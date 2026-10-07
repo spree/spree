@@ -14,7 +14,7 @@ module Spree
             # Its own permission rather than store configuration: a standing
             # credential to the back office is not the same kind of thing as
             # a delivery zone.
-            scoped_resource :agents
+            scoped_resource :oauth_applications
 
             protected
 

@@ -10,7 +10,7 @@ module Spree
           # again, while anything still holding a token stops working on its
           # next call.
           class ApplicationTokensController < Spree::Api::V3::Admin::BaseController
-            scoped_resource :agents
+            scoped_resource :oauth_applications
 
             def destroy
               application = current_store.oauth_applications.find_by_prefix_id!(params[:application_id])

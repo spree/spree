@@ -4166,7 +4166,7 @@
         "stock": "Niveles de stock, ubicaciones, movimientos y transferencias",
         "store_credits": "Saldos de crédito de tienda de los clientes",
         "webhooks": "Endpoints y entregas de webhooks",
-        "agents": "Agentes de IA conectados a esta tienda"
+        "oauth_applications": "Clientes OAuth registrados en esta tienda"
       },
       "grid": {
         "read_aria": "Ver {{resource}}",
@@ -4219,7 +4219,7 @@
         "stock": "Stock",
         "store_credits": "Créditos de tienda",
         "webhooks": "Webhooks",
-        "agents": "Agentes"
+        "oauth_applications": "Aplicaciones OAuth"
       }
     },
     "settings_nav": {

@@ -4236,7 +4236,7 @@
         "stock": "库存水平、仓库、变动与调拨",
         "store_credits": "客户店铺余额",
         "webhooks": "Webhook 端点与投递记录",
-        "agents": "连接到此店铺的 AI 代理"
+        "oauth_applications": "已在此店铺注册的 OAuth 客户端"
       },
       "grid": {
         "read_aria": "查看{{resource}}",
@@ -4289,7 +4289,7 @@
         "stock": "库存",
         "store_credits": "店铺信用",
         "webhooks": "Webhooks",
-        "agents": "代理"
+        "oauth_applications": "OAuth 应用"
       }
     },
     "policies": {

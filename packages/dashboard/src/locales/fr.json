@@ -4246,7 +4246,7 @@
         "stock": "Niveaux de stock, emplacements, mouvements et transferts",
         "store_credits": "Avoirs des clients",
         "webhooks": "Points de terminaison et livraisons de webhooks",
-        "agents": "Agents IA connectés à cette boutique"
+        "oauth_applications": "Clients OAuth enregistrés pour cette boutique"
       },
       "grid": {
         "read_aria": "Voir {{resource}}",
@@ -4299,7 +4299,7 @@
         "stock": "Stock",
         "store_credits": "Avoirs en boutique",
         "webhooks": "Webhooks",
-        "agents": "Agents"
+        "oauth_applications": "Applications OAuth"
       }
     },
     "policies": {

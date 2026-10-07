@@ -4300,7 +4300,7 @@
         "stock": "Stany magazynowe, lokalizacje, ruchy i transfery",
         "store_credits": "Salda środków sklepowych klientów",
         "webhooks": "Punkty końcowe i dostarczenia webhooków",
-        "agents": "Agenty AI połączone z tym sklepem"
+        "oauth_applications": "Klienci OAuth zarejestrowani w tym sklepie"
       },
       "grid": {
         "read_aria": "Podgląd: {{resource}}",
@@ -4353,7 +4353,7 @@
         "stock": "Stan magazynowy",
         "store_credits": "Środki w sklepie",
         "webhooks": "Webhooki",
-        "agents": "Agenty"
+        "oauth_applications": "Aplikacje OAuth"
       }
     },
     "policies": {

@@ -4246,7 +4246,7 @@
         "stock": "Stock levels, locations, movements and transfers",
         "store_credits": "Customer store credit balances",
         "webhooks": "Webhook endpoints and deliveries",
-        "agents": "AI agents connected to this store"
+        "oauth_applications": "OAuth clients registered against this store"
       },
       "grid": {
         "read_aria": "View {{resource}}",
@@ -4299,7 +4299,7 @@
         "stock": "Stock",
         "store_credits": "Store credits",
         "webhooks": "Webhooks",
-        "agents": "Agents"
+        "oauth_applications": "OAuth applications"
       }
     },
     "policies": {

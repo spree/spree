@@ -19,7 +19,7 @@ RSpec.describe 'Admin OAuth consent', type: :request do
   let(:staffer) do
     create(:admin_user, :without_admin_role).tap do |user|
       role = create(:role, name: "products-only-#{SecureRandom.hex(4)}",
-                           permissions: %w[write_agents read_products], resource: store)
+                           permissions: %w[write_oauth_applications read_products], resource: store)
       create(:role_user, user: user, role: role)
     end
   end

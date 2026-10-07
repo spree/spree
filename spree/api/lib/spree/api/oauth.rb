@@ -84,13 +84,13 @@ module Spree
         # Scopes that govern credentials rather than commerce, and so are
         # never offered to a delegated client.
         #
-        # Granting an agent `write_agents` would let it connect another
+        # Granting an agent `write_oauth_applications` would let it connect another
         # agent; `write_api_keys` would let it mint a key that outlives the
         # grant it was given. Neither is an escalation a merchant could
         # reasonably be asked to judge on a consent screen, and the tools
         # withhold the models anyway — so the scopes should not be offered in
         # the first place, rather than offered and quietly inert.
-        CREDENTIAL_SCOPES = %w[agents api_keys integrations webhooks staff].freeze
+        CREDENTIAL_SCOPES = %w[oauth_applications api_keys integrations webhooks staff].freeze
 
         # @return [Array<String>]
         def staff_scope_keys
