@@ -42,6 +42,10 @@ Dummy::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
+  # Spree's own code must not call the deprecated Spree.t.
+  config.active_support.disallowed_deprecation = :raise
+  config.active_support.disallowed_deprecation_warnings = [/Spree\.t is deprecated/]
+
   config.active_job.queue_adapter = :test
 
   config.cache_store = :null_store

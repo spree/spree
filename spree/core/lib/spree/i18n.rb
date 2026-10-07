@@ -30,12 +30,18 @@ module Spree
       allowed.empty? ? SHIPPED_LOCALES : SHIPPED_LOCALES & allowed
     end
 
-    # Languages of {available_locales} a store can be set to without a region,
-    # e.g. "pt" when +pt+ is available, not when only +pt-BR+ is.
+    # The available locale a store should use for a language: the language
+    # itself when Spree ships it, otherwise its first regional variant ("zh"
+    # becomes "zh-CN", since Spree ships Chinese only by region).
     #
-    # @return [Array<String>]
-    def available_languages
-      available_locales.map(&:to_s).reject { |locale| locale.include?('-') }
+    # @param language [String] ISO 639-1 code, e.g. "de"
+    # @param locales [Array<Symbol>] the locales to choose from
+    # @return [String, nil] nil when the language is not available at all
+    def locale_for_language(language, locales = available_locales)
+      codes = locales.map(&:to_s)
+      return language if codes.include?(language)
+
+      codes.sort.find { |code| code.start_with?("#{language}-") }
     end
   end
 end

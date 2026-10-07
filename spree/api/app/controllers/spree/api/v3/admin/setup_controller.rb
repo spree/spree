@@ -150,11 +150,11 @@ module Spree
           # English closes the gap for countries whose languages all fall
           # through, and is always offered alongside.
           def offerable_locales(country)
-            (country.official_locales & available_languages).presence || ['en']
+            country.official_locales.filter_map { |language| Spree.locale_for_language(language, available_locales) }.presence || ['en']
           end
 
-          def available_languages
-            @available_languages ||= Spree.available_languages
+          def available_locales
+            @available_locales ||= Spree.available_locales
           end
 
           # Token mismatch, spent token, and already-set-up all render the

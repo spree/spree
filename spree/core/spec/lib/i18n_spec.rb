@@ -23,15 +23,26 @@ describe 'i18n' do
     end
   end
 
-  describe '.available_languages' do
-    it 'lists only languages a store can be set to without a region' do
-      allow(Spree).to receive(:available_locales).and_return(%i[en pt-BR de])
+  describe '.locale_for_language' do
+    let(:locales) { %i[en de de-CH zh-TW zh-CN] }
 
-      expect(Spree.available_languages).to contain_exactly('en', 'de')
+    it 'picks the language itself when Spree ships it' do
+      expect(Spree.locale_for_language('de', locales)).to eq('de')
+    end
+
+    it "picks a regional variant when Spree ships the language only by region" do
+      expect(Spree.locale_for_language('zh', locales)).to eq('zh-CN')
+    end
+
+    it 'returns nothing for a language Spree does not ship' do
+      expect(Spree.locale_for_language('sq', locales)).to be_nil
     end
   end
 
   describe '.t' do
+    # The test app raises on this warning so Spree's own code never calls Spree.t.
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     it 'translates within the spree scope' do
       expect(Spree.t(:foo)).to eq('bar')
     end
