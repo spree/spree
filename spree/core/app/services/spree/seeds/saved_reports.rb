@@ -97,9 +97,7 @@ module Spree
       # The downcased name this report carries in every locale core ships.
       def known_names(key)
         @known_names ||= {}
-        @known_names[key] ||= Spree.available_locales.filter_map do |locale|
-          I18n.t("spree.reporting.seeds.#{key}.name", locale: locale, default: nil)&.downcase
-        end.to_set
+        @known_names[key] ||= Spree.translations_of("spree.reporting.seeds.#{key}.name").to_set(&:downcase)
       end
     end
   end

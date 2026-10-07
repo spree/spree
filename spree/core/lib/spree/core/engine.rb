@@ -108,13 +108,17 @@ module Spree
       end
 
       # Spree's translations cover only part of the English keys in most
-      # languages, so the rest fall back to English, the one complete language
-      # (`true` would fall back to the app's default locale instead). An app
-      # that configured its own fallbacks, including turning them off, keeps
-      # its choice.
+      # languages, so the rest fall back to English, the one complete language.
+      # `true` (Rails' generated production.rb) falls back to the app's default
+      # locale only, so English is added after it. An app that configured its
+      # own fallback chain, or turned fallbacks off, keeps its choice.
       initializer 'spree.i18n.fallbacks', before: :load_config_initializers do |app|
         fallbacks = app.config.i18n.fallbacks
-        app.config.i18n.fallbacks = [:en] if fallbacks.is_a?(ActiveSupport::OrderedOptions) && fallbacks.empty?
+        if fallbacks == true
+          app.config.i18n.fallbacks = [app.config.i18n.default_locale || :en, :en].uniq
+        elsif fallbacks.is_a?(ActiveSupport::OrderedOptions) && fallbacks.empty?
+          app.config.i18n.fallbacks = [:en]
+        end
       end
 
       # Spree's gems ship translations for dozens of languages. An app that
@@ -124,11 +128,10 @@ module Spree
         allowed = Array(app.config.i18n.available_locales).map(&:to_s)
         next if allowed.empty?
 
-        pattern = "{#{(allowed | ['en']).join(',')}}.yml"
-        Rails::Engine.subclasses.each do |engine|
-          next if engine <= Rails::Application || !engine.name.to_s.start_with?('Spree')
-
-          engine.config.paths['config/locales'].glob = pattern
+        # A regional file (de-CH) holds only its differences from its base (de).
+        locales = allowed | allowed.map { |locale| locale.split('-').first } | ['en']
+        %w[Spree::Core::Engine Spree::Api::Engine Spree::Emails::Engine].filter_map(&:safe_constantize).each do |engine|
+          engine.config.paths['config/locales'].glob = "{#{locales.join(',')}}.yml"
         end
       end
 
@@ -160,7 +163,7 @@ module Spree
       # populated while initializers are still running.
       config.after_initialize do
         ISO3166.configure do |iso_config|
-          iso_config.locales = (Spree.available_locales.map { |locale| locale.to_s.downcase } << 'en').uniq
+          iso_config.locales = (Spree.configured_locales.map { |locale| locale.to_s.downcase } << 'en').uniq
         end
 
         Spree::IsoData.reset!

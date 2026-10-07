@@ -134,6 +134,12 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       expect(location.country_code).to eq('DE')
       expect(location).to be_active
     end
+
+    it 'reuses the location seeded in another language' do
+      store.default_stock_location.update!(name: I18n.t('spree.default_stock_location_name', locale: :de))
+
+      expect { subject }.not_to change { store.stock_locations.first_party.count }
+    end
   end
 
   describe 'the delivery zones' do

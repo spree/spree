@@ -9,30 +9,42 @@ module Spree
     def translate(key, options = {})
       Spree::Deprecation.warn('Spree.t is deprecated and will be removed in Spree 6.1. Use I18n.t with the full key, e.g. I18n.t("spree.free").') if defined?(Spree::Deprecation)
 
-      I18n.t(key, **options.symbolize_keys, scope: [:spree, *options[:scope]].uniq)
+      I18n.t(key, **options.symbolize_keys, scope: [:spree, *Array(options[:scope]).map(&:to_sym)].uniq)
     end
     alias t translate
 
-    # Locales Spree ships translations for and the app allows
-    # (+config.i18n.available_locales+), plus English and the app's default and
-    # current locale.
+    # Locales Spree ships translations for that the app allows, plus English
+    # and the app's default and current locale.
     #
     # @return [Array<Symbol>]
     def available_locales
-      allowed = Array(Rails.application.config.i18n.available_locales).map(&:to_sym)
-      locales = allowed.empty? ? SHIPPED_LOCALES.dup : SHIPPED_LOCALES & allowed
-      locales << :en
-      locales << I18n.locale
-      locales << Rails.application.config.i18n.default_locale
-
-      locales.uniq.compact
+      (configured_locales & I18n.available_locales.map(&:to_sym)) | [:en, I18n.locale, Rails.application.config.i18n.default_locale].compact
     end
 
-    # Base languages of {available_locales}, e.g. "pt" for "pt-BR".
+    # {available_locales} as read from configuration alone, without loading
+    # any translations, for use while the app boots.
+    #
+    # @return [Array<Symbol>]
+    def configured_locales
+      allowed = Array(Rails.application.config.i18n.available_locales).map(&:to_sym)
+      allowed.empty? ? SHIPPED_LOCALES : SHIPPED_LOCALES & allowed
+    end
+
+    # Languages of {available_locales} a store can be set to without a region,
+    # e.g. "pt" when +pt+ is available, not when only +pt-BR+ is.
     #
     # @return [Array<String>]
     def available_languages
-      available_locales.map { |locale| Spree::Locale.new(code: locale).language_code }.uniq
+      available_locales.map(&:to_s).reject { |locale| locale.include?('-') }
+    end
+
+    # Every translation of a key across {available_locales}, e.g. to recognize
+    # a record seeded under another language.
+    #
+    # @param key [String] full translation key
+    # @return [Array<String>]
+    def translations_of(key)
+      available_locales.filter_map { |locale| I18n.t(key, locale: locale, default: nil) }.uniq
     end
   end
 end

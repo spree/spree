@@ -808,7 +808,8 @@ Spree's translations for emails, API messages and validation messages are now pa
 - **Remove `spree_i18n` from your Gemfile.** Its last release is empty and only warns. Older releases load their own, larger files over Spree's.
 - **Use `I18n.t` with the full key.** `Spree.t(:free)` becomes `I18n.t('spree.free')`, and `Spree.t(:x, scope: :api)` becomes `I18n.t('spree.api.x')`. `Spree.t` keeps working until 6.1 with a deprecation warning.
 - **A missing key is plain text.** `Spree.t` used to return a `<span class="translation_missing">` HTML element for a key it could not find. It now returns what `I18n.t` returns.
-- **Fall back to English if your default language is not English.** Spree's translations are complete only in English. An app that sets `config.i18n.fallbacks = true` falls back to its own default locale, so a store defaulting to another language should use `config.i18n.fallbacks = [:en]`, or remove the setting and let Spree apply it.
+- **Untranslated keys fall back to English.** Spree's translations are complete only in English. With `config.i18n.fallbacks = true`, as Rails generates for production, Spree adds English after your default locale. An app that sets its own fallback list or turns fallbacks off keeps its choice.
+- **`spree/testing_support/i18n` does nothing.** Set `config.i18n.raise_on_missing_translations = true` in your test environment to catch missing keys.
 - **Kaminari is no longer loaded.** It came in through `spree_i18n`. Spree paginates with Pagy, and the `Spree::Base.page` bridge for a custom Kaminari `page_method_name` is gone. Add `kaminari` to your Gemfile if your own code uses it.
 - **Translations for removed screens are gone.** Keys used only by the old admin and storefront, and by the v2 API, were removed. If your code reads one, copy it into your app's locale files.
 

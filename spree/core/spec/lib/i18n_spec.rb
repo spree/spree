@@ -15,6 +15,29 @@ describe 'i18n' do
 
       expect(Spree.available_locales).to contain_exactly(:en, :de)
     end
+
+    it 'leaves out shipped locales I18n does not accept' do
+      allow(I18n).to receive(:available_locales).and_return(%i[en fr])
+
+      expect(Spree.available_locales).to contain_exactly(:en, :fr)
+    end
+  end
+
+  describe '.available_languages' do
+    it 'lists only languages a store can be set to without a region' do
+      allow(Spree).to receive(:available_locales).and_return(%i[en pt-BR de])
+
+      expect(Spree.available_languages).to contain_exactly('en', 'de')
+    end
+  end
+
+  describe '.translations_of' do
+    it 'returns the key in every available locale' do
+      I18n.backend.store_translations(:de, spree: { foo: 'Balken' })
+      allow(Spree).to receive(:available_locales).and_return(%i[en de])
+
+      expect(Spree.translations_of('spree.foo')).to contain_exactly('bar', 'Balken')
+    end
   end
 
   describe '.t' do
@@ -29,6 +52,7 @@ describe 'i18n' do
 
     it 'ignores a spree scope the caller already passed' do
       expect(Spree.t(:foo, scope: :spree)).to eq('bar')
+      expect(Spree.t(:foo, scope: 'spree')).to eq('bar')
     end
 
     it 'warns that it is deprecated' do
