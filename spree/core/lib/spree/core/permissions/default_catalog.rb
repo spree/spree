@@ -206,7 +206,7 @@ module Spree
         # the store, so it is its own permission rather than part of settings
         # — a merchandiser who may edit a delivery zone is not thereby someone
         # who may connect Claude to the back office.
-        catalog.register_scope(:agents, group: :access, resources: -> { [Spree::OauthApplication] })
+        catalog.register_scope(:oauth_applications, group: :access, resources: -> { [Spree::OauthApplication] })
         catalog.register_scope(:staff, group: :access, resources: -> {
           [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]
         })

@@ -4264,7 +4264,7 @@
         "stock": "Bestände, Lagerorte, Bewegungen und Transfers",
         "store_credits": "Guthaben der Kunden",
         "webhooks": "Webhook-Endpunkte und Zustellungen",
-        "agents": "Mit diesem Shop verbundene KI-Agenten"
+        "oauth_applications": "Für diesen Shop registrierte OAuth-Clients"
       },
       "grid": {
         "read_aria": "{{resource}} ansehen",
@@ -4317,7 +4317,7 @@
         "stock": "Bestand",
         "store_credits": "Guthaben",
         "webhooks": "Webhooks",
-        "agents": "Agenten"
+        "oauth_applications": "OAuth-Anwendungen"
       }
     },
     "policies": {
