@@ -1417,6 +1417,13 @@
           "help": "Les acheteurs dont le pays est inconnu voient ce marché. Un seul peut être défini par défaut par boutique.",
           "label": "Marché par défaut"
         },
+        "default_country_code": {
+          "help": "Le pays utilisé pour les taxes avant que le client ne saisisse une adresse. Laissez vide pour utiliser le premier pays par ordre alphabétique.",
+          "home_help": "Le pays dont la taxe est comprise dans vos prix. Laissez vide pour utiliser le premier pays par ordre alphabétique.",
+          "home_label": "Pays d'origine",
+          "label": "Pays principal",
+          "placeholder": "Premier pays par ordre alphabétique"
+        },
         "default_locale": {
           "help": "Langue de la boutique pour les acheteurs de ce marché.",
           "label": "Langue par défaut"
@@ -1435,6 +1442,17 @@
         "tax_provider": {
           "help": "Ce qui calcule la taxe pour les commandes de ce marché.",
           "label": "Moteur de calcul"
+        },
+        "tax_display": {
+          "help": {
+            "dynamic": "Les prix des clients hors de votre pays d'origine sont ajustés : la taxe de votre pays est retirée et la leur est intégrée.",
+            "included": "Les clients hors de votre pays d'origine paient le prix saisi, la taxe de leur pays y étant comprise."
+          },
+          "label": "Affichage des taxes",
+          "options": {
+            "dynamic": "Affichage dynamique des taxes",
+            "included": "Afficher comme incluses"
+          }
         }
       },
       "match_policy": {
@@ -2226,7 +2244,7 @@
           "help": "Laissez vide pour taxer tous les pays."
         },
         "included_in_price": {
-          "help": "Les prix contiennent déjà cette taxe, elle est déduite au lieu d'être ajoutée.",
+          "help": "Les prix contiennent déjà cette taxe, elle est déduite au lieu d'être ajoutée. Dans un marché à affichage dynamique des taxes, les prix des clients à l'étranger sont d'abord ajustés au taux de leur pays.",
           "label": "Incluse dans le prix",
           "short": "Incluse"
         },

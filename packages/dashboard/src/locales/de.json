@@ -1417,6 +1417,13 @@
           "help": "Käufer ohne bekanntes Land sehen diesen Markt. Pro Store kann nur einer Standard sein.",
           "label": "Standardmarkt"
         },
+        "default_country_code": {
+          "help": "Das Land, nach dem die Steuer berechnet wird, bevor ein Kunde eine Adresse angibt. Leer lassen, um das alphabetisch erste Land zu verwenden.",
+          "home_help": "Das Land, dessen Steuer in Ihren Preisen enthalten ist. Leer lassen, um das alphabetisch erste Land zu verwenden.",
+          "home_label": "Heimatland",
+          "label": "Hauptland",
+          "placeholder": "Alphabetisch erstes Land"
+        },
         "default_locale": {
           "help": "Storefront-Sprache für Käufer in diesem Markt.",
           "label": "Standardsprache"
@@ -1435,6 +1442,17 @@
         "tax_provider": {
           "help": "Womit die Steuer für Bestellungen in diesem Markt berechnet wird.",
           "label": "Steuerberechnung"
+        },
+        "tax_display": {
+          "help": {
+            "dynamic": "Preise für Kunden außerhalb Ihres Heimatlandes werden angepasst: Die Steuer Ihres Heimatlandes wird herausgerechnet und die ihres Landes eingerechnet.",
+            "included": "Kunden außerhalb Ihres Heimatlandes zahlen den eingegebenen Preis, die Steuer ihres Landes ist darin enthalten."
+          },
+          "label": "Steueranzeige",
+          "options": {
+            "dynamic": "Dynamische Steueranzeige",
+            "included": "Als enthalten anzeigen"
+          }
         }
       },
       "match_policy": {
@@ -2226,7 +2244,7 @@
           "help": "Leer lassen, um jedes Land zu besteuern."
         },
         "included_in_price": {
-          "help": "Die Preise enthalten diese Steuer bereits, sie wird herausgerechnet statt aufgeschlagen.",
+          "help": "Die Preise enthalten diese Steuer bereits, sie wird herausgerechnet statt aufgeschlagen. In einem Markt mit dynamischer Steueranzeige werden Preise für Kunden im Ausland zuerst an den Steuersatz ihres Landes angepasst.",
           "label": "Im Preis enthalten",
           "short": "Enthalten"
         },

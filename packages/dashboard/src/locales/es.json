@@ -1457,6 +1457,13 @@
           "help": "Los compradores sin un país conocido ven este mercado. Solo puede haber uno predeterminado por tienda.",
           "label": "Mercado predeterminado"
         },
+        "default_country_code": {
+          "help": "El país usado para los impuestos antes de que el cliente introduzca una dirección. Déjalo vacío para usar el primer país por orden alfabético.",
+          "home_help": "El país cuyos impuestos incluyen tus precios. Déjalo vacío para usar el primer país por orden alfabético.",
+          "home_label": "País de origen",
+          "label": "País principal",
+          "placeholder": "Primer país por orden alfabético"
+        },
         "default_locale": {
           "help": "Idioma del storefront para los compradores de este mercado.",
           "label": "Idioma predeterminado"
@@ -1475,6 +1482,17 @@
         "tax_provider": {
           "help": "Qué motor calcula los impuestos de los pedidos de este mercado.",
           "label": "Motor de impuestos"
+        },
+        "tax_display": {
+          "help": {
+            "dynamic": "Los precios para clientes fuera de tu país de origen se ajustan: se descuentan los impuestos de tu país y se incluyen los del suyo.",
+            "included": "Los clientes fuera de tu país de origen pagan el precio introducido, con los impuestos de su país incluidos."
+          },
+          "label": "Visualización de impuestos",
+          "options": {
+            "dynamic": "Visualización dinámica de impuestos",
+            "included": "Mostrar como incluidos"
+          }
         }
       },
       "match_policy": {
@@ -2266,7 +2284,7 @@
           "help": "Dejalo vacío para cobrar impuestos en todos los países."
         },
         "included_in_price": {
-          "help": "Los precios ya incluyen este impuesto, así que se descuenta en lugar de sumarse.",
+          "help": "Los precios ya incluyen este impuesto, así que se descuenta en lugar de sumarse. En un mercado con visualización dinámica de impuestos, los precios para clientes en el extranjero se ajustan primero al tipo de su país.",
           "label": "Incluido en el precio",
           "short": "Incluido"
         },

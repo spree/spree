@@ -1826,6 +1826,18 @@ export interface MarketCreateParams {
    * `taxProviders.list()`. `null` uses the installation default.
    */
   tax_provider?: string | null
+  /**
+   * What a price means for an order shipping outside the home country.
+   * `included` (the default) charges it as entered; `dynamic` takes the home
+   * country's tax out and puts the destination's in. Whether a tax is inside
+   * the price or added on top is set on each tax rate.
+   */
+  tax_display?: 'included' | 'dynamic'
+  /**
+   * The market's main country, one of `country_codes`. On the default market it
+   * is the store's home country. `null` uses the first country by name.
+   */
+  default_country_code?: string | null
 }
 
 export interface MarketUpdateParams {
@@ -1838,6 +1850,8 @@ export interface MarketUpdateParams {
   position?: number
   country_codes?: string[]
   tax_provider?: string | null
+  tax_display?: 'included' | 'dynamic'
+  default_country_code?: string | null
 }
 
 export interface CustomerGroupCreateParams {
