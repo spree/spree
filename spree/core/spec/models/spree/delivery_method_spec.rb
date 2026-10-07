@@ -399,6 +399,14 @@ describe Spree::DeliveryMethod, type: :model do
 
       it { expect(delivery_method.display_estimated_price).to eq('Flat rate: Free') }
     end
+
+    context 'with a percentage of the item total' do
+      let(:delivery_method) do
+        build(:delivery_method, calculator: Spree::Calculator::Shipping::FlatPercentItemTotal.new(preferred_flat_percent: 12.5))
+      end
+
+      it { expect(delivery_method.display_estimated_price).to eq("#{I18n.t('spree.flat_percent')}: 12.50%") }
+    end
   end
   describe '#available_pickup_locations' do
     let(:delivery_method) { create(:delivery_method, store: @default_store) }

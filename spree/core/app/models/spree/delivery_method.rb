@@ -437,7 +437,7 @@ module Spree
         elsif calculator.is_a?(Spree::Calculator::Shipping::FlexiRate)
           Spree::Money.new(calculator.preferred_first_item, { currency: calculator.preferred_currency }).to_s
         elsif calculator.is_a?(Spree::Calculator::Shipping::FlatPercentItemTotal)
-          ActionController::Base.helpers.number_to_percentage(calculator.preferred_flat_percent, precision: 2)
+          ActiveSupport::NumberHelper.number_to_percentage(calculator.preferred_flat_percent, precision: 2)
         else
           ''
         end
