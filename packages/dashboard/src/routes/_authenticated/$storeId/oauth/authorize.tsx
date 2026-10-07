@@ -61,7 +61,7 @@ function OauthAuthorizePage() {
   function setSelected(next: string[]) {
     setGranted(next)
   }
-  const { data: catalog } = usePermissionCatalog()
+  const { data: catalog, isLoading: catalogLoading } = usePermissionCatalog()
 
   // Only the resources this request touches. The grid builds its rows from
   // whatever catalog entries it is handed, so narrowing the entries narrows
@@ -103,6 +103,12 @@ function OauthAuthorizePage() {
 
   const pending = approve.isPending || deny.isPending
 
+  // The grid draws its rows from the permission catalog, so a screen without
+  // it shows nothing to approve. Treating only the authorization request as
+  // "loaded" left Approve live over an empty grid with every scope still
+  // pre-selected — a merchant could allow access without seeing what.
+  const awaitingData = isLoading || !data || catalogLoading || !catalog
+
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <PageHeader
@@ -127,7 +133,7 @@ function OauthAuthorizePage() {
 
       {error ? null : (
         <Card>
-          {isLoading || !data ? null : (
+          {awaitingData ? null : (
             <CardHeader>
               <CardTitle>{t('admin.pages.oauth.authorize.permissions_heading')}</CardTitle>
               <CardDescription>
@@ -136,7 +142,7 @@ function OauthAuthorizePage() {
             </CardHeader>
           )}
           <CardContent className="flex flex-col gap-4">
-            {isLoading || !data ? (
+            {awaitingData ? (
               <div className="flex flex-col gap-3">
                 <Skeleton className="h-5 w-48" />
                 <Skeleton className="h-4 w-full" />
@@ -191,7 +197,7 @@ function OauthAuthorizePage() {
               </>
             )}
           </CardContent>
-          {isLoading || !data ? null : (
+          {awaitingData ? null : (
             <CardFooter className="gap-3">
               <Button disabled={pending || selected.length === 0} onClick={() => decide(approve)}>
                 {t('admin.pages.oauth.authorize.approve')}
