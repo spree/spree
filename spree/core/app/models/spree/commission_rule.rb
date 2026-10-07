@@ -15,6 +15,9 @@ module Spree
   # setting. A rate with no rules charges every sale.
   class CommissionRule < Spree.base_class
     include Spree::PreferenceSchema
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.commission_rule_types'
 
     has_prefix_id :comrule
 
@@ -46,16 +49,6 @@ module Spree
     validate :type_must_be_registered
 
     registers_subclasses_via { Spree.commission_rules }
-
-    # @return [String] the name an operator picks this rule kind by
-    def self.human_name
-      I18n.t("spree.commission_rule_types.#{api_type}.name", default: name.demodulize.titleize)
-    end
-
-    # @return [String] what the rule does, shown beside the name in the picker
-    def self.description
-      I18n.t("spree.commission_rule_types.#{api_type}.description", default: '')
-    end
 
     # Whether this rule admits the sale.
     #

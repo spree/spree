@@ -26,7 +26,7 @@ module Spree
               {
                 type: klass.api_type,
                 name: klass.human_name,
-                description: klass.description,
+                description: klass.human_description,
                 preference_schema: klass.serialized_preference_schema,
                 # Config a rule takes beyond its preferences — a catalog-scale
                 # reference list lives in its own table, not the blob, and an

@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Spree::DeliveryMethodRule, type: :model do
+
+  it_behaves_like 'type labels'
+
   let(:store) { @default_store }
   let(:delivery_method) { create(:delivery_method) }
   let(:package) do
