@@ -76,6 +76,31 @@ RSpec.describe 'agent workflow tool arguments' do
     end
   end
 
+  # Nothing shipped reaches this, but an extension registering a workflow
+  # whose key does not name a Spree model would: `can?(:create, nil)` answers
+  # true, so the authorization check passes for exactly the tool nobody can
+  # vouch for, and the attribute filter keyed off the same lookup falls open
+  # with it.
+  describe 'a workflow naming a resource that does not exist' do
+    let(:tool_class) do
+      Spree::AgentTools::WorkflowTool.for(:product_create_workflow, permission: 'write_products')
+    end
+
+    let(:tool) do
+      instance = tool_class.new(context)
+      allow(instance).to receive(:created_model).and_return(nil)
+      allow(instance).to receive(:subject_model).and_return(nil)
+      instance
+    end
+
+    it 'refuses rather than authorizing against nothing' do
+      result = tool.call(attributes: { 'name' => 'Should not be created' })
+
+      expect(result[:error]).to include('does not exist').or include('not one an agent may write')
+      expect(Spree::Product.where(name: 'Should not be created')).to be_empty
+    end
+  end
+
   describe 'an actor the record cannot hold' do
     let(:supplier) { create(:supplier, store: store) }
     let(:stock_location) { store.stock_locations.first || create(:stock_location, store: store) }

@@ -223,9 +223,17 @@ module Spree
       # @return [Hash, nil]
       def unauthorized_create
         return unless ability_action == :create
-        return if context.can?(:create, created_model)
 
-        { error: "You do not have permission to create this #{created_model.model_name.human.downcase}." }
+        # A key whose model does not resolve leaves nothing to authorize
+        # against, and `can?(:create, nil)` answers true — so the check would
+        # pass for exactly the workflow nobody can vouch for. The attribute
+        # filter is keyed off the same lookup and would also fall open, which
+        # is the tenancy hole it exists to close.
+        model = created_model
+        return { error: 'This tool cannot be used: its workflow names a resource that does not exist.' } if model.nil?
+        return if context.can?(:create, model)
+
+        { error: "You do not have permission to create this #{model.model_name.human.downcase}." }
       end
 
       # What the workflow creates, named by its own key: `products.create`
@@ -402,7 +410,12 @@ module Spree
         return [attributes, nil] unless attributes.is_a?(Hash)
 
         entry = subject_entry
-        return [attributes, nil] if entry.nil?
+        if entry.nil?
+          # No entry means no list of what the Admin API would accept, and
+          # forwarding the hash unchecked is what let a caller name
+          # `store_id` and write into another merchant's store.
+          return [nil, { error: 'This tool cannot be used: its resource is not one an agent may write.' }]
+        end
 
         attributes = attributes.transform_keys(&:to_s)
         allowed = entry.writable_attribute_names
