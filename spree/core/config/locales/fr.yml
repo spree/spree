@@ -1,0 +1,835 @@
+---
+fr:
+  activemodel:
+    errors:
+      messages:
+        blank: ne peut pas être vide
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adresse
+        address2: Adresse complémentaire
+        city: Ville
+        company: Entreprise
+        country: Pays
+        label: Nom d'adresse
+        phone: Téléphone
+        state: Province / Région / État
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Montant de base
+        preferred_tiers: Tiers
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Pourcentage de base
+        preferred_tiers: Tiers
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: Nom ISO
+        name: Nom
+        numcode: Code ISO
+      spree/credit_card:
+        base: Base
+        cc_type: Type
+        month: Mois
+        name: Nom
+        number: Numéro
+        verification_value: Code de sécurité
+        year: Année
+      spree/customer_group:
+        description: Description
+        name: Nom
+      spree/gift_card:
+        amount_used: Montant utilisé
+        expires_at: Expire le
+      spree/import:
+        preferred_delimiter: Délimiteur
+      spree/import_mapping:
+        file_column: Colonne du fichier
+        schema_field: Champ du schéma
+      spree/import_row:
+        row_number: Numéro
+      spree/inventory_unit:
+        state: Province / Région / État
+      spree/invitation:
+        inviter: Invitant
+      spree/line_item:
+        price: Prix
+        quantity: Quantité
+      spree/option_type:
+        filterable: Filtrable
+        kind: Type
+        name: Nom
+      spree/option_value:
+        color_code: Code couleur
+        image: Image de l'échantillon
+      spree/order:
+        checkout_complete: Votre commande à été reçu
+        completed_at: Terminé à
+        considered_risky: Considérée à risque
+        coupon_code: Coupon de promotion
+        created_at: Date d'achat
+        email: Courriel du client
+        internal_note: Note interne
+        ip_address: Adresse IP
+        item_count: Articles
+        item_total: Nombre total d'articles
+        number: Nombre
+        payment_state: État du paiement
+        shipment_state: État du colis
+        special_instructions: Instructions spéciales
+        state: État de la commande
+        total: Total
+      spree/order/bill_address:
+        address1: Rue de l'adresse de facturation
+        city: Ville de l'adresse de facturation
+        phone: Numéro de téléphone de l'adresse de facturation
+        state: Province / Région / État de l'adresse de facturation
+      spree/order/ship_address:
+        address1: Rue de l'adresse de livraison
+        city: Ville de l'adresse de livraison
+        phone: Numéro de téléphone de l'adresse de livraison
+        state: Province / Région / État de l'adresse de livraison
+      spree/payment:
+        amount: Montant
+        number: Numéro
+      spree/payment_method:
+        name: Nom
+      spree/policy:
+        body: Contenu
+        owner: Politique pour
+      spree/price_list:
+        description: Description
+        ends_at: Se termine le
+        match_policy: Règle de correspondance
+        name: Nom
+        priority: Priorité
+        starts_at: Commence le
+        status: Statut
+      spree/price_rule:
+        priority: Priorité
+        type: Type
+      spree/product:
+        available_on: Disponible le
+        cost_currency: Devise du prix
+        cost_price: Prix d'achat
+        description: Description
+        discontinue_on: Disponible jusqu'au
+        less_than: Moins que
+        make_active_at: Activer le
+        master_price: Prix de départ
+        more_than: Plus de
+        name: Nom
+        on_hand: En Stock
+        tax_category: Catégorie de taxe
+      spree/promotion:
+        advertise: Publiciser
+        code: Code
+        description: Description
+        event_name: Nom de l'événement
+        expires_at: Expire le
+        generate_code: code
+        name: Nom
+        path: Chemin
+        promotion_category: Catégorie de promotion
+        starts_at: Débute le
+        usage_limit: Limite d'utilisation
+      spree/promotion_category:
+        code: Code
+        name: Nom
+      spree/property:
+        name: Nom
+        presentation: Présentation
+      spree/role:
+        name: Nom
+      spree/shipment:
+        number: Numéro
+      spree/state:
+        abbr: Abréviation
+        name: Nom
+      spree/store:
+        address: Adresse
+        contact_phone: Téléphone de contact
+        mail_from_address: Courriel d'envoi
+        meta_description: Description (Meta)
+        meta_keywords: Mots-clés (Meta)
+        name: Nom du site
+        preferred_digital_asset_authorized_clicks: Limite de clics de téléchargement
+        preferred_digital_asset_authorized_days: Limite de jours de téléchargement
+        preferred_limit_digital_download_count: Limiter le nombre de téléchargements des liens numériques
+        preferred_limit_digital_download_days: Limiter le nombre de jours de téléchargement des liens numériques
+        seo_robots: Robots PDG
+        seo_title: Titre SEO
+        storefront_custom_code_body_end: Code personnalisé avant la balise body de fermeture
+        storefront_custom_code_body_start: Code personnalisé après la balise body d'ouverture
+        storefront_custom_code_head: Code personnalisé dans l'en-tête de la page
+        url: Adresse URL
+      spree/store_credit:
+        amount_used: Total utilisé
+      spree/tax_category:
+        description: Description
+        name: Nom
+      spree/tax_rate:
+        amount: Taux
+        included_in_price: Inclus dans le prix
+        show_rate_in_label: Afficher le taux dans l'étiquette
+      spree/taxon:
+        name: Nom
+        permalink: Permalien
+        position: Position
+        sort_order: Ordre de tri
+      spree/taxonomy:
+        name: Nom
+      spree/user:
+        avatar: Avatar
+        email: Courriel
+        password: Mot de passe
+        password_confirmation: Confirmation du mot de passe
+      spree/variant:
+        cost_currency: Devise du prix
+        cost_price: Prix coûtant
+        depth: Profondeur
+        height: Hauteur
+        price: Prix
+        sku: SKU
+        weight: Poids
+        width: Largeur
+      spree/zone:
+        description: Description
+        name: Nom
+      user:
+        current_sign_in: Connexion actuelle le
+        last_sign_in: Dernière connexion le
+        sign_in_count: Nombre de connexions
+    errors:
+      messages:
+        blank: ne peut pas être vide
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: doit être une origine (schéma et hôte) sans chemin, requête ou fragment
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: est déjà relié à ce produit
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Cette carte est expirée
+              expiry_invalid: Cette carte est invalide
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Impossible de supprimer une carte cadeau utilisée
+        spree/import:
+          attributes:
+            attachment:
+              content_type: a un type de contenu non autorisé
+            type:
+              inclusion: n'est pas inclus dans la liste des types autorisés
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Doit correspondre à la devise de la commande
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: Impossible de supprimer le marché par défaut.
+              cannot_destroy_last_market: Impossible de supprimer le seul marché.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: est déjà attribué à un autre marché dans cette boutique
+              not_in_shipping_zone: n'est couvert par aucune zone d'expédition. Veuillez d'abord configurer une zone d'expédition.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: est supérieur au montant maximum autorisé de %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: doit être postérieur à la date de début
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Les produits ne peuvent pas être supprimés s'ils se trouvent dans un élément de campagne
+            discontinue_on:
+              invalid_date_range: Doit être postérieure à la date disponible
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: doit être postérieur à la date de publication
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: Doit être postérieur à la date de début
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: est plus grand que la valeur autorisée.
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: Impossible de supprimer la seule boutique.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Dépasse le solde total
+            amount_used:
+              cannot_be_greater_than_amount: Ne peut pas être supérieur à la somme.
+              greater_than_zero_restrict_delete: Est supérieur à zéro. Le crédit ne peut pas être supprimé.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: appartient à un autre utilisateur
+              deprecated_in_completed_order: obsolète dans une commande finalisée
+            ship_address_id:
+              belongs_to_other_user: appartient à un autre utilisateur
+              deprecated_in_completed_order: obsolète dans une commande finalisée
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Les variantes ne peuvent pas être supprimées si elles appartiennent à un élément de campagne
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: ne doit pas pointer vers une adresse de réseau interne ou privé
+    models:
+      spree/address:
+        one: Adresse
+        other: Adresses
+      spree/classification:
+        one: Classification
+        other: Classifications
+      spree/country:
+        one: Pays
+        other: Pays
+      spree/credit_card:
+        one: Carte de crédit
+        other: Cartes de crédit
+      spree/customer_group:
+        one: Groupe de clients
+        other: Groupes de clients
+      spree/customer_group_user:
+        one: Utilisateur de groupe de clients
+        other: Utilisateurs de groupe de clients
+      spree/export:
+        one: Exportation
+        other: Exportations
+      spree/integration:
+        one: Intégration
+        other: Intégrations
+      spree/inventory_unit:
+        one: Stock
+        other: Stocks
+      spree/line_item:
+        one: article
+        other: articles
+      spree/option_type:
+        one: Type d'option
+        other: Types d'option
+      spree/option_value:
+        one: Valeur d'option
+        other: Valeurs d'option
+      spree/order:
+        one: Commande
+        other: Commandes
+      spree/payment:
+        one: Paiement
+        other: Paiements
+      spree/payment_method:
+        one: Méthode de paiement
+        other: Méthodes de paiement
+      spree/price:
+        one: Prix
+        other: Prix
+      spree/price_list:
+        one: Liste de prix
+        other: Listes de prix
+      spree/price_rule:
+        one: Règle de prix
+        other: Règles de prix
+      spree/product:
+        one: Produit
+        other: Produits
+      spree/promotion:
+        one: Promotion
+        other: Promotions
+      spree/promotion_category:
+        one: Catégorie de promotion
+        other: Catégories de promotion
+      spree/property:
+        one: Proprieté
+        other: Proprietés
+      spree/refund_reason:
+        one: Raison du remboursement
+        other: Raisons du remboursement
+      spree/role:
+        one: Rôle
+        other: Rôles
+      spree/shipment:
+        one: Expédition
+        other: Expéditions
+      spree/shipping_method:
+        one: Méthode de livraison
+        other: Méthodes de livraison
+      spree/state:
+        one: Région
+        other: Régions
+      spree/stock_location:
+        one: Emplacement du stock
+        other: Emplacements du stock
+      spree/stock_movement:
+        one: Mouvement de stock
+        other: Mouvements de stock
+      spree/stock_transfer:
+        one: Transfert de stock
+        other: Transferts de stock
+      spree/store:
+        one: Boutique
+        other: Boutiques
+      spree/store_credit:
+        one: Crédit
+        other: Crédits
+      spree/tax_category:
+        one: Catégorie de taxe
+        other: Catégories des taxes
+      spree/tax_rate:
+        one: Taux de la taxe
+        other: Taux des taxes
+      spree/taxon:
+        one: Taxon
+        other: Taxons
+      spree/taxonomy:
+        one: Taxonomie
+        other: Taxonomies
+      spree/user:
+        one: Utilisateur
+        other: Utilisateurs
+      spree/variant:
+        one: Variante
+        other: Variantes
+      spree/zone:
+        one: Zone
+        other: Zones
+  errors:
+    messages:
+      already_confirmed: est déjà confirmé
+      not_a_number: n'est pas un nombre
+      not_found: Non trouvé(e)
+      not_locked: n'est pas bloqué
+      not_saved:
+        one: "%{resource} n'a pu etre sauvegardé à cause d' 1 erreur:"
+        other: "%{resource} n'a pu etre sauvegardé à cause de %{count} erreurs:"
+  number:
+    currency:
+      format:
+        delimiter: " "
+        separator: ","
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accept: Accepter
+    accepted: Accepté
+    accepts_email_marketing: Accepte le marketing par e-mail
+    account: Compte
+    active: Actif
+    address: Adresse
+    address1: Adresse
+    address2: Adresse (complément)
+    adjustment: Ajustement
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Inclus dans le prix)"
+    adjustments_deleted: Ajustements supprimés
+    admin_user_mailer:
+      password_reset_email:
+        action: Réinitialiser le mot de passe
+        expiry_notice: Ce lien de réinitialisation du mot de passe expirera bientôt. Si vous n'en êtes pas à l'origine, aucune action n'est requise.
+        greeting: Bonjour %{name},
+        ignore_notice: Si vous n'avez pas demandé de réinitialisation de mot de passe, vous pouvez ignorer cet e-mail en toute sécurité. Votre mot de passe ne sera pas modifié.
+        instructions: Nous avons reçu une demande de réinitialisation du mot de passe de votre compte administrateur %{store_name}. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.
+        subject: Instructions de réinitialisation du mot de passe
+    all: Tous
+    amount: Montant
+    api_key_no_current_key: Aucune clé API n'a authentifié cette requête
+    api_key_scopes_immutable: ne peut pas être modifié après la création de la clé ; créez une nouvelle clé avec les portées dont vous avez besoin et révoquez celle-ci
+    approver: Approbateur
+    authorized: Autorisé
+    availability: Disponibilité
+    backorderable: Peut être acheté même si le stock est vide
+    backordered: En rupture de stock
+    bill_address: Adresse facturée
+    billing_address: Adresse de facturation
+    calculator: Calculateur
+    canceled: Annulé
+    canceler: Annulateur
+    cannot_be_destroyed: La commande ne peut pas être supprimée.
+    capture: accepté
+    cart: Panier
+    cart_already_updated: Le panier a déjà été mis à jour.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} ne peut pas être livré à l'adresse sélectionnée"
+      discontinued: "%{li_name} a été retiré car il a été abandonné"
+      out_of_stock: "%{li_name} a été retiré car il est en rupture de stock"
+    categories: Catégories
+    category: Categorie
+    channel: canal
+    channels: Canaux de vente
+    checkout: Passer la commande
+    checkout_requirements:
+      email_required: L'adresse e-mail est requise
+      line_items_required: Ajoutez au moins un article à votre panier
+      payment_required: Ajoutez un mode de paiement
+      ship_address_required: L'adresse de livraison est requise
+    city: Ville
+    color_code: Code couleur
+    company: Entreprise
+    compare_at_amount: Montant de comparaison
+    compare_at_price: Comparer au prix
+    complete: Terminé
+    confirm: Confirmation
+    cost_price: Prix coûtant
+    count_on_hand: Nombre en stock
+    country: Pays
+    coupon_code: Code Promo
+    coupon_code_already_applied: Le code promo a déjà été utilisé pour cette commande
+    coupon_code_applied: Le code promo a été appliqué avec succès à votre commande.
+    coupon_code_better_exists: Le code promo utilisé précédemment vous offre une meilleure réduction
+    coupon_code_expired: Le code promo n'est plus valable
+    coupon_code_max_usage: Le code promo à été utilisé trop de fois et n'est plus valide
+    coupon_code_not_eligible: Le code promo ne peut pas être utilisé pour cette commande
+    coupon_code_not_found: Le code promo que vous avez entré n'existe pas.
+    coupon_code_unknown_error: Ce code promo ne peut pas être appliqué au panier pour le moment.
+    coupon_code_used: Le code promo que vous avez saisi a déjà été utilisé. Veuillez réessayer.
+    created_at: Date de création
+    credit_card: Carte de crédit
+    currency: Devise
+    currency_not_supported_by_store: n'est pas prise en charge par cette boutique
+    customer: Client
+    customers: Clients
+    default: Défaut
+    default_stock_location_name: Emplacement de la boutique
+    default_wishlist_name: Liste de souhaits
+    delivery: Livraison
+    depth: Profondeur
+    description: Description
+    destination: Destination
+    destroy: Supprimer
+    details: Détails
+    digital:
+      digital_delivery: Livraison numérique
+    digital_assets: Ressources numériques
+    discontinued: Discontinué
+    discontinued_variants_present: Certains éléments de campagne de cette campagne contiennent des produits qui ne sont plus disponibles.
+    display_delivery_range: Livraison en %{delivery_range} jours ouvrés
+    draft: Brouillon
+    eligibility_errors:
+      messages:
+        has_excluded_product: Le panier contient des produits qui empêchent l'attribution du code de bon.
+        item_total_less_than: Ce code de bon ne peut pas être utilisé pour les commandes inférieures à une valeur totale de %{amount}.
+        item_total_less_than_or_equal: Ce code de bon ne peut pas être utilisé pour les commandes d'une valeur totale inférieure ou égale à %{amount}.
+        item_total_more_than: Le code du bon n'est valable que pour les commandes d'un montant total jusqu'à %{amount}.
+        item_total_more_than_or_equal: Le code du bon d'achat n'est valable que pour les commandes d'un montant total de / à %{amount}.
+        limit_once_per_user: Ce code de bon n'est valable qu'une seule fois par utilisateur.
+        missing_product: Les bons produits manquent dans le panier pour ce code de bon.
+        missing_taxon: Pour ce code de bon d'achat, les produits de la catégorie correcte doivent être dans le panier.
+        no_applicable_products: Le produit correspondant au code de bon ne se trouve pas dans le panier.
+        no_matching_channel: Ce code de réduction n'est pas valable pour ce canal de vente.
+        no_matching_market: Ce code de réduction n'est pas valable sur votre marché.
+        no_matching_taxons: Pour ce code de bon, le produit de la catégorie correspondante doit être dans le panier.
+        no_user_or_email_specified: Vous devez être inscrit / connecté pour ajouter le code du bon.
+        no_user_specified: Vous devez être connecté pour ajouter le code du bon.
+        not_first_order: Ce code de bon d'achat n'est valable que pour la première commande d'un utilisateur.
+        wrong_country: Ce code promo n'est pas valable dans votre pays
+    email: Courriel
+    error: erreur
+    error_user_destroy_with_orders: Utilisateur d'erreur supprimé avec les commandes
+    error_user_does_not_have_any_store_credits: L'utilisateur ne dispose d'aucun avoir en boutique
+    errors:
+      messages:
+        cannot_delete_default_channel: Le canal par défaut ne peut pas être supprimé. Définissez d'abord un autre canal comme canal par défaut.
+        channel_store_mismatch: doit appartenir à la même boutique
+        invalid_order_routing_rule: n'est pas une règle de routage de commande enregistrée
+        invalid_order_routing_strategy: n'est pas une stratégie de routage de commande enregistrée
+        store_association_can_not_be_changed: L'association de boutique ne peut pas être modifiée
+        store_is_already_set: La boutique est déjà définie
+    expired: Expiré
+    export_mailer:
+      export_done:
+        message: Bien joué, votre exportation est prête ! Veuillez utiliser le lien ci-dessous pour la télécharger.
+        subject: Votre exportation %{export_number} a été traitée avec succès !
+      greeting: Bonjour %{user_name},
+    field: Champ
+    first_name: Prénom
+    flat_percent: Pourcentage net
+    flat_rate_per_order: Taux net par commande
+    flexible_rate: Taux flexible
+    free: Gratuit
+    gateway: Méthode de paiement
+    gateway_error: Erreur de la méthode de paiement
+    gift_card: Carte cadeau
+    gift_card_already_redeemed: La carte cadeau a déjà été utilisée.
+    gift_card_applied: La carte cadeau a été appliquée avec succès à votre commande !
+    gift_card_customer_not_logged_in: La carte cadeau ne peut pas être appliquée par un invité.
+    gift_card_expired: La carte cadeau a expiré.
+    gift_card_mismatched_currency: La carte cadeau ne peut pas être appliquée avec la devise actuelle.
+    gift_card_mismatched_customer: Cette carte cadeau est associée à un autre utilisateur.
+    gift_card_not_found: La carte cadeau est introuvable.
+    gift_card_removed: La carte cadeau a été retirée avec succès de votre commande
+    gift_card_using_store_credit_error: Vous ne pouvez pas appliquer la carte cadeau après avoir appliqué l'avoir en boutique.
+    height: Taille
+    i18n:
+      this_file_language: Français (FR)
+    idempotency_key_reused: Cette clé d'idempotence a déjà été utilisée avec des paramètres de requête différents.
+    image: Image
+    import: Importer
+    in_stock: En stock
+    inactive: Inactif
+    incomplete: Incomplet
+    insufficient_stock_lines_present: Nous n'avons pas tous les articles de votre commande dans notre inventaire.
+    internal_note: Note interne
+    inventory: Inventaire
+    invitation_mailer:
+      greeting: Bonjour %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} a accepté votre invitation à rejoindre %{resource_name}"
+        subject: "%{invitee_name} a accepté votre invitation à rejoindre %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} vous a invité à rejoindre %{resource_name}"
+        link_description: 'Pour accepter cette invitation, veuillez cliquer sur le lien ci-dessous :'
+        subject: Invitation à rejoindre %{resource_name}
+    iso: ISO Alpha-2
+    item: Article
+    items_cannot_be_shipped: Il nous est impossible de livrer l'article sélectionné à votre adresse de livraison. Veuillez choisir une autre adresse de livraison.
+    key: Clé
+    kind: Type
+    label: Libellé
+    last_name: Nom
+    line_item: Ligne d'article
+    line_items: Lignes d'articles
+    link: Lien
+    locale: Langue
+    locale_not_supported_by_store: n'est pas prise en charge par cette boutique
+    manual: Manuel
+    market: Marché
+    me_no_current_user: Aucun utilisateur administrateur n'a authentifié cette requête
+    media: Médias
+    meta_description: Description Meta
+    meta_keywords: Mots clés Meta
+    meta_title: Titre du site
+    metadata: Données Meta
+    min_quantity: Quantité min
+    month: Mois
+    name: Nom
+    new_variant: Nouvelle variante
+    no_cc_type: N/D
+    no_payment_found: Aucun paiement trouvé
+    none: Aucun
+    number: Nombre
+    on_hand: Disponible
+    only_active_products_can_be_added_to_cart: Les produits en brouillon et archivés ne peuvent pas être ajoutés au panier, veuillez d'abord marquer le produit comme actif.
+    open: Ouvrir
+    option_name: Nom de l'option
+    option_type: Type d'option
+    option_value: Valeur de l'option
+    options: Options
+    or: ou
+    order: Commande
+    order_canceled: Commande annulée
+    order_routing:
+      strategies:
+        legacy: Hérité
+        rules: Règles (ordonnées)
+    order_summary: Résumé de la commande
+    orders: Commandes
+    out_of_stock: En rupture de stock
+    password: Mot de passe
+    path: Chemin
+    payment: Paiement
+    payment_method: Méthode de paiement
+    payment_method_not_supported: Ce méthode de paiement n'est pas supportée
+    payment_methods: Méthodes de paiement
+    payment_processing_failed: Le paiement ne peut être effectué, merci de vérifier les informations fournies
+    payment_source: Source de paiement
+    pending: En attente
+    percent: Pourcent
+    percent_per_item: Pourcent par article
+    phone: Téléphone
+    price: Prix
+    price_range: Prix
+    price_rules:
+      channel_rule:
+        description: Appliquer une tarification en fonction du canal de vente
+      customer_group_rule:
+        description: Appliquer la tarification à des groupes de clients spécifiques
+    price_sack: Prix du sac
+    prices: Prix
+    privacy_policy: Politique de confidentialité
+    processing: Traitement en cours
+    product: Produit
+    product_translations: Traductions du produit
+    products: Produits
+    products_cannot_be_shipped: Nous ne pouvons pas expédier %{product_names} vers votre emplacement actuel pour le moment. Veuillez modifier votre adresse de livraison ou retirer %{product_names} de votre panier.
+    promotion: Promotion
+    promotion_action_types:
+      create_adjustment:
+        description: Crée un ajustement de promotion sur la commande
+        name: Créer un ajustement
+      create_item_adjustments:
+        description: Crée un ajustement de promotion sur un item.
+        name: Crée un ajustement sur un item.
+      create_line_items:
+        description: Remplit le panier avec la quantité spécifiée de variante
+        name: Créez des lignes d'article
+      free_shipping:
+        description: Livraison gratuite pour la commande.
+        name: Livraison gratuite
+    promotion_actions: Actions
+    promotion_already_used: Vous ne pouvez pas supprimer une promotion qui a déjà été appliquée
+    promotion_label: Promotion %{name}
+    promotion_rule_types:
+      category:
+        description: La commande inclut des produits dans les catégories spécifiées
+        name: Catégories
+      channel:
+        description: Limiter aux commandes passées via le ou les canaux spécifiés
+        name: Canal(aux)
+      country:
+        description: La commande a été envoyée dans le bon pays (ou par défaut)
+        name: Pays
+      currency:
+        description: Limiter aux commandes dans une devise spécifique
+        name: Devise
+      customer:
+        description: Disponible uniquement pour les clients spécifiés
+        name: Clients
+      customer_group:
+        description: Disponible uniquement pour les clients des groupes de clients spécifiés
+        name: Groupe(s) de clients
+      customer_logged_in:
+        description: Disponible uniquement pour les clients connectés
+        name: Clients connectés uniquement
+      first_order:
+        description: Doit être la première commande de l'utilisateur
+        name: Première commande
+      item_total:
+        description: Le total de la commande réponds aux critaires suivants
+        name: Total de la commande
+      market:
+        description: Limiter aux commandes passées sur le ou les marchés spécifiés
+        name: Marché(s)
+      one_use_per_user:
+        description: Une utilisation par client
+        name: Utilisation unique
+      option_value:
+        description: La commande comprend le ou les options(s) spécifié(s)
+        name: Option(s)
+      product:
+        description: La commande comprend le ou les produit(s) spécifié(s)
+        name: Produit(s)
+    promotions: Promotions
+    quantity: Quantité
+    query: Requête
+    reason: Raison
+    received: Reçu
+    reference: Référence
+    refund: Remboursement
+    refund_amount: Montant du remboursement
+    refunds: Remboursements
+    registration: Enregistrement
+    remove: Supprimer
+    remove_gift_card_on_completed_order_error: Vous ne pouvez pas retirer la carte cadeau après que la commande a été passée
+    resellable: Revendable
+    resend: Renvoyer
+    response_code: Code de réponse
+    return: retourner
+    returned: Retourner
+    returns_policy: Politique de retour
+    row: Ligne
+    rules: Règles
+    say_no: Non
+    say_yes: Oui
+    scope: Scope
+    selected_quantity_not_available: sélectionné %{item} n'est pas disponible.
+    ship: livraison
+    ship_address: Adresse de livraison
+    shipment: Livraison
+    shipped: Livré
+    shipping: Frais de livraison
+    shipping_address: Adresse de livraison
+    shipping_flat_rate_per_item: Taux fixe par article
+    shipping_flat_rate_per_order: Taux fixe
+    shipping_flexible_rate: Taux variable par article
+    shipping_policy: Politique d'expédition
+    shipping_price_sack: Prix groupé
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
+    sku: Code barre
+    slug: Identifiant
+    source: Origine
+    status: Statut
+    stock_location: Emplacement de stock
+    stock_locations: Emplacements de stock
+    stock_transfer:
+      errors:
+        must_have_variant: Vous devez ajouter au moins une variante.
+        same_location: ne peut pas être identique à l'emplacement de destination
+        variants_unavailable: Certaines variantes ne sont pas disponibles sur %{stock}
+    store: Enregistrer
+    store_credit:
+      allocated: Ajoutée
+      authorized: Autorisé
+      captured: D'occasion
+      credit: crédit
+      eligible: Éligible
+    store_credit_name: Crédit
+    store_credit_payment_method:
+      currency_mismatch: La devise du crédit est différente de la devise de la commande
+      insufficient_authorized_amount: Pas plus que le montant autorisé ne peut être enregistré
+      insufficient_funds: Le solde restant n'est pas suffisant
+      successful_action: Crédit réussi %{action}
+      unable_to_credit: 'Le code: %{auth_code} ne peut pas être crédité'
+      unable_to_find: Le crédit est introuvable
+      unable_to_find_for_action: 'Crédit pour le code d''authentification: %{auth_code} pour l''action: %{action} est introuvable'
+      unable_to_void: 'Le code: %{auth_code} ne peut pas être invalidé'
+    tags: Mots clés
+    tax: TVA
+    tax_category: Catégorie de taxe
+    terms_of_service: Conditions d'utilisation
+    there_are_no_items_for_this_order: Il n'y a aucun article dans cette commande. Veuillez en ajouter un à la commande pour continuer.
+    total: Total
+    tracking: Localiser
+    tracking_number: Numéro de suivi
+    tracking_url: URL du traqueur
+    type: Type
+    unable_to_connect_to_gateway: N'arrive pas à se connecter à la méthode de paiement.
+    updated_at: Mis à jour le
+    url: URL
+    user: Utilisateur
+    validation:
+      must_be_int: doit être un entier
+    value: Valeur
+    variant: Variante
+    variants: Variantes
+    verified: Vérifié
+    void: Annuler
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Désactivé le
+        heading: Point de terminaison de webhook désactivé
+        instructions: Veuillez vérifier l'URL et le service du point de terminaison, puis réactivez-le dans Paramètres → Développeurs → Webhooks.
+        message: Le point de terminaison de webhook « %{endpoint_name} » a été automatiquement désactivé après plusieurs échecs de livraison.
+        name_label: Nom
+        reason_label: Raison
+        subject: 'Point de terminaison de webhook désactivé : %{endpoint_name}'
+        url_label: URL
+    weight: Poids
+    weight_unit: Unité de poids
+    width: Largeur
+    year: Année
+    zip: Code postal

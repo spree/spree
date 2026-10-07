@@ -1,0 +1,841 @@
+---
+uk:
+  activemodel:
+    errors:
+      messages:
+        blank: не може бути порожнім
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Адреса
+        address2: Адреса (продовження)
+        city: Місто
+        company: Компанія
+        country: Країна
+        label: Назва адреси
+        phone: Телефон
+        state: Область
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Базова сума
+        preferred_tiers: Рівні
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Базовий відсоток
+        preferred_tiers: Рівні
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: Назва ISO
+        name: Назва
+        numcode: Код ISO
+      spree/credit_card:
+        cc_type: Тип
+        month: Місяць
+        name: Ім'я
+        number: Номер
+        verification_value: Підтверджуюче значення
+        year: Рік
+      spree/customer_group:
+        description: Опис
+        name: Назва
+      spree/gift_card:
+        amount_used: Використана сума
+        expires_at: Закінчується
+      spree/import:
+        preferred_delimiter: Роздільник
+      spree/import_mapping:
+        file_column: Стовпець файлу
+        schema_field: Поле схеми
+      spree/import_row:
+        row_number: Номер
+      spree/inventory_unit:
+        state: Стан
+      spree/invitation:
+        inviter: Запросив
+      spree/line_item:
+        price: Ціна
+        quantity: Кількість
+      spree/option_type:
+        filterable: Фільтрується
+        kind: Тип
+        name: Назва
+      spree/option_value:
+        color_code: Код кольору
+        image: Зображення зразка
+      spree/order:
+        checkout_complete: Оформлення завершено
+        completed_at: Завершено
+        considered_risky: Потенційно ризиковане
+        coupon_code: Промокод
+        created_at: Дата замовлення
+        email: Email
+        internal_note: Внутрішня примітка
+        ip_address: IP-адреса
+        item_count: Товари
+        item_total: Сума товарів
+        number: Номер
+        payment_state: Стан оплати
+        shipment_state: Стан відвантаження
+        special_instructions: Спеціальні інструкції
+        state: Стан
+        total: Загальна сума
+      spree/order/bill_address:
+        address1: Адреса платника
+        city: Місто платника
+        phone: Телефон платника
+        state: Область платника
+      spree/order/ship_address:
+        address1: Адреса доставки
+        city: Місто доставки
+        phone: Телефон одержувача
+        state: Область доставки
+      spree/payment:
+        amount: Сума
+        number: Номер
+      spree/payment_method:
+        name: Назва
+      spree/policy:
+        body: Текст
+        owner: Політика для
+      spree/price_list:
+        description: Опис
+        ends_at: Закінчується
+        match_policy: Політика збігу
+        name: Назва
+        priority: Пріоритет
+        starts_at: Починається
+        status: Статус
+      spree/price_rule:
+        priority: Пріоритет
+        type: Тип
+      spree/product:
+        available_on: Доступно з
+        cost_currency: Валюта вартості
+        cost_price: Вартість
+        description: Опис
+        discontinue_on: Припинити з
+        less_than: Менше, ніж
+        make_active_at: Активувати з
+        master_price: Основна ціна
+        more_than: Більше, ніж
+        name: Назва
+        on_hand: В наявності
+        tax_category: Категорія податків
+      spree/promotion:
+        advertise: Реклама
+        code: Код
+        description: Опис
+        event_name: Назва події
+        expires_at: Закінчується
+        generate_code: Згенерувати код купона
+        name: Назва
+        path: Шлях
+        promotion_category: Категорія промоакції
+        starts_at: Починається
+        usage_limit: Ліміт використання
+      spree/promotion_category:
+        code: Код
+        name: Назва
+      spree/property:
+        name: Назва
+        presentation: Представлення
+      spree/role:
+        name: Назва
+      spree/shipment:
+        number: Номер
+      spree/state:
+        abbr: Абревіатура
+        name: Назва
+      spree/store:
+        address: Адреса
+        contact_phone: Контактний телефон
+        mail_from_address: Адреса електронної пошти відправника
+        meta_description: Мета-опис
+        meta_keywords: Мета-ключові слова
+        name: Назва сайту
+        preferred_digital_asset_authorized_clicks: Ліміт завантажень (кліків)
+        preferred_digital_asset_authorized_days: Ліміт завантажень (днів)
+        preferred_limit_digital_download_count: Обмежити кількість завантажень цифрових посилань
+        preferred_limit_digital_download_days: Обмежити кількість днів для завантаження цифрових посилань
+        seo_robots: Роботи пошукової системи
+        seo_title: Заголовок SEO
+        storefront_custom_code_body_end: Власний код перед закриваючим тегом body
+        storefront_custom_code_body_start: Власний код після відкриваючого тегу body
+        storefront_custom_code_head: Власний код у head сторінки
+        url: URL сайту
+      spree/store_credit:
+        amount_used: Використана сума
+      spree/tax_category:
+        description: Опис
+        name: Назва
+      spree/tax_rate:
+        amount: Ставка
+        included_in_price: Включено у ціну
+        show_rate_in_label: Показати ставку у мітці
+      spree/taxon:
+        name: Назва
+        permalink: Постійне посилання
+        position: Позиція
+        sort_order: Порядок сортування
+      spree/taxonomy:
+        name: Назва
+      spree/user:
+        avatar: Аватар
+        email: Email
+        password: Пароль
+        password_confirmation: Підтвердження пароля
+      spree/variant:
+        cost_currency: Валюта вартості
+        cost_price: Вартість
+        depth: Глибина
+        height: Висота
+        price: Ціна
+        sku: SKU
+        weight: Вага
+        width: Ширина
+      spree/zone:
+        description: Опис
+        name: Назва
+      user:
+        current_sign_in: Поточний вхід
+        last_sign_in: Останній вхід
+        sign_in_count: Кількість входів
+    errors:
+      messages:
+        blank: не може бути порожнім
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: має бути джерелом (схема та хост) без шляху, запиту або фрагмента
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: вже пов'язаний з цим товаром
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Термін дії картки минув
+              expiry_invalid: Недійсний термін дії картки
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Неможливо видалити використаний подарунковий сертифікат
+        spree/import:
+          attributes:
+            attachment:
+              content_type: має недозволений тип вмісту
+            type:
+              inclusion: не входить до списку дозволених типів
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Повинна відповідати валюті замовлення
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: Неможливо видалити ринок за замовчуванням.
+              cannot_destroy_last_market: Неможливо видалити єдиний ринок.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: вже призначена іншому ринку в цьому магазині
+              not_in_shipping_zone: не охоплена жодною зоною доставки. Спочатку налаштуйте зону доставки.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: перевищує дозволену максимальну суму %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: має бути пізніше за дату початку
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Неможливо видалити товари, які додані до оформлених замовлень. У таких випадках будь ласка, припиніть їх.
+            discontinue_on:
+              invalid_date_range: повинно бути пізніше, ніж дата доступності
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: має бути пізніше за дату публікації
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: повинно бути пізніше, ніж дата початку
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: перевищує допустиму суму.
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: Неможливо видалити єдиний магазин.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: перевищує загальну суму кредитів.
+            amount_used:
+              cannot_be_greater_than_amount: Неможливо перевищити суму.
+              greater_than_zero_restrict_delete: перевищує нуль. Неможливо видалити кредит магазину.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: належить іншому користувачеві
+              deprecated_in_completed_order: застарілий у завершеному замовленні
+            ship_address_id:
+              belongs_to_other_user: належить іншому користувачеві
+              deprecated_in_completed_order: застарілий у завершеному замовленні
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Неможливо видалити варіанти, які додані до оформлених замовлень. У таких випадках будь ласка, припиніть їх.
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: не має вказувати на внутрішню або приватну мережеву адресу
+    models:
+      spree/address:
+        one: Адреса
+        other: Адреси
+      spree/classification:
+        one: Класифікація
+        other: Класифікації
+      spree/country:
+        one: Країна
+        other: Країни
+      spree/credit_card:
+        one: Кредитна картка
+        other: Кредитні картки
+      spree/customer_group:
+        one: Група клієнтів
+        other: Групи клієнтів
+      spree/customer_group_user:
+        one: Користувач групи клієнтів
+        other: Користувачі групи клієнтів
+      spree/export:
+        one: Експорт
+        other: Експорти
+      spree/integration:
+        one: Інтеграція
+        other: Інтеграції
+      spree/inventory_unit:
+        one: Одиниця інвентаризації
+        other: Одиниці інвентаризації
+      spree/line_item:
+        one: Позиція
+        other: Позиції
+      spree/option_type:
+        one: Тип опції
+        other: Типи опцій
+      spree/option_value:
+        one: Значення опції
+        other: Значення опцій
+      spree/order:
+        one: Замовлення
+        other: Замовлення
+      spree/payment:
+        one: Оплата
+        other: Оплати
+      spree/payment_method:
+        one: Спосіб оплати
+        other: Способи оплати
+      spree/price:
+        one: Ціна
+        other: Ціни
+      spree/price_list:
+        one: Прайс-лист
+        other: Прайс-листи
+      spree/price_rule:
+        one: Правило ціноутворення
+        other: Правила ціноутворення
+      spree/product:
+        one: Товар
+        other: Товари
+      spree/promotion:
+        one: Промоакція
+        other: Промоакції
+      spree/promotion_category:
+        one: Категорія промоакцій
+        other: Категорії промоакцій
+      spree/property:
+        one: Властивість
+        other: Властивості
+      spree/refund_reason:
+        one: Причина повернення
+        other: Причини повернень
+      spree/role:
+        one: Роль
+        other: Ролі
+      spree/shipment:
+        one: Відправлення
+        other: Відправлення
+      spree/shipping_method:
+        one: Метод доставки
+        other: Методи доставок
+      spree/state:
+        one: Штат
+        other: Штати
+      spree/stock_location:
+        one: Місце зберігання
+        other: Місця зберігання
+      spree/stock_movement:
+        one: Рух запасів
+        other: Рухи запасів
+      spree/stock_transfer:
+        one: Переміщення запасів
+        other: Переміщення запасів
+      spree/store:
+        one: Магазин
+        other: Магазини
+      spree/store_credit:
+        one: Кредит магазину
+        other: Кредити магазину
+      spree/tax_category:
+        one: Категорія податків
+        other: Категорії податків
+      spree/tax_rate:
+        one: Ставка податку
+        other: Ставки податку
+      spree/taxon:
+        one: Таксон
+        other: Таксони
+      spree/taxonomy:
+        one: Таксономія
+        other: Таксономії
+      spree/user:
+        one: Користувач
+        other: Користувачі
+      spree/variant:
+        one: Варіант
+        other: Варіанти
+      spree/zone:
+        one: Зона
+        other: Зони
+  errors:
+    messages:
+      already_confirmed: вже підтверджено
+      not_a_number: не є числом
+      not_found: не знайдено
+      not_locked: не заблоковано
+      not_saved:
+        few: "%{count} помилки завадили збереженню цього %{resource}:"
+        many: "%{count} помилок завадили збереженню цього %{resource}:"
+        one: '1 помилка завадила збереженню цього %{resource}:'
+        other: "%{count} помилки завадили збереженню цього %{resource}:"
+  number:
+    currency:
+      format:
+        delimiter: " "
+        separator: ","
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accept: Прийняти
+    accepted: Прийнято
+    accepts_email_marketing: Згоден отримувати email-розсилки
+    account: Обліковий запис
+    active: Активний
+    address: Адреса
+    address1: Адреса
+    address2: Адреса (продовження)
+    adjustment: Коригування
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Уключено у ціну)"
+    adjustments_deleted: Коригування видалено
+    admin_user_mailer:
+      password_reset_email:
+        action: Скинути пароль
+        expiry_notice: Термін дії цього посилання для скидання пароля незабаром закінчиться. Якщо ви не надсилали запит, жодних дій не потрібно.
+        greeting: Вітаємо, %{name}!
+        ignore_notice: Якщо ви не надсилали запит на скидання пароля, можете спокійно проігнорувати цей лист. Ваш пароль не буде змінено.
+        instructions: Ми отримали запит на скидання пароля для вашого облікового запису адміністратора %{store_name}. Натисніть кнопку нижче, щоб установити новий пароль.
+        subject: Інструкції зі скидання пароля
+    all: Усі
+    amount: Сума
+    api_key_no_current_key: Жоден API-ключ не автентифікував цей запит
+    api_key_scopes_immutable: не можна змінити після створення ключа; створіть новий ключ з потрібними областями доступу та відкличте цей
+    approver: Затверджувач
+    authorized: Дозволено
+    availability: Наявність
+    backorderable: Можна замовити наступні
+    backordered: Замовлено
+    bill_address: Платіжна адреса
+    billing_address: Платіжна адреса
+    calculator: Калькулятор
+    canceled: Скасовано
+    canceler: Скасовано
+    cannot_be_destroyed: Замовлення не може бути видалене.
+    capture: Захват
+    cart: Кошик
+    cart_already_updated: Кошик вже оновлено.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} не може бути доставлено на вибрану адресу"
+      discontinued: "%{li_name} видалено, оскільки товар знято з продажу"
+      out_of_stock: "%{li_name} видалено, оскільки товар розпродано"
+    categories: Категорії
+    category: Категорія
+    channel: Канал
+    channels: Канали продажу
+    checkout: Оформлення замовлення
+    checkout_requirements:
+      email_required: Потрібна адреса електронної пошти
+      line_items_required: Додайте принаймні один товар до кошика
+      payment_required: Додайте спосіб оплати
+      ship_address_required: Потрібна адреса доставки
+    city: Місто
+    color_code: Код кольору
+    company: Компанія
+    compare_at_amount: Стара ціна
+    compare_at_price: Порівняти ціни
+    complete: завершено
+    confirm: Підтвердити
+    cost_price: Вартість
+    count_on_hand: Кількість на руках
+    country: Країни
+    coupon_code: Промо-код
+    coupon_code_already_applied: Промо-код вже застосовано до цього замовлення
+    coupon_code_applied: Промо-код успішно застосовано до вашого замовлення.
+    coupon_code_better_exists: Раніше застосований промо-код призводить до кращої угоди
+    coupon_code_expired: Промо-код прострочений
+    coupon_code_max_usage: Досягнуто ліміт використання промо-коду
+    coupon_code_not_eligible: Цей промо-код не підходить для цього замовлення
+    coupon_code_not_found: Введений вами промо-код не існує. Будь ласка, спробуйте ще раз.
+    coupon_code_unknown_error: Цей промо-код не може бути застосований до кошика наразі.
+    coupon_code_used: Введений промокод вже використано. Спробуйте ще раз.
+    created_at: Створено о
+    credit_card: Кредитна карта
+    currency: Валюта
+    currency_not_supported_by_store: не підтримується цим магазином
+    customer: Клієнт
+    customers: Клієнти
+    default: За замовчуванням
+    default_stock_location_name: Місцезнаходження магазину
+    default_wishlist_name: Список бажань
+    delivery: Доставка
+    depth: Глибина
+    description: Опис
+    destination: Призначення
+    destroy: Знищити
+    details: Деталі
+    digital:
+      digital_delivery: Цифрова доставка
+    digital_assets: Цифрові ресурси
+    discontinued: Припинено
+    discontinued_variants_present: Деякі товари у цьому замовленні більше не доступні.
+    display_delivery_range: Доставка за %{delivery_range} робочих днів
+    draft: Чернетка
+    eligibility_errors:
+      messages:
+        has_excluded_product: Ваш кошик містить товар, який перешкоджає застосуванню цього промокоду.
+        item_total_less_than: Цей промокод не можна застосувати до замовлень менше %{amount}.
+        item_total_less_than_or_equal: Цей промокод не можна застосувати до замовлень менше або рівно %{amount}.
+        item_total_more_than: Цей промокод не можна застосувати до замовлень більше %{amount}.
+        item_total_more_than_or_equal: Цей промокод не можна застосувати до замовлень більше або рівно %{amount}.
+        limit_once_per_user: Цей промокод можна використовувати лише один раз для користувача.
+        missing_product: Цей промокод не можна застосувати, оскільки в вашому кошику відсутні всі необхідні товари.
+        missing_taxon: Перш ніж застосувати цей промокод, потрібно додати товар з усіх відповідних категорій.
+        no_applicable_products: Перш ніж застосувати цей промокод, потрібно додати відповідний товар.
+        no_matching_channel: Цей промокод не діє для цього каналу продажів.
+        no_matching_market: Цей промокод не діє на вашому ринку.
+        no_matching_taxons: Перш ніж застосувати цей промокод, потрібно додати товар з відповідної категорії.
+        no_user_or_email_specified: Перш ніж застосувати цей промокод, вам потрібно увійти або вказати свою електронну адресу.
+        no_user_specified: Перш ніж застосувати цей промокод, вам потрібно увійти.
+        not_first_order: Цей промокод можна застосувати лише до вашого першого замовлення.
+        wrong_country: Цей промокод недоступний у вашій країні
+    email: Електронна пошта
+    error: помилка
+    error_user_destroy_with_orders: Користувач, пов'язаний з замовленнями, не може бути видалений
+    error_user_does_not_have_any_store_credits: Користувач не має доступних магазинних кредитів
+    errors:
+      messages:
+        cannot_delete_default_channel: Неможливо видалити канал за замовчуванням. Спочатку призначте інший канал як такий, що використовується за замовчуванням.
+        channel_store_mismatch: має належати тому самому магазину
+        invalid_order_routing_rule: не є зареєстрованим правилом маршрутизації замовлень
+        invalid_order_routing_strategy: не є зареєстрованою стратегією маршрутизації замовлень
+        store_association_can_not_be_changed: Зв'язок з магазином не можна змінити
+        store_is_already_set: Магазин вже встановлено
+    expired: Прострочено
+    export_mailer:
+      export_done:
+        message: Чудова робота, ваш експорт готовий! Скористайтеся посиланням нижче, щоб завантажити його.
+        subject: Ваш експорт %{export_number} успішно оброблено!
+      greeting: Вітаємо, %{user_name}!
+    field: Поле
+    first_name: Ім'я
+    flat_percent: Фіксований відсоток
+    flat_rate_per_order: Фіксована ставка
+    flexible_rate: Гнучка ставка
+    free: Безкоштовно
+    gateway: Шлюз
+    gateway_error: Помилка шлюзу
+    gift_card: Подарунковий сертифікат
+    gift_card_already_redeemed: Подарунковий сертифікат вже використано.
+    gift_card_applied: Подарунковий сертифікат успішно застосовано до вашого замовлення!
+    gift_card_customer_not_logged_in: Подарунковий сертифікат неможливо застосувати для гостьового користувача.
+    gift_card_expired: Термін дії подарункового сертифіката закінчився.
+    gift_card_mismatched_currency: Подарунковий сертифікат неможливо застосувати в поточній валюті.
+    gift_card_mismatched_customer: Цей подарунковий сертифікат пов’язаний з іншим користувачем.
+    gift_card_not_found: Подарунковий сертифікат не знайдено.
+    gift_card_removed: Подарунковий сертифікат успішно видалено з вашого замовлення
+    gift_card_using_store_credit_error: Неможливо застосувати подарунковий сертифікат після застосування кредиту магазину.
+    height: Висота
+    i18n:
+      this_file_language: Українська(UK)
+    idempotency_key_reused: Цей Idempotency-Key вже використовувався з іншими параметрами запиту.
+    image: Зображення
+    import: Імпорт
+    in_stock: В наявності
+    inactive: Неактивний
+    incomplete: Незавершений
+    insufficient_stock_lines_present: Деякі товари у цьому замовленні мають недостатню кількість.
+    internal_note: Внутрішня примітка
+    inventory: Інвентар
+    invitation_mailer:
+      greeting: Вітаємо, %{user_name}!
+      invitation_accepted:
+        body: "%{invitee_name} прийняв(-ла) ваше запрошення приєднатися до %{resource_name}"
+        subject: "%{invitee_name} прийняв(-ла) ваше запрошення приєднатися до %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} запросив(-ла) вас приєднатися до %{resource_name}"
+        link_description: 'Щоб прийняти це запрошення, натисніть на посилання нижче:'
+        subject: Запрошення приєднатися до %{resource_name}
+    iso: ISO Alpha-2
+    item: Товар
+    items_cannot_be_shipped: Ми не можемо розрахувати вартість доставки для вибраних товарів.
+    key: Ключ
+    kind: Тип
+    label: Позначка
+    last_name: Прізвище
+    line_item: Позиція замовлення
+    line_items: Позиції замовлення
+    link: Посилання
+    locale: Мова
+    locale_not_supported_by_store: не підтримується цим магазином
+    manual: Вручну
+    market: Ринок
+    me_no_current_user: Жоден адміністратор не автентифікував цей запит
+    media: Медіа
+    meta_description: Мета-опис
+    meta_keywords: Мета-ключові слова
+    meta_title: Мета-заголовок
+    metadata: Метадані
+    min_quantity: Мін. кількість
+    month: Місяць
+    name: Ім'я
+    new_variant: Новий варіант
+    no_cc_type: Немає
+    no_payment_found: Платіж не знайдено
+    none: Немає
+    number: Номер
+    on_hand: Наявність
+    only_active_products_can_be_added_to_cart: Товари у стані "Чорновик" та "Архів" не можуть бути додані в кошик. Будь ласка, зробіть товар активним.
+    open: Відкрити
+    option_name: Назва опції
+    option_type: Тип опції
+    option_value: Значення опції
+    options: Опції
+    or: або
+    order: Замовлення
+    order_canceled: Замовлення скасовано
+    order_routing:
+      strategies:
+        legacy: Застаріла
+        rules: Правила (за порядком)
+    order_summary: Підсумок замовлення
+    orders: Замовлення
+    out_of_stock: Немає в наявності
+    password: Пароль
+    path: Шлях
+    payment: Платіж
+    payment_method: Спосіб оплати
+    payment_method_not_supported: Цей спосіб оплати не підтримується. Будь ласка, виберіть інший.
+    payment_methods: Способи оплати
+    payment_processing_failed: Платіж не може бути оброблений, будь ласка, перевірте введені дані
+    payment_source: Джерело платежу
+    pending: Очікування
+    percent: Відсоток
+    percent_per_item: Відсоток за одиницю
+    phone: Телефон
+    price: Ціна
+    price_range: Діапазон цін
+    price_rules:
+      channel_rule:
+        description: Застосовувати ціни залежно від каналу продажів
+      customer_group_rule:
+        description: Застосовувати ціноутворення до певних груп клієнтів
+    price_sack: Ціновий мішок
+    prices: Ціни
+    privacy_policy: Політика конфіденційності
+    processing: Обробка
+    product: Товар
+    product_translations: Переклади товарів
+    products: Товари
+    products_cannot_be_shipped: Наразі ми не можемо доставити %{product_names} за вашою поточною адресою. Змініть адресу доставки або видаліть %{product_names} з кошика.
+    promotion: Промоакція
+    promotion_action_types:
+      create_adjustment:
+        description: Створює кредитне нарахування промоакції за весь замовлення
+        name: Створити кредитне нарахування за весь замовлення
+      create_item_adjustments:
+        description: Створює кредитне нарахування промоакції за кожен товар
+        name: Створити кредитне нарахування за кожен товар
+      create_line_items:
+        description: Заповнює кошик вказаною кількістю варіантів
+        name: Створити товари в кошику
+      free_shipping:
+        description: Зроблює всі відвантаження безкоштовними
+        name: Безкоштовна доставка
+    promotion_actions: Дії
+    promotion_already_used: Неможливо видалити акцію, яку вже було застосовано
+    promotion_label: Промоакція (%{name})
+    promotion_rule_types:
+      category:
+        description: Замовлення містить товари з вказаних категорій
+        name: Категорії
+      channel:
+        description: Обмежити замовленнями, оформленими через вказані канали
+        name: Канали
+      country:
+        description: Замовлення відправляється в відповідну (або типову) країну
+        name: Країна
+      currency:
+        description: Обмежити замовленнями в певній валюті
+        name: Валюта
+      customer:
+        description: Доступно лише вказаним клієнтам
+        name: Клієнти
+      customer_group:
+        description: Доступно лише клієнтам з указаних груп клієнтів
+        name: Групи клієнтів
+      customer_logged_in:
+        description: Доступно лише авторизованим клієнтам
+        name: Лише авторизовані клієнти
+      first_order:
+        description: Має бути першим замовленням клієнта
+        name: Перше замовлення
+      item_total:
+        description: Загальна вартість замовлення відповідає цим критеріям
+        name: Загальна вартість товару
+      market:
+        description: Обмежити замовленнями, оформленими на вказаних ринках
+        name: Ринки
+      one_use_per_user:
+        description: Тільки один використання на користувача
+        name: Один використання на користувача
+      option_value:
+        description: Замовлення містить вказані товари з відповідними значеннями опцій
+        name: Значення опцій
+      product:
+        description: Замовлення містить вказані товари
+        name: Товари
+    promotions: Промоакції
+    quantity: Кількість
+    query: Запит
+    reason: Причина
+    received: Отримано
+    reference: Посилання
+    refund: Повернення
+    refund_amount: Сума повернення
+    refunds: Повернення
+    registration: Реєстрація
+    rejected: Відхилено
+    remove: Видалити
+    remove_gift_card_on_completed_order_error: Неможливо видалити подарунковий сертифікат після оформлення замовлення
+    resellable: Перепродаваний
+    resend: Надіслати знову
+    response_code: Код відповіді
+    return: повернення
+    returned: Повернено
+    returns_policy: Політика повернення
+    row: Рядок
+    rules: Правила
+    say_no: Ні
+    say_yes: Так
+    scope: Обсяг
+    selected_quantity_not_available: вибрана кількість %{item} недоступна.
+    ship: Відправити
+    ship_address: Адреса доставки
+    shipment: Відвантаження
+    shipped: Відправлено
+    shipping: Доставка
+    shipping_address: Адреса доставки
+    shipping_flat_rate_per_item: Фіксована ставка за пакунковий товар
+    shipping_flat_rate_per_order: Фіксована ставка
+    shipping_flexible_rate: Гнучка ставка за пакунковий товар
+    shipping_policy: Політика доставки
+    shipping_price_sack: Мішок ціни
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (включно з податком %{tax_amount} %{tax_rate_name})"
+    sku: Артикул
+    slug: Заголовок
+    source: Джерело
+    status: Статус
+    stock_location: Місце розташування запасів
+    stock_locations: Місця розташування
+    stock_transfer:
+      errors:
+        must_have_variant: Ви повинні додати принаймні один варіант.
+        same_location: не може збігатися з місцем призначення
+        variants_unavailable: Деякі варіанти недоступні на %{stock}
+    store: Магазин
+    store_credit:
+      allocated: Доданий
+      authorized: Авторизований
+      captured: Використаний
+      credit: Кредит
+      eligible: Доступно
+    store_credit_name: Кредит магазину
+    store_credit_payment_method:
+      currency_mismatch: Валюта кредиту магазину не відповідає валюті замовлення
+      insufficient_authorized_amount: Неможливо отримати більше, ніж авторизована сума
+      insufficient_funds: Сума кредиту магазину, що залишилася, недостатня
+      successful_action: Успішна дія з кредитом магазину %{action}
+      unable_to_credit: 'Неможливо кредитувати код: %{auth_code}'
+      unable_to_find: Не вдалося знайти кредит магазину
+      unable_to_find_for_action: 'Не вдалося знайти кредит магазину для коду авторизації: %{auth_code} для дії: %{action}'
+      unable_to_void: 'Неможливо скасувати код: %{auth_code}'
+    success: Успіх
+    tags: Мітки
+    tax: Податок
+    tax_category: Категорія податку
+    terms_of_service: Умови надання послуг
+    there_are_no_items_for_this_order: Немає товарів для цього замовлення. Будь ласка, додайте товар до замовлення, щоб продовжити.
+    tiered_flat_rate: Поступова фіксована ставка
+    tiered_percent: Поступовий відсоток
+    total: Загальна сума
+    track_inventory: Відстеження запасів
+    tracking: Відстеження
+    tracking_number: Номер відстеження
+    tracking_url: URL-адреса відстеження
+    type: Тип
+    unable_to_connect_to_gateway: Неможливо підключитися до шлюзу.
+    updated_at: Оновлено
+    url: URL
+    user: Користувач
+    validation:
+      must_be_int: повинно бути цілим числом
+    value: Значення
+    variant: Варіант
+    variants: Варіанти
+    verified: Підтверджено
+    void: Скасувати
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Вимкнено
+        heading: Кінцеву точку вебхука вимкнено
+        instructions: Перевірте URL та сервіс кінцевої точки, а потім увімкніть її знову в розділі Налаштування → Розробники → Вебхуки.
+        message: Кінцеву точку вебхука «%{endpoint_name}» автоматично вимкнено після повторюваних збоїв доставки.
+        name_label: Назва
+        reason_label: Причина
+        subject: 'Кінцеву точку вебхука вимкнено: %{endpoint_name}'
+        url_label: URL
+    weight: Вага
+    weight_unit: Одиниця ваги
+    width: Ширина
+    year: Рік
+    zip: Поштовий індекс

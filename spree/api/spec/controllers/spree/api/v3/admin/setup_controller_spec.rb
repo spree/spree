@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       expect(switzerland['locales']).to include('de', 'fr', 'it')
     end
 
-    context 'when the install carries translations (spree_i18n)' do
+    context "when only some of a country's languages are translated" do
       before do
         allow(Spree).to receive(:available_locales).and_return(%i[en de fr it pl])
       end

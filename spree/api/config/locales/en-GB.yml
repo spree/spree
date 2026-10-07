@@ -1,0 +1,15 @@
+---
+en-GB:
+  spree:
+    api:
+      cannot_delete: "%{model} cannot be deleted"
+      current_password_invalid: Current password is invalid or missing
+      newsletter_verification_token_invalid: Newsletter verification token is invalid or has expired.
+      password_reset_requested: If an account exists for that email, password reset instructions have been sent.
+      password_reset_token_invalid: Password reset token is invalid or has expired.
+      record_not_found: "%{model} not found"
+      unauthorized: You are not authorised to perform that action.
+      v3:
+        payments:
+          method_unavailable: This payment method is not available for this order.
+          session_required: This payment method requires a payment session. Use the payment sessions endpoint instead.

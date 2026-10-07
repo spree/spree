@@ -3,6 +3,7 @@ en:
   spree:
     api:
       cannot_delete: "%{model} cannot be deleted"
+      cannot_modify_seller_import: This import belongs to a seller. It can be viewed here, but only the seller can retry or delete it.
       current_password_invalid: Current password is invalid or missing
       errors:
         automatic_collection_curation: Products of an automatic collection are managed by its rules and can't be curated manually
@@ -15,6 +16,7 @@ en:
         media_url_import_requires_product: Importing media from a URL needs a product to import it into. Upload the file instead, or post it to a product's media.
         store_mismatch: The requested store does not match the store this API key belongs to.
         storefront_login_required: Authentication required to access this store.
+        unsupported_export_type: 'Unsupported export type. Supported types: %{types}'
       newsletter_unsubscribe_token_invalid: Newsletter unsubscribe token is invalid or has expired.
       newsletter_verification_token_invalid: Newsletter verification token is invalid or has expired.
       password_reset_requested: If an account exists for that email, password reset instructions have been sent.

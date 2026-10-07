@@ -4,6 +4,8 @@ data:
     write:
       # do not wrap lines at 80 characters
       line_width: -1
+  external:
+    - "<%= File.expand_path('../core/config/locales', Dir.pwd) %>/%{locale}.yml"
 
 # Find translate calls
 search:

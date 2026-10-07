@@ -1,0 +1,15 @@
+---
+et:
+  spree:
+    api:
+      cannot_delete: "%{model} ei saa kustutada"
+      current_password_invalid: Praegune parool on vale või puudub
+      newsletter_verification_token_invalid: Uudiskirja kinnitustoken on vigane või aegunud.
+      password_reset_requested: Kui sellele e-posti aadressile on konto olemas, on parooli lähtestamise juhised saadetud.
+      password_reset_token_invalid: Parooli lähtestamise token on vigane või aegunud.
+      record_not_found: "%{model} ei leitud"
+      unauthorized: Teil ei ole õigust seda toimingut sooritada.
+      v3:
+        payments:
+          method_unavailable: See makseviis ei ole selle tellimuse jaoks saadaval.
+          session_required: See makseviis nõuab makseseanssi. Kasutage selle asemel makseseansside lõpp-punkti.

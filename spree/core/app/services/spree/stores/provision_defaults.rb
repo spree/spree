@@ -59,8 +59,7 @@ module Spree
       # translations. Only the *derived* default is filtered: falling back to
       # a country's official language that Spree has no strings for would set
       # a storefront to a language with nothing behind it, and it is not one
-      # the setup screen ever offers. Installs without spree_i18n know only
-      # English, so filtering there would flatten every country to it.
+      # the setup screen ever offers.
       def resolve_locale(requested, country)
         return requested if requested.present?
 
@@ -68,7 +67,7 @@ module Spree
         return 'en' if derived.blank?
 
         translated = Spree.available_locales.map { |locale| locale.to_s.split('-').first }.uniq
-        return derived if translated.size <= 1 || translated.include?(derived)
+        return derived if translated.include?(derived)
 
         (country.official_locales & translated).first || 'en'
       end

@@ -1,0 +1,694 @@
+---
+ca:
+  activemodel:
+    errors:
+      messages:
+        blank: no pot estar en blanc
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adreça
+        address2: Adreça (continuació)
+        city: Ciutat
+        company: Empresa
+        country: País
+        label: Nom de l'adreça
+        phone: Telèfon
+        state: Estat
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: Nomeni ISO
+        name: Nom
+        numcode: Codi ISO
+      spree/credit_card:
+        cc_type: Tipus
+        month: Mes
+        number: Nombre
+        verification_value: Codi de verificació
+        year: Any
+      spree/customer_group:
+        description: Descripció
+        name: Nom
+      spree/gift_card:
+        amount_used: Import utilitzat
+        expires_at: Caduca el
+      spree/import:
+        preferred_delimiter: Delimitador
+      spree/import_mapping:
+        file_column: Columna del fitxer
+        schema_field: Camp de l'esquema
+      spree/import_row:
+        row_number: Número
+      spree/inventory_unit:
+        state: Província
+      spree/invitation:
+        inviter: Convidant
+      spree/line_item:
+        price: Preu
+        quantity: Quantitat
+      spree/option_type:
+        filterable: Filtrable
+        kind: Tipus
+      spree/option_value:
+        color_code: Codi de color
+        image: Imatge de mostra
+      spree/order:
+        checkout_complete: Comanda completada
+        completed_at: Completat el
+        created_at: Data Comanda
+        internal_note: Nota interna
+        ip_address: Adreça IP
+        item_count: Articles
+        number: Nombre
+        payment_state: Estat Pagament
+        shipment_state: Estat Enviament
+        special_instructions: Instruccions especials
+        state: Estat
+        total: Total
+      spree/payment:
+        number: Número
+      spree/policy:
+        body: Cos
+        owner: Política per a
+      spree/price_list:
+        description: Descripció
+        ends_at: Finalitza el
+        match_policy: Política de coincidència
+        name: Nom
+        priority: Prioritat
+        starts_at: Comença el
+        status: Estat
+      spree/price_rule:
+        priority: Prioritat
+        type: Tipus
+      spree/product:
+        available_on: Disponible en
+        cost_currency: Cost Moneda
+        cost_price: Preu de cost
+        description: Descripció
+        discontinue_on: Descatalogar el
+        less_than: Menys de
+        make_active_at: Activar el
+        master_price: Preu principal
+        more_than: Més de
+        name: Nom
+        on_hand: Disponibles
+        tax_category: Categoria d'impostos
+      spree/promotion:
+        advertise: Advertise
+        code: Codi
+        description: Descripció
+        event_name: Event Name
+        expires_at: Caduca el
+        generate_code: Genera un codi de cupó
+        name: Nom
+        path: Path
+        promotion_category: Categoria de promoció
+        starts_at: Comença el
+        usage_limit: Límit d'ús
+      spree/promotion_category:
+        code: Codi
+      spree/property:
+        name: Nom
+        presentation: Presentació
+      spree/role:
+        name: Nom
+      spree/shipment:
+        number: Número
+      spree/state:
+        abbr: Abreviatura
+        name: Nom
+      spree/store:
+        address: Adreça
+        contact_phone: Telèfon de contacte
+        preferred_digital_asset_authorized_clicks: Límit de clics de descàrrega
+        preferred_digital_asset_authorized_days: Límit de dies de descàrrega
+        preferred_limit_digital_download_count: Limita el nombre de descàrregues d'enllaços digitals
+        preferred_limit_digital_download_days: Limita els dies de descàrrega d'enllaços digitals
+        seo_robots: Robots SEO
+        storefront_custom_code_body_end: Codi personalitzat abans de tancar l'etiqueta body
+        storefront_custom_code_body_start: Codi personalitzat després d'obrir l'etiqueta body
+        storefront_custom_code_head: Codi personalitzat a la capçalera de la pàgina
+      spree/store_credit:
+        amount_used: Import utilitzat
+      spree/tax_category:
+        description: Descripció
+        name: Nom
+      spree/tax_rate:
+        amount: Taxa
+        included_in_price: Included in Price
+        show_rate_in_label: Show rate in label
+      spree/taxon:
+        name: Nom
+        permalink: Enllaç permanent
+        position: Posició
+        sort_order: Ordre de classificació
+      spree/taxonomy:
+        name: Nom
+      spree/user:
+        avatar: Avatar
+        email: Email
+        password: Password
+        password_confirmation: Password Confirmation
+      spree/variant:
+        cost_currency: Cost Moneda
+        cost_price: Preu de cost
+        depth: Profunditat
+        height: Altura
+        price: Preu
+        sku: Codi de producte
+        weight: Pes
+        width: Ample
+      spree/zone:
+        description: Descripció
+        name: Nom
+      user:
+        current_sign_in: Sessió actual iniciada el
+        last_sign_in: Última sessió iniciada el
+        sign_in_count: Nombre d'inicis de sessió
+    errors:
+      messages:
+        blank: no pot estar en blanc
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: ha de ser un origen (esquema i amfitrió) sense ruta, consulta ni fragment
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: No es pot eliminar una targeta de regal utilitzada
+        spree/import:
+          attributes:
+            attachment:
+              content_type: té un tipus de contingut no permès
+            type:
+              inclusion: no està inclòs a la llista de tipus permesos
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: No es pot eliminar el mercat per defecte.
+              cannot_destroy_last_market: No es pot eliminar l'únic mercat.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: ja està assignat a un altre mercat d'aquesta botiga
+              not_in_shipping_zone: no està cobert per cap zona d'enviament. Configureu primer una zona d'enviament.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: és superior a l'import màxim permès de %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: ha de ser posterior a la data d'inici
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: No es poden eliminar productes que s'han afegit a comandes realitzades. En aquests casos, descatalogueu-los.
+            discontinue_on:
+              invalid_date_range: ha de ser posterior a la data de disponibilitat
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: ha de ser posterior a la data de publicació
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: ha de ser posterior a la data d'inici
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: No es pot eliminar l'única botiga.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Supera el total de crèdits.
+            amount_used:
+              cannot_be_greater_than_amount: No pot ser superior a l'import.
+              greater_than_zero_restrict_delete: és superior a zero. No es pot eliminar el crèdit de botiga.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: pertany a un altre usuari
+              deprecated_in_completed_order: obsolet en una comanda completada
+            ship_address_id:
+              belongs_to_other_user: pertany a un altre usuari
+              deprecated_in_completed_order: obsolet en una comanda completada
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: No es poden eliminar variants que s'han afegit a comandes realitzades. En aquests casos, descatalogueu-les.
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: no ha d'apuntar a una adreça de xarxa interna o privada
+    models:
+      spree/address:
+        one: Adreça
+        other: Adreces
+      spree/classification:
+        one: Classificació
+        other: Classificacions
+      spree/country:
+        one: País
+        other: Països
+      spree/credit_card:
+        one: Targeta de crèdit
+        other: Targetes de crèdit
+      spree/customer_group:
+        one: Grup de clients
+        other: Grups de clients
+      spree/customer_group_user:
+        one: Usuari del grup de clients
+        other: Usuaris del grup de clients
+      spree/export:
+        one: Exportació
+        other: Exportacions
+      spree/integration:
+        one: Integració
+        other: Integracions
+      spree/inventory_unit:
+        one: Unitat en inventari
+        other: Unitats en inventari
+      spree/line_item:
+        one: Article
+        other: Articles
+      spree/option_type:
+        one: Tipus d'opció
+        other: Tipus d'opció
+      spree/option_value:
+        one: Valor d'opció
+        other: Valors d'opció
+      spree/order:
+        one: Comanda
+        other: Comandes
+      spree/payment:
+        one: Pagament
+        other: Pagaments
+      spree/payment_method:
+        one: Mètode de pagament
+        other: Mètodes de pagament
+      spree/price:
+        one: Preu
+        other: Preus
+      spree/price_list:
+        one: Llista de preus
+        other: Llistes de preus
+      spree/price_rule:
+        one: Regla de preu
+        other: Regles de preu
+      spree/product:
+        one: Producte
+        other: Productes
+      spree/promotion:
+        one: Promoció
+        other: Promocions
+      spree/promotion_category:
+        one: Categoria de promoció
+        other: Categories de promoció
+      spree/property:
+        one: Propietat
+        other: Propietats
+      spree/refund_reason:
+        one: Motiu de reemborsament
+        other: Motius de reemborsament
+      spree/role:
+        one: Funció
+        other: Funcions
+      spree/shipment:
+        one: Enviament
+        other: Enviaments
+      spree/shipping_method:
+        one: Mètode d'enviament
+        other: Mètodes d'enviament
+      spree/state:
+        one: Estat
+        other: Estats
+      spree/stock_location:
+        one: Ubicació d'estoc
+        other: Ubicacions d'estoc
+      spree/stock_movement:
+        one: Moviment d'estoc
+        other: Moviments d'estoc
+      spree/stock_transfer:
+        one: Transferència d'estoc
+        other: Transferències d'estoc
+      spree/store:
+        one: Botiga
+        other: Botigues
+      spree/store_credit:
+        one: Crèdit de botiga
+        other: Crèdits de botiga
+      spree/tax_category:
+        one: Categoria d'impostos
+        other: Categories d'impostos
+      spree/tax_rate:
+        one: Taxa d'impostos
+        other: Taxes d'impostos
+      spree/taxon:
+        one: Categoria
+        other: Categories
+      spree/taxonomy:
+        one: Propietat
+        other: Propietats
+      spree/user:
+        one: Usuari
+        other: Usuaris
+      spree/variant:
+        one:
+        other:
+      spree/zone:
+        one: Zona
+        other:
+  errors:
+    messages:
+      not_a_number: no és un número
+      not_found: no trobat
+      not_saved:
+        one: '1 error ha impedit desar aquest %{resource}:'
+        other: "%{count} errors han impedit desar aquest %{resource}:"
+  number:
+    currency:
+      format:
+        delimiter: "."
+        separator: ","
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accepts_email_marketing: Accepta màrqueting per correu electrònic
+    account: Compte
+    active: Actiu
+    address: Adreça
+    address1: Adreça
+    address2: Adreça(cont.)
+    adjustment: Ajust
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Inclòs en el preu)"
+    adjustments_deleted: Ajustaments eliminats
+    all: Tots
+    amount: Quantia
+    api_key_no_current_key: Cap clau API ha autenticat aquesta sol·licitud
+    api_key_scopes_immutable: no es pot canviar després de crear la clau; creeu una clau nova amb els abasts que necessiteu i revoqueu aquesta
+    availability: disponibilitat
+    bill_address: Adreça de facturació
+    billing_address: Adreça de facturació
+    calculator: Calculadora
+    canceled: Cancel·lat
+    cannot_be_destroyed: No es pot eliminar la comanda.
+    capture: captura
+    cart: Carret
+    cart_already_updated: La cistella ja s'ha actualitzat.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} no es pot enviar a l'adreça seleccionada"
+      discontinued: "%{li_name} s'ha eliminat perquè s'ha descatalogat"
+      out_of_stock: "%{li_name} s'ha eliminat perquè s'ha esgotat"
+    categories: Categories
+    category: Categoria
+    channel: Canal de venda
+    channels: Canals de venda
+    checkout: Pagar
+    checkout_requirements:
+      email_required: L'adreça de correu electrònic és obligatòria
+      line_items_required: Afegiu com a mínim un article a la cistella
+      payment_required: Afegiu un mètode de pagament
+      ship_address_required: L'adreça d'enviament és obligatòria
+    city: Ciutat
+    color_code: Codi de color
+    compare_at_amount: Import de comparació
+    compare_at_price: Preu de comparació
+    complete: complet
+    confirm: Confirmar
+    cost_price: Preu del Cost
+    country: País
+    coupon_code: Codi de cupó
+    coupon_code_used: El codi de cupó que heu introduït ja s'ha utilitzat. Torneu-ho a provar.
+    credit_card: Targeta de crèdit
+    currency_not_supported_by_store: no és compatible amb aquesta botiga
+    customer: Client
+    customers: Clients
+    default: Per omissió
+    default_stock_location_name: Ubicació de la botiga
+    default_wishlist_name: Llista de desitjos
+    delivery: Enviament
+    depth: Profunditat
+    description: Descripció
+    destroy: Eliminar
+    digital:
+      digital_delivery: Lliurament digital
+    digital_assets: Recursos digitals
+    discontinued: Descatalogat
+    discontinued_variants_present: Alguns articles d'aquesta comanda tenen productes que ja no estan disponibles.
+    display_delivery_range: Lliurament en %{delivery_range} dies laborables
+    draft: Esborrany
+    eligibility_errors:
+      messages:
+        no_matching_channel: Aquest codi de cupó no és vàlid per a aquest canal de venda.
+        no_matching_market: Aquest codi de cupó no és vàlid al teu mercat.
+        wrong_country: Aquest codi de cupó no és vàlid al vostre país
+    email: Correu Electrònic
+    error: error
+    error_user_destroy_with_orders: No es pot eliminar un usuari associat a comandes
+    error_user_does_not_have_any_store_credits: L'usuari no té cap crèdit de botiga disponible
+    errors:
+      messages:
+        cannot_delete_default_channel: No es pot eliminar el canal per defecte. Promociona primer un altre canal com a predeterminat.
+        channel_store_mismatch: ha de pertànyer a la mateixa botiga
+        invalid_order_routing_rule: no és una regla d'encaminament de comandes registrada
+        invalid_order_routing_strategy: no és una estratègia d'encaminament de comandes registrada
+        store_association_can_not_be_changed: L'associació de botiga no es pot canviar
+        store_is_already_set: La botiga ja està definida
+    expired: Caducat
+    export_mailer:
+      export_done:
+        message: Bona feina, la vostra exportació està a punt! Utilitzeu l'enllaç de sota per descarregar-la.
+        subject: La vostra exportació %{export_number} s'ha processat correctament!
+      greeting: Hola %{user_name},
+    field: Camp
+    first_name: Nom
+    flat_percent: Percentatge simple
+    flat_rate_per_order: Quantitat fixa (per comanda)
+    flexible_rate: Quantitat variable
+    free: Gratuït
+    gateway: mitjà
+    gateway_error: Error en el mitjà
+    gift_card: Targeta de regal
+    gift_card_already_redeemed: La targeta de regal ja s'ha bestreta.
+    gift_card_applied: La targeta de regal s'ha aplicat correctament a la vostra comanda!
+    gift_card_customer_not_logged_in: La targeta de regal no es pot aplicar amb un usuari convidat.
+    gift_card_expired: La targeta de regal ha caducat.
+    gift_card_mismatched_currency: La targeta de regal no es pot aplicar amb la divisa actual.
+    gift_card_mismatched_customer: Aquesta targeta de regal està associada a un altre usuari.
+    gift_card_not_found: No s'ha trobat la targeta de regal.
+    gift_card_removed: La targeta de regal s'ha eliminat correctament de la vostra comanda
+    gift_card_using_store_credit_error: No podeu aplicar la targeta de regal després d'haver aplicat el crèdit de botiga.
+    height: Altura
+    i18n:
+      this_file_language: Català (CA)
+    idempotency_key_reused: Aquesta Idempotency-Key ja s'ha utilitzat amb paràmetres de sol·licitud diferents.
+    image: Imatge
+    import: Importa
+    in_stock: En estoc
+    internal_note: Nota interna
+    inventory: Inventari
+    invitation_mailer:
+      greeting: Hola %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} ha acceptat la vostra invitació per unir-se a %{resource_name}"
+        subject: "%{invitee_name} ha acceptat la vostra invitació per unir-se a %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} us ha convidat a unir-vos a %{resource_name}"
+        link_description: 'Per acceptar aquesta invitació, feu clic a l''enllaç de sota:'
+        subject: Invitació per unir-se a %{resource_name}
+    iso: ISO Alpha-2
+    item: article
+    key: Clau
+    kind: Tipus
+    label: Etiqueta
+    last_name: Cognoms
+    line_item: Línia d'article
+    line_items: Línies d'article
+    link: Enllaç
+    locale: Configuració regional
+    locale_not_supported_by_store: no és compatible amb aquesta botiga
+    manual: Manual
+    market: Mercat
+    me_no_current_user: Cap usuari administrador ha autenticat aquesta sol·licitud
+    media: Mitjans
+    meta_description: Fiqui descripció
+    meta_keywords: Fiqui paraules clau
+    metadata: Metadades
+    min_quantity: Quantitat mínima
+    month: Mes
+    name: Nom
+    new_variant: Nova Variant
+    no_cc_type: N/D
+    none: Cap
+    number: Número
+    on_hand: Disponible
+    only_active_products_can_be_added_to_cart: Els productes en esborrany i arxivats no es poden afegir a la cistella; marqueu primer el producte com a actiu.
+    open: Obert
+    option_name: Nom de l'opció
+    option_type: Tipus d'opció
+    option_value: Valor de l'opció
+    options: Opcions
+    or: o
+    order: Demanat
+    order_routing:
+      strategies:
+        legacy: Antic
+        rules: Regles (ordenades)
+    order_summary: Resum de comanda
+    orders: Demanats
+    out_of_stock: Sense estoc
+    password: Contrasenya
+    path: Ruta
+    payment: Pagament
+    payment_method: Mètode de pagament
+    payment_methods: Mètodes de pagament
+    payment_processing_failed: El pagament no ha pogut ser processat, per favor, revisi les dades proporcionades.
+    payment_source: Font de pagament
+    phone: Telèfon
+    price: Preu
+    price_rules:
+      channel_rule:
+        description: Aplica preus en funció del canal de venda
+      customer_group_rule:
+        description: Aplica preus a grups de clients específics
+    prices: Preus
+    privacy_policy: Política de privadesa
+    processing: S'està processant
+    product: Producte
+    product_translations: Traduccions del producte
+    products: Productes
+    products_cannot_be_shipped: De moment no podem enviar %{product_names} a la vostra ubicació actual. Canvieu la vostra adreça d'enviament o elimineu %{product_names} de la vostra cistella.
+    promotion: Promoció
+    promotion_already_used: No podeu eliminar una promoció que ja s'ha aplicat
+    promotion_label: Promoció (%{name})
+    promotion_rule_types:
+      category:
+        description: La comanda inclou productes de categories especificades
+        name: Categories
+      channel:
+        description: Limita a les comandes fetes a través dels canals especificats
+        name: Canal(s)
+      country:
+        description: Limita a comandes amb adreça d'enviament en un país específic
+        name: País
+      currency:
+        description: Limita a comandes en una divisa específica
+        name: Divisa
+      customer:
+        description: Disponible només per als clients especificats
+        name: Clients
+      customer_group:
+        description: Disponible només per a clients dels grups de clients especificats
+        name: Grup(s) de clients
+      customer_logged_in:
+        description: Disponible només per a clients amb la sessió iniciada
+        name: Només clients amb la sessió iniciada
+      first_order:
+        description: Ha de ser la primera comanda del client
+        name: Primera comanda
+      item_total:
+        description: Total de la comanda coincideix amb els següents criteris
+        name: Total d'elements
+      market:
+        description: Limita a les comandes fetes als mercats especificats
+        name: Mercat(s)
+      product:
+        description: La comanda inclou els següents productes
+        name: Productes
+    promotions: Promocions
+    quantity: Quantitat
+    query: Consulta
+    reason: Raó
+    received: Rebut
+    refund: Retornar
+    refund_amount: Import del reemborsament
+    registration: Registre
+    remove: Eliminar
+    remove_gift_card_on_completed_order_error: No podeu eliminar la targeta de regal després de fer la comanda
+    resellable: Revendible
+    resend: Tornar a enviar
+    response_code: Codi de resposta
+    return: tornar
+    returned: va tornar
+    returns_policy: Política de devolucions
+    row: Fila
+    rules: Regles
+    scope: Scope
+    selected_quantity_not_available: seleccionat de %{item} no està disponible.
+    ship: enviar
+    ship_address: adreça d'enviament
+    shipment: Enviament
+    shipped: Enviat
+    shipping: Enviament
+    shipping_address: Adreça d'enviament
+    shipping_policy: Política d'enviament
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
+    sku: Codi
+    source: Font
+    status: Estat
+    stock_transfer:
+      errors:
+        must_have_variant: Heu d'afegir com a mínim una variant
+        same_location: no pot ser la mateixa que la ubicació de destinació
+        variants_unavailable: Algunes variants no estan disponibles a %{stock}
+    store: Tenda
+    store_credit:
+      allocated: Afegit
+      authorized: Autoritzat
+      captured: Utilitzat
+      credit: Crèdit
+      eligible: Elegible
+    store_credit_name: Crèdit de botiga
+    store_credit_payment_method:
+      currency_mismatch: La divisa del crèdit de botiga no coincideix amb la divisa de la comanda
+      insufficient_authorized_amount: No es pot capturar més de l'import autoritzat
+      insufficient_funds: L'import restant del crèdit de botiga no és suficient
+      successful_action: "%{action} de crèdit de botiga correcte"
+      unable_to_credit: 'No s''ha pogut acreditar el codi: %{auth_code}'
+      unable_to_find: No s'ha pogut trobar el crèdit de botiga
+      unable_to_find_for_action: 'No s''ha pogut trobar el crèdit de botiga per al codi d''autorització: %{auth_code} per a l''acció: %{action}'
+      unable_to_void: 'No s''ha pogut anul·lar el codi: %{auth_code}'
+    tags: Etiquetes
+    tax: Imposats
+    tax_category: Categoria fiscal
+    terms_of_service: Condicions del servei
+    total: Total
+    tracking: Seguiment
+    type: Tipus
+    unable_to_connect_to_gateway: No ha estat possible connectar-se a la passarel·la.
+    updated_at: Actualitzat el
+    url: URL
+    user: Usuari
+    validation:
+      must_be_int: ha de ser un sencer
+    value: valor
+    variant: Variant
+    variants: Variants
+    verified: Verificat
+    void: Buit
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Desactivat el
+        heading: Punt de connexió de webhook desactivat
+        instructions: Comproveu l'URL del punt de connexió i el servei, i torneu-lo a activar a Configuració → Desenvolupadors → Webhooks.
+        message: El punt de connexió de webhook "%{endpoint_name}" s'ha desactivat automàticament després de fallades de lliurament repetides.
+        name_label: Nom
+        reason_label: Motiu
+        subject: 'Punt de connexió de webhook desactivat: %{endpoint_name}'
+        url_label: URL
+    weight: Pes
+    weight_unit: Unitat de pes
+    width: Ample
+    year: Any
+    zip: Codi postal

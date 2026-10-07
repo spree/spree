@@ -31,8 +31,10 @@ data:
   # External locale data (e.g. gems).
   # This data is not considered unused and is never written to.
   external:
-    ## Example (replace %#= with %=):
-    # - "<%#= %x[bundle info vagrant --path].chomp %>/templates/locales/%{locale}.yml"
+    ## Core's code search covers every Spree gem, so their locale files are read too.
+    - "<%= File.expand_path('../api/config/locales', Dir.pwd) %>/%{locale}.yml"
+    - "<%= File.expand_path('../emails/config/locales', Dir.pwd) %>/%{locale}.yml"
+    - "<%= File.expand_path('../providers', Dir.pwd) %>/*/config/locales/%{locale}.yml"
 
   ## Specify the router (see Readme for details). Valid values: conservative_router, pattern_router, or a custom class.
   # router: conservative_router
@@ -57,14 +59,9 @@ search:
   paths:
     - app/
     - lib/
-    - ../api/app/
-    - ../api/lib/
-    - ../emails/app/
-    - ../emails/lib/
-    - ../dashboard/app/
-    - ../dashboard/lib/
-    - ../opentelemetry/lib/
-    - ../providers/
+<% %w[api/app api/lib emails/app emails/lib dashboard/app dashboard/lib opentelemetry/lib providers].each do |path| %>
+    - "<%= File.expand_path("../#{path}", Dir.pwd) %>"
+<% end %>
 
   ## Root directories for relative keys resolution.
   # relative_roots:
@@ -151,6 +148,8 @@ ignore_missing:
   # CanCan's namespace — Spree::Storefront::AccessDenied reads it with an
   # inline English default so the two 403 branches share host translations.
   - 'unauthorized.default'
+  # Spree::Reporting::Schema#translate is not I18n's translate.
+  - '{presets,families,metrics,dimensions}'
 
 ## Consider these keys used:
 ignore_unused:

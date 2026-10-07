@@ -1,0 +1,37 @@
+---
+da:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Nulstil adgangskode
+        expiry_notice: Dette link til nulstilling af adgangskode udløber snart. Hvis du ikke har anmodet om dette, behøver du ikke at foretage dig noget.
+        greeting: Hej %{name},
+        ignore_notice: Hvis du ikke har anmodet om en nulstilling af adgangskoden, kan du roligt ignorere denne e-mail. Din adgangskode bliver ikke ændret.
+        instructions: Vi har modtaget en anmodning om at nulstille din adgangskode. Klik på knappen nedenfor for at vælge en ny adgangskode.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hej,
+        ignore_disclaimer: Hvis du ikke har anmodet om dette, kan du ignorere denne e-mail.
+        instructions: Klik venligst på knappen nedenfor for at bekræfte din e-mailadresse.
+        message_copy_link: 'Hvis knappen ikke virker, så kopiér og indsæt følgende link i din browser:'
+        subject: Bekræft din e-mailadresse
+        verify_email_address_link: Bekræft e-mailadresse
+    order_mailer:
+      cancel_email:
+        instructions: Din ordre er blevet annulleret. Gem venligst denne annullering
+        subject: Annullering af ordre
+      confirm_email:
+        instructions: Gennemlæs og gem venligst følgende orderinformation.
+        subject: Ordrebekræftelse
+      payment_link_email:
+        message: Klik venligst på knappen nedenfor for at betale for din ordre.
+        message_copy_link: 'Hvis knappen ikke virker, så kopiér og indsæt følgende link i din browser:'
+        pay_for_order: Betal for ordre
+        subject: 'Betalingslink til ordre #%{number}'
+      store_owner_notification_email:
+        heading: Ny ordre modtaget
+        instructions: Du har modtaget en ny ordre.
+        order_summary: Oversigt over ordre %{number}
+        subject: "%{store_name} modtog en ny ordre"
+      subtotal: 'Subtotal:'
+      total: 'Ordretotal:'

@@ -6,6 +6,10 @@ RSpec.describe Spree::Locale, type: :model do
       expect(described_class.new(code: 'en').name).to eq('English')
     end
 
+    it "uses the language's own name when Spree ships no translations for it" do
+      expect(described_class.new(code: 'sq').name).to eq('Shqip')
+    end
+
     it 'falls back to the code for an unknown locale' do
       expect(described_class.new(code: 'xx').name).to eq('xx')
     end

@@ -1,3 +1,5 @@
+require 'csv'
+
 module Spree
   # Virtual model for a supported locale. Wraps a locale +code+ and exposes its
   # display name, layout direction, and whether it is a store's default — the
@@ -24,13 +26,14 @@ module Spree
         return normalize_name(I18n.t('spree.i18n.this_file_language', locale: code))
       end
 
-      if defined?(SpreeI18n::Locale) && (name = SpreeI18n::Locale.local_language_name(code))
-        return normalize_name(name)
-      end
+      name = self.class.language_names[code.downcase] || self.class.language_names[language_code]
+      name ? normalize_name(name) : code
+    end
 
-      return 'English' if code == 'en'
-
-      code
+    # Each language's name in that language ("Deutsch", "日本語"), keyed by code.
+    # @return [Hash{String => String}]
+    def self.language_names
+      @language_names ||= ::CSV.read(File.expand_path('../../../config/language_names.csv', __dir__)).to_h { |row| [row[0], row[2]] }
     end
 
     # Select label, e.g. "EN — English".

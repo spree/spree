@@ -107,6 +107,14 @@ module Spree
         app.middleware.use ::I18n::Middleware
       end
 
+      # Spree's translations cover only part of the English keys in most
+      # languages, so the rest fall back to English. An app that configured
+      # its own fallbacks (including turning them off) keeps its choice.
+      initializer 'spree.i18n.fallbacks', before: :load_config_initializers do |app|
+        fallbacks = app.config.i18n.fallbacks
+        app.config.i18n.fallbacks = true if fallbacks.is_a?(ActiveSupport::OrderedOptions) && fallbacks.empty?
+      end
+
       # Seeded before application initializers so a host's
       # `config/initializers/spree.rb` can register custom generators.
       initializer 'spree.register.number_generators', before: :load_config_initializers do |app|

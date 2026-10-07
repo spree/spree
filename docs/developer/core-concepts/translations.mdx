@@ -124,25 +124,33 @@ Asking the API which resources are translatable means a translation tool doesn't
 
 ## Translating the interface
 
-Spree's own strings — everything in the dashboard and in transactional emails — come from a community-maintained project covering 40+ languages.
+Spree's own text — transactional emails, API error messages and validation messages — ships translated into 47 languages as part of Spree itself. There is nothing to install. A key that a language does not translate yet is shown in English.
 
-<CodeGroup>
+The admin dashboard carries its own translations, separate from these. See [Dashboard translations](/developer/dashboard/customization/translations).
 
-```bash Spree CLI
-spree bundle add spree_i18n
+### Changing a translation
+
+To change a word or add a language, add the key to a locale file in your app. Your file wins over the one Spree ships.
+
+```yaml server/config/locales/de.yml
+de:
+  spree:
+    order_mailer:
+      confirm_email:
+        subject: Ihre Bestellung
 ```
 
-```bash Bundler
-bundle add spree_i18n
+Every key lives under `spree`. To read one from your own Ruby code, use its full key:
+
+```ruby server/app/services/my_app/greeting.rb
+I18n.t('spree.order_mailer.confirm_email.subject')
 ```
-
-</CodeGroup>
-
-That's the whole installation. Locales are picked up automatically; nothing needs copying into your app.
 
 <Info>
-See the [supported locales](https://github.com/spree-contrib/spree_i18n/tree/main/config/locales) in the Spree I18n repository. Contributions are welcome if yours is incomplete.
+`Spree.t` still works in 6.0 but is deprecated and will be removed in 6.1. Use `I18n.t` with the full `spree.` key instead.
 </Info>
+
+Corrections to the translations Spree ships are welcome as pull requests to the locale files in the [Spree repository](https://github.com/spree/spree/tree/main/spree/core/config/locales).
 
 ## Related
 

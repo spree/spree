@@ -857,6 +857,7 @@ en:
         flat_fee_cannot_charge_delivery: is not available on a flat fee, which already charges for the sale the delivery belongs to — add a separate rate to charge delivery
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration
+        invalid_collection_rule: is not a registered collection rule
         invalid_commission_rule: is not a commission rule kind this store has
         invalid_commission_rule_type: "%{type} is not a commission rule kind this store has"
         invalid_delivery_method_rule: is not a registered delivery method rule
@@ -865,6 +866,7 @@ en:
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_refund_method: must be one of original_payment, store_credit
         invalid_seller_requirement: is not a registered seller requirement
+        invalid_status: Invalid status
         invalid_storefront_access: is not a valid storefront access level
         items_not_a_list: items must be a list of objects
         must_be_greater_than_min_amount: must be greater than or equal to the minimum
@@ -963,6 +965,7 @@ en:
     in_stock: In Stock
     inactive: Inactive
     incomplete: Incomplete
+    insufficient_stock_for_reservation: "%{item} has only %{available} available"
     insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
     internal_note: Internal Note
     invalid_password: Invalid password.
@@ -1038,6 +1041,7 @@ en:
       preferred_location:
         description: Fulfill from the location pinned on the order, when one is set
         name: Preferred location
+    order_summary: Order Summary
     orders: Orders
     out_of_stock: Out of Stock
     package_types:
@@ -1154,6 +1158,7 @@ en:
         description: Apply pricing to specific customer groups
     price_sack: Price Sack
     prices: Prices
+    privacy_policy: Privacy Policy
     processing: Processing
     product: Product
     product_import_unknown_stock_location: You have no stock location named %{name}.
@@ -1568,11 +1573,13 @@ en:
           refunded: Refunded
           voided: Voided
     resellable: Resellable
+    resend: Resend
     response_code: Response Code
     return: return
     return_errors:
       outside_window: This order is outside the %{days}-day return window
     returned: Returned
+    returns_policy: Returns Policy
     role_cannot_be_deleted: This role is protected or still referenced by staff members or pending invitations and cannot be deleted
     role_immutable: cannot be changed on a protected role
     role_permissions_not_grantable_for_audience: 'cannot be granted to a %{audience} role: %{keys}'
@@ -1634,8 +1641,10 @@ en:
         description: The address customer returns are sent to
         name: Returns address
     seller_requirements:
+      custom_field_not_for_sellers: must be a custom field defined for sellers
       file_required: A file is required for this requirement
       incomplete: "%{name} is not complete"
+      invalid_terms_effective_from: Terms effective from is not a date
     seller_submission_no_file: This submission has no attached file.
     seller_team_last_member: A seller needs at least one team member. Invite someone else before removing this one.
     seller_user_mailer:
@@ -1650,6 +1659,7 @@ en:
     ship_address: Ship Address
     shipment: Shipment
     shipped: Shipped
+    shipping: Shipping
     shipping_address: Shipping Address
     shipping_flat_rate_per_item: Flat rate per package item
     shipping_flat_rate_per_order: Flat rate
@@ -1668,6 +1678,7 @@ en:
         return_closed: A return label can only be bought while the return is open
         tracking_number_required: An uploaded label needs its tracking number
         uploaded_not_refundable: An uploaded label was not bought through Spree and cannot be refunded — delete it instead
+    shipping_policy: Shipping Policy
     shipping_price_sack: Price sack
     shipping_rates:
       display_price:
@@ -1742,6 +1753,7 @@ en:
     store_credit_using_gift_card_error: You can't apply store credit after you applied a gift card.
     success: Success
     tags: Tags
+    tax: Tax
     tax_capabilities:
       oss_thresholds:
         description: Crossing the EU-wide cross-border threshold does not switch to destination-country rates automatically, because it depends on annual turnover across every destination rather than on any single order.

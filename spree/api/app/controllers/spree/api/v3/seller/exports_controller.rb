@@ -183,7 +183,7 @@ module Spree
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
               message: I18n.t(
                 'spree.api.errors.unsupported_export_type',
-                default: "Unsupported export type. Supported types: #{ALLOWED_TYPES.join(', ')}"
+                types: ALLOWED_TYPES.join(', ')
               ),
               status: :unprocessable_content
             )
