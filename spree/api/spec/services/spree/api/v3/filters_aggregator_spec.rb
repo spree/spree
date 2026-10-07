@@ -85,8 +85,8 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       # The range is public; a price list's rows belong to its own audience.
       it 'leaves price-list prices out of the range' do
         price_list = create(:price_list, store: store)
-        create(:price, variant: product1.master, price_list: price_list, amount: 0.5, currency: currency)
-        create(:price, variant: product2.master, price_list: price_list, amount: 9_999, currency: currency)
+        create(:price, variant: product1.default_variant, price_list: price_list, amount: 0.5, currency: currency)
+        create(:price, variant: product2.default_variant, price_list: price_list, amount: 9_999, currency: currency)
 
         price_filter = result[:filters].find { |f| f[:type] == 'price_range' }
 

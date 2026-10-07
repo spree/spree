@@ -450,8 +450,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(created.shipments).not_to be_empty
         expect(created.shipments.first.shipping_rates).not_to be_empty
         expect(created.shipments.first.selected_shipping_rate).to be_present
-        expect(created.shipment_total).to eq(5)
-        expect(created.total).to eq(created.item_total + created.shipment_total + created.adjustment_total)
+        expect(created.delivery_total).to eq(5)
+        expect(created.total).to eq(created.item_total + created.delivery_total + created.adjustment_total)
 
         expect(json_response['delivery_total']).to eq('5.0')
         expect(json_response['total']).to eq(created.total.to_s)
@@ -850,7 +850,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(order.shipments).not_to be_empty
         expect(order.fulfillments.first.shipping_rates).not_to be_empty
         expect(order.fulfillments.first.selected_shipping_rate).to be_present
-        expect(order.shipment_total).to eq(5)
+        expect(order.delivery_total).to eq(5)
 
         expect(json_response['delivery_total']).to eq('5.0')
         expect(json_response['total']).to eq(order.total.to_s)
@@ -933,7 +933,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
     it 'passes notify_customer flag to the service' do
       service_double = instance_double(Spree::Orders::Complete)
-      allow(Spree).to receive(:order_complete_service).and_return(service_double)
+      allow(Spree).to receive(:order_complete_workflow).and_return(service_double)
       expect(service_double).to receive(:call).with(
         hash_including(order: order, notify_customer: true)
       ).and_return(Spree::ServiceModule::Result.new(true, order, nil))
@@ -945,7 +945,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
     it 'omits notify_customer when not given (service defaults to false)' do
       service_double = instance_double(Spree::Orders::Complete)
-      allow(Spree).to receive(:order_complete_service).and_return(service_double)
+      allow(Spree).to receive(:order_complete_workflow).and_return(service_double)
       expect(service_double).to receive(:call) do |args|
         expect(args[:notify_customer]).to be_nil # service default kicks in (false)
         expect(args[:order]).to eq(order)
@@ -971,7 +971,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       it 'surfaces validation errors from the order' do
         service_double = instance_double(Spree::Orders::Complete)
-        allow(Spree).to receive(:order_complete_service).and_return(service_double)
+        allow(Spree).to receive(:order_complete_workflow).and_return(service_double)
         allow(service_double).to receive(:call) do |args|
           args[:order].errors.add(:base, 'Custom failure reason')
           Spree::ServiceModule::Result.new(false, args[:order], 'service error')
@@ -987,7 +987,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       it 'falls back to the service error when the order has no errors' do
         service_double = instance_double(Spree::Orders::Complete)
-        allow(Spree).to receive(:order_complete_service).and_return(service_double)
+        allow(Spree).to receive(:order_complete_workflow).and_return(service_double)
         allow(service_double).to receive(:call).and_return(
           Spree::ServiceModule::Result.new(false, order, 'Order is canceled')
         )
