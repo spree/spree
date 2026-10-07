@@ -28,6 +28,8 @@ erDiagram
         string default_locale
         string supported_locales
         boolean tax_inclusive
+        string tax_display
+        string default_country_code
         boolean default
     }
 
@@ -45,6 +47,8 @@ erDiagram
 | `default_locale` | Default language for this market | `en` |
 | `supported_locales` | All locales available in this market | `["en", "es"]` |
 | `tax_inclusive` | Whether prices include tax (affects display and checkout calculation) | `false` |
+| `tax_display` | What a price means for an order shipping outside the home country: `included` or `dynamic`. Admin API only | `included` |
+| `default_country_code` | The market's main country, one of its `country_codes`. On the default market it is the store's home country. Admin API only | `DE` |
 | `default` | Whether this is the fallback market when no country match is found | `true` |
 | `country_codes` | Countries in this market, as ISO codes | `["US", "CA"]` |
 
@@ -222,6 +226,40 @@ The `tax_inclusive` flag on a market controls how prices are displayed and calcu
 - **`tax_inclusive: false`** (common in the US) — tax is added at checkout on top of the displayed price
 
 This matters because prices are shown long before anyone knows where the shopper lives. The market's own country supplies the assumed rate for browsing; once a shipping address is entered at checkout, that address takes over and the real rate applies.
+
+### Customers outside the home country
+
+A tax-inclusive price includes some country's tax. When the customer is in another country, the market's `tax_display` decides what happens to the price:
+
+| `tax_display` | The customer pays | Example: €100.00, store at home in the US, order to Germany (19%) |
+|---|---|---|
+| `included` (default) | The price as entered, with their country's tax inside it | €100.00, of which €15.97 is VAT |
+| `dynamic` | The price adjusted to their country: the home country's tax comes out and theirs goes in | €119.00, of which €19.00 is VAT |
+
+New markets use `included`. Markets created before Spree added the setting use `dynamic`, which is what they charged before. Whether a tax is inside the price or added on top is still set on each [tax rate](/developer/core-concepts/taxes); `tax_display` only decides whether the price moves when the order goes abroad.
+
+A price from a price list with a [Market Rule](/developer/core-concepts/pricing#price-rules) or a zone rule is charged as entered under both options, because it was set for that market.
+
+### Main country and home country
+
+Each market has a main country. It is the country Spree uses for tax before the customer enters an address. On the default market it is also the store's **home country**: the country whose tax your prices include, which `dynamic` markets take out before adding the customer's.
+
+Set it with `default_country_code`. It must be one of the market's countries, and removing it from the market's countries is refused until you choose another one. When it is empty, the market uses the first of its countries by name.
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.markets.update('market_xxx', {
+  tax_display: 'dynamic',
+  default_country_code: 'DE',
+})
+```
+
+```bash CLI
+spree api patch /markets/market_xxx -d '{"tax_display": "dynamic", "default_country_code": "DE"}'
+```
+
+</CodeGroup>
 
 A market also chooses **which tax provider works out its numbers** — Spree's own rate tables in a simple market, an external tax service in a complicated one. See [Taxes](/developer/core-concepts/taxes).
 
