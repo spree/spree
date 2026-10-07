@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::CollectionRule, type: :model do
 
-  it_behaves_like 'type labels', Spree::CollectionRules::Sale
+  it_behaves_like 'type labels'
 
   let(:store) { @default_store }
   let(:collection) { create(:automatic_collection, store: store) }
