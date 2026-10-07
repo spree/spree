@@ -6339,15 +6339,20 @@
     "mcp_connect": {
       "open_cta": "Agent verbinden",
       "title": "Agent verbinden",
-      "subtitle": "Richten Sie einen KI-Assistenten auf diesen Shop. Er schickt Sie hierher zurück, um die Freigabe zu erteilen.",
-      "url_label": "Die MCP-Adresse Ihres Shops",
+      "subtitle": "Wählen Sie den Assistenten, dem Sie Zugriff auf diesen Shop geben möchten.",
       "step_paste": "Fügen Sie diese Adresse in den Connector oder die MCP-Einstellungen Ihres Clients ein.",
       "step_sign_in": "Sie werden zur Anmeldung hierher geschickt.",
       "step_approve": "Geben Sie frei, was der Agent tun darf. Sie können dies jederzeit auf dieser Seite zurücknehmen.",
-      "scope_note": "Ein Agent erhält nie mehr, als Sie selbst haben, und nur das, was Sie freigeben. Eine Freigabe für Produkte schließt Bestellungen nicht ein.",
-      "cli_note": "Für Skripte, CI oder alles, was sich nicht anmelden kann, verwenden Sie die Spree CLI mit einem API-Schlüssel — hier werden API-Schlüssel nicht akzeptiert.",
       "client_id_label": "Client-ID",
-      "client_id_help": "Manche Clients fragen danach, bevor sie starten. Sie wird pro Shop vergeben — verwenden Sie die für den Client, den Sie verbinden."
+      "client_id_help": "Manche Clients fragen danach, bevor sie starten.",
+      "ready_title": "{{client}} kann verbunden werden",
+      "ready_subtitle": "Fügen Sie dies im Client ein und genehmigen Sie dann, was er tun darf.",
+      "endpoint_label": "Die MCP-Adresse Ihres Shops",
+      "copy_endpoint": "Adresse kopieren",
+      "copy_client_id": "Client-ID kopieren",
+      "other_title": "Etwas anderes",
+      "other_cta": "Registrieren und fortfahren",
+      "bounded_note": "Ein Agent erhält nie mehr als Sie selbst haben, und nur das, was Sie genehmigen."
     }
   }
 }

@@ -6339,15 +6339,20 @@
     "mcp_connect": {
       "open_cta": "Connecter un agent",
       "title": "Connecter un agent",
-      "subtitle": "Dirigez un assistant IA vers cette boutique. Il vous renverra ici pour approuver ce qu’il peut faire.",
-      "url_label": "L’adresse MCP de votre boutique",
+      "subtitle": "Choisissez l'assistant auquel donner accès à cette boutique.",
       "step_paste": "Collez cette adresse dans le connecteur ou les réglages MCP de votre client.",
       "step_sign_in": "Il vous renvoie ici pour vous connecter.",
       "step_approve": "Approuvez ce que l’agent peut faire. Vous pouvez le retirer à tout moment sur cette page.",
-      "scope_note": "Un agent n’obtient jamais plus que vous, et uniquement ce que vous approuvez. Approuver l’accès aux produits n’inclut pas les commandes.",
-      "cli_note": "Pour les scripts, la CI ou tout ce qui ne peut pas se connecter, utilisez la CLI Spree avec une clé API — les clés API ne sont pas acceptées ici.",
       "client_id_label": "Identifiant client",
-      "client_id_help": "Certains clients le demandent avant de démarrer. Il est émis par boutique : utilisez celui du client que vous connectez."
+      "client_id_help": "Certains clients le demandent avant de démarrer.",
+      "ready_title": "{{client}} est prêt à être connecté",
+      "ready_subtitle": "Collez ceci dans le client, puis approuvez ce qu'il peut faire.",
+      "endpoint_label": "Adresse MCP de votre boutique",
+      "copy_endpoint": "Copier l'adresse",
+      "copy_client_id": "Copier l'identifiant client",
+      "other_title": "Autre chose",
+      "other_cta": "Enregistrer et continuer",
+      "bounded_note": "Un agent n'obtient jamais plus que vous, et uniquement ce que vous approuvez."
     }
   }
 }

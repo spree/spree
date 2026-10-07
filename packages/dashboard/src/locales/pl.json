@@ -6407,15 +6407,20 @@
     "mcp_connect": {
       "open_cta": "Połącz agenta",
       "title": "Połącz agenta",
-      "subtitle": "Wskaż asystentowi AI ten sklep. Odeśle Cię tutaj, abyś zatwierdził, co może robić.",
-      "url_label": "Adres MCP Twojego sklepu",
+      "subtitle": "Wybierz asystenta, któremu chcesz dać dostęp do tego sklepu.",
       "step_paste": "Wklej ten adres w konektorze lub ustawieniach MCP swojego klienta.",
       "step_sign_in": "Odeśle Cię tutaj, abyś się zalogował.",
       "step_approve": "Zatwierdź, co agent może robić. Możesz to cofnąć w dowolnej chwili na tej stronie.",
-      "scope_note": "Agent nigdy nie dostaje więcej niż Ty i tylko to, co zatwierdzisz. Zgoda na produkty nie obejmuje zamówień.",
-      "cli_note": "Do skryptów, CI i wszystkiego, co nie może się zalogować, użyj Spree CLI z kluczem API — tutaj klucze API nie są akceptowane.",
       "client_id_label": "Identyfikator klienta",
-      "client_id_help": "Niektórzy klienci proszą o niego przed startem. Jest wydawany osobno dla każdego sklepu — użyj tego dla łączonego klienta."
+      "client_id_help": "Niektórzy klienci proszą o niego przed startem.",
+      "ready_title": "{{client}} jest gotowy do połączenia",
+      "ready_subtitle": "Wklej to w kliencie, a następnie zatwierdź, co może robić.",
+      "endpoint_label": "Adres MCP Twojego sklepu",
+      "copy_endpoint": "Kopiuj adres",
+      "copy_client_id": "Kopiuj identyfikator klienta",
+      "other_title": "Coś innego",
+      "other_cta": "Zarejestruj i kontynuuj",
+      "bounded_note": "Agent nigdy nie dostanie więcej niż masz Ty i tylko to, co zatwierdzisz."
     }
   }
 }

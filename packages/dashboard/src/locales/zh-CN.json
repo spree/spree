@@ -6326,15 +6326,20 @@
     "mcp_connect": {
       "open_cta": "连接代理",
       "title": "连接代理",
-      "subtitle": "将 AI 助手指向此店铺。它会把您送回这里，确认它可以做什么。",
-      "url_label": "您店铺的 MCP 地址",
+      "subtitle": "选择要授予此店铺访问权限的助手。",
       "step_paste": "将此地址粘贴到客户端的连接器或 MCP 设置中。",
       "step_sign_in": "它会把您送到这里登录。",
       "step_approve": "确认代理可以做什么。您随时可以在此页面收回。",
-      "scope_note": "代理获得的权限绝不会超过您自己，且仅限您确认的范围。确认商品访问权限并不包含订单。",
-      "cli_note": "对于脚本、CI 或任何无法登录的场景，请改用 Spree CLI 配合 API 密钥——此处不接受 API 密钥。",
       "client_id_label": "客户端 ID",
-      "client_id_help": "部分客户端在开始前会要求填写。它按店铺分别签发，请使用您要连接的客户端对应的 ID。"
+      "client_id_help": "部分客户端在开始前会要求填写。",
+      "ready_title": "{{client}} 已可连接",
+      "ready_subtitle": "将这些粘贴到客户端，然后批准它可以做什么。",
+      "endpoint_label": "您店铺的 MCP 地址",
+      "copy_endpoint": "复制地址",
+      "copy_client_id": "复制客户端 ID",
+      "other_title": "其他",
+      "other_cta": "注册并继续",
+      "bounded_note": "代理获得的权限绝不会超过您自己的，且仅限于您批准的部分。"
     }
   }
 }

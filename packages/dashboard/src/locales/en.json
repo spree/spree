@@ -6339,15 +6339,20 @@
     "mcp_connect": {
       "open_cta": "Connect an agent",
       "title": "Connect an agent",
-      "subtitle": "Point an AI assistant at this store. It will send you back here to approve what it may do.",
-      "url_label": "Your store’s MCP address",
+      "subtitle": "Choose the assistant you want to give access to this store.",
       "step_paste": "Paste this address into your client’s connector or MCP settings.",
       "step_sign_in": "It sends you here to sign in.",
       "step_approve": "Approve what the agent may do. You can take it back at any time on this page.",
-      "scope_note": "An agent never gets more than you have, and only what you approve. Approving product access does not include orders.",
-      "cli_note": "For scripts, CI or anything that cannot sign in, use the Spree CLI with an API key instead — API keys are not accepted here.",
       "client_id_label": "Client ID",
-      "client_id_help": "Some clients ask for this before they will start. It is issued per store, so use the one for the client you are connecting."
+      "client_id_help": "Some clients ask for this before they will start.",
+      "ready_title": "{{client}} is ready to connect",
+      "ready_subtitle": "Paste these into the client, then approve what it may do.",
+      "endpoint_label": "Your store's MCP address",
+      "copy_endpoint": "Copy address",
+      "copy_client_id": "Copy client ID",
+      "other_title": "Something else",
+      "other_cta": "Register and continue",
+      "bounded_note": "An agent never gets more than you have, and only what you approve."
     }
   }
 }

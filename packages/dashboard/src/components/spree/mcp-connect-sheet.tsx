@@ -1,15 +1,25 @@
+import type { OauthApplication } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
+  Button,
   CopyToClipboardButton,
+  Field,
+  FieldError,
+  Input,
+  Label,
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOauthRegistrations } from '../../hooks/use-oauth'
+import { useOauthApplications } from '../../hooks/use-oauth'
 
 type McpConnectSheetProps = {
   open: boolean
@@ -17,86 +27,207 @@ type McpConnectSheetProps = {
 }
 
 /**
- * How a merchant points an agent at this store.
+ * The clients whose callback we can fill in for the merchant.
  *
- * There is nothing to mint: the client sends the person here to sign in and
- * approve what the agent may do, so the only thing to hand over is the URL.
- * An API key is not accepted by the MCP endpoint — that credential belongs
- * to the CLI, where there is no person to approve anything.
+ * A redirect URI is where authorization codes are delivered, so a wrong one
+ * sends them to whoever controls that host. For the clients we know, the
+ * merchant should never have to find or type it — they pick a name. Anything
+ * else is "Something else", where a developer supplies the callback from the
+ * client's own documentation.
+ */
+const KNOWN_CLIENTS = [
+  { id: 'claude', name: 'Claude', redirectUri: 'https://claude.ai/api/mcp/auth_callback' },
+  {
+    id: 'chatgpt',
+    name: 'ChatGPT',
+    redirectUri: 'https://chatgpt.com/connector_platform_oauth_redirect',
+  },
+] as const
+
+/**
+ * Connecting an agent, in two steps: choose which one, then take away the
+ * address and the id it asks for.
+ *
+ * The client is registered when the merchant picks it, rather than seeded
+ * into every store — a store that never connects anything carries no
+ * registrations, and the sheet shows one id (the one just created) instead
+ * of every id at once.
  */
 export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   const { t } = useTranslation()
-  const { data: registrations } = useOauthRegistrations()
+  const queryClient = useQueryClient()
+  const [created, setCreated] = useState<OauthApplication | null>(null)
+  const [customName, setCustomName] = useState('')
+  const [customUri, setCustomUri] = useState('')
+  const [failure, setFailure] = useState<string | null>(null)
+  const { data: existing } = useOauthApplications()
 
   // Where this dashboard's own API calls go — either a configured origin or
   // the page's own, which is what a proxied or multi-hostname deployment
   // actually answers on.
   const apiOrigin = import.meta.env.VITE_SPREE_API_URL || window.location.origin
   const endpoint = `${apiOrigin}/api/v3/admin/mcp`
-  const clients = registrations?.data ?? []
+
+  const register = useMutation({
+    mutationFn: (params: { name: string; redirect_uri: string }) =>
+      adminClient.oauth.applications.create(params),
+    onSuccess: (application) => {
+      queryClient.invalidateQueries({ queryKey: ['oauth-applications'] })
+      setCreated(application)
+    },
+  })
+
+  async function choose(name: string, redirectUri: string) {
+    setFailure(null)
+
+    // Picking the same client twice is reconnecting it, not registering a
+    // second one — two rows with two ids would leave a merchant guessing
+    // which to paste.
+    const already = existing?.data?.find((candidate) => candidate.name === name)
+    if (already) {
+      setCreated(already)
+      return
+    }
+
+    try {
+      await register.mutateAsync({ name, redirect_uri: redirectUri })
+    } catch (error) {
+      setFailure(error instanceof Error ? error.message : t('admin.common.error'))
+    }
+  }
+
+  function reset(next: boolean) {
+    onOpenChange(next)
+    if (next) return
+    setCreated(null)
+    setCustomName('')
+    setCustomUri('')
+    setFailure(null)
+  }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+    <Sheet open={open} onOpenChange={reset}>
+      <SheetContent className="flex w-full flex-col overflow-y-auto sm:max-w-xl">
         <SheetHeader>
-          <SheetTitle>{t('admin.mcp_connect.title')}</SheetTitle>
-          <SheetDescription>{t('admin.mcp_connect.subtitle')}</SheetDescription>
+          <SheetTitle>
+            {created
+              ? t('admin.mcp_connect.ready_title', { client: created.name })
+              : t('admin.mcp_connect.title')}
+          </SheetTitle>
+          <SheetDescription>
+            {created ? t('admin.mcp_connect.ready_subtitle') : t('admin.mcp_connect.subtitle')}
+          </SheetDescription>
         </SheetHeader>
 
-        <div className="flex flex-col gap-6 px-4 pb-8">
-          <div className="flex flex-col gap-2">
-            <p className="font-medium text-sm">{t('admin.mcp_connect.url_label')}</p>
-            <div className="relative">
-              <pre className="overflow-x-auto rounded-md bg-muted p-3 pr-12 text-xs">
-                <code>{endpoint}</code>
-              </pre>
-              <CopyToClipboardButton
-                aria-label={t('admin.actions.copy')}
-                className="absolute top-1.5 right-2"
-                value={endpoint}
-              />
-            </div>
-          </div>
-
-          <ol className="flex list-decimal flex-col gap-2 pl-5 text-sm">
-            <li>{t('admin.mcp_connect.step_paste')}</li>
-            <li>{t('admin.mcp_connect.step_sign_in')}</li>
-            <li>{t('admin.mcp_connect.step_approve')}</li>
-          </ol>
-
-          {/* Some clients ask for a client ID before they will start the
-              sign-in flow. It is issued per store, so it cannot be published
-              anywhere — a merchant has to be able to read this store's own. */}
-          {clients.length > 0 ? (
-            <div className="flex flex-col gap-2">
-              <p className="font-medium text-sm">{t('admin.mcp_connect.client_id_label')}</p>
-              <p className="text-muted-foreground text-xs">
-                {t('admin.mcp_connect.client_id_help')}
-              </p>
-              {clients.map((client) => (
-                <div key={client.id} className="flex flex-col gap-1">
-                  <p className="text-xs">{client.name}</p>
-                  <div className="relative">
-                    <pre className="overflow-x-auto rounded-md bg-muted p-3 pr-12 text-xs">
-                      <code>{client.client_id}</code>
-                    </pre>
-                    <CopyToClipboardButton
-                      aria-label={t('admin.actions.copy')}
-                      className="absolute top-1.5 right-2"
-                      value={client.client_id}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="flex flex-1 flex-col gap-6 px-4">
+          {failure ? (
+            <Alert variant="destructive">
+              <AlertDescription>{failure}</AlertDescription>
+            </Alert>
           ) : null}
 
-          <Alert>
-            <AlertDescription>{t('admin.mcp_connect.scope_note')}</AlertDescription>
-          </Alert>
+          {created ? (
+            <>
+              <div className="flex flex-col gap-2">
+                <p className="font-medium text-sm">{t('admin.mcp_connect.endpoint_label')}</p>
+                <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
+                  <code className="flex-1 truncate font-mono text-xs">{endpoint}</code>
+                  <CopyToClipboardButton
+                    value={endpoint}
+                    aria-label={t('admin.mcp_connect.copy_endpoint')}
+                  />
+                </div>
+              </div>
 
-          <p className="text-muted-foreground text-xs">{t('admin.mcp_connect.cli_note')}</p>
+              <div className="flex flex-col gap-2">
+                <p className="font-medium text-sm">{t('admin.mcp_connect.client_id_label')}</p>
+                <p className="text-muted-foreground text-xs">
+                  {t('admin.mcp_connect.client_id_help')}
+                </p>
+                <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
+                  <code className="flex-1 truncate font-mono text-xs">{created.client_id}</code>
+                  <CopyToClipboardButton
+                    value={created.client_id}
+                    aria-label={t('admin.mcp_connect.copy_client_id')}
+                  />
+                </div>
+              </div>
+
+              <ol className="flex list-decimal flex-col gap-2 pl-5 text-sm">
+                <li>{t('admin.mcp_connect.step_paste')}</li>
+                <li>{t('admin.mcp_connect.step_sign_in')}</li>
+                <li>{t('admin.mcp_connect.step_approve')}</li>
+              </ol>
+
+              <Alert variant="info">
+                <AlertDescription>{t('admin.mcp_connect.bounded_note')}</AlertDescription>
+              </Alert>
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col gap-2">
+                {KNOWN_CLIENTS.map((client) => (
+                  <Button
+                    key={client.id}
+                    variant="outline"
+                    className="justify-start"
+                    disabled={register.isPending}
+                    onClick={() => choose(client.name, client.redirectUri)}
+                  >
+                    {client.name}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Anything we do not know a callback for. A developer reads it
+                  from the client's documentation; a merchant picks a name
+                  above and never sees this. */}
+              <div className="flex flex-col gap-3 border-t pt-4">
+                <p className="font-medium text-sm">{t('admin.mcp_connect.other_title')}</p>
+                <Field>
+                  <Label htmlFor="mcp-other-name">
+                    {t('admin.fields.oauth_application.name.label')}
+                  </Label>
+                  <Input
+                    id="mcp-other-name"
+                    value={customName}
+                    onChange={(event) => setCustomName(event.target.value)}
+                    placeholder={t('admin.fields.oauth_application.name.placeholder')}
+                  />
+                </Field>
+                <Field>
+                  <Label htmlFor="mcp-other-uri">
+                    {t('admin.fields.oauth_application.redirect_uri.label')}
+                  </Label>
+                  <Input
+                    id="mcp-other-uri"
+                    value={customUri}
+                    onChange={(event) => setCustomUri(event.target.value)}
+                    placeholder="https://example.com/oauth/callback"
+                  />
+                  <FieldError />
+                  <p className="text-muted-foreground text-xs">
+                    {t('admin.fields.oauth_application.redirect_uri.help')}
+                  </p>
+                </Field>
+                <Button
+                  variant="outline"
+                  className="self-start"
+                  disabled={register.isPending || !customName.trim() || !customUri.trim()}
+                  onClick={() => choose(customName.trim(), customUri.trim())}
+                >
+                  {t('admin.mcp_connect.other_cta')}
+                </Button>
+              </div>
+            </>
+          )}
         </div>
+
+        <SheetFooter>
+          <Button variant="outline" onClick={() => reset(false)}>
+            {created ? t('admin.common.done') : t('admin.common.cancel')}
+          </Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   )

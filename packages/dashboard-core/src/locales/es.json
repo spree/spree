@@ -1664,7 +1664,9 @@
       "searching": "Buscando…",
       "select_placeholder": "Seleccionar…",
       "unsaved_changes": "Tenés cambios sin guardar.",
-      "yes": "Sí"
+      "yes": "Sí",
+      "done": "Listo",
+      "error": "Algo salió mal."
     },
     "messages": {
       "address_removed": "Dirección eliminada",
