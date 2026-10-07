@@ -1320,6 +1320,12 @@
                 ]
               }
             ]
+          },
+          {
+            "tab": "Changelog",
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       },

@@ -1,0 +1,878 @@
+---
+title: Changelog
+description: New features and improvements in Spree Commerce, newest first.
+rss: true
+mode: "custom"
+---
+
+<div className="changelog">
+
+# Changelog
+
+Every feature that lands in Spree, explained in plain words with links to the full guides.
+
+<a href="https://spreecommerce.org/docs/changelog/rss.xml" className="changelog-rss"><Icon icon="rss" size={14} /> Subscribe via RSS</a>
+
+<Update label="Email template editor" description="October 6, 2026" tags={["Emails", "Dashboard"]}>
+  Merchants can now change what their customer emails say and how they look, right in the dashboard, without asking a developer. Order confirmations, shipping notifications, refunds, password resets, the layout around every email and the shared blocks such as item rows are all editable under **Settings → Emails → Templates**.
+
+  - The editor suggests the placeholders each email can use and previews it with one of your real orders, on desktop, mobile or as plain text.
+  - Changes are saved as a draft. Publishing checks the template against your store's data first and refuses one that would break.
+  - Each language is edited separately, so an English edit never reaches French customers.
+  - Every published version is kept, and any one can be restored.
+  - When a Spree update changes a template you edited, the editor shows **Updated by Spree** with what changed.
+
+  Developers get the same operations through the Admin API and SDK.
+
+  **Learn more:** [Email templates guide](/user/settings/emails#templates) · [Developer guide](/developer/customization/emails)
+</Update>
+
+<Update label="Typed webhook events" description="October 6, 2026" tags={["Developers", "Integrations"]}>
+  Every event Spree publishes is now declared in one catalog, and webhooks built on them are typed from end to end. An integration that reacts to orders, payments or stock changes knows exactly which events exist and exactly what each one carries.
+
+  - The dashboard's webhook picker and the Admin API list every event, including those your extensions add.
+  - Payloads use the same shape as the Store API and never carry back-office data such as costs, internal notes or staff names.
+  - The TypeScript SDK checks a webhook's signature and returns a typed event, so your code knows the shape of the order or product inside it.
+  - A failed delivery is retried automatically, waiting longer before each attempt. Staff can re-send one from the delivery log, and an endpoint that keeps failing is turned off and the store team is emailed.
+
+  Publishing an event nobody declared fails in development, so typos are caught before they ship.
+
+  **Learn more:** [Webhooks](/developer/core-concepts/webhooks) · [Events](/developer/core-concepts/events) · [Webhook events reference](/api-reference/webhooks-events)
+</Update>
+
+<Update label="Integrations gallery" description="October 5, 2026" tags={["Integrations", "Payments", "Dashboard"]}>
+  **Settings → Integrations** is where you connect outside services to your store: payment providers, carriers for live shipping rates and labels, tax engines and more. It now lists payment providers too, so you can set up payments from the same place as everything else.
+
+  Each service appears as a card with its logo and status: not connected, connected but inactive, or active. Providers can add a link to their setup guide. Credentials are stored once per store. Turning a service on checks the connection first, and if the service refuses, you see its own error message, so a mistyped key never breaks checkout without you noticing.
+
+  Developers who build their own payment method or shipping rate provider can give it a logo and a setup guide link, so merchants see it in the gallery next to the built-in services.
+
+  **Learn more:** [Integrations user guide](/user/settings/integrations) · [All integrations](/integrations/integrations) · [Custom payment method](/developer/how-to/custom-payment-method)
+</Update>
+
+<Update label="Spree installer" description="October 5, 2026" tags={["Developers", "Platform"]}>
+  Starting a new Spree project takes one command. The installer sets up the Spree backend, its database and the admin dashboard, then asks a few questions: whether to add the Next.js storefront, whether to load sample products, and whether you run a marketplace and want the seller panel. When it finishes, your store is running and the installer prints your admin login and API keys.
+
+  - The admin dashboard is included in every project. Skip it and the backend still serves a built-in one.
+  - The seller panel is optional, and you can add it later with one command.
+  - Every prompt has a matching option, so the installer can run unattended in a build pipeline.
+  - New projects are created with encryption keys already set up.
+
+  After setup, the Spree command-line tool runs, updates and upgrades the project, opens a console, seeds data and creates admin users.
+
+  **Learn more:** [create-spree-app](/developer/create-spree-app/quickstart) · [Spree CLI](/developer/cli/quickstart)
+</Update>
+
+<Update label="Encrypted settings" description="October 5, 2026" tags={["Developers", "Platform"]}>
+  Settings stored on stores, payment methods, integrations, calculators and other records are now saved as JSON, and secrets are kept apart from them and encrypted. Once encryption keys are set, a copy of your database no longer reveals the keys to your payment provider.
+
+  - Payment gateway and integration credentials, webhook signing secrets, payment provider customer references and the sign-in tokens from connected identity providers are encrypted at rest.
+  - The Admin API returns a secret masked, showing only its last four characters.
+  - New projects get encryption keys at setup. Existing projects can generate them with one command, then encrypt existing secrets with an upgrade task.
+  - Extension authors declare a credential as a secret setting, and Spree stores and encrypts it for them.
+
+  **Learn more:** [Secret preferences](/developer/customization/model-preferences#secret-preferences) · [Encryption setup](/developer/deployment/environment_variables#active-record-encryption)
+</Update>
+
+<Update label="Packing slips" description="October 4, 2026" tags={["Shipping", "Dashboard"]}>
+  The printable packing slip has been redesigned with a clean layout. It shows order and fulfillment details, the ship-to and ships-from addresses, and a product table with images, SKUs and quantities.
+
+  Prices and an order summary appear when they are available, and match what is in the parcel when an order ships in parts. Slips print cleanly on A4 and Letter paper and come translated into every language Spree supports. Print one from the fulfillment on the order page.
+
+  **Learn more:** [Fulfillments](/developer/core-concepts/fulfillments)
+</Update>
+
+<Update label="Dashboard plugins and slots" description="October 1, 2026" tags={["Dashboard", "Seller Panel", "Developers"]}>
+  You can add your own pages and screens to the dashboard without forking it. Slots are named places on built-in pages where your own cards and fields appear, so you can extend a product, order, customer or seller page while still taking every Spree update.
+
+  Slots now cover the detail pages across the admin dashboard, including catalogs, price lists, promotions, purchase orders, stock transfers, seller payouts and webhooks. The seller panel has its own slots on its product, order, payout and profile pages.
+
+  Fields you add to a page's form save with that page's **Save** button. They load with the record, mark the page as changed when edited, and save with everything else, so your widget needs no save logic of its own. Customizations start in one file in your own dashboard app. When other stores need the same feature, package it as a plugin that any store can install, with nothing else to edit.
+
+  **Learn more:** [Slots](/developer/dashboard/customization/slots) · [Slots catalog](/developer/dashboard/slots-catalog) · [Plugin overview](/developer/dashboard/plugins/overview)
+</Update>
+
+<Update label="Liquid and MJML emails" description="October 1, 2026" tags={["Emails", "Developers"]}>
+  Every email Spree sends, from order confirmations and shipping notices to password resets and staff invitations, now renders from a Liquid template written in MJML. Liquid fills in the data; MJML turns a handful of layout tags into the markup email apps need, so messages look right in every mail client and stack properly on phones.
+
+  - Change an email by copying its template into your app. Your file wins as soon as it exists, with nothing to register.
+  - Templates read the same plain data the Store API returns, never internal objects, which is what lets merchants edit customer emails safely.
+  - Everything a template prints is escaped, so a customer's name can never become a live link.
+  - The plain-text version is generated from the HTML, so the two never drift apart.
+  - Customer emails take their colors and font from the store's branding settings.
+
+  Delivery works with any email provider over standard SMTP, configured once for the whole installation.
+
+  **Learn more:** [Email templates](/developer/customization/emails) · [Email delivery](/developer/providers/emails)
+</Update>
+
+<Update label="Typed SDKs with Zod" description="September 29, 2026" tags={["Developers", "Marketplace"]}>
+  Spree has one REST API with three typed clients for TypeScript: one for your storefront, one for back-office tools and integrations, and one for marketplace sellers. Each one handles sign-in, automatic retries and errors for you, so you write product, cart and order calls instead of plumbing.
+
+  The types are generated from the API itself, so every response field is typed and stays in step with what the server sends. Each SDK also ships Zod schemas, which check data at runtime where compile-time types are not enough: validating form input, or checking a payload that arrived from outside before you trust it. You can extend the schemas with your own custom fields.
+
+  The same schemas power typed webhook events in the storefront SDK.
+
+  **Learn more:** [Store SDK](/developer/sdk/quickstart) · [Admin SDK](/developer/sdk/admin/quickstart) · [Seller API](/api-reference/seller-api/introduction)
+</Update>
+
+<Update label="Marketplace settings" description="September 19, 2026" tags={["Marketplace", "Dashboard"]}>
+  The decisions that shape how your marketplace runs now live on one page: Settings → Marketplace. It covers who gets to trade, what goes on sale, what sellers hear from you, and how they get paid.
+
+  - Choose the payout provider, how often sellers are paid, and the minimum balance worth sending.
+  - Decide whether new sellers and their products are approved automatically or reviewed by you. Both are off by default.
+  - Turn off Spree's emails to sellers if you send seller messages yourself.
+  - Set a default tax rate for your commission when nothing more specific applies.
+
+  A seller can still carry their own payout schedule and minimum, which override the store-wide settings for that seller.
+
+  **Learn more:** [Marketplace settings user guide](/user/settings/marketplace) · [Payouts user guide](/user/sellers/payouts)
+</Update>
+
+<Update label="Dashboard in more languages" description="September 18, 2026" tags={["Dashboard", "Seller Panel"]}>
+  Your team can now run the store in the language they work in best. The admin dashboard is fully translated into seven languages: English, Spanish, German, French, Polish, Arabic and Simplified Chinese.
+
+  Each person picks their own language, so one teammate can work in Spanish while another works in German. The seller panel for marketplaces now ships in six languages, the same set without Spanish. Sellers can also edit their own name, photo and panel language from the account menu, and their choice follows them between devices.
+
+  Developers who add pages or plugins register their own translations in the same way, so custom screens appear in the language each person has chosen.
+
+  **Learn more:** [Dashboard translations](/developer/dashboard/customization/translations) · [Build a marketplace](/developer/how-to/build-a-marketplace)
+</Update>
+
+<Update label="Store credits in Loyalty" description="September 14, 2026" tags={["Dashboard", "Payments"]}>
+  Gift cards and store credits are money your store owes customers, not marketing. They now live together in a new **Loyalty** section of the dashboard, while Promotions keeps discounts.
+
+  **Loyalty → Store Credits** shows every credit in your store on one page. Before, you had to open each customer in turn to answer "how much do we owe?". Now you can:
+
+  - See the outstanding, issued and used amounts for each currency, which follow any filter you apply
+  - Filter by customer, currency, origin, who issued it, or whether money is left
+  - Open a credit to see every movement of its balance
+  - Issue a new credit to any customer, and edit or delete credits that have not been spent
+
+  Each credit shows where it came from, such as a redeemed gift card, a return, or a goodwill gesture from your team. Developers can list store credits across customers through the Admin API.
+
+  **Learn more:** [Store credits list](/user/loyalty/store-credits-list) · [Issue store credits](/user/loyalty/store-credits) · [Developer guide](/developer/core-concepts/store-credits-gift-cards)
+</Update>
+
+<Update label="Redesigned dashboard" description="September 13, 2026" tags={["Dashboard", "Seller Panel"]}>
+  The admin dashboard and the seller panel have a new look. The page header now pins to the top of a clean, inset work area, and the account menu and search moved into the sidebar, so more of the screen is given to your work.
+
+  What changed:
+
+  - **Dark mode**, alongside light mode, or follow your device setting
+  - A **Command+K menu** that searches orders, products, customers, companies and sellers, and creates new records by typing "new product" or similar
+  - **New table filters**, with always-visible quick filters for statuses and dates and ready-made ranges such as today or last month
+  - One consistent design for every field, button and status label
+
+  Everything is styled from a shared set of design tokens, so developers can restyle the colors, corner radius and fonts of their own dashboard, in both light and dark mode, without changing a single component.
+
+  **Learn more:** [Dashboard overview](/developer/dashboard/overview) · [Theming](/developer/dashboard/customization/theming) · [Tables](/developer/dashboard/customization/tables)
+</Update>
+
+<Update label="Reports" description="September 12, 2026" tags={["Reporting", "Dashboard"]}>
+  Spree now has a **Reports** section that answers everyday questions about your store: what sold, where the money came from and what moved through the warehouse. The dashboard home screen was rebuilt on the same foundation, with key figures and counters such as orders to fulfill, open returns and low stock.
+
+  Every store starts with ready-made reports for sales, payments, stock and seller payouts. You can also build your own:
+
+  - Pick the numbers, such as net sales, orders, units sold, gross profit or abandoned carts
+  - Group them by time, product, category, channel, market, country, customer or seller
+  - Filter, sort, and compare with the previous period
+  - Save the report for your team and export it as a CSV file
+
+  Sales figures follow one clear chain from gross sales to net and total sales, and each report answers in one currency without silent conversion. Developers can add their own metrics and groupings, and query the same data through the Admin API.
+
+  **Learn more:** [Reports user guide](/user/reports/reports) · [Reporting developer guide](/developer/core-concepts/reporting)
+</Update>
+
+<Update label="Inventory page" description="September 11, 2026" tags={["Inventory", "Dashboard"]}>
+  The new Inventory page answers the questions merchants ask first: what do I have, where is it, and how much can I still sell? It lists every product at every location, with five figures side by side: on hand, allocated, reserved, available and incoming.
+
+  - Filter by location or by stock status, and search by name or SKU.
+  - Correct a count in place after a stocktake, setting a new number or adjusting by an amount, with a reason recorded in the stock history.
+  - See which stock is already on its way before you reorder, and start a transfer or purchase order straight from the row that needs it.
+
+  Incoming stock counts from the moment a purchase order is placed or a transfer leaves, and comes back down as goods are received.
+
+  **Learn more:** [Inventory user guide](/user/inventory/stock-levels) · [Developer guide](/developer/core-concepts/inventory#the-inventory-page)
+</Update>
+
+<Update label="Purchase orders and receiving" description="September 10, 2026" tags={["Inventory", "Dashboard"]}>
+  Buying stock from suppliers now happens inside Spree. A purchase order records what you asked for, what each unit costs, which warehouse it is going to and when it was promised. Once it is placed, the units show as incoming, so nobody reorders them by mistake.
+
+  - Keep a shared supplier list with contacts and addresses.
+  - Count each delivery in as it arrives, accept what is fine and reject what is damaged, wrong or expired.
+  - Receive in batches, and close an order short when the rest is not coming.
+  - Find overdue orders and orders past their cancel-by date.
+  - Export orders to send to suppliers, and import them from a spreadsheet.
+
+  Stock transfers between your own warehouses work the same way: packed, sent, then counted in at the other end. What each unit cost follows it into your stock history.
+
+  **Learn more:** [Purchase orders](/user/inventory/purchase-orders) · [Stock transfers](/user/inventory/stock-transfers) · [Developer guide](/developer/core-concepts/inventory#buying-stock-in)
+</Update>
+
+<Update label="Seller payouts" description="September 9, 2026" tags={["Marketplace", "Payments", "Seller Panel"]}>
+  You and your sellers can now see exactly where the money is. On a schedule you choose, each seller's earnings are batched into a payout, and every payout lists the earnings it covers, so a seller can match it to the deposit in their bank.
+
+  - The Transfers and Payouts pages in your dashboard show every earning and payout, with each earning linked to its order.
+  - A Balance card on each seller's page shows what they have earned, what is pending, what is owed and what has been paid.
+  - Sellers see their own balances, earnings and payouts in the Seller Panel.
+  - Pay sellers by hand and mark each payout paid with its bank reference, or let a payout provider send the money.
+
+  Developers can connect a bank transfer service, a wallet or another payment provider by writing their own payout provider.
+
+  **Learn more:** [Payouts user guide](/user/sellers/payouts) · [Payout provider developer guide](/developer/providers/payouts)
+</Update>
+
+<Update label="Wholesale freight" description="September 8, 2026" tags={["B2B", "Shipping"]}>
+  A wholesale order does not leave the warehouse as parcels. It leaves as cartons, a pallet or a container, and international freight is usually priced by a forwarder after someone has looked at the order. Spree now handles this next to retail parcel shipping, on the same products.
+
+  - Define your cartons, pallets and containers as package types, then record how many units fit in a carton and how many cartons fit on a pallet.
+  - Every cart and order shows its freight totals: units, cartons, pallets, cubic meters and weight.
+  - Offer shipment tiers such as "Pallet" or "20ft container" based on packed volume, and offer them only to company buyers.
+  - Freight methods show "Quoted after review" instead of "Free", and the buyer can still check out. Add the forwarder's quote to the order as a fee later.
+
+  Products can also be sold by the carton, so a buyer sees "2 cartons" while the order holds 96 units.
+
+  **Learn more:** [Package types user guide](/user/settings/package-types) · [Freight developer guide](/developer/core-concepts/freight)
+</Update>
+
+<Update label="Volume pricing" description="September 7, 2026" tags={["B2B", "Catalog"]}>
+  Business buyers expect to pay less per unit when they order more. Price lists can now carry quantity breaks, so one variant has a whole price ladder: one price from 1 unit, a lower one from 24, and lower again from 100.
+
+  - Add up to ten breaks per variant and currency on a price list. When an order line reaches a break, it is priced at that break's unit price.
+  - Spree refuses a break that costs more than the quantity below it, so a customer never pays more per unit for ordering more.
+  - Export a price list as a spreadsheet file, edit it, and import it back. Rows that cannot be applied are listed in a report and do not stop the rest.
+
+  Breaks work on catalog price lists too. When a company holds several catalogs, the price compared is the one for the quantity being bought.
+
+  **Learn more:** [Price lists user guide](/user/pricing/price-lists#quantity-breaks) · [Pricing developer guide](/developer/core-concepts/pricing)
+</Update>
+
+<Update label="Fees and surcharges" description="September 6, 2026" tags={["Checkout", "Tax"]}>
+  Extra charges such as gift wrapping, handling or cash on delivery are now their own lines on an order, not amounts hidden inside a total. Customers see each fee in their cart and on their order before they pay, and merchants can answer "what did we charge in handling this quarter?" without untangling a mixed list.
+
+  - Add a fee to a whole order, a single item or one parcel, with a label the customer sees and an amount.
+  - Pick a kind for each fee, such as surcharge, handling, gift wrap, cash on delivery or payment fee, so you can report on them later.
+  - Add or remove fees on placed orders, not only drafts. The totals and payment status update straight away.
+
+  Fees are taxed at the same rates as the items, and that tax is recorded against the fee itself, so tax on goods, delivery and fees stays separately visible. Customs duties are the one kind of fee that is not taxed.
+
+  **Learn more:** [Fees on orders](/user/orders/discounts-fees-and-taxes#fees) · [Developer guide](/developer/core-concepts/fees)
+</Update>
+
+<Update label="Seller order management" description="September 5, 2026" tags={["Marketplace", "Seller Panel"]}>
+  On a marketplace, the seller is the one who packs the order, posts it and handles anything that goes wrong afterwards. The Seller Panel's order screens now match the admin dashboard's, so sellers can run their own orders from start to finish without asking you for help.
+
+  - Sellers see the list and full detail of their own orders, and never anyone else's.
+  - They ship orders with tracking, handle deliveries and shipping labels, and cancel orders when needed.
+  - They manage returns, exchanges and claims on their own orders.
+  - Shipping an order is what records the seller's earning on their ledger.
+
+  Some decisions stay with you. A seller cannot mark an order as delivered, because only the buyer or the carrier can confirm that a parcel arrived.
+
+  **Learn more:** [Marketplace orders user guide](/user/sellers/orders) · [Developer guide](/developer/how-to/build-a-marketplace#what-the-client-covers)
+</Update>
+
+<Update label="Data privacy tools" description="September 5, 2026" tags={["Compliance", "Developers"]}>
+  Spree now gives merchants the tools European privacy and consumer law expects: answering "send me my data" and "delete me" requests, proving consent, showing lawful sale prices and telling buyers how long they have to change their mind.
+
+  - Customers can request a copy of their data or its erasure from their account, and staff can do both from the customer page in the dashboard. The export arrives by email as a link that expires.
+  - Erasure removes everything that identifies a person but keeps orders, payments and taxes intact, because those records carry their own legal retention duty.
+  - Consent to marketing and to your terms is recorded with when, where and which version of the text the person accepted.
+  - Price history records the lowest price of the previous 30 days for discount displays.
+  - Orders show the end of the EU 14-day withdrawal window, set per market.
+
+  **Learn more:** [Data privacy](/developer/core-concepts/data-privacy)
+</Update>
+
+<Update label="Shipping labels and tracking" description="September 4, 2026" tags={["Shipping", "Integrations"]}>
+  Buy postage without leaving Spree. Buying a label records its tracking number for you, so nobody types it by hand. If you bought the label elsewhere, upload it, and the file and its cost stay with the parcel.
+
+  - Labels are stored in Spree, so you can reprint one after the carrier's link expires.
+  - What you paid for postage is recorded for your own accounting and never shown to customers.
+  - Refund a purchased label with the carrier if the parcel never shipped.
+  - One shipment can travel as several parcels, each with its own tracking number.
+
+  Carrier updates flow back on their own: in transit, out for delivery, delivered, or returned to sender. A parcel that bounces stays marked as sent, because you did hand it over, and the problem shows up on its tracking. The order counts as delivered only when every parcel has arrived.
+
+  **Learn more:** [Shipping labels](/developer/core-concepts/fulfillments#shipping-labels) · [Parcel tracking](/developer/core-concepts/fulfillments#where-the-parcel-actually-is) · [EasyPost labels](/integrations/shipping/easypost#buying-labels)
+</Update>
+
+<Update label="Seller delivery methods" description="September 3, 2026" tags={["Marketplace", "Shipping", "Seller Panel"]}>
+  Each seller packs and ships their own goods from their own warehouse, so they now manage their own shipping setup. Sellers create their own delivery methods with their own rates, alongside any shared ones you offer, and record the boxes and cartons they ship in.
+
+  - Sellers set up delivery methods with their own rates from the Seller Panel.
+  - They record their own package types and choose a default box, or pack into your standard cartons without measuring them again.
+  - When a seller lists a product, they choose a product type and a delivery profile from the lists you provide.
+
+  Delivery profiles and zones stay under your control: sellers pick from them rather than defining them. A parcel is quoted using the box of whoever shipped it, falling back to yours when a seller has not recorded one, so checkout keeps working while a seller finishes their setup.
+
+  **Learn more:** [Seller products user guide](/user/sellers/products) · [Package types settings](/user/settings/package-types) · [Developer guide](/developer/core-concepts/delivery-setup#on-a-marketplace)
+</Update>
+
+<Update label="Translations page" description="September 2, 2026" tags={["Catalog", "Dashboard"]}>
+  Selling in more than one language means keeping track of what still needs translating. The new Translations page, under Products in the dashboard, shows how far your catalog is translated into every language your markets use, without opening products one by one.
+
+  - See coverage per language, with the number of translated products and a progress bar.
+  - Scan a grid of products with a column per language, showing which translations exist and which are missing.
+  - Click a product to edit its translations in a side panel.
+  - Export every translation to a spreadsheet, and import the finished file back in bulk.
+
+  Product names, descriptions, web addresses and search engine fields can all be translated, along with categories, collections, option labels and more. Developers can read and write the same translations through the APIs.
+
+  **Learn more:** [Translations guide](/user/translations/translations) · [Developer guide](/developer/core-concepts/translations)
+</Update>
+
+<Update label="Seller ledger and Stripe Connect" description="September 1, 2026" tags={["Marketplace", "Payments"]}>
+  Spree now keeps a ledger of what every seller has earned. A seller earns when their order ships: Spree records their share of the sale, less your commission, in the sale's currency. A refund never edits an earning; it adds a reversal instead, so a seller's balance always adds up from their history.
+
+  With Stripe Connect, money moves automatically too:
+
+  - Sellers connect a Stripe account from their panel, through Stripe's own hosted onboarding pages, and Spree never handles their identity or bank details.
+  - As each seller's goods ship, their share is transferred to their connected account, tied to the customer payment that funds it.
+  - A Stripe notification confirms when the money has landed, and earnings waiting for an account are sent as soon as the seller can be paid.
+
+  Stripe Connect uses the same Stripe account and keys as your store's payments, so there is nothing separate to connect.
+
+  **Learn more:** [Stripe Connect guide](/integrations/payments/stripe-connect) · [Developer guide](/developer/core-concepts/sellers#payouts)
+</Update>
+
+<Update label="Catalogs" description="August 31, 2026" tags={["B2B", "Catalog"]}>
+  A catalog is a commercial agreement. It decides which products an audience sees, what they pay and how much they must order, so you can give a wholesale customer their own range and prices without running a second store.
+
+  - Leave the product list empty to keep the full range at agreed prices, or add products so the audience sees only those.
+  - Price products by typing in amounts or with one percentage off the shop price, for example "15% off everything", with no rows to maintain.
+  - Assign a catalog to a company, which covers every division beneath it, or to a customer group. A sales channel can also name a default catalog for everyone who buys through it.
+  - Build a new catalog step by step with the setup wizard, then activate it when it is ready.
+
+  When a company holds several catalogs, the buyer pays the best price among them. Anything outside a buyer's catalogs cannot be added to their cart.
+
+  **Learn more:** [Catalogs user guide](/user/catalogs/catalogs) · [Developer guide](/developer/core-concepts/catalogs)
+</Update>
+
+<Update label="Quantity rules and order minimums" description="August 31, 2026" tags={["B2B", "Checkout"]}>
+  Wholesale goods are rarely sold one at a time. Quantity rules let you say how much a buyer must order of each product, and order minimums say how much a whole order must come to.
+
+  - A minimum order quantity and an order multiple for each product. A minimum of 48 in steps of 24 allows 48, 72 and 96, and refuses 50.
+  - Set them on a variant for every buyer, as a default for a whole catalog, or per product inside a catalog.
+  - A minimum order value in each currency, such as €500, set on the catalog.
+
+  Spree never rounds a quantity silently. Adding a quantity that breaks a rule is refused, and the message names the nearest valid quantities. The cart shows how far an order is below its minimum, so a storefront can display "€180 to go", and it cannot be completed until the minimum is met. Staff entering a draft order are exempt, so an agreed exception is never blocked.
+
+  **Learn more:** [Catalogs user guide](/user/catalogs/catalogs#order-terms) · [Build a B2B store](/developer/how-to/build-a-b2b-store#set-how-much-a-buyer-must-order)
+</Update>
+
+<Update label="Purchase order numbers" description="August 31, 2026" tags={["B2B", "Checkout"]}>
+  For a business buyer, their own purchase order number matters as much as your order number. Their accounts team matches the order, the invoice and the payment against it.
+
+  Buyers can now enter their purchase order number at checkout. It is kept on the order, shown on the order page and in the confirmation email, and staff can search for orders by it. Buyers can also attach the signed purchase order document itself, as a PDF, an image or a Word file.
+
+  Turn on **Require a PO number** for a company, and its buyers must supply one before they can check out. The cart lists it as a missing step until they do, so a storefront can ask for it at the right moment. Staff entering an order are not asked, because the reference often arrives with the paperwork later, and it can be corrected on a placed order at any time.
+
+  **Learn more:** [Companies user guide](/user/customers/companies#purchase-order-numbers) · [Checkout requirements](/developer/core-concepts/carts#checkout-requirements) · [Build a B2B store](/developer/how-to/build-a-b2b-store#purchase-order-numbers)
+</Update>
+
+<Update label="Draft order negotiation" description="August 31, 2026" tags={["B2B", "Dashboard"]}>
+  Many business orders arrive by email or phone, or after a negotiation. Until now, giving one customer a special price on one order meant editing a price list, which changed the price for everyone.
+
+  Draft orders now handle the deal itself:
+
+  - Set a negotiated unit price on any line of a draft. The line is marked as negotiated and is never repriced, even when the quantity changes.
+  - Reset a line to return it to catalog pricing.
+  - Name the company the order is for, so its catalog prices and tax treatment apply, and record the buyer's purchase order number.
+  - Place the order with payment still to come, then record the payment when the invoice is paid.
+
+  Drafts live under **Orders → Drafts** in the dashboard, where the unit price is editable on each line. Negotiated prices can only be set before the order is placed. After that, use fees and discounts.
+
+  **Learn more:** [Creating orders user guide](/user/orders/creating-orders) · [Build a B2B store](/developer/how-to/build-a-b2b-store#staff-keyed-draft-orders)
+</Update>
+
+<Update label="VAT IDs and tax exemptions" description="August 29, 2026" tags={["B2B", "Tax"]}>
+  Business customers often pay tax differently, and the paperwork matters. Spree now records a company's tax registrations, such as a VAT number or an Australian Business Number, and its tax exemption certificates.
+
+  - EU VAT numbers are checked automatically for the correct format and check digits when saved, so a typo never reaches an invoice. Registry lookups can be added through an extension.
+  - Exemption certificates apply to the country or state that issued them. Staff verify a certificate before it counts, and it stops applying by itself when it expires.
+  - When a sale is exempt, the order still records zero-amount tax lines, so you can explain later why no tax was charged.
+  - Registrations belong to legal entities. A subsidiary with no VAT number of its own never borrows its parent's.
+
+  EU reverse charge on business sales needs a connected tax service that supports it. The dashboard warns you when a market needs it and the built-in tax engine cannot provide it.
+
+  **Learn more:** [Companies user guide](/user/customers/companies#tax) · [Tax-exempt customers](/developer/core-concepts/taxes#tax-exempt-customers) · [Build a B2B store](/developer/how-to/build-a-b2b-store#handle-business-tax)
+</Update>
+
+<Update label="Digital products" description="August 28, 2026" tags={["Catalog", "Dashboard"]}>
+  You can now sell e-books, design files, courses and software from the dashboard, with no developer work. A digital product is an ordinary product that delivers a download instead of a parcel, so a cart of digital items skips the delivery step at checkout.
+
+  - Attach files to a product on its **Digital files** card. Files are kept in private storage and are only handed out through short-lived links.
+  - Each purchase grants the customer their own download links, sent in a "your files are ready" email and listed in their account.
+  - Limit how many times, and for how many days, a file can be downloaded. Set store-wide defaults or override them per file.
+  - Replace a file mid-sale without breaking links already sent, and reset a customer's access from the order page.
+
+  A failed download never uses up the customer's allowance. Developers can also connect a provider that creates the deliverable on demand, such as a license key from a billing system.
+
+  **Learn more:** [Sell digital products](/developer/how-to/sell-digital-products) · [Developer guide](/developer/core-concepts/products#digital-products)
+</Update>
+
+<Update label="Store and seller policies" description="August 28, 2026" tags={["Compliance", "Dashboard", "Marketplace"]}>
+  Your terms, privacy notice, returns and shipping policies now live inside Spree. Every new store starts with these four policies already created and ready to write. They matter for trust and for compliance, and in most places you are required to publish at least some of them.
+
+  Manage them in **Settings → Policies**. Write each one with a formatting toolbar, give it its own web address, and save to publish it immediately. Add more for anything the four do not cover, such as a warranty, an accessibility statement or a cookie notice. Spree's Next.js storefront publishes each policy as a page automatically, and any other storefront reads them through the API.
+
+  In a marketplace, sellers publish policies of their own, and you can make a seller policy a requirement they must complete during onboarding.
+
+  **Learn more:** [Policies](/user/settings/policies) · [Seller onboarding](/user/sellers/onboarding)
+</Update>
+
+<Update label="Seller product review" description="August 27, 2026" tags={["Marketplace", "Catalog"]}>
+  What your marketplace lists is what it vouches for. Sellers no longer publish products directly: they submit them, and you decide. A submitted product waits in your review queue, hidden from the storefront, until you approve it or send it back.
+
+  - Filter the products list by the Proposed status to see everything waiting for review.
+  - Approve a product to put it on sale right away, or send it back with a reason the seller will see.
+  - Sellers revise and resubmit rejected products, and can always take their own listing down.
+  - Each product shows who made the decision and when, while the seller sees the note and the date.
+
+  Stores that already trust their sellers can turn on automatic approval and skip the queue. Developers can subscribe to an event at each step of the review.
+
+  **Learn more:** [Seller products user guide](/user/sellers/products) · [Developer guide](/developer/core-concepts/products#seller-submissions)
+</Update>
+
+<Update label="Company hierarchies" description="August 26, 2026" tags={["B2B"]}>
+  A business buyer is not just one person. They buy for an organization that has other buyers, several delivery sites, a VAT number and a finance team that wants to see every order. Companies let you model that organization as a tree: a head office with subsidiaries, divisions and regional units, up to five levels deep.
+
+  - Membership reaches downward, so a buyer added at "Acme Europe" can buy for every division below it.
+  - Add a colleague by email. An existing customer joins straight away, and anyone new gets an invitation that is valid for 30 days.
+  - Each company keeps its own address book of labelled ship-to and billing addresses, separate from any one person's.
+  - Orders are recorded against the company, so the whole organization's spending shows in one place.
+
+  Members can manage colleagues, invitations and the address book themselves through the Store API. Roles, order approvals and spending limits are part of Spree Enterprise.
+
+  **Learn more:** [Companies user guide](/user/customers/companies) · [Developer guide](/developer/core-concepts/companies) · [Build a B2B store](/developer/how-to/build-a-b2b-store)
+</Update>
+
+<Update label="PIM and ERP connections" description="August 25, 2026" tags={["Integrations", "Inventory", "Catalog"]}>
+  Larger merchants rarely start from zero. They already run an ERP that owns stock and a product information system that owns product data and prices. Spree is designed to work with those systems rather than replace them, or keep a copy that slowly drifts out of date.
+
+  The rule is simple: Spree is the record of what the shopper sees, and your existing systems stay the record of what is true. Stock, prices and product data flow into Spree, and product pages render from Spree's own copy, so shoppers never wait on another system. Spree checks with your systems live only at the moments that matter, such as completing an order.
+
+  Stock feeds from a warehouse or ERP can update thousands of stock levels in a single request. A store that connects nothing works exactly as before.
+
+  **Learn more:** [How Spree fits your systems](/developer/providers/overview) · [Inventory developer guide](/developer/core-concepts/inventory)
+</Update>
+
+<Update label="Seller Panel and Seller API" description="August 25, 2026" tags={["Marketplace", "Seller Panel", "Developers"]}>
+  Sellers now get their own back office, separate from your dashboard. The Seller Panel is where a seller runs their shop inside your marketplace, and it is built on the same foundations as the admin dashboard, so both look and behave alike. Every request is limited to the signed-in seller, so a seller can never reach another seller's data.
+
+  - Sellers sign in, reset their own password, and accept invitations to join a seller's team.
+  - They edit their profile, manage their team, and work through onboarding.
+  - They create and edit products, use bulk actions on many products at once, and submit them for review.
+  - They import products from a spreadsheet file and export their orders and products as CSV files.
+
+  You can restyle and re-word the panel to match your brand and add your own pages and widgets with the same plugin system as the dashboard. Developers building a native seller app or connecting a seller's own systems can use the Seller API and its TypeScript SDK directly.
+
+  **Learn more:** [Seller panel developer guide](/developer/how-to/build-a-marketplace#stand-up-the-seller-panel) · [Seller API reference](/api-reference/seller-api/introduction)
+</Update>
+
+<Update label="Media library and video" description="August 24, 2026" tags={["Catalog", "Dashboard"]}>
+  Every image and video in your store now lives in one store-wide media library. Upload a file once, then place it wherever you need it: on a product, a variant, a category, a collection, or inside a description. You no longer upload the same photo twice.
+
+  - Each placement keeps its own alt text and position, while the file itself is stored only once.
+  - Product galleries can hold video: upload your own file, or paste a YouTube or Vimeo link. Spree checks the link when you save it.
+  - Add a poster image so a video shows a still before it plays.
+  - Set a focal point, so the important part of an image stays in frame when a storefront crops it.
+  - A file that is in use cannot be deleted by accident. Spree shows you where it is used first.
+
+  Images are converted to a web-friendly format and resized ahead of time, so listing pages stay fast.
+
+  **Learn more:** [Media developer guide](/developer/core-concepts/media) · [Product video](/developer/core-concepts/media#video)
+</Update>
+
+<Update label="Dashboard on your phone" description="August 23, 2026" tags={["Dashboard"]}>
+  Running a store does not stop when you leave your desk. The dashboard now works on a phone, so you can check an order, look up a customer or change a product from wherever you are.
+
+  On small screens, the navigation opens as a proper mobile menu with touch-sized rows that close when you tap a link. Bulk actions sit at the bottom of the screen, within reach of your thumb, and search fields can be cleared on every phone.
+
+  Settings were reorganized at the same time. The Settings area now opens on a searchable page of cards, with entries grouped around the task at hand, so developer tools such as API keys and webhooks no longer sit next to staff and roles. A heading, a link back to the dashboard and breadcrumbs show where you are, even several levels deep. Developers can still add their own groups and entries to the settings menu.
+
+  **Learn more:** [Dashboard overview](/developer/dashboard/overview) · [Navigation customization](/developer/dashboard/customization/navigation)
+</Update>
+
+<Update label="Split checkout across sellers" description="August 21, 2026" tags={["Marketplace", "Checkout", "Payments"]}>
+  A shopper buying from three sellers expects one basket and one payment, not three checkouts. Spree now handles this for you: the customer fills one cart, enters one address and pays once. When the order is placed, Spree creates one order per seller, held together in an order group, so each seller ships, gets paid and is refunded separately without seeing anyone else's business.
+
+  - The single payment is divided into payment splits, so each seller's share of the charge is recorded exactly.
+  - Delivery and order-level fees are shared out by the value of each seller's items.
+  - The customer receives one confirmation email for the whole purchase.
+  - In the dashboard, each order shows its seller and links to the other orders in its group.
+
+  A cart with only one seller's products, or only your own, still produces a single order. The Store and Admin SDKs tell you whether completing a cart returned one order or a group.
+
+  **Learn more:** [Marketplace orders user guide](/user/sellers/orders) · [Developer guide](/developer/core-concepts/sellers#one-checkout-several-sellers)
+</Update>
+
+<Update label="Seller onboarding" description="August 20, 2026" tags={["Marketplace", "Seller Panel"]}>
+  Bringing a seller onto your marketplace is now a process with a decision at the end of it. You define the checklist a seller must complete before they can sell, they work through it in their own panel, then they ask you to review them. Every marketplace asks for different things, so the checklist is yours to build rather than fixed in code.
+
+  - Ask sellers to accept your terms, complete their profile, give billing and returns addresses, set up delivery, and list a minimum number of products.
+  - Request documents to review, such as a business registration, or a manual check you perform yourself.
+  - Ask sellers to connect a payout account when you pay them through a provider.
+  - Mark each item required or recommended, reorder the list, and switch items off without deleting them.
+
+  Required items block approval until they are done, unless you deliberately override them. Developers can add their own requirement types, and these appear in the same picker.
+
+  **Learn more:** [Onboarding user guide](/user/sellers/onboarding) · [Seller requirements settings](/user/settings/seller-requirements) · [Developer guide](/developer/core-concepts/sellers#onboarding-requirements)
+</Update>
+
+<Update label="Workflows replace state machines" description="August 20, 2026" tags={["Developers", "Platform"]}>
+  Spree no longer uses state machines. Orders, payments, gift cards, returns and other records hold a plain status, and each change of status happens in one named workflow, such as completing a checkout, capturing a payment or cancelling an order. Nothing changes status on its own, so it is always clear what moved a record and why.
+
+  Workflows give developers named places to add their own logic without copying Spree's code:
+
+  - Veto an operation before anything is written, such as a purchase limit or a legal hold, at no cost and with nothing to roll back.
+  - React after something happened, inside the same database transaction when needed.
+  - Feed extra data into a calculation.
+
+  A rejection is reported in words, field by field, in the same shape as any validation error, so storefronts and the dashboard can show customers and staff exactly what to fix. Extensions can also add statuses of their own.
+
+  **Learn more:** [Services and workflows](/developer/customization/workflows) · [Validations](/developer/customization/validations)
+</Update>
+
+<Update label="Stock history" description="August 19, 2026" tags={["Inventory", "Dashboard"]}>
+  When a stock count looks wrong, the first question is how it got that way. Every change to stock is now recorded with what happened and the document that caused it, so you get a clear answer instead of a list of numbers.
+
+  Each entry says whether stock was received, allocated to an order, shipped, released after a cancellation, or adjusted by hand. It names the purchase order, transfer, return, exchange, fulfillment or order behind the change, and links straight to it. Manual corrections carry a reason, such as a stocktake, damage or theft.
+
+  Find the history on each stock location in the dashboard, or read it through the API for any product across every location. Stock that arrived from a supplier also records what it cost, so you can tell what your inventory is worth.
+
+  **Learn more:** [Stock history user guide](/user/settings/locations#stock-history) · [Developer guide](/developer/core-concepts/inventory#stock-movements)
+</Update>
+
+<Update label="Stock that matches the shelf" description="August 19, 2026" tags={["Inventory", "Checkout"]}>
+  Placing an order no longer takes stock off the shelf. The units are allocated to the order and come off the on-hand count only when the parcel ships, so the number Spree shows matches what a warehouse worker counts.
+
+  This works together with checkout reservations. Two shoppers can both see the last unit, and without reservations one of them finds out at the payment step that it is gone. When a customer enters checkout, their items are held for a short time and other shoppers stop seeing them as available. The hold is extended while the customer keeps editing the cart, becomes a real order when they pay, and returns to stock if they leave.
+
+  You choose how long a hold lasts, or switch reservations off. Backorderable items are never held.
+
+  **Learn more:** [Inventory user guide](/user/inventory/stock-levels) · [Developer guide](/developer/core-concepts/inventory#reservations-during-checkout)
+</Update>
+
+<Update label="Payment gateways" description="August 18, 2026" tags={["Payments", "Checkout", "Integrations"]}>
+  Spree's payment integrations now share one checkout flow, so Stripe, Adyen and PayPal all work the same way from your storefront's point of view. Card details are collected by the provider's own payment form and never touch your server, so Spree never stores sensitive card data.
+
+  - Accept cards, digital wallets such as Apple Pay and Google Pay, buy-now-pay-later options such as Klarna, Afterpay and PayPal Pay Later, and bank transfers, depending on the provider.
+  - Customers can save a card or other payment method for future purchases.
+  - An order completes even if the customer closes the tab after paying: the provider's confirmation finishes the job, and whichever signal arrives first wins without charging twice.
+  - Offline methods, such as check, cash on delivery, bank transfer or purchase order, work without any provider session.
+
+  **Learn more:** [Payments](/developer/core-concepts/payments) · [Stripe](/integrations/payments/stripe) · [PayPal](/integrations/payments/paypal)
+</Update>
+
+<Update label="Commission engine" description="August 17, 2026" tags={["Marketplace", "Tax"]}>
+  Commission is how a marketplace earns: a cut of each sale a seller makes. You set it as rates, each with rules for when it applies, and Spree records the result of every sale as a commission line that never changes afterwards. Editing a rate changes what the next sale is charged, never what a past one was.
+
+  - Charge a percentage, with an optional floor and cap per currency, or a fixed fee per sale.
+  - Target rates by seller, category, product or item value, and combine several rules on one rate.
+  - Rates are tried from the top of the list, and the first match wins, so drag a row to change the answer.
+  - Commission is charged after discounts and excludes the customer's sales tax or VAT by default, with an option to include delivery.
+
+  Tax on your commission follows the seller's location, not the shopper's, because your commission is a separate service you sell to the seller.
+
+  **Learn more:** [Commission rates user guide](/user/sellers/commission-rates) · [Developer guide](/developer/core-concepts/commissions)
+</Update>
+
+<Update label="Sellers and marketplace" description="August 16, 2026" tags={["Marketplace"]}>
+  Spree can now run a marketplace: other businesses list and sell their products through your store, while you keep control of the catalog, the customer and the payment. A seller is a vendor with their own products, stock locations, team and orders. A product with no seller stays your own stock, so a store that is part shop, part marketplace is a normal setup.
+
+  - Invite a seller by email, then approve, suspend, reinstate or cancel them from their page in the dashboard.
+  - Track each seller through a clear lifecycle, from invited and onboarding to approved.
+  - Sellers can pause their own listings with holiday mode, without you suspending them.
+  - Every sale records which seller it came from, and several sellers can offer the same listing, with the marketplace choosing which offer to feature.
+
+  Everything a marketplace needs ships in the open-source core, with no commercial licence required. Developers get the same controls through the Admin API and SDK.
+
+  **Learn more:** [Sellers user guide](/user/sellers/sellers) · [Managing sellers](/user/sellers/managing-sellers) · [Developer guide](/developer/core-concepts/sellers)
+</Update>
+
+<Update label="Duties and import fees" description="August 15, 2026" tags={["Tax", "Shipping", "Catalog"]}>
+  When a parcel crosses a border, the destination country may charge import duty. If the shopper only learns about it when a courier asks for money at the door, parcels get refused. Spree now shows customs duties as their own line at checkout, so the customer sees the full cost before paying.
+
+  - Describe each variant the way customs authorities do: a commodity code, the country where it was made, and a plain description for the declaration.
+  - Edit these details per variant, in the bulk product editor, or through imports.
+  - Each duty keeps a copy of what it was calculated from, so correcting a product's classification later never changes what a past customer was charged.
+  - Duties are not taxed again as if they were a sale.
+
+  Spree records the classification and charges the duty, while a landed-cost provider works out the amount. Carrier integrations use the same details to fill in customs declarations on international labels.
+
+  **Learn more:** [Customs duties](/developer/core-concepts/fees#customs-duties) · [Customs classification](/developer/core-concepts/fees#customs-classification)
+</Update>
+
+<Update label="Tax providers" description="August 14, 2026" tags={["Tax", "Integrations"]}>
+  Built-in tax rates work when the rules are simple. They become a liability when they are not: US sales tax varies by city and changes constantly, and cross-border VAT has thresholds that move with your sales. Now you can connect a tax service such as Avalara and let it work out the tax instead of maintaining rates yourself.
+
+  The tax provider is chosen per market, so one store can use its own rates in a simple market and an external service in a complex one. A provider says up front what it cannot handle, and the dashboard warns you before you pair it with a market that needs it.
+
+  Whichever provider you use, every order keeps a tax line per charge with its own copy of the rate and label, so past orders never change when rates do. The order page names an exemption when a buyer's certificate was applied, and flags an order when no tax rate matched the address. Tax given back on a return covers only the units that came back.
+
+  **Learn more:** [Taxes developer guide](/developer/core-concepts/taxes#connecting-a-tax-service) · [Avalara setup](/integrations/tax/avalara) · [Taxes on orders](/user/orders/discounts-fees-and-taxes#taxes)
+</Update>
+
+<Update label="Payment capture options" description="August 14, 2026" tags={["Payments", "Checkout"]}>
+  Every store now chooses when money is actually taken from the customer, with one clear setting instead of two overlapping switches that could contradict each other.
+
+  - **At checkout** takes the money as soon as the order is placed.
+  - **On dispatch** reserves the amount at checkout and takes it when the goods go out.
+  - **Manually** reserves the amount at checkout and lets staff take it when they choose.
+
+  The setting is the default for every payment method in the store, and an individual payment method can override it. A store that ships made-to-order goods can charge on dispatch by default, while one payment method that needs it still charges at checkout. Reserved payments wait as pending until they are captured, and each capture publishes an event your other systems can react to.
+
+  **Learn more:** [When to charge customers](/user/settings/payments#when-to-charge-customers) · [Payments](/developer/core-concepts/payments)
+</Update>
+
+<Update label="OpenTelemetry" description="August 14, 2026" tags={["Platform", "Developers"]}>
+  Spree now supports OpenTelemetry, the open standard for watching applications in production. When checkout slows down or a payment fails, you can see exactly where the time went: in the database, in the payment provider, or in a webhook to another system.
+
+  Install one optional package and point it at your collector with the same settings every other OpenTelemetry service uses. Without a collector configured it stays dormant and adds no overhead. Traces go to any compatible monitoring tool, so there is no vendor lock-in.
+
+  A completed checkout becomes one trace containing the web request, each step of checkout, the payment provider call, the database work, and the background jobs and webhooks the order triggered. Webhooks carry trace headers, so a system receiving them can join the same trace. Traces never contain personal data such as emails, addresses, order contents or payment details.
+
+  **Learn more:** [Observability](/developer/providers/observability)
+</Update>
+
+<Update label="Search provider" description="August 13, 2026" tags={["Catalog", "Integrations"]}>
+  Product search in Spree is now pluggable. Out of the box, Spree searches your own database, which suits development and smaller catalogs. For larger catalogs you can switch to Meilisearch, an open-source search engine, as an optional add-on.
+
+  With Meilisearch, shoppers get search that forgives typos, ranks the most relevant products first, and filters quickly by price, availability, options and categories with accurate counts. Each product is indexed per market and language, so a German shopper searches German names at euro prices.
+
+  Switching providers needs no changes to your storefront. The same search, filter and sort options in the Store API work with either one. Stores that never use Meilisearch no longer carry it as a dependency, and developers can build their own provider for another search service.
+
+  **Learn more:** [Search and filtering](/developer/core-concepts/search-filtering) · [Meilisearch setup](/integrations/search/meilisearch) · [Build a search provider](/developer/how-to/custom-search-provider)
+</Update>
+
+<Update label="First-run store setup" description="August 13, 2026" tags={["Dashboard", "Platform"]}>
+  A new Spree store no longer ships with a default admin password. Instead, the first start prints a one-time setup link. It opens a setup screen in the dashboard where you create your admin account and describe your store in one place.
+
+  The setup screen asks for your store's name, country, currency and language. Picking a country suggests a matching currency and the languages it supports, and your store's defaults follow that choice. A box, ticked by default, loads sample products, categories and images, so you can explore a populated store straight away.
+
+  After setup, the **Getting Started** checklist in the dashboard walks you through the remaining essentials, starting with the address you ship from, and then payments, products and taxes. It disappears once every task is done.
+
+  **Learn more:** [Developer quickstart](/developer/getting-started/quickstart) · [Create Spree App](/developer/create-spree-app/quickstart) · [User quickstart](/user/user-quickstart-guide)
+</Update>
+
+<Update label="Custom order numbers" description="August 13, 2026" tags={["Dashboard", "Checkout"]}>
+  Order numbers are the references your team reads out on support calls and customers quote in emails. You can now shape them to suit your business from the dashboard, with no code.
+
+  Under **Settings → Store → Order numbers** you choose:
+
+  - **Sequential** numbers, which count up and are easy to read over the phone, or **random** numbers, which do not reveal how many orders you take
+  - A **prefix** and **suffix**, such as INV in front and -EU at the end
+  - The number to **start counting from** on a new store
+  - A **preview** that shows the next number as you type
+
+  Changes only affect future orders, so numbers already printed on invoices and emails never change. Developers who need more, such as the year or a warehouse code in the number, can plug in their own number format for orders, returns, exchanges, claims and other documents.
+
+  **Learn more:** [Store details user guide](/user/settings/store-details#order-numbers) · [Customize document numbers](/developer/how-to/custom-document-numbers)
+</Update>
+
+<Update label="Delivery profiles and zones" description="August 12, 2026" tags={["Shipping"]}>
+  Bulky furniture does not ship like a pair of shoes, and a download does not ship at all. Delivery profiles let you group products by how they ship, instead of setting rules product by product. Each profile says which warehouses the goods leave from, where they can go, and which delivery methods are offered there.
+
+  - Name the warehouses a profile ships from, so chilled goods are never picked from a dry warehouse.
+  - Split a profile by origin, so stock leaving Amsterdam is priced differently from the same goods leaving California.
+  - Build delivery zones from countries, states and postal codes. Use a prefix or a numeric range to offer free local delivery, add a surcharge for islands, or keep express delivery to city postcodes.
+  - Mix physical and digital goods in one order: the download is ready at once, and the parcel gets its tracking number.
+
+  **Learn more:** [Delivery profiles user guide](/user/settings/delivery-profiles) · [Developer guide](/developer/core-concepts/delivery-setup)
+</Update>
+
+<Update label="Live carrier rates" description="August 12, 2026" tags={["Shipping", "Integrations", "Checkout"]}>
+  A flat rate you maintain by hand rarely matches what a parcel really costs to send. Delivery methods can now ask a carrier for a live price for the actual parcel, based on its weight, size and destination.
+
+  You choose per method: a calculator you configure, or a rate provider that quotes live. One carrier-priced method can offer several services, such as Ground, 2-Day and Overnight, each as its own choice with a carrier name and an estimated delivery date. The rules you set on a method still apply to live quotes.
+
+  EasyPost works out of the box and reaches USPS, UPS, FedEx, DHL and many regional carriers, on its accounts or on rates you negotiated yourself. Developers can connect any other carrier by writing their own rate provider.
+
+  **Learn more:** [EasyPost setup](/integrations/shipping/easypost) · [How rates work](/developer/core-concepts/delivery-setup#rates) · [Custom rate providers](/developer/how-to/custom-delivery-rate-provider)
+</Update>
+
+<Update label="Click and collect" description="August 12, 2026" tags={["Shipping", "Checkout"]}>
+  Customers can now collect orders in person from your own shops and warehouses. A pickup method needs no delivery address, so checkout skips straight past it.
+
+  - Turn on customer pickup for any stock location and choose which locations each pickup method offers.
+  - Set how long an order takes to be ready, and the instructions customers see, such as which entrance to use and what to bring.
+  - Offer pickup only for items already on that shelf, or let customers collect goods you will bring in from another warehouse first.
+  - Offer third-party collection points, such as lockers and partner shops, through a pickup point method.
+
+  Storefronts ask the API which locations a customer can collect from, and staff mark the order collected when it is handed over.
+
+  **Learn more:** [Pickup user guide](/user/settings/delivery-profiles#pickup) · [Pickup locations](/user/settings/locations#pickup) · [Developer guide](/developer/core-concepts/fulfillments#pickup)
+</Update>
+
+<Update label="Channel warehouses" description="August 12, 2026" tags={["Shipping", "Inventory", "B2B"]}>
+  Sales channels can now be limited to specific warehouses. A wholesale portal can ship only from the wholesale warehouse, and a shop's point of sale can fulfill only from that shop, without copying products or delivery profiles for each channel.
+
+  Choose the locations on each sales channel, or leave it on all locations. Orders on that channel are only fulfilled from those locations, so customers are only offered delivery options and pickup counters those locations can serve.
+
+  To offer different prices to different channels from the same warehouse, add a channel condition to a delivery method. Wholesale customers can pay one rate and retail customers another.
+
+  **Learn more:** [Sales channels user guide](/user/settings/sales-channels#create-a-sales-channel) · [Delivery method conditions](/user/settings/delivery-profiles#conditions) · [Channels developer guide](/developer/core-concepts/channels)
+</Update>
+
+<Update label="Multiple stores" description="August 12, 2026" tags={["Platform", "Dashboard"]}>
+  One Spree installation can run more than one store, and each store keeps its own products, orders, payment methods, delivery methods and promotions. Until now, many commerce settings applied to the whole installation, so two stores on the same server could not behave differently. An EU store needs price history for discount rules; its sister store outside the EU does not.
+
+  Those settings now belong to each store and are managed in **Settings → Store** in the dashboard:
+
+  - when customers are charged for their orders
+  - whether stock is tracked and held during checkout
+  - whether price history is recorded
+  - whether products without a price are shown
+  - whether addresses require a phone number, and whether SKUs must be unique
+
+  The dashboard lets staff switch between the stores they work in. A staff member who has no role on any store sees a clear "no store access" screen with a sign-out button, instead of being sent back and forth to the login page.
+
+  **Learn more:** [Store details](/user/settings/store-details) · [Stores](/developer/core-concepts/stores)
+</Update>
+
+<Update label="Custom fields" description="August 9, 2026" tags={["Catalog", "Dashboard", "Developers"]}>
+  Sooner or later every store needs to keep something Spree has no field for: a fabric composition, care instructions, a purchase order number, an ID from another system. Custom fields let merchants add that data themselves, without code changes or developer help.
+
+  - Define a field once, with a label, a type (text, rich text, number, yes or no, or structured data) and the record it belongs to.
+  - Add fields to products, variants, orders, customers, categories and more than 25 other kinds of record.
+  - Decide per field whether shoppers can see it. Hidden fields never leave the back office.
+  - Make product fields searchable and sortable, so shoppers can find and filter by them.
+  - Fill in values in the dashboard, or in bulk through product CSV imports.
+
+  Each store keeps its own set of field definitions. Developers read and write the same fields through the Store and Admin APIs.
+
+  **Learn more:** [Custom fields guide](/user/settings/custom-fields) · [Developer guide](/developer/core-concepts/metafields)
+</Update>
+
+<Update label="Staff roles and permissions" description="August 8, 2026" tags={["Dashboard", "Platform"]}>
+  You can now decide exactly what each member of your team can see and change, without asking a developer. Roles are created and edited in the dashboard, and each role belongs to your store, so one store's staff never reach another store's data.
+
+  In **Settings → Roles** you build a role from a simple grid:
+
+  - One row per area of the store, such as orders, products, refunds, sellers or webhooks, with **View** and **Manage** tick boxes
+  - Ready-made starting points for an order manager, a merchandiser and a support agent
+  - Shortcuts to grant read-only or full access in one click
+  - A protected Admin role that always means "everything in this store"
+
+  The same list of permissions also controls what a secret API key may do, so a person and an integration are described in the same words. Developers can create and edit roles through the Admin API and list every permission that can be granted.
+
+  **Learn more:** [Roles user guide](/user/settings/roles) · [Staff and roles developer guide](/developer/core-concepts/staff-roles)
+</Update>
+
+<Update label="Product types" description="August 7, 2026" tags={["Catalog", "Dashboard"]}>
+  A book and a sofa need different information. Merchants who sell more than one kind of thing used to repeat themselves on every product: every pair of shoes needs Size and Colour, belongs under Footwear, and wants a Material field. A product type captures that once.
+
+  When you create a product from a type, it starts with the right option types, categories and delivery profile. Its edit form also asks for the custom fields that kind of product needs, and marks the important ones as required.
+
+  A type is a template, not a rule. Editing a type never changes products that already exist, so you cannot restructure a live catalog by accident. When you do want existing products to catch up, use **Apply to products**. It shows how many products will change, and it only ever adds what is missing. Product types are managed under Settings, and through the Admin API.
+
+  **Learn more:** [Product types guide](/user/settings/product-types) · [Developer guide](/developer/core-concepts/products#product-types)
+</Update>
+
+<Update label="Returns, exchanges and claims" description="August 6, 2026" tags={["Returns", "Dashboard"]}>
+  What happens after an order arrives now gets the right record. A return means money back, an exchange means different items, and a claim covers goods that arrived damaged, wrong or not at all. Keeping claims separate means a smashed parcel is no longer recorded as a return, so damage reporting finally works.
+
+  - Customers open returns and claims on their own orders and follow their progress, while your team approves, receives and refunds.
+  - Receive what the warehouse actually counted. Partial and damaged returns are normal, and only goods you can sell again go back into stock.
+  - Refund to the original payment, to store credit, or part to each, with the right share of tax given back.
+  - Resolve a claim with a refund, a replacement sent on the original order, or both.
+  - Set a return window per market, add your own rules, and send a prepaid return label when a carrier is connected.
+
+  **Learn more:** [Returns user guide](/user/orders/returns) · [Return and claim reasons](/user/settings/returns-and-reasons) · [Developer guide](/developer/core-concepts/returns-exchanges-claims)
+</Update>
+
+<Update label="Delivery method rules" description="August 6, 2026" tags={["Shipping", "Checkout"]}>
+  Deciding when a delivery method appears at checkout used to depend on which pricing formula you picked, and carrier-priced methods could not be limited at all. Conditions now sit on the delivery method itself, so every method follows the same rules, whether you set its price or a carrier quotes it.
+
+  Add conditions from the dashboard, with no code:
+
+  - **Item total** to offer a method only above or below a basket value. Free delivery over a threshold is a zero-priced method with this condition.
+  - **Weight** and **Volume** to keep heavy or large orders off letter post.
+  - **Excluded products** to hide a method when certain products are in the basket.
+  - **Channel** and **Company** to offer a method only on certain sales channels or to particular business customers.
+
+  A method with no conditions is offered everywhere it otherwise applies.
+
+  **Learn more:** [Delivery method conditions](/user/settings/delivery-profiles#conditions) · [Developer guide](/developer/core-concepts/delivery-setup#pricing-and-rules)
+</Update>
+
+<Update label="Categories and collections" description="August 5, 2026" tags={["Catalog", "Dashboard"]}>
+  Spree now groups products in two clear ways, each answering a different question. Categories are the shelves of your store: a browsable tree such as Fashion, then Men, then Footwear, which most storefront navigation is built from. Collections cut across those shelves: "Summer 2025", "Best Sellers", "Gifts Under $50".
+
+  - Build a category tree as deep as your range needs, and file a product under several categories.
+  - Curate a collection by hand, and drag products into the order you want.
+  - Or let a collection fill itself from rules, such as a product tag, being on sale, or a publish date. Products join and leave as those facts change, so there is no list to maintain.
+  - Give each collection its own storefront page, with images, a description and search engine settings. Names and descriptions can be translated.
+
+  Both are managed in the dashboard under Products, and both can be read through the Store API.
+
+  **Learn more:** [Categories guide](/user/products/categories) · [Collections guide](/user/products/collections) · [Developer guide](/developer/core-concepts/products#categories)
+</Update>
+
+<Update label="Customers and staff accounts" description="August 4, 2026" tags={["Platform", "Developers"]}>
+  Spree now owns its sign-in from end to end, and it names the two kinds of people who sign in plainly: customers, who shop on the storefront, and staff, who run the store from the dashboard. The old catch-all "user" was ambiguous, and the sign-in stack depended on a separate library built for server-rendered apps rather than an API-first platform.
+
+  Customers register, sign in, refresh their session and reset their password through the Store API. Staff sign in through the Admin API and receive the same short-lived credentials whichever sign-in method they used, with the refresh token kept in a secure cookie. Sign-in methods are pluggable on both sides, so you can add an outside identity provider without changing the rest of the API.
+
+  Upgrading stores move their existing accounts onto the new customer and staff records with one task, and passwords carry over so nobody has to reset them.
+
+  **Learn more:** [Customers](/developer/core-concepts/customers) · [Staff and roles](/developer/core-concepts/staff-roles) · [Upgrade guide](/developer/upgrades/5.6-to-6.0)
+</Update>
+
+<Update label="Single sign-on for staff" description="August 4, 2026" tags={["Platform", "Dashboard", "Integrations"]}>
+  Larger businesses already keep their staff accounts in an identity provider, and a commerce platform with its own password database is one more thing for the security team to watch. Spree now supports OpenID Connect, the open standard behind most single sign-on services, as part of the core platform.
+
+  Connect your identity provider and staff sign in to the dashboard through the login they already use. Sessions, multi-factor authentication and offboarding stay governed by the system your security team already operates. Any OpenID Connect provider works, and you can turn off email and password sign-in to require single sign-on for everyone.
+
+  Customer sign-in supports the same standard, so a merchant running a customer identity platform can keep it as the source of truth for shopper accounts.
+
+  **Learn more:** [Identity and single sign-on](/developer/providers/sso) · [Staff and roles](/developer/core-concepts/staff-roles)
+</Update>
+
+<Update label="React admin dashboard" description="August 3, 2026" tags={["Dashboard", "Platform"]}>
+  The new React dashboard is now the admin for Spree. The old Rails admin has been removed, so there is one back office to learn, maintain and extend. The dashboard talks to your store only through the Admin API, which means every screen your team uses is backed by the same API your integrations can call.
+
+  The Spree server serves the dashboard itself out of the box, so a standard deployment needs no extra hosting. If you prefer, you can build it as static files and put it on any static host or CDN.
+
+  Developers get a small app they own: add pages, sidebar entries, table columns and cards from one file, without forking. When a customization is useful to other stores, it can be packaged as a plugin. Existing projects move over by removing the old admin from their Gemfile and adding the dashboard in its place.
+
+  **Learn more:** [Dashboard overview](/developer/dashboard/overview) · [Deploying the dashboard](/developer/dashboard/deployment) · [Upgrade guide](/developer/upgrades/5.6-to-6.0)
+</Update>
+
+<Update label="Carts and orders separated" description="August 3, 2026" tags={["Checkout", "Developers"]}>
+  A cart and an order are now two separate records. The cart covers everything before a purchase is final: adding items, entering an address, choosing delivery and paying. Completing it creates an order, a permanent record of what the customer agreed to pay. The two want opposite things: a cart changes constantly and is often abandoned, while an order must never change quietly.
+
+  - A customer who double-clicks "Place order" gets the same order back, not a second charge.
+  - If something fails after the customer was charged, trying again finishes the job instead of charging twice.
+  - Totals are worked out at the moment of completion, so a price that changed during review cannot lead to the wrong charge.
+  - The order keeps its own copy of items, prices, taxes and discounts, even if a product's price changes the next day.
+
+  A cart tells your storefront exactly what it still needs before checkout can finish. Completed carts are kept, so you can measure conversion and drive abandoned-cart emails from events.
+
+  **Learn more:** [Carts](/developer/core-concepts/carts) · [Orders](/developer/core-concepts/orders)
+</Update>
+
+<Update label="Fulfillment providers" description="July 29, 2026" tags={["Shipping", "Integrations", "Developers"]}>
+  When an order ships, something outside Spree often does the physical work: a warehouse system, a third-party logistics company or a carrier. Fulfillment providers connect them to Spree through one shared contract, so each delivery method can hand its orders to the right partner.
+
+  A provider receives the fulfillment, does the work and reports tracking back. Providers that buy labels do so before the order is marked as shipped, so the customer's shipping email always carries a tracking number. Cancelling a fulfillment tells the partner to stand down. Carrier tracking updates flow in separately, without changing what your team recorded.
+
+  Spree includes providers for orders you ship yourself, for pickup at your own locations, and for third-party collection points. EasyPost is the reference carrier integration, and developers can build their own for any warehouse or logistics partner.
+
+  **Learn more:** [Fulfillment providers](/developer/providers/fulfillment) · [Fulfillments](/developer/core-concepts/fulfillments)
+</Update>
+
+<Update label="Simpler product model" description="July 10, 2026" tags={["Catalog", "Developers"]}>
+  Earlier versions of Spree gave every product a hidden "master variant" next to the real ones. It held the price and SKU of simple products, then lost them when real variants were added, and every query had to remember to leave it out. That concept is gone.
+
+  Now a product is the listing a customer browses, and a variant is the thing they actually buy. Every product has at least one real variant, even a book with no size or colour. All variants are the same kind of thing: each one has its own SKU, price and stock, and each one can be bought.
+
+  One variant is marked as the default. It sets the price shown on listing pages and decides what "add to cart" means before a shopper picks options. If the default variant is removed, Spree promotes another one automatically, so a product always has one. Existing stores move over with a single upgrade task.
+
+  **Learn more:** [Products and variants](/developer/core-concepts/products#variants) · [Upgrade guide](/developer/upgrades/5.6-to-6.0#remove-master-variants)
+</Update>
+
+</div>
