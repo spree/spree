@@ -11,7 +11,7 @@ module Spree
 
           # Override base index to skip pagination — there are ~250 countries
           # and address-form dropdowns need them all at once. Pagy's global
-          # max_limit (100) prevents using the paginated path for this.
+          # client_limit (100) prevents using the paginated path for this.
           #
           # Countries are reference data rather than records, so this reads
           # from the registry and needs no authorization beyond the admin
