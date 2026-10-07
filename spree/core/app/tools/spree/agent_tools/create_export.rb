@@ -59,9 +59,14 @@ module Spree
           # Generation is a background job, so there is no file yet. Naming
           # the tool that finishes the job keeps the model from sending the
           # merchant to the dashboard for something it can fetch itself.
-          message: 'The export is being prepared. Read it back with get_resource ' \
-                   "(resource: \"exports\", id: \"#{export.prefixed_id}\"); once the file is ready " \
-                   'the record carries a download_url, which is a path on this API.'
+          # Naming the MCP resource matters: a client that can read one will
+          # otherwise never learn the file is there, and the model reports a
+          # download path to a merchant instead of reading the rows itself.
+          resource_uri: "spree+export://#{export.prefixed_id}",
+          message: 'The export is being prepared. Once it is ready you can read its contents ' \
+                   "from the MCP resource spree+export://#{export.prefixed_id}, or call " \
+                   "get_resource (resource: \"exports\", id: \"#{export.prefixed_id}\") for its " \
+                   'status and a download_url to hand the merchant.'
         }
       end
 

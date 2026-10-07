@@ -25,6 +25,10 @@ module Spree
         behave identically. Record arguments are prefixed ids as they appear in
         search results. You are only offered the tools this credential permits,
         so a tool you cannot see is one this store has not granted.
+
+        A finished export is also an MCP resource. After create_export, read
+        its contents from resources rather than reporting a download path —
+        the path is for the merchant, the resource is for you.
       TEXT
 
       class << self
