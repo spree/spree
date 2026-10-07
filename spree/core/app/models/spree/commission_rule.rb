@@ -50,12 +50,6 @@ module Spree
 
     registers_subclasses_via { Spree.commission_rules }
 
-    # @deprecated Use {.human_description}. Removed in Spree 6.1.
-    def self.description
-      Spree::Deprecation.warn('Spree::CommissionRule.description is deprecated and will be removed in Spree 6.1. Use .human_description instead.')
-      human_description
-    end
-
     # Whether this rule admits the sale.
     #
     # @param context [Spree::Commissions::Context]

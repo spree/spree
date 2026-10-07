@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 RSpec.describe Spree::SellerRequirement, type: :model do
+
+  it_behaves_like 'type labels', Spree::SellerRequirements::Document
+
   let(:store) { @default_store }
   let(:seller) { create(:seller, store: store) }
 

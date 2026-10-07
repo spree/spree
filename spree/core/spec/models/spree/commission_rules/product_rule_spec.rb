@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CommissionRules::ProductRule do
+
+  it_behaves_like 'type labels', Spree::CommissionRules::ProductRule
+
   let(:store) { @default_store }
   let(:rate) { create(:commission_rate, store: store) }
   let(:rule) { described_class.create!(commission_rate: rate) }

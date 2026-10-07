@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Spree::PromotionRule, type: :model do
+    it_behaves_like 'type labels', Spree::Promotion::Rules::OptionValue
+
     class BadTestRule < Spree::PromotionRule; end
 
     class TestRule < Spree::PromotionRule

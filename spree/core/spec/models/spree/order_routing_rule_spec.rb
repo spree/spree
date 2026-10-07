@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 RSpec.describe Spree::OrderRoutingRule, type: :model do
+
+  it_behaves_like 'type labels', Spree::OrderRouting::Rules::DefaultLocation
+
   let(:store) { @default_store }
   let(:channel) { store.default_channel }
 
