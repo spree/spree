@@ -129,7 +129,7 @@ export function OauthApplicationSheet({
               {t('admin.common.cancel')}
             </Button>
             <Button type="submit" disabled={save.isPending}>
-              {t('admin.common.save')}
+              {t('admin.actions.save')}
             </Button>
           </SheetFooter>
         </form>
