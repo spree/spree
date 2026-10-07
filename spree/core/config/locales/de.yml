@@ -415,17 +415,12 @@ de:
   errors:
     messages:
       already_confirmed: wurde bereits bestätigt
-      not_a_number: ist keine Zahl
       not_found: nicht gefunden
       not_locked: war nicht gesperrt
       not_saved:
         one: 'Ein Fehler hat das Speichern von %{resource} verhindert:'
         other: "%{count} Fehler haben das Speichern von %{resource} verhindert:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

@@ -388,17 +388,12 @@ id:
   errors:
     messages:
       already_confirmed: telah dikonfirmasi.
-      not_a_number: bukan angka
       not_found: tidak ditemukan
       not_locked: tidak terkunci
       not_saved:
         one: '1 kesalahan menghalangi %{resource} ini untuk disimpan:'
         other: "%{count} kesalahan menghalangi %{resource} ini untuk disimpan:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

@@ -390,17 +390,12 @@ km:
   errors:
     messages:
       already_confirmed: ត្រូវបានបញ្ជាក់រួចហើយ
-      not_a_number: មិនមែនជាលេខ
       not_found: មិនមានទេ
       not_locked: ត្រូវបានបិទ
       not_saved:
         one: មានកំហុស​ មួយ ដែល​មិន​ឲ្យ​រក្សាទុក %{resource} មួយនេះ ៖
         other: មាន​កំហុស %{count} ដែល​មិន​ឲ្យ​រក្សាទុក %{resource} មួយនេះ ៖
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

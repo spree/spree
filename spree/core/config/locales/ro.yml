@@ -387,17 +387,12 @@ ro:
   errors:
     messages:
       already_confirmed: a fost deja confirmat
-      not_a_number: nu este un număr
       not_found: nu a fost găsit
       not_locked: nu a fost blocat
       not_saved:
         one: 'o eroare a împiedicat acest %{resource} să fie salvat:'
         other: "%{count} erori au împiedicat acest %{resource} să fie salvat:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

@@ -394,17 +394,12 @@ bg:
   errors:
     messages:
       already_confirmed: Вече бе потвърден
-      not_a_number: не е число
       not_found: не намерен
       not_locked: не бе заключен
       not_saved:
         one: Една грешка предоотврати запазването на %{resource}
         other: "%{count} грешки предоотвратиха запазването на %{resource}"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

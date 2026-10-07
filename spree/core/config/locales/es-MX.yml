@@ -389,17 +389,12 @@ es-MX:
   errors:
     messages:
       already_confirmed: Ya ha sido confirmado
-      not_a_number: no es un número
       not_found: no encontrado
       not_locked: no estaba bloqueado
       not_saved:
         one: '1 error impidió guardar este(a) %{resource}:'
         other: "%{count} errores impidieron guardar este(a) %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

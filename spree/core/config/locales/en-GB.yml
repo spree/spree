@@ -386,17 +386,12 @@ en-GB:
   errors:
     messages:
       already_confirmed: was already confirmed
-      not_a_number: is not a number
       not_found: not found
       not_locked: was not locked
       not_saved:
         one: '1 error prohibited with %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

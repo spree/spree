@@ -406,17 +406,12 @@ da:
   errors:
     messages:
       already_confirmed: er blevet bekræftet
-      not_a_number: er ikke et tal
       not_found: ikke fundet
       not_locked: var ikke låst
       not_saved:
         one: '1 fejl forhindrede %{resource} i at blive gemt:'
         other: "%{count} fejl forhindrede %{resource} i at blive gemt:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

@@ -7,7 +7,13 @@ describe 'i18n' do
 
   describe '#available_locales' do
     it 'returns the locales Spree ships translations for, including English' do
-      expect(Spree.available_locales).to include(:en)
+      expect(Spree.available_locales).to include(:en, :de, :'pt-BR')
+    end
+
+    it 'leaves out shipped locales the app does not allow' do
+      allow(I18n).to receive(:available_locales).and_return(%i[en de])
+
+      expect(Spree.available_locales).to contain_exactly(:en, :de)
     end
   end
 
@@ -19,6 +25,10 @@ describe 'i18n' do
     it 'prepends the spree scope to a given scope' do
       expect(Spree.t(:foo, scope: 'bar')).to eq('bar within bar scope')
       expect(Spree.t(:foo, scope: [:bar])).to eq('bar within bar scope')
+    end
+
+    it 'ignores a spree scope the caller already passed' do
+      expect(Spree.t(:foo, scope: :spree)).to eq('bar')
     end
 
     it 'warns that it is deprecated' do

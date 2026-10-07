@@ -415,17 +415,12 @@ nb:
   errors:
     messages:
       already_confirmed: Allerede bekreftet
-      not_a_number: er ikke et tall
       not_found: Ikke funnet
       not_locked: Ikke låst
       not_saved:
         one: '1 feil forbød dette %{resource} fra å bli frelst:'
         other: "%{count} feil forbød dette %{resource} fra å bli frelst"
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

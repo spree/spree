@@ -108,11 +108,13 @@ module Spree
       end
 
       # Spree's translations cover only part of the English keys in most
-      # languages, so the rest fall back to English. An app that configured
-      # its own fallbacks (including turning them off) keeps its choice.
+      # languages, so the rest fall back to English, the one complete language
+      # (`true` would fall back to the app's default locale instead). An app
+      # that configured its own fallbacks, including turning them off, keeps
+      # its choice.
       initializer 'spree.i18n.fallbacks', before: :load_config_initializers do |app|
         fallbacks = app.config.i18n.fallbacks
-        app.config.i18n.fallbacks = true if fallbacks.is_a?(ActiveSupport::OrderedOptions) && fallbacks.empty?
+        app.config.i18n.fallbacks = [:en] if fallbacks.is_a?(ActiveSupport::OrderedOptions) && fallbacks.empty?
       end
 
       # Seeded before application initializers so a host's

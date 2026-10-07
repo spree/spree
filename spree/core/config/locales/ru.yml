@@ -422,7 +422,6 @@ ru:
   errors:
     messages:
       already_confirmed: уже был подтвержден
-      not_a_number: не является числом
       not_found: не найден
       not_locked: не был заблокирован
       not_saved:
@@ -430,10 +429,6 @@ ru:
         one: 'Одна ошибка препятствует сохранению %{resource}:'
         other: "%{count} ошибки препятствуют сохранению %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

@@ -412,17 +412,12 @@ es:
   errors:
     messages:
       already_confirmed: fue ya confirmada.
-      not_a_number: no es un número
       not_found: no encontrado
       not_locked: no estaba bloqueada
       not_saved:
         one: 1 error evitó que este %{resource} fuese grabado.
         other: "%{count} errores evitaron que este %{resource} fuese grabado:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

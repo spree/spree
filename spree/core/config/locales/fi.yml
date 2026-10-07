@@ -388,17 +388,12 @@ fi:
   errors:
     messages:
       already_confirmed: on jo vahvistettu
-      not_a_number: ei ole numero
       not_found: ei löytynyt
       not_locked: ei ollut lukittu
       not_saved:
         one: 'Yksi virhe esti kohteen %{resource} tallennuksen:'
         other: "%{count} virhettä estivät kohteen %{resource} tallennuksen:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

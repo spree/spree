@@ -394,17 +394,12 @@ tr:
   errors:
     messages:
       already_confirmed: zaten onaylanmış
-      not_a_number: bir sayı değil
       not_found: bulunamadı
       not_locked: kilitli değil
       not_saved:
         one: '1 hata bu %{resource} kaydının kaydedilmesini engelledi:'
         other: "%{count} hata bu %{resource} kaydının kaydedilmesini engelledi:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

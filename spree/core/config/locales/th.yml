@@ -382,17 +382,12 @@ th:
   errors:
     messages:
       already_confirmed: ได้ทำการยืนยันแล้ว
-      not_a_number: ไม่ใช่ตัวเลข
       not_found: ไม่พบ
       not_locked: ไม่ได้ล๊อก
       not_saved:
         one: 'พบข้อผิดพลาด 1 รายการที่ทำให้ %{resource} นี้ไม่สามารถบันทึกได้:'
         other: 'พบข้อผิดพลาด %{count} รายการที่ทำให้ %{resource} นี้ไม่สามารถบันทึกได้:'
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

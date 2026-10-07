@@ -371,14 +371,9 @@ lv:
   errors:
     messages:
       already_confirmed: ir jau apstiprināts, lūdzu mēģiniet pieslēgties
-      not_a_number: nav skaitlis
       not_found: netika atrasts
       not_locked: netika nobloķēts
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

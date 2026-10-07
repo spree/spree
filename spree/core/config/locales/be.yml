@@ -442,7 +442,6 @@ be:
   errors:
     messages:
       already_confirmed: быў ужо пацверджаны
-      not_a_number: не з'яўляецца лікам
       not_found: не знойдзены
       not_locked: не быў заблакаваны
       not_saved:
@@ -450,10 +449,6 @@ be:
         one: 'Адна памылка перашкаджае захаванню %{resource}:'
         other: "%{count} памылкі перашкаджаюць захаванню %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

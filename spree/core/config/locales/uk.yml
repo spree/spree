@@ -414,7 +414,6 @@ uk:
   errors:
     messages:
       already_confirmed: вже підтверджено
-      not_a_number: не є числом
       not_found: не знайдено
       not_locked: не заблоковано
       not_saved:
@@ -423,10 +422,6 @@ uk:
         one: '1 помилка завадила збереженню цього %{resource}:'
         other: "%{count} помилки завадили збереженню цього %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

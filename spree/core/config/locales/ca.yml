@@ -364,16 +364,11 @@ ca:
         other:
   errors:
     messages:
-      not_a_number: no és un número
       not_found: no trobat
       not_saved:
         one: '1 error ha impedit desar aquest %{resource}:'
         other: "%{count} errors han impedit desar aquest %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

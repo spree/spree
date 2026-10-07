@@ -334,17 +334,12 @@ et:
   errors:
     messages:
       already_confirmed: on juba kinnitatud
-      not_a_number: ei ole arv
       not_found: ei leitud
       not_locked: ei olnud lukus
       not_saved:
         one: '1 viga takistas salvestamast objekti %{resource}:'
         other: "%{count} viga takistasid salvestamast objekti %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

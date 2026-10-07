@@ -310,15 +310,10 @@ pt:
         other: Zonas
   errors:
     messages:
-      not_a_number: não é um número
       not_saved:
         one: '1 erro impediu que este %{resource} fosse guardado:'
         other: "%{count} erros impediram que este %{resource} fosse guardado:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

@@ -382,15 +382,10 @@ ja:
         other: ゾーン
   errors:
     messages:
-      not_a_number: は数値ではありません
       not_saved:
         one: "%{resource}を保存できませんでした。1件のエラーがあります："
         other: "%{resource}を保存できませんでした。%{count}件のエラーがあります："
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

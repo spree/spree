@@ -407,17 +407,12 @@ nl:
   errors:
     messages:
       already_confirmed: was reeds bevestigd
-      not_a_number: is geen getal
       not_found: niet gevonden
       not_locked: was niet vergendeld
       not_saved:
         one: '1 fout voorkwam dat deze %{resource} werd opgeslagen:'
         other: "%{count} fouten voorkwamen dat deze %{resource} werd opgeslagen:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

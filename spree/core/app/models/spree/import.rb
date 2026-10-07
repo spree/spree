@@ -326,7 +326,7 @@ module Spree
     # Returns the display name for the import
     # @return [String]
     def display_name
-      "#{I18n.t("spree.#{type.demodulize.pluralize.downcase}")} #{number}"
+      "#{I18n.t("spree.#{type.demodulize.pluralize.downcase}", default: type.demodulize.titleize)} #{number}"
     end
 
     # Returns the headers of the csv file

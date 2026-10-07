@@ -356,15 +356,10 @@ fa:
         other: Zones
   errors:
     messages:
-      not_a_number: یک عدد نیست
       not_saved:
         one: '۱ خطا مانع از ذخیره این %{resource} شد:'
         other: "%{count} خطا مانع از ذخیره این %{resource} شد:"
   number:
-    currency:
-      format:
-        delimiter: "،"
-        separator: "."
     percentage:
       format:
         precision: 1

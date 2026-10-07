@@ -415,17 +415,12 @@ lt:
   errors:
     messages:
       already_confirmed: jau buvo patvirtinta
-      not_a_number: nėra skaičius
       not_found: nerastas
       not_locked: nebuvo užrakinta
       not_saved:
         one: '1 klaida neleido išsaugoti %{resource}:'
         other: "%{count} klaidos neleido išsaugoti %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

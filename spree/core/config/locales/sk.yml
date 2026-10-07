@@ -377,15 +377,10 @@ sk:
         other: Zón
   errors:
     messages:
-      not_a_number: nie je číslo
       not_saved:
         one: '1 chyba zabránila uloženiu tohto %{resource}:'
         other: "%{count} chýb zabránilo uloženiu tohto %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

@@ -399,17 +399,12 @@ zh-CN:
   errors:
     messages:
       already_confirmed: 已被确认
-      not_a_number: 不是数字
       not_found: 无法找到
       not_locked: 未冻结
       not_saved:
         one: 有 1 个错误导致此%{resource}无法保存：
         other: 有 %{count} 个错误导致此%{resource}无法保存：
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

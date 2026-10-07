@@ -411,17 +411,12 @@ vi:
   errors:
     messages:
       already_confirmed: đã được chứng nhận
-      not_a_number: không phải là một số
       not_found: không tìm thấy
       not_locked: không bị khoá
       not_saved:
         one: '1 lỗi đã ngăn không cho %{resource} này được lưu:'
         other: "%{count} lỗi đã ngăn không cho %{resource} này được lưu:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

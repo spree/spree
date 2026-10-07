@@ -386,17 +386,12 @@ hu:
   errors:
     messages:
       already_confirmed: már meg van erősítve
-      not_a_number: nem szám
       not_found: nem található
       not_locked: nem volt zárolva
       not_saved:
         one: '1 hiba miatt ezt %{resource} nem lehet elmenteni:'
         other: "%{count} számú hiba megakadályozta %{resource} elmentését:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

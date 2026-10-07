@@ -395,17 +395,12 @@ el:
   errors:
     messages:
       already_confirmed: έχει ήδη επιβεβαιωθεί
-      not_a_number: δεν είναι αριθμός
       not_found: δεν βρέθηκς
       not_locked: δεν είναι κλειδωμένο
       not_saved:
         one: '1 πρόβλημα εμπόδισε αυτήν την %{resource} απο το να αποθηκευτέι:'
         other: "%{count} προβήματα εμπόδισαν αυτήν την %{resource} απο το να αποθηκευτέι:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

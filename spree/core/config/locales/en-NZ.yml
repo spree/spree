@@ -385,15 +385,10 @@ en-NZ:
         other: Zones
   errors:
     messages:
-      not_a_number: is not a number
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

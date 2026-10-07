@@ -434,7 +434,6 @@ cs:
   errors:
     messages:
       already_confirmed: již byl potvrzen
-      not_a_number: není číslo
       not_found: nenalezen
       not_locked: nebyl uzamčen
       not_saved:
@@ -442,10 +441,6 @@ cs:
         one: '1 chyba zabraňuje uložení %{resource}:'
         other: "%{count} chyb zabraňuje uložení %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

@@ -414,17 +414,12 @@ pt-BR:
   errors:
     messages:
       already_confirmed: já foi confirmado
-      not_a_number: não é um número
       not_found: não encontrado
       not_locked: não foi trancado
       not_saved:
         one: '1 erro impediu %{resource} de ser salvo:'
         other: "%{count} erros impediram o %{resource} de ser salvo:"
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

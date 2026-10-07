@@ -279,15 +279,10 @@ ko:
         other: 구역
   errors:
     messages:
-      not_a_number: 은(는) 숫자가 아닙니다
       not_saved:
         one: "%{resource}을(를) 저장하지 못하도록 하는 오류가 1개 있습니다:"
         other: "%{resource}을(를) 저장하지 못하도록 하는 오류가 %{count}개 있습니다:"
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

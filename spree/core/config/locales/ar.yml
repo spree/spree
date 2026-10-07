@@ -399,17 +399,12 @@ ar:
   errors:
     messages:
       already_confirmed: " تم تأكيد بالفعل "
-      not_a_number: ليس رقمًا
       not_found: " غير موجود "
       not_locked: " لم يتم تأمينه "
       not_saved:
         one: " حدث خطأ أثناء منع حفظ %{resource}: "
         other: " أدت أخطاء %{count} إلى منع حفظ %{resource} هذا: "
   number:
-    currency:
-      format:
-        delimiter: "."
-        separator: ","
     percentage:
       format:
         precision: 1

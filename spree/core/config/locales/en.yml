@@ -651,6 +651,7 @@ en:
         subject: Password Reset Instructions
     all: All
     amount: Amount
+    any: Any
     api_key_channel_immutable: cannot be changed after the key is created; create a new key bound to the channel you need and revoke this one
     api_key_channel_must_belong_to_store: must belong to the same store as the key
     api_key_channel_publishable_only: can only be set on publishable keys

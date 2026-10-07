@@ -280,15 +280,10 @@ de-CH:
         other: Zonen
   errors:
     messages:
-      not_a_number: ist keine Zahl
       not_saved:
         one: '1 Fehler hat das Speichern dieser %{resource} verhindert:'
         other: "%{count} Fehler haben das Speichern dieser %{resource} verhindert:"
   number:
-    currency:
-      format:
-        delimiter: "’"
-        separator: "."
     percentage:
       format:
         precision: 1

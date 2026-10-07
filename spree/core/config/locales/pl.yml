@@ -415,17 +415,12 @@ pl:
   errors:
     messages:
       already_confirmed: już zostało potwierdzone
-      not_a_number: nie jest liczbą
       not_found: nie znaleziono
       not_locked: nie zostało zablokowane
       not_saved:
         one: '1 błąd uniemożliwił zachowanie tego %{resource}:'
         other: "%{count} błędy(-ów) uniemożliwiło zachowanie tego %{resource}:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

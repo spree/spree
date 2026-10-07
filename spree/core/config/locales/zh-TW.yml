@@ -414,17 +414,12 @@ zh-TW:
   errors:
     messages:
       already_confirmed: 已經驗證，請直接登入。
-      not_a_number: 不是數字
       not_found: 找不到。
       not_locked: 並未被鎖定。
       not_saved:
         one: 有一個錯誤導致 %{resource} 不能被儲存：
         other: 有 %{count} 個錯誤導致 %{resource} 不能被儲存：
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1

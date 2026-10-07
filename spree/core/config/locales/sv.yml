@@ -415,17 +415,12 @@ sv:
   errors:
     messages:
       already_confirmed: var redan bekräftad
-      not_a_number: är inte ett tal
       not_found: hittas inte
       not_locked: var inte låst
       not_saved:
         one: '1 fel hindrade detta %{resource} från att sparas:'
         other: "%{count} fel hindrade detta %{resource} från att sparas:"
   number:
-    currency:
-      format:
-        delimiter: " "
-        separator: ","
     percentage:
       format:
         precision: 1

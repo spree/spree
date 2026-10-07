@@ -59,8 +59,8 @@ search:
   paths:
     - app/
     - lib/
-<% %w[api/app api/lib emails/app emails/lib dashboard/app dashboard/lib opentelemetry/lib providers].each do |path| %>
-    - "<%= File.expand_path("../#{path}", Dir.pwd) %>"
+<% (%w[api emails dashboard opentelemetry].map { |gem| "../#{gem}" } + Dir['../providers/*']).product(%w[app lib]).each do |gem, folder| %>
+    - "<%= File.expand_path("#{gem}/#{folder}", Dir.pwd) %>"
 <% end %>
 
   ## Root directories for relative keys resolution.

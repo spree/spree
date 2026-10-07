@@ -415,17 +415,12 @@ ne:
   errors:
     messages:
       already_confirmed: पहिल्यै पुष्टि भइसकेको थियो
-      not_a_number: संख्या होइन
       not_found: फेला परेन
       not_locked: लक गरिएको थिएन
       not_saved:
         one: '१ त्रुटि %{resource} सँग संसाधन बचत हुनबाट रोकियो:'
         other: "%{count} त्रुटिहरूले यस %{resource} लाई बचत गर्नबाट रोक्‍यो:"
   number:
-    currency:
-      format:
-        delimiter: ","
-        separator: "."
     percentage:
       format:
         precision: 1
