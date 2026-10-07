@@ -3,7 +3,6 @@ es-EC:
   spree:
     customer_mailer:
       password_reset_email:
-        action: Restablecer contraseña
         expiry_notice: Este enlace de restablecimiento de contraseña vencerá pronto. Si no solicitaste esto, no es necesario que hagas nada.
         greeting: Hola %{name},
         ignore_notice: Si no solicitaste un restablecimiento de contraseña, puedes ignorar este correo sin problema. Tu contraseña no será cambiada.
@@ -17,21 +16,7 @@ es-EC:
         subject: Verifica tu correo electrónico
         verify_email_address_link: Verificar correo electrónico
     order_mailer:
-      cancel_email:
-        instructions: Tu pedido ha sido CANCELADO. Por favor conserva esta información de cancelación para tus registros.
-        subject: Cancelación de pedido
-      confirm_email:
-        instructions: Por favor, revisa y conserva la siguiente información del pedido de tus registros.
-        subject: Confirmación del pedido
       payment_link_email:
         message: Por favor, haz clic en el botón de abajo para pagar tu pedido.
         message_copy_link: 'Si el botón no funciona, por favor copia y pega el siguiente enlace en tu navegador:'
-        pay_for_order: Pagar el pedido
         subject: Enlace de pago para el pedido n.° %{number}
-      store_owner_notification_email:
-        heading: Nuevo pedido recibido
-        instructions: Has recibido un nuevo pedido.
-        order_summary: Resumen del pedido %{number}
-        subject: "%{store_name} recibió un nuevo pedido"
-      subtotal: 'Subtotal:'
-      total: 'Total del pedido:'

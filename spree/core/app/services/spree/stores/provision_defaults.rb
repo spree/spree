@@ -66,10 +66,9 @@ module Spree
         derived = country.default_locale.presence
         return 'en' if derived.blank?
 
-        translated = Spree.available_locales.map { |locale| locale.to_s.split('-').first }.uniq
-        return derived if translated.include?(derived)
+        return derived if Spree.available_languages.include?(derived)
 
-        (country.official_locales & translated).first || 'en'
+        (country.official_locales & Spree.available_languages).first || 'en'
       end
 
       # The store's own country/currency/locale columns are not the source of

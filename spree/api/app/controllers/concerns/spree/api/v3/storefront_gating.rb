@@ -63,7 +63,7 @@ module Spree
           return if try_spree_current_user.present?
           return unless current_channel&.storefront_login_required?
 
-          render_authentication_required(I18n.t('spree.api.errors.storefront_login_required', default: 'Authentication required to access this store'))
+          render_authentication_required(I18n.t('spree.api.errors.storefront_login_required'))
         end
       end
     end

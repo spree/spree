@@ -266,8 +266,7 @@ module Spree
       return if Spree.seller_requirements.any? { |kind| kind.to_s == type }
 
       errors.add(
-        :type, :invalid_seller_requirement, message: I18n.t('spree.errors.messages.invalid_seller_requirement',
-                                             default: 'is not a registered seller requirement')
+        :type, :invalid_seller_requirement, message: I18n.t('spree.errors.messages.invalid_seller_requirement')
       )
     end
   end

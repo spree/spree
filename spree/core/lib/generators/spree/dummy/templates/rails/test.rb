@@ -28,6 +28,9 @@ Dummy::Application.configure do
   # the suite sees it, as every real Spree app does.
   config.action_controller.raise_on_missing_callback_actions = true
 
+  # Fail a spec that looks up a translation key that does not exist.
+  config.i18n.raise_on_missing_translations = true
+
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.

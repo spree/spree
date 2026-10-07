@@ -803,7 +803,7 @@ Other changes that come with it:
 
 ## Translations ship with Spree
 
-Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 47 languages. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).
+Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 43 languages besides English. Regional English (`en-GB` and the like) now falls back to `en`. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).
 
 - **Remove `spree_i18n` from your Gemfile.** Its last release is empty and only warns. Older releases load their own, larger files over Spree's.
 - **Use `I18n.t` with the full key.** `Spree.t(:free)` becomes `I18n.t('spree.free')`, and `Spree.t(:x, scope: :api)` becomes `I18n.t('spree.api.x')`. `Spree.t` keeps working until 6.1 with a deprecation warning.

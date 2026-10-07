@@ -11,7 +11,7 @@ describe 'i18n' do
     end
 
     it 'leaves out shipped locales the app does not allow' do
-      allow(I18n).to receive(:available_locales).and_return(%i[en de])
+      allow(Rails.application.config.i18n).to receive(:available_locales).and_return(%i[en de])
 
       expect(Spree.available_locales).to contain_exactly(:en, :de)
     end

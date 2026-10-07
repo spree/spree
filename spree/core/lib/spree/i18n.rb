@@ -13,17 +13,26 @@ module Spree
     end
     alias t translate
 
-    # Locales Spree ships translations for and the app allows, plus English and
-    # the app's default and current locale.
+    # Locales Spree ships translations for and the app allows
+    # (+config.i18n.available_locales+), plus English and the app's default and
+    # current locale.
     #
     # @return [Array<Symbol>]
     def available_locales
-      locales = SHIPPED_LOCALES & I18n.available_locales.map(&:to_sym)
+      allowed = Array(Rails.application.config.i18n.available_locales).map(&:to_sym)
+      locales = allowed.empty? ? SHIPPED_LOCALES.dup : SHIPPED_LOCALES & allowed
       locales << :en
       locales << I18n.locale
       locales << Rails.application.config.i18n.default_locale
 
       locales.uniq.compact
+    end
+
+    # Base languages of {available_locales}, e.g. "pt" for "pt-BR".
+    #
+    # @return [Array<String>]
+    def available_languages
+      available_locales.map { |locale| Spree::Locale.new(code: locale).language_code }.uniq
     end
   end
 end

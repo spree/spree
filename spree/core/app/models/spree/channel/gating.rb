@@ -58,7 +58,7 @@ module Spree
         return if STOREFRONT_ACCESS.include?(value.to_s)
 
         errors.add(
-          :preferred_storefront_access, :invalid_storefront_access, message: I18n.t('spree.errors.messages.invalid_storefront_access', default: 'is not a valid storefront access level')
+          :preferred_storefront_access, :invalid_storefront_access, message: I18n.t('spree.errors.messages.invalid_storefront_access')
         )
       end
     end

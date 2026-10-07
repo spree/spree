@@ -52,7 +52,6 @@ require 'ffaker'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
-require 'spree/testing_support/raise_on_missing_translations'
 
 require 'spree/testing_support/action_text'
 require 'spree/testing_support/emails'

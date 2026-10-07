@@ -90,8 +90,7 @@ module Spree
         # On the preference rather than :base, so the operator's form marks the
         # field they got wrong instead of only showing a summary line.
         errors.add(:preferred_terms_effective_from, :invalid_terms_effective_from,
-                   message: I18n.t('spree.seller_requirements.invalid_terms_effective_from',
-                                    default: 'Terms effective from is not a date'))
+                   message: I18n.t('spree.seller_requirements.invalid_terms_effective_from'))
       end
 
       def store_terms_body

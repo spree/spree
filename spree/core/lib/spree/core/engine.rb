@@ -117,6 +117,21 @@ module Spree
         app.config.i18n.fallbacks = [:en] if fallbacks.is_a?(ActiveSupport::OrderedOptions) && fallbacks.empty?
       end
 
+      # Spree's gems ship translations for dozens of languages. An app that
+      # limits `config.i18n.available_locales` loads only those (and English),
+      # instead of parsing every file at boot and discarding the rest.
+      initializer 'spree.i18n.locale_files', before: :load_config_initializers do |app|
+        allowed = Array(app.config.i18n.available_locales).map(&:to_s)
+        next if allowed.empty?
+
+        pattern = "{#{(allowed | ['en']).join(',')}}.yml"
+        Rails::Engine.subclasses.each do |engine|
+          next if engine <= Rails::Application || !engine.name.to_s.start_with?('Spree')
+
+          engine.config.paths['config/locales'].glob = pattern
+        end
+      end
+
       # Seeded before application initializers so a host's
       # `config/initializers/spree.rb` can register custom generators.
       initializer 'spree.register.number_generators', before: :load_config_initializers do |app|
@@ -580,11 +595,7 @@ module Spree
       end
 
       config.to_prepare do
-        I18n.load_path.unshift(*(Dir.glob(
-          File.join(
-            File.dirname(__FILE__), '../../../config/locales', '*.{rb,yml}'
-          )
-        ) - I18n.load_path))
+        I18n.load_path.unshift(*(Spree::Core::Engine.config.paths['config/locales'].existent - I18n.load_path))
 
         ActsAsTaggableOn::Tag.include(Spree::RansackableAttributes)
         ActsAsTaggableOn::Tag.whitelisted_ransackable_attributes = %w[id name]

@@ -124,9 +124,19 @@ Asking the API which resources are translatable means a translation tool doesn't
 
 ## Translating the interface
 
-Spree's own text — transactional emails, API error messages and validation messages — ships translated into 47 languages as part of Spree itself. There is nothing to install. A key that a language does not translate yet is shown in English.
+Spree's own text — transactional emails, API error messages and validation messages — ships translated into 43 languages besides English as part of Spree itself. There is nothing to install. A key that a language does not translate yet is shown in English.
 
 The admin dashboard carries its own translations, separate from these. See [Dashboard translations](/developer/dashboard/customization/translations).
+
+Regional variants such as `de-CH` or `pt-BR` hold only what differs from their base language and fall back to it. Regional English (`en-GB` and the like) falls back to `en`.
+
+### Using fewer languages
+
+Loading every language costs startup time and memory. An app that serves only some languages can list them, and Spree then loads only those, plus English:
+
+```ruby server/config/application.rb
+config.i18n.available_locales = [:en, :de, :fr]
+```
 
 ### Changing a translation
 

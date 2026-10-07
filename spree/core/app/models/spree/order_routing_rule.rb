@@ -94,7 +94,7 @@ module Spree
       return if type.blank?
       return if Spree.order_routing.rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_order_routing_rule, message: I18n.t('spree.errors.messages.invalid_order_routing_rule', default: 'is not a registered order routing rule'))
+      errors.add(:type, :invalid_order_routing_rule, message: I18n.t('spree.errors.messages.invalid_order_routing_rule'))
     end
 
     def channel_belongs_to_store

@@ -107,7 +107,7 @@ module Spree
             if resolve_workflow.nil?
               return render_error(
                 code: 'invalid_status',
-                message: I18n.t('spree.errors.messages.invalid_status', default: 'Invalid status'),
+                message: I18n.t('spree.errors.messages.invalid_status'),
                 status: :unprocessable_content
               )
             end

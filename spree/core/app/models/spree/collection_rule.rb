@@ -47,8 +47,7 @@ module Spree
       return if type.blank?
       return if Rails.application.config.spree.collection_rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_collection_rule, message: I18n.t('spree.errors.messages.invalid_collection_rule',
-                                                          default: 'is not a registered collection rule'))
+      errors.add(:type, :invalid_collection_rule, message: I18n.t('spree.errors.messages.invalid_collection_rule'))
     end
 
     def regenerate_collection_products

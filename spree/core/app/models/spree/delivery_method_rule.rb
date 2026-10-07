@@ -49,7 +49,7 @@ module Spree
       return if type.blank?
       return if Spree.delivery_method_rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_delivery_method_rule, message: I18n.t('spree.errors.messages.invalid_delivery_method_rule', default: 'is not a registered delivery method rule'))
+      errors.add(:type, :invalid_delivery_method_rule, message: I18n.t('spree.errors.messages.invalid_delivery_method_rule'))
     end
   end
 end

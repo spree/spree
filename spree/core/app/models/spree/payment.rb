@@ -548,7 +548,7 @@ module Spree
 
     def add_source_error(field, message)
       field_name = source.class.human_attribute_name(field)
-      errors.add(I18n.t("spree.#{source.class.to_s.demodulize.underscore}", default: source.class.model_name.human), "#{field_name} #{message}")
+      errors.add(source.class.model_name.human, "#{field_name} #{message}")
     end
 
 

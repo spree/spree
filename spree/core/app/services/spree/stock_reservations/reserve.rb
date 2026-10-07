@@ -38,7 +38,6 @@ module Spree
                 line_item,
                 I18n.t(
                   'spree.insufficient_stock_for_reservation',
-                  default: '%{item} has only %{available} available',
                   item: line_item.variant.name,
                   available: [available, 0].max
                 )

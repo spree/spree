@@ -5,18 +5,15 @@ pt-BR:
       password_reset_email:
         action: Redefinir senha
         expiry_notice: Este link de redefinição de senha expirará em breve. Se você não solicitou isso, nenhuma ação é necessária.
-        greeting: Olá %{name},
         ignore_notice: Se você não solicitou a redefinição de senha, pode ignorar este e-mail com segurança. Sua senha não será alterada.
         instructions: Recebemos uma solicitação para redefinir sua senha. Clique no botão abaixo para escolher uma nova senha.
         subject: Instruções para redefinição de senha
     newsletter_mailer:
       email_confirmation:
-        dear_customer: Olá,
         ignore_disclaimer: Se você não solicitou isso, ignore este e-mail.
         instructions: Clique no botão abaixo para verificar seu endereço de e-mail.
         message_copy_link: 'Se o botão não funcionar, copie e cole o link a seguir no seu navegador:'
         subject: Verifique seu endereço de e-mail
-        verify_email_address_link: Verificar endereço de e-mail
     order_mailer:
       cancel_email:
         instructions: Seu pedido foi cancelado. Por favor, mantenha esse cancelamento em seus registros.
@@ -34,5 +31,4 @@ pt-BR:
         instructions: Você recebeu um novo pedido.
         order_summary: Resumo do pedido %{number}
         subject: "%{store_name} recebeu um novo pedido"
-      subtotal: 'Subtotal:'
       total: 'Total do Pedido:'

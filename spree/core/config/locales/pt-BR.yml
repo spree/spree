@@ -1,20 +1,10 @@
 ---
 pt-BR:
-  activemodel:
-    errors:
-      messages:
-        blank: não pode ficar em branco
   activerecord:
     attributes:
       spree/address:
-        address1: Endereço
         address2: Endereço (complemento)
-        city: Cidade
-        company: Empresa
-        country: País
         label: Nome do endereço
-        phone: Telefone
-        state: Estado
       spree/calculator/tiered_flat_rate:
         preferred_base_amount: Quantia base
         preferred_tiers: Níveis
@@ -22,45 +12,23 @@ pt-BR:
         preferred_base_percent: Base Percentual
         preferred_tiers: Níveis
       spree/country:
-        iso: ISO
-        iso3: ISO3
         iso_name: Nome do ISO
-        name: Nome
-        numcode: Código ISO
       spree/credit_card:
         cc_type: Tipo de Cartão
-        month: Mês
         name: Nome no Cartão
-        number: Número
         verification_value: Código de Verificação
         year: Ano
-      spree/customer_group:
-        description: Descrição
-        name: Nome
       spree/gift_card:
         amount_used: Valor utilizado
         expires_at: Expira em
-      spree/import:
-        preferred_delimiter: Delimitador
       spree/import_mapping:
         file_column: Coluna do arquivo
-        schema_field: Campo do esquema
-      spree/import_row:
-        row_number: Número
       spree/inventory_unit:
         state: Estado
       spree/invitation:
         inviter: Convidante
-      spree/line_item:
-        price: Preço
-        quantity: Quantidade
-      spree/option_type:
-        filterable: Filtrável
-        kind: Tipo
-        name: Nome
       spree/option_value:
         color_code: Código da cor
-        image: Imagem da amostra
       spree/order:
         checkout_complete: Checkout Completo
         completed_at: Completado em
@@ -68,11 +36,9 @@ pt-BR:
         coupon_code: Código do cupom
         created_at: Criado em
         email: Email do cliente
-        internal_note: Nota interna
         ip_address: Endereço IP
         item_count: Itens
         item_total: Total de itens
-        number: Número
         payment_state: Status do Pagamento
         shipment_state: Status do Envio
         special_instructions: Instruções de Envio
@@ -90,40 +56,24 @@ pt-BR:
         state: Estado
       spree/payment:
         amount: Valor
-        number: Número
-      spree/payment_method:
-        name: Nome
       spree/policy:
         body: Conteúdo
-        owner: Política para
       spree/price_list:
-        description: Descrição
         ends_at: Termina em
-        match_policy: Política de correspondência
-        name: Nome
-        priority: Prioridade
         starts_at: Começa em
         status: Status
-      spree/price_rule:
-        priority: Prioridade
-        type: Tipo
       spree/product:
         available_on: Disponível em
         cost_currency: Moeda
         cost_price: Preço de Custo
-        description: Descrição
         discontinue_on: Indisponível em
         less_than: Menor que
-        make_active_at: Ativar em
         master_price: Preço Principal
         more_than: Maior que
-        name: Nome
         on_hand: Pronta Entrega
         tax_category: Tipo de Taxa
       spree/promotion:
         advertise: Anunciar
-        code: Código
-        description: Descrição
         event_name: Nome do Evento
         expires_at: Expira em
         generate_code: Gerar código de cupom
@@ -133,15 +83,12 @@ pt-BR:
         starts_at: Início em
         usage_limit: Limite de uso
       spree/promotion_category:
-        code: Código
         name: Categorias de Promoções
       spree/property:
         name: Nome
         presentation: Apresentação
       spree/role:
         name: Nome
-      spree/shipment:
-        number: Número
       spree/state:
         abbr: Abreviação
         name: Nome
@@ -160,7 +107,6 @@ pt-BR:
         seo_title: Título SEO
         storefront_custom_code_body_end: Código personalizado antes da tag de fechamento do body
         storefront_custom_code_body_start: Código personalizado após a tag de abertura do body
-        storefront_custom_code_head: Código personalizado no head da página
         url: URL do site
       spree/store_credit:
         amount_used: Quantidade utilizada
@@ -179,7 +125,6 @@ pt-BR:
       spree/taxonomy:
         name: Nome
       spree/user:
-        avatar: Avatar
         email: Email
         password: Senha
         password_confirmation: Confirmação de Senha
@@ -200,8 +145,6 @@ pt-BR:
         last_sign_in: Último login em
         sign_in_count: Contagem de logins
     errors:
-      messages:
-        blank: não pode ficar em branco
       models:
         spree/allowed_origin:
           attributes:
@@ -224,8 +167,6 @@ pt-BR:
           attributes:
             attachment:
               content_type: possui um tipo de conteúdo não permitido
-            type:
-              inclusion: não está incluído na lista de tipos permitidos
         spree/line_item:
           attributes:
             currency:
@@ -238,26 +179,17 @@ pt-BR:
         spree/market_country:
           attributes:
             country:
-              already_in_market: já está atribuído a outro mercado nesta loja
               not_in_shipping_zone: não está coberto por nenhuma zona de envio. Configure uma zona de envio primeiro.
         spree/payment:
           attributes:
             amount:
               greater_than_max_amount: é maior que o valor máximo permitido de %{max_amount}
-        spree/price_list:
-          attributes:
-            ends_at:
-              must_be_after_starts_at: deve ser posterior à data de início
         spree/product:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Não é possível deletar produtos que já estão em pedidos
             discontinue_on:
               invalid_date_range: precisa ser posterior a data de disponibilidade
-        spree/product_publication:
-          attributes:
-            unpublished_at:
-              must_be_after_published_at: deve ser posterior à data de publicação
         spree/promotion:
           attributes:
             expires_at:
@@ -272,8 +204,6 @@ pt-BR:
               cannot_destroy_only_store: Não é possível excluir a única loja.
         spree/store_credit:
           attributes:
-            amount_authorized:
-              exceeds_total_credits: Excede o total de créditos.
             amount_used:
               cannot_be_greater_than_amount: Não pode ser maior que a quantidade.
               greater_than_zero_restrict_delete: é maior que zero. Não é possível apagar créditos da loja.
@@ -289,89 +219,34 @@ pt-BR:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Não é possível apagar variações que já façam parte de algum pedido.
-        spree/webhook_endpoint:
-          attributes:
-            url:
-              internal_address_not_allowed: não deve apontar para um endereço de rede interna ou privada
     models:
       spree/address:
         one: Endereço
         other: Endereços
-      spree/classification:
-        one: Classificação
-        other: Classificações
-      spree/country:
-        one: País
-        other: Países
       spree/credit_card:
         one: Cartão de Crédito
         other: Cartões de Crédito
-      spree/customer_group:
-        one: Grupo de clientes
-        other: Grupos de clientes
       spree/customer_group_user:
         one: Usuário de grupo de clientes
         other: Usuários de grupo de clientes
-      spree/export:
-        one: Exportação
-        other: Exportações
-      spree/integration:
-        one: Integração
-        other: Integrações
       spree/inventory_unit:
         one: Unidade de Inventário
         other: Unidades de Inventário
       spree/line_item:
         one: Item
         other: Itens
-      spree/option_type:
-        one: Tipo de opção
-        other: Tipos de opção
       spree/option_value:
         one: Valor da opção
         other: Valores das opções
       spree/order:
         one: Pedido
         other: Pedidos
-      spree/payment:
-        one: Pagamento
-        other: Pagamentos
-      spree/payment_method:
-        one: Método de pagamento
-        other: Métodos de pagamento
-      spree/price:
-        one: Preço
-        other: Preços
-      spree/price_list:
-        one: Lista de preços
-        other: Listas de preços
-      spree/price_rule:
-        one: Regra de preço
-        other: Regras de preço
-      spree/product:
-        one: Produto
-        other: Produtos
-      spree/promotion:
-        one: Promoção
-        other: Promoções
       spree/promotion_category:
         one: Categoria de Promoção
         other: Categorias de Promoções
-      spree/property:
-        one: Propriedade
-        other: Propriedades
-      spree/refund_reason:
-        one: Motivo de reembolso
-        other: Motivos de reembolso
       spree/role:
         one: Função
         other: Funções
-      spree/shipment:
-        one: Envio
-        other: Envios
-      spree/shipping_method:
-        one: Método de envio
-        other: Métodos de envio
       spree/state:
         one: Estado
         other: Estados
@@ -384,12 +259,6 @@ pt-BR:
       spree/stock_transfer:
         one: Transferência de estoque
         other: Transferências de estoque
-      spree/store:
-        one: Loja
-        other: Lojas
-      spree/store_credit:
-        one: Crédito da loja
-        other: Créditos da loja
       spree/tax_category:
         one: Categoria de Imposto
         other: Categorias de Imposto
@@ -399,9 +268,6 @@ pt-BR:
       spree/taxon:
         one: Árvore de Categorias
         other: Árvores de Categorias
-      spree/taxonomy:
-        one: Categoria
-        other: Categorias
       spree/user:
         one: Usuário
         other: Usuários
@@ -419,30 +285,21 @@ pt-BR:
       not_saved:
         one: '1 erro impediu %{resource} de ser salvo:'
         other: "%{count} erros impediram o %{resource} de ser salvo:"
-  number:
-    percentage:
-      format:
-        precision: 1
   spree:
     accept: Aceitar
     accepted: Aceito
-    accepts_email_marketing: Aceita marketing por e-mail
-    account: Conta
-    active: Ativo
     address: Endereço
     address1: Endereço
     address2: Endereço (complemento)
     adjustment: Ajuste
     adjustment_labels:
       tax_rates:
-        excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Incluso no preço)"
     adjustments_deleted: Ajustes excluídos
     admin_user_mailer:
       password_reset_email:
         action: Redefinir senha
         expiry_notice: Este link de redefinição de senha expirará em breve. Se você não fez essa solicitação, nenhuma ação é necessária.
-        greeting: Olá %{name},
         ignore_notice: Se você não solicitou a redefinição de senha, pode ignorar este e-mail com segurança. Sua senha não será alterada.
         instructions: Recebemos uma solicitação para redefinir a senha da sua conta de administrador da %{store_name}. Clique no botão abaixo para escolher uma nova senha.
         subject: Instruções para redefinição de senha
@@ -452,42 +309,27 @@ pt-BR:
     api_key_scopes_immutable: não pode ser alterado após a criação da chave; crie uma nova chave com os escopos necessários e revogue esta
     approver: Aprovador
     authorized: Autorizado
-    availability: disponibilidade
     backorderable: Aceita pedido sem estoque
     backordered: Pendente
     bill_address: Endereço da Conta
     billing_address: Endereço de Cobrança
-    calculator: Calculadora
     canceled: Cancelado
     canceler: Cancelado por
     cannot_be_destroyed: O pedido não pode ser excluído.
-    capture: Capturar
     cart: Carrinho
-    cart_already_updated: O carrinho já foi atualizado.
     cart_line_item:
-      delivery_unavailable: "%{li_name} não pode ser entregue no endereço selecionado"
-      discontinued: "%{li_name} foi removido porque foi descontinuado"
       out_of_stock: "%{li_name} foi removido porque foi esgotado"
-    categories: Categorias
-    category: Categoria
-    channel: Canal de vendas
-    channels: Canais de vendas
     checkout: Finalizar Compra
     checkout_requirements:
-      email_required: O endereço de e-mail é obrigatório
       line_items_required: Adicione pelo menos um item ao seu carrinho
       payment_required: Adicione uma forma de pagamento
       ship_address_required: O endereço de entrega é obrigatório
-    city: Cidade
     color_code: Código da cor
     company: Empresa
     compare_at_amount: Valor comparativo
-    compare_at_price: Preço comparativo
     complete: Completo
-    confirm: Confirme
     cost_price: Preço de Custo
     count_on_hand: Disponíveis
-    country: País
     coupon_code: Código do Cupom
     coupon_code_already_applied: O cupom já foi adicionado ao pedido
     coupon_code_applied: O Código do cupom foi acrecentado ao seu pedido
@@ -499,27 +341,16 @@ pt-BR:
     coupon_code_unknown_error: Este código de cupom não pode ser aplicado desta vez.
     coupon_code_used: O código de cupom que você inseriu já foi utilizado. Tente novamente.
     created_at: Criado em
-    credit_card: Cartão de Crédito
     currency: Moeda
     currency_not_supported_by_store: não é compatível com esta loja
-    customer: Cliente
-    customers: Clientes
-    default: Padrão
     default_stock_location_name: Local da loja
-    default_wishlist_name: Lista de desejos
-    delivery: Entrega
     depth: Profundidade
-    description: Descrição
     destination: Destino
     destroy: Apagar
     details: Detalhes
-    digital:
-      digital_delivery: Entrega digital
     digital_assets: Ativos digitais
     discontinued: Indisponível
     discontinued_variants_present: Alguns itens deste pedido não estão mais disponíveis.
-    display_delivery_range: Entrega em %{delivery_range} dias úteis
-    draft: Rascunho
     eligibility_errors:
       messages:
         has_excluded_product: O carrinho possui um produto que não deixa o cupom ser aplicado.
@@ -538,31 +369,22 @@ pt-BR:
         no_user_specified: É necessário fazer login antes de aplicar este código de cupom.
         not_first_order: Este cupom só pode ser aplicado na primeira compra.
         wrong_country: Este código de cupom não é válido no seu país
-    email: Email
     error: Erro
     error_user_destroy_with_orders: Um usuário que já realizou pedidos não pode ser apagado
     error_user_does_not_have_any_store_credits: O usuário não possui créditos da loja disponíveis
     errors:
       messages:
         cannot_delete_default_channel: O canal padrão não pode ser excluído. Promova outro canal a padrão primeiro.
-        channel_store_mismatch: deve pertencer à mesma loja
         invalid_order_routing_rule: não é uma regra de roteamento de pedidos registrada
         invalid_order_routing_strategy: não é uma estratégia de roteamento de pedidos registrada
         store_association_can_not_be_changed: A associação da loja não pode ser alterada
-        store_is_already_set: A loja já está definida
-    expired: Expirado
     export_mailer:
       export_done:
         message: Bom trabalho, sua exportação está pronta! Use o link abaixo para baixá-la.
         subject: Sua exportação %{export_number} foi processada com sucesso!
-      greeting: Olá %{user_name},
-    field: Campo
-    first_name: Nome
     flat_percent: Porcentagem fixa
     flat_rate_per_order: Taxa por pedido
     flexible_rate: Taxa flexível
-    free: Grátis
-    gateway: Gateway
     gateway_error: Erro no Gateway
     gift_card: Cartão-presente
     gift_card_already_redeemed: O cartão-presente já foi resgatado.
@@ -574,20 +396,14 @@ pt-BR:
     gift_card_not_found: O cartão-presente não foi encontrado.
     gift_card_removed: O cartão-presente foi removido do seu pedido com sucesso
     gift_card_using_store_credit_error: Você não pode aplicar o cartão-presente após ter aplicado o crédito da loja.
-    height: Altura
     i18n:
       this_file_language: Português (pt-BR)
     idempotency_key_reused: Esta Idempotency-Key já foi usada com parâmetros de requisição diferentes.
-    image: Imagem
-    import: Importar
     in_stock: Em estoque
     inactive: Inativo
     incomplete: Incompleto
     insufficient_stock_lines_present: Algum item neste pedido não possui quantidade suficinte.
-    internal_note: Nota interna
-    inventory: Inventário
     invitation_mailer:
-      greeting: Olá %{user_name},
       invitation_accepted:
         body: "%{invitee_name} aceitou seu convite para participar de %{resource_name}"
         subject: "%{invitee_name} aceitou seu convite para participar de %{resource_name}"
@@ -595,79 +411,33 @@ pt-BR:
         body: "%{inviter_name} convidou você para participar de %{resource_name}"
         link_description: 'Para aceitar este convite, clique no link abaixo:'
         subject: Convite para participar de %{resource_name}
-    iso: ISO Alpha-2
     item: Item
     items_cannot_be_shipped: Estamos impossibilitados de enviar os itens selecionados para seu endereço de entrega. Por favor, escolha outro endereço.
-    key: Chave
-    kind: Tipo
     label: Rótulo
-    last_name: Sobrenome
     line_item: Item do pedido
     line_items: Itens do pedido
     link: Link
-    locale: Idioma
     locale_not_supported_by_store: não é compatível com esta loja
-    manual: Manual
-    market: Mercado
     me_no_current_user: Nenhum usuário administrador autenticou esta requisição
     media: Mídia
-    meta_description: Descrição
-    meta_keywords: Palavras-Chave
     meta_title: Título da Página
-    metadata: Metadados
-    min_quantity: Quantidade mínima
-    month: Mês
-    name: Nome
-    new_variant: Nova Variante
-    no_cc_type: N/D
     no_payment_found: Nenhum pagamento encontrado
-    none: Nenhum
-    number: Número
     on_hand: Em Estoque
     only_active_products_can_be_added_to_cart: Produtos em rascunho e arquivados não podem ser adicionados ao carrinho, marque o produto como ativo antes.
     open: Abrir
-    option_name: Nome da opção
-    option_type: Tipo de Opção
     option_value: Valor da Opcional
-    options: Opções
-    or: ou
-    order: Pedido
     order_canceled: Pedido cancelado
-    order_routing:
-      strategies:
-        legacy: Legado
-        rules: Regras (ordenadas)
-    order_summary: Resumo do Pedido
     orders: Pedidos
-    out_of_stock: Esgotado
     password: Senha
-    path: Caminho
-    payment: Pagamento
-    payment_method: Método de Pagamento
     payment_method_not_supported: Esse método de pagamento não é suportado. Por favor escolha outro.
-    payment_methods: Métodos de Pagamento
-    payment_processing_failed: Pagamento não foi processado, por favor verifique os detalhes informados.
-    payment_source: Origem do pagamento
     pending: Pendente
     percent: porcentos
     percent_per_item: Porcentagem por Item
-    phone: Telefone
-    price: Preço
     price_range: Faixa de Preço
-    price_rules:
-      channel_rule:
-        description: Aplicar preços com base no canal de venda
-      customer_group_rule:
-        description: Aplicar preços a grupos de clientes específicos
     price_sack: Preço da Embalagem
-    prices: Preços
-    privacy_policy: Política de privacidade
     processing: Processando
-    product: Produto
     product_translations: Traduções do produto
-    products: Produtos
     products_cannot_be_shipped: No momento não conseguimos enviar %{product_names} para o seu local atual. Altere o endereço de entrega ou remova %{product_names} do seu carrinho.
-    promotion: Promoção
     promotion_action_types:
       create_adjustment:
         description: Criar um ajuste de crédito promocional no pedido
@@ -683,26 +453,17 @@ pt-BR:
         name: Frete gratuito
     promotion_actions: Ações das Promoções
     promotion_already_used: Você não pode excluir uma promoção que já foi aplicada
-    promotion_label: Promoção (%{name})
     promotion_rule_types:
       category:
         description: O pedido inclui produtos de categorias específicas
-        name: Categorias
       channel:
         description: Limitar a pedidos feitos pelo(s) canal(is) especificado(s)
-        name: Canal(is)
       country:
         description: Pedido é enviado para o mesmo país
-        name: País
       currency:
         description: Limitar a pedidos em uma moeda específica
-        name: Moeda
-      customer:
-        description: Disponível apenas para os clientes especificados
-        name: Clientes
       customer_group:
         description: Disponível apenas para clientes em grupos de clientes específicos
-        name: Grupo(s) de clientes
       customer_logged_in:
         description: Disponível apenas para clientes logados
         name: Apenas clientes logados
@@ -712,39 +473,21 @@ pt-BR:
       item_total:
         description: Total do pedido fecha com estes critérios
         name: Total do Item
-      market:
-        description: Limitar a pedidos feitos no(s) mercado(s) especificado(s)
-        name: Mercado(s)
       one_use_per_user:
         description: Apenas um por usuário
         name: Um por usuário
       option_value:
         description: Pedido possui produto(s) específicos com certas opções
         name: Opções de produto
-      product:
-        description: Pedido inclui produto(s) específico(s)
-        name: Produto(s)
-    promotions: Promoções
     quantity: Quantidade
-    query: Consulta
-    reason: Razões
-    received: Recebido
     reference: Referência
     refund: Extorno
     refund_amount: Valor do reembolso
     refunds: Extornos
     registration: Registro
     rejected: Rejeitado
-    remove: Remover
     remove_gift_card_on_completed_order_error: Você não pode remover o cartão-presente após o pedido ter sido feito
     resellable: Pode revender
-    resend: Reenviar
-    response_code: Código de Resposta
-    return: Devolução
-    returned: Devolvido
-    returns_policy: Política de devoluções
-    row: Linha
-    rules: Regras
     say_no: Não
     say_yes: Sim
     scope: Escopo
@@ -753,18 +496,14 @@ pt-BR:
     ship_address: Endereço da entrega
     shipment: Envio
     shipped: Despachado
-    shipping: Entrega
     shipping_address: Endereço de entrega
     shipping_flat_rate_per_item: Taxa fixa por item no pedido
     shipping_flat_rate_per_order: Taxa fixa
     shipping_flexible_rate: Taxa flexível por item no pedido
-    shipping_policy: Política de envio
     shipping_price_sack: Preço
     shipping_rates:
       display_price:
-        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incluso %{tax_amount} %{tax_rate_name})"
-    sku: SKU
     slug: Url Amigável
     source: Fonte
     status: Status
@@ -774,61 +513,35 @@ pt-BR:
       errors:
         must_have_variant: Necessário adicionar pelo menos uma variação
         same_location: não pode ser igual ao local de destino
-        variants_unavailable: Algumas variantes não estão disponíveis em %{stock}
-    store: Loja
     store_credit:
       allocated: Alocado
-      authorized: Autorizado
-      captured: Utilizado
-      credit: Crédito
-      eligible: Elegível
-    store_credit_name: Crédito da loja
     store_credit_payment_method:
       currency_mismatch: A moeda dos créditos da loja não batem com moeda do pedido
       insufficient_authorized_amount: Não é possível capturar mais que a quantia autorizada
       insufficient_funds: Os créditos da loja restantes não são suficientes
       successful_action: Ação realizada com sucesso %{action}
       unable_to_credit: 'Não foi possível creditar o código: %{auth_code}'
-      unable_to_find: Não foi possível encontrar o crédito da loja
       unable_to_find_for_action: 'Não foi possível encontrar o código: %{auth_code} para: %{action}'
       unable_to_void: 'Não foi possível pagar o código: %{auth_code}'
     success: Sucesso
     tags: Tags
-    tax: Imposto
     tax_category: Categoria de imposto
     terms_of_service: Termos de serviço
     there_are_no_items_for_this_order: Não existem itens para esse pedido. Por favor adicione um item ao pedido para continuar.
     tiered_flat_rate: Taxa fixa nivelada
     tiered_percent: Porcentagem nivelada
-    total: Total
     track_inventory: Rastrear Inventário
-    tracking: Rastreio
     tracking_number: Número de rastreio
     tracking_url: URL de rastreio
-    type: Tipo
     unable_to_connect_to_gateway: Impossível se conectar no gateway
     updated_at: Atualizado em
-    url: URL
     user: Usuário
     validation:
       must_be_int: Deve ser um inteiro
-    value: Valor
     variant: Variante
-    variants: Variantes
-    verified: Verificado
-    void: Vazio
     webhook_mailer:
       endpoint_disabled:
         disabled_at_label: Desativado em
-        heading: Endpoint de webhook desativado
         instructions: Verifique a URL e o serviço do endpoint e reative-o em Configurações → Desenvolvedores → Webhooks.
         message: O endpoint de webhook "%{endpoint_name}" foi desativado automaticamente após falhas repetidas de entrega.
-        name_label: Nome
-        reason_label: Motivo
-        subject: 'Endpoint de webhook desativado: %{endpoint_name}'
-        url_label: URL
-    weight: Peso
-    weight_unit: Unidade de peso
-    width: Largura
-    year: Ano
     zip: CEP

@@ -22,8 +22,7 @@ module Spree
       return if custom_field_definition.resource_type == Spree::Seller.to_s
 
       errors.add(:custom_field_definition, :invalid,
-                 message: I18n.t('spree.seller_requirements.custom_field_not_for_sellers',
-                                  default: 'must be a custom field defined for sellers'))
+                 message: I18n.t('spree.seller_requirements.custom_field_not_for_sellers'))
     end
 
     # Both sides are store-owned, so a marketplace can only ask its sellers

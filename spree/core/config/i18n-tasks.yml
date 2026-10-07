@@ -14,11 +14,13 @@ data:
   # adapter: I18n::Tasks::Data::FileSystem
 
   # Locale files or `Dir.glob` patterns where translations are read from:
+  ## This one config checks every Spree gem: core's keys are used from all of
+  ## them, and their own keys from core.
   read:
-    ## Default:
-    # - config/locales/%{locale}.yml
-    ## More files:
-    # - config/locales/**/*.%{locale}.yml
+    - config/locales/%{locale}.yml
+<% %w[api emails].map { |gem| "../#{gem}" }.concat(Dir['../providers/*']).each do |gem| %>
+    - "<%= File.expand_path("#{gem}/config/locales", Dir.pwd) %>/%{locale}.yml"
+<% end %>
 
   # Locale files to write new keys to, based on a list of key pattern => file rules. Matched from top to bottom:
   # `i18n-tasks normalize -p` will force move the keys according to these rules
@@ -31,10 +33,8 @@ data:
   # External locale data (e.g. gems).
   # This data is not considered unused and is never written to.
   external:
-    ## Core's code search covers every Spree gem, so their locale files are read too.
-    - "<%= File.expand_path('../api/config/locales', Dir.pwd) %>/%{locale}.yml"
-    - "<%= File.expand_path('../emails/config/locales', Dir.pwd) %>/%{locale}.yml"
-    - "<%= File.expand_path('../providers', Dir.pwd) %>/*/config/locales/%{locale}.yml"
+    ## Example (replace %#= with %=):
+    # - "<%#= %x[bundle info vagrant --path].chomp %>/templates/locales/%{locale}.yml"
 
   ## Specify the router (see Readme for details). Valid values: conservative_router, pattern_router, or a custom class.
   # router: conservative_router
@@ -148,8 +148,6 @@ ignore_missing:
   # CanCan's namespace — Spree::Storefront::AccessDenied reads it with an
   # inline English default so the two 403 branches share host translations.
   - 'unauthorized.default'
-  # Spree::Reporting::Schema#translate is not I18n's translate.
-  - '{presets,families,metrics,dimensions}'
 
 ## Consider these keys used:
 ignore_unused:
@@ -185,9 +183,7 @@ ignore_unused:
 # <%# I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper',
 #       only: %w(*.html.haml *.html.slim),
 #       patterns: [['= title\b', '.page_title']] %>
-#
-# The PatternMapper can also match key literals via a special %{key} interpolation, e.g.:
-#
+
 # Email templates translate Spree keys with Liquid's `t` filter, and shared
 # partials take a key to translate (`label: 'some.key', translate: true`).
 <% I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper',

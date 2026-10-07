@@ -4,7 +4,7 @@
 
 **Decision:** Core calls `I18n.t` with full keys (`I18n.t('spree.free')`). `Spree.t` stays until 6.1 as a deprecated one-line proxy onto `I18n.t`, with no Action View and no HTML. The translations still used by core, the API and emails move into those gems' `config/locales`, trimmed to keys English has, after dead English keys are pruned. `rails-i18n` becomes a `spree_core` dependency; `i18n_data`, `kaminari-i18n` and `spree_extension` are dropped. Core turns on English fallback unless the app configured its own. Spree's own specs raise on a missing key. `spree_i18n` gets an empty 6.0.0 release that warns, then is archived.
 
-**Consequences:** Every install gets the 47 languages without an extra gem. A missing key is plain text in production. Extensions calling `Spree.t` keep working with a warning. Removing a key the checker reports unused is a reviewed step: it cannot see keys passed around as strings or built from a value one level under `spree`.
+**Consequences:** Every install gets 43 languages besides English without an extra gem; regional English falls back to `en`. A missing key is plain text in production. Extensions calling `Spree.t` keep working with a warning. Removing a key the checker reports unused is a reviewed step: it cannot see keys passed around as strings or built from a value one level under `spree`.
 
 **Plan:** `6.0-translations-in-core.md`.
 

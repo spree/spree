@@ -80,8 +80,7 @@ module Spree
 
               render_error(
                 code: ERROR_CODES[:validation_error],
-                message: I18n.t('spree.api.errors.automatic_collection_curation',
-                                 default: "Products of an automatic collection are managed by its rules and can't be curated manually"),
+                message: I18n.t('spree.api.errors.automatic_collection_curation'),
                 status: :unprocessable_content
               )
             end

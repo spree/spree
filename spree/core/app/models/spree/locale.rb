@@ -91,7 +91,7 @@ module Spree
 
     private
 
-    # Strip a trailing " (CODE)" suffix from Spree I18n locale labels. Uses
+    # Strip a trailing " (CODE)" suffix from a locale file's own name. Uses
     # plain string ops rather than a regex to avoid polynomial backtracking on
     # adversarial input (ReDoS).
     def normalize_name(name)

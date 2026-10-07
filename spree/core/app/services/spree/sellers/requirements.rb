@@ -61,8 +61,7 @@ module Spree
       def record_blocking(errors)
         blocking.each do |requirement|
           errors.add(:requirements, :incomplete,
-                     message: I18n.t('spree.seller_requirements.incomplete', name: requirement.name,
-                                                                       default: "#{requirement.name} is not complete"))
+                     message: I18n.t('spree.seller_requirements.incomplete', name: requirement.name))
         end
       end
 

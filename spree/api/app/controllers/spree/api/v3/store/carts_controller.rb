@@ -124,7 +124,7 @@ module Spree
             find_cart!(include_completed: true)
 
             if @cart.guest_checkout_disallowed?
-              return render_authentication_required(I18n.t('spree.api.errors.guest_checkout_not_allowed', default: 'You must be signed in to complete checkout'))
+              return render_authentication_required(I18n.t('spree.api.errors.guest_checkout_not_allowed'))
             end
 
             result = Spree::Dependencies.carts_complete_workflow.constantize.call(cart: @cart)
