@@ -245,6 +245,7 @@ en:
         sign_in_count: Sign in count
     errors:
       messages:
+        already_linked: is already linked to this product
         blank: can't be blank
         must_apply_to_products: must be a custom field definition for products
         must_belong_to_same_store: must belong to the same store
