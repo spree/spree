@@ -4274,7 +4274,7 @@
         "stock": "مستويات المخزون والمواقع والحركات والتحويلات",
         "store_credits": "أرصدة المتجر للعملاء",
         "webhooks": "نقاط الويب هوك وعمليات التسليم",
-        "agents": "وكلاء الذكاء الاصطناعي المتصلون بهذا المتجر"
+        "oauth_applications": "عملاء OAuth المسجّلون لهذا المتجر"
       },
       "grid": {
         "read_aria": "عرض {{resource}}",
@@ -4327,7 +4327,7 @@
         "stock": "مخزون",
         "store_credits": "Store credits",
         "webhooks": "Webhooks",
-        "agents": "الوكلاء"
+        "oauth_applications": "تطبيقات OAuth"
       }
     },
     "policies": {
