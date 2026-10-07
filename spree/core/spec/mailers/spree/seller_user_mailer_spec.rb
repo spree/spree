@@ -10,7 +10,7 @@ describe Spree::SellerUserMailer, type: :mailer do
       message = described_class.password_reset_email(seller_user, token, store)
 
       expect(message.to).to eq(['seller@example.com'])
-      expect(message.subject).to eq("#{store.name} #{Spree.t('seller_user_mailer.password_reset_email.subject')}")
+      expect(message.subject).to eq("#{store.name} #{I18n.t('spree.seller_user_mailer.password_reset_email.subject')}")
     end
 
     it 'links with the reset token' do

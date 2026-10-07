@@ -22,7 +22,7 @@ module Spree
 
     def authorize(amount_in_cents, store_credit, gateway_options = {})
       if store_credit.nil?
-        Spree::PaymentResponse.new(false, Spree.t('store_credit_payment_method.unable_to_find'), {}, {})
+        Spree::PaymentResponse.new(false, I18n.t('spree.store_credit_payment_method.unable_to_find'), {}, {})
       else
         action = lambda do |store_credit|
           store_credit.authorize(
@@ -58,7 +58,7 @@ module Spree
       end
 
       if event.blank?
-        Spree::PaymentResponse.new(false, Spree.t('store_credit_payment_method.unable_to_find'), {}, {})
+        Spree::PaymentResponse.new(false, I18n.t('spree.store_credit_payment_method.unable_to_find'), {}, {})
       else
         capture(amount_in_cents, event.authorization_code, gateway_options)
       end
@@ -115,7 +115,7 @@ module Spree
           # note that we only need to return the auth code on an 'auth', but it's innocuous to always return
           Spree::PaymentResponse.new(
             true,
-            Spree.t('store_credit_payment_method.successful_action', action: action_name),
+            I18n.t('spree.store_credit_payment_method.successful_action', action: action_name),
             {},
             authorization: auth_code || response
           )
@@ -132,7 +132,7 @@ module Spree
       if store_credit.nil?
         Spree::PaymentResponse.new(
           false,
-          Spree.t('store_credit_payment_method.unable_to_find_for_action', auth_code: auth_code, action: action_name),
+          I18n.t('spree.store_credit_payment_method.unable_to_find_for_action', auth_code: auth_code, action: action_name),
           {},
           {}
         )

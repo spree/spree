@@ -94,8 +94,8 @@ module Spree
             def render_po_document_invalid
               render_error(
                 code: ERROR_CODES[:parameter_invalid],
-                message: Spree.t(
-                  :po_document_invalid,
+                message: I18n.t(
+                  'spree.po_document_invalid',
                   size: ActiveSupport::NumberHelper.number_to_human_size(
                     Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE
                   )

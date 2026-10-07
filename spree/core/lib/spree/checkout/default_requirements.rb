@@ -29,19 +29,19 @@ module Spree
 
       def advisory_requirements
         [].tap do |r|
-          r << req('cart', 'line_items', Spree.t('checkout_requirements.line_items_required')) unless @cart.line_items.any?
-          r << req('address', 'email', Spree.t('checkout_requirements.email_required')) unless @cart.email.present?
-          r << req('address', 'ship_address', Spree.t('checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
-          r << req('delivery', 'delivery_method', Spree.t('checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
-          r << req('payment', 'payment', Spree.t('checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
-          r << req('address', 'po_number', Spree.t('checkout_requirements.po_number_required')) if po_number_missing?
+          r << req('cart', 'line_items', I18n.t('spree.checkout_requirements.line_items_required')) unless @cart.line_items.any?
+          r << req('address', 'email', I18n.t('spree.checkout_requirements.email_required')) unless @cart.email.present?
+          r << req('address', 'ship_address', I18n.t('spree.checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
+          r << req('delivery', 'delivery_method', I18n.t('spree.checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
+          r << req('payment', 'payment', I18n.t('spree.checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
+          r << req('address', 'po_number', I18n.t('spree.checkout_requirements.po_number_required')) if po_number_missing?
           r << order_minimum_requirement if below_order_minimum?
         end
       end
 
       def completion_requirements
         errors = stock_errors + quantity_rule_errors + assortment_errors
-        errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
+        errors << req('address', 'email', I18n.t('spree.guest_checkout_not_allowed'), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
         errors
       end
 
@@ -67,7 +67,7 @@ module Spree
         orderable_ids = @cart.orderable_variants.where(id: line_items.map(&:variant_id)).pluck(:id).to_set
 
         line_items.reject { |line_item| orderable_ids.include?(line_item.variant_id) }.map do |line_item|
-          req('cart', 'line_items', Spree.t('cart_line_item.not_orderable', li_name: line_item.name), code: 'not_orderable')
+          req('cart', 'line_items', I18n.t('spree.cart_line_item.not_orderable', li_name: line_item.name), code: 'not_orderable')
         end
       end
 
@@ -84,7 +84,7 @@ module Spree
         shortfall = Spree::Money.new(@cart.order_minimum_shortfall, currency: minimum.currency)
 
         req('cart', 'order_minimum',
-            Spree.t('checkout_requirements.order_minimum_not_met',
+            I18n.t('spree.checkout_requirements.order_minimum_not_met',
                     minimum: minimum.display_amount.to_s, shortfall: shortfall.to_s),
             code: 'order_minimum_not_met')
       end
@@ -95,9 +95,9 @@ module Spree
       def stock_errors
         completion_line_items.filter_map do |line_item|
           if discontinued?(line_item)
-            req('cart', 'line_items', Spree.t('cart_line_item.discontinued', li_name: line_item.name), code: 'discontinued')
+            req('cart', 'line_items', I18n.t('spree.cart_line_item.discontinued', li_name: line_item.name), code: 'discontinued')
           elsif !line_item.sufficient_stock?
-            req('cart', 'line_items', Spree.t('cart_line_item.out_of_stock', li_name: line_item.name), code: 'out_of_stock')
+            req('cart', 'line_items', I18n.t('spree.cart_line_item.out_of_stock', li_name: line_item.name), code: 'out_of_stock')
           end
         end
       end

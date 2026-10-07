@@ -64,7 +64,7 @@ module Spree
             unless current_api_key
               return render_error(
                 code: ERROR_CODES[:record_not_found],
-                message: Spree.t(:api_key_no_current_key),
+                message: I18n.t('spree.api_key_no_current_key'),
                 status: :not_found
               )
             end

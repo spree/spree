@@ -1,0 +1,34 @@
+---
+pt-BR:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Redefinir senha
+        expiry_notice: Este link de redefinição de senha expirará em breve. Se você não solicitou isso, nenhuma ação é necessária.
+        ignore_notice: Se você não solicitou a redefinição de senha, pode ignorar este e-mail com segurança. Sua senha não será alterada.
+        instructions: Recebemos uma solicitação para redefinir sua senha. Clique no botão abaixo para escolher uma nova senha.
+        subject: Instruções para redefinição de senha
+    newsletter_mailer:
+      email_confirmation:
+        ignore_disclaimer: Se você não solicitou isso, ignore este e-mail.
+        instructions: Clique no botão abaixo para verificar seu endereço de e-mail.
+        message_copy_link: 'Se o botão não funcionar, copie e cole o link a seguir no seu navegador:'
+        subject: Verifique seu endereço de e-mail
+    order_mailer:
+      cancel_email:
+        instructions: Seu pedido foi cancelado. Por favor, mantenha esse cancelamento em seus registros.
+        subject: Cancelamento de Pedido
+      confirm_email:
+        instructions: Por favor reveja e mantenha essas informações em seus registros.
+        subject: Confirmação de Pedidos
+      payment_link_email:
+        message: Clique no botão abaixo para pagar seu pedido.
+        message_copy_link: 'Se o botão não funcionar, copie e cole o link a seguir no seu navegador:'
+        pay_for_order: Pagar pedido
+        subject: Link de pagamento do pedido nº %{number}
+      store_owner_notification_email:
+        heading: Novo pedido recebido
+        instructions: Você recebeu um novo pedido.
+        order_summary: Resumo do pedido %{number}
+        subject: "%{store_name} recebeu um novo pedido"
+      total: 'Total do Pedido:'

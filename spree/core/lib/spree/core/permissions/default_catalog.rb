@@ -194,6 +194,11 @@ module Spree
         catalog.register_scope(:webhooks, group: :settings, resources: -> {
           [Spree::WebhookEndpoint, Spree::WebhookDelivery]
         })
+        # Separate from settings: a template writes what every customer receives,
+        # links included, so managing store settings does not grant it.
+        catalog.register_scope(:email_templates, group: :settings, resources: -> {
+          [Spree::EmailTemplate, Spree::EmailTemplateDraft, Spree::EmailTemplateRevision]
+        })
         catalog.register_scope(:integrations, group: :settings, resources: -> { [Spree::Integration] })
 
         catalog.register_scope(:api_keys, group: :access, resources: -> { [Spree::ApiKey] })

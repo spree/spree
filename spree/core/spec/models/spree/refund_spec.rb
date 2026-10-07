@@ -166,7 +166,7 @@ describe Spree::Refund, type: :model do
       end
 
       it 'raises Spree::Core::GatewayError' do
-        expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t(:unable_to_connect_to_gateway))
+        expect { subject }.to raise_error(Spree::Core::GatewayError, I18n.t('spree.unable_to_connect_to_gateway'))
       end
     end
 

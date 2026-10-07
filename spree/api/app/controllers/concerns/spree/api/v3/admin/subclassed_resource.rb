@@ -103,7 +103,7 @@ module Spree
           def render_unknown_type
             render_error(
               code: self.class.unknown_type_error_code,
-              message: Spree.t("api.#{self.class.unknown_type_error_code}",
+              message: I18n.t("spree.api.#{self.class.unknown_type_error_code}",
                                default: 'Unknown type'),
               status: :unprocessable_content
             )

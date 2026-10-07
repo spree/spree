@@ -473,8 +473,8 @@ module Spree
 
         it 'includes human-readable labels for custom_field sort options' do
           by_id = result.sort_options.index_by { |o| o[:id] }
-          expect(by_id['cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
-          expect(by_id['-cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")
+          expect(by_id['cf_custom_label'][:label]).to eq("Material (#{I18n.t('spree.sort_a_to_z')})")
+          expect(by_id['-cf_custom_label'][:label]).to eq("Material (#{I18n.t('spree.sort_z_to_a')})")
         end
       end
 

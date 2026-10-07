@@ -52,6 +52,7 @@ require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/tax_identifier_validators'
 require 'spree/testing_support/image_helpers'
+require 'spree/testing_support/editable_email_templates'
 
 require 'spree/api/testing_support/v3/base'
 require 'spree/api/testing_support/factories'

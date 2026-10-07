@@ -312,8 +312,8 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     it 'says so on the cost and the total alike' do
-      expect(rate.display_cost).to eq(Spree.t('delivery_rates.quoted_after_review'))
-      expect(rate.display_total).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(rate.display_cost).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
+      expect(rate.display_total).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
     end
   end
 

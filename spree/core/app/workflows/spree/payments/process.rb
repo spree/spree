@@ -36,11 +36,11 @@ module Spree
         halt!(payment) if payment.processing?
         return unless payment.payment_method&.source_required?
 
-        failure(payment, Spree.t(:payment_processing_failed)) if payment.source.blank?
+        failure(payment, I18n.t('spree.payment_processing_failed')) if payment.source.blank?
 
         unless payment.payment_method.supports?(payment.source) || payment.token_based?
           payment.invalidate!
-          failure(payment, Spree.t(:payment_method_not_supported))
+          failure(payment, I18n.t('spree.payment_method_not_supported'))
         end
       end
 

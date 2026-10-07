@@ -67,6 +67,10 @@ module SpreeEasyPost
       'https://www.easypost.com/wp-content/uploads/2026/03/EasyPost-Logo.svg'
     end
 
+    def self.docs_url
+      'https://spreecommerce.org/docs/integrations/shipping/easypost'
+    end
+
     # Fallback for hosts without the gem's translations; the localized
     # description in config/locales wins.
     def self.description

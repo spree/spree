@@ -128,6 +128,11 @@ describe Spree::Emails::Renderer do
     expect { render(section("{% render '../../etc/passwd' %}")) }.to raise_error(Liquid::FileSystemError)
   end
 
+  it 'has no include tag, whose variable partial name would echo data back in its error' do
+    expect { render(section('{% include order.email %}'), { order: { email: 'jane@example.com' } }) }.
+      to raise_error(Liquid::SyntaxError) { |error| expect(error.message).not_to include('jane@example.com') }
+  end
+
   it 'fails a runaway template instead of rendering it' do
     expect { render(section('{% for i in (1..10000000) %}{{ i }}{% endfor %}')) }.to raise_error(Liquid::MemoryError)
   end

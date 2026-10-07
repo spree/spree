@@ -70,7 +70,7 @@ describe Spree::AdminUserMethods do
   describe 'selected_locale' do
     # The admin-UI display language is a client concern (the React dashboard
     # ships its own locale bundles); the backend just stores the preference and
-    # does NOT validate it against Spree.available_locales (Rails/SpreeI18n
+    # does NOT validate it against Spree.available_locales (Rails/Spree
     # locales), which is an unrelated list. Each consumer applies it against its
     # own supported set.
     it 'stores any locale code, including ones the Rails backend has no translations for' do

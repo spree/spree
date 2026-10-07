@@ -1022,7 +1022,7 @@ module Spree
         result = described_class.call(cart: cart, params: { po_document: orphan_blob.signed_id })
 
         expect(result).to be_failure
-        expect(result.error.to_s).to include(Spree.t(:po_document_upload_incomplete))
+        expect(result.error.to_s).to include(I18n.t('spree.po_document_upload_incomplete'))
         expect(result.error.to_s).not_to include('ActiveStorage')
       end
     end

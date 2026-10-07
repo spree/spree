@@ -27,6 +27,7 @@ require 'name_of_person'
 require 'nokogiri'
 require 'oj'
 require 'rails-html-sanitizer'
+require 'rails-i18n'
 require 'paranoia'
 require 'request_store'
 require 'ransack'
@@ -221,20 +222,12 @@ module Spree
     ->(locale) { locale.name == Spree::Current.content_locale }
   end
 
-  # Stable anonymous identifier for this Spree installation. Generated once,
-  # persisted in the preferences store and reused afterwards. It identifies the
-  # installation only
+  # Stable anonymous identifier for this Spree installation, kept on the
+  # default store, which generates it when it is first saved.
   #
-  # Deliberately not memoized: the persisted preference is the single source
-  # of truth, so processes that race to generate the first value converge on
-  # the winning row at the next read instead of each holding a different id
-  # for their lifetime.
-  #
-  # @return [String] UUID
+  # @return [String, nil] UUID, or nil before the default store exists
   def self.install_id
-    store = Spree::Preferences::Store.instance
-    store.get('spree/install_id') { nil }.presence ||
-      SecureRandom.uuid.tap { |id| store.set('spree/install_id', id) }
+    Spree::Store.default&.preferred_install_id
   end
 
   # Used to configure Spree.
@@ -460,6 +453,13 @@ module Spree
   #   Spree.number_generators[:order] = 'MyApp::BranchOrderNumbers'
   singleton_class.delegate :number_generators, to: :spree_config
 
+  # The email templates merchants may edit in the dashboard.
+  #
+  # @return [Spree::Emails::EditableTemplates]
+  def self.editable_email_templates
+    @editable_email_templates ||= Spree::Emails::EditableTemplates.new
+  end
+
   # Event subscribers that handle lifecycle and custom events
   # @example Adding a custom subscriber
   #   Spree.subscribers << MyApp::OrderNotificationSubscriber
@@ -634,14 +634,15 @@ require 'spree/store_scope_guard'
 require 'spree/checkout/step'
 require 'spree/checkout/requirement'
 require 'spree/checkout/registry'
+require 'spree/emails/editable_templates'
 require 'spree/checkout/default_requirements'
 require 'spree/checkout/requirements'
 
 require 'spree/core/controller_helpers/store'
 
-require 'spree/core/preferences/store'
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/masking'
+require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'
 require 'spree/core/ransack_configuration'

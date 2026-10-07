@@ -151,7 +151,7 @@ module Spree
 
         expect(execute.success?).to eq(false)
         expect(execute.error.to_s).to eq(
-          Spree.t('fulfillments.errors.insufficient_quantity', item: line_item.prefixed_id, requested: 2, available: 1)
+          I18n.t('spree.fulfillments.errors.insufficient_quantity', item: line_item.prefixed_id, requested: 2, available: 1)
         )
       end
 
@@ -340,21 +340,21 @@ module Spree
         params[:cost] = -5
 
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
 
       it 'rejects a non-numeric cost' do
         params[:cost] = 'free'
 
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
 
       it 'rejects mixed alphanumeric garbage instead of stripping it' do
         params[:cost] = '12 boxes'
 
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
     end
 
@@ -416,19 +416,19 @@ module Spree
         result = subject.call(order: incomplete, stock_location: stock_location)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.order_not_completed'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.order_not_completed'))
       end
 
       it 'rejects a canceled order' do
         order.update_columns(status: 'canceled', canceled_at: Time.current)
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.order_canceled'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.order_canceled'))
       end
 
       it 'rejects an unknown status' do
         params[:status] = 'ready'
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_status'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_status'))
       end
 
       it 'rejects a quantity above the unfulfilled quantity' do
@@ -451,7 +451,7 @@ module Spree
         result = subject.call(order: shipped, stock_location: shipped.shipments.first.stock_location)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.no_items_to_fulfill'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.no_items_to_fulfill'))
       end
     end
 

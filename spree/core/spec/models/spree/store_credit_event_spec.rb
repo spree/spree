@@ -37,7 +37,7 @@ describe 'StoreCreditEvent' do
       let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
 
       it 'returns used' do
-        expect(subject.display_action).to eq Spree.t('store_credit.captured')
+        expect(subject.display_action).to eq I18n.t('spree.store_credit.captured')
       end
     end
 
@@ -45,7 +45,7 @@ describe 'StoreCreditEvent' do
       let(:action) { Spree::StoreCredit::AUTHORIZE_ACTION }
 
       it 'returns authorized' do
-        expect(subject.display_action).to eq Spree.t('store_credit.authorized')
+        expect(subject.display_action).to eq I18n.t('spree.store_credit.authorized')
       end
     end
 
@@ -53,7 +53,7 @@ describe 'StoreCreditEvent' do
       let(:action) { Spree::StoreCredit::ALLOCATION_ACTION }
 
       it 'returns added' do
-        expect(subject.display_action).to eq Spree.t('store_credit.allocated')
+        expect(subject.display_action).to eq I18n.t('spree.store_credit.allocated')
       end
     end
 
@@ -61,7 +61,7 @@ describe 'StoreCreditEvent' do
       let(:action) { Spree::StoreCredit::VOID_ACTION }
 
       it 'returns credit' do
-        expect(subject.display_action).to eq Spree.t('store_credit.credit')
+        expect(subject.display_action).to eq I18n.t('spree.store_credit.credit')
       end
     end
 
@@ -69,7 +69,7 @@ describe 'StoreCreditEvent' do
       let(:action) { Spree::StoreCredit::CREDIT_ACTION }
 
       it 'returns credit' do
-        expect(subject.display_action).to eq Spree.t('store_credit.credit')
+        expect(subject.display_action).to eq I18n.t('spree.store_credit.credit')
       end
     end
   end

@@ -15,6 +15,8 @@ module Spree
           include Spree::Api::V3::Seller::AuthCookies
           include Spree::Api::V3::JwtAuthentication
 
+          RESET_REQUESTED_EVENT = 'seller_user.password_reset_requested'.freeze
+
           # No `skip_scope_check!`: this extends the plain v3 base, which has
           # no authentication or scope gate to lift. The emailed token is the
           # only credential, exactly as on the admin twin.
@@ -32,12 +34,12 @@ module Spree
             # them a seller reset link would be an invitation to a session they
             # cannot hold.
             if user&.seller_member?
-              user.publish_event('seller_user.password_reset_requested', event_payload(user))
+              user.publish_event(RESET_REQUESTED_EVENT, event_payload(user))
             end
 
             # Always 202, whether or not anything matched — this endpoint must
             # not become a way to discover which addresses exist.
-            render json: { message: Spree.t(:password_reset_requested, scope: :api) }, status: :accepted
+            render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
           end
 
           # PATCH /api/v3/seller/auth/password_resets/:id
@@ -79,7 +81,7 @@ module Spree
           def render_token_invalid
             render_error(
               code: ErrorHandler::ERROR_CODES[:password_reset_token_invalid],
-              message: Spree.t(:password_reset_token_invalid, scope: :api),
+              message: I18n.t('spree.api.password_reset_token_invalid'),
               status: :unprocessable_content
             )
           end
@@ -88,14 +90,11 @@ module Spree
           # right panel origin and locale without a request to read them from.
           def event_payload(user)
             store = seller_store(user)
-            payload = {
-              reset_token: user.generate_token_for(:password_reset),
-              email: user.email,
-              store_id: store&.prefixed_id
-            }
-            redirect_url = validated_redirect_url(store)
-            payload[:redirect_url] = redirect_url if redirect_url.present?
-            payload
+            user.event_payload_for(
+              RESET_REQUESTED_EVENT,
+              reset_token: user.generate_token_for(:password_reset), store: store,
+              redirect_url: validated_redirect_url(store).presence
+            )
           end
 
           # Which store's panel to send them to.

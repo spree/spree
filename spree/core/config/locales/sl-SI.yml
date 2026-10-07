@@ -1,0 +1,600 @@
+---
+sl-SI:
+  activemodel:
+    errors:
+      messages:
+        blank: ne sme biti prazno
+  activerecord:
+    attributes:
+      spree/address:
+        company: Podjetje
+        label: Naziv naslova
+      spree/customer_group:
+        description: Opis
+        name: Ime
+      spree/gift_card:
+        amount_used: Porabljeni znesek
+        expires_at: Poteče
+      spree/import:
+        preferred_delimiter: Ločilo
+      spree/import_mapping:
+        file_column: Stolpec datoteke
+        schema_field: Polje sheme
+      spree/import_row:
+        row_number: Številka
+      spree/invitation:
+        inviter: Vabitelj
+      spree/option_type:
+        filterable: Filtrirno
+        kind: Vrsta
+      spree/option_value:
+        color_code: Koda barve
+        image: Slika vzorca
+      spree/order:
+        internal_note: Interna opomba
+        item_count: Izdelki
+      spree/payment:
+        number: Številka
+      spree/policy:
+        body: Vsebina
+        owner: Pravilnik za
+      spree/price_list:
+        description: Opis
+        ends_at: Konča se
+        match_policy: Pravilnik ujemanja
+        name: Ime
+        priority: Prioriteta
+        starts_at: Začne se
+        status: Stanje
+      spree/price_rule:
+        priority: Prioriteta
+        type: Vrsta
+      spree/product:
+        discontinue_on: Ukini dne
+        less_than: Manj kot
+        make_active_at: Aktiviraj dne
+        more_than: Več kot
+      spree/promotion:
+        generate_code: Ustvari kodo kupona
+        promotion_category: Kategorija promocije
+      spree/promotion_category:
+        code: Koda
+      spree/shipment:
+        number: Številka
+      spree/store:
+        address: Naslov
+        contact_phone: Kontaktni telefon
+        preferred_digital_asset_authorized_clicks: Omejitev klikov za prenos
+        preferred_digital_asset_authorized_days: Omejitev dni za prenos
+        preferred_limit_digital_download_count: Omeji število prenosov digitalnih povezav
+        preferred_limit_digital_download_days: Omeji dni za prenos digitalnih povezav
+        seo_robots: SEO roboti
+        storefront_custom_code_body_end: Koda po meri pred zaprtjem oznake body
+        storefront_custom_code_body_start: Koda po meri za odprtjem oznake body
+        storefront_custom_code_head: Koda po meri v glavi strani
+      spree/store_credit:
+        amount_used: Porabljeni znesek
+      spree/taxon:
+        sort_order: Vrstni red razvrščanja
+      spree/user:
+        avatar: Avatar
+      user:
+        current_sign_in: Trenutna prijava ob
+        last_sign_in: Zadnja prijava ob
+        sign_in_count: Število prijav
+    errors:
+      messages:
+        blank: ne sme biti prazno
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: mora biti izvor (shema in gostitelj) brez poti, poizvedbe ali fragmenta
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Porabljene darilne kartice ni mogoče izbrisati
+        spree/import:
+          attributes:
+            attachment:
+              content_type: ima nedovoljeno vrsto vsebine
+            type:
+              inclusion: ni vključeno na seznam dovoljenih vrst
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: Privzetega trga ni mogoče izbrisati.
+              cannot_destroy_last_market: Edinega trga ni mogoče izbrisati.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: je že dodeljena drugemu trgu v tej trgovini
+              not_in_shipping_zone: ni zajeta v nobeni dostavni coni. Najprej nastavite dostavno cono.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: je večji od dovoljenega največjega zneska %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: mora biti za začetkom
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Izdelkov, dodanih oddanim naročilom, ni mogoče izbrisati. V takih primerih jih raje ukinite.
+            discontinue_on:
+              invalid_date_range: mora biti za datumom razpoložljivosti
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: mora biti za datumom objave
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: mora biti za začetnim datumom
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: Edine trgovine ni mogoče izbrisati.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Presega skupni dobropis.
+            amount_used:
+              cannot_be_greater_than_amount: Ne sme biti večji od zneska.
+              greater_than_zero_restrict_delete: je večji od nič. Dobropisa trgovine ni mogoče izbrisati.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: pripada drugemu uporabniku
+              deprecated_in_completed_order: je opuščeno v zaključenem naročilu
+            ship_address_id:
+              belongs_to_other_user: pripada drugemu uporabniku
+              deprecated_in_completed_order: je opuščeno v zaključenem naročilu
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Različic, dodanih oddanim naročilom, ni mogoče izbrisati. V takih primerih jih raje ukinite.
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: ne sme kazati na interni ali zasebni omrežni naslov
+    models:
+      spree/address:
+        one: Naslov
+        other: Naslovi
+      spree/classification:
+        one: Razvrstitev
+        other: Razvrstitve
+      spree/country:
+        one: Država
+        other: Države
+      spree/credit_card:
+        one: Kreditna kartica
+        other: Kreditne kartice
+      spree/customer_group:
+        one: Skupina strank
+        other: Skupine strank
+      spree/customer_group_user:
+        one: Uporabnik skupine strank
+        other: Uporabniki skupine strank
+      spree/export:
+        one: Izvoz
+        other: Izvozi
+      spree/integration:
+        one: Integracija
+        other: Integracije
+      spree/inventory_unit:
+        one: Enota zaloge
+        other: Enote zaloge
+      spree/line_item:
+        one: Postavka
+        other: Postavke
+      spree/option_type:
+        one: Vrsta možnosti
+        other: Vrste možnosti
+      spree/option_value:
+        one: Vrednost možnosti
+        other: Vrednosti možnosti
+      spree/order:
+        one: Naročilo
+        other: Naročila
+      spree/payment:
+        one: Plačilo
+        other: Plačila
+      spree/payment_method:
+        one: Način plačila
+        other: Načini plačila
+      spree/price:
+        one: Cena
+        other: Cene
+      spree/price_list:
+        one: Cenik
+        other: Ceniki
+      spree/price_rule:
+        one: Cenovno pravilo
+        other: Cenovna pravila
+      spree/product:
+        one: Izdelek
+        other: Izdelki
+      spree/promotion:
+        one: Promocija
+        other: Promocije
+      spree/promotion_category:
+        one: Kategorija promocije
+        other: Kategorije promocij
+      spree/property:
+        one: Lastnost
+        other: Lastnosti
+      spree/refund_reason:
+        one: Razlog vračila
+        other: Razlogi vračila
+      spree/role:
+        one: Vloge
+        other: Vloge
+      spree/shipment:
+        one: Pošiljka
+        other: Pošiljke
+      spree/shipping_method:
+        one: Način dostave
+        other: Načini dostave
+      spree/state:
+        one: Regija
+        other: Regije
+      spree/stock_location:
+        one: Lokacija zaloge
+        other: Lokacije zaloge
+      spree/stock_movement:
+        one: Premik zaloge
+        other: Premiki zaloge
+      spree/stock_transfer:
+        one: Prenos zaloge
+        other: Prenosi zaloge
+      spree/store:
+        one: Trgovina
+        other: Trgovine
+      spree/store_credit:
+        one: Dobropis trgovine
+        other: Dobropisi trgovine
+      spree/tax_category:
+        one: Davčna kategorija
+        other: Davčne kategorije
+      spree/tax_rate:
+        one: Davčna stopnja
+        other: Davčne stopnje
+      spree/taxon:
+        one: Kategorija
+        other: Kategorije
+      spree/taxonomy:
+        one: Kategorija
+        other: Kategorije
+      spree/user:
+        one: Uporabnik
+        other: Uporabniki
+      spree/variant:
+        one: Različica
+        other: Različice
+      spree/zone:
+        one: Cona
+        other: Cone
+  errors:
+    messages:
+      not_a_number: ni število
+      not_saved:
+        one: '1 napaka je preprečila shranjevanje tega vira: %{resource}:'
+        other: "%{count} napak je preprečilo shranjevanje tega vira: %{resource}:"
+  number:
+    currency:
+      format:
+        delimiter: "."
+        separator: ","
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accepts_email_marketing: Sprejema e-poštno trženje
+    account: Uporabniški račun
+    active: Objavljeno
+    address: Naslov
+    adjustment: Prilagoditev
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (vključeno v ceno)"
+    adjustments_deleted: Prilagoditve izbrisane
+    all: Vse
+    amount: Znesek
+    api_key_no_current_key: Te zahteve ni overil noben API ključ
+    api_key_scopes_immutable: ni mogoče spremeniti po ustvarjenju ključa; ustvarite nov ključ z obsegi, ki jih potrebujete, in tega prekličite
+    availability: razpoložljivost
+    bill_address: Naslov za Račun
+    billing_address: Naslov za Račun
+    calculator: Kalkulator
+    canceled: Preklicano
+    cannot_be_destroyed: Naročila ni mogoče izbrisati.
+    capture: zajemi
+    cart: Košarica
+    cart_already_updated: Košarica je bila že posodobljena.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} ni mogoče dostaviti na izbrani naslov"
+      discontinued: "%{li_name} je bilo odstranjeno, ker je bilo ukinjeno"
+      out_of_stock: "%{li_name} je bilo odstranjeno, ker je bilo razprodano"
+    categories: Kategorije
+    category: Kategorija
+    channel: Prodajni kanal
+    channels: Prodajni kanali
+    checkout: Naročilo
+    checkout_requirements:
+      email_required: E-poštni naslov je obvezen
+      line_items_required: Dodajte vsaj en izdelek v košarico
+      payment_required: Dodajte način plačila
+      ship_address_required: Naslov za dostavo je obvezen
+    city: Mesto
+    color_code: Koda barve
+    compare_at_amount: Primerjalni znesek
+    compare_at_price: Primerjalna cena
+    complete: complete
+    confirm: Potrdi
+    cost_price: Nabavna Cena
+    country: Država
+    coupon_code: Koda kupona
+    coupon_code_used: Vnesena koda kupona je bila že uporabljena. Poskusite znova.
+    credit_card: Kreditna kartica
+    currency_not_supported_by_store: te trgovine ne podpira
+    customer: Stranka
+    customers: Stranke
+    default: Privzeto
+    default_stock_location_name: Lokacija trgovine
+    default_wishlist_name: Seznam želja
+    delivery: Delivery
+    depth: Globina
+    description: Opis
+    destroy: Izbriši
+    digital:
+      digital_delivery: Digitalna dostava
+    digital_assets: Digitalna sredstva
+    discontinued: Ukinjeno
+    discontinued_variants_present: Nekatere postavke v tem naročilu vsebujejo izdelke, ki niso več na voljo.
+    display_delivery_range: Dostava v %{delivery_range} delovnih dneh
+    draft: Osnutek
+    eligibility_errors:
+      messages:
+        no_matching_channel: Ta kupon ni veljaven za ta prodajni kanal.
+        no_matching_market: Ta kupon ni veljaven na vašem trgu.
+        wrong_country: Ta koda kupona ni veljavna v vaši državi
+    error: napaka
+    error_user_destroy_with_orders: Uporabnika, povezanega z naročili, ni mogoče izbrisati
+    error_user_does_not_have_any_store_credits: Uporabnik nima na voljo nobenih dobropisov trgovine
+    errors:
+      messages:
+        cannot_delete_default_channel: Privzetega kanala ni mogoče izbrisati. Najprej določite drug kanal kot privzeti.
+        channel_store_mismatch: mora pripadati isti trgovini
+        invalid_order_routing_rule: ni registrirano pravilo usmerjanja naročil
+        invalid_order_routing_strategy: ni registrirana strategija usmerjanja naročil
+        store_association_can_not_be_changed: Povezave s trgovino ni mogoče spremeniti
+        store_is_already_set: Trgovina je že nastavljena
+    expired: Poteklo
+    export_mailer:
+      export_done:
+        message: Odlično delo, vaš izvoz je pripravljen! Za prenos uporabite spodnjo povezavo.
+        subject: Vaš izvoz %{export_number} je bil uspešno obdelan!
+      greeting: Pozdravljeni %{user_name},
+    field: Polje
+    first_name: Ime
+    flat_percent: Fiksni odstotek
+    flat_rate_per_order: Fiksna cena (na naročilo)
+    flexible_rate: Fleksibilna cena
+    free: Brezplačno
+    gateway: Ponudnik
+    gateway_error: Napaka ponudnika
+    gift_card: Darilna kartica
+    gift_card_already_redeemed: Darilna kartica je bila že unovčena.
+    gift_card_applied: Darilna kartica je bila uspešno uporabljena za vaše naročilo!
+    gift_card_customer_not_logged_in: Darilne kartice ni mogoče uporabiti kot gost.
+    gift_card_expired: Darilna kartica je potekla.
+    gift_card_mismatched_currency: Darilne kartice ni mogoče uporabiti s trenutno valuto.
+    gift_card_mismatched_customer: Ta darilna kartica je povezana z drugim uporabnikom.
+    gift_card_not_found: Darilna kartica ni bila najdena.
+    gift_card_removed: Darilna kartica je bila uspešno odstranjena iz vašega naročila
+    gift_card_using_store_credit_error: Darilne kartice ne morete uporabiti, potem ko ste uporabili dobropis trgovine.
+    height: Višina
+    i18n:
+      this_file_language: Slovenščina (sl-SL)
+    idempotency_key_reused: Ta ključ Idempotency-Key je bil že uporabljen z drugimi parametri zahteve.
+    image: Slika
+    import: Uvoz
+    in_stock: Na zalogi
+    internal_note: Interna opomba
+    inventory: Inventar
+    invitation_mailer:
+      greeting: Pozdravljeni %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} je sprejel vaše vabilo, da se pridruži %{resource_name}"
+        subject: "%{invitee_name} je sprejel vaše vabilo, da se pridruži %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} vas je povabil, da se pridružite %{resource_name}"
+        link_description: 'Za sprejem tega vabila kliknite spodnjo povezavo:'
+        subject: Vabilo za pridružitev %{resource_name}
+    iso: ISO Alpha-2
+    item: Izdelek
+    key: Ključ
+    kind: Vrsta
+    label: Oznaka
+    last_name: Priimek
+    line_item: Postavka
+    line_items: Postavke
+    link: Povezava
+    locale: Jezikovna nastavitev
+    locale_not_supported_by_store: te trgovine ne podpira
+    manual: Ročno
+    market: Trg
+    me_no_current_user: Te zahteve ni overil noben skrbniški uporabnik
+    media: Mediji
+    meta_description: Meta opis
+    meta_keywords: Meta ključne besede
+    metadata: Metadata
+    min_quantity: Najmanjša količina
+    month: Mesec
+    name: Ime
+    new_variant: Dodaj varianto
+    no_cc_type: Ni na voljo
+    none: Noben
+    number: Številka
+    on_hand: Na zalogi
+    only_active_products_can_be_added_to_cart: Osnutkov in arhiviranih izdelkov ni mogoče dodati v košarico, najprej označite izdelek kot aktiven.
+    option_name: Ime možnosti
+    option_type: Option Type
+    option_value: Option Value
+    options: Možnosti
+    or: ali
+    order: Naročilo
+    order_routing:
+      strategies:
+        legacy: Podedovano
+        rules: Pravila (urejeno)
+    order_summary: Povzetek naročila
+    orders: Naročila
+    out_of_stock: Ni na zalogi
+    password: Geslo
+    path: Pot
+    payment: Plačilo
+    payment_method: Način plačila
+    payment_methods: Načini plačila
+    payment_processing_failed: Plačila ni možno izvesti, prosimo preverite vnešene podatke
+    payment_source: Vir plačila
+    phone: Telefon
+    price: Cena
+    price_rules:
+      channel_rule:
+        description: Uporabi cene glede na prodajni kanal
+      customer_group_rule:
+        description: Uporabi cene za določene skupine strank
+    prices: Cene
+    privacy_policy: Pravilnik o zasebnosti
+    processing: Obdelava
+    product: Izdelek
+    product_translations: Prevodi izdelkov
+    products: Izdelki
+    products_cannot_be_shipped: Trenutno ne moremo dostaviti %{product_names} na vašo trenutno lokacijo. Spremenite svoj naslov za dostavo ali odstranite %{product_names} iz košarice.
+    promotion_already_used: Ne morete izbrisati promocije, ki je bila že uporabljena
+    promotion_label: Promocija (%{name})
+    promotion_rule_types:
+      category:
+        description: Naročilo vključuje izdelke v določenih kategorijah
+        name: Kategorije
+      channel:
+        description: Omeji na naročila, oddana prek določenih kanalov
+        name: Kanal(i)
+      country:
+        description: Omeji na naročila z naslovom za dostavo v določeni državi
+        name: Država
+      currency:
+        description: Omeji na naročila v določeni valuti
+        name: Valuta
+      customer:
+        description: Na voljo samo določenim strankam
+        name: Stranke
+      customer_group:
+        description: Na voljo samo strankam v določenih skupinah strank
+        name: Skupina(-e) strank
+      customer_logged_in:
+        description: Na voljo samo prijavljenim strankam
+        name: Samo prijavljene stranke
+      first_order:
+        description: Mora biti strankino prvo naročilo
+        name: Prvo naročilo
+      item_total:
+        description: Naročilo skupaj izpolnjuje te kriterije
+        name: Izdelki skupaj
+      market:
+        description: Omeji na naročila, oddana na določenih trgih
+        name: Trg(i)
+      product:
+        description: Naročilo vsebuje določene izdelke
+        name: Izdelek(i)
+    promotions: Promocije
+    query: Poizvedba
+    reason: Razlog
+    received: Prejeto
+    refund: Povračilo
+    refund_amount: Znesek vračila
+    registration: Registracija
+    remove: Odstrani
+    remove_gift_card_on_completed_order_error: Darilne kartice ne morete odstraniti, potem ko je bilo naročilo oddano
+    resellable: Primerno za nadaljnjo prodajo
+    resend: Pošlji ponovno
+    response_code: Odzivna koda
+    return: vračilo
+    returned: Vrnjeno
+    returns_policy: Pravilnik o vračilih
+    row: Vrstica
+    scope: Pravilo
+    selected_quantity_not_available: izbranih od %{item} ni na voljo.
+    ship: pošlji
+    ship_address: Naslov za dostavo
+    shipment: Pošiljka
+    shipped: Poslano
+    shipping: Poštnina
+    shipping_address: Naslov za dostavo
+    shipping_policy: Pravilnik o dostavi
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (vklj. %{tax_amount} %{tax_rate_name})"
+    sku: šifra
+    status: Status
+    stock_transfer:
+      errors:
+        must_have_variant: Dodati morate vsaj eno različico
+        same_location: ne sme biti enaka ciljni lokaciji
+        variants_unavailable: Nekatere različice niso na voljo na %{stock}
+    store: Trgovina
+    store_credit:
+      allocated: Dodano
+      authorized: Odobreno
+      captured: Porabljeno
+      credit: Dobropis
+      eligible: Upravičeno
+    store_credit_name: Dobropis trgovine
+    store_credit_payment_method:
+      currency_mismatch: Valuta dobropisa trgovine se ne ujema z valuto naročila
+      insufficient_authorized_amount: Ni mogoče zajeti več od odobrenega zneska
+      insufficient_funds: Preostali znesek dobropisa trgovine ne zadošča
+      successful_action: Uspešen dobropis trgovine %{action}
+      unable_to_credit: 'Kode ni mogoče dobropisati: %{auth_code}'
+      unable_to_find: Dobropisa trgovine ni mogoče najti
+      unable_to_find_for_action: Dobropisa trgovine za avtorizacijsko kodo %{auth_code} za dejanje %{action} ni mogoče najti
+      unable_to_void: 'Kode ni mogoče razveljaviti: %{auth_code}'
+    tags: Oznake
+    tax: DDV
+    tax_category: Davčna kategorija
+    terms_of_service: Pogoji uporabe
+    total: Skupaj
+    tracking: Sledenje
+    type: Tip
+    unable_to_connect_to_gateway: Povezava do ponudnika plačilnih storitev ni uspela
+    updated_at: Posodobljeno
+    url: URL
+    user: Uporabnik
+    validation:
+      must_be_int: mora biti celo število
+    value: Vrednost
+    variant: Variant
+    variants: Variante
+    verified: Potrjeno
+    void: Neveljaven
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Onemogočeno ob
+        heading: Končna točka spletnega zahtevka onemogočena
+        instructions: Preverite URL končne točke in storitev, nato pa jo ponovno omogočite v Nastavitve → Razvijalci → Spletni zahtevki.
+        message: Končna točka spletnega zahtevka "%{endpoint_name}" je bila samodejno onemogočena po ponavljajočih se neuspelih dostavah.
+        name_label: Ime
+        reason_label: Razlog
+        subject: 'Končna točka spletnega zahtevka onemogočena: %{endpoint_name}'
+        url_label: URL
+    weight: Teža
+    weight_unit: Enota teže
+    width: Širina
+    year: Leto
+    zip: Poštna številka

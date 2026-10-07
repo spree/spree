@@ -26,7 +26,7 @@ module Spree
           def pickup_points
             provider = find_resource.pickup_point_provider_instance
             if provider.nil?
-              return render_error(code: ERROR_CODES[:record_not_found], message: Spree.t('errors.messages.no_pickup_point_provider'), status: :not_found)
+              return render_error(code: ERROR_CODES[:record_not_found], message: I18n.t('spree.errors.messages.no_pickup_point_provider'), status: :not_found)
             end
 
             latitude = params[:latitude].presence&.to_f

@@ -1,0 +1,15 @@
+---
+vi:
+  spree:
+    api:
+      cannot_delete: Không thể xóa %{model}
+      current_password_invalid: Mật khẩu hiện tại không hợp lệ hoặc bị thiếu
+      newsletter_verification_token_invalid: Token xác minh bản tin không hợp lệ hoặc đã hết hạn.
+      password_reset_requested: Nếu có tài khoản ứng với email đó, hướng dẫn đặt lại mật khẩu đã được gửi đi.
+      password_reset_token_invalid: Token đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.
+      record_not_found: Không tìm thấy %{model}
+      unauthorized: Bạn không được phép thực hiện hành động đó.
+      v3:
+        payments:
+          method_unavailable: Phương thức thanh toán này không khả dụng cho đơn hàng này.
+          session_required: Phương thức thanh toán này yêu cầu một phiên thanh toán. Vui lòng dùng điểm cuối phiên thanh toán thay thế.

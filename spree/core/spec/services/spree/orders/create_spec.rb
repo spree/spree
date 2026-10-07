@@ -285,7 +285,7 @@ module Spree
         }.not_to raise_error
 
         expect(result).to be_failure
-        expect(result.error.to_s).to include(Spree.t(:po_document_upload_incomplete))
+        expect(result.error.to_s).to include(I18n.t('spree.po_document_upload_incomplete'))
       end
     end
   end

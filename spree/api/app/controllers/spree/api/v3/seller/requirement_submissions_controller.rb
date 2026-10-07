@@ -42,7 +42,7 @@ module Spree
             unless @submission.file.attached?
               return render_error(
                 code: ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t(:seller_submission_no_file),
+                message: I18n.t('spree.seller_submission_no_file'),
                 status: :unprocessable_content
               )
             end

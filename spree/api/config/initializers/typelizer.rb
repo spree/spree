@@ -21,13 +21,10 @@ Rails.application.config.after_initialize do
       }
     }
 
-    # Serializers that exist only for Admin API or events — no Store API controller
+    # Serializers that exist only for the Admin API. Event serializers stay in:
+    # they describe the `data` of the typed webhook events the Store SDK ships.
     store_excluded = %w[
-      Asset CartPromotion OrderPromotion
-      StockLevel StockMovement StockTransfer
-      Report Export Import ImportRow
-      TaxCategory Exchange ExchangeLineItem
-      SupplierEvent PurchaseOrderEvent StockReceiptEvent
+      Asset CartPromotion OrderPromotion Report TaxCategory
     ].to_set
 
     # Store SDK — no prefix, package provides namespace
@@ -35,7 +32,7 @@ Rails.application.config.after_initialize do
       c.output_dir = api_root.join('../../packages/sdk/src/types/generated')
       c.reject_class = ->(serializer:) {
         name = serializer.name.to_s
-        name.include?('::Admin::') || name.include?('::Seller::') ||
+        !name.start_with?('Spree::Api::V3::') || name.include?('::Admin::') || name.include?('::Seller::') ||
           store_excluded.include?(name.sub(/\ASpree::Api::V3::/, '').sub(/Serializer\z/, ''))
       }
       c.serializer_name_mapper = ->(serializer) {

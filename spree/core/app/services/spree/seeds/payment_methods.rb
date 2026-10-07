@@ -12,8 +12,8 @@ module Spree
         )
         return if payment_method.persisted?
 
-        payment_method.name = Spree.t(:store_credit_name)
-        payment_method.description = Spree.t(:store_credit_name)
+        payment_method.name = I18n.t('spree.store_credit_name')
+        payment_method.description = I18n.t('spree.store_credit_name')
         payment_method.active = true
         payment_method.save!
       end

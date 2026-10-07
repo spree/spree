@@ -31,7 +31,7 @@ module Spree
             stream_shipping_label(@resource) do
               render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t('shipping_labels.errors.no_file_url'),
+                message: I18n.t('spree.shipping_labels.errors.no_file_url'),
                 status: :unprocessable_content
               )
             end
@@ -45,7 +45,7 @@ module Spree
             unless @resource.uploaded?
               return render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t('shipping_labels.errors.purchased_not_deletable'),
+                message: I18n.t('spree.shipping_labels.errors.purchased_not_deletable'),
                 status: :unprocessable_content
               )
             end
@@ -113,7 +113,7 @@ module Spree
           def render_invalid_signature
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:parameter_invalid],
-              message: Spree.t('shipping_labels.errors.file_required'),
+              message: I18n.t('spree.shipping_labels.errors.file_required'),
               status: :unprocessable_content
             )
           end

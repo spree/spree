@@ -496,7 +496,7 @@ module Spree
 
           it 'says the price is coming rather than showing an amount' do
             expect(subject.delivery_rates(package).first.display_price).
-              to eq(Spree.t('delivery_rates.quoted_after_review'))
+              to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
           end
         end
 

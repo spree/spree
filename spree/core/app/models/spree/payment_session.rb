@@ -9,6 +9,7 @@ module Spree
     self.event_prefix = 'payment_session'
 
     publishes_lifecycle_events
+    publishes_events :canceled, :completed, :expired, :failed, :processing
 
     belongs_to :order, class_name: 'Spree::Order', optional: true
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :payment_sessions
@@ -198,7 +199,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
 
     def publish_processing_event

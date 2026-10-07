@@ -24,13 +24,13 @@ module Spree
       # @return [Spree::ServiceModule::Result] the corrected stock level
       def call(stock_level:, count_on_hand: nil, adjustment: nil, reason: nil)
         if count_on_hand.present? && adjustment.present?
-          return failure(stock_level, Spree.t('stock_level.errors.adjustment_exclusive_with_count_on_hand'))
+          return failure(stock_level, I18n.t('spree.stock_level.errors.adjustment_exclusive_with_count_on_hand'))
         end
 
         target = parse(count_on_hand)
         delta = parse(adjustment)
-        return failure(stock_level, Spree.t('stock_level.errors.count_on_hand_not_an_integer')) if count_on_hand.present? && target.nil?
-        return failure(stock_level, Spree.t('stock_level.errors.adjustment_not_an_integer')) if adjustment.present? && delta.nil?
+        return failure(stock_level, I18n.t('spree.stock_level.errors.count_on_hand_not_an_integer')) if count_on_hand.present? && target.nil?
+        return failure(stock_level, I18n.t('spree.stock_level.errors.adjustment_not_an_integer')) if adjustment.present? && delta.nil?
 
         # Locked around the read: the delta is worked out from the count this
         # caller first saw, so two admins correcting the same level at once

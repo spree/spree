@@ -41,7 +41,7 @@ RSpec.describe Spree::CSV::CustomerPresenter do
       expect(subject[0]).to eq customer.first_name
       expect(subject[1]).to eq customer.last_name
       expect(subject[2]).to eq customer.email
-      expect(subject[3]).to eq Spree.t(:say_yes)
+      expect(subject[3]).to eq I18n.t('spree.say_yes')
       expect(subject[4]).to eq customer.address.company
       expect(subject[5]).to eq customer.address.address1
       expect(subject[6]).to eq customer.address.address2
@@ -61,7 +61,7 @@ RSpec.describe Spree::CSV::CustomerPresenter do
       before { customer.update!(accepts_email_marketing: false) }
 
       it 'returns say_no for email marketing' do
-        expect(subject[3]).to eq Spree.t(:say_no)
+        expect(subject[3]).to eq I18n.t('spree.say_no')
       end
     end
 

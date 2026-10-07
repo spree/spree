@@ -139,7 +139,7 @@ module Spree
 
           it 'returns failure' do
             expect(subject.success?).to be false
-            expect(subject.error.value).to eq Spree.t(:cannot_be_destroyed)
+            expect(subject.error.value).to eq I18n.t('spree.cannot_be_destroyed')
           end
         end
 
@@ -149,7 +149,7 @@ module Spree
 
           it 'returns failure' do
             expect(subject.success?).to be false
-            expect(subject.error.value).to eq Spree.t(:cannot_be_destroyed)
+            expect(subject.error.value).to eq I18n.t('spree.cannot_be_destroyed')
           end
         end
       end
@@ -162,7 +162,7 @@ module Spree
 
       it 'returns failure' do
         expect(subject.success?).to be false
-        expect(subject.error.value).to eq Spree.t(:cannot_be_destroyed)
+        expect(subject.error.value).to eq I18n.t('spree.cannot_be_destroyed')
       end
     end
   end

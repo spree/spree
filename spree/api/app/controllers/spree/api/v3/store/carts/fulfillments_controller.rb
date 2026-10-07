@@ -54,7 +54,7 @@ module Spree
               if provider.nil?
                 render_error(
                   code: ERROR_CODES[:validation_error],
-                  message: Spree.t('errors.messages.no_pickup_point_provider'),
+                  message: I18n.t('spree.errors.messages.no_pickup_point_provider'),
                   status: :unprocessable_entity
                 )
                 return false
@@ -64,7 +64,7 @@ module Spree
               if point.nil?
                 render_error(
                   code: ERROR_CODES[:record_not_found],
-                  message: Spree.t('errors.messages.pickup_point_not_found'),
+                  message: I18n.t('spree.errors.messages.pickup_point_not_found'),
                   status: :not_found
                 )
                 return false

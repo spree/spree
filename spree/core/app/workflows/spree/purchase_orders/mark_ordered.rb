@@ -32,8 +32,8 @@ module Spree
       private
 
       def ensure_draft
-        failure(purchase_order, Spree.t('purchase_order.errors.not_draft')) unless purchase_order.draft?
-        failure(purchase_order, Spree.t('purchase_order.errors.must_have_variant')) if purchase_order.items.empty?
+        failure(purchase_order, I18n.t('spree.purchase_order.errors.not_draft')) unless purchase_order.draft?
+        failure(purchase_order, I18n.t('spree.purchase_order.errors.must_have_variant')) if purchase_order.items.empty?
       end
 
       def mark_ordered

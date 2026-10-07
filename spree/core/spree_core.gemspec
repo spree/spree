@@ -60,6 +60,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paranoia', '>= 2.4'
   s.add_dependency 'loofah', '~> 2.21'
   s.add_dependency 'rails-html-sanitizer', '~> 1.6'
+  s.add_dependency 'rails-i18n', '~> 8.0'
   s.add_dependency 'ransack', '>= 4.1'
   s.add_dependency 'request_store', '~> 1.5'
   s.add_dependency 'rexml'
@@ -80,5 +81,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'bcrypt', '~> 3.1'
   s.add_dependency 'sqids', '~> 0.2'
   s.add_dependency 'ssrf_filter', '~> 1.0'
-  s.add_dependency 'pagy', '>= 43.3'
+  s.add_dependency 'pagy', '>= 43.6.3'
 end

@@ -1,0 +1,745 @@
+---
+th:
+  activemodel:
+    errors:
+      messages:
+        blank: ต้องไม่เว้นว่าง
+  activerecord:
+    attributes:
+      spree/address:
+        address1: ที่อยู่
+        address2: ที่อยู่ 2
+        city: ตำบล
+        company: บริษัท
+        country: ประเทศ
+        label: ชื่อที่อยู่
+        phone: เบอร์โทรศัพท์
+        state: จังหวัด
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO Name
+        name: ชื่อประเทศ
+        numcode: ISO Code
+      spree/credit_card:
+        cc_type: ประเภท
+        month: เดือน
+        number: เลขที่บัตร
+        verification_value: เลขยืนยัน
+        year: ปี
+      spree/customer_group:
+        description: คำอธิบาย
+        name: ชื่อ
+      spree/gift_card:
+        amount_used: จำนวนที่ใช้ไป
+        expires_at: หมดอายุเมื่อ
+      spree/import:
+        preferred_delimiter: ตัวคั่น
+      spree/import_mapping:
+        file_column: คอลัมน์ไฟล์
+        schema_field: ฟิลด์สคีมา
+      spree/import_row:
+        row_number: หมายเลข
+      spree/inventory_unit:
+        state: จังหวัด
+      spree/invitation:
+        inviter: ผู้เชิญ
+      spree/line_item:
+        price: ราคา
+        quantity: จำนวน
+      spree/option_type:
+        filterable: กรองได้
+        kind: ประเภท
+        name: ชื่อเรียก
+      spree/option_value:
+        color_code: รหัสสี
+        image: รูปตัวอย่างสี
+      spree/order:
+        checkout_complete: เช็คเอ้าท์เรียบร้อย
+        completed_at: รายการสมบูรณ์เมื่อ
+        coupon_code: เลขคูปอง
+        created_at: วันที่สั่งสินค้า
+        email: อีเมลของลูกค้า
+        internal_note: หมายเหตุภายใน
+        ip_address: หลายเลขไอพี
+        item_count: รายการ
+        item_total: รวม
+        number: หมายเลข
+        payment_state: จังหวัด
+        shipment_state: จังหวัด
+        special_instructions: ข้อแนะนำเพิ่มเติม
+        state: จังหวัด
+        total: รวม
+      spree/order/bill_address:
+        address1: ชื่อถนนในใบเสร็จ
+        city: ชื่อตำบลในใบเสร็จ
+        phone: เบอร์โทรศัพท์ในใบเสร็จ
+        state: ชื่อจังหวัดในใบเสร็จ
+      spree/order/ship_address:
+        address1: ถนนที่จัดส่ง
+        city: จังหวัดที่จัดส่ง
+        phone: เบอร์โทรศัพท์ผู้รับ
+        state: จังหวัดที่จัดส่ง
+      spree/payment:
+        amount: จำนวน
+        number: หมายเลข
+      spree/payment_method:
+        name: ชื่อ
+      spree/policy:
+        body: เนื้อหา
+        owner: นโยบายสำหรับ
+      spree/price_list:
+        description: คำอธิบาย
+        ends_at: สิ้นสุดเมื่อ
+        match_policy: นโยบายการจับคู่
+        name: ชื่อ
+        priority: ลำดับความสำคัญ
+        starts_at: เริ่มต้นเมื่อ
+        status: สถานะ
+      spree/price_rule:
+        priority: ลำดับความสำคัญ
+        type: ประเภท
+      spree/product:
+        available_on: พร้อมเมื่อ
+        cost_currency: ราคาอัตราแลกเปลี่ยน
+        cost_price: ราคา
+        description: รายละเอียด
+        discontinue_on: เลิกจำหน่ายเมื่อ
+        less_than: น้อยกว่า
+        make_active_at: เปิดใช้งานเมื่อ
+        master_price: ราคาจริง
+        more_than: มากกว่า
+        name: ชื่อ
+        on_hand: มีสินค้า
+        tax_category: ประเภทภาษี
+      spree/promotion:
+        advertise: โฆษณา
+        code: หมายเลข
+        description: รายละเอียด
+        event_name: Event Name
+        expires_at: วันหมดอายุ
+        generate_code: สร้างรหัสคูปอง
+        name: ชื่อ
+        path: Path
+        promotion_category: หมวดหมู่โปรโมชัน
+        starts_at: เริ่มเมื่อ
+        usage_limit: จำกัดจำนวน
+      spree/promotion_category:
+        code: รหัส
+      spree/property:
+        name: ชื่อ
+        presentation: การแสดงผล
+      spree/role:
+        name: ชื่อ
+      spree/shipment:
+        number: หมายเลข
+      spree/state:
+        abbr: ตัวย่อ
+        name: ชื่อ
+      spree/store:
+        address: ที่อยู่
+        contact_phone: เบอร์โทรติดต่อ
+        preferred_digital_asset_authorized_clicks: จำกัดจำนวนคลิกดาวน์โหลด
+        preferred_digital_asset_authorized_days: จำกัดจำนวนวันดาวน์โหลด
+        preferred_limit_digital_download_count: จำกัดจำนวนครั้งดาวน์โหลดลิงก์ดิจิทัล
+        preferred_limit_digital_download_days: จำกัดจำนวนวันดาวน์โหลดลิงก์ดิจิทัล
+        seo_robots: SEO Robots
+        storefront_custom_code_body_end: โค้ดกำหนดเองก่อนปิดแท็ก body
+        storefront_custom_code_body_start: โค้ดกำหนดเองหลังเปิดแท็ก body
+        storefront_custom_code_head: โค้ดกำหนดเองในส่วนหัวของหน้า
+      spree/store_credit:
+        amount_used: จำนวนที่ใช้ไป
+      spree/tax_category:
+        description: รายละเอียด
+        name: ชื่อ
+      spree/tax_rate:
+        amount: อัตรา
+        included_in_price: รวมในราคา
+        show_rate_in_label: แสดงอัตรา
+      spree/taxon:
+        name: ชื่อ
+        permalink: Permalink
+        position: ตำแหน่ง
+        sort_order: ลำดับการจัดเรียง
+      spree/taxonomy:
+        name: ชื่อ
+      spree/user:
+        avatar: รูปโปรไฟล์
+        email: อีเมล
+        password: รหัสผ่าน
+        password_confirmation: ยืนยันรหัสผ่าน
+      spree/variant:
+        cost_currency: อัตราแลกเปลี่ยน
+        cost_price: ราคา
+        depth: ความลึก
+        height: ความสูง
+        price: ราคา
+        sku: SKU
+        weight: น้ำหนัก
+        width: ความกว้าง
+      spree/zone:
+        description: รายละเอียด
+        name: ชื่อ
+      user:
+        current_sign_in: เข้าสู่ระบบครั้งปัจจุบันเมื่อ
+        last_sign_in: เข้าสู่ระบบครั้งล่าสุดเมื่อ
+        sign_in_count: จำนวนครั้งที่เข้าสู่ระบบ
+    errors:
+      messages:
+        blank: ต้องไม่เว้นว่าง
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: ต้องเป็น origin (สคีมาและโฮสต์) เท่านั้น โดยไม่มี path, query หรือ fragment
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: ไม่สามารถลบบัตรของขวัญที่ใช้ไปแล้วได้
+        spree/import:
+          attributes:
+            attachment:
+              content_type: มีประเภทเนื้อหาที่ไม่ได้รับอนุญาต
+            type:
+              inclusion: ไม่อยู่ในรายการประเภทที่ได้รับอนุญาต
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: ไม่สามารถลบตลาดเริ่มต้นได้
+              cannot_destroy_last_market: ไม่สามารถลบตลาดสุดท้ายที่เหลืออยู่ได้
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: ถูกกำหนดให้กับตลาดอื่นในร้านค้านี้แล้ว
+              not_in_shipping_zone: ไม่ได้ครอบคลุมโดยเขตการจัดส่งใด ๆ กรุณาตั้งค่าเขตการจัดส่งก่อน
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: มากกว่าจำนวนสูงสุดที่อนุญาตคือ %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: ต้องอยู่หลังเวลาเริ่มต้น
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: ไม่สามารถลบสินค้าที่ถูกเพิ่มในคำสั่งซื้อที่สั่งแล้วได้ ในกรณีนี้กรุณาเลิกจำหน่ายสินค้าแทน
+            discontinue_on:
+              invalid_date_range: ต้องอยู่หลังวันที่วางจำหน่าย
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: ต้องอยู่หลังวันที่เผยแพร่
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: ต้องอยู่หลังวันที่เริ่มต้น
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: ไม่สามารถลบร้านค้าเพียงร้านเดียวที่เหลืออยู่ได้
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: เกินยอดเครดิตทั้งหมด
+            amount_used:
+              cannot_be_greater_than_amount: ต้องไม่มากกว่าจำนวนเงิน
+              greater_than_zero_restrict_delete: มากกว่าศูนย์ ไม่สามารถลบเครดิตร้านค้าได้
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: เป็นของผู้ใช้รายอื่น
+              deprecated_in_completed_order: ถูกยกเลิกการใช้งานในคำสั่งซื้อที่เสร็จสมบูรณ์แล้ว
+            ship_address_id:
+              belongs_to_other_user: เป็นของผู้ใช้รายอื่น
+              deprecated_in_completed_order: ถูกยกเลิกการใช้งานในคำสั่งซื้อที่เสร็จสมบูรณ์แล้ว
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: ไม่สามารถลบตัวเลือกสินค้าที่ถูกเพิ่มในคำสั่งซื้อที่สั่งแล้วได้ ในกรณีนี้กรุณาเลิกจำหน่ายแทน
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: ต้องไม่ชี้ไปยังที่อยู่ของเครือข่ายภายในหรือเครือข่ายส่วนตัว
+    models:
+      spree/address:
+        one: ที่อยู่
+        other: ที่อยู่
+      spree/classification:
+        one: การจัดประเภท
+        other: การจัดประเภท
+      spree/country:
+        one: ประเทศ
+        other: ประเทศ
+      spree/credit_card:
+        one: บัตรเครดิต
+        other: บัตรเครดิต
+      spree/customer_group:
+        one: กลุ่มลูกค้า
+        other: กลุ่มลูกค้า
+      spree/customer_group_user:
+        one: ผู้ใช้ในกลุ่มลูกค้า
+        other: ผู้ใช้ในกลุ่มลูกค้า
+      spree/export:
+        one: การส่งออก
+        other: การส่งออก
+      spree/integration:
+        one: การเชื่อมต่อ
+        other: การเชื่อมต่อ
+      spree/inventory_unit:
+        one: จำนวนในคลัง
+        other: จำนวนในคลัง
+      spree/line_item:
+        one: Line Item
+        other: Line Items
+      spree/option_type:
+        one: ประเภทตัวเลือก
+        other: ประเภทตัวเลือก
+      spree/option_value:
+        one: ค่าตัวเลือก
+        other: ค่าตัวเลือก
+      spree/order:
+        one: สั่งซื้อ
+        other: สั่งซื้อ
+      spree/payment:
+        one: ชำระ
+        other: ชำระ
+      spree/payment_method:
+        one: วิธีการชำระเงิน
+        other: วิธีการชำระเงิน
+      spree/price:
+        one: ราคา
+        other: ราคา
+      spree/price_list:
+        one: รายการราคา
+        other: รายการราคา
+      spree/price_rule:
+        one: กฎราคา
+        other: กฎราคา
+      spree/product:
+        one: สินค้า
+        other: สินค้า
+      spree/promotion:
+        one: โปรโมชัน
+        other: โปรโมชัน
+      spree/promotion_category:
+        one: หมวดหมู่โปรโมชัน
+        other: หมวดหมู่โปรโมชัน
+      spree/property:
+        one: คุณสมบัติ
+        other: คุณสมบัติ
+      spree/refund_reason:
+        one: เหตุผลการคืนเงิน
+        other: เหตุผลการคืนเงิน
+      spree/role:
+        one: หน้าที่
+        other: หน้าที่
+      spree/shipment:
+        one: การส่งสินค้า
+        other: การส่งสินค้า
+      spree/shipping_method:
+        one: วิธีการจัดส่ง
+        other: วิธีการจัดส่ง
+      spree/state:
+        one: จังหวัด
+        other: จังหวัด
+      spree/stock_location:
+        one: คลังสินค้า
+        other: คลังสินค้า
+      spree/stock_movement:
+        one: การเคลื่อนไหวของสต็อก
+        other: การเคลื่อนไหวของสต็อก
+      spree/stock_transfer:
+        one: การโอนสต็อก
+        other: การโอนสต็อก
+      spree/store:
+        one: ร้านค้า
+        other: ร้านค้า
+      spree/store_credit:
+        one: เครดิตร้านค้า
+        other: เครดิตร้านค้า
+      spree/tax_category:
+        one: ประเภทภาษี
+        other: ประเภทภาษี
+      spree/tax_rate:
+        one: อัตราภาษีTax Rate
+        other: อัตราภาษี
+      spree/taxon:
+        one: หมวดหมู่
+        other: หมวดหมู่
+      spree/taxonomy:
+        one: หมวดหมู่
+        other: หมวดหมู่
+      spree/user:
+        one: ผู้ใช้งาน
+        other: ผู้ใช้งาน
+      spree/variant:
+        one: ตัวแปร
+        other: ตัวแปร
+      spree/zone:
+        one: เขต
+        other: เขต
+  errors:
+    messages:
+      already_confirmed: ได้ทำการยืนยันแล้ว
+      not_found: ไม่พบ
+      not_locked: ไม่ได้ล๊อก
+      not_saved:
+        one: 'พบข้อผิดพลาด 1 รายการที่ทำให้ %{resource} นี้ไม่สามารถบันทึกได้:'
+        other: 'พบข้อผิดพลาด %{count} รายการที่ทำให้ %{resource} นี้ไม่สามารถบันทึกได้:'
+  number:
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accepts_email_marketing: ยอมรับการตลาดผ่านอีเมล
+    account: บัญชีผู้ใช้
+    active: ใช้งาน
+    address: ที่อยู่
+    address1: ที่อยู่
+    address2: ที่อยู่ (เพิ่มเติม)
+    adjustment: แก้ไขรายการ
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (รวมในราคาแล้ว)"
+    adjustments_deleted: ลบรายการปรับปรุงแล้ว
+    all: ทั้งหมด
+    amount: รวม
+    api_key_no_current_key: ไม่มี API key ที่ยืนยันตัวตนสำหรับคำขอนี้
+    api_key_scopes_immutable: ไม่สามารถเปลี่ยนแปลงได้หลังจากสร้างคีย์แล้ว กรุณาสร้างคีย์ใหม่ด้วยขอบเขตที่คุณต้องการและเพิกถอนคีย์นี้
+    availability: ความพร้อมจำหน่าย
+    backorderable: สามารถสั่งซื้อล่วงหน้าได้
+    bill_address: ที่อยู่บนใบเสร็จรับเงิน
+    billing_address: ที่อยู่บนใบเสร็จรับเงิน
+    calculator: เครื่องคิดเลข
+    canceled: ยกเลิกแล้ว
+    cannot_be_destroyed: ไม่สามารถลบคำสั่งซื้อได้
+    capture: capture
+    cart: ตะกร้าสินค้า
+    cart_already_updated: ตะกร้าได้รับการอัปเดตแล้ว
+    cart_line_item:
+      delivery_unavailable: ไม่สามารถจัดส่ง %{li_name} ไปยังที่อยู่ที่เลือกได้
+      discontinued: "%{li_name} ถูกนำออกเนื่องจากเลิกจำหน่ายแล้ว"
+      out_of_stock: "%{li_name} ถูกนำออกเนื่องจากสินค้าหมด"
+    categories: หมวดหมู่
+    category: ชนิด
+    channel: ช่องทางการขาย
+    channels: ช่องทางการขาย
+    checkout: สั่งซื้อ
+    checkout_requirements:
+      email_required: จำเป็นต้องระบุที่อยู่อีเมล
+      line_items_required: เพิ่มสินค้าอย่างน้อยหนึ่งรายการลงในตะกร้าของคุณ
+      payment_required: เพิ่มวิธีการชำระเงิน
+      ship_address_required: จำเป็นต้องระบุที่อยู่จัดส่ง
+    city: เขต หรือ อำเภอ
+    color_code: รหัสสี
+    company: บริษัท
+    compare_at_amount: จำนวนเงินเปรียบเทียบ
+    compare_at_price: ราคาเปรียบเทียบ
+    complete: เสร็จสิ้น
+    confirm: ยืนยันรหัสผ่าน
+    cost_price: Cost Price
+    count_on_hand: จำนวนในมือ
+    country: ประเทศ
+    coupon_code: หมายเลขคูปอง
+    coupon_code_already_applied: คูปองใบนี้ได้ถูกใช้ในรายการสั่งซื้อนี้แล้ว
+    coupon_code_applied: คูปองใบนี้ได้ถูกใช้สิทธิร่วมกับรายการสั่งซื้อของคุณเป็นที่เรียบร้อย
+    coupon_code_better_exists: คูปองที่ได้ใช้นั้นทำให้ราคาถูกลง
+    coupon_code_expired: คูปองหมดอายุแล้ว
+    coupon_code_max_usage: คูปองได้ถูกใช้เกินกำหนดแล้ว
+    coupon_code_not_eligible: คูปองนี้ไม่สามารถใช้กับรายการสั่งซื้อดังกล่าวได้
+    coupon_code_not_found: ไม่พบหมายเลขคูปองนี้ กรุณาลองใหม่อีกครั้ง
+    coupon_code_used: รหัสคูปองที่คุณกรอกถูกใช้ไปแล้ว กรุณาลองใหม่อีกครั้ง
+    created_at: สร้างเมื่อ
+    credit_card: บัตรเครดิต
+    currency: สกุลเงิน
+    currency_not_supported_by_store: ไม่รองรับโดยร้านค้านี้
+    customer: ลูกค้า
+    customers: ลูกค้า
+    default: ค่าเริ่มต้น
+    default_stock_location_name: ที่ตั้งร้านค้า
+    default_wishlist_name: รายการสิ่งที่อยากได้
+    delivery: จัดส่ง
+    depth: ลึก
+    description: รายละเอียด
+    destination: จุดหมาย
+    destroy: ทำลาย
+    digital:
+      digital_delivery: การจัดส่งแบบดิจิทัล
+    digital_assets: สินทรัพย์ดิจิทัล
+    discontinued: เลิกจำหน่ายแล้ว
+    discontinued_variants_present: รายการสินค้าบางรายการในคำสั่งซื้อนี้มีสินค้าที่ไม่มีจำหน่ายแล้ว
+    display_delivery_range: จัดส่งภายใน %{delivery_range} วันทำการ
+    draft: ฉบับร่าง
+    eligibility_errors:
+      messages:
+        no_matching_channel: รหัสคูปองนี้ใช้ไม่ได้กับช่องทางการขายนี้
+        no_matching_market: รหัสคูปองนี้ใช้ไม่ได้ในตลาดของคุณ
+        wrong_country: รหัสคูปองนี้ไม่สามารถใช้ได้ในประเทศของคุณ
+    email: อีเมล
+    error: ข้อผิดพลาด
+    error_user_destroy_with_orders: ไม่สามารถลบผู้ใช้ที่เกี่ยวข้องกับคำสั่งซื้อได้
+    error_user_does_not_have_any_store_credits: ผู้ใช้ไม่มีเครดิตร้านค้าที่สามารถใช้ได้
+    errors:
+      messages:
+        cannot_delete_default_channel: ไม่สามารถลบช่องทางเริ่มต้นได้ กรุณาเลื่อนช่องทางอื่นให้เป็นค่าเริ่มต้นก่อน
+        channel_store_mismatch: ต้องอยู่ในร้านค้าเดียวกัน
+        invalid_order_routing_rule: ไม่ใช่กฎการกำหนดเส้นทางคำสั่งซื้อที่ลงทะเบียนไว้
+        invalid_order_routing_strategy: ไม่ใช่กลยุทธ์การกำหนดเส้นทางคำสั่งซื้อที่ลงทะเบียนไว้
+        store_association_can_not_be_changed: ไม่สามารถเปลี่ยนแปลงการเชื่อมโยงร้านค้าได้
+        store_is_already_set: มีการตั้งค่าร้านค้าไว้แล้ว
+    expired: หมดอายุแล้ว
+    export_mailer:
+      export_done:
+        message: เยี่ยมมาก การส่งออกของคุณพร้อมแล้ว! กรุณาใช้ลิงก์ด้านล่างเพื่อดาวน์โหลด
+        subject: การส่งออก %{export_number} ของคุณดำเนินการเรียบร้อยแล้ว!
+      greeting: สวัสดีคุณ %{user_name},
+    field: ฟิลด์
+    first_name: ชื่อจริง
+    flat_percent: Flat Percent
+    flat_rate_per_order: Flat Rate (ต่อรายการสั่งซื้อ)
+    flexible_rate: Flexible Rate
+    free: ฟรี
+    gateway: ช่องทางการชำระเงิน
+    gateway_error: เกิดข้อผิดพลาดที่ช่องทางการชำระเงิน
+    gift_card: บัตรของขวัญ
+    gift_card_already_redeemed: บัตรของขวัญนี้ถูกใช้แลกไปแล้ว
+    gift_card_applied: ใช้บัตรของขวัญกับคำสั่งซื้อของคุณเรียบร้อยแล้ว!
+    gift_card_customer_not_logged_in: ไม่สามารถใช้บัตรของขวัญกับผู้ใช้ที่เป็นแขกได้
+    gift_card_expired: บัตรของขวัญหมดอายุแล้ว
+    gift_card_mismatched_currency: ไม่สามารถใช้บัตรของขวัญกับสกุลเงินปัจจุบันได้
+    gift_card_mismatched_customer: บัตรของขวัญนี้เชื่อมโยงกับผู้ใช้รายอื่น
+    gift_card_not_found: ไม่พบบัตรของขวัญ
+    gift_card_removed: นำบัตรของขวัญออกจากคำสั่งซื้อของคุณเรียบร้อยแล้ว
+    gift_card_using_store_credit_error: คุณไม่สามารถใช้บัตรของขวัญหลังจากที่ใช้เครดิตร้านค้าแล้วได้
+    height: สูง
+    i18n:
+      this_file_language: ภาษาไทย (TH)
+    idempotency_key_reused: Idempotency-Key นี้ถูกใช้ไปแล้วกับพารามิเตอร์คำขอที่แตกต่างกัน
+    image: รูปภาพ
+    import: นำเข้า
+    in_stock: มีสินค้าในสต็อก
+    internal_note: หมายเหตุภายใน
+    inventory: คลัง
+    invitation_mailer:
+      greeting: สวัสดีคุณ %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} ได้ยอมรับคำเชิญของคุณให้เข้าร่วม %{resource_name}"
+        subject: "%{invitee_name} ได้ยอมรับคำเชิญของคุณให้เข้าร่วม %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} ได้เชิญคุณให้เข้าร่วม %{resource_name}"
+        link_description: 'ในการยอมรับคำเชิญนี้ กรุณาคลิกที่ลิงก์ด้านล่าง:'
+        subject: คำเชิญให้เข้าร่วม %{resource_name}
+    iso: ISO Alpha-2
+    item: สินค้า
+    items_cannot_be_shipped: เราไม่สามารถส่งสินค้าดังกล่าวไปยังสถานที่ของคุณได้ กรุณาเลือกสถานที่จัดส่งอื่น
+    key: คีย์
+    kind: ประเภท
+    label: ป้ายกำกับ
+    last_name: นามสกุล
+    line_item: รายการสินค้า
+    line_items: รายการสินค้า
+    link: ลิงก์
+    locale: ภาษาและภูมิภาค
+    locale_not_supported_by_store: ไม่รองรับโดยร้านค้านี้
+    manual: ด้วยตนเอง
+    market: ตลาด
+    me_no_current_user: ไม่มีผู้ดูแลระบบที่ยืนยันตัวตนสำหรับคำขอนี้
+    media: สื่อ
+    meta_description: Meta Description
+    meta_keywords: Meta Keywords
+    metadata: Metadata
+    min_quantity: จำนวนต่ำสุด
+    month: เดือน
+    name: ชื่อ
+    new_variant: เพิ่มตัวแปรใหม่
+    no_cc_type: ไม่มี
+    none: ว่าง
+    number: หมายเลข
+    on_hand: สินค้าในคลัง
+    only_active_products_can_be_added_to_cart: ไม่สามารถเพิ่มสินค้าที่เป็นฉบับร่างและที่จัดเก็บแล้วลงในตะกร้าได้ กรุณาตั้งสถานะสินค้าเป็นใช้งานก่อน
+    open: เปิด
+    option_name: ชื่อตัวเลือก
+    option_type: ประเภทตัวเลือก
+    option_value: ค่าของตัวเลือก
+    options: ตัวเลือก
+    or: หรือ
+    order: รายการ
+    order_routing:
+      strategies:
+        legacy: แบบดั้งเดิม
+        rules: กฎ (เรียงลำดับ)
+    order_summary: รายการที่สั่งซื้อ
+    orders: รายการสั่งซื้อ
+    out_of_stock: สินค้าหมด
+    password: รหัสผ่าน
+    path: Path
+    payment: ชำระ
+    payment_method: วิธีชำระเงิน
+    payment_methods: วิธีชำระเงิน
+    payment_processing_failed: ไม่สามารถชำระเงินได้ กรุณาตรวจสอบข้อมูลที่คุณได้กรอกใหม่
+    payment_source: แหล่งที่มาของการชำระเงิน
+    percent: เปอร์เซ็น
+    percent_per_item: เปอร์เซ็นต่อชิ้น
+    phone: เบอร์โทรศัพท์
+    price: ราคา
+    price_range: ราคาระหว่าง
+    price_rules:
+      channel_rule:
+        description: กำหนดราคาตามช่องทางการขาย
+      customer_group_rule:
+        description: ใช้การกำหนดราคากับกลุ่มลูกค้าที่ระบุ
+    price_sack: Price Sack
+    prices: ราคา
+    privacy_policy: นโยบายความเป็นส่วนตัว
+    processing: กำลังประมวลผล
+    product: สินค้า
+    product_translations: การแปลสินค้า
+    products: สินค้า
+    products_cannot_be_shipped: ขณะนี้เราไม่สามารถจัดส่ง %{product_names} ไปยังตำแหน่งปัจจุบันของคุณได้ กรุณาเปลี่ยนที่อยู่จัดส่งหรือนำ %{product_names} ออกจากตะกร้าของคุณ
+    promotion: โปรโมชั่น
+    promotion_action_types:
+      create_adjustment:
+        description: Creates a promotion credit adjustment on the order
+        name: สร้างการปรับเปลี่ยน
+      create_line_items:
+        description: สร้างตะกร้าสินค้าด้วยจำนวนที่กำหนดจากตัวแปร
+        name: สร้าง line items
+    promotion_actions: ดำเนินการ
+    promotion_already_used: คุณไม่สามารถลบโปรโมชันที่ถูกใช้ไปแล้วได้
+    promotion_label: โปรโมชัน (%{name})
+    promotion_rule_types:
+      category:
+        description: คำสั่งซื้อมีสินค้าในหมวดหมู่ที่ระบุ
+        name: หมวดหมู่
+      channel:
+        description: จำกัดเฉพาะคำสั่งซื้อที่ทำผ่านช่องทางที่ระบุ
+        name: ช่องทางการขาย
+      country:
+        description: จำกัดเฉพาะคำสั่งซื้อที่มีที่อยู่จัดส่งในประเทศที่ระบุ
+        name: ประเทศ
+      currency:
+        description: จำกัดเฉพาะคำสั่งซื้อในสกุลเงินที่ระบุ
+        name: สกุลเงิน
+      customer:
+        description: ใช้ได้เฉพาะลูกค้าที่ระบุเท่านั้น
+        name: ลูกค้า
+      customer_group:
+        description: ใช้ได้เฉพาะลูกค้าในกลุ่มลูกค้าที่ระบุเท่านั้น
+        name: กลุ่มลูกค้า
+      customer_logged_in:
+        description: ใช้ได้เฉพาะลูกค้าที่เข้าสู่ระบบแล้วเท่านั้น
+        name: เฉพาะลูกค้าที่เข้าสู่ระบบแล้ว
+      first_order:
+        description: ต้องเป็นรายการสั่งซื้อแรกเท่านั้น
+        name: รายการแรก
+      item_total:
+        description: จำนวนสั่งซื้อนั้นอยู่ในเกณฑ์ดังกล่าว
+        name: จำนวนทั้งหมด
+      market:
+        description: จำกัดเฉพาะคำสั่งซื้อที่ทำในตลาดที่ระบุ
+        name: ตลาด
+      product:
+        description: รายการนั้นรวมสินค้าที่กำหนด
+        name: สินค้า
+    promotions: โปรโมชั่น
+    quantity: จำนวน
+    query: การค้นหา
+    reason: เหตุผล
+    received: ได้รับแล้ว
+    reference: อ้างอิง
+    refund: คืนเงิน
+    refund_amount: จำนวนเงินที่คืน
+    registration: ลงทะเบียน
+    remove: ลบ
+    remove_gift_card_on_completed_order_error: คุณไม่สามารถนำบัตรของขวัญออกได้หลังจากที่สั่งซื้อแล้ว
+    resellable: ขายต่อได้
+    resend: ส่งใหม่
+    response_code: รหัสที่ได้รับ
+    return: กลับ
+    returned: คืน
+    returns_policy: นโยบายการคืนสินค้า
+    row: แถว
+    rules: กฏ
+    say_no: ไม่
+    say_yes: ถูกต้อง
+    scope: Scope
+    selected_quantity_not_available: ที่เลือกของ %{item} ไม่พร้อมจำหน่าย
+    ship: ส่ง
+    ship_address: ที่อยู่���่งของ
+    shipment: การส่ง
+    shipped: ส่งแล้ว
+    shipping: ส่ง
+    shipping_address: ที่อยู่การจัดส่ง
+    shipping_flat_rate_per_item: อัตราสุทธิต่อชิ้น
+    shipping_flat_rate_per_order: อัตราสุทธิ
+    shipping_flexible_rate: อัตราแปรผั่นต่อชิ้น
+    shipping_policy: นโยบายการจัดส่ง
+    shipping_price_sack: Price sack
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (รวม %{tax_amount} %{tax_rate_name})"
+    source: จาก
+    status: สถานะ
+    stock_location: สถานที่ของคลังสินค้า
+    stock_locations: สถานที่ของคลังสินค้า
+    stock_transfer:
+      errors:
+        must_have_variant: คุณต้องเพิ่มตัวเลือกสินค้าอย่างน้อยหนึ่งรายการ
+        same_location: ต้องไม่เป็นที่ตั้งเดียวกับที่ตั้งปลายทาง
+        variants_unavailable: ตัวเลือกสินค้าบางรายการไม่พร้อมจำหน่ายที่ %{stock}
+    store: Store
+    store_credit:
+      allocated: เพิ่มแล้ว
+      authorized: อนุมัติแล้ว
+      captured: ใช้แล้ว
+      credit: เครดิต
+      eligible: มีสิทธิ์
+    store_credit_name: เครดิตร้านค้า
+    store_credit_payment_method:
+      currency_mismatch: สกุลเงินของเครดิตร้านค้าไม่ตรงกับสกุลเงินของคำสั่งซื้อ
+      insufficient_authorized_amount: ไม่สามารถเก็บเงินเกินจำนวนที่ได้รับอนุมัติได้
+      insufficient_funds: ยอดเครดิตร้านค้าที่เหลืออยู่ไม่เพียงพอ
+      successful_action: "%{action} เครดิตร้านค้าสำเร็จ"
+      unable_to_credit: 'ไม่สามารถเครดิตรหัส: %{auth_code}'
+      unable_to_find: ไม่พบเครดิตร้านค้า
+      unable_to_find_for_action: 'ไม่พบเครดิตร้านค้าสำหรับรหัสอนุมัติ: %{auth_code} สำหรับการดำเนินการ: %{action}'
+      unable_to_void: 'ไม่สามารถยกเลิกรหัส: %{auth_code}'
+    tags: แท็ก
+    tax: ภาษี
+    tax_category: ประเภทภาษี
+    terms_of_service: ข้อกำหนดในการให้บริการ
+    there_are_no_items_for_this_order: ไม่พบรายการสินค้าในการสั่งซื้อนี้ กรุณาเพิ่มรายการสินค้าเพื่อทำการต่อ
+    total: จำนวน
+    tracking: Tracking
+    tracking_number: Tracking Number
+    tracking_url: Tracking URL
+    type: ประเภท
+    unable_to_connect_to_gateway: ไม่สามารถติดต่อกับ Gateway
+    updated_at: อัปเดตเมื่อ
+    url: URL
+    user: ผู้ใช้
+    validation:
+      must_be_int: ต้องเป็นเลขจำนวนเต็ม
+    value: ค่า
+    variant: ตัวแปร
+    variants: ตัวแปร
+    verified: ยืนยันแล้ว
+    void: Void
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: ปิดใช้งานเมื่อ
+        heading: ปลายทาง Webhook ถูกปิดใช้งาน
+        instructions: กรุณาตรวจสอบ URL ปลายทางและบริการ จากนั้นเปิดใช้งานใหม่ได้ที่ การตั้งค่า → นักพัฒนา → Webhooks
+        message: ปลายทาง Webhook "%{endpoint_name}" ถูกปิดใช้งานโดยอัตโนมัติหลังจากส่งล้มเหลวซ้ำหลายครั้ง
+        name_label: ชื่อ
+        reason_label: เหตุผล
+        subject: 'ปลายทาง Webhook ถูกปิดใช้งาน: %{endpoint_name}'
+        url_label: URL
+    weight: น้ำหนัก
+    weight_unit: หน่วยน้ำหนัก
+    width: กว้าง
+    year: ปี
+    zip: รหัสไปรษณีย์

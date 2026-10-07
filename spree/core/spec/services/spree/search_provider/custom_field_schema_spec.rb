@@ -112,8 +112,8 @@ RSpec.describe Spree::SearchProvider::CustomFieldSchema do
              namespace: 'custom', key: 'label', label: 'Material')
 
       expect(schema.sort_options).to include(
-        { id: 'cf_custom_label', label: "Material (#{Spree.t(:sort_a_to_z)})" },
-        { id: '-cf_custom_label', label: "Material (#{Spree.t(:sort_z_to_a)})" }
+        { id: 'cf_custom_label', label: "Material (#{I18n.t('spree.sort_a_to_z')})" },
+        { id: '-cf_custom_label', label: "Material (#{I18n.t('spree.sort_z_to_a')})" }
       )
     end
 
@@ -122,8 +122,8 @@ RSpec.describe Spree::SearchProvider::CustomFieldSchema do
              namespace: 'custom', key: 'weight', label: 'Weight')
 
       expect(schema.sort_options).to include(
-        { id: 'cf_custom_weight', label: "Weight (#{Spree.t(:sort_low_to_high)})" },
-        { id: '-cf_custom_weight', label: "Weight (#{Spree.t(:sort_high_to_low)})" }
+        { id: 'cf_custom_weight', label: "Weight (#{I18n.t('spree.sort_low_to_high')})" },
+        { id: '-cf_custom_weight', label: "Weight (#{I18n.t('spree.sort_high_to_low')})" }
       )
     end
 

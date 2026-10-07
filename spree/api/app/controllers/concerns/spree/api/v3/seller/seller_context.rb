@@ -96,7 +96,7 @@ module Spree
 
             render_error(
               code: ErrorHandler::ERROR_CODES[:access_denied],
-              message: Spree.t(:seller_access_denied),
+              message: I18n.t('spree.seller_access_denied'),
               status: :forbidden
             )
             false

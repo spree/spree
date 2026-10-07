@@ -271,6 +271,7 @@ Spree::Core::Engine.add_routes do
           patch :revoke, on: :member
         end
         resources :allowed_origins
+        resources :webhook_events, only: [:index]
         resources :webhook_endpoints do
           member do
             post :send_test
@@ -279,6 +280,20 @@ Spree::Core::Engine.add_routes do
           end
           resources :deliveries, controller: 'webhook_deliveries', only: [:index, :show] do
             post :redeliver, on: :member
+          end
+        end
+        # Addressed by template key with dots (`spree.order_mailer.confirm_email`).
+        resources :email_templates, only: [:index, :show, :destroy], format: false,
+                                    constraints: { id: /[a-z0-9_.]+/, email_template_id: /[a-z0-9_.]+/ } do
+          scope module: :email_templates do
+            resource :draft, only: [:update, :destroy]
+            resource :publication, only: [:create]
+            resource :preview, only: [:create]
+            resource :test_email, only: [:create]
+            resources :sample_records, only: [:index]
+            resources :revisions, only: [:index], constraints: { id: %r{[^/]+} } do
+              resource :restoration, only: [:create]
+            end
           end
         end
         resources :roles, only: [:index, :show, :create, :update, :destroy]

@@ -92,7 +92,7 @@ module Spree
       def ensure_valid_status
         return if status.nil? || status == 'shipped'
 
-        failure(nil, Spree.t('fulfillments.errors.invalid_status'))
+        failure(nil, I18n.t('spree.fulfillments.errors.invalid_status'))
       end
 
       # parse_cost returns a failure Result for an unparseable value; step
@@ -102,8 +102,8 @@ module Spree
       end
 
       def ensure_order_fulfillable
-        failure(nil, Spree.t('fulfillments.errors.order_not_completed')) unless order.completed?
-        failure(nil, Spree.t('fulfillments.errors.order_canceled')) if order.canceled?
+        failure(nil, I18n.t('spree.fulfillments.errors.order_not_completed')) unless order.completed?
+        failure(nil, I18n.t('spree.fulfillments.errors.order_canceled')) if order.canceled?
       end
 
       def build_fulfillment
@@ -177,12 +177,12 @@ module Spree
             quantity = available_for.call(line_item)
             { line_item: line_item, quantity: quantity } if quantity.positive?
           end
-          failure(nil, Spree.t('fulfillments.errors.no_items_to_fulfill')) if derived.empty?
+          failure(nil, I18n.t('spree.fulfillments.errors.no_items_to_fulfill')) if derived.empty?
 
           return derived
         end
 
-        failure(nil, Spree.t('fulfillments.errors.no_items_to_fulfill')) if items.empty?
+        failure(nil, I18n.t('spree.fulfillments.errors.no_items_to_fulfill')) if items.empty?
 
         # Merge duplicate line item entries, then validate quantities.
         merged = items.group_by { |item| item[:line_item].id }.values.map do |grouped|
@@ -194,14 +194,14 @@ module Spree
           quantity = item[:quantity]
 
           unless quantity.positive?
-            failure(nil, Spree.t('fulfillments.errors.invalid_quantity', item: line_item.prefixed_id))
+            failure(nil, I18n.t('spree.fulfillments.errors.invalid_quantity', item: line_item.prefixed_id))
           end
 
           available = available_for.call(line_item)
           if quantity > available
             failure(
               nil,
-              Spree.t('fulfillments.errors.insufficient_quantity',
+              I18n.t('spree.fulfillments.errors.insufficient_quantity',
                       item: line_item.prefixed_id, requested: quantity, available: available)
             )
           end
@@ -329,11 +329,11 @@ module Spree
         return if cost.blank?
 
         parsed = cost.is_a?(String) ? BigDecimal(cost.strip) : cost
-        failure(nil, Spree.t('fulfillments.errors.invalid_cost')) if parsed.negative?
+        failure(nil, I18n.t('spree.fulfillments.errors.invalid_cost')) if parsed.negative?
 
         parsed
       rescue ArgumentError
-        failure(nil, Spree.t('fulfillments.errors.invalid_cost'))
+        failure(nil, I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
 
       # Registers an externally-completed fulfillment: backorders are filled

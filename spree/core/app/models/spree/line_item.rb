@@ -64,7 +64,7 @@ module Spree
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
       in: 0..DB_INTEGER_MAX,
-      only_integer: true, message: Spree.t('validation.must_be_int')
+      only_integer: true, message: I18n.t('spree.validation.must_be_int')
     }
 
     validates :price, numericality: true
@@ -572,7 +572,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
   end
 end
