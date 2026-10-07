@@ -140,20 +140,23 @@ config.i18n.available_locales = [:en, :de, :fr]
 
 ### Changing a translation
 
-To change a word or add a language, add the key to a locale file in your app. Your file wins over the one Spree ships.
+<Tip>
+To change what a customer email says, edit it in the dashboard under **Settings → Emails → Templates** instead. Edits apply per store and per language, and need no deploy. See [Templates merchants edit in the dashboard](/developer/customization/emails#templates-merchants-edit-in-the-dashboard) and the [Emails user guide](/user/settings/emails).
+</Tip>
+
+Locale files are for the text the dashboard does not edit: API error messages, checkout requirements, validation messages and staff emails. To change a word or add a language, add the key to a locale file in your app. Your file wins over the one Spree ships.
 
 ```yaml server/config/locales/de.yml
 de:
   spree:
-    order_mailer:
-      confirm_email:
-        subject: Ihre Bestellung
+    checkout_requirements:
+      email_required: Bitte geben Sie Ihre E-Mail-Adresse ein
 ```
 
 Every key lives under `spree`. To read one from your own Ruby code, use its full key:
 
-```ruby server/app/services/my_app/greeting.rb
-I18n.t('spree.order_mailer.confirm_email.subject')
+```ruby server/app/services/my_app/checkout_check.rb
+I18n.t('spree.checkout_requirements.email_required')
 ```
 
 <Info>
