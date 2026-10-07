@@ -40,11 +40,23 @@ type McpConnectSheetProps = {
  * `surfaces` are the ways that client connects. A desktop or web app takes
  * the address pasted into its settings; a terminal client takes a command.
  */
+/**
+ * The loopback callback a terminal client listens on.
+ *
+ * Registered alongside the hosted one because Claude Code and Codex redirect
+ * to a local port rather than the vendor's servers, and the port is chosen
+ * at run time. RFC 8252 §7.3 says to compare loopback redirects ignoring the
+ * port, which Doorkeeper does — but only for an IP literal, since it decides
+ * by parsing the host as an address. `localhost` is a name, so it parses as
+ * nothing and every ephemeral port is refused.
+ */
+const LOOPBACK_CALLBACK = 'http://127.0.0.1/callback'
+
 const KNOWN_CLIENTS = [
   {
     value: 'claude',
     name: 'Claude',
-    redirectUri: 'https://claude.ai/api/mcp/auth_callback',
+    redirectUris: ['https://claude.ai/api/mcp/auth_callback', LOOPBACK_CALLBACK],
     surfaces: [
       { id: 'app', command: null },
       { id: 'cli', command: (url: string) => `claude mcp add --transport http spree ${url}` },
@@ -53,7 +65,7 @@ const KNOWN_CLIENTS = [
   {
     value: 'chatgpt',
     name: 'ChatGPT',
-    redirectUri: 'https://chatgpt.com/connector_platform_oauth_redirect',
+    redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect', LOOPBACK_CALLBACK],
     surfaces: [
       { id: 'app', command: null },
       { id: 'cli', command: (url: string) => `codex mcp add spree --url ${url}` },
@@ -92,7 +104,9 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   async function connect() {
     setFailure(null)
     const name = selected ? selected.name : customName.trim()
-    const redirectUri = selected ? selected.redirectUri : customUri.trim()
+    // Doorkeeper stores several callbacks newline-separated and accepts a
+    // request matching any one of them.
+    const redirectUri = selected ? selected.redirectUris.join('\n') : customUri.trim()
 
     // Picking the same client twice is reconnecting it, not registering a
     // second one — two rows with two ids would leave a merchant guessing
