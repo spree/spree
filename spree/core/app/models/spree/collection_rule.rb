@@ -20,12 +20,12 @@ module Spree
 
     # @return [String] localized display name for the rule kind, used by admin pickers
     def self.human_name
-      Spree.t("collection_rule_types.#{api_type}.name", default: api_type.titleize)
+      I18n.t("spree.collection_rule_types.#{api_type}.name", default: api_type.titleize)
     end
 
     # @return [String] localized description for the rule kind
     def self.human_description
-      Spree.t("collection_rule_types.#{api_type}.description", default: '')
+      I18n.t("spree.collection_rule_types.#{api_type}.description", default: '')
     end
 
     # Feeds the `description` field of `subclasses_with_preference_schema`
@@ -47,7 +47,7 @@ module Spree
       return if type.blank?
       return if Rails.application.config.spree.collection_rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_collection_rule, message: Spree.t(:invalid_collection_rule, scope: [:errors, :messages],
+      errors.add(:type, :invalid_collection_rule, message: I18n.t('spree.errors.messages.invalid_collection_rule',
                                                           default: 'is not a registered collection rule'))
     end
 

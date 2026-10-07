@@ -39,7 +39,7 @@ module Spree
           if preferred_amount_max.present?
             Spree::Money.new(preferred_amount_max, currency: order.currency).to_s
           else
-            Spree.t('no_maximum')
+            I18n.t('spree.no_maximum')
           end
         end
 

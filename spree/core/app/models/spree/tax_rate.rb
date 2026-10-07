@@ -100,8 +100,7 @@ module Spree
     #
     # @return [String]
     def adjustment_label
-      Spree.t included_in_price? ? :including_tax : :excluding_tax,
-              scope: 'adjustment_labels.tax_rates',
+      I18n.t "spree.adjustment_labels.tax_rates.#{included_in_price? ? :including_tax : :excluding_tax}",
               name: name.presence || tax_category.name,
               amount: amount_for_label
     end

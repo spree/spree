@@ -42,7 +42,7 @@ module Spree
         return if shipping_label.refundable?
 
         reason = shipping_label.uploaded? ? 'uploaded_not_refundable' : 'not_refundable'
-        failure(shipping_label, Spree.t("shipping_labels.errors.#{reason}"))
+        failure(shipping_label, I18n.t("spree.shipping_labels.errors.#{reason}"))
       end
 
       # A provider that knows why the carrier said no raises with its words;
@@ -52,7 +52,7 @@ module Spree
 
         return if %w[refunded refund_requested].include?(@outcome)
 
-        failure(shipping_label, Spree.t('shipping_labels.errors.refund_failed'))
+        failure(shipping_label, I18n.t('spree.shipping_labels.errors.refund_failed'))
       rescue Spree::Core::LabelRefundRefused => e
         failure(shipping_label, e.message)
       end

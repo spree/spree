@@ -142,9 +142,9 @@ module Spree
       def sort_option_label(name, field_type, direction)
         suffix =
           if field_type == 'number'
-            direction == :asc ? Spree.t(:sort_low_to_high) : Spree.t(:sort_high_to_low)
+            direction == :asc ? I18n.t('spree.sort_low_to_high') : I18n.t('spree.sort_high_to_low')
           else
-            direction == :asc ? Spree.t(:sort_a_to_z) : Spree.t(:sort_z_to_a)
+            direction == :asc ? I18n.t('spree.sort_a_to_z') : I18n.t('spree.sort_z_to_a')
           end
         "#{name} (#{suffix})"
       end

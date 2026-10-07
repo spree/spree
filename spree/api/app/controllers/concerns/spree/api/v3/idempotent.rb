@@ -36,7 +36,7 @@ module Spree
             if cached[:fingerprint] != request_fingerprint
               render_error(
                 code: ErrorHandler::ERROR_CODES[:idempotency_key_reused],
-                message: Spree.t(:idempotency_key_reused),
+                message: I18n.t('spree.idempotency_key_reused'),
                 status: :unprocessable_content
               )
               return

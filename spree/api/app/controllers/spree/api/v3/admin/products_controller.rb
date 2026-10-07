@@ -54,7 +54,7 @@ module Spree
             unless Spree::Product::STATUSES.include?(params[:status].to_s)
               return render_error(
                 code: 'invalid_status',
-                message: Spree.t(:invalid_status, scope: 'errors.messages', default: 'Invalid status'),
+                message: I18n.t('spree.errors.messages.invalid_status', default: 'Invalid status'),
                 status: :unprocessable_content
               )
             end

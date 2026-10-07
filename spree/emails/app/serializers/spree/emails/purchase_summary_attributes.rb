@@ -10,7 +10,7 @@ module Spree
         typelize customer_name: :string, display_total_minus_store_credits: :string
 
         attribute :customer_name do |purchase|
-          purchase.name.presence || Spree.t(:customer)
+          purchase.name.presence || I18n.t('spree.customer')
         end
 
         attribute :display_total_minus_store_credits do |purchase|

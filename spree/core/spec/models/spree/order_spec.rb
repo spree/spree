@@ -381,7 +381,7 @@ describe Spree::Order, type: :model do
 
       it 'has error message' do
         subject
-        expect(order.errors[:base]).to include(Spree.t(:discontinued_variants_present))
+        expect(order.errors[:base]).to include(I18n.t('spree.discontinued_variants_present'))
       end
 
       it 'is false' do
@@ -407,7 +407,7 @@ describe Spree::Order, type: :model do
 
     it 'has error message' do
       subject
-      expect(order.errors[:base]).to include(Spree.t(:insufficient_stock_lines_present))
+      expect(order.errors[:base]).to include(I18n.t('spree.insufficient_stock_lines_present'))
     end
 
     it 'is false' do
@@ -2244,7 +2244,7 @@ describe Spree::Order, type: :model do
 
       it 'returns false and adds an error to the order' do
         expect(subject).to be false
-        expect(order.errors.full_messages).to include(Spree.t(:items_cannot_be_shipped))
+        expect(order.errors.full_messages).to include(I18n.t('spree.items_cannot_be_shipped'))
       end
     end
 
@@ -2255,7 +2255,7 @@ describe Spree::Order, type: :model do
 
       it 'returns false and adds an error to the order' do
         expect(subject).to be false
-        expect(order.errors.full_messages).to include(Spree.t(:products_cannot_be_shipped, product_names: line_item.name))
+        expect(order.errors.full_messages).to include(I18n.t('spree.products_cannot_be_shipped', product_names: line_item.name))
       end
 
       it 'deletes all the shipments' do

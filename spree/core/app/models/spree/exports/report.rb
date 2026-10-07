@@ -52,7 +52,7 @@ module Spree
           totals = query.metrics.map { |m| result.totals[m.name][:value] }
           # With a breakdown the totals close the file under a "Total" label in
           # the first dimension column; without one the totals are the only row.
-          label = query.dimensions.empty? ? [] : [Spree.t('reporting.export.total')] + Array.new(query.dimensions.size - 1, '')
+          label = query.dimensions.empty? ? [] : [I18n.t('spree.reporting.export.total')] + Array.new(query.dimensions.size - 1, '')
           csv << Spree::CSV::FormulaSanitizer.row(label + totals)
         end
       end

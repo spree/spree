@@ -7,8 +7,8 @@ RSpec.describe 'seller requirement kinds', type: :model do
   describe Spree::SellerRequirements::AcceptTerms do
     let(:requirement) { create(:accept_terms_requirement, store: store) }
     let(:terms_policy) do
-      store.policies.with_matching_name(Spree.t(:terms_of_service)).first ||
-        store.policies.create!(name: Spree.t(:terms_of_service))
+      store.policies.with_matching_name(I18n.t('spree.terms_of_service')).first ||
+        store.policies.create!(name: I18n.t('spree.terms_of_service'))
     end
 
     it 'is unmet until the seller accepts' do

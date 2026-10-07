@@ -165,7 +165,7 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       store.reload
       expect(store.stock_locations.where(pickup_enabled: true)).to exist
 
-      pickup = store.delivery_methods.find_by(name: Spree.t('pickup.store_pickup'))
+      pickup = store.delivery_methods.find_by(name: I18n.t('spree.pickup.store_pickup'))
       expect(pickup.fulfillment_provider).to eq('Spree::FulfillmentProvider::Pickup')
       expect(pickup.calculator.preferred_currency).to eq('EUR')
     end

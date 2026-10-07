@@ -83,7 +83,7 @@ RSpec.shared_examples 'a currency host' do
       record = new_record(currency: 'JPY')
 
       expect(record).not_to be_valid
-      expect(record.errors[:currency]).to include(Spree.t(:currency_not_supported_by_store))
+      expect(record.errors[:currency]).to include(I18n.t('spree.currency_not_supported_by_store'))
     end
   end
 end
@@ -125,7 +125,7 @@ RSpec.shared_examples 'a locale host' do
       record = new_record(locale: 'de')
 
       expect(record).not_to be_valid
-      expect(record.errors[:locale]).to include(Spree.t(:locale_not_supported_by_store))
+      expect(record.errors[:locale]).to include(I18n.t('spree.locale_not_supported_by_store'))
     end
   end
 end

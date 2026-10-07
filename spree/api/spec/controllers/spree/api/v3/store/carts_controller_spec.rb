@@ -539,7 +539,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(json_response['coupon_code']).to be_nil
         expect(json_response['warnings']).to contain_exactly(
-          'code' => 'coupon_code_unavailable', 'message' => Spree.t(:coupon_code_unavailable)
+          'code' => 'coupon_code_unavailable', 'message' => I18n.t('spree.coupon_code_unavailable')
         )
       end
     end

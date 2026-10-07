@@ -44,7 +44,7 @@ module Spree
             if secret_api_key && store_id_header && secret_api_key.store&.prefixed_id != store_id_header
               render_error(
                 code: ErrorHandler::ERROR_CODES[:access_denied],
-                message: Spree.t('api.errors.store_mismatch', default: 'The requested store does not match the store this API key belongs to.'),
+                message: I18n.t('spree.api.errors.store_mismatch', default: 'The requested store does not match the store this API key belongs to.'),
                 status: :forbidden
               )
               return

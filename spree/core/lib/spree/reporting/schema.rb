@@ -105,7 +105,7 @@ module Spree
       end
 
       def translate(group, name, facet)
-        Spree.t("reporting.#{group}.#{name}.#{facet}", default: (facet == :label ? name.to_s.humanize : nil))
+        I18n.t("spree.reporting.#{group}.#{name}.#{facet}", default: (facet == :label ? name.to_s.humanize : nil))
       end
 
 
@@ -117,7 +117,7 @@ module Spree
       # @param value [String]
       # @return [String]
       def self.value_label(dimension, value)
-        Spree.t("reporting.values.#{dimension.name}.#{value}", default: value.to_s.humanize)
+        I18n.t("spree.reporting.values.#{dimension.name}.#{value}", default: value.to_s.humanize)
       end
     end
   end

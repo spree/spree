@@ -517,7 +517,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
     end
 
     def set_amount
@@ -548,7 +548,7 @@ module Spree
 
     def add_source_error(field, message)
       field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-      errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{message}")
+      errors.add(I18n.t("spree.#{source.class.to_s.demodulize.underscore}"), "#{field_name} #{message}")
     end
 
 

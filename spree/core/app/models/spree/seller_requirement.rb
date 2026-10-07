@@ -89,12 +89,12 @@ module Spree
 
     # @return [String] the localized name of the kind, used by operator pickers
     def self.human_name
-      Spree.t("seller_requirement_types.#{api_type}.name", default: api_type.titleize)
+      I18n.t("spree.seller_requirement_types.#{api_type}.name", default: api_type.titleize)
     end
 
     # @return [String] the localized description of the kind
     def self.human_description
-      Spree.t("seller_requirement_types.#{api_type}.description", default: '')
+      I18n.t("spree.seller_requirement_types.#{api_type}.description", default: '')
     end
 
     # Whether the operator may configure this kind more than once per store.
@@ -266,7 +266,7 @@ module Spree
       return if Spree.seller_requirements.any? { |kind| kind.to_s == type }
 
       errors.add(
-        :type, :invalid_seller_requirement, message: Spree.t(:invalid_seller_requirement, scope: [:errors, :messages],
+        :type, :invalid_seller_requirement, message: I18n.t('spree.errors.messages.invalid_seller_requirement',
                                              default: 'is not a registered seller requirement')
       )
     end

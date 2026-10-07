@@ -82,7 +82,7 @@ module Spree
         return unless requirement.class.requires_file?
         return if submission.file.attached?
 
-        errors.add(:file, :blank, message: Spree.t('seller_requirements.file_required',
+        errors.add(:file, :blank, message: I18n.t('spree.seller_requirements.file_required',
                                                    default: 'A file is required for this requirement'))
         failure(submission, errors)
       end

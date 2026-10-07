@@ -74,7 +74,7 @@ module Spree
             unless @invitation
               render_error(
                 code: ErrorHandler::ERROR_CODES[:record_not_found],
-                message: Spree.t(:invitation_not_acceptable),
+                message: I18n.t('spree.invitation_not_acceptable'),
                 status: :not_found
               )
               return false
@@ -101,7 +101,7 @@ module Spree
 
             render_error(
               code: ErrorHandler::ERROR_CODES[:authentication_failed],
-              message: Spree.t(:invalid_password),
+              message: I18n.t('spree.invalid_password'),
               status: :unauthorized
             )
             nil
@@ -111,7 +111,7 @@ module Spree
             if params[:password].blank?
               render_error(
                 code: ErrorHandler::ERROR_CODES[:parameter_missing],
-                message: Spree.t(:password_required_to_create_account),
+                message: I18n.t('spree.password_required_to_create_account'),
                 status: :unprocessable_content
               )
               return nil

@@ -84,7 +84,7 @@ module Spree
           def render_invalid_position
             render_error(
               code: ERROR_CODES[:validation_error],
-              message: Spree.t('api.errors.invalid_position', default: 'new_position must be an integer'),
+              message: I18n.t('spree.api.errors.invalid_position', default: 'new_position must be an integer'),
               status: :unprocessable_content
             )
           end

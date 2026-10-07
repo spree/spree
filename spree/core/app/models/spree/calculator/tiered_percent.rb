@@ -10,7 +10,7 @@ module Spree
     }
 
     def self.description
-      Spree.t(:tiered_percent)
+      I18n.t('spree.tiered_percent')
     end
 
     def compute(object)

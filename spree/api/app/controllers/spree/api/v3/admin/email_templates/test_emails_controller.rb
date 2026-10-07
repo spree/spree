@@ -28,7 +28,7 @@ module Spree
             def render_no_recipient
               render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_request],
-                message: Spree.t('email_templates.test_email_needs_admin'),
+                message: I18n.t('spree.email_templates.test_email_needs_admin'),
                 status: :unprocessable_content
               )
             end

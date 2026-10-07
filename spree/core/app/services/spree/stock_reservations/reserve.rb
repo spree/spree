@@ -36,8 +36,8 @@ module Spree
             if available < line_item.quantity
               raise InsufficientStockError.new(
                 line_item,
-                Spree.t(
-                  :insufficient_stock_for_reservation,
+                I18n.t(
+                  'spree.insufficient_stock_for_reservation',
                   default: '%{item} has only %{available} available',
                   item: line_item.variant.name,
                   available: [available, 0].max

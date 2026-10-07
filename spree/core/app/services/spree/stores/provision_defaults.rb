@@ -123,7 +123,7 @@ module Spree
         # first_party, so a seller who happened to name a location the same
         # thing is never adopted as the store's own.
         location = store.stock_locations.first_party.
-                   where(name: Spree.t(:default_stock_location_name)).first_or_initialize
+                   where(name: I18n.t('spree.default_stock_location_name')).first_or_initialize
         location.propagate_all_variants = false if location.new_record?
         location.country_code = country.iso
         if location.persisted? && location.will_save_change_to_country_code?
@@ -206,7 +206,7 @@ module Spree
         weight_unit = store.preferred_weight_unit
 
         store.package_types.create!(
-          name: Spree.t('package_types.default_name'),
+          name: I18n.t('spree.package_types.default_name'),
           kind: 'box',
           default: true,
           length: metric ? 30 : 12,
@@ -237,7 +237,7 @@ module Spree
         end
         return if store.stock_locations.first_party.where(pickup_enabled: true).none?
 
-        delivery_method = store.delivery_methods.where(name: Spree.t('pickup.store_pickup')).first_or_initialize
+        delivery_method = store.delivery_methods.where(name: I18n.t('spree.pickup.store_pickup')).first_or_initialize
         delivery_method.delivery_profile = profile
         delivery_method.storefront_visible = true
         delivery_method.fulfillment_provider = 'Spree::FulfillmentProvider::Pickup'

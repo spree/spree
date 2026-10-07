@@ -33,7 +33,7 @@ module Spree
       end
 
       def self.description
-        Spree.t('price_rules.customer_group_rule.description')
+        I18n.t('spree.price_rules.customer_group_rule.description')
       end
 
       def self.superseded?

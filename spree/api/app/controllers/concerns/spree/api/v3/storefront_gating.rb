@@ -41,12 +41,11 @@ module Spree
         end
 
         # Renders a 401 with the shared +authentication_required+ error code.
-        # @param message_key [String] i18n key for the error message
-        # @param default_message [String] fallback when the key is missing
-        def render_authentication_required(message_key, default_message)
+        # @param message [String] translated error message
+        def render_authentication_required(message)
           render_error(
             code: ErrorHandler::ERROR_CODES[:authentication_required],
-            message: Spree.t(message_key, default: default_message),
+            message: message,
             status: :unauthorized
           )
         end
@@ -57,7 +56,7 @@ module Spree
           return if try_spree_current_user.present?
           return unless current_channel&.storefront_login_required?
 
-          render_authentication_required('api.errors.storefront_login_required', 'Authentication required to access this store')
+          render_authentication_required(I18n.t('spree.api.errors.storefront_login_required', default: 'Authentication required to access this store'))
         end
       end
     end

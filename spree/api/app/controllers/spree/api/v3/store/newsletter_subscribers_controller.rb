@@ -43,7 +43,7 @@ module Spree
             unless subscriber
               return render_error(
                 code: ERROR_CODES[:invalid_token],
-                message: Spree.t(:newsletter_verification_token_invalid, scope: :api),
+                message: I18n.t('spree.api.newsletter_verification_token_invalid'),
                 status: :unprocessable_content
               )
             end
@@ -64,7 +64,7 @@ module Spree
             if subscriber.blank?
               return render_error(
                 code: ERROR_CODES[:invalid_token],
-                message: Spree.t(:newsletter_unsubscribe_token_invalid, scope: :api),
+                message: I18n.t('spree.api.newsletter_unsubscribe_token_invalid'),
                 status: :unprocessable_content
               )
             end

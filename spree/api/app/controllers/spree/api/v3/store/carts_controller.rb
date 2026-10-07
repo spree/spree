@@ -124,7 +124,7 @@ module Spree
             find_cart!(include_completed: true)
 
             if @cart.guest_checkout_disallowed?
-              return render_authentication_required('api.errors.guest_checkout_not_allowed', 'You must be signed in to complete checkout')
+              return render_authentication_required(I18n.t('spree.api.errors.guest_checkout_not_allowed', default: 'You must be signed in to complete checkout'))
             end
 
             result = Spree::Dependencies.carts_complete_workflow.constantize.call(cart: @cart)
@@ -187,7 +187,7 @@ module Spree
           def render_invalid_po_document
             render_error(
               code: ERROR_CODES[:validation_error],
-              message: Spree.t(:po_document_invalid_signed_id),
+              message: I18n.t('spree.po_document_invalid_signed_id'),
               status: :unprocessable_content
             )
           end

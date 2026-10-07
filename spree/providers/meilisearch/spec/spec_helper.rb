@@ -33,6 +33,7 @@ require 'webmock/rspec'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
+require 'spree/testing_support/raise_on_missing_translations'
 require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'

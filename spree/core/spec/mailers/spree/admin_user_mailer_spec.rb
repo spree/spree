@@ -10,7 +10,7 @@ describe Spree::AdminUserMailer, type: :mailer do
       message = described_class.password_reset_email(admin_user, token, store)
 
       expect(message.to).to eq(['admin@example.com'])
-      expect(message.subject).to eq("#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject')}")
+      expect(message.subject).to eq("#{store.name} #{I18n.t('spree.admin_user_mailer.password_reset_email.subject')}")
     end
 
     it 'links with the reset token' do
@@ -121,7 +121,7 @@ describe Spree::AdminUserMailer, type: :mailer do
 
         message = described_class.password_reset_email(admin_user, token, store)
 
-        expect(message.subject).to eq("#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject', locale: :en)}")
+        expect(message.subject).to eq("#{store.name} #{I18n.t('spree.admin_user_mailer.password_reset_email.subject', locale: :en)}")
       end
 
       it 'falls back to the store default locale for blank or unavailable values' do
@@ -129,7 +129,7 @@ describe Spree::AdminUserMailer, type: :mailer do
 
         message = described_class.password_reset_email(admin_user, token, store)
 
-        expect(message.subject).to eq("#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject')}")
+        expect(message.subject).to eq("#{store.name} #{I18n.t('spree.admin_user_mailer.password_reset_email.subject')}")
       end
     end
   end

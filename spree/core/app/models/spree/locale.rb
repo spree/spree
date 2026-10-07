@@ -21,7 +21,7 @@ module Spree
       code = self.code.to_s
 
       if I18n.exists?('spree.i18n.this_file_language', locale: code, fallback: false)
-        return normalize_name(Spree.t('i18n.this_file_language', locale: code))
+        return normalize_name(I18n.t('spree.i18n.this_file_language', locale: code))
       end
 
       if defined?(SpreeI18n::Locale) && (name = SpreeI18n::Locale.local_language_name(code))

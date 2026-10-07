@@ -59,7 +59,7 @@ module Spree
             if header && header.id != bound.id
               render_error(
                 code: ErrorHandler::ERROR_CODES[:channel_mismatch],
-                message: Spree.t('api.errors.channel_mismatch', default: 'The requested channel does not match the channel this API key is bound to'),
+                message: I18n.t('spree.api.errors.channel_mismatch', default: 'The requested channel does not match the channel this API key is bound to'),
                 status: :unprocessable_entity
               )
               return
@@ -68,7 +68,7 @@ module Spree
             unless bound.active?
               render_error(
                 code: ErrorHandler::ERROR_CODES[:channel_inactive],
-                message: Spree.t('api.errors.channel_inactive', default: 'The channel this API key is bound to is not active'),
+                message: I18n.t('spree.api.errors.channel_inactive', default: 'The channel this API key is bound to is not active'),
                 status: :forbidden
               )
               return
