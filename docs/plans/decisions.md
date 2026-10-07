@@ -7,6 +7,16 @@
 **Consequences:** Checked on Stripe test mode: R1004 completed and R1005 captured, each $30.00 received at Stripe; R1006, with a card whose bank always asks for authentication, failed with Stripe's message and stayed a draft. Such a card cannot be charged from the admin at all; the customer has to pay it themselves. These are merchant-initiated charges, so Stripe requires the customer's consent to off-session use when the card is saved. The session flow saves every new card for off-session use, and whether the storefront asks for that consent is not checked here. A partial capture's remainder is now re-authorized off-session on the same card, as core's capture flow expects; Stripe releases the uncaptured part of the original hold, and the remainder's authorization used to fail. The same idempotency key also means a declined charge retried on the same payment within 24 hours gets Stripe's stored decline back; a fresh payment is a fresh attempt. In the dashboard, a refused completion or payment action now says why and refreshes the order, so a failed payment shows without a manual reload.
 
 **Plans amended:** `6.0-payment-gateways-monorepo.md` (the keep-set note, the drop-set entry, and a Constraints on Current Work bullet on payments added without a session), `6.0-admin-api.md` (the off-session charge note).
+## 2026-10-07: Translations move into core, and `Spree.t` is deprecated for `I18n.t`
+
+**Context:** `Spree.t` ran through Rails' view translation helper, so it needed Action View and returned `<span class="translation_missing">` markup for a missing key, which leaked into JSON errors and dashboard notifications. Every language but English lived in `spree_i18n`: 6.5 MB of locale files, about 60% for the removed admin and storefront, plus `kaminari-i18n` (which requires the full `rails` gem), `i18n_data` (which swaps the global `I18n.backend`) and `spree_extension`.
+
+**Decision:** Core calls `I18n.t` with full keys (`I18n.t('spree.free')`). `Spree.t` stays until 6.1 as a deprecated one-line proxy onto `I18n.t`, with no Action View and no HTML. The translations still used by core, the API and emails move into those gems' `config/locales`, trimmed to keys English has, after dead English keys are pruned. `rails-i18n` becomes a `spree_core` dependency; `i18n_data`, `kaminari-i18n` and `spree_extension` are dropped. Untranslated keys fall back to English: core sets `[:en]` when the app configured nothing and appends English to Rails' generated `fallbacks = true`. Regional English is not shipped; other regional variants keep only their differences. Spree's own specs raise on a missing key. `spree_i18n` gets an empty 6.0.0 release that warns, then is archived.
+
+**Consequences:** Every install gets 43 languages besides English without an extra gem; regional English falls back to `en`. A missing key is plain text in production. Extensions calling `Spree.t` keep working with a warning. Removing a key the checker reports unused is a reviewed step: it cannot see keys passed around as strings or built from a value one level under `spree`.
+
+**Plan:** `6.0-translations-in-core.md`.
+
 ## 2026-10-04: Creating a payment session always opens a new one
 
 **Context:** Handing back the cart's open Stripe session and re-pricing it (2026-09-30) drifts from the intent Stripe actually holds. The amount, the saved card, the customer and the ephemeral key are each updated on their own, and a failure partway through leaves Spree and Stripe describing different sessions. The storefront asks for a session every time the payment step loads, so that drift is the common path.
@@ -6113,3 +6123,46 @@ endpoint that names it, and naming it needs `write_customers`. The staff and
 seller reset requests are declared `webhook: false` and never reach any
 webhook endpoint, whatever it subscribes to — the rule 5.x kept in the
 subscriber's `NON_DELIVERABLE_EVENTS`, now read from the catalog.
+
+## 2026-10-06 — The products CSV carries each location's shelf count
+
+**Context:** The products export filled `inventory_count` from
+`Variant#total_on_hand`, which since stock reservations and allocation means
+what a customer can still buy: the shelf, minus units promised to placed
+orders, minus units held by checkouts, summed over every active location. The
+import writes the same column back through `Variant#set_stock`, which sets the
+shelf at a single location. Exporting and re-importing an unchanged file
+therefore took every promised and held unit off the shelf, once per round trip
+(V-3697), and moved stock from every other location onto the default one. Both
+stock plans told readers to go through the availability figure and never the
+shelf, and neither listed the export as a reader.
+
+**Decision:** `inventory_count` is the shelf count at one location, and
+`inventory_backorderable` that location's setting. A new `stock_location`
+column names the location; blank means the owner's default, so existing files
+keep their meaning. The export writes the default location on the full row and
+a stock-only row for each further location holding stock — the shape the
+price-only rows for extra currencies already have. Locations are named, not
+referenced by id, as the purchase-order import's `destination` is. An
+operator's file covers the marketplace's locations and, for a seller's
+product, that seller's; on import the seller's own location wins when both
+owners use the name, as with cartons. That misroutes only a seller's product
+stocked in a marketplace location named like one of the seller's own — rare
+enough that failing every shared name was the worse trade, since it would
+fail ordinary rows. A seller's file and import cover only their own locations:
+a seller never sets the marketplace's shelf. Rejected: keeping the
+sellable figure and having the import add held units back (holds change
+between export and import); one column per location (headers change when a
+location is renamed); exporting the default location alone (stock elsewhere
+disappears from the file).
+
+**Consequences:** A reader whose figure is written back to the shelf
+(`set_stock`, a stock adjustment, a file meant to be re-imported) reads the
+stock level's own `count_on_hand`; every availability reader still reads
+`total_on_hand`. Renaming a location between export and import fails that
+location's rows rather than writing elsewhere. A seller's export leaves out
+their products' stock held in marketplace locations.
+
+**Plans amended:** `5.6-admin-spa-csv-import.md` (stock is per location),
+`6.0-stock-reservations.md` and `6.0-typed-stock-movements.md` (the "read
+availability, never the shelf" constraints name the write-back exception).

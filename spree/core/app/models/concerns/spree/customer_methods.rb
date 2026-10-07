@@ -346,7 +346,7 @@ module Spree
     # @return [Spree::Wishlist]
     def default_wishlist_for_store(current_store)
       wishlists.find_by(is_default: true, store_id: current_store.id) || ActiveRecord::Base.connected_to(role: :writing) do
-        wishlists.create!(store: current_store, is_default: true, name: Spree.t(:default_wishlist_name))
+        wishlists.create!(store: current_store, is_default: true, name: I18n.t('spree.default_wishlist_name'))
       end
     end
 

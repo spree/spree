@@ -59,18 +59,17 @@ module Spree
       # translations. Only the *derived* default is filtered: falling back to
       # a country's official language that Spree has no strings for would set
       # a storefront to a language with nothing behind it, and it is not one
-      # the setup screen ever offers. Installs without spree_i18n know only
-      # English, so filtering there would flatten every country to it.
+      # the setup screen ever offers.
       def resolve_locale(requested, country)
         return requested if requested.present?
 
         derived = country.default_locale.presence
         return 'en' if derived.blank?
 
-        translated = Spree.available_locales.map { |locale| locale.to_s.split('-').first }.uniq
-        return derived if translated.size <= 1 || translated.include?(derived)
-
-        (country.official_locales & translated).first || 'en'
+        locales = Spree.available_locales
+        Spree.locale_for_language(derived, locales) ||
+          country.official_locales.lazy.filter_map { |language| Spree.locale_for_language(language, locales) }.first ||
+          'en'
       end
 
       # The store's own country/currency/locale columns are not the source of
@@ -118,12 +117,12 @@ module Spree
       end
 
       # Match on identity alone: folding the other attributes into the finder
-      # made re-running fail once anything edited them.
+      # made re-running fail once anything edited them. The default flag is
+      # that identity; the name is translated and may have been edited.
       def provision_stock_location
-        # first_party, so a seller who happened to name a location the same
-        # thing is never adopted as the store's own.
-        location = store.stock_locations.first_party.
-                   where(name: Spree.t(:default_stock_location_name)).first_or_initialize
+        # first_party, so a seller's location is never adopted as the store's own.
+        location = store.stock_locations.first_party.where(default: true).
+                   first_or_initialize(name: I18n.t('spree.default_stock_location_name'))
         location.propagate_all_variants = false if location.new_record?
         location.country_code = country.iso
         if location.persisted? && location.will_save_change_to_country_code?
@@ -206,7 +205,7 @@ module Spree
         weight_unit = store.preferred_weight_unit
 
         store.package_types.create!(
-          name: Spree.t('package_types.default_name'),
+          name: I18n.t('spree.package_types.default_name'),
           kind: 'box',
           default: true,
           length: metric ? 30 : 12,
@@ -237,10 +236,12 @@ module Spree
         end
         return if store.stock_locations.first_party.where(pickup_enabled: true).none?
 
-        delivery_method = store.delivery_methods.where(name: Spree.t('pickup.store_pickup')).first_or_initialize
+        # Matched by its provider, not its translated (and editable) name.
+        delivery_method = store.delivery_methods.first_party.
+                          where(fulfillment_provider: 'Spree::FulfillmentProvider::Pickup').
+                          first_or_initialize(name: I18n.t('spree.pickup.store_pickup'))
         delivery_method.delivery_profile = profile
         delivery_method.storefront_visible = true
-        delivery_method.fulfillment_provider = 'Spree::FulfillmentProvider::Pickup'
         delivery_method.calculator ||= Spree::Calculator::Shipping::FlatRate.new
         delivery_method.calculator.preferences = { amount: 0, currency: currency }
         delivery_method.save!

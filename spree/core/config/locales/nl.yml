@@ -1,0 +1,826 @@
+---
+nl:
+  activemodel:
+    errors:
+      messages:
+        blank: mag niet leeg zijn
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adres
+        address2: Adres 2
+        city: Woonplaats
+        company: Bedrijf
+        country: Land
+        label: Adresnaam
+        phone: Telefoon
+        state: Provincie
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO Naam
+        name: Naam
+        numcode: ISO Code
+      spree/credit_card:
+        cc_type: Type
+        month: Maand
+        name: Naam
+        number: Nummer
+        verification_value: Veiligheidscode
+        year: Jaar
+      spree/customer_group:
+        description: Omschrijving
+        name: Naam
+      spree/gift_card:
+        amount_used: Gebruikt bedrag
+        expires_at: Vervalt op
+      spree/import:
+        preferred_delimiter: Scheidingsteken
+      spree/import_mapping:
+        file_column: Bestandskolom
+        schema_field: Schemaveld
+      spree/import_row:
+        row_number: Nummer
+      spree/inventory_unit:
+        state: Status
+      spree/invitation:
+        inviter: Uitnodiger
+      spree/line_item:
+        price: Prijs
+        quantity: Aantal
+      spree/option_type:
+        filterable: Filterbaar
+        kind: Soort
+        name: Naam
+      spree/option_value:
+        color_code: Kleurcode
+        image: Stalenafbeelding
+      spree/order:
+        checkout_complete: Bestelling afgerond
+        completed_at: Voltooid op
+        considered_risky: Risicofactor
+        coupon_code: Kortingscode
+        created_at: Besteldatum
+        email: Klant e-mail
+        internal_note: Interne notitie
+        ip_address: IP adres
+        item_count: Artikelen
+        item_total: Product totaal
+        number: Nummer
+        payment_state: Betaalstatus
+        shipment_state: Verzendstatus
+        special_instructions: Speciale instructies
+        state: Status
+        total: Totaal
+      spree/order/bill_address:
+        address1: Factuuradres
+        city: Woonplaats
+        phone: Telefoon
+        state: Provincie
+      spree/order/ship_address:
+        address1: Verzendadres
+        city: Woonplaats
+        phone: Telefoon
+        state: Provincie
+      spree/payment:
+        amount: Bedrag
+        number: Nummer
+      spree/payment_method:
+        name: Naam
+      spree/policy:
+        body: Inhoud
+        owner: Beleid voor
+      spree/price_list:
+        description: Omschrijving
+        ends_at: Eindigt op
+        match_policy: Overeenkomstbeleid
+        name: Naam
+        priority: Prioriteit
+        starts_at: Begint op
+        status: Status
+      spree/price_rule:
+        priority: Prioriteit
+        type: Type
+      spree/product:
+        available_on: Beschikbaar op
+        cost_currency: Kosten valuta
+        cost_price: Kostprijs
+        description: Omschrijving
+        discontinue_on: Uit assortiment op
+        less_than: Minder dan
+        make_active_at: Activeren op
+        master_price: Prijs
+        more_than: Meer dan
+        name: Naam
+        on_hand: Op voorraad
+        tax_category: Belastingscategorie
+      spree/promotion:
+        advertise: Adverteren
+        code: Code
+        description: Omschrijving
+        event_name: Evenementnaam
+        expires_at: Verloopt op
+        generate_code: Couponcode genereren
+        name: Naam
+        path: Pad
+        promotion_category: Promotiecategorie
+        starts_at: Begint op
+        usage_limit: Gebruikslimiet
+      spree/promotion_category:
+        code: Code
+      spree/property:
+        name: Naam
+        presentation: Presentatie
+      spree/role:
+        name: Naam
+      spree/shipment:
+        number: Nummer
+      spree/state:
+        abbr: Afkorting
+        name: Naam
+      spree/store:
+        address: Adres
+        contact_phone: Contacttelefoon
+        mail_from_address: Mail From Address
+        meta_description: Meta Omschrijving
+        meta_keywords: Meta Sleutelwoorden
+        name: Site Naam
+        preferred_digital_asset_authorized_clicks: Limiet downloadklikken
+        preferred_digital_asset_authorized_days: Limiet downloaddagen
+        preferred_limit_digital_download_count: Aantal downloads van digitale links beperken
+        preferred_limit_digital_download_days: Downloaddagen van digitale links beperken
+        seo_robots: SEO Robots
+        seo_title: Seo Titel
+        storefront_custom_code_body_end: Aangepaste code vóór de sluitende body-tag
+        storefront_custom_code_body_start: Aangepaste code na de openende body-tag
+        storefront_custom_code_head: Aangepaste code in de pagina-head
+        url: Site URL
+      spree/store_credit:
+        amount_used: Gebruikt bedrag
+      spree/tax_category:
+        description: Omschrijving
+        name: Naam
+      spree/tax_rate:
+        amount: Bedrag
+        included_in_price: Inbegrepen in prijs
+        show_rate_in_label: Toon percentage naast naam
+      spree/taxon:
+        name: Naam
+        permalink: Permalink
+        position: Positie
+        sort_order: Sorteervolgorde
+      spree/taxonomy:
+        name: Naam
+      spree/user:
+        avatar: Avatar
+        email: E-mail
+        password: Wachtwoord
+        password_confirmation: Wachtwoord bevestiging
+      spree/variant:
+        cost_currency: Inkoop valuta
+        cost_price: Kostprijs
+        depth: Diepte
+        height: Hoogte
+        price: Prijs
+        sku: Sku
+        weight: Gewicht
+        width: Breedte
+      spree/zone:
+        description: Omschrijving
+        name: Naam
+      user:
+        current_sign_in: Huidige aanmelding op
+        last_sign_in: Laatste aanmelding op
+        sign_in_count: Aantal aanmeldingen
+    errors:
+      messages:
+        blank: mag niet leeg zijn
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: moet een origin (schema en host) zijn zonder pad, query of fragment
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: is reeds gekoppeld aan dit product
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Kaart is verlopen
+              expiry_invalid: Kaart verloopdatum is ongeldig
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Een gebruikte cadeaubon kan niet worden verwijderd
+        spree/import:
+          attributes:
+            attachment:
+              content_type: heeft een niet-toegestaan inhoudstype
+            type:
+              inclusion: staat niet in de lijst met toegestane types
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: moet overeenkomen met de order valuta
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: De standaardmarkt kan niet worden verwijderd.
+              cannot_destroy_last_market: De enige markt kan niet worden verwijderd.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: is al toegewezen aan een andere markt in deze winkel
+              not_in_shipping_zone: valt niet onder een verzendzone. Stel eerst een verzendzone in.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: is hoger dan het toegestane maximumbedrag van %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: moet na de begindatum liggen
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Producten die aan geplaatste bestellingen zijn toegevoegd, kunnen niet worden verwijderd. Haal ze in dat geval uit het assortiment.
+            discontinue_on:
+              invalid_date_range: moet later zijn dan de beschikbaarheidsdatum
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: moet na de publicatiedatum liggen
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: moet later zijn dan de begindatum
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: is groter dan de toegestane hoeveelheid.
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: De enige winkel kan niet worden verwijderd.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Overschrijdt het totale tegoed.
+            amount_used:
+              cannot_be_greater_than_amount: Mag niet hoger zijn dan het bedrag.
+              greater_than_zero_restrict_delete: is hoger dan nul. Winkeltegoed kan niet worden verwijderd.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: behoort tot een andere gebruiker
+              deprecated_in_completed_order: verouderd in voltooide bestelling
+            ship_address_id:
+              belongs_to_other_user: behoort tot een andere gebruiker
+              deprecated_in_completed_order: verouderd in voltooide bestelling
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Varianten die aan geplaatste bestellingen zijn toegevoegd, kunnen niet worden verwijderd. Haal ze in dat geval uit het assortiment.
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: mag niet verwijzen naar een intern of privénetwerkadres
+    models:
+      spree/address:
+        one: Adres
+        other: Adressen
+      spree/classification:
+        one: Classificatie
+        other: Classificaties
+      spree/country:
+        one: Land
+        other: Landen
+      spree/credit_card:
+        one: Kredietkaart
+        other: Kredietkaarten
+      spree/customer_group:
+        one: Klantgroep
+        other: Klantgroepen
+      spree/customer_group_user:
+        one: Klantgroepgebruiker
+        other: Klantgroepgebruikers
+      spree/export:
+        one: Export
+        other: Exports
+      spree/integration:
+        one: Integratie
+        other: Integraties
+      spree/inventory_unit:
+        one: Voorraadeenheid
+        other: Voorraadeenheden
+      spree/line_item:
+        one: Regel
+        other: Regels
+      spree/option_type:
+        one: Optie Type
+        other: Optie Types
+      spree/option_value:
+        one: Optie Waarde
+        other: Optie Waardes
+      spree/order:
+        one: Bestelling
+        other: Bestellingen
+      spree/payment:
+        one: Betaling
+        other: Betalingen
+      spree/payment_method:
+        one: Betaalmethode
+        other: Betaalmethodes
+      spree/price:
+        one: Prijs
+        other: Prijzen
+      spree/price_list:
+        one: Prijslijst
+        other: Prijslijsten
+      spree/price_rule:
+        one: Prijsregel
+        other: Prijsregels
+      spree/product:
+        one: Product
+        other: Producten
+      spree/promotion:
+        one: Promotie
+        other: Promoties
+      spree/promotion_category:
+        one: Promotion Categorie
+        other: Promotion Categorieën
+      spree/property:
+        one: Eigenschap
+        other: Eigenschappen
+      spree/refund_reason:
+        one: Terugbetaling Reden
+        other: Refund Reasons
+      spree/role:
+        one: Rol
+        other: Rollen
+      spree/shipment:
+        one: Verzending
+        other: Verzendingen
+      spree/shipping_method:
+        one: Verzendmethode
+        other: Verzendmethodes
+      spree/state:
+        one: Provincie
+        other: Provincies
+      spree/stock_location:
+        one: Voorraad locatie
+        other: Voorraad Locaties
+      spree/stock_movement:
+        one: Voorraadverplaatsing
+        other: Voorraadverplaatsingen
+      spree/stock_transfer:
+        one: Voorraadoverdracht
+        other: Voorraadoverdrachten
+      spree/store:
+        one: Winkel
+        other: Winkels
+      spree/store_credit:
+        one: Winkeltegoed
+        other: Winkeltegoeden
+      spree/tax_category:
+        one: Belastingscategorie
+        other: Belastingscategorieën
+      spree/tax_rate:
+        one: Belastingstarief
+        other: Belastingstarieven
+      spree/taxon:
+        one: Taxon
+        other: Taxa
+      spree/taxonomy:
+        one: Taxonomie
+        other: Taxonomieën
+      spree/user:
+        one: Gebruiker
+        other: Gebruikers
+      spree/variant:
+        one: Variant
+        other: Varianten
+      spree/zone:
+        one: Zone
+        other: Zones
+  errors:
+    messages:
+      already_confirmed: was reeds bevestigd
+      not_found: niet gevonden
+      not_locked: was niet vergendeld
+      not_saved:
+        one: '1 fout voorkwam dat deze %{resource} werd opgeslagen:'
+        other: "%{count} fouten voorkwamen dat deze %{resource} werd opgeslagen:"
+  number:
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accept: Accepteer
+    accepted: Geaccepteerd
+    accepts_email_marketing: Accepteert e-mailmarketing
+    account: Account
+    active: Actief
+    address: Adres
+    address1: Adres
+    address2: Adres (vervolg)
+    adjustment: Aanpassing
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Inbegrepen in prijs)"
+    adjustments_deleted: Correcties verwijderd
+    admin_user_mailer:
+      password_reset_email:
+        action: Wachtwoord resetten
+        expiry_notice: Deze link om je wachtwoord opnieuw in te stellen verloopt binnenkort. Als je dit niet hebt aangevraagd, hoef je niets te doen.
+        greeting: Hallo %{name},
+        ignore_notice: Als je geen nieuw wachtwoord hebt aangevraagd, kun je deze e-mail veilig negeren. Je wachtwoord wordt niet gewijzigd.
+        instructions: We hebben een verzoek ontvangen om het wachtwoord van je %{store_name}-beheerdersaccount opnieuw in te stellen. Klik op de knop hieronder om een nieuw wachtwoord te kiezen.
+        subject: Instructies voor het opnieuw instellen van het wachtwoord
+    all: Alle
+    amount: Bedrag
+    api_key_no_current_key: Geen API-sleutel heeft dit verzoek geauthenticeerd
+    api_key_scopes_immutable: kan niet worden gewijzigd nadat de sleutel is aangemaakt; maak een nieuwe sleutel aan met de scopes die je nodig hebt en trek deze in
+    approver: Door
+    authorized: Geautoriseerd
+    availability: beschikbaarheid
+    backorderable: Nabestelbaar
+    backordered: Nabestelling
+    bill_address: Factuuradres
+    billing_address: Factuuradres
+    calculator: Calculator
+    canceled: Geannuleerd
+    canceler: Geannueleerd door
+    cannot_be_destroyed: Bestelling kan niet worden verwijderd.
+    capture: betaling vastleggen
+    cart: Winkelwagen
+    cart_already_updated: De winkelwagen is al bijgewerkt.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} kan niet worden bezorgd op het geselecteerde adres"
+      discontinued: "%{li_name} is verwijderd omdat het uit het assortiment is gehaald"
+      out_of_stock: "%{li_name} is verwijderd omdat het was uitverkocht"
+    categories: Categorieën
+    category: Categorie
+    channel: Verkoopkanaal
+    channels: Verkoopkanalen
+    checkout: Afrekenen
+    checkout_requirements:
+      email_required: E-mailadres is verplicht
+      line_items_required: Voeg ten minste één artikel toe aan je winkelwagen
+      payment_required: Voeg een betaalmethode toe
+      ship_address_required: Verzendadres is verplicht
+    city: Stad
+    color_code: Kleurcode
+    company: Bedrijf
+    compare_at_amount: Vergelijkbaar bedrag
+    compare_at_price: Vergelijkbare prijs
+    complete: Voltooid
+    confirm: Bevestig
+    cost_price: Kostprijs
+    count_on_hand: Aantal in voorraad
+    country: Land
+    coupon_code: Kortingscode
+    coupon_code_already_applied: Deze kortingscode is al toegepast op deze bestelling
+    coupon_code_applied: De kortingscode is toegepast op je winkelwagen
+    coupon_code_better_exists: De voorgaande kortingscode geeft een betere deal
+    coupon_code_expired: Kortingscode is vervallen
+    coupon_code_max_usage: Kortingscode is te vaak gebruikt
+    coupon_code_not_eligible: Kortingscode is niet geldig voor deze bestelling
+    coupon_code_not_found: Deze kortingscode bestaat niet. Probeer het nogmaals.
+    coupon_code_unknown_error: Deze kortingscode kon niet worden toegepast op deze bestelling.
+    coupon_code_used: De couponcode die je hebt ingevoerd is al gebruikt. Probeer het opnieuw.
+    created_at: Aangemaakt op
+    credit_card: Kredietkaart
+    currency: Valuta
+    currency_not_supported_by_store: wordt niet ondersteund door deze winkel
+    customer: Klant
+    customers: Klanten
+    default: Standaard
+    default_stock_location_name: Winkellocatie
+    default_wishlist_name: Verlanglijst
+    delivery: Bezorging
+    depth: Diepte
+    description: Omschrijving
+    destination: Bestemming
+    destroy: Verwijder
+    details: Details
+    digital:
+      digital_delivery: Digitale levering
+    digital_assets: Digitale bestanden
+    discontinued: Uit assortiment
+    discontinued_variants_present: Sommige artikelen in deze bestelling bevatten producten die niet meer beschikbaar zijn.
+    display_delivery_range: Levering binnen %{delivery_range} werkdagen
+    draft: Concept
+    eligibility_errors:
+      messages:
+        has_excluded_product: Je winkelwagen bevat procuten waardoor deze kortingscode niet gebruikt kan worden.
+        item_total_less_than: Deze kortingscode kan niet gebruikt worden op bestellingen minder dan %{amount}.
+        item_total_less_than_or_equal: Deze kortingscode kan niet gebruikt worden op bestellingen minder of gelijk aan %{amount}.
+        item_total_more_than: Deze kortingscode kan niet gebruikt worden op bestellingen meer dan %{amount}.
+        item_total_more_than_or_equal: Deze kortingscode kan niet gebruikt worden op bestellingen meer dan of gelijk aan %{amount}.
+        limit_once_per_user: Deze kortingscode kan per klant slechts eenmalig worden gebruikt.
+        missing_product: Deze kortingscode kan niet worden toegepast omdat niet alle benodigde producten in de winkelwagen zitten.
+        missing_taxon: Er moet producten worden toegevoegd uit alle opgegeven productcategorieën voordat deze kortingscode gebruikt kan worden.
+        no_applicable_products: Er moet een artikel worden toegevoegd voordat deze kortingscode gebruikt kan worden.
+        no_matching_channel: Deze couponcode is niet geldig voor dit verkoopkanaal.
+        no_matching_market: Deze couponcode is niet geldig in uw markt.
+        no_matching_taxons: Er moet een artikel uit een van opgegeven productcategoriën worden toegevoegd voordat deze kortingscode kan worden gebruikt.
+        no_user_or_email_specified: Login of e-mail moet worden opgegeven voordat deze kortingscode kan worden gebruikt.
+        no_user_specified: Login is noodzakelijk om deze kortingscode te kunenn gebruiken
+        not_first_order: Deze kortingscode is alleen toepasbaar op de eerste order
+        wrong_country: Deze couponcode is niet geldig in jouw land
+    email: E-mail
+    error: fout
+    error_user_destroy_with_orders: Een gebruiker met bestellingen kan niet worden verwijderd
+    error_user_does_not_have_any_store_credits: Gebruiker heeft geen winkeltegoed beschikbaar
+    errors:
+      messages:
+        cannot_delete_default_channel: Het standaardkanaal kan niet worden verwijderd. Maak eerst een ander kanaal het standaardkanaal.
+        channel_store_mismatch: moet tot dezelfde winkel behoren
+        invalid_order_routing_rule: is geen geregistreerde regel voor bestelroutering
+        invalid_order_routing_strategy: is geen geregistreerde strategie voor bestelroutering
+        store_association_can_not_be_changed: De winkelkoppeling kan niet worden gewijzigd
+        store_is_already_set: Winkel is al ingesteld
+    expired: Verlopen
+    export_mailer:
+      export_done:
+        message: Goed gedaan, je export is klaar! Gebruik de onderstaande link om hem te downloaden.
+        subject: Je export %{export_number} is succesvol verwerkt!
+      greeting: Hoi %{user_name},
+    field: Veld
+    first_name: Voornaam
+    flat_percent: Vast percentage
+    flat_rate_per_order: Vast  bedrag (per bestelling)
+    flexible_rate: Flexibel bedrag
+    free: Gratis
+    gateway: Gateway
+    gateway_error: Gateway fout
+    gift_card: Cadeaubon
+    gift_card_already_redeemed: De cadeaubon is al ingewisseld.
+    gift_card_applied: De cadeaubon is succesvol op je bestelling toegepast!
+    gift_card_customer_not_logged_in: Een cadeaubon kan niet als gast worden toegepast.
+    gift_card_expired: De cadeaubon is verlopen.
+    gift_card_mismatched_currency: De cadeaubon kan niet worden toegepast met de huidige valuta.
+    gift_card_mismatched_customer: Deze cadeaubon is gekoppeld aan een andere gebruiker.
+    gift_card_not_found: De cadeaubon is niet gevonden.
+    gift_card_removed: De cadeaubon is succesvol van je bestelling verwijderd
+    gift_card_using_store_credit_error: Je kunt de cadeaubon niet toepassen nadat je het winkeltegoed hebt toegepast.
+    height: Hoogte
+    i18n:
+      this_file_language: Nederlands (NL)
+    idempotency_key_reused: Deze Idempotency-Key is al gebruikt met andere verzoekparameters.
+    image: Afbeelding
+    import: Importeren
+    in_stock: Op voorraad
+    inactive: Inactief
+    incomplete: onvolledig
+    internal_note: Interne notitie
+    inventory: Voorraad
+    invitation_mailer:
+      greeting: Hoi %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} heeft je uitnodiging om lid te worden van %{resource_name} geaccepteerd"
+        subject: "%{invitee_name} heeft je uitnodiging om lid te worden van %{resource_name} geaccepteerd"
+      invitation_email:
+        body: "%{inviter_name} heeft je uitgenodigd om lid te worden van %{resource_name}"
+        link_description: 'Klik op de onderstaande link om deze uitnodiging te accepteren:'
+        subject: Uitnodiging om lid te worden van %{resource_name}
+    iso: ISO Alpha-2
+    item: Product
+    items_cannot_be_shipped: Items kunnen niet worden verstuurd
+    key: Sleutel
+    kind: Soort
+    label: Label
+    last_name: Achternaam
+    line_item: Bestelregel
+    line_items: Bestelregels
+    link: Link
+    locale: Lokalisatie
+    locale_not_supported_by_store: wordt niet ondersteund door deze winkel
+    manual: Handmatig
+    market: Markt
+    me_no_current_user: Geen beheerder heeft dit verzoek geauthenticeerd
+    media: Media
+    meta_description: Meta beschrijving
+    meta_keywords: Meta sleutelwoorden
+    meta_title: Meta Titel
+    metadata: Metadata
+    min_quantity: Min. hoeveelheid
+    month: Maand
+    name: Naam
+    new_variant: Nieuwe variant
+    no_cc_type: N.v.t.
+    no_payment_found: Geen betaling gevonden
+    none: Geen
+    number: Nummer
+    on_hand: Op voorraad
+    only_active_products_can_be_added_to_cart: Concept- en gearchiveerde producten kunnen niet aan de winkelwagen worden toegevoegd. Markeer het product eerst als actief.
+    open: Open
+    option_name: Optienaam
+    option_type: Option type
+    option_value: Optiewaarde
+    options: Opties
+    or: of
+    order: Bestelling
+    order_canceled: Order geannuleerd
+    order_routing:
+      strategies:
+        legacy: Verouderd
+        rules: Regels (geordend)
+    order_summary: Samenvatting van je bestelling
+    orders: Bestellingen
+    out_of_stock: Niet op voorraad
+    password: Wachtwoord
+    path: Pad
+    payment: Betaling
+    payment_method: Betaalmethode
+    payment_method_not_supported: Betaalmethode wordt niet ondersteund
+    payment_methods: Betaalmethoden
+    payment_processing_failed: De betaling kan niet worden verwerkt, controleer de informatie die je hebt ingevuld
+    payment_source: Betaalbron
+    pending: Openstaand
+    percent: Procent
+    percent_per_item: Procent per item
+    phone: Telefoon
+    price: Prijs
+    price_range: Prijsklasse
+    price_rules:
+      channel_rule:
+        description: Pas prijzen toe op basis van het verkoopkanaal
+      customer_group_rule:
+        description: Prijzen toepassen op specifieke klantgroepen
+    price_sack: Prijsvork
+    prices: Prijzen
+    privacy_policy: Privacybeleid
+    processing: Verwerken
+    product: Product
+    product_translations: Productvertalingen
+    products: Producten
+    products_cannot_be_shipped: We kunnen %{product_names} op dit moment niet naar je huidige locatie verzenden. Wijzig je verzendadres of verwijder %{product_names} uit je winkelwagen.
+    promotion: Actie
+    promotion_action_types:
+      create_adjustment:
+        description: Past de prijs van een order aan gebaseerd op een promotie.
+        name: Maak order-aanpassing
+      create_item_adjustments:
+        description: Korting toepassen op een artikelregel
+        name: Maak artikelregel-aanpassing
+      create_line_items:
+        description: Vult de winkelwagen met de aangegeven hoeveelheid van een artikel
+        name: Maak een artikelregel
+      free_shipping:
+        description: Maakt de verzending gratis
+        name: Geen verzendkosten
+    promotion_actions: Acties
+    promotion_already_used: Je kunt een promotie die al is toegepast niet verwijderen
+    promotion_label: Promotie (%{name})
+    promotion_rule_types:
+      category:
+        description: Bestelling bevat producten in opgegeven categorieën
+        name: Categorieën
+      channel:
+        description: Beperken tot bestellingen die via opgegeven kanaal/kanalen zijn geplaatst
+        name: Kanaal/kanalen
+      country:
+        description: Beperk tot bestellingen met een verzendadres in een specifiek land
+        name: Land
+      currency:
+        description: Beperk tot bestellingen in een specifieke valuta
+        name: Valuta
+      customer:
+        description: Alleen beschikbaar voor de opgegeven klanten
+        name: Klanten
+      customer_group:
+        description: Alleen beschikbaar voor klanten in opgegeven klantgroep(en)
+        name: Klantgroep(en)
+      customer_logged_in:
+        description: Alleen beschikbaar voor ingelogde klanten
+        name: Alleen ingelogde klanten
+      first_order:
+        description: Moet de klant zijn eerste bestelling zijn
+        name: Eerste bestelling
+      item_total:
+        description: Bestelbedrag (totaal) komt overeen met de volgende criteria
+        name: Bedrag totaal
+      market:
+        description: Beperken tot bestellingen die in opgegeven markt(en) zijn geplaatst
+        name: Markt(en)
+      one_use_per_user:
+        description: Een per gebruiker
+        name: Een per gebruiker
+      option_value:
+        description: Order bevat product(en) met opgegeven optie waarde(s)
+        name: Optie waarde(s)
+      product:
+        description: Bestelling bevat de volgende producten
+        name: Product(en)
+    promotions: Acties
+    quantity: Hoeveelheid
+    query: Query
+    reason: Reden
+    received: Ontvangen
+    reference: Verwijzing
+    refund: Terugbetaling
+    refund_amount: Terugbetalingsbedrag
+    refunds: Terugbetalingen
+    registration: Registratie
+    rejected: Afgewezen
+    remove: Verwijderen
+    remove_gift_card_on_completed_order_error: Je kunt de cadeaubon niet verwijderen nadat de bestelling is geplaatst
+    resellable: Doorverkoopbaar
+    resend: Opnieuw verzenden
+    response_code: Antwoordcode
+    return: Terugzenden
+    returned: Teruggezonden
+    returns_policy: Retourbeleid
+    row: Rij
+    rules: Regels
+    say_no: Nee
+    say_yes: Ja
+    scope: Scope
+    selected_quantity_not_available: geselecteerd van %{item} is niet beschikbaar.
+    ship: Verzenden
+    ship_address: Afleveradres
+    shipment: Verzending
+    shipped: verzonden
+    shipping: Verzenden
+    shipping_address: Afleveradres
+    shipping_flat_rate_per_item: Vast tarief per verpakt item
+    shipping_flat_rate_per_order: Vast tarief
+    shipping_flexible_rate: Flexibel tarief per verpakt item
+    shipping_policy: Verzendbeleid
+    shipping_price_sack: Prijsvork
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
+    sku: Sku
+    slug: Verkorte URL
+    source: Bron
+    status: Status
+    stock_location: Voorraadlocatie
+    stock_locations: Voorraadlocaties
+    stock_transfer:
+      errors:
+        must_have_variant: Je moet ten minste één variant toevoegen
+        same_location: kan niet hetzelfde zijn als de bestemmingslocatie
+        variants_unavailable: Sommige varianten zijn niet beschikbaar op %{stock}
+    store: Winkel
+    store_credit:
+      allocated: Toegevoegd
+      authorized: Geautoriseerd
+      captured: Gebruikt
+      credit: Krediet
+      eligible: In aanmerking komend
+    store_credit_name: Winkeltegoed
+    store_credit_payment_method:
+      currency_mismatch: Valuta van winkeltegoed komt niet overeen met de valuta van de bestelling
+      insufficient_authorized_amount: Kan niet meer dan het geautoriseerde bedrag innen
+      insufficient_funds: Het resterende winkeltegoed is niet toereikend
+      successful_action: Succesvolle winkeltegoedactie %{action}
+      unable_to_credit: 'Kan code niet bijschrijven: %{auth_code}'
+      unable_to_find: Kon winkeltegoed niet vinden
+      unable_to_find_for_action: 'Kon winkeltegoed niet vinden voor autorisatiecode: %{auth_code} voor actie: %{action}'
+      unable_to_void: 'Kan code niet annuleren: %{auth_code}'
+    success: Succes
+    tags: Labels
+    tax: Belasting
+    tax_category: Belastingcategorie
+    terms_of_service: Servicevoorwaarden
+    there_are_no_items_for_this_order: Er zijn geen items voor deze bestelling
+    tiered_flat_rate: Staffelprijzen
+    tiered_percent: Staffelpercentages
+    total: Totaal
+    track_inventory: Voorraadbeheer
+    tracking: Tracking
+    tracking_number: Tracking nummer
+    tracking_url: Tracking URL
+    type: Type
+    unable_to_connect_to_gateway: Kon geen verbinding maken met de betaalserver.
+    updated_at: Bijgewerkt op
+    url: URL
+    user: Gebruiker
+    validation:
+      must_be_int: moet een getal zijn
+    value: Waarde
+    variant: Variant
+    variants: Varianten
+    verified: Geverifieerd
+    void: Ongeldig
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Uitgeschakeld op
+        heading: Webhook-endpoint uitgeschakeld
+        instructions: Controleer de endpoint-URL en de service en schakel deze opnieuw in via Instellingen → Ontwikkelaars → Webhooks.
+        message: Het webhook-endpoint "%{endpoint_name}" is automatisch uitgeschakeld na herhaalde afleveringsfouten.
+        name_label: Naam
+        reason_label: Reden
+        subject: 'Webhook-endpoint uitgeschakeld: %{endpoint_name}'
+        url_label: URL
+    weight: Gewicht
+    weight_unit: Gewichtseenheid
+    width: Breedte
+    year: Jaar
+    zip: Postcode

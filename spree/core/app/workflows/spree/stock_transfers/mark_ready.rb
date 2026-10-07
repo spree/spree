@@ -24,8 +24,8 @@ module Spree
       private
 
       def ensure_draft
-        failure(stock_transfer, Spree.t('stock_transfer.errors.not_draft')) unless stock_transfer.draft?
-        failure(stock_transfer, Spree.t('stock_transfer.errors.must_have_variant')) if stock_transfer.items.empty?
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.not_draft')) unless stock_transfer.draft?
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.must_have_variant')) if stock_transfer.items.empty?
       end
 
       def mark_ready

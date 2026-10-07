@@ -70,7 +70,7 @@ module Spree
         order.process_payments! unless payment_covered?
 
         failure(order, order.errors.full_messages.to_sentence) if order.errors.any?
-        failure(order, Spree.t(:payment_processing_failed)) unless payment_covered?
+        failure(order, I18n.t('spree.payment_processing_failed')) unless payment_covered?
       end
 
       # Files the sale under whoever made it, dividing the order into one per

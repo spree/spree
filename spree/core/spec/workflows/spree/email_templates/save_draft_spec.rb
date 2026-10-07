@@ -24,7 +24,7 @@ describe Spree::EmailTemplates::SaveDraft do
     draft = save({ subject: nil }, locale: 'en').value
 
     expect(draft.body).not_to include('| t')
-    expect(draft.body).to include(Spree.t('admin_user_mailer.password_reset_email.action'))
+    expect(draft.body).to include(I18n.t('spree.admin_user_mailer.password_reset_email.action'))
     expect(draft.base_body).to include("'admin_user_mailer.password_reset_email.action' | t")
   end
 

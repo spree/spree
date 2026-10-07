@@ -39,13 +39,6 @@ class Spree::Base < ApplicationRecord
     backfill_default_preferences if has_attribute?(:preferences) && !preferences.nil?
   end
 
-  # only for backwards compatibility with Kaminari
-  if defined?(Kaminari) && Kaminari.config.page_method_name != :page
-    def self.page(num)
-      send Kaminari.config.page_method_name, num
-    end
-  end
-
   self.abstract_class = true
 
   scope :for_ordering_with_translations, lambda { |klass, fields = nil|

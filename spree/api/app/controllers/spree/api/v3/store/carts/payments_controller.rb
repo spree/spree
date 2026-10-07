@@ -20,7 +20,7 @@ module Spree
               if payment_method.session_required?
                 return render_error(
                   code: 'payment_session_required',
-                  message: Spree.t('api.v3.payments.session_required'),
+                  message: I18n.t('spree.api.v3.payments.session_required'),
                   status: :unprocessable_content
                 )
               end
@@ -30,7 +30,7 @@ module Spree
               unless @cart.payment_methods.include?(payment_method)
                 return render_error(
                   code: 'payment_method_unavailable',
-                  message: Spree.t('api.v3.payments.method_unavailable'),
+                  message: I18n.t('spree.api.v3.payments.method_unavailable'),
                   status: :unprocessable_content
                 )
               end

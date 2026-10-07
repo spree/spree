@@ -3,7 +3,8 @@ require 'i18n/tasks'
 
 RSpec.describe I18n do
   let(:i18n) { I18n::Tasks::BaseTask.new }
-  let(:missing_keys) { i18n.missing_keys }
+  # Other languages fall back to English, so only English must be complete.
+  let(:missing_keys) { i18n.missing_keys(locales: [i18n.base_locale]) }
   let(:inconsistent_interpolations) { i18n.inconsistent_interpolations }
 
   it 'does not have missing keys' do

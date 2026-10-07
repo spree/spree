@@ -122,7 +122,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['error']['message']).to eq(Spree.t('fulfillments.errors.order_not_completed'))
+          expect(data['error']['message']).to eq(I18n.t('spree.fulfillments.errors.order_not_completed'))
         end
       end
     end

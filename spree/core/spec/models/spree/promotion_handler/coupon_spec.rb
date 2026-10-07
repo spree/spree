@@ -27,7 +27,7 @@ module Spree
 
           it 'has success message' do
             subject
-            expect(coupon.success).to eq(Spree.t(status))
+            expect(coupon.success).to eq(I18n.t("spree.#{status}"))
           end
         end
 
@@ -43,7 +43,7 @@ module Spree
 
           it 'has error message' do
             subject
-            expect(coupon.error).to eq(Spree.t(status))
+            expect(coupon.error).to eq(I18n.t("spree.#{status}"))
           end
         end
       end
@@ -60,7 +60,7 @@ module Spree
 
           it 'populates error message' do
             subject.apply
-            expect(subject.error).to eq Spree.t(:coupon_code_not_found)
+            expect(subject.error).to eq I18n.t('spree.coupon_code_not_found')
           end
         end
       end
@@ -99,7 +99,7 @@ module Spree
                 subject.apply
                 expect(subject.success).to be_present
                 subject.apply
-                expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+                expect(subject.error).to eq I18n.t('spree.coupon_code_already_applied')
               end
             end
 
@@ -160,7 +160,7 @@ module Spree
               subject.apply
               expect(subject.success).to be_present
               subject.apply
-              expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+              expect(subject.error).to eq I18n.t('spree.coupon_code_already_applied')
             end
           end
         end
@@ -187,13 +187,13 @@ module Spree
               subject.apply
               expect(subject.success).to be_present
               subject.apply
-              expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+              expect(subject.error).to eq I18n.t('spree.coupon_code_already_applied')
             end
 
             it 'coupon fails to activate' do
               allow_any_instance_of(Spree::Promotion).to receive(:activate).and_return false
               subject.apply
-              expect(subject.error).to eq Spree.t(:coupon_code_unknown_error)
+              expect(subject.error).to eq I18n.t('spree.coupon_code_unknown_error')
             end
 
             it 'coupon code hit max usage' do
@@ -206,7 +206,7 @@ module Spree
               coupon = Coupon.new(order_2)
               coupon.apply
               expect(coupon.successful?).to be false
-              expect(coupon.error).to eq Spree.t(:coupon_code_max_usage)
+              expect(coupon.error).to eq I18n.t('spree.coupon_code_max_usage')
             end
 
             context 'when the a new coupon is less good' do
@@ -216,7 +216,7 @@ module Spree
                 subject.apply
                 allow(order).to receive_messages(coupon_code: '5off')
                 coupon = Coupon.new(order).apply
-                expect(coupon.error).to eq Spree.t(:coupon_code_better_exists)
+                expect(coupon.error).to eq I18n.t('spree.coupon_code_better_exists')
               end
             end
           end
@@ -336,7 +336,7 @@ module Spree
             subject.apply
             expect(subject.success).to be_present
             subject.apply
-            expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+            expect(subject.error).to eq I18n.t('spree.coupon_code_already_applied')
           end
 
           context 'with used coupon code' do
@@ -346,7 +346,7 @@ module Spree
               subject.apply
 
               expect(subject.success).to be_nil
-              expect(subject.error).to eq Spree.t(:coupon_code_used)
+              expect(subject.error).to eq I18n.t('spree.coupon_code_used')
             end
           end
 
@@ -381,7 +381,7 @@ module Spree
               expect(cart.read_attribute(:coupon_code)).to be_nil
               expect(cart.warnings).to contain_exactly(
                 { code: 'line_item_removed' },
-                { code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable) }
+                { code: 'coupon_code_unavailable', message: I18n.t('spree.coupon_code_unavailable') }
               )
             end
 
@@ -401,7 +401,7 @@ module Spree
 
               subject.apply
 
-              expect(subject.error).to eq Spree.t(:coupon_code_used)
+              expect(subject.error).to eq I18n.t('spree.coupon_code_used')
               expect(coupon_code.reload.holder).to eq(cart)
               expect(order.reload.total).to eq(130)
               expect(order.promotions).to be_empty
@@ -416,7 +416,7 @@ module Spree
             it 'keeps the code on the draft order' do
               subject.apply
 
-              expect([subject.status_code, subject.error]).to eq([:coupon_code_used, Spree.t(:coupon_code_used)])
+              expect([subject.status_code, subject.error]).to eq([:coupon_code_used, I18n.t('spree.coupon_code_used')])
               expect(coupon_code.reload.holder).to eq(draft_order)
               expect(order.reload.total).to eq(130)
             end
@@ -475,7 +475,7 @@ module Spree
             expect(subject.successful?).to be true
             subject_2.apply
             expect(subject_2.successful?).to be false
-            expect(subject_2.error).to eq Spree.t(:coupon_code_max_usage)
+            expect(subject_2.error).to eq I18n.t('spree.coupon_code_max_usage')
           end
         end
 
@@ -521,7 +521,7 @@ module Spree
 
               subject_2.apply
               expect(subject_2.successful?).to be false
-              expect(subject_2.error).to eq Spree.t(:coupon_code_used)
+              expect(subject_2.error).to eq I18n.t('spree.coupon_code_used')
             end
           end
 

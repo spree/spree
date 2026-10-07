@@ -1,0 +1,15 @@
+---
+pt:
+  spree:
+    api:
+      cannot_delete: Não é possível eliminar %{model}
+      current_password_invalid: A palavra-passe atual é inválida ou está em falta
+      newsletter_verification_token_invalid: O token de verificação da newsletter é inválido ou expirou.
+      password_reset_requested: Se existir uma conta para esse e-mail, foram enviadas instruções para repor a palavra-passe.
+      password_reset_token_invalid: O token de reposição de palavra-passe é inválido ou expirou.
+      record_not_found: "%{model} não encontrado"
+      unauthorized: Não tem autorização para executar essa ação.
+      v3:
+        payments:
+          method_unavailable: Este método de pagamento não está disponível para esta encomenda.
+          session_required: Este método de pagamento requer uma sessão de pagamento. Utilize antes o endpoint de sessões de pagamento.

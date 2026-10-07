@@ -61,17 +61,17 @@ module Spree
       # @return [Spree::ServiceModule::Result, nil] failure when the price is refused
       def parse_manual_price
         if cart.completed?
-          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          errors.add(:base, :price_override_not_allowed, message: I18n.t('spree.cart_line_item.price_override_not_allowed'))
           return failure(cart, errors)
         end
 
         @manual_price = BigDecimal(price.to_s)
         if @manual_price.negative? || !@manual_price.finite?
-          errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+          errors.add(:base, :invalid_price, message: I18n.t('spree.cart_line_item.invalid_price'))
           return failure(cart, errors)
         end
       rescue ArgumentError
-        errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+        errors.add(:base, :invalid_price, message: I18n.t('spree.cart_line_item.invalid_price'))
         failure(cart, errors)
       end
 
@@ -158,7 +158,7 @@ module Spree
 
         return if result.value.blank?
 
-        failure(variant, Spree.t(:selected_quantity_not_available, item: variant.name.inspect))
+        failure(variant, I18n.t('spree.selected_quantity_not_available', item: variant.name.inspect))
       end
 
       # Asked before the item exists, so the context carries the quantity the

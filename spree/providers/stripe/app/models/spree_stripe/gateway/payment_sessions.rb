@@ -50,7 +50,7 @@ module SpreeStripe
         total = amount.presence || order.total_minus_store_credits
         amount_in_cents = Spree::Money.new(total, currency: order.currency).cents
 
-        raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.zero_amount') if amount_in_cents.zero?
+        raise Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.zero_amount') if amount_in_cents.zero?
 
         stripe_payment_method_id = external_data[:stripe_payment_method_id] || external_data['stripe_payment_method_id']
 
@@ -224,7 +224,7 @@ module SpreeStripe
       def replace_open_sessions(order)
         sessions = order.payment_sessions.where(payment_method: self)
         if sessions.exists?(status: 'completed')
-          raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
+          raise Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.payment_in_progress')
         end
 
         # A failed confirm leaves the intent payable. It is canceled with the
@@ -236,7 +236,7 @@ module SpreeStripe
           payment_intent = find_payment_intent(payment_session.external_id)
           next unless payment_intent && payment_intent_in_progress?(payment_intent)
 
-          raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
+          raise Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.payment_in_progress')
         end
 
         open_sessions.each do |payment_session|

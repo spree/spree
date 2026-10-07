@@ -1,0 +1,31 @@
+---
+et:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Lähtesta parool
+        expiry_notice: See parooli lähtestamise link aegub peagi. Kui te seda ei taotlenud, ei ole midagi vaja ette võtta.
+        greeting: Tere %{name},
+        ignore_notice: Kui te ei taotlenud parooli lähtestamist, võite selle e-kirja rahulikult eirata. Teie parooli ei muudeta.
+        instructions: Saime teie parooli lähtestamise taotluse. Uue parooli valimiseks klõpsake allolevat nuppu.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Tere,
+        ignore_disclaimer: Kui te seda ei taotlenud, palun eirake seda e-kirja.
+        instructions: E-posti aadressi kinnitamiseks klõpsake allolevat nuppu.
+        message_copy_link: 'Kui nupp ei tööta, kopeerige ja kleepige järgmine link oma brauserisse:'
+        subject: Kinnitage oma e-posti aadress
+        verify_email_address_link: Kinnita e-posti aadress
+    order_mailer:
+      payment_link_email:
+        message: Tellimuse eest tasumiseks klõpsake allolevat nuppu.
+        message_copy_link: 'Kui nupp ei tööta, kopeerige ja kleepige järgmine link oma brauserisse:'
+        pay_for_order: Tasu tellimuse eest
+        subject: 'Makselink tellimusele #%{number}'
+      store_owner_notification_email:
+        heading: Uus tellimus saabunud
+        instructions: Olete saanud uue tellimuse.
+        order_summary: Tellimuse %{number} kokkuvõte
+        subject: "%{store_name} sai uue tellimuse"
+      subtotal: 'Vahesumma:'
+      total: 'Tellimuse kogusumma:'

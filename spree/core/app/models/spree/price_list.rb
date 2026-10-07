@@ -154,7 +154,7 @@ module Spree
     end
 
     def self.match_policies
-      MATCH_POLICIES.map { |key| [Spree.t(key), key] }
+      MATCH_POLICIES.map { |key| [I18n.t("spree.#{key}"), key] }
     end
 
     # Returns true if the price list is applicable to the context

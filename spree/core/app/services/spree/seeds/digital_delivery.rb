@@ -12,7 +12,7 @@ module Spree
         profile = Spree::DeliveryProfiles::Digital.find_by(store: store) ||
                   Spree::DeliveryProfiles::Digital.create!(store: store, name: I18n.t('spree.seed.delivery_profiles.digital'))
 
-        digital_delivery_method = Spree::DeliveryMethod.find_or_initialize_by(name: Spree.t('digital.digital_delivery'), store: store)
+        digital_delivery_method = Spree::DeliveryMethod.find_or_initialize_by(name: I18n.t('spree.digital.digital_delivery'), store: store)
 
         digital_delivery_method.delivery_profile = profile
         digital_delivery_method.storefront_visible = true

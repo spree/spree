@@ -149,7 +149,7 @@ module Spree
       return unless default?
       return if destroyed_by_association.present?
 
-      errors.add(:base, Spree.t('errors.messages.cannot_delete_default_package_type'))
+      errors.add(:base, I18n.t('spree.errors.messages.cannot_delete_default_package_type'))
       throw(:abort)
     end
 

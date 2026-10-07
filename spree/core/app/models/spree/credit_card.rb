@@ -160,7 +160,7 @@ module Spree
     # Show the card brand, eg. "VISA", "MASTERCARD", etc.
     # @return [String]
     def display_brand
-      brand.present? ? brand.upcase : Spree.t(:no_cc_type)
+      brand.present? ? brand.upcase : I18n.t('spree.no_cc_type')
     end
 
     # Returns the first name of the cardholder.

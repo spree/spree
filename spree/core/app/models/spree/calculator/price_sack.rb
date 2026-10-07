@@ -6,7 +6,7 @@ module Spree
     preference :currency, :string, default: -> { Spree::Store.default.default_currency }
 
     def self.description
-      Spree.t(:price_sack)
+      I18n.t('spree.price_sack')
     end
 
     # as object we always get line items, as calculable we have Coupon, ShippingMethod

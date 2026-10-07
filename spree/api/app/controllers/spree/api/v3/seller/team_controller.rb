@@ -68,7 +68,7 @@ module Spree
 
             render_error(
               code: ErrorHandler::ERROR_CODES[:processing_error],
-              message: Spree.t(:seller_team_last_member),
+              message: I18n.t('spree.seller_team_last_member'),
               status: :unprocessable_content
             )
           end

@@ -18,7 +18,7 @@ module Spree
         branding: branding
       ).call
 
-      mail(to: recipient, subject: Spree.t('email_templates.test_email_subject', subject: email.subject)) do |format|
+      mail(to: recipient, subject: I18n.t('spree.email_templates.test_email_subject', subject: email.subject)) do |format|
         format.text { render plain: email.text, layout: false }
         format.html { render html: email.html.html_safe, layout: false }
       end

@@ -6,7 +6,7 @@ module Spree
     preference :currency, :string, default: -> { Spree::Store.default.default_currency }
 
     def self.description
-      Spree.t(:tiered_flat_rate)
+      I18n.t('spree.tiered_flat_rate')
     end
 
     def compute(object = nil)

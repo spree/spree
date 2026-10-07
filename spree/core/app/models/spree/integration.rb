@@ -61,7 +61,7 @@ module Spree
     attr_accessor :connection_error_message
 
     # Associates the integration to a group.
-    # The name here will be used as Spree.t key to display the group name.
+    # The name is read as a translation key under +spree.+ to display the group name.
     # Leave blank to leave the integration ungrouped.
     def self.integration_group
       nil
@@ -82,7 +82,7 @@ module Spree
     #
     # @return [String, nil]
     def self.human_description
-      Spree.t("integrations.#{api_type}.description", default: description)
+      I18n.t("spree.integrations.#{api_type}.description", default: description)
     end
 
     # Wire entries for the admin types-discovery endpoint — every registered
@@ -162,7 +162,7 @@ module Spree
       return if Spree.integrations.empty?
       return if Spree.integrations.map(&:to_s).include?(type)
 
-      errors.add(:type, :integration_type_not_registered, message: Spree.t('errors.messages.integration_type_not_registered'))
+      errors.add(:type, :integration_type_not_registered, message: I18n.t('spree.errors.messages.integration_type_not_registered'))
     end
 
     # On :base, not :active — the seller's message ("This api key is no
@@ -172,7 +172,7 @@ module Spree
     def must_connect_when_activating
       return if can_connect?
 
-      errors.add(:base, connection_error_message.presence || Spree.t('errors.messages.integration_connection_failed'))
+      errors.add(:base, connection_error_message.presence || I18n.t('spree.errors.messages.integration_connection_failed'))
     end
   end
 end

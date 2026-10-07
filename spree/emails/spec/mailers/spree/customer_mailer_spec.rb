@@ -15,7 +15,7 @@ describe Spree::CustomerMailer, type: :mailer do
 
       expect(message.to).to eq(['customer@example.com'])
       expect(message.from).to eq([store.mail_from_address])
-      expect(message.subject).to eq("#{store.name} #{Spree.t('customer_mailer.password_reset_email.subject')}")
+      expect(message.subject).to eq("#{store.name} #{I18n.t('spree.customer_mailer.password_reset_email.subject')}")
     end
 
     it 'links to the storefront URL with the reset token appended' do
@@ -41,13 +41,13 @@ describe Spree::CustomerMailer, type: :mailer do
       message = described_class.data_export_email(data_request.reload)
 
       expect(message.to).to eq(['customer@example.com'])
-      expect(message.subject).to eq("#{store.name} #{Spree.t('customer_mailer.data_export_email.subject')}")
+      expect(message.subject).to eq("#{store.name} #{I18n.t('spree.customer_mailer.data_export_email.subject')}")
     end
 
     it 'carries a link to the file' do
       message = described_class.data_export_email(data_request.reload)
 
-      expect(message).to have_body_text(Spree.t('customer_mailer.data_export_email.action'))
+      expect(message).to have_body_text(I18n.t('spree.customer_mailer.data_export_email.action'))
     end
   end
 end

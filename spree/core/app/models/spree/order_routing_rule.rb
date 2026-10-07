@@ -52,12 +52,12 @@ module Spree
 
     # @return [String] localized display name for the rule kind, used by admin pickers
     def self.human_name
-      Spree.t("order_routing_rule_types.#{api_type}.name", default: api_type.titleize)
+      I18n.t("spree.order_routing_rule_types.#{api_type}.name", default: api_type.titleize)
     end
 
     # @return [String] localized description for the rule kind
     def self.human_description
-      Spree.t("order_routing_rule_types.#{api_type}.description", default: '')
+      I18n.t("spree.order_routing_rule_types.#{api_type}.description", default: '')
     end
 
     # Feeds the `description` field of `subclasses_with_preference_schema`
@@ -94,14 +94,14 @@ module Spree
       return if type.blank?
       return if Spree.order_routing.rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_order_routing_rule, message: Spree.t(:invalid_order_routing_rule, scope: [:errors, :messages], default: 'is not a registered order routing rule'))
+      errors.add(:type, :invalid_order_routing_rule, message: I18n.t('spree.errors.messages.invalid_order_routing_rule'))
     end
 
     def channel_belongs_to_store
       return if channel.nil? || store_id.nil?
       return if channel.store_id == store_id
 
-      errors.add(:channel, :channel_store_mismatch, message: Spree.t('errors.messages.channel_store_mismatch'))
+      errors.add(:channel, :channel_store_mismatch, message: I18n.t('spree.errors.messages.channel_store_mismatch'))
     end
   end
 end

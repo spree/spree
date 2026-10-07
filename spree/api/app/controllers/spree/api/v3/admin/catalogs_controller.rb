@@ -22,7 +22,7 @@ module Spree
             if @resource.price_list.nil?
               return render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t('catalogs.no_price_list_to_import'),
+                message: I18n.t('spree.catalogs.no_price_list_to_import'),
                 status: :unprocessable_content
               )
             end

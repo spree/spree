@@ -312,8 +312,7 @@ module Spree
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: Spree.t(:cannot_modify_seller_import, scope: 'api',
-                               default: "This import belongs to a seller. It can be viewed here, but only the seller can retry or delete it."),
+              message: I18n.t('spree.api.cannot_modify_seller_import'),
               status: :unprocessable_content
             )
             true

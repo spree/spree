@@ -53,7 +53,7 @@ module Spree
       def ensure_pending
         return if data_request.pending?
 
-        failure(data_request, Spree.t('data_request_errors.not_pending'))
+        failure(data_request, I18n.t('spree.data_request_errors.not_pending'))
       end
 
       def mark_processing
@@ -92,7 +92,7 @@ module Spree
 
         return unless refused
 
-        failure(data_request, Spree.t('data_request_errors.already_anonymized'))
+        failure(data_request, I18n.t('spree.data_request_errors.already_anonymized'))
       end
 
       def attach_export
