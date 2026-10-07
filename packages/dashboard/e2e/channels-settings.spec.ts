@@ -88,6 +88,13 @@ test.describe('settings / channels', () => {
     await page.getByRole('button', { name: /^save$/i }).click()
 
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
+
+    // Reopening reads the saved strategy back into the same readable option.
+    await rowButton(page, updated).click()
+    await expect(page.getByRole('heading', { name: updated })).toBeVisible({ timeout: 15_000 })
+    await expect(page.locator('#preferred_order_routing_strategy')).toContainText(
+      /^rules \(ordered\)$/i,
+    )
   })
 
   test('names the default catalog picker for assistive technology', async ({ page }) => {
