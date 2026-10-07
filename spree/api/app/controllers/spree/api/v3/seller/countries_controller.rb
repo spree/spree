@@ -14,7 +14,7 @@ module Spree
           # GET /api/v3/seller/countries
           #
           # Unpaginated: there are ~250 countries and an address dropdown needs
-          # them all at once, which Pagy's global max_limit would prevent.
+          # them all at once, which Pagy's global client_limit would prevent.
           def index
             countries = Spree::Country.all.sort_by(&:name)
 
