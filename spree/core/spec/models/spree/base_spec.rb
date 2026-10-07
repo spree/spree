@@ -43,13 +43,6 @@ describe Spree::Base do
     end
   end
 
-  describe '.polymorphic_api_type' do
-    it 'names categories stored under the pre-6.0 class as `category`' do
-      expect(described_class.polymorphic_api_type('Spree::Taxon')).to eq('category')
-      expect(described_class.polymorphic_api_type('Spree::Category')).to eq('category')
-    end
-  end
-
   describe '.polymorphic_type_for' do
     it 'resolves against the given candidates' do
       expect(described_class.polymorphic_type_for('order', [Spree::Product, Spree::Order])).to eq('Spree::Order')

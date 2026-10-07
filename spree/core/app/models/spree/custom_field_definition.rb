@@ -178,11 +178,8 @@ module Spree
       errors.add(:field_type, :inclusion)
     end
 
-    # Category definitions the 6.0 upgrade task has not yet moved off the
-    # pre-6.0 `Spree::Taxon` name stay editable. Drops with the alias in 6.1.
     def valid_available_resources
-      resources = self.class.available_resources.map(&:to_s)
-      resources.include?('Spree::Category') ? resources + ['Spree::Taxon'] : resources
+      self.class.available_resources.map(&:to_s)
     end
 
     def set_default_type

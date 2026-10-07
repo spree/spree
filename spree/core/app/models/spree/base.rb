@@ -162,15 +162,13 @@ class Spree::Base < ApplicationRecord
   #
   # The configured customer and admin user classes always answer `customer`
   # and `admin_user`, so a host app's own `User` class does not change the
-  # contract. `Spree::Taxon` rows not yet backfilled by the 6.0 upgrade are
-  # categories.
+  # contract.
   def self.polymorphic_api_type(type)
     return nil if type.blank?
 
     type = type.to_s
     return 'customer' if type == Spree.customer_class(constantize: false)
     return 'admin_user' if type == Spree.admin_user_class(constantize: false)
-    return 'category' if type == 'Spree::Taxon'
 
     type.demodulize.underscore
   end
