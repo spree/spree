@@ -1,4 +1,4 @@
-import { defineTable, Subject } from '@spree/dashboard-core'
+import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, RelativeTime, TagList } from '@spree/dashboard-ui'
 import { UsersIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -127,7 +127,7 @@ defineTable('customers', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: Subject.Customer,
+      taggableType: 'customer',
       default: false,
       render: (c) => <TagList tags={c.tags} />,
     },

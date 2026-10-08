@@ -1098,8 +1098,7 @@
           "inherit": "Inherit from store",
           "label": "Order routing strategy",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Legacy",
-            "Spree::OrderRouting::Strategy::Rules": "Rules (ordered)"
+            "rules": "Rules (ordered)"
           }
         },
         "storefront_access": {
@@ -1234,12 +1233,12 @@
         "resource_type": {
           "label": "Applies to",
           "options": {
-            "Spree::OptionType": "Option types",
-            "Spree::Order": "Orders",
-            "Spree::Product": "Products",
-            "Spree::Taxon": "Categories",
-            "Spree::Customer": "Customers",
-            "Spree::Variant": "Variants"
+            "option_type": "Option types",
+            "order": "Orders",
+            "product": "Products",
+            "category": "Categories",
+            "customer": "Customers",
+            "variant": "Variants"
           },
           "read_only_help": "The owner can't be changed once values exist for this field."
         },

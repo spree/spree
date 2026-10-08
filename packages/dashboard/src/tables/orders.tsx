@@ -1,4 +1,4 @@
-import { defineTable, Subject } from '@spree/dashboard-core'
+import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -247,7 +247,7 @@ defineTable('orders', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: Subject.Order,
+      taggableType: 'order',
       default: false,
       render: (order) => <TagList tags={order.tags} />,
     },

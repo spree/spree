@@ -1,8 +1,29 @@
-import { expect, test } from '@playwright/test'
+import { expect, type Locator, type Page, test } from '@playwright/test'
 import { gotoIndex, login } from './helpers'
 
 const DELIVERY_PROFILES_PATH = (storeId: string) => `/${storeId}/settings/delivery-profiles`
 const PROFILE_CTA = /add profile/i
+
+/** The select inside a method-form field, found by the field's visible label. */
+function fieldSelect(scope: Locator | Page, label: string): Locator {
+  const page = 'page' in scope ? scope.page() : scope
+  return scope
+    .locator('[data-slot="field"]')
+    .filter({ has: page.getByText(label, { exact: true }) })
+    .getByRole('combobox')
+}
+
+async function createProfile(page: Page, name: string, kind?: RegExp) {
+  await page.getByRole('button', { name: PROFILE_CTA }).click()
+  await expect(page.getByRole('heading', { name: /new delivery profile/i })).toBeVisible()
+  await page.locator('#name').fill(name)
+  if (kind) {
+    await fieldSelect(page.getByRole('dialog'), 'Kind').click()
+    await page.getByRole('option', { name: kind }).click()
+  }
+  await page.getByRole('button', { name: /create profile/i }).click()
+  await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+}
 
 test.describe('delivery profiles', () => {
   test('lists delivery profiles including the store default', async ({ page }) => {
@@ -302,5 +323,78 @@ test.describe('delivery profiles', () => {
       .click()
 
     await expect(page.getByText(groupName)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  // Profile kinds and fulfillment providers are both named by short values on
+  // the wire; the digital kind must offer, preselect and persist the digital
+  // provider, and reopening must find it in the provider catalog again.
+  test('creates a digital profile with a digital method that reopens as digital', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const stamp = Date.now()
+    const methodName = `E2E Download ${stamp}`
+    await createProfile(page, `E2E Digital Profile ${stamp}`, /^digital$/i)
+
+    await page.getByRole('button', { name: /add digital method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    const sheet = page.getByRole('dialog')
+    await expect(fieldSelect(sheet, 'Fulfillment provider')).toContainText(/^digital$/i, {
+      timeout: 15_000,
+    })
+    await sheet.locator('#name').fill(methodName)
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    await page.getByText(methodName).click()
+    await expect(fieldSelect(page.getByRole('dialog'), 'Fulfillment provider')).toContainText(
+      /^digital$/i,
+      { timeout: 15_000 },
+    )
+  })
+
+  // A method left on the default would reopen as Internal whether or not the
+  // stored provider round-tripped, so pick the other built-in one.
+  test('prices a method through the freight rate provider, and it reopens that way', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const stamp = Date.now()
+    const methodName = `E2E Freight ${stamp}`
+    await createProfile(page, `E2E Freight Profile ${stamp}`)
+
+    await page
+      .getByRole('button', { name: /add method/i })
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    const sheet = page.getByRole('dialog')
+    await sheet.locator('#name').fill(methodName)
+    const rateProvider = fieldSelect(sheet, 'Rate provider')
+    await expect(rateProvider).toContainText(/^internal$/i, { timeout: 15_000 })
+    await rateProvider.click()
+    await page.getByRole('option', { name: /^freight$/i }).click()
+    await expect(rateProvider).toContainText(/^freight$/i)
+
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    await page.getByText(methodName).click()
+    await expect(fieldSelect(page.getByRole('dialog'), 'Rate provider')).toContainText(
+      /^freight$/i,
+      { timeout: 15_000 },
+    )
   })
 })

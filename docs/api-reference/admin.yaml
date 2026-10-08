@@ -3784,11 +3784,11 @@ paths:
                   default: true
                   storefront_access: public
                   guest_checkout: true
-                  preferred_order_routing_strategy:
                   preferred_storefront_access:
                   preferred_guest_checkout:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  preferred_order_routing_strategy:
                   stock_location_ids: []
                   default_catalog_id:
                 - id: ch_gbHJdmfrXB
@@ -3798,11 +3798,11 @@ paths:
                   default: false
                   storefront_access: public
                   guest_checkout: true
-                  preferred_order_routing_strategy:
                   preferred_storefront_access:
                   preferred_guest_checkout:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  preferred_order_routing_strategy:
                   stock_location_ids: []
                   default_catalog_id:
                 meta:
@@ -3886,11 +3886,11 @@ paths:
                 default: false
                 storefront_access: public
                 guest_checkout: true
-                preferred_order_routing_strategy:
                 preferred_storefront_access:
                 preferred_guest_checkout:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                preferred_order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
       requestBody:
@@ -3917,8 +3917,8 @@ paths:
                 preferred_order_routing_strategy:
                   type: string
                   nullable: true
-                  description: Routing strategy class name. `null` inherits the store
-                    setting.
+                  description: 'Routing strategy shorthand (built-in: `rules`). `null`
+                    inherits the store setting.'
                 preferred_storefront_access:
                   type: string
                   nullable: true
@@ -3987,11 +3987,11 @@ paths:
                 default: false
                 storefront_access: public
                 guest_checkout: true
-                preferred_order_routing_strategy:
                 preferred_storefront_access:
                 preferred_guest_checkout:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                preferred_order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
     patch:
@@ -4044,11 +4044,11 @@ paths:
                 default: false
                 storefront_access: login_required
                 guest_checkout: false
-                preferred_order_routing_strategy:
                 preferred_storefront_access: login_required
                 preferred_guest_checkout: false
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                preferred_order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
       requestBody:
@@ -4068,8 +4068,8 @@ paths:
                 preferred_order_routing_strategy:
                   type: string
                   nullable: true
-                  description: Routing strategy class name. `null` inherits the store
-                    setting.
+                  description: 'Routing strategy shorthand (built-in: `rules`). `null`
+                    inherits the store setting.'
                 preferred_storefront_access:
                   type: string
                   nullable: true
@@ -4632,7 +4632,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Returns all defined custom fields. Filter by `?q[resource_type_eq]=Spree::Product` to narrow to one parent type.
+        Returns all defined custom fields. Filter by `?q[resource_type_eq]=product` to narrow to one parent type.
 
         **Required scope:** `read_settings` (for API-key authentication).
       x-codeSamples:
@@ -4647,11 +4647,11 @@ paths:
           })
 
           const { data: definitions } = await client.customFieldDefinitions.list({
-            q: { resource_type_eq: 'Spree::Product' },
+            q: { resource_type_eq: 'product' },
           })
       - lang: bash
         label: Spree CLI
-        source: spree api get /custom_field_definitions -d '{"q":{"resource_type_eq":"Spree::Product"}}'
+        source: spree api get /custom_field_definitions -d '{"q":{"resource_type_eq":"product"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4689,25 +4689,25 @@ paths:
                   key: fabric
                   label: Title
                   field_type: short_text
-                  resource_type: Spree::Product
                   storefront_visible: true
                   searchable: false
                   sortable: false
                   filter_key: cf_specs_fabric
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  resource_type: product
                 - id: cfdef_gbHJdmfrXB
                   namespace: custom
                   key: order_notes
                   label: Order Notes
                   field_type: short_text
-                  resource_type: Spree::Order
                   storefront_visible: true
                   searchable: false
                   sortable: false
                   filter_key: cf_custom_order_notes
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  resource_type: order
                 meta:
                   page: 1
                   limit: 25
@@ -4742,13 +4742,13 @@ paths:
             key: 'origin',
             label: 'Country of Origin',
             field_type: 'short_text',
-            resource_type: 'Spree::Product',
+            resource_type: 'product',
             storefront_visible: true,
           })
       - lang: bash
         label: Spree CLI
         source: spree api post /custom_field_definitions -d '{"namespace":"specs","key":"origin","label":"Country
-          of Origin","field_type":"short_text","resource_type":"Spree::Product","storefront_visible":true}'
+          of Origin","field_type":"short_text","resource_type":"product","storefront_visible":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4771,13 +4771,13 @@ paths:
                 key: origin
                 label: Country of Origin
                 field_type: short_text
-                resource_type: Spree::Product
                 storefront_visible: true
                 searchable: false
                 sortable: false
                 filter_key: cf_specs_origin
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                resource_type: product
       requestBody:
         content:
           application/json:
@@ -4803,7 +4803,7 @@ paths:
                     is named by its registered class instead.
                 resource_type:
                   type: string
-                  description: Owner class, e.g. `Spree::Product`
+                  description: Shorthand of the owning resource, e.g. `product`
                 storefront_visible:
                   type: boolean
                   description: When false, the definition is admin-only and never
@@ -4881,13 +4881,13 @@ paths:
                 key: fabric
                 label: Title
                 field_type: short_text
-                resource_type: Spree::Product
                 storefront_visible: true
                 searchable: false
                 sortable: false
                 filter_key: cf_specs_fabric
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                resource_type: product
     patch:
       summary: Update a custom field definition
       tags:
@@ -4942,13 +4942,13 @@ paths:
                 key: fabric
                 label: Fabric Composition
                 field_type: short_text
-                resource_type: Spree::Product
                 storefront_visible: false
                 searchable: false
                 sortable: false
                 filter_key: cf_specs_fabric
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                resource_type: product
       requestBody:
         content:
           application/json:
@@ -5744,7 +5744,7 @@ paths:
                   longitude:
                   customer_id: cust_UkLWZg9DAJ
                   owner_id: cust_UkLWZg9DAJ
-                  owner_type: Spree::Customer
+                  owner_type: customer
                 meta:
                   page: 1
                   limit: 25
@@ -5844,7 +5844,7 @@ paths:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
                 owner_id: cust_UkLWZg9DAJ
-                owner_type: Spree::Customer
+                owner_type: customer
       requestBody:
         content:
           application/json:
@@ -5963,7 +5963,7 @@ paths:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
                 owner_id: cust_UkLWZg9DAJ
-                owner_type: Spree::Customer
+                owner_type: customer
       requestBody:
         content:
           application/json:
@@ -12602,9 +12602,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 - id: mkt_gbHJdmfrXB
                   name: EU
                   currency: USD
@@ -12617,9 +12617,9 @@ paths:
                   - DE
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 meta:
                   page: 1
                   limit: 25
@@ -12714,9 +12714,9 @@ paths:
                 supported_locales:
                 - en
                 - fr
-                tax_provider:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                tax_provider:
               schema:
                 "$ref": "#/components/schemas/Market"
         '422':
@@ -12862,9 +12862,9 @@ paths:
                 - DE
                 supported_locales:
                 - en
-                tax_provider:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                tax_provider:
               schema:
                 "$ref": "#/components/schemas/Market"
         '404':
@@ -12945,9 +12945,9 @@ paths:
                 - DE
                 supported_locales:
                 - en
-                tax_provider:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                tax_provider:
               schema:
                 "$ref": "#/components/schemas/Market"
         '422':
@@ -14702,9 +14702,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 external_references: {}
                 status: draft
                 last_ip_address:
@@ -14968,9 +14968,9 @@ paths:
                     - US
                     supported_locales:
                     - en
-                    tax_provider:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
+                    tax_provider:
                   external_references: {}
                   status: draft
                   last_ip_address:
@@ -15211,9 +15211,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 external_references: {}
                 status: draft
                 last_ip_address:
@@ -15487,9 +15487,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 external_references: {}
                 status: draft
                 last_ip_address:
@@ -15651,9 +15651,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 external_references: {}
                 status: draft
                 last_ip_address:
@@ -15934,9 +15934,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 external_references: {}
                 status: placed
                 last_ip_address:
@@ -16133,9 +16133,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 external_references: {}
                 status: canceled
                 last_ip_address:
@@ -16310,9 +16310,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 external_references: {}
                 status: placed
                 last_ip_address:
@@ -16461,9 +16461,9 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  tax_provider:
                 external_references: {}
                 status: placed
                 last_ip_address:
@@ -18617,7 +18617,6 @@ paths:
                 data:
                 - id: cf_UkLWZg9DAJ
                   label: Title
-                  type: Spree::CustomFields::ShortText
                   field_type: short_text
                   key: custom.title
                   value: wool
@@ -18688,7 +18687,6 @@ paths:
               example:
                 id: cf_gbHJdmfrXB
                 label: Description
-                type: Spree::CustomFields::LongText
                 field_type: long_text
                 key: custom.description
                 value: A longer description
@@ -18791,7 +18789,6 @@ paths:
               example:
                 id: cf_UkLWZg9DAJ
                 label: Title
-                type: Spree::CustomFields::ShortText
                 field_type: short_text
                 key: custom.title
                 value: wool
@@ -18856,7 +18853,6 @@ paths:
               example:
                 id: cf_UkLWZg9DAJ
                 label: Title
-                type: Spree::CustomFields::ShortText
                 field_type: short_text
                 key: custom.title
                 value: cotton
@@ -24162,18 +24158,14 @@ paths:
                 preferred_track_price_history: true
                 preferred_show_products_without_price: false
                 preferred_disable_sku_validation: false
-                preferred_order_routing_strategy: Spree::OrderRouting::Strategy::Rules
                 preferred_pricing_provider: internal
                 preferred_inventory_provider: internal
                 preferred_pricing_provider_failure_policy: strict
                 preferred_inventory_provider_failure_policy: fallback
-                preferred_payout_provider:
                 preferred_default_payouts_schedule_interval: monthly
-                preferred_default_minimum_payout_amount: 0
                 preferred_auto_approve_sellers: false
                 preferred_auto_approve_seller_products: false
                 preferred_send_seller_transactional_emails: true
-                preferred_default_commission_tax_rate: 0
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -24184,7 +24176,11 @@ paths:
                 preferred_digital_asset_authorized_days: 7
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                preferred_order_routing_strategy: rules
+                preferred_payout_provider:
                 order_number_sequence_started: false
+                preferred_default_minimum_payout_amount: 0.0
+                preferred_default_commission_tax_rate: 0.0
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
@@ -24501,18 +24497,14 @@ paths:
                 preferred_track_price_history: true
                 preferred_show_products_without_price: false
                 preferred_disable_sku_validation: false
-                preferred_order_routing_strategy: Spree::OrderRouting::Strategy::Rules
                 preferred_pricing_provider: internal
                 preferred_inventory_provider: internal
                 preferred_pricing_provider_failure_policy: strict
                 preferred_inventory_provider_failure_policy: fallback
-                preferred_payout_provider:
                 preferred_default_payouts_schedule_interval: monthly
-                preferred_default_minimum_payout_amount: 0
                 preferred_auto_approve_sellers: false
                 preferred_auto_approve_seller_products: false
                 preferred_send_seller_transactional_emails: true
-                preferred_default_commission_tax_rate: 0
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -24523,7 +24515,11 @@ paths:
                 preferred_digital_asset_authorized_days: 7
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                preferred_order_routing_strategy: rules
+                preferred_payout_provider:
                 order_number_sequence_started: false
+                preferred_default_minimum_payout_amount: 0.0
+                preferred_default_commission_tax_rate: 0.0
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
@@ -24806,12 +24802,12 @@ paths:
           })
 
           const { data: tags } = await client.tags.list({
-            taggable_type: 'Spree::User',
+            taggable_type: 'customer',
             q: 'vip',
           })
       - lang: bash
         label: Spree CLI
-        source: spree api get /tags -d '{"taggable_type":"Spree::User","q":"vip"}'
+        source: spree api get /tags -d '{"taggable_type":"customer","q":"vip"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -24826,7 +24822,7 @@ paths:
       - name: taggable_type
         in: query
         required: true
-        description: Taggable type (`Spree::Product`, `Spree::Order`, or `Spree::User`)
+        description: 'Shorthand of the tagged resource: `product`, `order` or `customer`'
         schema:
           type: string
       - name: q
@@ -24851,8 +24847,7 @@ paths:
               example:
                 error:
                   code: invalid_taggable_type
-                  message: taggable_type must be one of Spree::Product, Spree::Order,
-                    Spree::Customer
+                  message: taggable_type must be one of product, order, customer
   "/api/v3/admin/tax_rates":
     get:
       summary: List tax rates
@@ -34600,9 +34595,7 @@ paths:
         that is not listed is refused on create.
 
         `resource_type` is the value to send; `name` is what a merchant calls
-        it. The two differ where a class has been renamed — categories are
-        stored under `Spree::Taxon` and shown as "Categories" — so send the
-        value back verbatim rather than deriving it from the name.
+        it — send the value back verbatim rather than deriving it from the name.
 
 
         **Required scope:** `read_settings` (for API-key authentication).
@@ -34641,67 +34634,67 @@ paths:
             application/json:
               example:
                 data:
-                - resource_type: Spree::Address
+                - resource_type: address
                   name: Addresses
-                - resource_type: Spree::Taxon
+                - resource_type: category
                   name: Categories
-                - resource_type: Spree::Claim
+                - resource_type: claim
                   name: Claims
-                - resource_type: Spree::Collection
+                - resource_type: collection
                   name: Collections
-                - resource_type: Spree::CreditCard
+                - resource_type: credit_card
                   name: Credit Cards
-                - resource_type: Spree::Customer
+                - resource_type: customer
                   name: Customers
-                - resource_type: Spree::DeliveryMethod
+                - resource_type: delivery_method
                   name: Delivery Methods
-                - resource_type: Spree::Exchange
+                - resource_type: exchange
                   name: Exchanges
-                - resource_type: Spree::Fulfillment
+                - resource_type: fulfillment
                   name: Fulfillments
-                - resource_type: Spree::GiftCard
+                - resource_type: gift_card
                   name: Gift Cards
-                - resource_type: Spree::LineItem
+                - resource_type: line_item
                   name: Line Items
-                - resource_type: Spree::Media
+                - resource_type: media
                   name: Media
-                - resource_type: Spree::NewsletterSubscriber
+                - resource_type: newsletter_subscriber
                   name: Newsletter Subscribers
-                - resource_type: Spree::OptionType
+                - resource_type: option_type
                   name: Option Types
-                - resource_type: Spree::OptionValue
+                - resource_type: option_value
                   name: Option Values
-                - resource_type: Spree::Order
+                - resource_type: order
                   name: Orders
-                - resource_type: Spree::PaymentMethod
+                - resource_type: payment_method
                   name: Payment Methods
-                - resource_type: Spree::PaymentSource
+                - resource_type: payment_source
                   name: Payment Sources
-                - resource_type: Spree::Payment
+                - resource_type: payment
                   name: Payments
-                - resource_type: Spree::ProductType
+                - resource_type: product_type
                   name: Product Types
-                - resource_type: Spree::Product
+                - resource_type: product
                   name: Products
-                - resource_type: Spree::Promotion
+                - resource_type: promotion
                   name: Promotions
-                - resource_type: Spree::Refund
+                - resource_type: refund
                   name: Refunds
-                - resource_type: Spree::Return
+                - resource_type: return
                   name: Returns
-                - resource_type: Spree::Seller
+                - resource_type: seller
                   name: Sellers
-                - resource_type: Spree::StockLevel
+                - resource_type: stock_level
                   name: Stock Levels
-                - resource_type: Spree::StockTransfer
+                - resource_type: stock_transfer
                   name: Stock Transfers
-                - resource_type: Spree::StoreCredit
+                - resource_type: store_credit
                   name: Store Credits
-                - resource_type: Spree::Store
+                - resource_type: store
                   name: Stores
-                - resource_type: Spree::TaxRate
+                - resource_type: tax_rate
                   name: Tax Rates
-                - resource_type: Spree::Variant
+                - resource_type: variant
                   name: Variants
               schema:
                 type: object
@@ -34713,7 +34706,7 @@ paths:
                       properties:
                         resource_type:
                           type: string
-                          example: Spree::Seller
+                          example: seller
                         name:
                           type: string
                           example: Sellers
@@ -35152,9 +35145,6 @@ paths:
                   pickup: false
                   pickup_point: false
                   admin_name:
-                  fulfillment_provider: Spree::FulfillmentProvider::Manual
-                  pickup_point_provider:
-                  rate_provider:
                   storefront_visible: true
                   tracking_url:
                   markup_flat: '0.0'
@@ -35172,6 +35162,9 @@ paths:
                   delivery_origin_group_id: og_UkLWZg9DAJ
                   delivery_zone_id:
                   stock_location_ids: []
+                  fulfillment_provider: manual
+                  pickup_point_provider:
+                  rate_provider:
                   calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
@@ -35244,9 +35237,6 @@ paths:
                 pickup: false
                 pickup_point: false
                 admin_name:
-                fulfillment_provider: Spree::FulfillmentProvider::Manual
-                pickup_point_provider:
-                rate_provider:
                 storefront_visible: true
                 tracking_url:
                 markup_flat: '0.0'
@@ -35264,6 +35254,9 @@ paths:
                 delivery_origin_group_id: og_UkLWZg9DAJ
                 delivery_zone_id:
                 stock_location_ids: []
+                fulfillment_provider: manual
+                pickup_point_provider:
+                rate_provider:
                 calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
@@ -35287,7 +35280,7 @@ paths:
                 fulfillment_provider:
                   type: string
                   nullable: true
-                  example: Spree::FulfillmentProvider::Manual
+                  example: manual
                 delivery_profile_id:
                   type: string
                   nullable: true
@@ -36069,7 +36062,7 @@ paths:
                 data:
                 - kind: media
                   name: Product 193397
-                  owner_type: Spree::Product
+                  owner_type: product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
               schema:
@@ -40240,7 +40233,7 @@ paths:
                   longitude:
                   customer_id:
                   owner_id: sel_UkLWZg9DAJ
-                  owner_type: Spree::Seller
+                  owner_type: seller
               schema:
                 "$ref": "#/components/schemas/Seller"
         '422':
@@ -40966,7 +40959,6 @@ paths:
                 - id: vpo_UkLWZg9DAJ
                   status: pending
                   currency: USD
-                  provider: Spree::PayoutProvider::System
                   reference:
                   metadata: {}
                   period_start: '2026-01-15T12:00:00.000Z'
@@ -40978,6 +40970,7 @@ paths:
                   seller_id: sel_UkLWZg9DAJ
                   seller_name: Sparks Audio
                   transfers_count: 1
+                  provider: system
               schema:
                 type: object
                 properties:
@@ -41048,7 +41041,6 @@ paths:
                 id: vpo_UkLWZg9DAJ
                 status: completed
                 currency: USD
-                provider: Spree::PayoutProvider::System
                 reference: TRF-8842
                 metadata: {}
                 period_start:
@@ -41060,6 +41052,7 @@ paths:
                 seller_id: sel_UkLWZg9DAJ
                 seller_name: Sparks Audio
                 transfers_count: 0
+                provider: system
               schema:
                 "$ref": "#/components/schemas/SellerPayout"
         '404':
@@ -44434,9 +44427,6 @@ components:
           type: string
         guest_checkout:
           type: boolean
-        preferred_order_routing_strategy:
-          type: string
-          nullable: true
         preferred_storefront_access:
           type: string
           nullable: true
@@ -44447,6 +44437,11 @@ components:
           type: string
         updated_at:
           type: string
+        preferred_order_routing_strategy:
+          type: string
+          nullable: true
+          description: 'Order routing strategy; null inherits the store setting. Built-in:
+            rules. Extensions may register more.'
         stock_location_ids:
           type: array
           items:
@@ -44462,11 +44457,11 @@ components:
       - default
       - storefront_access
       - guest_checkout
-      - preferred_order_routing_strategy
       - preferred_storefront_access
       - preferred_guest_checkout
       - created_at
       - updated_at
+      - preferred_order_routing_strategy
       - stock_location_ids
       - default_catalog_id
       x-typelizer: true
@@ -45246,11 +45241,6 @@ components:
           - number
           - boolean
           - json
-        resource_type:
-          type: string
-          description: Class name of the resource the field attaches to, for example
-            Spree::Product, Spree::Order or Spree::Customer. Extensions may register
-            more.
         storefront_visible:
           type: boolean
         searchable:
@@ -45263,19 +45253,24 @@ components:
           type: string
         updated_at:
           type: string
+        resource_type:
+          type: string
+          description: Shorthand of the resource the field attaches to, for example
+            product, variant, order, customer or category. Discover the full list
+            from the resource_types endpoint; extensions may register more.
       required:
       - id
       - namespace
       - key
       - label
       - field_type
-      - resource_type
       - storefront_visible
       - searchable
       - sortable
       - filter_key
       - created_at
       - updated_at
+      - resource_type
       x-typelizer: true
     CustomField:
       type: object
@@ -45284,9 +45279,6 @@ components:
           type: string
         label:
           type: string
-        type:
-          type: string
-          deprecated: true
         field_type:
           type: string
           enum:
@@ -45311,7 +45303,6 @@ components:
       required:
       - id
       - label
-      - type
       - field_type
       - key
       - value
@@ -45628,14 +45619,6 @@ components:
         admin_name:
           type: string
           nullable: true
-        fulfillment_provider:
-          type: string
-        pickup_point_provider:
-          type: string
-          nullable: true
-        rate_provider:
-          type: string
-          nullable: true
         storefront_visible:
           type: boolean
         tracking_url:
@@ -45684,6 +45667,20 @@ components:
           type: array
           items:
             type: string
+        fulfillment_provider:
+          type: string
+          description: 'Fulfillment provider. Built-in: manual, digital, pickup, pickup_point.
+            Provider gems register more (e.g. easy_post).'
+        pickup_point_provider:
+          type: string
+          nullable: true
+          description: Pickup point network. None built in; provider gems register
+            them.
+        rate_provider:
+          type: string
+          nullable: true
+          description: 'Rate provider; null prices through the calculator. Built-in:
+            internal, freight. Provider gems register more (e.g. easy_post).'
         calculator_type:
           type: string
           nullable: true
@@ -45700,9 +45697,6 @@ components:
       - pickup
       - pickup_point
       - admin_name
-      - fulfillment_provider
-      - pickup_point_provider
-      - rate_provider
       - storefront_visible
       - tracking_url
       - markup_flat
@@ -45720,6 +45714,9 @@ components:
       - delivery_origin_group_id
       - delivery_zone_id
       - stock_location_ids
+      - fulfillment_provider
+      - pickup_point_provider
+      - rate_provider
       - calculator_type
       - calculator_preferences
       x-typelizer: true
@@ -46093,15 +46090,17 @@ components:
         byte_size:
           type: number
           nullable: true
-        provider_type:
-          type: string
-          nullable: true
         provider_settings:
           type: object
         created_at:
           type: string
         updated_at:
           type: string
+        provider_type:
+          type: string
+          nullable: true
+          description: 'Digital asset provider; null is an uploaded file. Built-in:
+            file. Extensions may register more.'
         provider_name:
           type: string
           description: 'Digital asset provider name. Built-in: File. Extensions may
@@ -46121,10 +46120,10 @@ components:
       - authorized_clicks
       - authorized_days
       - byte_size
-      - provider_type
       - provider_settings
       - created_at
       - updated_at
+      - provider_type
       - provider_name
       - download_url
       - effective_authorized_clicks
@@ -47346,13 +47345,15 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Country"
-        tax_provider:
-          type: string
-          nullable: true
         created_at:
           type: string
         updated_at:
           type: string
+        tax_provider:
+          type: string
+          nullable: true
+          description: 'Tax provider; null uses the store default. Built-in: internal,
+            recorded_share. Provider gems register more.'
       required:
       - id
       - name
@@ -47363,9 +47364,9 @@ components:
       - country_codes
       - country_isos
       - supported_locales
-      - tax_provider
       - created_at
       - updated_at
+      - tax_provider
       x-typelizer: true
     Media:
       type: object
@@ -50027,10 +50028,6 @@ components:
             more.
         currency:
           type: string
-        provider:
-          type: string
-          description: 'Payout provider class name. Built-in: Spree::PayoutProvider::System.
-            Provider gems register more.'
         reference:
           type: string
           nullable: true
@@ -50057,11 +50054,14 @@ components:
           nullable: true
         transfers_count:
           type: number
+        provider:
+          type: string
+          description: 'Payout provider. Built-in: system. Provider gems register
+            more (e.g. stripe).'
       required:
       - id
       - status
       - currency
-      - provider
       - reference
       - metadata
       - period_start
@@ -50073,6 +50073,7 @@ components:
       - seller_id
       - seller_name
       - transfers_count
+      - provider
       x-typelizer: true
     SellerRequirement:
       type: object
@@ -50426,10 +50427,6 @@ components:
             more.
         currency:
           type: string
-        provider:
-          type: string
-          description: 'Payout provider class name. Built-in: Spree::PayoutProvider::System.
-            Provider gems register more.'
         reference:
           type: string
           nullable: true
@@ -50471,12 +50468,15 @@ components:
         order_number:
           type: string
           nullable: true
+        provider:
+          type: string
+          description: 'Payout provider. Built-in: system. Provider gems register
+            more (e.g. stripe).'
       required:
       - id
       - kind
       - status
       - currency
-      - provider
       - reference
       - metadata
       - created_at
@@ -50493,6 +50493,7 @@ components:
       - refund_id
       - seller_name
       - order_number
+      - provider
       x-typelizer: true
     SetupTask:
       type: object
@@ -50560,8 +50561,8 @@ components:
         owner_type:
           type: string
           enum:
-          - Spree::Fulfillment
-          - Spree::Return
+          - fulfillment
+          - return
         cost:
           type: string
         display_cost:
@@ -51441,8 +51442,6 @@ components:
           type: boolean
         preferred_disable_sku_validation:
           type: boolean
-        preferred_order_routing_strategy:
-          type: string
         preferred_pricing_provider:
           type: string
         preferred_inventory_provider:
@@ -51451,21 +51450,14 @@ components:
           type: string
         preferred_inventory_provider_failure_policy:
           type: string
-        preferred_payout_provider:
-          type: string
-          nullable: true
         preferred_default_payouts_schedule_interval:
           type: string
-        preferred_default_minimum_payout_amount:
-          type: number
         preferred_auto_approve_sellers:
           type: boolean
         preferred_auto_approve_seller_products:
           type: boolean
         preferred_send_seller_transactional_emails:
           type: boolean
-        preferred_default_commission_tax_rate:
-          type: number
         preferred_document_number_format:
           type: string
         preferred_order_number_prefix:
@@ -51486,8 +51478,21 @@ components:
           type: string
         updated_at:
           type: string
+        preferred_order_routing_strategy:
+          type: string
+          description: 'Order routing strategy. Built-in: rules. Extensions may register
+            more.'
+        preferred_payout_provider:
+          type: string
+          nullable: true
+          description: 'Payout provider; null uses the installation default. Built-in:
+            system. Provider gems register more (e.g. stripe).'
         order_number_sequence_started:
           type: boolean
+        preferred_default_minimum_payout_amount:
+          type: number
+        preferred_default_commission_tax_rate:
+          type: number
         url:
           type: string
         api_url:
@@ -51551,18 +51556,14 @@ components:
       - preferred_track_price_history
       - preferred_show_products_without_price
       - preferred_disable_sku_validation
-      - preferred_order_routing_strategy
       - preferred_pricing_provider
       - preferred_inventory_provider
       - preferred_pricing_provider_failure_policy
       - preferred_inventory_provider_failure_policy
-      - preferred_payout_provider
       - preferred_default_payouts_schedule_interval
-      - preferred_default_minimum_payout_amount
       - preferred_auto_approve_sellers
       - preferred_auto_approve_seller_products
       - preferred_send_seller_transactional_emails
-      - preferred_default_commission_tax_rate
       - preferred_document_number_format
       - preferred_order_number_prefix
       - preferred_order_number_suffix
@@ -51573,7 +51574,11 @@ components:
       - preferred_digital_asset_authorized_days
       - created_at
       - updated_at
+      - preferred_order_routing_strategy
+      - preferred_payout_provider
       - order_number_sequence_started
+      - preferred_default_minimum_payout_amount
+      - preferred_default_commission_tax_rate
       - url
       - api_url
       - setup_tasks

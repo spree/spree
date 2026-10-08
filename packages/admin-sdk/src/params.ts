@@ -10,7 +10,6 @@ export interface StoreDataSourceProvider {
   /** What the store preference stores, and what a priced line records as its source. */
   key: string
   name: string
-  integration_class: string | null
   /** The integration's wire shorthand, for deep-linking to its settings page. */
   integration_type: string | null
   /** False while the provider's integration is not connected for this store. */
@@ -24,7 +23,7 @@ export interface StoreDataSourceProvider {
  * sellers to hold an account with it.
  */
 export interface StorePayoutProvider {
-  /** What the store preference stores — the provider's class name. */
+  /** The provider's shorthand (`system`, `stripe`) — what `preferred_payout_provider` takes. */
   id: string
   name: string
   /** False when the store has not connected what this provider needs. */
@@ -809,6 +808,7 @@ export interface MediaUsageReference {
    */
   kind: 'media' | 'attachment' | 'rich_text'
   name: string | null
+  /** Shorthand of the record using the file, e.g. `product`, `variant`, `category`, `collection`. */
   owner_type: string
   owner_id: string | null
   field: string | null
@@ -844,7 +844,7 @@ export interface DigitalAssetProviderSettingField {
 
 /** A selectable digital-asset source, from the `providers` discovery endpoint. */
 export interface DigitalAssetProvider {
-  /** Class name to send as `provider_type`. */
+  /** Shorthand to send as `provider_type`, e.g. `file`. */
   type: string
   /** Human-readable label. */
   name: string
@@ -858,7 +858,7 @@ export interface DigitalAssetCreateParams {
   /** Signed blob id from a `private: true` direct upload. Required for a file
    *  asset (the default source); omitted for a provider-backed asset. */
   signed_id?: string
-  /** Provider class name. Omit for an uploaded file (the default source). */
+  /** Provider shorthand from the `providers` endpoint. Omit for an uploaded file (the default source). */
   provider_type?: string
   /** Values for the provider's `settings_schema`, keyed by field name. */
   provider_settings?: Record<string, unknown>
@@ -1281,6 +1281,7 @@ export interface CustomFieldDefinitionCreateParams {
   key: string
   label?: string
   field_type: string
+  /** Shorthand of the resource the field attaches to, e.g. `product`. See `customFieldDefinitions.resourceTypes()`. */
   resource_type: string
   storefront_visible?: boolean
   /**
@@ -1821,7 +1822,7 @@ export interface MarketCreateParams {
   /** 2-letter ISO country codes assigned to this market. At least one is required. */
   country_codes: string[]
   /**
-   * Class name of the tax engine that prices this market, from
+   * Shorthand of the tax engine that prices this market (`internal`), from
    * `taxProviders.list()`. `null` uses the installation default.
    */
   tax_provider?: string | null
@@ -1855,8 +1856,8 @@ export interface ChannelCreateParams {
   active?: boolean
   default?: boolean
   /**
-   * Class name of a +Spree::OrderRouting::Strategy::Base+ subclass, or +null+
-   * to inherit the store-level preference.
+   * Order routing strategy shorthand (built-in: `rules`), or `null` to
+   * inherit the store-level preference.
    */
   preferred_order_routing_strategy?: string | null
   /**
@@ -1995,7 +1996,7 @@ export interface SellerReopenOnboardingParams {
 
 /** A resource a custom field definition can be attached to. */
 export interface CustomFieldResourceType {
-  /** The value to send as `resource_type`. */
+  /** The value to send as `resource_type`, e.g. `seller`. */
   resource_type: string
   /** What a merchant calls it, e.g. "Sellers". */
   name: string
@@ -2476,9 +2477,7 @@ export interface IntegrationUpdateParams {
  * class name. The server validates `type` against the configured allowlist
  * (`Spree::Export.available_types`); a plugin can register additional types,
  * which arrive here as the trailing `string & {}` arm.
- *
- * Note that Ransack filters (`type_eq`) match the database column, so those
- * still take the class name.
+ * List filters (`type_eq`) take the same shorthand.
  */
 export type ExportType =
   | 'products'
@@ -2571,15 +2570,13 @@ export interface ImportCompleteMappingParams {
  * `client.<resource>.customFields` accessors and don't need this.
  */
 export type CustomFieldOwnerType =
-  | 'Spree::Product'
-  | 'Spree::Variant'
-  | 'Spree::Order'
-  | 'Spree::Customer'
-  /** @deprecated Use `'Spree::Customer'` — removed in Spree 6.1. */
-  | 'Spree::User'
-  | 'Spree::Category'
-  | 'Spree::Collection'
-  | 'Spree::OptionType'
+  | 'product'
+  | 'variant'
+  | 'order'
+  | 'customer'
+  | 'category'
+  | 'collection'
+  | 'option_type'
   | (string & {})
 
 export type PromotionKind = 'coupon_code' | 'automatic'
@@ -2787,6 +2784,7 @@ export interface DeliveryMethodParams {
   name?: string
   admin_name?: string | null
   code?: string | null
+  /** Fulfillment provider shorthand (see `deliveryMethods.fulfillmentProviders()`), e.g. `manual`. */
   fulfillment_provider?: string
   /** Delivery profile this method belongs to (fp_...); defaults to the store default profile. */
   delivery_profile_id?: string
@@ -2794,7 +2792,7 @@ export interface DeliveryMethodParams {
   delivery_origin_group_id?: string
   pickup_point_provider?: string | null
   /**
-   * Quoting strategy class name (see `deliveryMethods.rateProviders()`).
+   * Rate provider shorthand (see `deliveryMethods.rateProviders()`), e.g. `easy_post`.
    * Omit or send null for the built-in Internal provider, which prices
    * through the method's calculator.
    */

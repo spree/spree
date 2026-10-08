@@ -62,15 +62,16 @@ RSpec.describe Spree::Api::V3::Admin::MarketsController, type: :controller do
 
   describe 'PATCH #update' do
     it 'points the market at an installed tax engine' do
-      patch :update, params: { id: market.prefixed_id, tax_provider: 'Spree::TaxProvider::Internal' }, as: :json
+      patch :update, params: { id: market.prefixed_id, tax_provider: 'internal' }, as: :json
 
       expect(response).to have_http_status(:ok)
+      expect(json_response['tax_provider']).to eq('internal')
       expect(market.reload.tax_provider).to eq('Spree::TaxProvider::Internal')
       expect(market.tax_provider_instance).to be_a(Spree::TaxProvider::Internal)
     end
 
     it 'refuses an engine this installation does not have' do
-      patch :update, params: { id: market.prefixed_id, tax_provider: 'MyApp::ImaginaryProvider' }, as: :json
+      patch :update, params: { id: market.prefixed_id, tax_provider: 'imaginary' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(market.reload.tax_provider).to be_nil

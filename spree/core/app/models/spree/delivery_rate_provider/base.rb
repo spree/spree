@@ -13,6 +13,7 @@ module Spree
     # store integration — they never store credentials themselves.
     class Base
       include Spree::IntegrationBackedProvider
+      extend Spree::ApiTyped
 
       attr_reader :delivery_method
 

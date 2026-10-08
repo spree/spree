@@ -1116,8 +1116,7 @@
           "inherit": "الوراثة من المتجر",
           "label": "استراتيجية توجيه الطلبات",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Legacy",
-            "Spree::OrderRouting::Strategy::Rules": "Rules (ordered)"
+            "rules": "Rules (ordered)"
           }
         },
         "storefront_access": {
@@ -1252,12 +1251,12 @@
         "resource_type": {
           "label": "ينطبق على",
           "options": {
-            "Spree::OptionType": "أنواع الخيارات",
-            "Spree::Order": "الطلبات",
-            "Spree::Product": "المنتجات",
-            "Spree::Taxon": "الفئات",
-            "Spree::Customer": "العملاء",
-            "Spree::Variant": "المتغيرات"
+            "option_type": "أنواع الخيارات",
+            "order": "الطلبات",
+            "product": "المنتجات",
+            "category": "الفئات",
+            "customer": "العملاء",
+            "variant": "المتغيرات"
           },
           "read_only_help": "لا يمكن تغيير المالك بعد وجود قيم لهذا الحقل."
         },

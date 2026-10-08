@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, Subject, TagCombobox } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, TagCombobox } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -198,7 +198,7 @@ function EditProfileSheet({
                   control={form.control}
                   render={({ field }) => (
                     <TagCombobox
-                      taggableType={Subject.Customer}
+                      taggableType="customer"
                       value={field.value}
                       onChange={field.onChange}
                     />

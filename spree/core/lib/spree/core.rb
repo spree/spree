@@ -374,6 +374,12 @@ module Spree
   # @return [Array<Class>]
   singleton_class.delegate :delivery_rate_providers, :delivery_rate_providers=, to: :spree_config
 
+  # Third-party pickup point networks selectable on a pickup-point delivery
+  # method. Empty in core; carrier gems append theirs.
+  #
+  # @return [Array<Class>]
+  singleton_class.delegate :pickup_point_providers, :pickup_point_providers=, to: :spree_config
+
   # Re-resolves every provider registry entry by name, in place.
   #
   # The registries hold class objects, and in development Zeitwerk reloads
@@ -391,7 +397,8 @@ module Spree
   # @return [void]
   def self.refresh_provider_registries!
     [Rails.application.config.spree.delivery_rate_providers,
-     Rails.application.config.spree.fulfillment_providers].compact.each do |registry|
+     Rails.application.config.spree.fulfillment_providers,
+     Rails.application.config.spree.pickup_point_providers].compact.each do |registry|
       registry.map! { |entry| entry.is_a?(Module) && entry.name ? entry.name.constantize : entry }
     end
   end

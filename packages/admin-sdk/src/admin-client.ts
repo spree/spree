@@ -512,7 +512,7 @@ import type {
 } from './types'
 
 /**
- * Maps a built-in CustomField owner type (e.g. `Spree::Product`) to its admin
+ * Maps a built-in CustomField owner type (e.g. `product`) to its admin
  * route segment. The generic `client.customFields(ownerType, ownerId)` escape
  * hatch reads this map; plugin owners that aren't registered here hit the
  * runtime "Unknown owner type" error and should use the first-class accessor
@@ -523,15 +523,13 @@ import type {
  * and the union in `params.ts`; the type system flags the map side.
  */
 const CUSTOM_FIELD_OWNER_PATHS = {
-  'Spree::Product': '/products',
-  'Spree::Variant': '/variants',
-  'Spree::Order': '/orders',
-  'Spree::Customer': '/customers',
-  // Pre-6.0 customer class name, kept so existing callers still resolve.
-  'Spree::User': '/customers',
-  'Spree::Category': '/categories',
-  'Spree::Collection': '/collections',
-  'Spree::OptionType': '/option_types',
+  product: '/products',
+  variant: '/variants',
+  order: '/orders',
+  customer: '/customers',
+  category: '/categories',
+  collection: '/collections',
+  option_type: '/option_types',
 } as const satisfies Record<Exclude<CustomFieldOwnerType, string & {}>, string>
 
 export class AdminClient {
@@ -709,7 +707,7 @@ export class AdminClient {
    * plugin-registered resource without a dedicated accessor.
    *
    * ```ts
-   * await client.customFields('Spree::Product', 'prod_xxx').list()
+   * await client.customFields('product', 'prod_xxx').list()
    * ```
    */
   customFields(ownerType: CustomFieldOwnerType, ownerId: string) {
@@ -1374,7 +1372,7 @@ export class AdminClient {
       },
     },
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Product']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.product),
 
     translations: this.parentScopedTranslations('/products'),
   }
@@ -2287,7 +2285,7 @@ export class AdminClient {
         this.request<void>('DELETE', `/orders/${orderId}/fees/${id}`, options),
     },
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Order']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.order),
   }
 
   // ============================================
@@ -2327,7 +2325,7 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/option_types/${id}`, options),
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::OptionType']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.option_type),
 
     translations: this.parentScopedTranslations('/option_types'),
   }
@@ -2510,12 +2508,8 @@ export class AdminClient {
       this.request<void>('DELETE', `/delivery_profiles/${id}`, options),
 
     /** Registered profile kinds (shipping, digital, extension kinds). */
-    kinds: (options?: RequestOptions): Promise<{ data: Array<{ type: string; kind: string }> }> =>
-      this.request<{ data: Array<{ type: string; kind: string }> }>(
-        'GET',
-        '/delivery_profiles/kinds',
-        options,
-      ),
+    kinds: (options?: RequestOptions): Promise<{ data: Array<{ kind: string }> }> =>
+      this.request<{ data: Array<{ kind: string }> }>('GET', '/delivery_profiles/kinds', options),
 
     /** Origin groups partition a profile's fulfillment origins; its zones and methods each belong to one. */
     originGroups: {
@@ -3018,6 +3012,7 @@ export class AdminClient {
 
   readonly tags = {
     list: (
+      /** `taggable_type` is the tagged resource's shorthand: `product`, `order` or `customer`. */
       params: { taggable_type: string; q?: string },
       options?: RequestOptions,
     ): Promise<{ data: Array<{ name: string }> }> =>
@@ -4552,7 +4547,7 @@ export class AdminClient {
         this.request<void>('DELETE', `/customers/${customerId}/store_credits/${id}`, options),
     },
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Customer']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.customer),
   }
 
   // ============================================
@@ -4649,7 +4644,7 @@ export class AdminClient {
     /** Manual product membership + ordering within a category. */
     products: this.positionedProductMembership('/categories'),
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Category']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.category),
 
     translations: this.parentScopedTranslations('/categories'),
   }
@@ -4703,7 +4698,7 @@ export class AdminClient {
      */
     products: this.positionedProductMembership('/collections'),
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Collection']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.collection),
 
     translations: this.parentScopedTranslations('/collections'),
   }
@@ -4738,7 +4733,7 @@ export class AdminClient {
         params: getParams(params),
       }),
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Variant']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.variant),
   }
 
   // ============================================

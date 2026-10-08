@@ -297,6 +297,7 @@ module Spree
         def ransack_params
           rp = params[:q]&.to_unsafe_h || params[:q] || {}
           rp = decode_prefixed_id_predicates(rp)
+          rp = decode_api_type_predicates(rp)
           sort_value = sort_param
 
           if sort_value.present?
@@ -326,6 +327,48 @@ module Spree
                           else
                             value
                           end
+          end
+        end
+
+        # Filters on a type column take the same shorthand responses carry
+        # (`type_eq=orders`, `receivable_type_eq=purchase_order`), translated
+        # here to the class name the column stores. Only the model's own STI
+        # column and its polymorphic `*_type` columns are translated; any other
+        # `*_type` attribute (`media_type`, `key_type`) is a plain value.
+        RANSACK_TYPE_PREDICATE_RE = /\A(?<attribute>(?:\w+_)?type)_(?:eq|not_eq|in|not_in)\z/.freeze
+        def decode_api_type_predicates(hash)
+          return hash unless hash.is_a?(Hash)
+
+          hash.each_with_object({}) do |(key, value), result|
+            resolver = api_type_resolver(RANSACK_TYPE_PREDICATE_RE.match(key.to_s)&.[](:attribute))
+            result[key] = if resolver
+                            resolve_api_type_values(value, resolver)
+                          elsif value.is_a?(Hash)
+                            decode_api_type_predicates(value)
+                          else
+                            value
+                          end
+          end
+        end
+
+        # A scalar stays a scalar; a list — including the indexed form
+        # (`type_in[0]=orders`) that arrives as a hash — becomes an array.
+        def resolve_api_type_values(value, resolver)
+          case value
+          when Hash, Array then (value.is_a?(Hash) ? value.values : value).map { |entry| resolve_api_type_values(entry, resolver) }
+          else resolver.call(value.to_s) || value
+          end
+        end
+
+        # @param attribute [String, nil] a `*type` column of {#model_class}
+        # @return [Proc, nil] shorthand → stored class name
+        def api_type_resolver(attribute)
+          return if attribute.nil? || !model_class.respond_to?(:api_type_registry)
+
+          if attribute == model_class.inheritance_column && model_class.api_type_registry.any?
+            ->(api_type) { model_class.class_name_for_api_type(api_type) }
+          elsif model_class.reflect_on_all_associations(:belongs_to).any? { |reflection| reflection.polymorphic? && reflection.foreign_type == attribute }
+            ->(api_type) { Spree::Base.polymorphic_type_for(api_type) }
           end
         end
 

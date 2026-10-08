@@ -336,16 +336,10 @@ function InheritableSelectField({
   const error = form.formState.errors[name]
   const options = values.map((value) => ({
     value,
-    // `nsSeparator: false` because option values can contain `::` (e.g. strategy
-    // class names), which i18next would otherwise parse as a namespace separator
-    // and miss the lookup.
     label:
       value === ''
         ? t(`${scope}.inherit`)
-        : t(`${scope}.options.${value}`, {
-            nsSeparator: false,
-            defaultValue: value.replace(/^Spree::/, ''),
-          }),
+        : t(`${scope}.options.${value}`, { defaultValue: value }),
   }))
   return (
     <Field>

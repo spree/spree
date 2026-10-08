@@ -40,12 +40,12 @@ module Spree
                    preferred_track_price_history: :boolean,
                    preferred_show_products_without_price: :boolean,
                    preferred_disable_sku_validation: :boolean,
-                   preferred_order_routing_strategy: :string,
+                   preferred_order_routing_strategy: [:string, comment: 'Order routing strategy. Built-in: rules. Extensions may register more.'],
                    preferred_pricing_provider: :string,
                    preferred_inventory_provider: :string,
                    preferred_pricing_provider_failure_policy: :string,
                    preferred_inventory_provider_failure_policy: :string,
-                   preferred_payout_provider: 'string | null',
+                   preferred_payout_provider: [:string, nullable: true, comment: 'Payout provider; null uses the installation default. Built-in: system. Provider gems register more (e.g. stripe).'],
                    preferred_default_payouts_schedule_interval: :string,
                    preferred_default_minimum_payout_amount: :number,
                    preferred_auto_approve_sellers: :boolean,
@@ -98,12 +98,10 @@ module Spree
                      :preferred_track_price_history,
                      :preferred_show_products_without_price,
                      :preferred_disable_sku_validation,
-                     :preferred_order_routing_strategy,
                      :preferred_pricing_provider,
                      :preferred_inventory_provider,
                      :preferred_pricing_provider_failure_policy,
                      :preferred_inventory_provider_failure_policy,
-                     :preferred_payout_provider,
                      :preferred_default_payouts_schedule_interval,
                      :preferred_auto_approve_sellers,
                      :preferred_auto_approve_seller_products,
@@ -117,6 +115,8 @@ module Spree
                      :preferred_limit_digital_download_days,
                      :preferred_digital_asset_authorized_days,
                      created_at: :iso8601, updated_at: :iso8601
+
+          api_type_attributes :preferred_order_routing_strategy, :preferred_payout_provider
 
           # Once the counter has issued a number the starting value no longer
           # applies, so the settings page can say that instead of accepting a

@@ -11,7 +11,7 @@ module Spree
           typelize seller_id: :string,
                    seller_name: 'string | null',
                    status: [:string, enum: Spree::SellerPayout.statuses, enum_type_name: 'SellerPayoutStatus'],
-                   provider: [:string, comment: 'Payout provider class name. Built-in: Spree::PayoutProvider::System. Provider gems register more.'],
+                   provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
                    currency: :string,
                    reference: 'string | null',
@@ -20,7 +20,7 @@ module Spree
                    transfers_count: :number,
                    display_amount: :string
 
-          attributes :status, :currency, :provider, :reference, :metadata,
+          attributes :status, :currency, :reference, :metadata,
                      period_start: :iso8601, period_end: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
@@ -39,6 +39,8 @@ module Spree
 
             counts ? counts.fetch(payout.id, 0) : payout.transfers.count
           end
+
+          api_type_attributes :provider
         end
       end
     end

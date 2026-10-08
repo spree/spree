@@ -6,7 +6,7 @@ module Spree
         class PayoutSerializer < V3::BaseSerializer
           typelize status: :string,
                    currency: :string,
-                   provider: :string,
+                   provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
                    display_amount: :string,
                    reference: 'string | null',
@@ -14,7 +14,7 @@ module Spree
                    period_end: 'string | null',
                    transfers_count: :number
 
-          attributes :status, :currency, :provider, :reference,
+          attributes :status, :currency, :reference,
                      period_start: :iso8601, period_end: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
@@ -29,6 +29,8 @@ module Spree
 
             counts ? counts.fetch(payout.id, 0) : payout.transfers.count
           end
+
+          api_type_attributes :provider
         end
       end
     end

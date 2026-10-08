@@ -16,7 +16,7 @@ module Spree
                    order_number: 'string | null',
                    kind: [:string, enum: Spree::SellerTransfer::KINDS],
                    status: [:string, enum: Spree::SellerTransfer.statuses, enum_type_name: 'SellerTransferStatus'],
-                   provider: [:string, comment: 'Payout provider class name. Built-in: Spree::PayoutProvider::System. Provider gems register more.'],
+                   provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
                    currency: :string,
                    settled_amount: 'string | null',
@@ -25,7 +25,7 @@ module Spree
                    reference: 'string | null',
                    display_amount: :string
 
-          attributes :kind, :status, :currency, :provider, :reference, :metadata,
+          attributes :kind, :status, :currency, :reference, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
           # A string, so the figure a seller is paid round-trips exactly.
@@ -46,6 +46,8 @@ module Spree
           # by row and these are what identify a row to an operator.
           attribute(:seller_name) { |transfer| transfer.seller&.name }
           attribute(:order_number) { |transfer| transfer.order&.number }
+
+          api_type_attributes :provider
         end
       end
     end

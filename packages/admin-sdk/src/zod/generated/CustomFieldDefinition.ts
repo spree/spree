@@ -7,13 +7,13 @@ export const CustomFieldDefinitionSchema = z.object({
   key: z.string(),
   label: z.string(),
   field_type: z.string(),
-  resource_type: z.string(),
   storefront_visible: z.boolean(),
   searchable: z.boolean(),
   sortable: z.boolean(),
   filter_key: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
+  resource_type: z.string(),
 });
 
 export type CustomFieldDefinition = z.infer<typeof CustomFieldDefinitionSchema>;

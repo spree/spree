@@ -21,12 +21,12 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       expect(keys).to include('fabric', order_definition.key)
     end
 
-    it 'filters by resource_type via Ransack' do
-      get :index, params: { q: { resource_type_eq: 'Spree::Product' } }, as: :json
+    it 'filters by resource_type shorthand via Ransack' do
+      get :index, params: { q: { resource_type_eq: 'product' } }, as: :json
 
       expect(response).to have_http_status(:ok)
       types = json_response['data'].map { |d| d['resource_type'] }.uniq
-      expect(types).to eq(['Spree::Product'])
+      expect(types).to eq(['product'])
     end
 
     it 'exposes computed fields with their API names' do
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
         key: 'origin',
         label: 'Country of Origin',
         field_type: 'short_text',
-        resource_type: 'Spree::Product',
+        resource_type: 'product',
         storefront_visible: true
       }
     end
@@ -112,7 +112,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
 
     context 'when resource_type is not registered' do
       it 'returns 422' do
-        post :create, params: create_params.merge(resource_type: 'Spree::Sasquatch'), as: :json
+        post :create, params: create_params.merge(resource_type: 'sasquatch'), as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -219,7 +219,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
 
     it 'builds a created definition on the requesting store' do
       post :create,
-           params: { namespace: 'specs', key: 'weave', field_type: 'short_text', resource_type: 'Spree::Product' },
+           params: { namespace: 'specs', key: 'weave', field_type: 'short_text', resource_type: 'product' },
            as: :json
 
       expect(response).to have_http_status(:created)
@@ -241,7 +241,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       end
 
       it 'rejects writes' do
-        post :create, params: { namespace: 'x', key: 'y', field_type: 'short_text', resource_type: 'Spree::Product' }, as: :json
+        post :create, params: { namespace: 'x', key: 'y', field_type: 'short_text', resource_type: 'product' }, as: :json
         expect(response).to have_http_status(:forbidden)
       end
     end
@@ -267,38 +267,25 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
 
       # A resource is offered because core registered it — sellers included,
       # which is what a marketplace needs to ask for a VAT number.
-      expect(values).to include('Spree::Seller', 'Spree::Product', 'Spree::Order')
+      expect(values).to include('seller', 'product', 'order', 'category')
       expect(values.size).to be > 6
+      expect(values.grep(/::/)).to be_empty
     end
 
-    it 'names categories as a merchant does while storing them where they live' do
-      get :resource_types, as: :json
-
-      category = json_response['data'].find { |t| t['resource_type'] == 'Spree::Taxon' }
-
-      # The label follows the class a merchant knows; the value follows where
-      # existing definitions are actually filed.
-      expect(category['name']).to eq('Categories')
-      expect(json_response['data'].map { |t| t['resource_type'] }).not_to include('Spree::Category')
-    end
-
-    it 'accepts the category type it offers, which is stored under the old class name' do
-      get :resource_types, as: :json
-      category = json_response['data'].find { |t| t['name'] == 'Categories' }
-
+    it 'accepts the category type it offers, storing the class name' do
       post :create, params: {
         namespace: 'merch', key: 'aisle', label: 'Aisle',
-        field_type: 'Spree::CustomFields::ShortText',
-        resource_type: category['resource_type']
+        field_type: 'short_text', resource_type: 'category'
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['resource_type']).to eq('Spree::Taxon')
+      expect(json_response['resource_type']).to eq('category')
+      expect(Spree::CustomFieldDefinition.find_by_prefix_id!(json_response['id']).resource_type).to eq('Spree::Category')
     end
 
     it 'accepts a type it offered' do
       get :resource_types, as: :json
-      seller_type = json_response['data'].find { |t| t['resource_type'] == 'Spree::Seller' }
+      seller_type = json_response['data'].find { |t| t['resource_type'] == 'seller' }
 
       post :create, params: {
         namespace: 'compliance', key: 'vat_number', label: 'VAT number',
@@ -307,7 +294,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['resource_type']).to eq('Spree::Seller')
+      expect(json_response['resource_type']).to eq('seller')
     end
   end
 

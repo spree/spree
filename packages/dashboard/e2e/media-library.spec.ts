@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { expect, type Page, test } from '@playwright/test'
-import { login } from './helpers'
+import { gotoIndex, login } from './helpers'
 import { E2E_DIR } from './paths'
+import { mediaCard, PRODUCTS_PATH } from './products-helpers'
 
 const MEDIA_PATH = (storeId: string) => `/${storeId}/products/media`
 const FIXTURE_IMAGE = readFileSync(resolve(E2E_DIR, 'fixtures/test-image.png'))
@@ -64,5 +65,40 @@ test.describe('media library', () => {
       .click()
 
     await expect(page.getByText(/no files match your filters/i)).toBeVisible({ timeout: 15_000 })
+  })
+
+  // Usage references name their owner by short type (`product`), which is
+  // what turns a placement into a link back to the record using the file.
+  test('links a file to the product it is used on', async ({ page }) => {
+    const creds = await login(page)
+    const suffix = Date.now()
+    const productName = `E2E Media Owner ${suffix}`
+    const fileName = `e2e-used-${suffix}.png`
+
+    await gotoIndex(page, PRODUCTS_PATH(creds.store_id), /add product/i)
+    await page.getByRole('button', { name: /add product/i }).click()
+    await expect(page.getByRole('heading', { name: /^new product$/i })).toBeVisible()
+    await page.getByLabel(/^name$/i).fill(productName)
+    await mediaCard(page)
+      .locator('input[type="file"]')
+      .setInputFiles({ name: fileName, mimeType: 'image/png', buffer: FIXTURE_IMAGE })
+    await expect(mediaCard(page).locator('img[src]').first()).toBeVisible({ timeout: 15_000 })
+    await expect(mediaCard(page).locator('.animate-spin')).toHaveCount(0, { timeout: 15_000 })
+    await page.getByRole('button', { name: /^create product$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
+      timeout: 30_000,
+    })
+
+    await page.goto(MEDIA_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: /^media$/i })).toBeVisible({ timeout: 15_000 })
+    await (await findTile(page, fileName)).click()
+    const sheet = page.getByRole('dialog')
+    const usage = sheet.getByRole('link', { name: productName })
+    await expect(usage).toBeVisible({ timeout: 15_000 })
+
+    await usage.click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
+      timeout: 15_000,
+    })
   })
 })

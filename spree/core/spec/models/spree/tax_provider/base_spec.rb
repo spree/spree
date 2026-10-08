@@ -65,7 +65,7 @@ describe Spree::TaxProvider::Base, type: :model do
     it 'presents id, name, availability and limits' do
       hash = Spree::TaxProvider::Internal.to_api_hash(order.store)
 
-      expect(hash[:id]).to eq('Spree::TaxProvider::Internal')
+      expect(hash[:id]).to eq('internal')
       expect(hash[:name]).to eq('Internal')
       expect(hash[:available]).to be(true)
       expect(hash[:default]).to be(true)

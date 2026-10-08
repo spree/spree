@@ -1316,6 +1316,13 @@ describe Spree::Store, type: :model, without_global_store: true do
       expect(payouts_store.payout_provider_instance).to be_a(Spree::PayoutProvider::System)
     end
 
+    it 'stores the class name of a provider named by its shorthand' do
+      payouts_store.preferred_payout_provider = 'system'
+
+      expect(payouts_store.preferred_payout_provider).to eq('Spree::PayoutProvider::System')
+      expect(payouts_store).to be_valid
+    end
+
     # A store object held across a settings change must not keep paying
     # through whoever was configured before.
     it 'follows the setting when it changes' do

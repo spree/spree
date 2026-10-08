@@ -491,7 +491,7 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
  */
 function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTypeFormValues> }) {
   const { t } = useTranslation()
-  const { data: definitions } = useCustomFieldDefinitions('Spree::Product')
+  const { data: definitions } = useCustomFieldDefinitions('product')
   const fieldArray = useFieldArray({ control: form.control, name: 'custom_field_definitions' })
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
