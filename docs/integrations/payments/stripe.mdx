@@ -93,6 +93,14 @@ Spree’s native Stripe integration supports a wide range of features and paymen
 - Accept Afterpay, Klarna, Affirm, and more
 - Automatic tax calculation at checkout with Stripe Tax
 
+### Charging a saved card from the admin
+
+Staff can take a Stripe payment for a draft order or an unpaid order using a card the customer saved to their account. Add a payment on the order, choose Stripe and pick one of the customer's saved cards. The customer doesn't need to be present. Completing the order charges the card, unless Stripe is set to capture payments later: then the amount is only held on the card, and it is taken when you capture the payment. Capturing the payment before completing the order charges the card straight away.
+
+- Only cards saved through this Stripe payment method are offered.
+- If the customer's bank asks them to confirm the payment (3D Secure), Stripe declines the charge and the payment is marked as failed with Stripe's message. The customer has to pay that order themselves.
+- Charging a card while the customer is away needs their consent, given when the card is saved. Make sure your storefront's terms say you may charge saved cards for orders placed on the customer's behalf.
+
 ### Storefront Display
 
 Spree’s Stripe integration enhances the customer experience with dynamic, context-aware payment options across the storefront:

@@ -19,6 +19,8 @@ module Spree
 
     has_many :payments, as: :source
 
+    self.whitelisted_ransackable_attributes = %w[payment_method_id]
+
     before_save :set_last_digits
 
     after_save :ensure_one_default

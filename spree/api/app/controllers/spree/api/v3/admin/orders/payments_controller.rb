@@ -82,11 +82,12 @@ module Spree
 
             # Saved-source charges require an order customer — sources are scoped
             # to that customer to prevent attaching customer A's card to
-            # customer B's order. Refuse if no customer is assigned.
+            # customer B's order. Refuse if no customer is assigned. A card is
+            # tokenized by the gateway that saved it, so no other can charge it.
             def find_source!(payment_method, source_id)
               raise ActiveRecord::RecordNotFound unless @parent.customer
 
-              @parent.customer.credit_cards.find_by_prefix_id!(source_id)
+              @parent.customer.credit_cards.where(payment_method: payment_method).find_by_prefix_id!(source_id)
             end
           end
         end

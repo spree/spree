@@ -698,12 +698,126 @@ RSpec.describe SpreeStripe::Gateway do
       end
     end
 
+    # A payment staff added to an order: no session ever created an intent.
     context 'when the payment has no payment intent' do
       let(:payment_intent_id) { nil }
 
-      it 'returns failure' do
-        expect(subject.success?).to be(false)
-        expect(subject.message).to eq('Payment is missing a payment intent')
+      context 'when the saved card has no Stripe customer' do
+        let!(:credit_card) do
+          create(:credit_card, customer: order.customer, gateway_payment_profile_id: payment_method_id,
+                               gateway_customer_profile_id: nil, payment_method: gateway)
+        end
+
+        it 'returns failure without calling Stripe' do
+          expect(subject.success?).to be(false)
+          expect(subject.message).to eq(I18n.t('spree.stripe.payment_errors.saved_payment_method_required'))
+        end
+      end
+
+      # The order's customer was changed after the payment was added.
+      context "when the card belongs to another customer" do
+        let!(:credit_card) do
+          create(:credit_card, customer: create(:customer), gateway_payment_profile_id: payment_method_id,
+                               gateway_customer_profile_id: 'cus_saved', payment_method: gateway)
+        end
+
+        it 'returns failure without calling Stripe' do
+          expect(subject.success?).to be(false)
+          expect(subject.message).to eq(I18n.t('spree.stripe.payment_errors.saved_payment_method_required'))
+        end
+      end
+
+      # Removing a card only marks it deleted, and the payment still loads it.
+      context 'when the customer removed the card after the payment was added' do
+        let!(:credit_card) do
+          create(:credit_card, customer: order.customer, gateway_payment_profile_id: payment_method_id,
+                               gateway_customer_profile_id: 'cus_saved', payment_method: gateway)
+        end
+
+        before { credit_card.destroy }
+
+        it 'returns failure without calling Stripe' do
+          expect(subject.success?).to be(false)
+          expect(subject.message).to eq(I18n.t('spree.stripe.payment_errors.saved_payment_method_required'))
+        end
+      end
+
+      context 'when the card is saved to a Stripe customer' do
+        let(:gateway_options) do
+          { payment_prefixed_id: payment.prefixed_id, idempotency_key: "spree-#{payment.prefixed_id}" }
+        end
+        let(:stripe_customer_id) { Stripe::Customer.create({}, gateway.api_options).id }
+        let(:stripe_test_card) { 'pm_card_visa' }
+        let(:payment_method_id) do
+          Stripe::PaymentMethod.attach(stripe_test_card, { customer: stripe_customer_id }, gateway.api_options).id
+        end
+        let!(:credit_card) do
+          create(:credit_card, customer: order.customer, gateway_payment_profile_id: payment_method_id,
+                               gateway_customer_profile_id: stripe_customer_id, payment_method: gateway)
+        end
+
+        it 'charges it off-session', vcr: { cassette_name: 'charge_saved_payment_method_purchase' } do
+          expect(subject.success?).to be(true)
+          expect(subject.authorization).to start_with('pi_')
+          expect(subject.params['status']).to eq('succeeded')
+          expect(subject.params['amount_received']).to eq(amount_in_cents)
+        end
+
+        context 'when authorizing' do
+          subject { gateway.authorize(amount_in_cents, credit_card, gateway_options) }
+
+          it 'leaves the charge to capture later', vcr: { cassette_name: 'charge_saved_payment_method_authorize' } do
+            expect(subject.success?).to be(true)
+            expect(subject.params['status']).to eq('requires_capture')
+          end
+        end
+
+        context 'when capturing' do
+          subject { gateway.capture(amount_in_cents, nil, gateway_options) }
+
+          it 'charges it off-session', vcr: { cassette_name: 'charge_saved_payment_method_capture' } do
+            expect(subject.success?).to be(true)
+            expect(subject.params['status']).to eq('succeeded')
+          end
+        end
+
+        context 'when the bank asks the customer to authenticate' do
+          let(:stripe_test_card) { 'pm_card_authenticationRequired' }
+
+          it 'returns the decline as a failure',
+             vcr: { cassette_name: 'charge_saved_payment_method_authentication_required' } do
+            expect(subject.success?).to be(false)
+            expect(subject.message).to match(/authenticat/i)
+          end
+        end
+      end
+    end
+  end
+
+  describe '#create_profile' do
+    let(:order) { create(:order_with_line_items, store: store, customer: create(:customer)) }
+    let(:credit_card) do
+      create(:credit_card, payment_method: gateway, gateway_payment_profile_id: 'pm_saved',
+                           gateway_customer_profile_id: 'cus_saved')
+    end
+    let(:payment) { create(:payment, payment_method: gateway, order: order, source: credit_card) }
+
+    # The order's customer has no Stripe customer for this gateway, so a
+    # lookup would create one and re-point the card at it.
+    it 'keeps the Stripe customer the card was saved under, without calling Stripe' do
+      expect { gateway.create_profile(payment) }.not_to change(Spree::GatewayCustomer, :count)
+      expect(credit_card.reload.gateway_customer_profile_id).to eq('cus_saved')
+    end
+
+    context 'when the saved card has no Stripe customer' do
+      let(:credit_card) do
+        create(:credit_card, payment_method: gateway, gateway_payment_profile_id: 'pm_saved',
+                             gateway_customer_profile_id: nil)
+      end
+
+      it 'leaves it without one, so the charge is refused rather than sent under the wrong customer' do
+        expect { gateway.create_profile(payment) }.not_to change(Spree::GatewayCustomer, :count)
+        expect(credit_card.reload.gateway_customer_profile_id).to be_nil
       end
     end
   end

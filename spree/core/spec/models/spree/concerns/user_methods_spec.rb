@@ -155,6 +155,9 @@ describe Spree::CustomerMethods do
   end
 
   describe '.search' do
+    # Fixed, because a random email or name can contain a search term
+    # (seth@smithhauck.ca matches 'SMITH').
+    let!(:another_user) { create(:user, email: 'pat.quill@example.com', first_name: 'Pat', last_name: 'Quill') }
     let!(:user_1) { create(:user, email: 'john.doe@example.com', first_name: 'John', last_name: 'Doe') }
     let!(:user_2) { create(:user, email: 'jane.doe@example.com', first_name: 'Jane', last_name: 'Gone') }
     let!(:user_3) { create(:user, email: 'mary.moe@example.com', first_name: 'Mary', last_name: 'Moe') }

@@ -77,6 +77,16 @@ RSpec.describe Spree::Payments::Capture do
       expect(result.error.value).to eq(:payment_not_capturable)
     end
 
+    it 'refuses an amount above the payment without touching it or the gateway' do
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: 4576)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:capture_amount_exceeds_payment)
+      expect(payment.reload).to be_pending
+    end
+
     it 'records the failure and surfaces a gateway decline as a failure result' do
       allow(gateway).to receive(:capture).and_return(failed_response)
 
