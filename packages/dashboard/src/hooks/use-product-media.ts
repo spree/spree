@@ -7,7 +7,10 @@ type MediaListSnapshot = { data: Media[] }
 export function useProductMedia(productId: string) {
   return useQuery({
     queryKey: useResourceKey('products', productId, 'media'),
-    queryFn: () => adminClient.products.media.list(productId),
+    // The media card edits the whole list at once, so it asks for the API's
+    // largest page rather than the default 25 — a save re-baselines the form
+    // from this list, and a shorter page would drop the rest from the form.
+    queryFn: () => adminClient.products.media.list(productId, { limit: 100 }),
     enabled: !!productId,
   })
 }
