@@ -35,10 +35,10 @@ interface Permissions {
 It mirrors the backend ability at the **class level**:
 
 ```ts
-permissions.can('read', 'Spree::Order')
+permissions.can('read', 'order')
 ```
 
-Subjects are strings (`'Spree::Order'`, `'Spree::Product'`, or your own `'MyApp::Report'`). There is no client-side record-level check — when a rule is conditional on record attributes, `isConditional` returns `true` and the API is the arbiter: render the control and handle a possible 403.
+Subjects are short names: the model's class name without its namespace, underscored (`'order'`, `'product'`, or `'report'` for your own `MyApp::Report`). Use the `Subject` constants from `@spree/dashboard-core` for Spree's own models. There is no client-side record-level check — when a rule is conditional on record attributes, `isConditional` returns `true` and the API is the arbiter: render the control and handle a possible 403.
 
 ## `subject` shortcut
 
@@ -49,7 +49,7 @@ nav.add({
   key: 'reports',
   label: 'Reports',
   path: '/reports',
-  subject: 'Spree::Order',  // hides nav item without read:Spree::Order
+  subject: 'order',  // hides nav item without read:order
 })
 ```
 
@@ -60,7 +60,7 @@ routes: [{
   key: 'reports',
   path: '/reports',
   component: ReportsPage,
-  subject: 'Spree::Order',
+  subject: 'order',
 }],
 ```
 
@@ -78,7 +78,7 @@ nav.add({
   label: 'Reports',
   path: '/reports',
   if: ({ permissions, store }) =>
-    permissions.can('read', 'Spree::Order') &&
+    permissions.can('read', 'order') &&
     !!(store as Store | null)?.setup_tasks?.every((task) => task.done),
 })
 ```
@@ -96,14 +96,14 @@ import { usePermissions } from '@spree/dashboard'
 
 function ReportsPage() {
   const { permissions } = usePermissions()
-  if (!permissions.can('read', 'Spree::Order')) {
+  if (!permissions.can('read', 'order')) {
     return <Forbidden />
   }
   return <ReportsList />
 }
 ```
 
-The same `permissions` object backs the nav registry's `if` predicate, so you can move logic between the two without changing behaviour. For declarative gating, `<Can I="update" a="Spree::Order">…</Can>` (also from `@spree/dashboard-core`) renders children only when the check passes.
+The same `permissions` object backs the nav registry's `if` predicate, so you can move logic between the two without changing behaviour. For declarative gating, `<Can I="update" a="order">…</Can>` (also from `@spree/dashboard-core`) renders children only when the check passes.
 
 ## Custom permissions
 

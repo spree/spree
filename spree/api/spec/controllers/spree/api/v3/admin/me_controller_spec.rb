@@ -85,6 +85,13 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
         subject
         expect(json_response['permission_keys']).to eq(%w[read_orders write_orders])
       end
+
+      it 'names subjects by their short name, never the Ruby class' do
+        subject
+        subjects = json_response['permissions'].flat_map { |rule| rule['subjects'] }
+        expect(subjects).to include('order', 'country')
+        expect(subjects.grep(/::/)).to be_empty
+      end
     end
 
     context 'as a staffer with different roles on different stores' do

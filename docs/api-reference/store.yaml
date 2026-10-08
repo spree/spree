@@ -11738,7 +11738,7 @@ components:
           type: array
           items:
             type: string
-          description: Subject class names, e.g. ["Spree::Product"] or ["all"]
+          description: Subject short names, e.g. ["product"] or ["all"]
         has_conditions:
           type: boolean
           description: True if the server-side rule has per-record conditions. The

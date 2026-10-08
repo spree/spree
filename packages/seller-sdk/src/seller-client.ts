@@ -1691,7 +1691,7 @@ export interface PermissionRule {
   allow: boolean
   /** Action names, e.g. ["read", "update"] or ["manage"] */
   actions: string[]
-  /** Subject class names, e.g. ["Spree::Product"] or ["all"] */
+  /** Subject short names, e.g. ["product"] or ["all"] */
   subjects: string[]
   /** The rule carries per-record conditions the API will still enforce. */
   has_conditions: boolean
