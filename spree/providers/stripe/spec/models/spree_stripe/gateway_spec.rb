@@ -727,6 +727,21 @@ RSpec.describe SpreeStripe::Gateway do
         end
       end
 
+      # Removing a card only marks it deleted, and the payment still loads it.
+      context 'when the customer removed the card after the payment was added' do
+        let!(:credit_card) do
+          create(:credit_card, customer: order.customer, gateway_payment_profile_id: payment_method_id,
+                               gateway_customer_profile_id: 'cus_saved', payment_method: gateway)
+        end
+
+        before { credit_card.destroy }
+
+        it 'returns failure without calling Stripe' do
+          expect(subject.success?).to be(false)
+          expect(subject.message).to eq(I18n.t('spree.stripe.payment_errors.saved_payment_method_required'))
+        end
+      end
+
       context 'when the card is saved to a Stripe customer' do
         let(:gateway_options) do
           { payment_prefixed_id: payment.prefixed_id, idempotency_key: "spree-#{payment.prefixed_id}" }
