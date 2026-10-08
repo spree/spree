@@ -523,6 +523,7 @@ module Spree
   #
   # @return [Spree::AgentTools::Registry]
   singleton_class.delegate :agent_tools, :agent_tools=, to: :spree_config
+  singleton_class.delegate :agent_attachments, :agent_attachments=, to: :spree_config
 
   # The permission catalog — the grant vocabulary shared by staff roles and
   # secret API key scopes. Roles themselves are data (Spree::Role#permissions);

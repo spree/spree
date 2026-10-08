@@ -28,6 +28,25 @@ module Spree
         Spree::AgentTools::ProposeImportMapping
       ].freeze
 
+      # Files a client may fetch, as `{resource, attachment, label}`.
+      #
+      # Each rides the permission of the record carrying it, so a file never
+      # becomes a way around a scope the merchant withheld. Deliberately not
+      # every attachment in the schema:
+      #
+      # - `data_requests.export_file` is a subject access export — one
+      #   customer's entire personal data, assembled because they asked for
+      #   it. It is theirs, not training material.
+      # - `digital_assets.attachment` is the product a customer paid for.
+      # - Logos, avatars and category imagery say nothing a model needs, and
+      #   their URLs are already public.
+      ATTACHMENTS = [
+        { resource: 'orders', attachment: :po_document, label: 'Purchase order' },
+        { resource: 'shipping_labels', attachment: :file, label: 'Shipping label' },
+        { resource: 'media', attachment: :attachment, label: 'Media file' },
+        { resource: 'imports', attachment: :attachment, label: 'Import file' }
+      ].freeze
+
       # Workflow key => permission, or => {permission:, except:, summary:}.
       WORKFLOWS = {
         # Catalog
@@ -142,9 +161,10 @@ module Spree
       class << self
         # @param registry [Spree::AgentTools::Registry]
         # @return [void]
-        def install(registry)
+        def install(registry, attachments = nil)
           TOOLS.each { |tool| registry << tool }
           registry.expose_workflows(**WORKFLOWS)
+          ATTACHMENTS.each { |attributes| attachments.register(**attributes) } if attachments
         end
       end
     end
