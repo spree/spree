@@ -1,0 +1,32 @@
+// This file is auto-generated. Do not edit directly.
+import { z } from 'zod';
+
+export const MaintenanceTaskRunSchema = z.object({
+  id: z.string(),
+  task_name: z.string(),
+  status: z.string(),
+  dry_run: z.boolean(),
+  initiated_via: z.string(),
+  cursor: z.string().nullable(),
+  tick_count: z.number(),
+  tick_total: z.number().nullable(),
+  error_class: z.string().nullable(),
+  error_message: z.string().nullable(),
+  started_at: z.string().nullable(),
+  ended_at: z.string().nullable(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  progress: z.number().nullable(),
+  duration: z.number().nullable(),
+  tallies: z.record(z.string(), z.number()),
+  arguments: z.record(z.string(), z.unknown()),
+  error_backtrace: z.string().nullable(),
+  resumable: z.boolean(),
+  cancelable: z.boolean(),
+  active: z.boolean(),
+  store_id: z.string().nullable(),
+  parent_run_id: z.string().nullable(),
+  admin_user: z.object({ id: z.string(), email: z.string(), first_name: z.string().nullable(), last_name: z.string().nullable() }).nullable(),
+});
+
+export type MaintenanceTaskRun = z.infer<typeof MaintenanceTaskRunSchema>;
