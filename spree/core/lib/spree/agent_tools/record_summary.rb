@@ -161,8 +161,13 @@ module Spree
           value unless value == title
         end
 
+        # A subtitle is one short line a model reads aloud, so only a scalar
+        # will do. A variant's `price` serializes as an object, and `to_s` on
+        # it printed the whole Ruby hash — amount, currency, cents and all —
+        # where "£89.99" belonged.
         def formatted(value)
           return if value.blank?
+          return unless value.is_a?(String) || value.is_a?(Numeric) || value.is_a?(Symbol)
 
           value.to_s
         end

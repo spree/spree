@@ -19,7 +19,19 @@ module Spree
       Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
                          :dashboard_path, :scope_name, :write_permission,
                          :writable_attributes, :create_workflow_key, :update_workflow_key,
-                         keyword_init: true) do
+                         :distinct, keyword_init: true) do
+        # Whether a search may add DISTINCT.
+        #
+        # Postgres rejects SELECT DISTINCT beside an ORDER BY the select list
+        # does not carry, which is why some controllers turn it off. Carried
+        # from the controller rather than decided here, so a resource that
+        # changes its mind is followed without a second list to maintain.
+        #
+        # @return [Boolean]
+        def distinct?
+          distinct.nil? ? true : distinct
+        end
+
         # Whether the generic write tools may touch this resource at all.
         # A resource written through a workflow must be written through its
         # workflow tool, so there is exactly one way to write each thing.
@@ -156,16 +168,20 @@ module Spree
         # @param create_workflow_key [String, nil] set when the controller
         #   declares a create workflow, which the generic write defers to
         # @param update_workflow_key [String, nil] likewise for updates
+        # @param distinct [Boolean, nil] false where the controller disables
+        #   DISTINCT on its own collection, which Postgres requires when the
+        #   sort column is not in the select list
         # @return [Entry]
         def register(key:, model_name:, permission:, serializer_name:, dashboard_path: nil, scope_name: nil,
                      write_permission: nil, writable_attributes: [], create_workflow_key: nil,
-                     update_workflow_key: nil)
+                     update_workflow_key: nil, distinct: nil)
           entry = Entry.new(key: key.to_s, model_name: model_name, permission: permission,
                             serializer_name: serializer_name, dashboard_path: dashboard_path,
                             scope_name: scope_name, write_permission: write_permission,
                             writable_attributes: writable_attributes,
                             create_workflow_key: create_workflow_key,
-                            update_workflow_key: update_workflow_key)
+                            update_workflow_key: update_workflow_key,
+                            distinct: distinct)
           entries[entry.key] = entry
         end
 

@@ -81,6 +81,27 @@ RSpec.describe Spree::AgentTools::RecordSummary do
     end
   end
 
+  # A subtitle is one short line a model reads aloud. A variant's `price`
+  # serializes as an object, and calling `to_s` on it printed the whole Ruby
+  # hash — amount, currency, cents and all — where a price belonged.
+  describe 'a subtitle field that is not a scalar' do
+    it 'is left out rather than dumped' do
+      subtitle = described_class.send(
+        :subtitle_for,
+        { 'price' => { 'amount' => nil, 'currency' => nil, 'amount_in_cents' => 0 } },
+        'Espresso Machine'
+      )
+
+      expect(subtitle).to be_nil
+    end
+
+    it 'still uses a scalar one' do
+      subtitle = described_class.send(:subtitle_for, { 'sku' => 'ESPRESSO-BLACK' }, 'Espresso')
+
+      expect(subtitle).to eq('ESPRESSO-BLACK')
+    end
+  end
+
   describe 'a credential carried in a value' do
     it 'drops an invitation acceptance link' do
       cleaned = described_class.sanitize(

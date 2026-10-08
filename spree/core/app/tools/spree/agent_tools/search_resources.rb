@@ -42,7 +42,12 @@ module Spree
         # (`can :read, Product, categories: {...}`), so without `distinct` a
         # record repeats once per matching row and the count is inflated —
         # and the assistant states that count as fact.
-        result = query.result.distinct
+        #
+        # Except where the resource's own controller has turned it off:
+        # Postgres rejects SELECT DISTINCT beside an ORDER BY the select list
+        # does not carry, which is why `Admin::PricesController` disables it.
+        # Applying it here anyway made every price search answer with a 500.
+        result = entry.distinct? ? query.result.distinct : query.result
         records = result.limit(capped_limit(limit)).to_a
 
         {
