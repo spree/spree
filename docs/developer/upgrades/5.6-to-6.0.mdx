@@ -194,7 +194,7 @@ bundle exec rake spree:upgrade:migrate_users_to_customers
 Copies your legacy Devise customer table (default `spree_users`) into `spree_customers`, keeping the same ids, and carries existing passwords over so customers and staff can keep signing in. The source table is left in place as a safety net.
 
 <Warning>
-  Passwords carry over only if your application **never configured a Devise pepper**. The task stops if it finds one. Because Devise is no longer loaded in 6.0, the task usually cannot check for itself — it stops until you confirm no pepper was used by re-running it with `CONFIRM_NO_PEPPER=true`. If you did use a pepper, single sign-on, or a non-bcrypt password format, skip this step and keep your own customer model by setting `Spree.customer_class`.
+  Passwords carry over only if your application **never configured a Devise pepper**. The task stops if it finds one. Because Devise is no longer loaded in 6.0, the task usually cannot check for itself — it stops until you confirm no pepper was used by re-running it with `CONFIRM_NO_PEPPER=true`. When there are no passwords to carry over, for example an empty `spree_users` table, the task skips this check. If you did use a pepper, single sign-on, or a non-bcrypt password format, skip this step and keep your own customer model by setting `Spree.customer_class`.
 </Warning>
 
 ### Name countries and states by ISO code
