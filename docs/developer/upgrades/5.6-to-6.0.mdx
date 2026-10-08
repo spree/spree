@@ -515,6 +515,20 @@ now returns `nil` for an ID with another model's prefix, the same as
 `find_by_prefix_id`. Call `Spree::PrefixedId.decode_prefixed_id` if you
 really need to decode any prefix.
 
+## Type values are short names, not class names
+
+The API no longer sends or accepts Ruby class names. Every value that used to name a class is now a short name (`Spree::CreditCard` becomes `credit_card`), so the API keeps the same shape whatever the server is built with. Records in the database are not touched.
+
+If your storefront or webhook receiver reads any of these fields, compare against the short name instead:
+
+| Field | Where | Before | After |
+|---|---|---|---|
+| `payment_source_type` | Store API payment setup sessions, `payment_setup_session.*` webhooks | `Spree::CreditCard` | `credit_card` |
+| `originator_type` | `refund.*` webhooks | `Spree::Return`, `Spree::Claim`, `Spree::Exchange` | `return`, `claim`, `exchange` |
+| `type` | Custom fields on products, variants, categories and collections | `Spree::CustomFields::ShortText` | removed — read `field_type` (`short_text`) |
+
+The Admin API follows the same rule everywhere: providers and strategies (`fulfillment_provider: 'manual'`, `preferred_order_routing_strategy: 'rules'`), custom field definition `resource_type` (`product`, `category`), tag `taggable_type`, the owner and originator types on records, and filters such as `q[type_eq]=orders`. An integration written against the Admin API preview sends and expects these short names; the [Admin SDK](/developer/sdk/admin/resources) types list them.
+
 ## Every event is declared
 
 Events are now declared on the model that publishes them (`publishes_event`, `publishes_events`), and `publish_event` raises in development and test for a name nobody declared. Extensions that publish their own events need one line each — see [Publishing your own events](/developer/core-concepts/events#publishing-your-own-events). In production an undeclared event is logged and still delivered.
