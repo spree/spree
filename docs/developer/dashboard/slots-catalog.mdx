@@ -44,7 +44,7 @@ import { usePermissions, useStore } from '@spree/dashboard'
 function MyWidget({ product }: { product: Product }) {
   const { permissions } = usePermissions()
   const { store } = useStore()
-  if (!permissions.can('read', 'MyApp::LoyaltyRecord')) return null
+  if (!permissions.can('read', 'loyalty_record')) return null
   // ...
 }
 ```
