@@ -175,11 +175,24 @@ module Spree
             write_permission: write_permission_for(model, scope, create_workflow, update_workflow, writable, controller),
             writable_attributes: writable,
             create_workflow_key: create_workflow,
-            update_workflow_key: update_workflow
+            update_workflow_key: update_workflow,
+            distinct: collection_distinct?(instance)
           }
         end
 
         private
+
+        # What the controller does with its own collection. A controller that
+        # disables DISTINCT has a reason — Postgres refuses it beside an
+        # ORDER BY the select list does not carry — and a search tool adding
+        # it anyway answers with a 500.
+        def collection_distinct?(instance)
+          return true unless instance.respond_to?(:collection_distinct?, true)
+
+          instance.send(:collection_distinct?)
+        rescue StandardError
+          true
+        end
 
         # A model can be served by more than one controller under different
         # permission scopes — a tax identifier through customers and through
@@ -208,7 +221,11 @@ module Spree
               create_workflow_key: candidates.filter_map { |entry| entry[:create_workflow_key] }.first,
               update_workflow_key: candidates.filter_map { |entry| entry[:update_workflow_key] }.first,
               write_permission: contested ? nil : narrowest[:write_permission],
-              writable_attributes: contested ? [] : narrowest[:writable_attributes]
+              writable_attributes: contested ? [] : narrowest[:writable_attributes],
+              # One controller refusing DISTINCT is enough: its sort would
+              # make Postgres reject the query, and whichever controller
+              # happened to sort first is not an answer.
+              distinct: candidates.all? { |entry| entry[:distinct] }
             )
           end
         end
