@@ -99,7 +99,7 @@ Upgrade your project to the latest Spree release in one go. It works for both ki
 3. **Migrate the database** — on a prebuilt-image project, it recreates the containers and the migrations run as they start. On an ejected project, it applies pending migrations.
 4. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records. An ejected project's app is then restarted so it loads the new gems.
 
-The packages are updated before the database steps, so a failed migration or backfill never leaves the dashboards on the previous release. Fix the cause and run `spree upgrade` again.
+The packages are updated before the database steps, so a failed migration or backfill no longer stops them from moving to the newest release their ranges allow. Fix the cause and run `spree upgrade` again.
 
 ```bash
 spree upgrade                  # Run every step, asking before each one
