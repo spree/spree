@@ -31,9 +31,8 @@ module Spree
 
             data = Spree.fulfillment_providers.map do |provider_class|
               {
-                type: provider_class.to_s,
+                type: provider_class.api_type,
                 name: provider_class.provider_name,
-                integration_class: provider_class.integration_class,
                 integration_type: integration_api_type(provider_class),
                 available: provider_class.available_for_store?(current_store),
                 digital: provider_class.digital?,
@@ -61,9 +60,8 @@ module Spree
               catalog = provider_class.service_catalog(integration)
 
               {
-                type: provider_class.to_s,
+                type: provider_class.api_type,
                 name: provider_class.provider_name,
-                integration_class: provider_class.integration_class,
                 integration_type: integration_api_type(provider_class),
                 available: provider_class.available_for_store?(current_store),
                 requires_address: provider_class.requires_address?,
@@ -76,7 +74,7 @@ module Spree
               }
             end
 
-            render json: { data: data, default: Spree::DeliveryMethod::DEFAULT_RATE_PROVIDER }
+            render json: { data: data, default: Spree::ApiTyped.api_type_for(Spree::DeliveryMethod::DEFAULT_RATE_PROVIDER) }
           end
 
           def create

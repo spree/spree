@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::RefundSerializer do
 
     it 'names what triggered it' do
       expect(subject['originator_id']).to eq(return_record.prefixed_id)
-      expect(subject['originator_type']).to eq('Spree::Return')
+      expect(subject['originator_type']).to eq('return')
     end
   end
 

@@ -4,7 +4,7 @@ module Spree
       module Admin
         # Schema-side metadata for custom fields. Definitions are per resource
         # *type* (every Spree::Product shares the same definitions), so this is
-        # a flat top-level endpoint. Filter by `?resource_type=Spree::Product`
+        # a flat top-level endpoint. Filter by `q[resource_type_eq]=product`
         # (or any other registered custom-field-bearing resource) to scope the
         # list to one parent type.
         class CustomFieldDefinitionsController < ResourceController
@@ -37,6 +37,14 @@ module Spree
             params.permit(*model_additional_permitted_attributes, :namespace, :key, :label, :field_type,
                           :resource_type, :storefront_visible,
                           :searchable, :sortable)
+          end
+
+          # `resource_type` is a plain column rather than a polymorphic
+          # association, so its filter is resolved against the registry here.
+          def api_type_resolver(attribute)
+            return super unless attribute == 'resource_type'
+
+            ->(api_type) { Spree::Base.polymorphic_type_for(api_type, model_class.available_resources) }
           end
 
           # Pure registry discovery — maps to the read scope.

@@ -79,7 +79,7 @@ module Spree
             {
               kind: reference.kind,
               name: reference.name,
-              owner_type: reference.owner_type,
+              owner_type: Spree::Base.polymorphic_api_type(reference.owner_type),
               owner_id: reference.owner_id,
               field: reference.field
             }

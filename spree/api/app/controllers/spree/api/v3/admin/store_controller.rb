@@ -56,7 +56,6 @@ module Spree
               {
                 key: provider_class.key,
                 name: provider_class.provider_name,
-                integration_class: provider_class.integration_class,
                 integration_type: provider_class.integration_class.presence&.safe_constantize&.api_type,
                 available: provider_class.available_for_store?(current_store)
               }

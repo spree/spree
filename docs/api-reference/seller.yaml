@@ -17969,7 +17969,6 @@ paths:
                 - id: vpo_UkLWZg9DAJ
                   status: pending
                   currency: USD
-                  provider: Spree::PayoutProvider::System
                   reference:
                   period_start:
                   period_end:
@@ -17978,6 +17977,7 @@ paths:
                   amount: '120.0'
                   display_amount: "$120.00"
                   transfers_count: 1
+                  provider: system
                 meta:
                   page: 1
                   limit: 25
@@ -18031,7 +18031,6 @@ paths:
                 id: vpo_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                provider: Spree::PayoutProvider::System
                 reference:
                 period_start:
                 period_end:
@@ -18040,6 +18039,7 @@ paths:
                 amount: '120.0'
                 display_amount: "$120.00"
                 transfers_count: 1
+                provider: system
               schema:
                 "$ref": "#/components/schemas/Payout"
         '404':
@@ -18776,7 +18776,6 @@ paths:
                   kind: earning
                   status: completed
                   currency: USD
-                  provider: Spree::PayoutProvider::System
                   reference:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -18789,6 +18788,7 @@ paths:
                   payout_id:
                   reversed_from_id:
                   order_number: R1001
+                  provider: system
                 meta:
                   page: 1
                   limit: 25
@@ -18843,7 +18843,6 @@ paths:
                 kind: earning
                 status: completed
                 currency: USD
-                provider: Spree::PayoutProvider::System
                 reference:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -18856,6 +18855,7 @@ paths:
                 payout_id:
                 reversed_from_id:
                 order_number: R1001
+                provider: system
               schema:
                 "$ref": "#/components/schemas/Transfer"
         '404':
@@ -19575,9 +19575,6 @@ components:
           type: string
         label:
           type: string
-        type:
-          type: string
-          deprecated: true
         field_type:
           type: string
           enum:
@@ -19594,7 +19591,6 @@ components:
       required:
       - id
       - label
-      - type
       - field_type
       - key
       - value
@@ -21146,8 +21142,6 @@ components:
           type: string
         currency:
           type: string
-        provider:
-          type: string
         reference:
           type: string
           nullable: true
@@ -21167,11 +21161,14 @@ components:
           type: string
         transfers_count:
           type: number
+        provider:
+          type: string
+          description: 'Payout provider. Built-in: system. Provider gems register
+            more (e.g. stripe).'
       required:
       - id
       - status
       - currency
-      - provider
       - reference
       - period_start
       - period_end
@@ -21180,6 +21177,7 @@ components:
       - amount
       - display_amount
       - transfers_count
+      - provider
       x-typelizer: true
     Policy:
       type: object
@@ -21890,8 +21888,8 @@ components:
         owner_type:
           type: string
           enum:
-          - Spree::Fulfillment
-          - Spree::Return
+          - fulfillment
+          - return
         cost:
           type: string
         display_cost:
@@ -22123,8 +22121,6 @@ components:
           type: string
         currency:
           type: string
-        provider:
-          type: string
         reference:
           type: string
           nullable: true
@@ -22156,12 +22152,15 @@ components:
         order_number:
           type: string
           nullable: true
+        provider:
+          type: string
+          description: 'Payout provider. Built-in: system. Provider gems register
+            more (e.g. stripe).'
       required:
       - id
       - kind
       - status
       - currency
-      - provider
       - reference
       - created_at
       - updated_at
@@ -22174,6 +22173,7 @@ components:
       - payout_id
       - reversed_from_id
       - order_number
+      - provider
       x-typelizer: true
     Variant:
       type: object

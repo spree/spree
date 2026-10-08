@@ -4,8 +4,9 @@ module Spree
       module Admin
         class DeliveryMethodSerializer < V3::DeliveryMethodSerializer
           typelize admin_name: [:string, nullable: true],
-                   fulfillment_provider: :string, pickup_point_provider: [:string, nullable: true],
-                   rate_provider: [:string, nullable: true],
+                   fulfillment_provider: [:string, comment: 'Fulfillment provider. Built-in: manual, digital, pickup, pickup_point. Provider gems register more (e.g. easy_post).'],
+                   pickup_point_provider: [:string, nullable: true, comment: 'Pickup point network. None built in; provider gems register them.'],
+                   rate_provider: [:string, nullable: true, comment: 'Rate provider; null prices through the calculator. Built-in: internal, freight. Provider gems register more (e.g. easy_post).'],
                    storefront_visible: :boolean, tracking_url: [:string, nullable: true],
                    tax_category_id: [:string, nullable: true],
                    delivery_profile_id: :string,
@@ -20,8 +21,7 @@ module Spree
                    seller_id: [:string, nullable: true],
                    seller_name: [:string, nullable: true]
 
-          attributes :admin_name, :fulfillment_provider, :pickup_point_provider,
-                     :rate_provider, :storefront_visible, :tracking_url,
+          attributes :admin_name, :storefront_visible, :tracking_url,
                      :markup_flat, :markup_percent, :available_to_sellers,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
 
@@ -45,6 +45,8 @@ module Spree
           attribute :stock_location_ids do |record|
             record.pickup_locations.map(&:prefixed_id)
           end
+
+          api_type_attributes :fulfillment_provider, :pickup_point_provider, :rate_provider
 
           attribute :calculator_type do |record|
             record.calculator&.class&.api_type

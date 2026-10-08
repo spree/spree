@@ -80,6 +80,12 @@ module Spree
     after_save :apply_pending_services, if: :pending_services?
     attribute :fulfillment_provider, :string, default: 'Spree::FulfillmentProvider::Manual'
 
+    # The API names providers by their shorthand (`manual`, `easy_post`); the
+    # columns keep the class name.
+    normalizes :fulfillment_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.fulfillment_providers, value) }
+    normalizes :rate_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.delivery_rate_providers, value) }
+    normalizes :pickup_point_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.pickup_point_providers, value) }
+
     # Methods whose fulfillment provider satisfies the predicate — behavior
     # queries route through provider classes, never string vocabularies.
     scope :with_provider, ->(predicate) {
@@ -138,6 +144,16 @@ module Spree
     # not save a provider whose integration isn't connected — that breaks
     # quoting at checkout, not at save time where the admin can see it.
     validate :rate_provider_must_be_available, if: :rate_provider_changed?
+    # Every provider column is constantized and instantiated at checkout or
+    # ship time, so only a registered class may be stored.
+    validates :fulfillment_provider,
+              inclusion: { in: -> (_record) { Spree.fulfillment_providers.map(&:to_s) } },
+              allow_blank: true,
+              if: :fulfillment_provider_changed?
+    validates :pickup_point_provider,
+              inclusion: { in: -> (_record) { Spree.pickup_point_providers.map(&:to_s) } },
+              allow_blank: true,
+              if: :pickup_point_provider_changed?
     # Providers declare the fulfillment types they handle; a mismatch would
     # only surface at checkout (no rates) or at ship time (no dispatch),
     # so reject it where the admin can still see why.
@@ -263,7 +279,7 @@ module Spree
     #
     # @return [Class]
     def provider_class
-      (fulfillment_provider.presence || DEFAULT_FULFILLMENT_PROVIDER).safe_constantize ||
+      Spree::ApiTyped.registered_class(Spree.fulfillment_providers, fulfillment_provider.presence || DEFAULT_FULFILLMENT_PROVIDER) ||
         DEFAULT_FULFILLMENT_PROVIDER.constantize
     end
 
@@ -286,7 +302,8 @@ module Spree
     #
     # @return [Class]
     def rate_provider_class
-      (rate_provider.presence || DEFAULT_RATE_PROVIDER).safe_constantize || DEFAULT_RATE_PROVIDER.constantize
+      Spree::ApiTyped.registered_class(Spree.delivery_rate_providers, rate_provider.presence || DEFAULT_RATE_PROVIDER) ||
+        DEFAULT_RATE_PROVIDER.constantize
     end
 
 
@@ -363,7 +380,7 @@ module Spree
     #
     # @return [Spree::PickupPointProvider::Base, nil]
     def pickup_point_provider_instance
-      @pickup_point_provider_instance ||= pickup_point_provider.presence&.constantize&.new
+      @pickup_point_provider_instance ||= Spree::ApiTyped.registered_class(Spree.pickup_point_providers, pickup_point_provider)&.new
     end
 
     def self.calculators

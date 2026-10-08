@@ -1098,8 +1098,7 @@
           "inherit": "Vom Store erben",
           "label": "Strategie für das Bestell-Routing",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Legacy",
-            "Spree::OrderRouting::Strategy::Rules": "Regeln (geordnet)"
+            "rules": "Regeln (geordnet)"
           }
         },
         "storefront_access": {
@@ -1234,12 +1233,12 @@
         "resource_type": {
           "label": "Gilt für",
           "options": {
-            "Spree::OptionType": "Optionstypen",
-            "Spree::Order": "Bestellungen",
-            "Spree::Product": "Produkte",
-            "Spree::Taxon": "Kategorien",
-            "Spree::Customer": "Kunden",
-            "Spree::Variant": "Varianten"
+            "option_type": "Optionstypen",
+            "order": "Bestellungen",
+            "product": "Produkte",
+            "category": "Kategorien",
+            "customer": "Kunden",
+            "variant": "Varianten"
           },
           "read_only_help": "Der Eigentümer kann nicht mehr geändert werden, sobald Werte für dieses Feld vorhanden sind."
         },

@@ -39,6 +39,14 @@ module Spree
           end
         end
 
+        # Declares attributes whose column stores a provider or strategy class
+        # name, sent as its shorthand (`manual`, `rules`) instead.
+        def self.api_type_attributes(*names)
+          names.each do |name|
+            attribute(name) { |object| Spree::ApiTyped.api_type_for(object.public_send(name)) }
+          end
+        end
+
         # Declares the wire form of an `acted_by` association: the actor's
         # prefixed id, the kind of actor it is, and the expansion. Both
         # halves read off the columns, so naming an actor costs no query and

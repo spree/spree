@@ -112,6 +112,11 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = %w[amount currency kind status provider reference created_at seller_id order_id payout_id]
+    # Filtered by the provider's API shorthand (`system`); the column holds
+    # its class name.
+    ransacker :provider, formatter: ->(value) { Spree::ApiTyped.class_name_for(Spree.payout_providers, value) } do |parent|
+      parent.table[:provider]
+    end
     # No `order`: filtering through it reaches the buyer's email and address,
     # which a payouts-only caller may not read. `order_id` covers the lookup.
     self.whitelisted_ransackable_associations = %w[seller payout refund]

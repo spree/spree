@@ -15,12 +15,7 @@ module Spree
           def kinds
             authorize! :create, model_class
 
-            data = Spree.delivery_profile_types.map do |profile_class|
-              {
-                type: profile_class.to_s,
-                kind: profile_class.api_type
-              }
-            end
+            data = Spree.delivery_profile_types.map { |profile_class| { kind: profile_class.api_type } }
 
             render json: { data: data }
           end

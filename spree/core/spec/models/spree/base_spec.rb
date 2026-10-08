@@ -20,13 +20,52 @@ describe Spree::Base do
     end
 
     # A row written by an extension that is no longer installed must not be
-    # constantized — it passes through as-is.
-    it 'passes an unregistered value through untouched' do
-      expect(Spree::Export.api_type_for('Spree::Exports::Gone')).to eq('Spree::Exports::Gone')
+    # constantized, nor sent as a class name.
+    it 'shortens an unregistered value without constantizing it' do
+      expect(Spree::Export.api_type_for('Spree::Exports::Gone')).to eq('gone')
     end
 
-    it 'passes through on a class with no type registry' do
-      expect(Spree::Address.api_type_for('Whatever')).to eq('Whatever')
+    it 'shortens on a class with no type registry' do
+      expect(Spree::Address.api_type_for('Spree::Whatever')).to eq('whatever')
+    end
+  end
+
+  describe '.class_name_for_api_type' do
+    it 'resolves a shorthand to its registered subclass' do
+      expect(Spree::Export.class_name_for_api_type('orders')).to eq('Spree::Exports::Orders')
+      expect(Spree::PromotionRule.class_name_for_api_type('currency')).to eq('Spree::Promotion::Rules::Currency')
+    end
+
+    it 'rejects a class name and an unknown shorthand' do
+      expect(Spree::Export.class_name_for_api_type('Spree::Exports::Orders')).to be_nil
+      expect(Spree::Export.class_name_for_api_type('nope')).to be_nil
+      expect(Spree::Address.class_name_for_api_type('address')).to be_nil
+    end
+  end
+
+  describe '.polymorphic_type_for' do
+    it 'resolves against the given candidates' do
+      expect(described_class.polymorphic_type_for('order', [Spree::Product, Spree::Order])).to eq('Spree::Order')
+      expect(described_class.polymorphic_type_for('variant', [Spree::Product])).to be_nil
+    end
+
+    it 'falls back to the Spree model of that name and the configured user classes' do
+      expect(described_class.polymorphic_type_for('purchase_order')).to eq('Spree::PurchaseOrder')
+      expect(described_class.polymorphic_type_for('customer')).to eq(Spree.customer_class.to_s)
+    end
+
+    context "with a host app's own customer class" do
+      before { allow(Spree).to receive(:customer_class).with(constantize: false).and_return('User') }
+
+      it 'still names it `customer`, both ways' do
+        expect(described_class.polymorphic_api_type('User')).to eq('customer')
+        expect(described_class.polymorphic_type_for('customer')).to eq('User')
+      end
+    end
+
+    it 'rejects anything that is not a shorthand' do
+      expect(described_class.polymorphic_type_for('Spree::Product')).to be_nil
+      expect(described_class.polymorphic_type_for('')).to be_nil
     end
   end
 

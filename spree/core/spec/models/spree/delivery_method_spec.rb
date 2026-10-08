@@ -230,6 +230,20 @@ describe Spree::DeliveryMethod, type: :model do
       expect(delivery_method.errors[:rate_provider]).to be_present
     end
 
+    it 'stores the class name of a provider named by its shorthand' do
+      delivery_method.update!(rate_provider: 'freight', fulfillment_provider: 'manual')
+
+      expect(delivery_method.rate_provider).to eq('Spree::DeliveryRateProvider::Freight')
+      expect(delivery_method.fulfillment_provider).to eq('Spree::FulfillmentProvider::Manual')
+    end
+
+    it 'rejects an unregistered fulfillment provider' do
+      delivery_method.fulfillment_provider = 'Spree::Order'
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:fulfillment_provider]).to be_present
+    end
+
     it 'keeps rows loadable when a registered provider is later removed' do
       delivery_method.update_columns(rate_provider: 'GoneAwayProvider')
 
@@ -408,6 +422,32 @@ describe Spree::DeliveryMethod, type: :model do
       it { expect(delivery_method.display_estimated_price).to eq("#{I18n.t('spree.flat_percent')}: 12.50%") }
     end
   end
+  describe '#pickup_point_provider_instance' do
+    let(:delivery_method) { create(:delivery_method) }
+    let(:provider_class) { Class.new(Spree::PickupPointProvider::Base) }
+
+    before { stub_const('SpreeLockers::PickupPointProvider', provider_class) }
+
+    it 'resolves a registered provider named by its shorthand' do
+      allow(Spree).to receive(:pickup_point_providers).and_return([provider_class])
+
+      delivery_method.pickup_point_provider = 'lockers'
+
+      expect(delivery_method.pickup_point_provider).to eq('SpreeLockers::PickupPointProvider')
+      expect(delivery_method.pickup_point_provider_instance).to be_a(provider_class)
+    end
+
+    # The column is instantiated at checkout, so it may only name a
+    # registered network.
+    it 'rejects and never instantiates an unregistered class' do
+      delivery_method.pickup_point_provider = 'Spree::Order'
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:pickup_point_provider]).to be_present
+      expect(delivery_method.pickup_point_provider_instance).to be_nil
+    end
+  end
+
   describe '#available_pickup_locations' do
     let(:delivery_method) { create(:delivery_method, store: @default_store) }
 

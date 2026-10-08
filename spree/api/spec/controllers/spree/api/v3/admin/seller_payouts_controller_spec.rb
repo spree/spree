@@ -21,6 +21,15 @@ RSpec.describe Spree::Api::V3::Admin::SellerPayoutsController, type: :controller
       expect(row['amount']).to eq('120.0')
       expect(row['display_amount']).to eq('$120.00')
       expect(row['status']).to eq('pending')
+      expect(row['provider']).to eq('system')
+    end
+
+    it 'filters by the provider shorthand' do
+      get :index, params: { q: { provider_eq: 'system' } }, as: :json
+      expect(json_response['data'].map { |row| row['id'] }).to contain_exactly(payout.prefixed_id)
+
+      get :index, params: { q: { provider_eq: 'stripe' } }, as: :json
+      expect(json_response['data']).to be_empty
     end
 
     it "hides another marketplace's settlements" do

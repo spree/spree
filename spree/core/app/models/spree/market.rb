@@ -69,6 +69,7 @@ module Spree
     # An unregistered class name would only fail at checkout, when a customer is
     # waiting on a total. The list is read at validation time so a provider gem
     # loaded after boot still counts.
+    normalizes :tax_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.tax_providers, value) }
     validates :tax_provider,
               inclusion: { in: ->(_market) { Spree.tax_providers.map(&:to_s) } },
               allow_blank: true

@@ -202,7 +202,7 @@ describe('tags', () => {
         http.get(`${API_PREFIX}/tags`, () => HttpResponse.json({ data: [{ name: 'vip' }] })),
       )
 
-      const res = await createTestClient().tags.list({ taggable_type: 'Spree::Customer' })
+      const res = await createTestClient().tags.list({ taggable_type: 'customer' })
 
       expect(res.data).toHaveLength(1)
       expect(res.data[0]?.name).toBe('vip')
@@ -217,9 +217,9 @@ describe('tags', () => {
         }),
       )
 
-      await createTestClient().tags.list({ taggable_type: 'Spree::Customer', q: 'vi' })
+      await createTestClient().tags.list({ taggable_type: 'customer', q: 'vi' })
 
-      expect(url!.searchParams.get('taggable_type')).toBe('Spree::Customer')
+      expect(url!.searchParams.get('taggable_type')).toBe('customer')
       expect(url!.searchParams.get('q')).toBe('vi')
     })
   })
