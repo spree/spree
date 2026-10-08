@@ -1,5 +1,11 @@
 # @spree/dashboard-ui
 
+## 1.0.0-rc.2
+
+### Patch Changes
+
+- [#14846](https://github.com/spree/spree/pull/14846) [`dca32db`](https://github.com/spree/spree/commit/dca32dbbca0b72705f89f8afb62721d3c6486728) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Projects that install the dashboard packages from npm now get a single copy of the rich text editor library. `@spree/dashboard` no longer declares its own, looser TipTap ranges next to the exact versions in `@spree/dashboard-ui`, so a newer TipTap release can no longer install beside the pinned one and break type checking.
+
 ## 1.0.0-rc.1
 
 ### Minor Changes
