@@ -19575,9 +19575,6 @@ components:
           type: string
         label:
           type: string
-        type:
-          type: string
-          deprecated: true
         field_type:
           type: string
           enum:
@@ -19594,7 +19591,6 @@ components:
       required:
       - id
       - label
-      - type
       - field_type
       - key
       - value

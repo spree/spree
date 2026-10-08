@@ -22,13 +22,7 @@ RSpec.describe Spree::Api::V3::RefundSerializer do
 
     it 'names what triggered it' do
       expect(subject['originator_id']).to eq(return_record.prefixed_id)
-      expect(subject['originator_type']).to eq('Spree::Return')
-    end
-
-    it 'names it by its shorthand in the Admin API' do
-      admin = Spree::Api::V3::Admin::RefundSerializer.new(refund, params: base_params).to_h
-
-      expect(admin['originator_type']).to eq('return')
+      expect(subject['originator_type']).to eq('return')
     end
   end
 

@@ -5,10 +5,6 @@ module Spree
         # Admin API Custom Field Serializer
         # Full custom field data including admin-only fields
         class CustomFieldSerializer < V3::CustomFieldSerializer
-          # The Store API keeps the deprecated class-name `type` for one more
-          # release; the Admin API names the field type by `field_type` only.
-          _attributes.delete(:type)
-
           typelize storefront_visible: :boolean,
                    custom_field_definition_id: :string
 
