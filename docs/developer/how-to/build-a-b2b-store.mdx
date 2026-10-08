@@ -394,7 +394,7 @@ A few rules keep the maths honest:
 
 - **Quantity is measured per line.** Ten of one SKU reaches a ten-unit break. Five each of two SKUs does not.
 - **A variant with quantity breaks is priced by its breaks alone.** The catalog's percentage does not apply on top of them.
-- **A break may never cost more than the quantity below it.** Saving is refused, so a buyer never pays more for ordering more. A variant can carry up to ten breaks per currency on one list.
+- **A break may never cost more than the quantity below it.** Saving such a price is refused, and so is deleting a price when that would leave a break costing more than what a buyer pays below it. A buyer never pays more for ordering more. A variant can carry up to ten breaks per currency on one list.
 - **Prices are per currency.** Spree never converts a negotiated price, so state the agreement in every currency the buyer trades in.
 
 Volume pricing for everyone, not just one audience, uses a standalone [price list](/developer/core-concepts/pricing#price-lists) with a **Volume** rule. Regional pricing across [markets](/developer/core-concepts/markets) uses a **Market** rule. See [Price Rules](/developer/core-concepts/pricing#price-rules).

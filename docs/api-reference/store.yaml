@@ -879,8 +879,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2516979
-                  slug: product-2516979
+                  name: Product 2536979
+                  slug: product-2536979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1054,8 +1054,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2989085
-                  slug: product-2989085
+                  name: Product 3009085
+                  slug: product-3009085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1086,8 +1086,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 2998209
-                  slug: product-2998209
+                  name: Product 3018209
+                  slug: product-3018209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1216,8 +1216,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3266885
-                slug: product-3266885
+                name: Product 3286885
+                slug: product-3286885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1576,8 +1576,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 225715
-                    slug: product-225715
+                    name: Product 227715
+                    slug: product-227715
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1697,8 +1697,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2262171
-                    slug: product-2262171
+                    name: Product 2282171
+                    slug: product-2282171
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -2010,7 +2010,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 230307 was removed because it was sold out
+                  message: Product 232307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2252,8 +2252,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2313263
-                  slug: product-2313263
+                  name: Product 2333263
+                  slug: product-2333263
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2540,8 +2540,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2338992
-                  slug: product-2338992
+                  name: Product 2358992
+                  slug: product-2358992
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2755,8 +2755,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2364794
-                  slug: product-2364794
+                  name: Product 2384794
+                  slug: product-2384794
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3097,8 +3097,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2652614
-                  slug: product-2652614
+                  name: Product 2672614
+                  slug: product-2672614
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3298,8 +3298,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2663461
-                  slug: product-2663461
+                  name: Product 2683461
+                  slug: product-2683461
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3487,8 +3487,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2688182
-                  slug: product-2688182
+                  name: Product 2708182
+                  slug: product-2708182
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3786,8 +3786,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2705702
-                  slug: product-2705702
+                  name: Product 2725702
+                  slug: product-2725702
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3839,13 +3839,7 @@ paths:
                     source_required: true
                 billing_address:
                 shipping_address:
-                payment_methods:
-                - id: pm_UkLWZg9DAJ
-                  name: Store Credit
-                  description:
-                  type: store_credit
-                  session_required: false
-                  source_required: true
+                payment_methods: []
                 gift_card:
                   id: gc_UkLWZg9DAJ
                   code: GIFTCODE1
@@ -4042,8 +4036,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2749569
-                  slug: product-2749569
+                  name: Product 2769569
+                  slug: product-2769569
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4198,10 +4192,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 27763 cannot be delivered to the selected address
+                  message: Product 27963 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 278298 cannot be delivered to the selected address
+                  message: Product 280298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4259,8 +4253,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 27763
-                  slug: product-27763
+                  name: Product 27963
+                  slug: product-27963
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4290,8 +4284,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 278298
-                  slug: product-278298
+                  name: Product 280298
+                  slug: product-280298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4522,8 +4516,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2849165
-                  slug: product-2849165
+                  name: Product 2869165
+                  slug: product-2869165
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5356,8 +5350,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3469789
-                  slug: product-3469789
+                  name: Product 3489789
+                  slug: product-3489789
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5409,13 +5403,7 @@ paths:
                     source_required: true
                 billing_address:
                 shipping_address:
-                payment_methods:
-                - id: pm_UkLWZg9DAJ
-                  name: Store Credit 5
-                  description: Store Credit
-                  type: store_credit
-                  session_required: false
-                  source_required: true
+                payment_methods: []
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -5576,8 +5564,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 348179
-                  slug: product-348179
+                  name: Product 350179
+                  slug: product-350179
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5757,8 +5745,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 288496
-                  slug: product-288496
+                  name: Product 290496
+                  slug: product-290496
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -6883,8 +6871,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2535270
-                    slug: product-2535270
+                    name: Product 2555270
+                    slug: product-2555270
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -7207,8 +7195,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2555633
-                  slug: product-2555633
+                  name: Product 2575633
+                  slug: product-2575633
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -9783,7 +9771,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-436
+                  sku: SKU-440
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -10966,8 +10954,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2525649
-                    slug: product-2525649
+                    name: Product 2545649
+                    slug: product-2545649
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
