@@ -91,7 +91,12 @@ function ProductForm({ product }: { product: Product }) {
   const router = useRouter()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
-  const { data: mediaResponse, refetch: refetchMedia } = useProductMedia(productId)
+  const {
+    data: mediaResponse,
+    refetch: refetchMedia,
+    isFetching: mediaRefetching,
+    isRefetchError: mediaRefetchFailed,
+  } = useProductMedia(productId)
   // Same query as the page's, read here for its refetch state only.
   const { isFetching: productRefetching } = useProduct(productId)
 
@@ -136,15 +141,19 @@ function ProductForm({ product }: { product: Product }) {
   //
   // Also wait while the product is refetching: after a save the media list
   // can land first, and resetting then would pair it with the pre-save
-  // product and put the old values back. The product's own refetch re-runs
-  // this effect once both are current.
+  // product and put the old values back. Likewise for media still in flight
+  // (a retry included) or whose refetch failed — the cached list is then the
+  // pre-save one, and refilling from it would drop new uploads and library
+  // picks. The effect re-runs once both queries settle.
   useEffect(() => {
-    if (form.formState.isDirty || productRefetching) return
+    if (form.formState.isDirty || productRefetching || mediaRefetching || mediaRefetchFailed) {
+      return
+    }
     form.reset({
       ...productToFormValues(product, mediaItems),
       ...extensionFormValues('product', product),
     })
-  }, [product, mediaItems, productRefetching, form])
+  }, [product, mediaItems, productRefetching, mediaRefetching, mediaRefetchFailed, form])
 
   // Media-only hydration that bypasses the isDirty guard for the
   // already-empty case. Scenario: page mounts with mediaResponse still

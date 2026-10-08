@@ -25,6 +25,34 @@ async function findTile(page: Page, text: string) {
   return tile
 }
 
+/** A library image with a description of its own, for the product media card to show by name. */
+async function uploadDescribedImage(page: Page, storeId: string) {
+  await page.goto(MEDIA_PATH(storeId))
+  await expect(page.getByRole('heading', { name: /^media$/i })).toBeVisible({ timeout: 15_000 })
+  const stamp = Date.now()
+  const name = `e2e-picked-${stamp}.png`
+  const alt = `Library swatch ${stamp}`
+  await uploadImage(page, name)
+  await (await findTile(page, name)).click()
+  const sheet = page.getByRole('dialog')
+  await sheet.locator('#media-alt').fill(alt)
+  await sheet.getByRole('button', { name: /^save$/i }).click()
+  await expect(page.getByText(/^saved$/i).first()).toBeVisible({ timeout: 15_000 })
+  await sheet.getByRole('button', { name: /^cancel$/i }).click()
+  return { stamp, name, alt }
+}
+
+/** On a product's edit page, adds a library file through the picker. */
+async function addFromLibrary(page: Page, name: string, alt: string) {
+  await page.getByRole('button', { name: /add from library/i }).click()
+  const picker = page.getByRole('dialog')
+  await picker.getByPlaceholder(/search by name/i).fill(name)
+  await picker.getByRole('button', { name: alt }).click()
+  await picker.getByRole('button', { name: /^add selected$/i }).click()
+  await expect(picker).toBeHidden()
+  await expect(page.getByRole('img', { name: alt })).toBeVisible()
+}
+
 test.describe('media library', () => {
   test('uploads an image and describes it for screen readers', async ({ page }) => {
     const creds = await login(page)
@@ -52,28 +80,9 @@ test.describe('media library', () => {
     page,
   }) => {
     const creds = await login(page)
-    await page.goto(MEDIA_PATH(creds.store_id))
-    await expect(page.getByRole('heading', { name: /^media$/i })).toBeVisible({ timeout: 15_000 })
-
-    const stamp = Date.now()
-    const name = `e2e-picked-${stamp}.png`
-    const alt = `Library swatch ${stamp}`
-    await uploadImage(page, name)
-    await (await findTile(page, name)).click()
-    const sheet = page.getByRole('dialog')
-    await sheet.locator('#media-alt').fill(alt)
-    await sheet.getByRole('button', { name: /^save$/i }).click()
-    await expect(page.getByText(/^saved$/i).first()).toBeVisible({ timeout: 15_000 })
-    await sheet.getByRole('button', { name: /^cancel$/i }).click()
-
+    const { stamp, name, alt } = await uploadDescribedImage(page, creds.store_id)
     await createProduct(page, creds.store_id, `Library pick ${stamp}`)
-    await page.getByRole('button', { name: /add from library/i }).click()
-    const picker = page.getByRole('dialog')
-    await picker.getByPlaceholder(/search by name/i).fill(name)
-    await picker.getByRole('button', { name: alt }).click()
-    await picker.getByRole('button', { name: /^add selected$/i }).click()
-    await expect(picker).toBeHidden()
-    await expect(page.getByRole('img', { name: alt })).toBeVisible()
+    await addFromLibrary(page, name, alt)
 
     // After the save, the media list landing while the product is still
     // reloading is the ordering that blanked new tiles and refilled the form
@@ -95,11 +104,43 @@ test.describe('media library', () => {
     // shows the old name only until the slowed reload lands.
     expect(await page.getByLabel(/^name$/i).inputValue()).toBe(renamed)
     await expect(page.getByRole('img', { name: alt })).toBeVisible({ timeout: 15_000 })
-    await page.unroute(mediaReload)
-    await page.unroute(productReload)
+    // Let any request still held by a delay finish before the reload below.
+    await page.unrouteAll({ behavior: 'wait' })
 
     await page.reload()
     await expect(page.getByRole('img', { name: alt })).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('a new library file stays on the product when the media reload after saving fails', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const { stamp, name, alt } = await uploadDescribedImage(page, creds.store_id)
+    await createProduct(page, creds.store_id, `Library pick ${stamp}`)
+    await addFromLibrary(page, name, alt)
+
+    // The media reload fails, and the product reload lands after the save —
+    // the order in which the form used to refill from the pre-save media.
+    const mediaReload = /\/api\/v3\/admin\/products\/prod_[^/?]+\/media(\?|$)/
+    const productReload = /\/api\/v3\/admin\/products\/prod_[^/?]+\?/
+    await page.route(mediaReload, (route) =>
+      route.request().method() === 'GET'
+        ? route.fulfill({ status: 500, json: { error: { code: 'internal', message: 'boom' } } })
+        : route.continue(),
+    )
+    await page.route(productReload, async (route) => {
+      if (route.request().method() === 'GET')
+        await new Promise((resolve) => setTimeout(resolve, 3_000))
+      await route.continue()
+    })
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 30_000 })
+    // A failed reload has nothing to show, so give the media retry and the
+    // slowed product reload time to land before checking the form kept the
+    // submitted tile.
+    await page.waitForTimeout(5_000)
+    await expect(page.getByRole('img', { name: alt })).toBeVisible()
+    await page.unrouteAll({ behavior: 'wait' })
   })
 
   test('deletes a file from the grid after confirming', async ({ page }) => {
