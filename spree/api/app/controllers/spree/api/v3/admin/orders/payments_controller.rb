@@ -53,7 +53,10 @@ module Spree
             # already-captured or already-void payment returns success.
             def capture
               amount = money_param(:amount, @resource.currency)
-              amount = Spree::Money.new(amount, currency: @resource.currency).amount_in_cents if amount
+              unless amount.nil? || amount.positive?
+                raise Spree::Money::InvalidFormat.new('must be greater than 0', field: :amount)
+              end
+              amount = Spree::Money::Rounding.to_hundredths(amount) if amount
 
               result = Spree.payment_capture_workflow.call(payment: @resource, amount: amount)
 

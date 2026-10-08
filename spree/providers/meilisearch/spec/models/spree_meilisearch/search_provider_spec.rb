@@ -107,7 +107,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
           ms_response
         end
 
-        provider.search_and_filter(scope: store.products, filters: { 'price_gte' => 'Infinity', 'price_lte' => '19.99' })
+        provider.search_and_filter(scope: store.products, filters: { 'price_gte' => '1e1000000000000000000', 'price_lte' => '19.99' })
       end
     end
 

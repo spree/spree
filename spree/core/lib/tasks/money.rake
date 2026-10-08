@@ -19,7 +19,9 @@ namespace :spree do
         payment = event.payment
         next if payment.nil?
 
-        exponent = Spree::Money::Rounding.precision(payment.currency)
+        # The wrong records were written with the Money gem's exponent, which
+        # differs from ISO 4217 for a few currencies (forint, ariary).
+        exponent = (::Money::Currency.find(payment.currency) || ::Money::Currency.find('USD')).exponent
         next if exponent == 2
 
         corrected = event.amount * (10**exponent) / 100

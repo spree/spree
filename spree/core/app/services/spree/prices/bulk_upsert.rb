@@ -46,7 +46,7 @@ module Spree
         rows = Array(rows).map { |r| r.with_indifferent_access }
         # Amounts are parsed once, here; everything below reads numbers.
         keyed = rows.select { |r| r[:variant_id].present? && r[:currency].present? }
-                    .map { |r| r.merge(amount: parse_amount(r[:amount]), compare_at_amount: parse_amount(r[:compare_at_amount])) }
+                    .map { |r| r.merge(amount: Spree::Money::Rounding.parse_decimal(r[:amount]), compare_at_amount: Spree::Money::Rounding.parse_decimal(r[:compare_at_amount])) }
         # Checked before anything is deduped: `row_key` coerces the quantity,
         # so two malformed rows would collapse into one and the batch would be
         # judged on a shape the caller never sent.
@@ -369,11 +369,6 @@ module Spree
       # A ladder is one variant's rungs, in one currency, on one list.
       def ladder_key(row)
         [row[:variant_id].to_s, row[:currency], row[:price_list_id].to_s]
-      end
-
-      # Blank values become nil.
-      def parse_amount(value)
-        value.presence&.to_d
       end
 
       def sweep(affected_keys, clear_rows)

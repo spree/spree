@@ -186,7 +186,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
         }, as: :json
       end
 
-      [1.15, '1,15', '1.155'].each do |amount|
+      [1.15, '1,15', '1.155', '-5.00', '0'].each do |amount|
         it "refuses #{amount.inspect} with invalid_money_format" do
           expect(Spree.payment_capture_workflow).not_to receive(:call)
 

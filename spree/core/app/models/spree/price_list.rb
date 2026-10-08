@@ -389,8 +389,8 @@ module Spree
 
         current = current_values[price_id]
 
-        amount = attrs[:amount].presence&.to_d
-        compare_at_amount = attrs[:compare_at_amount].presence&.to_d
+        amount = Spree::Money::Rounding.parse_decimal(attrs[:amount])
+        compare_at_amount = Spree::Money::Rounding.parse_decimal(attrs[:compare_at_amount])
 
         # Clear compare_at_amount if it equals amount
         compare_at_amount = nil if compare_at_amount == amount

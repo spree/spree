@@ -1274,7 +1274,7 @@ module Spree
     end
 
     def credit_card_nil_payment?(attributes)
-      payments.store_credits.present? && (BigDecimal(attributes[:amount].to_s, exception: false) || 0).zero?
+      payments.store_credits.present? && Spree::Money::Rounding.blank_or_zero?(attributes[:amount])
     end
   end
 end

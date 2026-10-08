@@ -116,6 +116,20 @@ module Spree
         BigDecimal(value)
       end
 
+      # Reads a decimal from a caller that may send a number or text: a blank
+      # is nil, a number passes, and text must be a plain decimal ("16.50"),
+      # never read as a wrong number the way `"1,599.99".to_d` reads 1.
+      #
+      # @param value [Numeric, String, nil]
+      # @return [BigDecimal, Numeric, nil]
+      # @raise [Spree::Money::InvalidFormat]
+      def parse_decimal(value)
+        return if value.blank?
+        return value if value.is_a?(Numeric)
+
+        parse_canonical_decimal(value.to_s.strip)
+      end
+
       # Writes an amount the way the API and exports carry it: exactly the
       # currency's decimal places ("10.00", "1.500", "100"). A unit price keeps
       # up to {UNIT_PRICE_DECIMALS}, with zeros beyond the currency's own
@@ -129,16 +143,10 @@ module Spree
         return if amount.nil?
 
         places = precision(currency)
-        unless unit_price
-          return Kernel.format("%.#{places}f", to_currency(amount, currency))
-        end
-
-        decimal = quantize(amount, [places, UNIT_PRICE_DECIMALS].max)
-        text = Kernel.format("%.#{[places, UNIT_PRICE_DECIMALS].max}f", decimal)
-        whole, fraction = text.split('.')
-        return whole if fraction.nil?
-
-        fraction = fraction.sub(/0+\z/, '').ljust(places, '0')
+        kept = unit_price ? [places, UNIT_PRICE_DECIMALS].max : places
+        rounded = quantize(amount, kept)
+        whole, fraction = (rounded.zero? ? BigDecimal(0) : rounded).to_s('F').split('.')
+        fraction = fraction.to_s.sub(/0+\z/, '').ljust(places, '0')
         fraction.empty? ? whole : "#{whole}.#{fraction}"
       end
 
@@ -172,6 +180,27 @@ module Spree
       # @return [Integer]
       def to_minor_units(amount, currency)
         (BigDecimal(amount.to_s) * (10**precision(currency))).round.to_i
+      end
+
+      # An amount in hundredths of the currency, whatever its own minor unit:
+      # the unit payment gateways are called with until they take amounts with
+      # their currency.
+      #
+      # @param amount [Numeric, String]
+      # @return [Integer]
+      def to_hundredths(amount)
+        quantize(BigDecimal(amount.to_s) * 100, 0).to_i
+      end
+
+      # Whether an amount is missing or zero. Text that is not a number is
+      # neither, so a malformed value is never mistaken for "nothing to pay".
+      #
+      # @param value [Numeric, String, nil]
+      # @return [Boolean]
+      def blank_or_zero?(value)
+        return true if value.blank?
+
+        BigDecimal(value.to_s, exception: false)&.zero? || false
       end
 
       # @param units [Integer] whole minor units, as {#to_minor_units} returns
@@ -214,7 +243,7 @@ module Spree
     #
     # @return [Integer]
     def amount_in_cents
-      Rounding.quantize(to_d * 100, 0).to_i
+      Rounding.to_hundredths(to_d)
     end
 
     def abs

@@ -279,6 +279,43 @@ describe Spree::Money do
       it 'passes nil through' do
         expect(described_class.format(nil, 'USD')).to be_nil
       end
+
+      it 'keeps every digit of a large amount' do
+        expect(described_class.format(BigDecimal('12345678901234.5678'), 'USD', unit_price: true)).to eq('12345678901234.5678')
+      end
+
+      it 'never writes a negative zero' do
+        expect(described_class.format(BigDecimal('-0.001'), 'USD')).to eq('0.00')
+      end
+    end
+
+    describe '.to_hundredths' do
+      it 'counts hundredths of any currency exactly' do
+        expect(described_class.to_hundredths(BigDecimal('1.15'))).to eq(115)
+        expect(described_class.to_hundredths('1500.50')).to eq(150_050)
+      end
+    end
+
+    describe '.blank_or_zero?' do
+      it 'is true for nothing and for zero' do
+        expect([nil, '', '0', '0.00', 0].map { |value| described_class.blank_or_zero?(value) }).to all(be(true))
+      end
+
+      it 'is false for an amount, and for text that is not a number' do
+        expect(['10', '10,00', 'abc'].map { |value| described_class.blank_or_zero?(value) }).to all(be(false))
+      end
+    end
+
+    describe '.parse_decimal' do
+      it 'reads a plain decimal, passes a number and leaves a blank empty' do
+        expect(described_class.parse_decimal(' 16.50 ')).to eq(BigDecimal('16.50'))
+        expect(described_class.parse_decimal(16.5)).to eq(16.5)
+        expect(described_class.parse_decimal('')).to be_nil
+      end
+
+      it 'refuses text it would otherwise misread' do
+        expect { described_class.parse_decimal('1,599.99') }.to raise_error(Spree::Money::InvalidFormat)
+      end
     end
 
     describe '.format_decimal' do

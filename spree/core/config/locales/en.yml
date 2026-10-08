@@ -956,6 +956,7 @@ en:
     image: Image
     import: Import
     import_has_no_failed_rows: This import has no failed rows to retry.
+    import_invalid_number: "%{column} must be a number like 16.50, got %{value}."
     import_mailer:
       greeting: Hi %{user_name},
       import_done:

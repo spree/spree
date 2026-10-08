@@ -822,7 +822,7 @@ Other changes that come with it:
 
 - **Numbers are no longer parsed by locale.** Price, variant, payment, refund, store credit, gift card, discount and fee amounts are stored as sent. Before 6.0 they were re-read under the request's language, so a store whose language writes a comma decimal (Dutch, German, French) saved the dashboard's `49.50` as 4950, and an unchanged price grew tenfold on each save. Send canonical decimal strings (`"1234.56"`) and convert localized input in the client. `Spree::LocalizedNumber` still works with a warning until 6.1. If your prices were saved in a comma-decimal store before upgrading, check them.
 - **Rounding follows the currency.** Taxes, percentage discounts, promotion splits and shipping markups round to the currency's own decimal places from the ISO 4217 table: whole yen, three decimals for dinar. Two-decimal currencies are unchanged. Open carts in other currencies may change by less than one minor unit the next time they are recalculated. Placed orders do not change. Spree now gives the Hungarian forint two decimal places, as ISO 4217 does.
-- **Capture records in yen and dinar were wrong.** A partial or manual capture in a currency without two decimals was recorded in the wrong unit: 100 times too much in yen, a tenth in dinar. New captures are recorded correctly. To list the old records, writing nothing, run:
+- **Capture records in yen and dinar may be wrong.** A capture in a currency without two decimals could be recorded in the wrong unit: 100 times too much in yen, a tenth in dinar. To list those records, writing nothing, run:
 
 <CodeGroup>
 
