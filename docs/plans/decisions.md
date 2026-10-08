@@ -2,7 +2,7 @@
 
 **Context:** Price, variant, payment, refund, store credit, gift card and adjustment setters re-parsed every string with `Spree::LocalizedNumber` under the request's locale, for the legacy Rails admin. That admin is gone. In a store whose language writes a comma decimal (nl, de, fr) the setters read the dashboard's canonical `"49.50"` as 4950, and an untouched `"99.0"` grew tenfold on every save.
 
-**Decision:** The locale-parsing setters are removed; Rails' decimal type stores the value as sent. `Spree::LocalizedNumber.parse` is deprecated with a warning and removed in 6.1. Clients normalize localized input before sending (5.5 plan).
+**Decision:** The locale-parsing setters are removed; Rails' decimal type stores the value as sent. `Spree::LocalizedNumber.parse` is deprecated with a warning and removed in 6.1. Clients normalize localized input before sending (5.5 plan). The dashboard shows and reads money in the admin's own dashboard language, whatever the currency or market (as Shopify does), instead of the currency's market locale, which was ambiguous when markets share a currency.
 
 **Consequences:** A localized string sent to a model (`"1.234,56"`) is no longer understood; the Admin API never accepted it by contract. Supersedes the 5.5 plan's "`LocalizedNumber.parse` is NOT removed". See `6.0-money-correctness.md`.
 

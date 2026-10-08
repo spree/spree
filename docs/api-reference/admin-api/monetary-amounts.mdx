@@ -46,7 +46,7 @@ JSON numbers are also accepted (`"amount": 29.99`), but strings are recommended:
 
 Amounts are **canonical**: a period decimal separator and no thousands grouping (`"1234.56"`), independent of any locale. The Admin API does **not** parse locale-specific formats — do not send `"1.234,56"` or `"1,234.56"`.
 
-If you are taking input from a merchant in a localized format, normalize it to canonical form **before** sending. The Spree dashboard does this in the browser: a EUR price typed as `1.234,56` becomes `1234.56` on the wire. This matches how other commerce APIs handle money (canonical decimal or minor-unit integers; localization is a presentation concern).
+If you are taking input from a merchant in a localized format, normalize it to canonical form **before** sending. The Spree dashboard does this in the browser, in the number format of the person using it: an admin who writes German types `1.234,56`, in any currency, and `1234.56` goes on the wire. This matches how other commerce APIs handle money (canonical decimal or minor-unit integers; localization is a presentation concern).
 
 ## Affected types
 
