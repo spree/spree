@@ -91,7 +91,7 @@ function ProductForm({ product }: { product: Product }) {
   const router = useRouter()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
-  const { data: mediaResponse } = useProductMedia(productId)
+  const { data: mediaResponse, refetch: refetchMedia } = useProductMedia(productId)
 
   const mediaItems = mediaResponse?.data
 
@@ -197,30 +197,41 @@ function ProductForm({ product }: { product: Product }) {
       // hydration effect would otherwise keep isDirty true forever (since
       // we then skip the refetch's reset).
       //
-      // Strip the file-transport keys and the UI-only fields from baseline
-      // media so a subsequent save before the mediaResponse refetch lands
-      // can't re-ship them and create a duplicate Asset — `signed_id` would
-      // re-attach the upload, `source_media_id` would place the library file a
-      // second time. The persisted media ids hydrate on the next refetch.
+      // Media re-baselines from the persisted list, not the submitted one: a
+      // new upload or library pick only gains its id and image URLs there.
+      // The save's own invalidation refetch can land while the form is still
+      // dirty — the hydration effect skips it, and an identical later refetch
+      // never re-runs that effect — so read it here instead.
+      //
+      // If that read fails, fall back to the submitted media with the
+      // file-transport keys stripped, so a second save can't re-ship them and
+      // create a duplicate — `signed_id` would re-attach the upload,
+      // `source_media_id` would place the library file a second time.
+      // A failed refetch keeps the stale list in `data`, which would drop the
+      // new entries — only a successful read replaces the submitted media.
+      const mediaRefetch = await refetchMedia()
+      const persistedMedia = mediaRefetch.status === 'success' ? mediaRefetch.data.data : undefined
       const baseline: ProductFormValues = {
         ...data,
         // `data` is the parsed (extension-stripped) shape — put extension
         // values back so the reset doesn't blank their inputs pre-refetch.
         ...extensionValues,
-        media: (data.media ?? []).map(
-          ({
-            signed_id: _sid,
-            source_media_id: _smid,
-            poster_signed_id: _psid,
-            previewUrl: _p,
-            fullPreviewUrl: _fp,
-            posterUrl: _pu,
-            videoUrl: _vu,
-            downloadUrl: _du,
-            uploadId: _u,
-            ...rest
-          }) => rest,
-        ),
+        media:
+          persistedMedia?.map(mediaToFormValues) ??
+          (data.media ?? []).map(
+            ({
+              signed_id: _sid,
+              source_media_id: _smid,
+              poster_signed_id: _psid,
+              previewUrl: _p,
+              fullPreviewUrl: _fp,
+              posterUrl: _pu,
+              videoUrl: _vu,
+              downloadUrl: _du,
+              uploadId: _u,
+              ...rest
+            }) => rest,
+          ),
       }
       form.reset(baseline)
       toastManager.add({ type: 'success', title: t('admin.messages.product_saved') })

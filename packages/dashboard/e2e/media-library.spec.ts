@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { expect, type Page, test } from '@playwright/test'
 import { login } from './helpers'
 import { E2E_DIR } from './paths'
+import { createProduct } from './products-helpers'
 
 const MEDIA_PATH = (storeId: string) => `/${storeId}/products/media`
 const FIXTURE_IMAGE = readFileSync(resolve(E2E_DIR, 'fixtures/test-image.png'))
@@ -45,6 +46,49 @@ test.describe('media library', () => {
     // The grid captions a file by its description once it has one.
     await sheet.getByRole('button', { name: /^cancel$/i }).click()
     await expect(page.getByRole('listitem').filter({ hasText: 'A red test swatch' })).toBeVisible()
+  })
+
+  test('a file added to a product from the library keeps its preview after saving', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await page.goto(MEDIA_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: /^media$/i })).toBeVisible({ timeout: 15_000 })
+
+    const stamp = Date.now()
+    const name = `e2e-picked-${stamp}.png`
+    const alt = `Library swatch ${stamp}`
+    await uploadImage(page, name)
+    await (await findTile(page, name)).click()
+    const sheet = page.getByRole('dialog')
+    await sheet.locator('#media-alt').fill(alt)
+    await sheet.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/^saved$/i).first()).toBeVisible({ timeout: 15_000 })
+    await sheet.getByRole('button', { name: /^cancel$/i }).click()
+
+    await createProduct(page, creds.store_id, `Library pick ${stamp}`)
+    await page.getByRole('button', { name: /add from library/i }).click()
+    const picker = page.getByRole('dialog')
+    await picker.getByPlaceholder(/search by name/i).fill(name)
+    await picker.getByRole('button', { name: alt }).click()
+    await picker.getByRole('button', { name: /^add selected$/i }).click()
+    await expect(picker).toBeHidden()
+    await expect(page.getByRole('img', { name: alt })).toBeVisible()
+
+    // The save waits on the translations refetch, so the media refetch
+    // usually lands first — while the form is still dirty. Slowing the
+    // former makes that ordering certain rather than a matter of timing.
+    await page.route('**/api/v3/admin/products/*/translations*', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1_500))
+      await route.continue()
+    })
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByRole('img', { name: alt })).toBeVisible({ timeout: 15_000 })
+    await page.unroute('**/api/v3/admin/products/*/translations*')
+
+    await page.reload()
+    await expect(page.getByRole('img', { name: alt })).toBeVisible({ timeout: 15_000 })
   })
 
   test('deletes a file from the grid after confirming', async ({ page }) => {
