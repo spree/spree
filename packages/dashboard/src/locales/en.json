@@ -1417,6 +1417,13 @@
           "help": "Shoppers without a known country see this market. Only one can be default per store.",
           "label": "Default market"
         },
+        "default_country_code": {
+          "help": "The country used for tax before a customer enters an address. Leave empty to use the first country by name.",
+          "home_help": "The country whose tax your prices include. Leave empty to use the first country by name.",
+          "home_label": "Home country",
+          "label": "Main country",
+          "placeholder": "First country by name"
+        },
         "default_locale": {
           "help": "Storefront language for shoppers in this market.",
           "label": "Default locale"
@@ -1435,6 +1442,17 @@
         "tax_provider": {
           "help": "Which engine calculates tax for orders in this market.",
           "label": "Tax engine"
+        },
+        "tax_display": {
+          "help": {
+            "dynamic": "Prices for customers outside your home country are adjusted: your home country's tax comes out and theirs goes in.",
+            "included": "Customers outside your home country pay the price as entered, with their country's tax included in it."
+          },
+          "label": "Tax display",
+          "options": {
+            "dynamic": "Dynamic tax display",
+            "included": "Show as included"
+          }
         }
       },
       "match_policy": {
@@ -2226,7 +2244,7 @@
           "help": "Leave empty to tax every country."
         },
         "included_in_price": {
-          "help": "Prices already carry this tax, so it is backed out rather than added.",
+          "help": "Prices already include this tax, so it is taken out of the price rather than added. In a market with dynamic tax display, prices for customers abroad are adjusted to their country's rate first.",
           "label": "Included in price",
           "short": "Included"
         },

@@ -34,8 +34,8 @@ module Spree
           def permitted_params
             normalize_params(
               params.permit(
-                :name, :currency, :default_locale, :tax_inclusive, :tax_provider,
-                :default, :position, supported_locales: [], country_codes: []
+                :name, :currency, :default_locale, :tax_inclusive, :tax_provider, :tax_display,
+                :default_country_code, :default, :position, supported_locales: [], country_codes: []
               )
             )
           end

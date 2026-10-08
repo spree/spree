@@ -93,6 +93,7 @@ module Spree
         market.currency = currency
         market.default_locale = locale
         market.country_codes = [country.iso]
+        market.default_country_code = country.iso
         market.save!
 
         store.association(:default_market).reset

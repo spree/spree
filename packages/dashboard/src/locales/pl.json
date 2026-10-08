@@ -1435,6 +1435,13 @@
           "help": "Kupujący bez znanego kraju widzą ten rynek. Tylko jeden może być domyślny w obrębie sklepu.",
           "label": "Rynek domyślny"
         },
+        "default_country_code": {
+          "help": "Kraj, według którego liczony jest podatek, zanim klient poda adres. Pozostaw puste, aby użyć pierwszego kraju alfabetycznie.",
+          "home_help": "Kraj, którego podatek zawierają Twoje ceny. Pozostaw puste, aby użyć pierwszego kraju alfabetycznie.",
+          "home_label": "Kraj macierzysty",
+          "label": "Kraj główny",
+          "placeholder": "Pierwszy kraj alfabetycznie"
+        },
         "default_locale": {
           "help": "Język sklepu dla kupujących na tym rynku.",
           "label": "Domyślne ustawienia regionalne"
@@ -1453,6 +1460,17 @@
         "tax_provider": {
           "help": "Co nalicza podatek dla zamówień na tym rynku.",
           "label": "Mechanizm podatkowy"
+        },
+        "tax_display": {
+          "help": {
+            "dynamic": "Ceny dla klientów spoza Twojego kraju macierzystego są dostosowywane: podatek Twojego kraju jest odejmowany, a podatek ich kraju wliczany w cenę.",
+            "included": "Klienci spoza Twojego kraju macierzystego płacą wpisaną cenę, a podatek ich kraju jest w niej zawarty."
+          },
+          "label": "Wyświetlanie podatku",
+          "options": {
+            "dynamic": "Dynamiczne wyświetlanie podatku",
+            "included": "Pokazuj jako wliczony"
+          }
         }
       },
       "match_policy": {
@@ -2244,7 +2262,7 @@
           "help": "Zostaw puste, aby opodatkować każdy kraj."
         },
         "included_in_price": {
-          "help": "Ceny już zawierają ten podatek, więc jest on wyliczany z ceny, a nie doliczany.",
+          "help": "Ceny już zawierają ten podatek, więc jest on wyliczany z ceny, a nie doliczany. Na rynku z dynamicznym wyświetlaniem podatku ceny dla klientów z zagranicy są najpierw dostosowywane do stawki ich kraju.",
           "label": "Wliczony w cenę",
           "short": "Wliczony"
         },

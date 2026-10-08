@@ -112,6 +112,7 @@ export function CountryCombobox({
   onBlur,
   placeholder,
   searchPlaceholder,
+  options,
   invalid,
   disabled = false,
 }: {
@@ -125,17 +126,25 @@ export function CountryCombobox({
   placeholder?: string
   /** Text in the dropdown's search box. */
   searchPlaceholder?: string
+  /** ISO codes to offer instead of every country. */
+  options?: string[]
   invalid?: boolean
   disabled?: boolean
 }) {
   const { t } = useTranslation()
-  const items = useCountryOptions()
+  const allItems = useCountryOptions()
+  const items = useMemo(
+    () => (options ? allItems.filter((c) => options.includes(c.iso)) : allItems),
+    [allItems, options],
+  )
   const countryName = useCountryDisplayName()
   const filter = useCountryFilter()
 
   // The Combobox holds the selected object internally; we adapt to a flat ISO
   // string at the boundary so callers don't have to thread the option shape.
-  const selected = useMemo(() => items.find((c) => c.iso === value) ?? null, [items, value])
+  // Looked up in every country so a value outside `options` still shows,
+  // beside the error that explains it.
+  const selected = useMemo(() => allItems.find((c) => c.iso === value) ?? null, [allItems, value])
 
   return (
     <Combobox

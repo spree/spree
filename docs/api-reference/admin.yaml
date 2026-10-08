@@ -12602,6 +12602,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -12617,6 +12619,8 @@ paths:
                   - DE
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -12714,6 +12718,8 @@ paths:
                 supported_locales:
                 - en
                 - fr
+                tax_display: included
+                default_country_code: FR
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 tax_provider:
@@ -12777,6 +12783,23 @@ paths:
                   type: boolean
                   default: false
                   description: Display prices with tax included.
+                tax_display:
+                  type: string
+                  enum:
+                  - included
+                  - dynamic
+                  default: included
+                  description: What a price means for an order shipping outside the
+                    home country. 'included' charges it as entered; 'dynamic' takes
+                    the home country's tax out and puts the destination's in. Whether
+                    a tax is inside the price or added on top is set on each tax rate.
+                default_country_code:
+                  type: string
+                  nullable: true
+                  example: DE
+                  description: The market's main country, one of its country_codes.
+                    On the default market it is the store's home country. When empty,
+                    the first of the market's countries by name.
                 default:
                   type: boolean
                   default: false
@@ -12862,6 +12885,8 @@ paths:
                 - DE
                 supported_locales:
                 - en
+                tax_display: included
+                default_country_code:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 tax_provider:
@@ -12945,6 +12970,8 @@ paths:
                 - DE
                 supported_locales:
                 - en
+                tax_display: dynamic
+                default_country_code:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 tax_provider:
@@ -12983,6 +13010,14 @@ paths:
                     type: string
                 tax_inclusive:
                   type: boolean
+                tax_display:
+                  type: string
+                  enum:
+                  - included
+                  - dynamic
+                default_country_code:
+                  type: string
+                  nullable: true
                 default:
                   type: boolean
                 position:
@@ -14702,6 +14737,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -14968,6 +15005,8 @@ paths:
                     - US
                     supported_locales:
                     - en
+                    tax_display: included
+                    default_country_code:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     tax_provider:
@@ -15211,6 +15250,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -15487,6 +15528,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -15651,6 +15694,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -15934,6 +15979,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -16133,6 +16180,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -16310,6 +16359,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -16461,6 +16512,8 @@ paths:
                   - US
                   supported_locales:
                   - en
+                  tax_display: included
+                  default_country_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
@@ -47345,6 +47398,14 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Country"
+        tax_display:
+          type: string
+          enum:
+          - included
+          - dynamic
+        default_country_code:
+          type: string
+          nullable: true
         created_at:
           type: string
         updated_at:
@@ -47364,6 +47425,8 @@ components:
       - country_codes
       - country_isos
       - supported_locales
+      - tax_display
+      - default_country_code
       - created_at
       - updated_at
       - tax_provider

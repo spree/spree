@@ -4,6 +4,7 @@ import {
   ALL_CURRENCY_CODES,
   adminClient,
   Can,
+  CountryCombobox,
   CountryMultiCombobox,
   CurrencySelect,
   LocaleSelect,
@@ -22,6 +23,11 @@ import {
   FieldLabel,
   Input,
   RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -51,6 +57,7 @@ import {
   type MarketFormValues,
   marketFormSchema,
   marketValuesToParams,
+  TAX_DISPLAYS,
 } from '../../../../schemas/market'
 import '../../../../tables/markets'
 
@@ -252,6 +259,8 @@ function EditMarketSheet({
         default: market.default,
         country_codes: market.country_codes,
         tax_provider: market.tax_provider ?? '',
+        tax_display: market.tax_display,
+        default_country_code: market.default_country_code ?? '',
       })
     }
   }, [market, form])
@@ -310,6 +319,13 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
   const { availableLocales } = useStore()
   const { errors } = form.formState
   const defaultLocaleField = form.watch('default_locale')
+  const countryCodes = form.watch('country_codes')
+  const isDefault = form.watch('default')
+  const taxDisplay = form.watch('tax_display')
+  const taxDisplayOptions = TAX_DISPLAYS.map((value) => ({
+    value,
+    label: t(`admin.fields.market.tax_display.options.${value}`),
+  }))
 
   return (
     <FieldGroup>
@@ -419,7 +435,68 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
         <FieldError errors={[errors.country_codes]} />
       </Field>
 
+      <Field>
+        <FieldLabel htmlFor="market-default-country">
+          {isDefault
+            ? t('admin.fields.market.default_country_code.home_label')
+            : t('admin.fields.market.default_country_code.label')}
+        </FieldLabel>
+        <Controller
+          name="default_country_code"
+          control={form.control}
+          render={({ field }) => (
+            <CountryCombobox
+              id="market-default-country"
+              value={field.value}
+              onValueChange={field.onChange}
+              onBlur={field.onBlur}
+              options={countryCodes}
+              placeholder={t('admin.fields.market.default_country_code.placeholder')}
+              invalid={!!errors.default_country_code}
+              disabled={countryCodes.length === 0}
+            />
+          )}
+        />
+        <span className="text-xs text-muted-foreground">
+          {isDefault
+            ? t('admin.fields.market.default_country_code.home_help')
+            : t('admin.fields.market.default_country_code.help')}
+        </span>
+        <FieldError errors={[errors.default_country_code]} />
+      </Field>
+
       <TaxProviderField form={form} />
+
+      <Field>
+        <FieldLabel htmlFor="market-tax-display">
+          {t('admin.fields.market.tax_display.label')}
+        </FieldLabel>
+        <Controller
+          name="tax_display"
+          control={form.control}
+          render={({ field }) => (
+            <Select items={taxDisplayOptions} value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger
+                id="market-tax-display"
+                aria-invalid={!!errors.tax_display || undefined}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {taxDisplayOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <span className="text-xs text-muted-foreground">
+          {t(`admin.fields.market.tax_display.help.${taxDisplay}`)}
+        </span>
+        <FieldError errors={[errors.tax_display]} />
+      </Field>
 
       <Field>
         <div className="flex items-start justify-between gap-4">

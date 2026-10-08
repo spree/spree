@@ -34,13 +34,30 @@ Click **Add market**.
 - **Default locale** - The storefront language shoppers in this market see first.
 - **Supported locales** - Additional languages shoppers can switch to. The default locale is always included.
 - **Countries** - The countries this market covers. Search for each one and add it.
+- **Main country** - The country used for tax before a customer enters an address, chosen from the market's countries. On the default market this field is called **Home country**: the country whose tax your prices include. Leave it empty to use the first country by name.
 - **Tax engine** - Which engine calculates tax for orders in this market. Leave this as it is unless another engine has been installed for your store.
+- **Tax display** - What customers outside your home country pay. **Show as included** charges the price as entered, with their country's tax inside it. **Dynamic tax display** adjusts the price to their country: your home country's tax comes out and theirs goes in. See below.
 - **Tax-inclusive pricing** - Display prices with tax included. Common in EU markets.
 - **Default market** - Shoppers without a known country see this market. Only one can be default per store.
 
 Click **Create market** when you are done.
 
 <Warning>Each country can belong to at most one market per store. A country already claimed by another market cannot be added to a second one, so plan your coverage before creating several markets.</Warning>
+
+### Prices for customers outside your home country
+
+Take a store at home in the US, with a Germany market selling a product at €100.00. German VAT is 19%.
+
+| Tax display | A customer in Germany pays |
+|---|---|
+| **Show as included** | €100.00, of which €15.97 is VAT. You keep €84.03. |
+| **Dynamic tax display** | €119.00, of which €19.00 is VAT. You keep €100.00. |
+
+New markets use **Show as included**. Markets you created before this setting existed use **Dynamic tax display**, so their prices did not change.
+
+<Note>A price set for a market through a [<u>price list</u>](/user/pricing/price-lists) with a market rule is always charged as entered, whichever option the market uses.</Note>
+
+<Warning>You cannot remove a market's main country from its countries. Choose another main country first, or clear it, in the same save.</Warning>
 
 ### What the built-in tax engine does not calculate
 

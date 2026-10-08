@@ -3,9 +3,11 @@ module Spree
     module V3
       module Admin
         class MarketSerializer < V3::MarketSerializer
-          typelize tax_provider: [:string, nullable: true, comment: 'Tax provider; null uses the store default. Built-in: internal, recorded_share. Provider gems register more.']
+          typelize tax_provider: [:string, nullable: true, comment: 'Tax provider; null uses the store default. Built-in: internal, recorded_share. Provider gems register more.'],
+                   tax_display: [:string, enum: Spree::Market::TAX_DISPLAYS],
+                   default_country_code: [:string, nullable: true]
 
-          attributes created_at: :iso8601, updated_at: :iso8601
+          attributes :tax_display, :default_country_code, created_at: :iso8601, updated_at: :iso8601
 
           # Which tax engine computes for this market. Nil means the store-wide
           # default; the selectable values come from /admin/tax_providers.

@@ -5,8 +5,16 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasListPosition
 
+    # How a price behaves when the order ships abroad: 'included' charges it as
+    # entered, 'dynamic' swaps the home tax for the destination's (Spree::VatPriceCalculation).
+    TAX_DISPLAYS = %w[included dynamic].freeze
+
     acts_as_paranoid
     acts_as_list scope: :store_id
+
+    attribute :tax_display, :string, default: 'included'
+
+    normalizes :default_country_code, with: ->(code) { code.strip.upcase.presence }
 
     #
     # Associations
@@ -76,6 +84,8 @@ module Spree
     validates :currency, presence: true
     validates :default_locale, presence: true
     validates :countries, presence: true
+    validates :tax_display, inclusion: { in: TAX_DISPLAYS }
+    validate :default_country_in_market
 
     #
     # Callbacks
@@ -121,11 +131,21 @@ module Spree
       store.markets.default.first || store.markets.order(:position).first
     end
 
-    # Returns the first country by name from this market's countries
+    # The market's main country: the one the merchant chose, else the first of
+    # its countries by name. On the default market this is the store's home
+    # country — the one whose tax catalogue prices include.
     #
     # @return [Spree::Country, nil]
     def default_country
-      countries.first
+      candidates = countries
+      candidates.find { |country| country.iso == default_country_code } || candidates.first
+    end
+
+    # Whether a price is restated for a buyer outside the home country.
+    #
+    # @return [Boolean]
+    def dynamic_tax_display?
+      tax_display == 'dynamic'
     end
 
     # The tax engine that computes for this market. A fresh instance per call:
@@ -200,6 +220,15 @@ module Spree
 
     def last_in_store?
       !self.class.where(store_id: store_id).where.not(id: id).exists?
+    end
+
+    # Refused rather than cleared: on the default market this is the home
+    # country, and quietly falling back to another one would reprice every
+    # dynamic market.
+    def default_country_in_market
+      return if default_country_code.blank? || country_codes.include?(default_country_code)
+
+      errors.add(:default_country_code, :not_in_market)
     end
 
     def ensure_single_default

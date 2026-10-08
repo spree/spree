@@ -284,14 +284,14 @@ describe Spree::Price, type: :model do
     let(:amount) { 10 }
     let(:tax_category) { Spree::TaxCategory.new }
     let(:price) { build :price, variant: variant, amount: amount }
-    let(:price_options) { { country: destination } }
+    let(:price_options) { { country: destination, market: build(:market, tax_display: 'dynamic') } }
 
     context 'when the destination is another country' do
       before do
         allow(variant).to receive(:tax_category).and_return(tax_category)
         expect(price).to receive(:default_tax_country).at_least(:once).and_return(home_country)
         allow(price).to receive(:included_tax_amount).with({ country: home_country, tax_category: tax_category }).and_return(0.19)
-        allow(price).to receive(:included_tax_amount).with({ country: destination, tax_category: tax_category }).and_return(0.25)
+        allow(price).to receive(:included_tax_amount).with(hash_including(country: destination, tax_category: tax_category)).and_return(0.25)
       end
 
       it 'returns the correct price including another VAT to two digits' do
@@ -334,14 +334,14 @@ describe Spree::Price, type: :model do
     let(:compare_at_amount) { 100 }
     let(:tax_category) { Spree::TaxCategory.new }
     let(:price) { build :price, variant: variant, amount: amount, compare_at_amount: compare_at_amount }
-    let(:price_options) { { country: destination } }
+    let(:price_options) { { country: destination, market: build(:market, tax_display: 'dynamic') } }
 
     context 'when the destination is another country' do
       before do
         allow(variant).to receive(:tax_category).and_return(tax_category)
         expect(price).to receive(:default_tax_country).at_least(:once).and_return(home_country)
         allow(price).to receive(:included_tax_amount).with({ country: home_country, tax_category: tax_category }).and_return(0.19)
-        allow(price).to receive(:included_tax_amount).with({ country: destination, tax_category: tax_category }).and_return(0.25)
+        allow(price).to receive(:included_tax_amount).with(hash_including(country: destination, tax_category: tax_category)).and_return(0.25)
       end
 
       it 'returns the correct price including another VAT to two digits' do

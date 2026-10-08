@@ -13,6 +13,8 @@ export const MarketSchema = z.object({
   country_isos: z.array(z.string()),
   supported_locales: z.array(z.string()),
   get countries() { return z.array(CountrySchema).optional(); },
+  tax_display: z.string(),
+  default_country_code: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   tax_provider: z.string().nullable(),

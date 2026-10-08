@@ -156,10 +156,13 @@ bundle exec rake spree:backfill_order_coupon_codes
 
 ```bash
 bundle exec rake spree:markets:migrate_checkout_zones
+bundle exec rake spree:markets:backfill_tax_display
 bundle exec rake spree:backfill_order_markets
 ```
 
 A store without a market gets a default one covering its old checkout zone's countries (or its default country), and the checkout zone is cleared. Orders missing a market then get the store default — `market` is required on carts and orders in 6.0.
+
+Every existing market is set to the `dynamic` [tax display](/developer/core-concepts/markets#customers-outside-the-home-country): a price for a customer outside the home country has the home country's tax taken out and theirs included. Markets created after the upgrade default to `included`, which charges the price as entered.
 
 ### Fill in the stock level counters
 

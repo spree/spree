@@ -18,6 +18,58 @@ RSpec.describe Spree::Market, type: :model do
       expect(market).not_to be_valid
       expect(market.errors[:name]).to be_present
     end
+
+    it 'refuses a tax display it does not know' do
+      market = build(:market, store: store, tax_display: 'line_item')
+      expect(market).not_to be_valid
+      expect(market.errors[:tax_display]).to be_present
+    end
+  end
+
+  describe '#dynamic_tax_display?' do
+    it 'charges prices as entered on a new market' do
+      expect(build(:market, store: store)).not_to be_dynamic_tax_display
+    end
+  end
+
+  describe '#default_country' do
+    let(:france) { Spree::Country.by_iso('FR') }
+    let(:germany) { Spree::Country.by_iso('DE') }
+    let(:market) { create(:market, store: store, countries: [germany, france]) }
+
+    it 'falls back to the first country by name' do
+      expect(market.default_country).to eq(france)
+    end
+
+    it 'answers the country the merchant chose' do
+      market.update!(default_country_code: 'de')
+
+      expect(market.default_country_code).to eq('DE')
+      expect(market.default_country).to eq(germany)
+    end
+
+    it "refuses a choice outside the market's countries" do
+      market.default_country_code = 'IT'
+
+      expect(market).not_to be_valid
+      expect(market.errors[:default_country_code]).to be_present
+    end
+
+    # On the default market this is the home country, so dropping it quietly
+    # would reprice every dynamic market.
+    it 'refuses to drop the chosen country from the market' do
+      market.update!(default_country_code: 'DE')
+
+      expect(market.update(country_codes: %w[FR])).to be(false)
+      expect(market.errors[:default_country_code]).to be_present
+    end
+
+    it 'is what the store reads as its home country' do
+      default_market = store.default_market
+      default_market.update!(countries: [germany, france], default_country_code: 'DE')
+
+      expect(store.reload.default_country).to eq(germany)
+    end
   end
 
   describe 'associations' do
