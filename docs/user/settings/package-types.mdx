@@ -58,7 +58,7 @@ A carton is described in three places, and all three are needed before bulk orde
 
 The split exists because the same case can hold very different products. The box is shared; what goes in it, what it weighs full and how many fit on a pallet are not.
 
-<Warning>Filling in one product section without the other leaves the figures incomplete. A carton set in **Packing** with no **Units per carton** in **B2B ordering** tells Spree what a case weighs but not what is in it, so a buyer ordering by the carton is ordering an unknown quantity.</Warning>
+<Warning>Filling in one product section without the other leaves the figures incomplete. If **Purchase unit** is **carton**, **Units per carton** must be a positive value before the product can be saved.</Warning>
 
 <Note>Both product sections only offer package types whose kind is Carton. Until you have defined at least one, the **Packing** section on every product is greyed out, with a prompt to come back here and add one.</Note>
 
