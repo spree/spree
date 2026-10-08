@@ -24,17 +24,19 @@ interface UpgradeFlags {
 
 // One command for both project shapes. The server half depends on where the
 // Rails app comes from: a prebuilt-image project pulls the new image (its
-// entrypoint migrates on boot), an ejected project bumps the Spree gems and
-// migrates itself. Both then run the spree:upgrade rake backfills and bump the
-// @spree/* packages of the root and the admin apps. Flags map to env vars on
-// the rake task: --plan → DRY_RUN, --step → STEP, --to → TO. --plan and --step
-// run the rake task alone.
+// entrypoint migrates when the containers are recreated), an ejected project
+// bumps the Spree gems and migrates itself. The @spree/* packages of the root
+// and the admin apps are bumped right after the server, before migrations and
+// the spree:upgrade rake backfills, so a failing backfill can't leave the
+// dashboards on the old release. Flags map to env vars on the rake task:
+// --plan → DRY_RUN, --step → STEP, --to → TO. --plan and --step run the rake
+// task alone.
 export function registerUpgradeCommand(program: Command): void {
   withUpgradeOptions(
     program
       .command('upgrade')
       .description(
-        'Upgrade Spree: the server (image or gems), migrations, data backfills and @spree/* packages',
+        'Upgrade Spree: the server (image or gems), @spree/* packages, migrations and data backfills',
       ),
   ).action(upgrade)
 
@@ -76,15 +78,16 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
 
   if (isEjectedProject(ctx.projectDir)) {
     const gemsUpdated = await runBundleUpdate(ctx.projectDir, flags)
+    await updateSpreePackages(ctx.projectDir, flags)
     await runMigrate(ctx.projectDir, flags)
     await runRakeUpgrade(ctx.projectDir, flags)
     if (gemsUpdated) await restartAppServices(ctx.projectDir)
   } else {
-    await pullImage(ctx.projectDir, flags)
+    const imagePulled = await pullImage(ctx.projectDir, flags)
+    await updateSpreePackages(ctx.projectDir, flags)
+    if (imagePulled) await recreateContainers(ctx.projectDir)
     await runRakeUpgrade(ctx.projectDir, flags)
   }
-
-  await updateSpreePackages(ctx.projectDir, flags)
 
   printPostUpgradeReminder(ctx.projectDir)
 }
@@ -99,18 +102,21 @@ async function confirmStep(message: string, flags: UpgradeFlags): Promise<boolea
   return confirmed
 }
 
-// The image's entrypoint runs db:prepare before Puma starts, and web's
-// healthcheck only passes once Puma answers — so `--wait` returns with the
-// migrations applied and the container ready for the rake step.
-async function pullImage(projectDir: string, flags: UpgradeFlags): Promise<void> {
+async function pullImage(projectDir: string, flags: UpgradeFlags): Promise<boolean> {
   if (!(await confirmStep('Pull the latest Spree image and recreate the containers?', flags))) {
     p.log.info('Skipping the image pull.')
-    return
+    return false
   }
 
   p.log.step(pc.bold('docker compose pull'))
   await dockerCompose(['pull'], projectDir, { stdio: 'inherit' })
+  return true
+}
 
+// The image's entrypoint runs db:prepare before Puma starts, and web's
+// healthcheck only passes once Puma answers — so `--wait` returns with the
+// migrations applied and the container ready for the rake step.
+async function recreateContainers(projectDir: string): Promise<void> {
   p.log.step(pc.bold('Recreating containers and running migrations'))
   // Prime the shared bundle_cache volume with web alone first so the up
   // below doesn't race the copy-up if this follows a `down -v` (cold volume).

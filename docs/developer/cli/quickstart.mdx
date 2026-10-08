@@ -94,11 +94,12 @@ spree build --yes            # Skip confirmation prompts (for CI)
 
 Upgrade your project to the latest Spree release in one go. It works for both kinds of project:
 
-1. **Update the server**
-   - On a project that runs the prebuilt image, it pulls the latest Spree image and recreates the containers. Database migrations run as the containers start.
-   - On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`, applies pending migrations, and restarts the app so it loads the new gems.
-2. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records.
-3. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
+1. **Update the server** — on a project that runs the prebuilt image, it pulls the latest Spree image. On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`.
+2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
+3. **Migrate the database** — on a prebuilt-image project, it recreates the containers and the migrations run as they start. On an ejected project, it applies pending migrations.
+4. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records. An ejected project's app is then restarted so it loads the new gems.
+
+The packages are updated before the database steps, so a failed migration or backfill never leaves the dashboards on the previous release. Fix the cause and run `spree upgrade` again.
 
 ```bash
 spree upgrade                  # Run every step, asking before each one
