@@ -15,6 +15,15 @@
 **Consequences:** Breaking for API clients sending numbers or comparing money strings, for clients reading the removed `*_in_cents` fields or the renamed tax rate fields, and (from 6.1) for gateways that never opt in. HUF stops rounding to whole forints. Open carts in zero- and three-decimal currencies change on their next recalculation; completed orders do not. Integer minor units are rejected as an API contract. Ships as four PRs: floats out, gateway amounts, wire contract, precision.
 
 **Plans amended:** `5.5-client-side-money-normalization.md` (its "lenient now" open question is settled as strict). See `6.0-money-correctness.md`.
+## 2026-10-09: Preferences are typed on the wire, and the `preferred_` prefix leaves the API
+
+**Context:** Preferences reached the v3 APIs as the Ruby DSL rather than a contract. Store, channel and import settings were exposed as `preferred_*` fields, and every configurable subtype (promotion rules and actions, calculators, payment methods, integrations, rules of every kind) sent an untyped `preferences` object next to a `preference_schema` written in Ruby type names, repeated on every row. The real rules (prefixed-ID decoding, country normalization, rejecting unknown keys) lived in code no client could read.
+
+**Decision:** The preference declarations stay the single source and become complete (`of:`, `keys:`/`values:`, `money:`, `choices:`, `format:`, `prefix:`). They compile to JSON Schema, which feeds the OpenAPI components, the SDK unions (one member per built-in subtype plus a fallback for plugins), the `/…/types` endpoints (`schema` replaces `preference_schema`, which leaves resource rows) and the validation of every preferences write (422 `invalid_preferences` with a JSON pointer per failure). `preferred_*` fields are renamed to plain names through `exposes_preferences` on the model; `order.preferred_stock_location_id` is an association and stays. The store's `storefront_url` setting takes the plain name and its reader keeps the fallback to the first allowed origin and the store URL. `exposes_preferences` grants no write access; each API keeps its own permitted list. Incomplete declarations in plugins warn and get a permissive schema in 6.0, and raise in 6.1. Delivery methods move to the nested `calculator: { type, preferences }` shape. All three phases ship in one pull request.
+
+**Consequences:** A new preference declares its full type and never uses `:any`; an ID list is `of: :id, prefix:`, never a decoding lambda; no serializer or permitted list gains a `preferred_*` name or a `preference_schema`; a new configurable family publishes a `/…/types` endpoint and a typed union with a fallback member. The Store API is unaffected; the Admin and Seller APIs break, and every rename is listed in the upgrade guide.
+
+**Plan:** `6.0-typed-preferences.md`.
 
 ## 2026-10-07: Translations move into core, and `Spree.t` is deprecated for `I18n.t`
 
