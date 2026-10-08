@@ -176,7 +176,7 @@ module SpreeEasyPost
     return unless origin&.country_code == 'US'
     return unless items.all? { |item| item[:currency].to_s.upcase == 'USD' }
 
-    declared_value = items.sum { |item| item[:value].to_f }
+    declared_value = items.sum { |item| BigDecimal(item[:value].to_s) }
     'NOEEI 30.37(a)' if declared_value < EEI_EXEMPTION_LIMIT_USD
   end
 
@@ -195,7 +195,7 @@ module SpreeEasyPost
       {
         description: variant.customs_description_for_declaration,
         quantity: item.quantity,
-        value: (item.price.to_f * item.quantity).round(2),
+        value: Spree::Money::Rounding.to_currency(item.price * item.quantity, package.owner&.currency).to_f, # EasyPost reads customs values as JSON numbers
         weight: ounces(item.weight, store),
         origin_country: variant.country_of_origin.presence,
         hs_tariff_number: variant.hs_code.presence,

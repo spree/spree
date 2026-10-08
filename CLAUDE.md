@@ -502,6 +502,16 @@ Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
 - Before removing a translation key `i18n-tasks unused` reports, check it is not passed around as a string or built from a value (`"spree.#{name}"`) — the checker cannot see either
 - Keep translations in `config/locales/en.yml` — no duplication across files
 
+### Money
+
+Money is never a float — not in Ruby, not in TypeScript (see `docs/plans/6.0-money-correctness.md`).
+
+- No `.to_f`, `Float()` or float literal (`100.0`) on an amount, price, total, cost, fee, discount, tax or payout. Compute in `BigDecimal`; in the dashboard never `parseFloat`/`Number()` a money string.
+- Round with `Spree::Money::Rounding.to_currency(amount, currency)` (the currency's ISO 4217 exponent from `spree/core/config/currency_exponents.json`), never `.round(2)`; split in minor units with `to_minor_units` / `from_minor_units`, never `* 100` / `/ 100`. Round only when persisting, calling a gateway, or serializing — not in intermediate math.
+- Read an amount from an API request with `Spree::Money::Rounding.parse_canonical(value, currency)`: canonical decimal strings only (`"1234.56"`), no locale parsing on the server. `Spree::LocalizedNumber` is deprecated; never add a model setter that re-parses numbers.
+- Write amounts out with `Spree::Money::Rounding.format(amount, currency)`.
+- A third party that needs a JSON number gets `.to_f` once, on the line that hands it over, with a comment saying why.
+
 ### Time zones
 
 - Parsing or formatting a date **for a store** uses that store's zone, never

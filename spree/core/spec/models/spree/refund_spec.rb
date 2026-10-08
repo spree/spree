@@ -12,15 +12,10 @@ describe Spree::Refund, type: :model do
 
   describe '#amount=' do
     let(:refund) { build(:refund) }
-    let(:amount) { '1,599,99' }
 
-    before do
-      allow_any_instance_of(Spree::Refund).to receive(:amount_is_less_than_or_equal_to_allowed_amount)
-      refund.amount = amount
-    end
-
-    it 'is expected to equal to localized number' do
-      expect(refund.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
+      I18n.with_locale(:nl) { refund.amount = '49.50' }
+      expect(refund.amount).to eq(BigDecimal('49.50'))
     end
   end
 
@@ -58,6 +53,17 @@ describe Spree::Refund, type: :model do
         to receive(:credit).
         with(amount_in_cents, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
         and_return(gateway_response)
+    end
+
+    context 'with an amount a float cannot hold exactly' do
+      let(:amount) { BigDecimal('1.15') }
+      let(:amount_in_cents) { 115 }
+
+      it 'credits the exact hundredths at the gateway' do
+        subject
+
+        expect(payment.payment_method).to have_received(:credit).with(115, any_args)
+      end
     end
 
     it 'is never attempted by creation alone' do

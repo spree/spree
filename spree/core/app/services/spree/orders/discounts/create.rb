@@ -39,7 +39,7 @@ module Spree
 
         def line_item_row(order, line_item, label, value, value_type)
           base = discountable_base(line_item)
-          amount = -[amount_for(base, value, value_type), base].min
+          amount = -[amount_for(base, value, value_type, order.currency), base].min
           return if amount.zero?
 
           create_row(order, line_item, label, amount, value, value_type)
@@ -51,19 +51,20 @@ module Spree
           bases_sum = bases.sum
           return [] if bases_sum <= 0
 
-          total = [amount_for(bases_sum, value, value_type), bases_sum].min
-          shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares((total * 100).round, bases)
+          total = [amount_for(bases_sum, value, value_type, order.currency), bases_sum].min
+          total_units = Spree::Money::Rounding.to_minor_units(total, order.currency)
+          shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(total_units, bases)
 
           line_items.each_with_index.filter_map do |line_item, index|
-            amount = -BigDecimal(shares[index]) / 100
+            amount = -Spree::Money::Rounding.from_minor_units(shares[index], order.currency)
             next if amount.zero?
 
             create_row(order, line_item, label, amount, value, value_type)
           end
         end
 
-        def amount_for(base, value, value_type)
-          value_type == 'percent' ? (base * value / 100).round(2) : value
+        def amount_for(base, value, value_type, currency)
+          value_type == 'percent' ? Spree::Money::Rounding.to_currency(base * value / 100, currency) : value
         end
 
         # Remaining discountable base: amount net of already-applied discounts.

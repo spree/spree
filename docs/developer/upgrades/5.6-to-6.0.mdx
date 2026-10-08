@@ -818,6 +818,24 @@ Other changes that come with it:
 - **Alba moved into `spree_core`**, with its configuration, so core's staff emails render in installations without `spree_api`.
 - **Your own mailers keep working.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own ERB views is wrapped in the new email layout, and the `spree/shared/mailer_hero` and `mailer_button` partials remain for its views. See [Your own mailers](/developer/customization/emails#your-own-mailers).
 
+## Money
+
+- **Numbers are no longer parsed by locale.** Price, variant, payment, refund, store credit, gift card, discount and fee amounts are stored as sent. Before 6.0 they were re-read under the request's language, so a store whose language writes a comma decimal (Dutch, German, French) saved the dashboard's `49.50` as 4950, and an unchanged price grew tenfold on each save. Send canonical decimal strings (`"1234.56"`) and convert localized input in the client. `Spree::LocalizedNumber` still works with a warning until 6.1. If your prices were saved in a comma-decimal store before upgrading, check them.
+- **Rounding follows the currency.** Taxes, percentage discounts, promotion splits and shipping markups round to the currency's own decimal places from the ISO 4217 table: whole yen, three decimals for dinar. Two-decimal currencies are unchanged. Open carts in other currencies may change by less than one minor unit the next time they are recalculated. Placed orders do not change. Spree now gives the Hungarian forint two decimal places, as ISO 4217 does.
+- **Capture records in yen and dinar were wrong.** A partial or manual capture in a currency without two decimals was recorded in the wrong unit: 100 times too much in yen, a tenth in dinar. New captures are recorded correctly. To list the old records, writing nothing, run:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:money:audit_capture_events
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:money:audit_capture_events
+```
+
+</CodeGroup>
+
 ## Translations ship with Spree
 
 Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 43 languages besides English. Regional English (`en-GB` and the like) now falls back to `en`. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).
@@ -877,6 +895,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `.with_metafield_key`, `.with_metafield_key_value` | `.with_custom_field_key`, `.with_custom_field_key_value` |
 | `Spree.metafields` | `Spree.custom_fields` |
 | `Spree.t`, `Spree.translate` | `I18n.t` with the full key, e.g. `I18n.t('spree.free')` |
+| `Spree::LocalizedNumber.parse` | `BigDecimal(value)` on a canonical decimal string; Spree no longer parses numbers by locale |
 | `CustomFieldDefinition#name`, `#metafield_type`, `#display_on` | `#label`, `#field_type`, `#storefront_visible` (columns renamed) |
 | `Spree::SearchProvider::Meilisearch` | `SpreeMeilisearch::SearchProvider` (moved to the `spree_meilisearch` gem) |
 | `Spree::SearchProvider::ProductPresenter` | `SpreeMeilisearch::ProductPresenter` (moved to the `spree_meilisearch` gem) |

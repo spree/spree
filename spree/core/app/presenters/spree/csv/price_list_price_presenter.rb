@@ -32,9 +32,7 @@ module Spree
       # store's locale, not the exporting admin's, and a comma written here
       # would re-import as a hundred times the price.
       def amount_string(amount)
-        return nil if amount.nil?
-
-        format("%.#{Spree::Money::Rounding.precision(price.currency)}f", amount)
+        Spree::Money::Rounding.format(amount, price.currency, unit_price: true)
       end
     end
   end

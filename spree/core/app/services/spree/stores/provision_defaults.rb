@@ -260,7 +260,7 @@ module Spree
           calculator = delivery_method.calculator
           next unless calculator.respond_to?(:preferred_currency)
           next if calculator.preferred_currency == currency
-          next unless calculator.preferences[:amount].to_f.zero?
+          next unless (BigDecimal(calculator.preferences[:amount].to_s, exception: false) || 0).zero?
 
           calculator.update!(preferences: calculator.preferences.merge(currency: currency))
         end

@@ -39,6 +39,27 @@ describe Spree::VatPriceCalculation, type: :model do
     expect(gross_for(france)).to eq(100.84)
   end
 
+  context 'rounding conformance' do
+    before do
+      create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
+                        country_code: france&.iso, included_in_price: true, store: store)
+    end
+
+    it 'restates to the exact cent, half up' do
+      price.update!(amount: BigDecimal('19.99'))
+
+      # 19.99 / 1.19 * 1.20 = 20.15798…
+      expect(gross_for(france)).to eq(BigDecimal('20.16'))
+    end
+
+    it 'restates a yen price to whole yen' do
+      yen_price = build(:price, variant: variant, currency: 'JPY', amount: BigDecimal('1000'))
+
+      # 1000 / 1.19 * 1.20 = 1008.403…
+      expect(yen_price.price_including_vat_for(country: france, market: home_market)).to eq(BigDecimal('1008'))
+    end
+  end
+
   it 'charges the net where the destination levies nothing — a zero-rated export' do
     expect(gross_for(japan)).to eq(84.03)
   end

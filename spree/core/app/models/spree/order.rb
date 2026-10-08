@@ -415,9 +415,9 @@ module Spree
 
     # Returns the subtotal used for analytics integrations
     # It's a sum of the item total and the promo total
-    # @return [Float]
+    # @return [BigDecimal]
     def analytics_subtotal
-      (item_total + line_items.sum(:discount_total)).to_f
+      item_total + line_items.sum(:discount_total)
     end
 
 
@@ -1274,7 +1274,7 @@ module Spree
     end
 
     def credit_card_nil_payment?(attributes)
-      payments.store_credits.present? && attributes[:amount].to_f.zero?
+      payments.store_credits.present? && (BigDecimal(attributes[:amount].to_s, exception: false) || 0).zero?
     end
   end
 end

@@ -56,10 +56,6 @@ module Spree
     # back through a payment that may belong to several orders.
     before_validation :assign_order_from_payment, on: :create
 
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
-
     def money
       Spree::Money.new(amount, currency: currency)
     end
@@ -121,7 +117,7 @@ module Spree
     def perform!
       return true if transaction_id.present?
 
-      credit_cents = Spree::Money.new(amount.to_f, currency: currency).amount_in_cents
+      credit_cents = Spree::Money.new(amount, currency: currency).amount_in_cents
 
       @response = process!(credit_cents)
 

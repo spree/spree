@@ -48,6 +48,7 @@ module Spree
           insufficient_stock: 'insufficient_stock',
           invalid_quantity: 'invalid_quantity',
           invalid_price: 'invalid_price',
+          invalid_money_format: 'invalid_money_format',
           price_override_not_allowed: 'price_override_not_allowed',
 
           # Validation errors

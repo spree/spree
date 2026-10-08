@@ -94,10 +94,20 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     context 'with price filter' do
       it 'passes price filter to Meilisearch' do
         expect(mock_index).to receive(:search).with(anything, hash_including(
-          filter: include('price >= 10.0')
+          filter: include('price >= 10')
         )).and_return(ms_response)
 
         provider.search_and_filter(scope: store.products, filters: { 'price_gte' => '10' })
+      end
+
+      it 'keeps a decimal bound exact and drops one that is not a finite number' do
+        expect(mock_index).to receive(:search) do |_query, options|
+          expect(options[:filter]).to include('price <= 19.99')
+          expect(options[:filter]).not_to include(a_string_starting_with('price >='))
+          ms_response
+        end
+
+        provider.search_and_filter(scope: store.products, filters: { 'price_gte' => 'Infinity', 'price_lte' => '19.99' })
       end
     end
 

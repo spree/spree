@@ -1,6 +1,7 @@
 module Spree
   module Adjusters
-    # Largest-remainder apportionment of an integer cent total across weights.
+    # Largest-remainder apportionment of an integer total, in the currency's
+    # minor units, across weights.
     # Shared by promotion order-level distribution and manual admin discounts
     # so both split identically (sum of shares always equals the total).
     module LargestRemainder

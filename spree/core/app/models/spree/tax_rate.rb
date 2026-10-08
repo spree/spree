@@ -66,7 +66,7 @@ module Spree
     end
 
     def amount_percentage=(value)
-      self.amount = value.present? ? (value.to_f / 100) : nil
+      self.amount = value.present? ? BigDecimal(value.to_s) / 100 : nil
     end
 
     # The included-in-price rate to back out of a gross price.

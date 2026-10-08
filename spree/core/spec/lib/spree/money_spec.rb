@@ -170,6 +170,12 @@ describe Spree::Money do
         it { expect(money.amount_in_cents).to eq(10000) }
       end
     end
+
+    it 'counts hundredths without float error' do
+      expect(described_class.new(BigDecimal('1.15')).amount_in_cents).to eq(115)
+      expect(described_class.new(BigDecimal('0.29')).amount_in_cents).to eq(29)
+      expect(described_class.new(BigDecimal('1234567.89')).amount_in_cents).to eq(123_456_789)
+    end
   end
 
   describe '#as_json' do
@@ -199,6 +205,88 @@ describe Spree::Money do
 
       it 'rounds half up rather than truncating' do
         expect(described_class.to_minor_units(BigDecimal('0.005'), 'USD')).to eq(1)
+      end
+    end
+
+    describe '.precision' do
+      it 'follows ISO 4217 where the Money gem does not' do
+        expect(described_class.precision('HUF')).to eq(2)
+        expect(described_class.precision('MGA')).to eq(2)
+      end
+
+      it 'reads the exponent of zero-, two- and three-decimal currencies' do
+        expect(%w[JPY USD KWD].map { |code| described_class.precision(code) }).to eq([0, 2, 3])
+      end
+
+      it 'falls back to two places for an unknown code' do
+        expect(described_class.precision('ZZZ')).to eq(2)
+      end
+    end
+
+    describe '.to_currency' do
+      it 'rounds half up by default' do
+        expect(described_class.to_currency(BigDecimal('2.345'), 'USD')).to eq(BigDecimal('2.35'))
+      end
+
+      it 'rounds with the mode a caller asks for' do
+        expect(described_class.to_currency(BigDecimal('2.345'), 'USD', mode: :half_even)).to eq(BigDecimal('2.34'))
+      end
+    end
+
+    describe '.parse_canonical' do
+      it 'reads a canonical string exactly' do
+        expect(described_class.parse_canonical('1234567.89', 'USD')).to eq(BigDecimal('1234567.89'))
+        expect(described_class.parse_canonical('-0.29', 'USD')).to eq(BigDecimal('-0.29'))
+      end
+
+      it 'passes nil through' do
+        expect(described_class.parse_canonical(nil, 'USD')).to be_nil
+      end
+
+      [19.99, 20, '1,99', '1.234,56', ' 5', '+5', '1e3', '', '.5', '5.'].each do |value|
+        it "rejects #{value.inspect}" do
+          expect { described_class.parse_canonical(value, 'USD') }.to raise_error(Spree::Money::InvalidFormat)
+        end
+      end
+
+      it 'rejects more decimals than the currency has' do
+        expect { described_class.parse_canonical('19.999', 'USD') }.to raise_error(Spree::Money::InvalidFormat)
+        expect { described_class.parse_canonical('100.5', 'JPY') }.to raise_error(Spree::Money::InvalidFormat)
+        expect(described_class.parse_canonical('1.500', 'KWD')).to eq(BigDecimal('1.5'))
+      end
+
+      it 'allows a unit price four decimals' do
+        expect(described_class.parse_canonical('0.0125', 'USD', unit_price: true)).to eq(BigDecimal('0.0125'))
+        expect { described_class.parse_canonical('0.01255', 'USD', unit_price: true) }.to raise_error(Spree::Money::InvalidFormat)
+      end
+    end
+
+    describe '.format' do
+      it "writes exactly the currency's decimal places" do
+        expect(described_class.format(BigDecimal('10'), 'USD')).to eq('10.00')
+        expect(described_class.format(BigDecimal('1.5'), 'KWD')).to eq('1.500')
+        expect(described_class.format(BigDecimal('100'), 'JPY')).to eq('100')
+        expect(described_class.format(BigDecimal('-0.5'), 'USD')).to eq('-0.50')
+      end
+
+      it 'keeps a unit price below the minor unit and drops zeros beyond it' do
+        expect(described_class.format(BigDecimal('0.0125'), 'USD', unit_price: true)).to eq('0.0125')
+        expect(described_class.format(BigDecimal('19.9900'), 'USD', unit_price: true)).to eq('19.99')
+        expect(described_class.format(BigDecimal('100'), 'JPY', unit_price: true)).to eq('100')
+        expect(described_class.format(BigDecimal('100.5'), 'JPY', unit_price: true)).to eq('100.5')
+      end
+
+      it 'passes nil through' do
+        expect(described_class.format(nil, 'USD')).to be_nil
+      end
+    end
+
+    describe '.format_decimal' do
+      it 'drops trailing zeros' do
+        expect(described_class.format_decimal(BigDecimal('0.23000'))).to eq('0.23')
+        expect(described_class.format_decimal(BigDecimal('23.00'))).to eq('23')
+        expect(described_class.format_decimal(BigDecimal('100'))).to eq('100')
+        expect(described_class.format_decimal(BigDecimal('0'))).to eq('0')
       end
     end
 

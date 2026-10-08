@@ -107,7 +107,7 @@ namespace :spree do
           order = sample_orders[index]
           seller.seller_transfers.create!(
             store: store, order: order, payout: payout,
-            amount: order.total * 0.85, currency: currency,
+            amount: Spree::Money::Rounding.to_currency(order.total * BigDecimal('0.85'), currency), currency: currency,
             kind: 'earning', provider: provider, status: 'completed',
             created_at: order.completed_at
           )
@@ -118,7 +118,7 @@ namespace :spree do
         original = seller.seller_transfers.earnings.order(:created_at).last
         seller.seller_transfers.create!(
           store: store, order: original.order, reversed_from: original,
-          amount: -(original.amount * 0.5), currency: currency,
+          amount: -Spree::Money::Rounding.to_currency(original.amount / 2, currency), currency: currency,
           kind: 'refund_reversal', provider: provider, status: 'completed'
         )
 

@@ -140,7 +140,7 @@ module Spree
         end
       end
 
-      # Largest-remainder distribution (in cents) of the order-wide winner over
+      # Largest-remainder distribution (in minor units) of the order-wide winner over
       # each line's remaining discounted base, so shares always sum exactly to
       # the promotion amount and no line goes below zero.
       def distribute_over_line_items(chosen)
@@ -149,11 +149,12 @@ module Spree
         bases_sum = bases.sum
         return if bases_sum <= 0
 
-        total_cents = [chosen[:amount].abs, bases_sum].min * 100
-        shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(total_cents.round, bases)
+        currency = order.currency
+        total_units = Spree::Money::Rounding.to_minor_units([chosen[:amount].abs, bases_sum].min, currency)
+        shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(total_units, bases)
 
         line_items.each_with_index do |line_item, index|
-          amount = -BigDecimal(shares[index]) / 100
+          amount = -Spree::Money::Rounding.from_minor_units(shares[index], currency)
           next if amount.zero?
 
           persist_discount(line_item, chosen, amount)

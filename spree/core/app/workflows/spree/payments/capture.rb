@@ -86,7 +86,10 @@ module Spree
           if Spree::Payment.where(id: payment.id, status: 'completed').exists?
             already_captured = true
           else
-            payment.capture_events.create!(amount: ::Money.new(@amount, payment.currency).to_f)
+            # Gateways are called in hundredths of the currency (see
+            # Spree::Money#amount_in_cents), not in its minor unit — reading
+            # them as minor units recorded a yen capture a hundred times over.
+            payment.capture_events.create!(amount: BigDecimal(@amount) / 100)
             # Split before completing, so payment.completed publishes with
             # the captured amount and the order recomputes from correct rows.
             @remainder = payment.split_uncaptured_amount

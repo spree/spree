@@ -80,9 +80,9 @@ module Spree
       @tax_amount ||= if tax_rate.nil?
                         BigDecimal(0)
                       elsif tax_rate.included_in_price?
-                        (cost / (1 + tax_rate.amount) * tax_rate.amount).round(2)
+                        Spree::Money::Rounding.to_currency(cost / (1 + tax_rate.amount) * tax_rate.amount, currency)
                       else
-                        (cost * tax_rate.amount).round(2)
+                        Spree::Money::Rounding.to_currency(cost * tax_rate.amount, currency)
                       end
     end
 

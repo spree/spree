@@ -63,7 +63,7 @@ namespace :spree do
               promotion = action&.promotion
               Spree::TypedAdjustmentsMigration.build_distributed_discounts(order, row, adjustable, promotion, action, stats)
             when nil
-              if row.amount.to_f.negative?
+              if row.amount.to_d.negative?
                 Spree::TypedAdjustmentsMigration.build_distributed_discounts(order, row, adjustable, nil, nil, stats, kind: 'manual')
               else
                 Spree::Fee.create!(

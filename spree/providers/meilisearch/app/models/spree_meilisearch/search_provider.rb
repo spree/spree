@@ -386,9 +386,11 @@ module SpreeMeilisearch
     def build_filter_condition(key, value)
       case key
       when 'price_gte'
-        "price >= #{value.to_f}"
+        price_bound = price_filter_value(value)
+        "price >= #{price_bound}" if price_bound
       when 'price_lte'
-        "price <= #{value.to_f}"
+        price_bound = price_filter_value(value)
+        "price <= #{price_bound}" if price_bound
       when 'in_stock'
         'in_stock = true' if value.to_s != '0'
       when 'out_of_stock'
@@ -436,6 +438,13 @@ module SpreeMeilisearch
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
       end
+    end
+
+    # The bound as a plain decimal, or nil for anything that is not a finite
+    # number, so a malformed price never reaches the filter expression.
+    def price_filter_value(value)
+      bound = BigDecimal(value.to_s, exception: false)
+      Spree::Money::Rounding.format_decimal(bound) if bound&.finite?
     end
 
     def format_custom_field_filter_value(value, numeric)

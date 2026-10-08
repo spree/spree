@@ -49,6 +49,33 @@ RSpec.describe Spree::Payments::Capture do
       expect(remainder.amount).to eq(35.75)
     end
 
+    context 'with exact amounts' do
+      { '0.29' => 29, '1.15' => 115, '1234567.89' => 123_456_789 }.each do |amount, hundredths|
+        it "records a capture of #{amount} to the cent" do
+          payment.update_columns(amount: BigDecimal(amount))
+          order.update_columns(total: BigDecimal(amount))
+          expect(gateway).to receive(:capture).with(hundredths, '123', anything).and_return(success_response)
+
+          described_class.call(payment: payment)
+
+          expect(payment.reload.captured_amount).to eq(BigDecimal(amount))
+        end
+      end
+
+      it 'records a yen capture in yen, not a hundred times over' do
+        payment.update_columns(amount: BigDecimal('1000'))
+        order.update_columns(currency: 'JPY', total: BigDecimal('1000'))
+        expect(gateway).to receive(:capture).with(100_000, '123', anything).and_return(success_response)
+
+        result = described_class.call(payment: payment)
+
+        expect(result).to be_success, result.error.to_s
+
+        expect(payment.reload.captured_amount).to eq(BigDecimal('1000'))
+        expect(payment.amount).to eq(BigDecimal('1000'))
+      end
+    end
+
     it 'is a no-op for an already-captured payment' do
       completed = create(:payment, payment_method: gateway, source: card, status: 'completed')
       expect(gateway).not_to receive(:capture)
