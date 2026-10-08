@@ -22,10 +22,7 @@ import { DownloadIcon, FileTextIcon, PencilIcon } from '@spree/dashboard-ui/icon
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
-
-/** What a purchase order plausibly arrives as — mirrors the server allowlist. */
-const PO_DOCUMENT_ACCEPT =
-  'application/pdf,image/jpeg,image/png,image/heic,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+import { PO_DOCUMENT_ACCEPT } from '../../../schemas/order'
 
 /** Narrowed from the SDK's own contract so the payload cannot drift from it. */
 type UpdateParams = Pick<OrderUpdateParams, 'po_number' | 'po_document'>

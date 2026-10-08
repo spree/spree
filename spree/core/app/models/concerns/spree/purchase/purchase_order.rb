@@ -17,8 +17,10 @@ module Spree
       MAX_PO_DOCUMENT_SIZE = 10.megabytes
 
       # What a purchase order plausibly arrives as: an export from the buyer's
-      # procurement system, a scan, or a photo of one. Matches the list the
-      # seller document requirement accepts — the same kinds of paperwork.
+      # procurement system (often a spreadsheet), a scan, or a photo of one.
+      # CSV is left out on purpose: plain text cannot be told apart from any
+      # other unidentified file by its bytes, so accepting it would mean
+      # trusting the filename.
       PO_DOCUMENT_CONTENT_TYPES = %w[
         application/pdf
         image/jpeg
@@ -27,6 +29,9 @@ module Spree
         image/webp
         application/msword
         application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        application/vnd.ms-excel
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        application/vnd.oasis.opendocument.spreadsheet
       ].freeze
 
       included do

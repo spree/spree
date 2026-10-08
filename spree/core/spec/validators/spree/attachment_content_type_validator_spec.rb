@@ -140,6 +140,43 @@ RSpec.describe Spree::AttachmentContentTypeValidator do
 
       expect(record.errors[:document]).to be_empty
     end
+
+    context 'against the purchase order allowlist' do
+      let(:model_class) do
+        Class.new(Spree::Cart) do
+          def self.name = 'Spree::Cart'
+
+          has_one_attached :document
+          validates_with Spree::AttachmentContentTypeValidator,
+                         attributes: [:document],
+                         in: Spree::Purchase::PurchaseOrder::PO_DOCUMENT_CONTENT_TYPES
+        end
+      end
+
+      it 'accepts an Excel spreadsheet' do
+        attach(docx_bytes, filename: 'po.xlsx',
+                           content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet').validate
+
+        expect(record.errors[:document]).to be_empty
+      end
+
+      it 'accepts a legacy Excel spreadsheet' do
+        ole = +"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1".b
+        ole << ("\x00" * 5000).b
+
+        attach(ole, filename: 'po.xls', content_type: 'application/vnd.ms-excel').validate
+
+        expect(record.errors[:document]).to be_empty
+      end
+
+      # Plain text has no signature, so a CSV cannot be told apart from any
+      # other unidentified file without trusting its name.
+      it 'rejects a CSV file' do
+        attach("po_number,sku,quantity\nPO-1,A1,3\n", filename: 'po.csv', content_type: 'text/csv').validate
+
+        expect(record.errors[:document]).to be_present
+      end
+    end
   end
 
   describe 'when the allowlist is empty' do

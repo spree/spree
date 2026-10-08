@@ -229,3 +229,17 @@ export function buildOrderItemsPayload(items: OrderEditItemValues[]): OrderItems
 
   return payload
 }
+
+/** What a purchase order plausibly arrives as — mirrors the server allowlist. */
+export const PO_DOCUMENT_ACCEPT = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/heic',
+  'image/webp',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.oasis.opendocument.spreadsheet',
+].join(',')

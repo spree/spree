@@ -2723,7 +2723,7 @@
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
           "document": "Documento de orden de compra",
-          "document_help": "PDF, imagen o archivo de Word, hasta 10 MB.",
+          "document_help": "PDF, imagen, documento de Word u hoja de cálculo, hasta 10 MB.",
           "download_failed": "No se pudo descargar la orden de compra",
           "save_failed": "No se pudo guardar la orden de compra",
           "title": "Orden de compra"

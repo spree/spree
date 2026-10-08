@@ -2936,7 +2936,7 @@
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
           "document": "Bestelldokument",
-          "document_help": "PDF-, Bild- oder Word-Datei, bis zu 10 MB.",
+          "document_help": "PDF, Bild, Word-Dokument oder Tabelle, bis zu 10 MB.",
           "download_failed": "Die Bestellung konnte nicht heruntergeladen werden",
           "save_failed": "Die Bestellung konnte nicht gespeichert werden",
           "title": "Bestellung des Kunden"

@@ -2964,7 +2964,7 @@
         "priced_by": "Cena z {{name}}",
         "purchase_order": {
           "document": "Dokument zamówienia zakupu",
-          "document_help": "Plik PDF, obraz lub dokument Word, do 10 MB.",
+          "document_help": "Plik PDF, obraz, dokument Word lub arkusz kalkulacyjny, do 10 MB.",
           "download_failed": "Nie udało się pobrać zamówienia zakupu",
           "save_failed": "Nie udało się zapisać zamówienia zakupu",
           "title": "Zamówienie zakupu"
