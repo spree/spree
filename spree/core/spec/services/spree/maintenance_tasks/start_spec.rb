@@ -53,6 +53,47 @@ RSpec.describe Spree::MaintenanceTasks::Start do
 
   # Two runs of one task would race each other over the same records, and
   # their cursors would leapfrog.
+  # A typo or a stale client must get told which parameter is wrong, and a
+  # key naming one of the task's own internals must never reach it.
+  it 'refuses an argument the task does not declare' do
+    result = described_class.call(task_name: 'StartSpecTask', arguments: { 'label' => 'x', 'run' => 'x' })
+
+    expect(result).to be_failure
+    expect(result.error.to_s).to include('no parameter named run')
+    expect(Spree::MaintenanceTaskRun.count).to eq(0)
+  end
+
+  describe 'an upgrade step from a release already completed' do
+    before { Spree::UpgradeRecord.stamp!('6.0', source: 'walk') }
+
+    let(:step) { Spree::Upgrade.find_step('migrate_capture_methods') }
+
+    # Re-running a completed conversion is how an upgrade damages data; the
+    # dashboard hides these steps, and the API has to refuse them too.
+    it 'is refused from the API and the dashboard' do
+      %w[api dashboard].each do |initiated_via|
+        result = described_class.call(task_name: step['task_class'], initiated_via: initiated_via)
+
+        expect(result).to be_failure, "#{initiated_via} was allowed"
+      end
+    end
+
+    it 'is refused through the generic step runner too' do
+      released = Spree::Upgrade.superseded_steps.find { |candidate| candidate['task'] }
+      result = described_class.call(task_name: 'Spree::MaintenanceTasks::UpgradeStep',
+                                    arguments: { 'step_id' => released['id'] }, initiated_via: 'api')
+
+      expect(result).to be_failure
+    end
+
+    # The command line is where an operator deliberately re-runs a step.
+    it 'stays available from the command line' do
+      result = described_class.call(task_name: step['task_class'], initiated_via: 'cli')
+
+      expect(result).to be_success
+    end
+  end
+
   it 'refuses a second run while one is in flight' do
     start
 

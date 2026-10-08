@@ -59,6 +59,12 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       expect(response).to have_http_status(:unprocessable_content)
     end
 
+    it 'rejects an argument the task does not declare' do
+      post :create, params: { task_name: 'TestMaintenance::Runs', arguments: { label: 'x', nope: '1' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'rejects a task that is not registered' do
       post :create, params: { task_name: 'Nope::Task' }
 

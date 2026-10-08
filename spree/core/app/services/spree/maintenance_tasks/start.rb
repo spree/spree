@@ -24,6 +24,13 @@ module Spree
         return failure(nil, unknown_task_error(task_name)) if task_class.nil?
 
         arguments = (arguments || {}).stringify_keys
+        unknown = arguments.keys - task_class.attribute_names
+        return failure(nil, unknown_arguments_error(unknown)) if unknown.any?
+
+        if initiated_via.to_s.in?(%w[api dashboard]) && superseded_step?(task_class, arguments)
+          return failure(nil, superseded_error(task_name))
+        end
+
         task = task_class.new(arguments)
         return failure(task, task.errors) unless task.valid?
 
@@ -77,6 +84,16 @@ module Spree
       # One run per task at a time. Checked rather than locked: the loser of a
       # genuine race is refused by the runner when it loads the row, so the
       # cost of the gap is a logged no-op rather than two writers.
+      # Upgrade steps of a release this installation already completed. The
+      # dashboard never offers them; the command line still runs them, since
+      # that is where an operator deliberately repeats a step.
+      def superseded_step?(task_class, arguments)
+        Spree::Upgrade.superseded_steps.any? do |step|
+          step['task_class'] == task_class.name ||
+            (task_class <= Spree::MaintenanceTasks::UpgradeStep && step['id'] == arguments['step_id'])
+        end
+      end
+
       def active_run_for(task_name)
         Spree::MaintenanceTaskRun.active.find_by(task_name: task_name)
       end
@@ -90,6 +107,14 @@ module Spree
 
       def unknown_task_error(task_name)
         errors_for(:task_name, "#{task_name} is not a registered maintenance task")
+      end
+
+      def unknown_arguments_error(names)
+        errors_for(:arguments, "the task takes no parameter named #{names.to_sentence}")
+      end
+
+      def superseded_error(task_name)
+        errors_for(:base, "#{task_name} belongs to a release this store has already completed")
       end
 
       def missing_csv_error
