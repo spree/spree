@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Seller::MeController, type: :controller do
     rules = json_response['permissions']
     expect(rules).to be_present
     expect(rules).to include(
-      a_hash_including('allow' => true, 'subjects' => include('Spree::Product'))
+      a_hash_including('allow' => true, 'subjects' => include('product'))
     )
   end
 

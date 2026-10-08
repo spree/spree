@@ -92,7 +92,7 @@ module Spree
               properties: {
                 allow: { type: :boolean, description: 'true for `can`, false for `cannot`' },
                 actions: { type: :array, items: { type: :string }, description: 'Action names, e.g. ["read", "update"] or ["manage"]' },
-                subjects: { type: :array, items: { type: :string }, description: 'Subject class names, e.g. ["Spree::Product"] or ["all"]' },
+                subjects: { type: :array, items: { type: :string }, description: 'Subject short names, e.g. ["product"] or ["all"]' },
                 has_conditions: { type: :boolean, description: 'True if the server-side rule has per-record conditions. The SPA shows the action optimistically and handles 403 from the API.' }
               },
               required: %w[allow actions subjects has_conditions]

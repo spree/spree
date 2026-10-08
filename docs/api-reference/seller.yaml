@@ -501,201 +501,201 @@ paths:
                   actions:
                   - read
                   subjects:
-                  - Spree::Country
+                  - country
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   subjects:
-                  - Spree::State
+                  - state
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   subjects:
-                  - Spree::Store
+                  - store
                   has_conditions: true
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::Product
+                  - product
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::Variant
+                  - variant
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::OptionType
+                  - option_type
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::OptionValue
+                  - option_value
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::Price
+                  - price
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::PriceList
+                  - price_list
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::PriceRule
+                  - price_rule
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::Catalog
+                  - catalog
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::CatalogProduct
+                  - catalog_product
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::CatalogAssignment
+                  - catalog_assignment
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::CustomField
+                  - custom_field
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::DigitalAsset
+                  - digital_asset
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::Import
+                  - import
                   has_conditions: false
                 - allow: true
                   actions:
                   - read
                   - admin
                   subjects:
-                  - Spree::ImportRow
+                  - import_row
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::Product
+                  - product
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::Variant
+                  - variant
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::OptionType
+                  - option_type
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::OptionValue
+                  - option_value
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::Price
+                  - price
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::PriceList
+                  - price_list
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::PriceRule
+                  - price_rule
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::Catalog
+                  - catalog
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::CatalogProduct
+                  - catalog_product
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::CatalogAssignment
+                  - catalog_assignment
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::CustomField
+                  - custom_field
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::DigitalAsset
+                  - digital_asset
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::Import
+                  - import
                   has_conditions: false
                 - allow: true
                   actions:
                   - manage
                   subjects:
-                  - Spree::ImportRow
+                  - import_row
                   has_conditions: false
                 permission_keys:
                 - read_products
@@ -19034,7 +19034,7 @@ components:
           type: array
           items:
             type: string
-          description: Subject class names, e.g. ["Spree::Product"] or ["all"]
+          description: Subject short names, e.g. ["product"] or ["all"]
         has_conditions:
           type: boolean
           description: True if the server-side rule has per-record conditions. The

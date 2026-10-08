@@ -192,7 +192,7 @@ export interface PermissionRule {
   allow: boolean
   /** Action names, e.g. ["read", "update"] or ["manage"] */
   actions: string[]
-  /** Subject class names, e.g. ["Spree::Product"] or ["all"] */
+  /** Subject short names, e.g. ["product"] or ["all"] */
   subjects: string[]
   /** Whether the server rule has per-record conditions. If true, the action may be denied at the record level and the SPA should expect possible 403. */
   has_conditions: boolean

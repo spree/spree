@@ -1,22 +1,25 @@
 require 'spec_helper'
 
 RSpec.describe Spree::ApiTyped do
-  let(:base) { Class.new { extend Spree::ApiTyped } }
-
-  def named(class_name)
+  def named(class_name, base)
     Class.new(base).tap { |klass| klass.define_singleton_method(:name) { class_name } }
   end
 
   describe '#api_type' do
     it 'uses the leaf inside a Spree family' do
-      expect(named('Spree::FulfillmentProvider::Manual').api_type).to eq('manual')
-      expect(named('Spree::OrderRouting::Strategy::Rules').api_type).to eq('rules')
+      expect(Spree::FulfillmentProvider::Manual.api_type).to eq('manual')
+      expect(Spree::OrderRouting::Strategy::Rules.api_type).to eq('rules')
     end
 
     it "uses the gem's module for a class named after its family" do
-      expect(named('SpreeEasyPost::FulfillmentProvider').api_type).to eq('easy_post')
-      expect(named('SpreeStripe::PayoutProvider').api_type).to eq('stripe')
-      expect(named('SpreeAcmeOms::Strategy').api_type).to eq('acme_oms')
+      expect(named('SpreeEasyPost::FulfillmentProvider', Spree::FulfillmentProvider::Base).api_type).to eq('easy_post')
+      expect(named('SpreeStripe::PayoutProvider', Spree::PayoutProvider::Base).api_type).to eq('stripe')
+      expect(named('SpreeAcmeOms::Strategy', Spree::OrderRouting::Strategy::Base).api_type).to eq('acme_oms')
+    end
+
+    it 'keeps the leaf for any other provider, so nested ones never collide' do
+      expect(named('Spree::FulfillmentProvider::AcmeProvider', Spree::FulfillmentProvider::Base).api_type).to eq('acme_provider')
+      expect(named('MyApp::Shipping::BetaProvider', Spree::FulfillmentProvider::Base).api_type).to eq('beta_provider')
     end
   end
 

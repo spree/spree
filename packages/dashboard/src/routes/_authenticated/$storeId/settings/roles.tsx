@@ -1,5 +1,5 @@
 import type { Role } from '@spree/admin-sdk'
-import { PageHeader, usePermissions } from '@spree/dashboard-core'
+import { PageHeader, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -76,7 +76,7 @@ function RolesSettingsPage() {
         title={t('admin.pages.roles.title')}
         description={t('admin.pages.roles.subtitle')}
         actions={
-          permissions.can('create', 'Spree::Role') && (
+          permissions.can('create', Subject.Role) && (
             <Button onClick={() => openCreate()}>
               <PlusIcon className="size-4" />
               {t('admin.pages.roles.add_cta')}
@@ -200,7 +200,7 @@ function RoleRow({
               key: 'duplicate',
               label: t('admin.actions.duplicate'),
               icon: <CopyIcon className="size-4" />,
-              visible: permissions.can('create', 'Spree::Role'),
+              visible: permissions.can('create', Subject.Role),
               onSelect: onDuplicate,
             },
             {
@@ -211,7 +211,7 @@ function RoleRow({
                 !role.mutable ||
                 role.users_count > 0 ||
                 deleteMutation.isPending ||
-                permissions.cannot('destroy', 'Spree::Role'),
+                permissions.cannot('destroy', Subject.Role),
               onSelect: handleDelete,
             },
           ]}

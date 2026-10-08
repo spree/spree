@@ -526,7 +526,7 @@ If your storefront or webhook receiver reads any of these fields, compare agains
 | `payment_source_type` | Store API payment setup sessions, `payment_setup_session.*` webhooks | `Spree::CreditCard` | `credit_card` |
 | `type` | Custom fields on products, variants, categories and collections | `Spree::CustomFields::ShortText` | removed — read `field_type` (`short_text`) |
 
-The Admin API follows the same rule everywhere: providers and strategies (`fulfillment_provider: 'manual'`, `preferred_order_routing_strategy: 'rules'`), custom field definition `resource_type` (`product`, `category`), tag `taggable_type`, the owner and originator types on records, and filters such as `q[type_eq]=orders`. An integration written against the Admin API preview sends and expects these short names; the [Admin SDK](/developer/sdk/admin/resources) types list them.
+The Admin API follows the same rule everywhere: providers and strategies (`fulfillment_provider: 'manual'`, `preferred_order_routing_strategy: 'rules'`), custom field definition `resource_type` (`product`, `category`), tag `taggable_type`, the owner and originator types on records, the permission subjects `/me` returns (`product`, `category`), and filters such as `q[type_eq]=orders`. An integration written against the Admin API preview sends and expects these short names; the [Admin SDK](/developer/sdk/admin/resources) types list them.
 
 ## Every event is declared
 

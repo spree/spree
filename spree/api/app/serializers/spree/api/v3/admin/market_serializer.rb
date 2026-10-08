@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class MarketSerializer < V3::MarketSerializer
-          typelize tax_provider: [:string, nullable: true, comment: 'Tax provider; null uses the store default. Built-in: internal, recorded_share. Provider gems register more.']
+          typelize tax_provider: [:string, nullable: true, comment: 'Tax provider; null uses the store default. Built-in: internal. Provider gems register more.']
 
           attributes created_at: :iso8601, updated_at: :iso8601
 

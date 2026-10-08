@@ -5,7 +5,7 @@ import { usePermissions } from '../providers/permission-provider'
 interface CanProps {
   /** Action name (e.g. "update", "destroy", "manage") */
   I: ActionName
-  /** Subject class name (e.g. "Spree::Product") */
+  /** Subject short name (e.g. "product") — see `Subject` */
   a: SubjectName
   children: ReactNode
   fallback?: ReactNode
@@ -16,7 +16,7 @@ interface CanProps {
  * can perform `I` on `a`, otherwise renders `fallback` (or nothing).
  *
  * Example:
- *   <Can I="destroy" a="Spree::Product">
+ *   <Can I="destroy" a={Subject.Product}>
  *     <Button onClick={handleDelete}>Delete</Button>
  *   </Can>
  *

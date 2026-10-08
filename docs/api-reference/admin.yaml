@@ -291,7 +291,7 @@ paths:
           const me = await client.me.get()
           if (
             me.permissions.some(
-              (r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'),
+              (r) => r.allow && r.actions.includes('manage') && r.subjects.includes('product'),
             )
           ) {
             // show "Create product" button
@@ -43316,7 +43316,7 @@ components:
           type: array
           items:
             type: string
-          description: Subject class names, e.g. ["Spree::Product"] or ["all"]
+          description: Subject short names, e.g. ["product"] or ["all"]
         has_conditions:
           type: boolean
           description: True if the server-side rule has per-record conditions. The
@@ -47352,8 +47352,8 @@ components:
         tax_provider:
           type: string
           nullable: true
-          description: 'Tax provider; null uses the store default. Built-in: internal,
-            recorded_share. Provider gems register more.'
+          description: 'Tax provider; null uses the store default. Built-in: internal.
+            Provider gems register more.'
       required:
       - id
       - name

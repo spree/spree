@@ -1,4 +1,4 @@
-import { hasVisibleSettingsEntries, i18n, nav } from '@spree/dashboard-core'
+import { hasVisibleSettingsEntries, i18n, nav, Subject } from '@spree/dashboard-core'
 import {
   BanknoteIcon,
   ClipboardCheckIcon,
@@ -50,7 +50,7 @@ nav.add({
   path: '/products',
   icon: TagIcon,
   position: 110,
-  subject: 'Spree::Product',
+  subject: Subject.Product,
 })
 
 nav.add({
@@ -59,7 +59,7 @@ nav.add({
   path: '/orders',
   icon: PackageIcon,
   position: 120,
-  subject: 'Spree::Order',
+  subject: Subject.Order,
 })
 
 // The seller's own books. Two entries rather than one because they answer
