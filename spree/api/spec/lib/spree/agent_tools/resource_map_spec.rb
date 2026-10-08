@@ -62,6 +62,25 @@ RSpec.describe Spree::AgentTools::ResourceMap do
     end
   end
 
+  # Postgres refuses SELECT DISTINCT beside an ORDER BY the select list does
+  # not carry, which is why some controllers turn it off. A search adding it
+  # anyway answered every price query with a 500.
+  describe 'a resource whose controller disables DISTINCT' do
+    it 'carries that through to the map' do
+      expect(described_class.find('prices').distinct?).to be(false)
+    end
+
+    # One controller refusing is enough — whichever sorted first is not an
+    # answer, and products is served by five.
+    it 'refuses when any colliding controller refuses' do
+      expect(described_class.find('products').distinct?).to be(false)
+    end
+
+    it 'leaves it on where no controller objects' do
+      expect(described_class.find('orders').distinct?).to be(true)
+    end
+  end
+
   describe 'a resource narrowed by a scope' do
     it 'narrows through its scope when one is registered' do
       described_class.register(key: 'draft_orders', model_name: 'Spree::Order', scope_name: :drafts,
