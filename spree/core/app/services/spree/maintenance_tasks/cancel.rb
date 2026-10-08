@@ -15,7 +15,9 @@ module Spree
       def call(run:)
         return failure(run, not_cancelable_error(run)) unless run.cancelable?
 
-        if run.running?
+        # A pending pause means a worker is still mid-batch, so it, not this
+        # service, records that the run stopped.
+        if run.running? || run.pausing?
           run.update(status: 'cancelling')
         else
           run.update(status: 'cancelled', ended_at: Time.current)

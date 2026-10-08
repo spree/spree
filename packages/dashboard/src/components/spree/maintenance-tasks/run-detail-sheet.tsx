@@ -23,6 +23,10 @@ import {
 } from '../../../hooks/use-maintenance-tasks'
 import { taskShortName } from '../../../lib/maintenance-tasks'
 
+// Mirrors what the pause service accepts: a run that is working, or one
+// queued with no execution yet to observe a request.
+const PAUSABLE_STATUSES: string[] = ['enqueued', 'interrupted', 'running']
+
 export function RunDetailSheet({
   runId,
   open,
@@ -168,7 +172,7 @@ export function RunDetailSheet({
         {run && (
           <SheetFooter>
             <Can I="update" a={Subject.MaintenanceTaskRun}>
-              {run.status === 'running' && (
+              {PAUSABLE_STATUSES.includes(run.status) && (
                 <Button
                   type="button"
                   variant="outline"

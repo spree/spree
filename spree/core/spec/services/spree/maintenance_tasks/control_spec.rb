@@ -36,6 +36,14 @@ RSpec.describe 'maintenance task run control' do
       end
     end
 
+    context 'while waiting to resume after its time slice' do
+      let(:status) { 'interrupted' }
+
+      it 'pauses immediately, since the queued execution will find it paused' do
+        expect(described_class.call(run: run).value).to be_paused
+      end
+    end
+
     context 'once the run has finished' do
       let(:status) { 'succeeded' }
 
@@ -52,6 +60,15 @@ RSpec.describe 'maintenance task run control' do
     context 'while the runner is working' do
       let(:status) { 'running' }
 
+      it 'asks the runner to stop for good' do
+        expect(described_class.call(run: run).value).to be_cancelling
+      end
+    end
+
+    context 'while a pause is pending' do
+      let(:status) { 'pausing' }
+
+      # The worker is still mid-batch, so only it can say the run stopped.
       it 'asks the runner to stop for good' do
         expect(described_class.call(run: run).value).to be_cancelling
       end

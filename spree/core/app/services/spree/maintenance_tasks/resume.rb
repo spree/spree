@@ -28,7 +28,7 @@ module Spree
         )
 
         if inline
-          ActiveRecord.after_all_transactions_commit { Spree::MaintenanceTasks::RunJob.perform_now(run.id) }
+          ActiveRecord.after_all_transactions_commit { Spree::MaintenanceTasks::RunJob.perform_now(run.id, inline: true) }
         else
           Spree::MaintenanceTasks::RunJob.perform_later(run.id)
         end

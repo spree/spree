@@ -68,7 +68,7 @@ module Spree
       # job up before the row it names is visible.
       def dispatch(run, inline)
         if inline
-          ActiveRecord.after_all_transactions_commit { Spree::MaintenanceTasks::RunJob.perform_now(run.id) }
+          ActiveRecord.after_all_transactions_commit { Spree::MaintenanceTasks::RunJob.perform_now(run.id, inline: true) }
         else
           Spree::MaintenanceTasks::RunJob.perform_later(run.id)
         end

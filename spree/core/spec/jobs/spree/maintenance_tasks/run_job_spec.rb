@@ -14,6 +14,9 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
       # in for an operator clicking the button mid-run.
       cattr_accessor :request_after, default: nil
       cattr_accessor :request_status, default: nil
+      cattr_accessor :seconds_per_item, default: nil
+      cattr_accessor :statuses_seen, default: []
+      cattr_accessor :fail_in, default: nil
 
       supports_dry_run
       collection_batch_size 2
@@ -25,8 +28,19 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
 
       def collection = Spree::Product.order(:id)
 
+      def after_start
+        raise ArgumentError, 'start failed' if self.class.fail_in == :after_start
+      end
+
+      def after_complete
+        raise ArgumentError, 'complete failed' if self.class.fail_in == :after_complete
+      end
+
       def process(product)
         raise ArgumentError, 'boom' if self.class.raise_on == product.id
+
+        self.class.statuses_seen << run.class.where(id: run.id).pick(:status)
+        Timecop.travel(self.class.seconds_per_item.seconds) if self.class.seconds_per_item
 
         return tally(:would_update) if dry_run?
 
@@ -43,6 +57,10 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
     SpecMaintenanceTask.raise_on = nil
     SpecMaintenanceTask.request_after = nil
     SpecMaintenanceTask.request_status = nil
+    SpecMaintenanceTask.seconds_per_item = nil
+    SpecMaintenanceTask.statuses_seen = []
+    SpecMaintenanceTask.fail_in = nil
+    SpecMaintenanceTask.run_time_limit = Spree::MaintenanceTask.run_time_limit
     Spree.maintenance_tasks << 'SpecMaintenanceTask'
   end
 
@@ -211,6 +229,82 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
     end
   end
 
+  describe 'running time' do
+    let!(:products) { create_list(:product, 6, store: store) }
+
+    after { Timecop.return }
+
+    it 'adds each batch once rather than compounding the total' do
+      Timecop.freeze
+      SpecMaintenanceTask.seconds_per_item = 5
+      run = start_run
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload.time_running.to_f).to be_within(1).of(30)
+    end
+  end
+
+  describe 'batch fetching' do
+    let!(:products) { create_list(:product, 3, store: store) }
+
+    it 'never loads the whole collection to see whether it is empty' do
+      unbounded = []
+      callback = lambda do |*, payload|
+        sql = payload[:sql]
+        unbounded << sql if sql.include?(Spree::Product.table_name) && sql.start_with?('SELECT') && !sql.include?('LIMIT') && !sql.include?('COUNT')
+      end
+
+      run = start_run
+      ActiveSupport::Notifications.subscribed(callback, 'sql.active_record') { described_class.perform_now(run.id) }
+
+      expect(unbounded).to be_empty
+    end
+  end
+
+  describe 'a callback that fails' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    %i[after_start after_complete].each do |callback|
+      it "records a failing #{callback} as an error instead of retrying" do
+        SpecMaintenanceTask.fail_in = callback
+        run = start_run
+
+        expect { described_class.perform_now(run.id) }.not_to raise_error
+
+        expect(run.reload).to be_errored
+        expect(run.error_message).to end_with('failed')
+      end
+    end
+  end
+
+  describe 'a run marked cancelled while it works' do
+    let!(:products) { create_list(:product, 4, store: store) }
+
+    it 'stops instead of carrying on and overwriting the cancellation' do
+      SpecMaintenanceTask.request_after = 2
+      SpecMaintenanceTask.request_status = 'cancelled'
+      run = start_run
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload).to be_cancelled
+      expect(SpecMaintenanceTask.processed.size).to eq(2)
+    end
+  end
+
+  describe 'an inline run' do
+    let!(:products) { create_list(:product, 4, store: store) }
+
+    it 'finishes in one go instead of handing the rest to a worker' do
+      SpecMaintenanceTask.run_time_limit = 0.seconds
+      run = start_run(inline: true)
+
+      expect(run.reload).to be_succeeded
+      expect(SpecMaintenanceTask.processed.size).to eq(4)
+    end
+  end
+
   describe 'interruption and resume' do
     include ActiveJob::Continuation::TestHelper
 
@@ -242,6 +336,18 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
       expect(SpecMaintenanceTask.processed).to eq(all_ids)
       expect(run.reload).to be_succeeded
       expect(run.tick_count).to eq(4)
+    end
+
+    it 'reports itself running again once it resumes after its time slice' do
+      SpecMaintenanceTask.run_time_limit = 0.seconds
+      run = start_run
+
+      described_class.perform_later(run.id)
+      # Each execution processes one batch and re-queues the next.
+      5.times { perform_enqueued_jobs if enqueued_jobs.any? }
+
+      expect(run.reload).to be_succeeded
+      expect(SpecMaintenanceTask.statuses_seen.uniq).to eq(['running'])
     end
 
     it 'does not reprocess records that were already applied' do

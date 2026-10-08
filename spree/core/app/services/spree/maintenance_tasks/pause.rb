@@ -13,13 +13,11 @@ module Spree
       # @param run [Spree::MaintenanceTaskRun]
       # @return [Spree::ServiceModule::Base::Result] the run
       def call(run:)
-        return failure(run, not_pausable_error(run)) unless run.enqueued? || run.running?
+        return failure(run, not_pausable_error(run)) unless run.enqueued? || run.interrupted? || run.running?
 
-        if run.enqueued?
-          run.update(status: 'paused')
-        else
-          run.update(status: 'pausing')
-        end
+        # A queued run, including one waiting out its time slice, has no
+        # execution to observe a request, so it pauses outright.
+        run.update(status: run.running? ? 'pausing' : 'paused')
 
         return failure(run, run.errors) if run.errors.any?
 

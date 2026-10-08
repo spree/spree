@@ -17,7 +17,12 @@ module Spree
 
       # A run that fails is recorded as failed; it must not be replayed by the
       # backend behind the operator's back. Resuming is an explicit action.
-      def perform(run_id)
+      #
+      # `inline` is a run executing in the caller's own process — the
+      # upgrade walk and the command line. It holds no worker, so it is not
+      # sliced: handing the remainder to a worker would let the caller report
+      # a step done that has not finished, on a deploy where no worker runs.
+      def perform(run_id, inline: false)
         # Outside the steps on purpose — runs on every execution, resumes
         # included.
         @run = Spree::MaintenanceTaskRun.find_by(id: run_id)
@@ -30,7 +35,10 @@ module Spree
         Spree::Current.store = @run.store
         @task = @task_class.new(@run.arguments.presence || {})
         @task.run = @run
+        @inline = inline
         @execution_started_at = Time.current
+        @time_running_before = @run.time_running.to_f
+        resume_after_time_slice
 
         step :start
         # Seeded from the row rather than from the continuation: the row
@@ -55,6 +63,20 @@ module Spree
         )
         task.after_start
         publish('started')
+      rescue StandardError => e
+        record_error(e)
+      end
+
+      # Continuations skip `start` once it has completed, so an execution
+      # picking up after its time slice would otherwise keep reporting
+      # `interrupted` while it works — and the control services would treat it
+      # as idle. Conditional, so a pause or cancel written while the job sat
+      # in the queue is not overwritten.
+      def resume_after_time_slice
+        return unless run.interrupted?
+
+        run.class.where(id: run.id, status: 'interrupted').update_all(status: 'running', updated_at: Time.current)
+        run.reload
       end
 
       # The collection walk. Batches are fetched by cursor rather than by
@@ -113,6 +135,8 @@ module Spree
         task.after_complete
         write_status('succeeded', ended_at: Time.current, tallies: merged_tallies)
         publish('succeeded')
+      rescue StandardError => e
+        record_error(e)
       end
 
       # CSV rows cursor by row number: the file is re-read on a resume, but
@@ -176,7 +200,6 @@ module Spree
       # executions, which an in-memory batch enumerator cannot do.
       def next_batch(cursor)
         items = task.collection
-        return [] if items.blank?
 
         if items.is_a?(ActiveRecord::Relation)
           scope = items
@@ -213,12 +236,12 @@ module Spree
       # batches would all land inside one interval.
       def check_operator_request
         case run.class.where(id: run.id).pick(:status)
-        when 'pausing'
+        when 'pausing', 'paused'
           write_status('paused', time_running: accumulated_time)
           task.after_pause
           publish('paused')
           @halted = true
-        when 'cancelling'
+        when 'cancelling', 'cancelled'
           write_status('cancelled', ended_at: Time.current, time_running: accumulated_time)
           task.after_cancel
           publish('cancelled')
@@ -237,6 +260,7 @@ module Spree
       end
 
       def check_time_slice(step)
+        return if @inline
         return if Time.current - @execution_started_at < task.class.run_time_limit
 
         write_status('interrupted', time_running: accumulated_time)
@@ -326,10 +350,13 @@ module Spree
         end
       end
 
+      # From the total this execution started with, never the row's current
+      # value: progress rewrites the row every batch, so adding elapsed time
+      # to it would count the same seconds again on each write.
       def accumulated_time
         return run.time_running if @execution_started_at.nil?
 
-        run.time_running + (Time.current - @execution_started_at)
+        @time_running_before + (Time.current - @execution_started_at)
       end
 
       def safe_count
