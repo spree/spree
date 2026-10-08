@@ -51,6 +51,7 @@ The tools are not a mirror of the API's endpoints — there would be hundreds, a
 | Answering with numbers | `describe_reporting`, `query_report` | Revenue, orders and units, sliced by time, product, channel or country — the same figures the dashboard charts show |
 | Doing things | One tool per operation: `orders_cancel`, `fulfillments_mark_delivered`, `products_activate`, `refunds_create`, `price_lists_activate` and around fifty more | Each runs the same workflow the dashboard runs, so validations, emails and webhooks behave identically |
 | Merchandising | `curate_products` | Which products a category, collection, catalog or price list holds |
+| Reading files | MCP resources | Finished exports, and documents attached to records — a buyer's purchase order, a shipping label |
 | Store setup | `create_resource`, `update_resource`, `delete_resource` | Markets, channels, delivery and payment methods, tax rates and the rest of the settings screens |
 
 An agent is only ever shown the tools its key permits, so the list stays small and relevant: a key minted for order operations sees around twenty.

@@ -3,6 +3,7 @@ require 'spree_api'
 require 'mcp'
 
 require 'spree/mcp/exports'
+require 'spree/mcp/attachments'
 require 'spree/mcp/tool_adapter'
 require 'spree/mcp/server'
 require 'spree/mcp/engine'

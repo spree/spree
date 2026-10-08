@@ -30,9 +30,12 @@ module Spree
         search results. You are only offered the tools this credential permits,
         so a tool you cannot see is one this store has not granted.
 
-        A finished export is also an MCP resource. After create_export, read
-        its contents from resources rather than reporting a download path —
-        the path is for the merchant, the resource is for you.
+        Files are MCP resources, not tool results. A finished export is one:
+        after create_export, read its contents from resources rather than
+        reporting a download path — the path is for the merchant, the
+        resource is for you. So are the documents attached to records — a
+        buyer's purchase order, a shipping label — which come back as the
+        file itself for you to read.
       TEXT
 
       class << self
@@ -48,13 +51,14 @@ module Spree
             server_context: { store_id: context.store.id }
           )
 
-          register_exports(server, context)
+          register_resources(server, context)
           server
         end
 
-        # Finished exports, as resources the client may fetch.
+        # The files a client may fetch: finished exports, and the documents
+        # attached to records — a buyer's purchase order, a shipping label.
         #
-        # A tool result has to fit the model's context; an export does not, so
+        # A tool result has to fit the model's context; a file does not, so
         # `create_export` hands back an id rather than a file. Resources are
         # the protocol's answer: the client sees what exists and fetches a
         # body only when it decides to.
@@ -63,13 +67,19 @@ module Spree
         # the store and on what this grant may read — both known only per
         # request. The closure carries the caller, so a resource one
         # credential can see is never offered to another.
-        def register_exports(server, context)
-          server.resources_list_handler { Exports.list(context) }
+        #
+        # The protocol allows one handler of each kind, so the sources are
+        # composed here: each owns which of its records the caller may see,
+        # and each answers only for its own URI scheme.
+        SOURCES = [Exports, Attachments].freeze
+
+        def register_resources(server, context)
+          server.resources_list_handler { SOURCES.flat_map { |source| source.list(context) } }
 
           server.resources_read_handler do |params|
             uri = params[:uri] || params['uri']
-            contents = Exports.read(context, uri)
-            # An export another store owns, or one this grant may not read, is
+            contents = SOURCES.lazy.filter_map { |source| source.read(context, uri) }.first
+            # A file another store owns, or one this grant may not read, is
             # indistinguishable from one that does not exist — the same answer
             # the tools give, so a probe learns nothing either way.
             raise ::MCP::Server::ResourceNotFoundError.new(uri, params) if contents.nil?
