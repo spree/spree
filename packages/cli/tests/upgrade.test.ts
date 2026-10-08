@@ -1,15 +1,38 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { Command } from 'commander'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('execa', () => ({ execa: vi.fn() }))
+
+let projectDir: string
+
+vi.mock('../src/context', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../src/context')>()),
+  detectProject: () => ({ mode: 'docker', projectDir, port: 3000 }),
+}))
+
+vi.mock('../src/commands/add', () => ({
+  APP_DIRS: ['dashboard'],
+  detectPackageManager: () => 'pnpm',
+  generateRouteTree: vi.fn(),
+}))
+
+vi.mock('@clack/prompts', () => ({
+  log: { step: vi.fn(), info: vi.fn(), warn: vi.fn() },
+  note: vi.fn(),
+  confirm: vi.fn(),
+  isCancel: () => false,
+  cancel: vi.fn(),
+}))
 
 import { execa } from 'execa'
 import {
   detectSpreeGems,
   detectSpreePackages,
   packageUpdateArgs,
+  registerUpgradeCommand,
   sdkAdvisory,
 } from '../src/commands/upgrade'
 
@@ -194,5 +217,112 @@ describe('packageUpdateArgs', () => {
     } finally {
       fs.rmSync(projectDir, { recursive: true, force: true })
     }
+  })
+})
+
+describe('spree upgrade', () => {
+  const mockExeca = vi.mocked(execa)
+  let commands: string[]
+
+  // Every docker and package-manager call goes through execa; record them in
+  // order, leaving out the read-only probes (`compose ps`, `bundle list`, …).
+  function routeExeca({ failOn }: { failOn?: string } = {}): void {
+    mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
+      if (args.includes('ps')) return { stdout: 'running' }
+      if (args.includes('list')) return { stdout: 'spree\nspree_core\n' }
+      if (args.includes('config')) return { stdout: 'web\n' }
+      const command = `${cmd} ${args.join(' ')}`
+      commands.push(command)
+      if (failOn && command.includes(failOn)) throw new Error(`${failOn} failed`)
+      return { stdout: '' }
+    }) as never)
+  }
+
+  function writeProject({ ejected }: { ejected: boolean }): void {
+    projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-upgrade-run-test-'))
+    fs.writeFileSync(
+      path.join(projectDir, 'docker-compose.yml'),
+      ejected
+        ? 'services:\n  web:\n    build: ./server\n'
+        : 'services:\n  web:\n    image: spree\n',
+    )
+    fs.writeFileSync(
+      path.join(projectDir, 'package.json'),
+      JSON.stringify({ devDependencies: { '@spree/cli': '^3.2.0' } }),
+    )
+    const dashboardDir = path.join(projectDir, 'apps', 'dashboard')
+    fs.mkdirSync(dashboardDir, { recursive: true })
+    fs.writeFileSync(
+      path.join(dashboardDir, 'package.json'),
+      JSON.stringify({ dependencies: { '@spree/dashboard': '^1.0.0' } }),
+    )
+  }
+
+  async function runUpgrade(argv: string[] = []): Promise<void> {
+    const program = new Command()
+    registerUpgradeCommand(program)
+    await program.parseAsync(['upgrade', '--yes', ...argv], { from: 'user' })
+  }
+
+  beforeEach(() => {
+    commands = []
+    routeExeca()
+  })
+
+  afterEach(() => {
+    mockExeca.mockReset()
+    fs.rmSync(projectDir, { recursive: true, force: true })
+  })
+
+  it('bumps the packages after the gems and before migrations and backfills on an ejected project', async () => {
+    writeProject({ ejected: true })
+
+    await runUpgrade()
+
+    expect(commands).toEqual([
+      'docker compose exec web bundle update spree spree_core',
+      'pnpm update @spree/cli',
+      'pnpm update @spree/dashboard',
+      'docker compose exec web bin/rails spree:install:migrations db:migrate',
+      'docker compose exec web bin/rake spree:upgrade',
+      'docker compose restart web',
+    ])
+  })
+
+  it('bumps the packages after the image pull and before the migrating recreate on an image-based project', async () => {
+    writeProject({ ejected: false })
+
+    await runUpgrade()
+
+    expect(commands).toEqual([
+      'docker compose pull',
+      'pnpm update @spree/cli',
+      'pnpm update @spree/dashboard',
+      'docker compose up -d --no-deps web',
+      'docker compose up -d --wait',
+      'docker compose exec web bin/rake spree:upgrade',
+    ])
+  })
+
+  it('has already bumped the packages when a backfill fails', async () => {
+    writeProject({ ejected: true })
+    routeExeca({ failOn: 'spree:upgrade' })
+
+    await expect(runUpgrade()).rejects.toThrow(/spree:upgrade failed/)
+
+    expect(commands).toContain('pnpm update @spree/dashboard')
+    expect(commands.at(-1)).toBe('docker compose exec web bin/rake spree:upgrade')
+  })
+
+  it('runs only the rake task with --plan or --step', async () => {
+    writeProject({ ejected: true })
+
+    await runUpgrade(['--plan'])
+    await runUpgrade(['--step', 'channels'])
+
+    expect(commands).toEqual([
+      'docker compose exec -e DRY_RUN=1 web bin/rake spree:upgrade',
+      'docker compose exec -e STEP=channels web bin/rake spree:upgrade',
+    ])
   })
 })

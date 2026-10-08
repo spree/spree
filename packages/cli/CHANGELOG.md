@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 3.2.1
+
+### Patch Changes
+
+- [#14843](https://github.com/spree/spree/pull/14843) [`6ff684e`](https://github.com/spree/spree/commit/6ff684e20192d4a29b08cb63f356248705d162ec) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` now updates the `@spree/*` packages right after the server (gems or image) and before migrations and data backfills, so a failing migration or backfill no longer prevents the `@spree/*` packages from updating.
+
 ## 3.2.0
 
 ### Minor Changes
