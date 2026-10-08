@@ -17,7 +17,7 @@ module Spree
         # Empty -> falls back to the Store-level preference. Both are `nullable`
         # so a blank write stays nil (inherit) rather than coercing to "" or
         # false, while an explicit value remains a channel override.
-        preference :storefront_access, :string, default: nil, nullable: true
+        preference :storefront_access, :string, default: nil, nullable: true, choices: STOREFRONT_ACCESS
         preference :guest_checkout, :boolean, default: nil, nullable: true
 
         validate :storefront_access_must_be_valid

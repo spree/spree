@@ -42,6 +42,17 @@ module Spree::Preferences::Preferable
     value
   end
 
+  # The record class an `of: :id` preference points at. Declared as a class
+  # name or a block, so a declaration never loads another model, nor fixes a
+  # configurable class like `Spree.customer_class`, at class load.
+  #
+  # @param definition [Hash] a preference definition
+  # @return [Class]
+  def self.preference_model(definition)
+    model = definition[:model]
+    model.respond_to?(:call) ? model.call : model.to_s.constantize
+  end
+
   def get_preference(name)
     has_preference! name
     public_send(:"preferred_#{name}")
@@ -183,6 +194,7 @@ module Spree::Preferences::Preferable
       value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
     end
     value = convert_preference_value(value, definition[:type], nullable: definition[:nullable])
+    value = cast_preference_contents(value, definition)
     # Decimals and times are kept in the string form JSON stores, so a record
     # read back from the database and one just written compare equal and
     # setting the same value is not a change. The reader restores them.
@@ -190,6 +202,81 @@ module Spree::Preferences::Preferable
 
     Spree::Deprecation.warn("`#{name}` is deprecated. #{definition[:deprecated]}") if definition[:deprecated]
     value
+  end
+
+  # Casts what a typed `:array` or `:hash` holds to its declared item type, in
+  # the form JSON stores. A value that does not cast is left as it came, so
+  # validation can name it rather than a silent zero hiding it.
+  def cast_preference_contents(value, definition)
+    case definition[:type]
+    when :array
+      case definition[:of]
+      when nil then value
+      when :id then decode_preference_ids(value, definition)
+      when :object then value.map { |item| cast_preference_object(item, definition[:properties]) }
+      else split_preference_list(value).map { |item| cast_preference_item(item, definition[:of]) }
+      end
+    when :hash
+      return value unless definition[:values] && value.is_a?(Hash)
+
+      value.to_h do |key, item|
+        key = definition[:keys] == :currency ? key.to_s.upcase : key.to_s
+        [key, cast_preference_item(item, definition[:values])]
+      end
+    else
+      value
+    end
+  end
+
+  # A comma-separated string is a list too: what a plain text field sends.
+  def split_preference_list(values)
+    values.flat_map { |item| item.is_a?(String) ? item.split(',') : [item] }
+          .map { |item| item.is_a?(String) ? item.strip : item }
+          .reject { |item| item.respond_to?(:empty?) && item.empty? }
+  end
+
+  def cast_preference_item(value, item_type)
+    case item_type
+    when :string then value.to_s
+    when :integer then Integer(value.to_s, 10, exception: false) || value
+    when :decimal, :money then BigDecimal(value.to_s, exception: false)&.as_json || value
+    when :boolean then ActiveModel::Type::Boolean.new.cast(value)
+    else value
+    end
+  end
+
+  def cast_preference_object(item, properties)
+    return item unless item.respond_to?(:to_h) && !item.is_a?(Array)
+
+    item.to_h.stringify_keys.slice(*properties.keys.map(&:to_s)).to_h do |key, value|
+      [key, cast_preference_item(value, properties[key.to_sym])]
+    end
+  end
+
+  # Turns a list of record ids into the raw primary keys the preference
+  # stores. A prefixed id must carry the declared model's prefix — a
+  # channel's id never decodes into a market id — and every id must belong to
+  # the record's scope, so a rule cannot point at another store's records.
+  #
+  # @raise [ActiveRecord::RecordNotFound] naming the ids that were not found
+  def decode_preference_ids(values, definition)
+    model = Spree::Preferences::Preferable.preference_model(definition)
+    prefix = "#{model._prefix_id_prefix}_"
+    ids = split_preference_list(values).map(&:to_s).map do |id|
+      next id unless Spree::PrefixedId.prefixed_id?(id)
+
+      id.start_with?(prefix) ? Spree::PrefixedId.decode_prefixed_id(id).to_s : id
+    end
+    return ids if ids.empty?
+
+    relation = definition[:scope] ? definition[:scope].call(self) : model
+    found = relation.where(id: ids.reject { |id| Spree::PrefixedId.prefixed_id?(id) }).pluck(:id).map(&:to_s).to_set
+    missing = ids.reject { |id| found.include?(id) }
+    if missing.any?
+      raise ActiveRecord::RecordNotFound.new("Couldn't find #{model.name} with id=#{missing.join(',')}", model.name)
+    end
+
+    ids
   end
 
   # Assigns a new hash rather than calling the store accessor's writer, which

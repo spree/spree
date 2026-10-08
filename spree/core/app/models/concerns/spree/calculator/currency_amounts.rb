@@ -13,7 +13,7 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        preference :amounts, :hash, default: {}
+        preference :amounts, :hash, keys: :currency, values: :money, default: {}
       end
 
       # The amount this calculator quotes for a currency: the per-currency

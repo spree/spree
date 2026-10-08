@@ -58,6 +58,23 @@ module Spree
         @preference_schema || []
       end
 
+      # Whether the declarations could be read — an empty {#preference_schema}
+      # also stands in for one that could not be computed before the database
+      # was up.
+      def preference_schema_computed?
+        preference_schema
+        !@preference_schema.nil?
+      end
+
+      # The JSON Schema of this class's `preferences` object (see
+      # {Spree::PreferenceSchema::JsonSchema}). Memoized like
+      # {#preference_schema}, and retried while that one could not be computed.
+      #
+      # @return [Hash, nil]
+      def preference_json_schema
+        @preference_json_schema ||= Spree::PreferenceSchema::JsonSchema.for(self)
+      end
+
       # Wire-safe variant of `preference_schema` with `:password`
       # defaults nilled out. A gateway author can set a non-empty
       # default for a `:password` preference; without this redaction the
@@ -154,6 +171,9 @@ module Spree
       #   relation builder; defaults to the unscoped `klass`.
       # @return [Proc] suitable for the `parse_on_set:` preference option.
       def normalize_id_preference(klass: nil, scope: nil)
+        Spree::Deprecation.warn(
+          '`normalize_id_preference` is deprecated. Declare the list as `preference :name, :array, of: :id, model:, scope:`.'
+        )
         lambda do |values, owner = nil|
           raw = Array(values).flat_map { |v| v.to_s.split(',') }.compact_blank.map(&:strip)
           next raw unless klass

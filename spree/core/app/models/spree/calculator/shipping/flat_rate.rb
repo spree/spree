@@ -7,7 +7,7 @@ module Spree
       # @deprecated Together with the single `amount`, superseded by the
       #   per-currency `amounts` hash; kept as the fallback for its own
       #   currency so upgraded stores quote unchanged.
-      preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+      preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
       preference :minimum_item_total, :money, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
       preference :maximum_item_total, :money, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'

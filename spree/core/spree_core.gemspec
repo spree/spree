@@ -49,6 +49,7 @@ Gem::Specification.new do |s|
   # touching a JSON column raises ArgumentError. Rails' bug, not ours — unpin
   # once activesupport passes those options as keywords.
   s.add_dependency 'json', '< 3'
+  s.add_dependency 'json_schemer', '~> 2.4'
   s.add_dependency 'jwt', '~> 3.1'
   s.add_dependency 'liquid', '~> 5.14'
   s.add_dependency 'money', '~> 6.13'

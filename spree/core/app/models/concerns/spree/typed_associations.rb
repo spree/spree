@@ -81,7 +81,7 @@ module Spree
       preferences&.each do |key, value|
         next unless record.has_preference?(key.to_sym)
 
-        record.set_preference(key.to_sym, decode_preference_value(key, value))
+        record.set_preference(key.to_sym, value)
       end
       record.assign_calculator_attributes(calculator) if calculator.present? && record.respond_to?(:assign_calculator_attributes)
 
@@ -99,17 +99,6 @@ module Spree
       # copied onto the owner, or the caller learns only that something failed.
       e.record.errors.full_messages.each { |message| errors.add(:base, message) }
       raise
-    end
-
-    # Decode `*_ids` array preferences (`customer_group_ids`, `user_ids`,
-    # …) from prefixed strings to raw PKs. Plain-scalar / non-id
-    # preferences pass through unchanged.
-    def decode_preference_value(key, value)
-      return value unless key.to_s.end_with?('_ids') && value.is_a?(Array)
-
-      value.map do |v|
-        Spree::PrefixedId.prefixed_id?(v) ? Spree::PrefixedId.decode_prefixed_id(v) : v
-      end
     end
 
     def find_or_build_typed_association_row(collection, row)

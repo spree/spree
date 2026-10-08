@@ -4,7 +4,7 @@ module Spree
       include Spree::Calculator::CurrencyAmounts
 
       preference :amount, :money, default: 0
-      preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+      preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
       def self.description
         I18n.t('spree.shipping_flat_rate_per_item')
