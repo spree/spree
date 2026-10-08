@@ -91,7 +91,14 @@ function ProductForm({ product }: { product: Product }) {
   const router = useRouter()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
-  const { data: mediaResponse } = useProductMedia(productId)
+  const {
+    data: mediaResponse,
+    refetch: refetchMedia,
+    isFetching: mediaRefetching,
+    isRefetchError: mediaRefetchFailed,
+  } = useProductMedia(productId)
+  // Same query as the page's, read here for its refetch state only.
+  const { isFetching: productRefetching } = useProduct(productId)
 
   const mediaItems = mediaResponse?.data
 
@@ -131,13 +138,24 @@ function ProductForm({ product }: { product: Product }) {
   // like deleting a media item) would otherwise overwrite the merchant's
   // unsaved edits. After the save round-trip itself, RHF's submission
   // already cleared isDirty, so the post-save refetch still re-hydrates.
+  //
+  // Also wait while the product or its media is refetching (a retry
+  // included): after a save the media list can land first, and resetting
+  // then would pair it with the pre-save product and put the old values
+  // back. The effect re-runs once both queries settle.
+  //
+  // A failed media refetch leaves the pre-save list cached, and refilling
+  // from it would drop new uploads and library picks — so the form keeps its
+  // own media then, while the product's server-assigned values (variant ids,
+  // slugs) still land.
   useEffect(() => {
-    if (form.formState.isDirty) return
-    form.reset({
+    if (form.formState.isDirty || productRefetching || mediaRefetching) return
+    const values = {
       ...productToFormValues(product, mediaItems),
       ...extensionFormValues('product', product),
-    })
-  }, [product, mediaItems, form])
+    }
+    form.reset(mediaRefetchFailed ? { ...values, media: form.getValues('media') } : values)
+  }, [product, mediaItems, productRefetching, mediaRefetching, mediaRefetchFailed, form])
 
   // Media-only hydration that bypasses the isDirty guard for the
   // already-empty case. Scenario: page mounts with mediaResponse still
@@ -197,32 +215,31 @@ function ProductForm({ product }: { product: Product }) {
       // hydration effect would otherwise keep isDirty true forever (since
       // we then skip the refetch's reset).
       //
-      // Strip the file-transport keys and the UI-only fields from baseline
-      // media so a subsequent save before the mediaResponse refetch lands
-      // can't re-ship them and create a duplicate Asset — `signed_id` would
-      // re-attach the upload, `source_media_id` would place the library file a
-      // second time. The persisted media ids hydrate on the next refetch.
+      // Strip the file-transport keys from baseline media so a second save
+      // can't re-ship them and create a duplicate — `signed_id` would
+      // re-attach the upload, `source_media_id` would place the library file
+      // a second time. Previews stay, so tiles keep their image meanwhile.
       const baseline: ProductFormValues = {
         ...data,
         // `data` is the parsed (extension-stripped) shape — put extension
         // values back so the reset doesn't blank their inputs pre-refetch.
         ...extensionValues,
         media: (data.media ?? []).map(
-          ({
-            signed_id: _sid,
-            source_media_id: _smid,
-            poster_signed_id: _psid,
-            previewUrl: _p,
-            fullPreviewUrl: _fp,
-            posterUrl: _pu,
-            videoUrl: _vu,
-            downloadUrl: _du,
-            uploadId: _u,
-            ...rest
-          }) => rest,
+          ({ signed_id: _sid, source_media_id: _smid, poster_signed_id: _psid, ...rest }) => rest,
         ),
       }
       form.reset(baseline)
+
+      // New uploads and library picks gain their ids only in the persisted
+      // list. The save's own invalidation refetch can land while the form is
+      // still dirty — the hydration effect skips it, and an identical later
+      // refetch never re-runs that effect — so read it here. Applied only if
+      // the merchant hasn't touched media since, and only from a successful
+      // read: a failed refetch keeps the stale list in `data`.
+      const mediaRefetch = await refetchMedia()
+      if (mediaRefetch.status === 'success' && !form.formState.dirtyFields.media) {
+        form.resetField('media', { defaultValue: mediaRefetch.data.data.map(mediaToFormValues) })
+      }
       toastManager.add({ type: 'success', title: t('admin.messages.product_saved') })
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
