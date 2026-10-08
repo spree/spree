@@ -498,6 +498,7 @@ Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
 
 ### I18n
 
+- A workflow failure symbol's message goes under `spree.errors.workflow.<symbol>` (read via `Spree::Workflow.error_message`)
 - Use `I18n.t('spree.<key>')` with the full key for translations — `Spree.t` is deprecated (see `docs/plans/6.0-translations-in-core.md`)
 - Before removing a translation key `i18n-tasks unused` reports, check it is not passed around as a string or built from a value (`"spree.#{name}"`) — the checker cannot see either
 - Keep translations in `config/locales/en.yml` — no duplication across files

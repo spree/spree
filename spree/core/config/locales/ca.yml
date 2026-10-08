@@ -457,6 +457,14 @@ ca:
         invalid_order_routing_strategy: no és una estratègia d'encaminament de comandes registrada
         store_association_can_not_be_changed: L'associació de botiga no es pot canviar
         store_is_already_set: La botiga ja està definida
+      workflow:
+        gift_card_already_redeemed: La targeta de regal ja s'ha bestreta.
+        gift_card_customer_not_logged_in: La targeta de regal no es pot aplicar amb un usuari convidat.
+        gift_card_expired: La targeta de regal ha caducat.
+        gift_card_mismatched_currency: La targeta de regal no es pot aplicar amb la divisa actual.
+        gift_card_mismatched_customer: Aquesta targeta de regal està associada a un altre usuari.
+        gift_card_using_store_credit_error: No podeu aplicar la targeta de regal després d'haver aplicat el crèdit de botiga.
+        remove_gift_card_on_completed_order_error: No podeu eliminar la targeta de regal després de fer la comanda
     expired: Caducat
     export_mailer:
       export_done:
@@ -472,15 +480,9 @@ ca:
     gateway: mitjà
     gateway_error: Error en el mitjà
     gift_card: Targeta de regal
-    gift_card_already_redeemed: La targeta de regal ja s'ha bestreta.
     gift_card_applied: La targeta de regal s'ha aplicat correctament a la vostra comanda!
-    gift_card_customer_not_logged_in: La targeta de regal no es pot aplicar amb un usuari convidat.
-    gift_card_expired: La targeta de regal ha caducat.
-    gift_card_mismatched_currency: La targeta de regal no es pot aplicar amb la divisa actual.
-    gift_card_mismatched_customer: Aquesta targeta de regal està associada a un altre usuari.
     gift_card_not_found: No s'ha trobat la targeta de regal.
     gift_card_removed: La targeta de regal s'ha eliminat correctament de la vostra comanda
-    gift_card_using_store_credit_error: No podeu aplicar la targeta de regal després d'haver aplicat el crèdit de botiga.
     height: Altura
     i18n:
       this_file_language: Català (CA)
@@ -607,7 +609,6 @@ ca:
     refund_amount: Import del reemborsament
     registration: Registre
     remove: Eliminar
-    remove_gift_card_on_completed_order_error: No podeu eliminar la targeta de regal després de fer la comanda
     resellable: Revendible
     resend: Tornar a enviar
     response_code: Codi de resposta

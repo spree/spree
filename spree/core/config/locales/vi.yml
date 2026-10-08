@@ -534,6 +534,14 @@ vi:
         invalid_order_routing_strategy: không phải là chiến lược định tuyến đơn hàng đã đăng ký
         store_association_can_not_be_changed: Không thể thay đổi liên kết cửa hàng
         store_is_already_set: Cửa hàng đã được đặt
+      workflow:
+        gift_card_already_redeemed: Thẻ quà tặng đã được sử dụng.
+        gift_card_customer_not_logged_in: Không thể áp dụng thẻ quà tặng với người dùng khách.
+        gift_card_expired: Thẻ quà tặng đã hết hạn.
+        gift_card_mismatched_currency: Không thể áp dụng thẻ quà tặng với tiền tệ hiện tại.
+        gift_card_mismatched_customer: Thẻ quà tặng này gắn với người dùng khác.
+        gift_card_using_store_credit_error: Bạn không thể áp dụng thẻ quà tặng sau khi đã áp dụng tín dụng cửa hàng.
+        remove_gift_card_on_completed_order_error: Bạn không thể gỡ thẻ quà tặng sau khi đơn hàng đã được đặt
     expired: Đã hết hạn
     export_mailer:
       export_done:
@@ -549,15 +557,9 @@ vi:
     gateway: Gateway
     gateway_error: Lỗi Gateway
     gift_card: Thẻ quà tặng
-    gift_card_already_redeemed: Thẻ quà tặng đã được sử dụng.
     gift_card_applied: Thẻ quà tặng đã được áp dụng thành công cho đơn hàng của bạn!
-    gift_card_customer_not_logged_in: Không thể áp dụng thẻ quà tặng với người dùng khách.
-    gift_card_expired: Thẻ quà tặng đã hết hạn.
-    gift_card_mismatched_currency: Không thể áp dụng thẻ quà tặng với tiền tệ hiện tại.
-    gift_card_mismatched_customer: Thẻ quà tặng này gắn với người dùng khác.
     gift_card_not_found: Không tìm thấy thẻ quà tặng.
     gift_card_removed: Thẻ quà tặng đã được gỡ thành công khỏi đơn hàng của bạn
-    gift_card_using_store_credit_error: Bạn không thể áp dụng thẻ quà tặng sau khi đã áp dụng tín dụng cửa hàng.
     height: Cao
     i18n:
       this_file_language: tiếng Việt (VN)
@@ -678,7 +680,6 @@ vi:
     refund_amount: Số tiền hoàn lại
     registration: Đăng ký
     remove: Xóa
-    remove_gift_card_on_completed_order_error: Bạn không thể gỡ thẻ quà tặng sau khi đơn hàng đã được đặt
     resellable: Có thể bán lại
     resend: Gửi lại
     response_code: Mã phản hồi

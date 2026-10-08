@@ -51,12 +51,12 @@ module Spree
               end
 
               if gift_card.expired?
-                render_error(code: ERROR_CODES[:gift_card_expired], message: I18n.t('spree.gift_card_expired'), status: :unprocessable_content)
+                render_error(code: ERROR_CODES[:gift_card_expired], message: I18n.t('spree.errors.workflow.gift_card_expired'), status: :unprocessable_content)
                 return
               end
 
               if gift_card.redeemed?
-                render_error(code: ERROR_CODES[:gift_card_already_redeemed], message: I18n.t('spree.gift_card_already_redeemed'), status: :unprocessable_content)
+                render_error(code: ERROR_CODES[:gift_card_already_redeemed], message: I18n.t('spree.errors.workflow.gift_card_already_redeemed'), status: :unprocessable_content)
                 return
               end
 

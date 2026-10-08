@@ -506,6 +506,14 @@ bg:
         invalid_order_routing_strategy: не е регистрирана стратегия за маршрутизиране на поръчки
         store_association_can_not_be_changed: Връзката с магазина не може да бъде променена
         store_is_already_set: Магазинът вече е зададен
+      workflow:
+        gift_card_already_redeemed: Подаръчната карта вече е използвана.
+        gift_card_customer_not_logged_in: Подаръчната карта не може да бъде приложена от гост.
+        gift_card_expired: Подаръчната карта е изтекла.
+        gift_card_mismatched_currency: Подаръчната карта не може да бъде приложена с текущата валута.
+        gift_card_mismatched_customer: Тази подаръчна карта е свързана с друг потребител.
+        gift_card_using_store_credit_error: Не можете да приложите подаръчната карта, след като сте приложили магазинния кредит.
+        remove_gift_card_on_completed_order_error: Не можете да премахнете подаръчната карта, след като поръчката е направена
     expired: Изтекло
     export_mailer:
       export_done:
@@ -521,15 +529,9 @@ bg:
     gateway: Портал
     gateway_error: Грешка в портала
     gift_card: Подаръчна карта
-    gift_card_already_redeemed: Подаръчната карта вече е използвана.
     gift_card_applied: Подаръчната карта беше успешно приложена към вашата поръчка!
-    gift_card_customer_not_logged_in: Подаръчната карта не може да бъде приложена от гост.
-    gift_card_expired: Подаръчната карта е изтекла.
-    gift_card_mismatched_currency: Подаръчната карта не може да бъде приложена с текущата валута.
-    gift_card_mismatched_customer: Тази подаръчна карта е свързана с друг потребител.
     gift_card_not_found: Подаръчната карта не беше намерена.
     gift_card_removed: Подаръчната карта беше успешно премахната от вашата поръчка
-    gift_card_using_store_credit_error: Не можете да приложите подаръчната карта, след като сте приложили магазинния кредит.
     height: Височина
     i18n:
       this_file_language: Български (BG)
@@ -649,7 +651,6 @@ bg:
     refund_amount: Сума за възстановяване
     registration: Регистрация
     remove: Премахни
-    remove_gift_card_on_completed_order_error: Не можете да премахнете подаръчната карта, след като поръчката е направена
     resellable: За препродажба
     resend: Препрати
     return: върни

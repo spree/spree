@@ -898,6 +898,32 @@ en:
         unknown_scopes: 'contains unknown scopes: %{scopes}'
         unregistered_actor: is not a registered actor class
         variant_product_mismatch: must belong to the same product as the variant
+      workflow:
+        gift_card_already_canceled: The Gift Card has already been canceled.
+        gift_card_already_redeemed: The Gift Card has already been redeemed.
+        gift_card_canceled: The Gift Card has been canceled.
+        gift_card_customer_not_logged_in: Gift Card cannot be applied with guest user.
+        gift_card_expired: The Gift Card has expired.
+        gift_card_held_by_another_order: The Gift Card is being used by another order that is still being placed. Please try again in a few minutes.
+        gift_card_mismatched_currency: Gift Card cannot be applied with current currency.
+        gift_card_mismatched_customer: This gift card is associated with another user.
+        gift_card_no_amount_remaining: The Gift Card has no amount remaining.
+        gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
+        import_has_no_failed_rows: This import has no failed rows to retry.
+        import_mapping_not_completed: The import's column mapping is not complete yet.
+        import_not_mapping: This import is not being mapped.
+        import_not_processing: This import is not processing.
+        invitation_already_accepted: This invitation has already been accepted.
+        invitation_expired: This invitation has expired. Invite them again to send a new one.
+        invitation_invitee_missing: This invitation has no invitee.
+        no_refundable_payments: There is no payment left on this order to refund.
+        not_received: This return cannot be refunded until its items are marked received.
+        nothing_to_refund: There is nothing left to refund on this return.
+        order_canceled: Order canceled
+        refund_amount_negative: The refund amount cannot be negative.
+        refund_amount_required: Enter an amount greater than zero, because the customer is still owed money on this return.
+        refund_exceeds_balance: That is more than the amount still refundable.
+        remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
     exchange_fee_label: Exchange %{number}
     expired: Expired
     export_mailer:
@@ -934,20 +960,10 @@ en:
     gateway: Gateway
     gateway_error: Gateway Error
     gift_card: Gift Card
-    gift_card_already_canceled: The Gift Card has already been canceled.
-    gift_card_already_redeemed: The Gift Card has already been redeemed.
     gift_card_applied: The Gift Card was successfully applied to your order!
-    gift_card_canceled: The Gift Card has been canceled.
-    gift_card_customer_not_logged_in: Gift Card cannot be applied with guest user.
-    gift_card_expired: The Gift Card has expired.
-    gift_card_held_by_another_order: The Gift Card is being used by another order that is still being placed. Please try again in a few minutes.
-    gift_card_mismatched_currency: Gift Card cannot be applied with current currency.
-    gift_card_mismatched_customer: This gift card is associated with another user.
-    gift_card_no_amount_remaining: The Gift Card has no amount remaining.
     gift_card_not_applied: The Gift Card could not be applied.
     gift_card_not_found: The Gift Card was not found.
     gift_card_removed: The Gift Card was successfully removed from your order
-    gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
     guest_checkout_not_allowed: You must be signed in to complete checkout.
     height: Height
     i18n:
@@ -955,7 +971,6 @@ en:
     idempotency_key_reused: This Idempotency-Key has already been used with different request parameters.
     image: Image
     import: Import
-    import_has_no_failed_rows: This import has no failed rows to retry.
     import_mailer:
       greeting: Hi %{user_name},
       import_done:
@@ -963,9 +978,6 @@ en:
         message: Your import has finished. %{completed_count} rows were imported successfully.
         subject: Your import %{import_number} has finished processing
         view_results: View import report
-    import_mapping_not_completed: The import's column mapping is not complete yet.
-    import_not_mapping: This import is not being mapped.
-    import_not_processing: This import is not processing.
     in_stock: In Stock
     inactive: Inactive
     incomplete: Incomplete
@@ -974,9 +986,6 @@ en:
     internal_note: Internal Note
     invalid_password: Invalid password.
     inventory: Inventory
-    invitation_already_accepted: This invitation has already been accepted.
-    invitation_expired: This invitation has expired. Invite them again to send a new one.
-    invitation_invitee_missing: This invitation has no invitee.
     invitation_mailer:
       greeting: Hi %{user_name},
       invitation_accepted:
@@ -1015,10 +1024,7 @@ en:
     no_cc_type: N/A
     no_maximum: No maximum
     no_payment_found: No payment found
-    no_refundable_payments: There is no payment left on this order to refund.
     none: None
-    not_received: This return cannot be refunded until its items are marked received.
-    nothing_to_refund: There is nothing left to refund on this return.
     number: Number
     on_hand: On Hand
     only_active_products_can_be_added_to_cart: Draft and archived products cannot be added to cart, please mark the product as active before.
@@ -1029,7 +1035,6 @@ en:
     options: Options
     or: or
     order: Order
-    order_canceled: Order canceled
     order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
     order_routing:
       strategies:
@@ -1262,14 +1267,10 @@ en:
     reference: Reference
     refund: Refund
     refund_amount: Refund Amount
-    refund_amount_negative: The refund amount cannot be negative.
-    refund_amount_required: Enter an amount greater than zero, because the customer is still owed money on this return.
-    refund_exceeds_balance: That is more than the amount still refundable.
     refunds: Refunds
     registration: Registration
     rejected: Rejected
     remove: Remove
-    remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
     reporting:
       dimensions:
         cart_channel:

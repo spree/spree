@@ -496,6 +496,14 @@ hu:
         invalid_order_routing_strategy: nem regisztrált rendelésirányítási stratégia
         store_association_can_not_be_changed: Az áruház hozzárendelése nem módosítható
         store_is_already_set: Az áruház már be van állítva
+      workflow:
+        gift_card_already_redeemed: Az ajándékkártyát már beváltották.
+        gift_card_customer_not_logged_in: Az ajándékkártya vendég felhasználóval nem érvényesíthető.
+        gift_card_expired: Az ajándékkártya lejárt.
+        gift_card_mismatched_currency: Az ajándékkártya az aktuális pénznemmel nem érvényesíthető.
+        gift_card_mismatched_customer: Ez az ajándékkártya egy másik felhasználóhoz tartozik.
+        gift_card_using_store_credit_error: Az ajándékkártya nem érvényesíthető az áruházi jóváírás alkalmazása után.
+        remove_gift_card_on_completed_order_error: Az ajándékkártya nem távolítható el a rendelés leadása után
     expired: Lejárt
     export_mailer:
       export_done:
@@ -511,15 +519,9 @@ hu:
     gateway: Gateway
     gateway_error: Gateway Error
     gift_card: Ajándékkártya
-    gift_card_already_redeemed: Az ajándékkártyát már beváltották.
     gift_card_applied: Az ajándékkártya sikeresen érvényesítésre került a rendelésén!
-    gift_card_customer_not_logged_in: Az ajándékkártya vendég felhasználóval nem érvényesíthető.
-    gift_card_expired: Az ajándékkártya lejárt.
-    gift_card_mismatched_currency: Az ajándékkártya az aktuális pénznemmel nem érvényesíthető.
-    gift_card_mismatched_customer: Ez az ajándékkártya egy másik felhasználóhoz tartozik.
     gift_card_not_found: Az ajándékkártya nem található.
     gift_card_removed: Az ajándékkártya sikeresen eltávolításra került a rendeléséről
-    gift_card_using_store_credit_error: Az ajándékkártya nem érvényesíthető az áruházi jóváírás alkalmazása után.
     height: Height
     i18n:
       this_file_language: Hungarian (HU)
@@ -660,7 +662,6 @@ hu:
     refund_amount: Visszatérítés összege
     registration: Registration
     remove: Remove
-    remove_gift_card_on_completed_order_error: Az ajándékkártya nem távolítható el a rendelés leadása után
     resellable: Továbbértékesíthető
     resend: Resend
     response_code: Response Code

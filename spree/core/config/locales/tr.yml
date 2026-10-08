@@ -514,6 +514,14 @@ tr:
         invalid_order_routing_strategy: kayıtlı bir sipariş yönlendirme stratejisi değil
         store_association_can_not_be_changed: Mağaza ilişkilendirmesi değiştirilemez
         store_is_already_set: Mağaza zaten ayarlanmış
+      workflow:
+        gift_card_already_redeemed: Hediye Kartı zaten kullanıldı.
+        gift_card_customer_not_logged_in: Hediye Kartı misafir kullanıcıyla uygulanamaz.
+        gift_card_expired: Hediye Kartının süresi doldu.
+        gift_card_mismatched_currency: Hediye Kartı mevcut para birimiyle uygulanamaz.
+        gift_card_mismatched_customer: Bu hediye kartı başka bir kullanıcıyla ilişkilendirilmiş.
+        gift_card_using_store_credit_error: Mağaza kredisini uyguladıktan sonra Hediye Kartını uygulayamazsınız.
+        remove_gift_card_on_completed_order_error: Sipariş verildikten sonra hediye kartını çıkaramazsınız
     expired: Süresi doldu
     export_mailer:
       export_done:
@@ -529,15 +537,9 @@ tr:
     gateway: Yöntem
     gateway_error: Yöntem Hatası
     gift_card: Hediye Kartı
-    gift_card_already_redeemed: Hediye Kartı zaten kullanıldı.
     gift_card_applied: Hediye Kartı siparişinize başarıyla uygulandı!
-    gift_card_customer_not_logged_in: Hediye Kartı misafir kullanıcıyla uygulanamaz.
-    gift_card_expired: Hediye Kartının süresi doldu.
-    gift_card_mismatched_currency: Hediye Kartı mevcut para birimiyle uygulanamaz.
-    gift_card_mismatched_customer: Bu hediye kartı başka bir kullanıcıyla ilişkilendirilmiş.
     gift_card_not_found: Hediye Kartı bulunamadı.
     gift_card_removed: Hediye Kartı siparişinizden başarıyla çıkarıldı
-    gift_card_using_store_credit_error: Mağaza kredisini uyguladıktan sonra Hediye Kartını uygulayamazsınız.
     height: Yükseklik
     i18n:
       this_file_language: Türkçe (TR)
@@ -683,7 +685,6 @@ tr:
     refund_amount: İade Tutarı
     registration: Kayıt
     remove: Kaldır
-    remove_gift_card_on_completed_order_error: Sipariş verildikten sonra hediye kartını çıkaramazsınız
     resellable: Yeniden satılabilir
     resend: Tekrar Gönder
     response_code: Yanıt Kodu

@@ -489,6 +489,14 @@ th:
         invalid_order_routing_strategy: ไม่ใช่กลยุทธ์การกำหนดเส้นทางคำสั่งซื้อที่ลงทะเบียนไว้
         store_association_can_not_be_changed: ไม่สามารถเปลี่ยนแปลงการเชื่อมโยงร้านค้าได้
         store_is_already_set: มีการตั้งค่าร้านค้าไว้แล้ว
+      workflow:
+        gift_card_already_redeemed: บัตรของขวัญนี้ถูกใช้แลกไปแล้ว
+        gift_card_customer_not_logged_in: ไม่สามารถใช้บัตรของขวัญกับผู้ใช้ที่เป็นแขกได้
+        gift_card_expired: บัตรของขวัญหมดอายุแล้ว
+        gift_card_mismatched_currency: ไม่สามารถใช้บัตรของขวัญกับสกุลเงินปัจจุบันได้
+        gift_card_mismatched_customer: บัตรของขวัญนี้เชื่อมโยงกับผู้ใช้รายอื่น
+        gift_card_using_store_credit_error: คุณไม่สามารถใช้บัตรของขวัญหลังจากที่ใช้เครดิตร้านค้าแล้วได้
+        remove_gift_card_on_completed_order_error: คุณไม่สามารถนำบัตรของขวัญออกได้หลังจากที่สั่งซื้อแล้ว
     expired: หมดอายุแล้ว
     export_mailer:
       export_done:
@@ -504,15 +512,9 @@ th:
     gateway: ช่องทางการชำระเงิน
     gateway_error: เกิดข้อผิดพลาดที่ช่องทางการชำระเงิน
     gift_card: บัตรของขวัญ
-    gift_card_already_redeemed: บัตรของขวัญนี้ถูกใช้แลกไปแล้ว
     gift_card_applied: ใช้บัตรของขวัญกับคำสั่งซื้อของคุณเรียบร้อยแล้ว!
-    gift_card_customer_not_logged_in: ไม่สามารถใช้บัตรของขวัญกับผู้ใช้ที่เป็นแขกได้
-    gift_card_expired: บัตรของขวัญหมดอายุแล้ว
-    gift_card_mismatched_currency: ไม่สามารถใช้บัตรของขวัญกับสกุลเงินปัจจุบันได้
-    gift_card_mismatched_customer: บัตรของขวัญนี้เชื่อมโยงกับผู้ใช้รายอื่น
     gift_card_not_found: ไม่พบบัตรของขวัญ
     gift_card_removed: นำบัตรของขวัญออกจากคำสั่งซื้อของคุณเรียบร้อยแล้ว
-    gift_card_using_store_credit_error: คุณไม่สามารถใช้บัตรของขวัญหลังจากที่ใช้เครดิตร้านค้าแล้วได้
     height: สูง
     i18n:
       this_file_language: ภาษาไทย (TH)
@@ -653,7 +655,6 @@ th:
     refund_amount: จำนวนเงินที่คืน
     registration: ลงทะเบียน
     remove: ลบ
-    remove_gift_card_on_completed_order_error: คุณไม่สามารถนำบัตรของขวัญออกได้หลังจากที่สั่งซื้อแล้ว
     resellable: ขายต่อได้
     resend: ส่งใหม่
     response_code: รหัสที่ได้รับ

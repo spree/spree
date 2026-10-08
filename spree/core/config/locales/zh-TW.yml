@@ -550,6 +550,15 @@ zh-TW:
         invalid_order_routing_strategy: 不是已註冊的訂單路由策略
         store_association_can_not_be_changed: 商店關聯無法變更
         store_is_already_set: 商店已設定
+      workflow:
+        gift_card_already_redeemed: 此禮品卡已被兌換。
+        gift_card_customer_not_logged_in: 訪客無法套用禮品卡。
+        gift_card_expired: 此禮品卡已過期。
+        gift_card_mismatched_currency: 禮品卡無法以目前的貨幣套用。
+        gift_card_mismatched_customer: 此禮品卡已與其他使用者建立關聯。
+        gift_card_using_store_credit_error: 套用商店點數後即無法再套用禮品卡。
+        order_canceled: 訂單已取消
+        remove_gift_card_on_completed_order_error: 訂單成立後即無法移除禮品卡
     expired: 已過期
     export_mailer:
       export_done:
@@ -565,15 +574,9 @@ zh-TW:
     gateway: 接口
     gateway_error: 接口錯誤
     gift_card: 禮品卡
-    gift_card_already_redeemed: 此禮品卡已被兌換。
     gift_card_applied: 禮品卡已成功套用至您的訂單！
-    gift_card_customer_not_logged_in: 訪客無法套用禮品卡。
-    gift_card_expired: 此禮品卡已過期。
-    gift_card_mismatched_currency: 禮品卡無法以目前的貨幣套用。
-    gift_card_mismatched_customer: 此禮品卡已與其他使用者建立關聯。
     gift_card_not_found: 找不到此禮品卡。
     gift_card_removed: 禮品卡已成功從您的訂單中移除
-    gift_card_using_store_credit_error: 套用商店點數後即無法再套用禮品卡。
     height: 高度
     i18n:
       this_file_language: 繁體中文 (zh-TW)
@@ -632,7 +635,6 @@ zh-TW:
     options: 選項
     or: 或
     order: 訂單
-    order_canceled: 訂單已取消
     order_routing:
       strategies:
         legacy: 舊版
@@ -736,7 +738,6 @@ zh-TW:
     registration: 註冊
     rejected: 已拒絕
     remove: 移除
-    remove_gift_card_on_completed_order_error: 訂單成立後即無法移除禮品卡
     resellable: 可轉售
     resend: 重寄
     response_code: 回應碼

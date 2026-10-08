@@ -38,7 +38,7 @@ module Spree
             if @invitation.expired?
               return render_error(
                 code: ErrorHandler::ERROR_CODES[:processing_error],
-                message: I18n.t('spree.invitation_expired'),
+                message: I18n.t('spree.errors.workflow.invitation_expired'),
                 status: :unprocessable_content
               )
             end

@@ -91,9 +91,6 @@ module Spree
           if errors.is_a?(ActiveModel::Errors)
             render_validation_error(errors)
           else
-            # The unwrapped value, so a workflow's rejection symbol reaches
-            # the branch that translates it rather than the one that prints
-            # the wrapper.
             render_service_error(errors)
           end
         end

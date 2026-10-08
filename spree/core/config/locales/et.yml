@@ -427,6 +427,14 @@ et:
         invalid_order_routing_strategy: ei ole registreeritud tellimuste suunamise strateegia
         store_association_can_not_be_changed: Poe seost ei saa muuta
         store_is_already_set: Pood on juba määratud
+      workflow:
+        gift_card_already_redeemed: Kinkekaart on juba lunastatud.
+        gift_card_customer_not_logged_in: Kinkekaarti ei saa külaliskasutajaga rakendada.
+        gift_card_expired: Kinkekaart on aegunud.
+        gift_card_mismatched_currency: Kinkekaarti ei saa praeguse valuutaga rakendada.
+        gift_card_mismatched_customer: See kinkekaart on seotud teise kasutajaga.
+        gift_card_using_store_credit_error: Te ei saa kinkekaarti rakendada pärast poekrediidi rakendamist.
+        remove_gift_card_on_completed_order_error: Te ei saa kinkekaarti eemaldada pärast tellimuse esitamist
     expired: Aegunud
     export_mailer:
       export_done:
@@ -442,15 +450,9 @@ et:
     gateway: Lüüs
     gateway_error: Lüüsi viga
     gift_card: Kinkekaart
-    gift_card_already_redeemed: Kinkekaart on juba lunastatud.
     gift_card_applied: Kinkekaart rakendati edukalt teie tellimusele!
-    gift_card_customer_not_logged_in: Kinkekaarti ei saa külaliskasutajaga rakendada.
-    gift_card_expired: Kinkekaart on aegunud.
-    gift_card_mismatched_currency: Kinkekaarti ei saa praeguse valuutaga rakendada.
-    gift_card_mismatched_customer: See kinkekaart on seotud teise kasutajaga.
     gift_card_not_found: Kinkekaarti ei leitud.
     gift_card_removed: Kinkekaart eemaldati edukalt teie tellimuselt
-    gift_card_using_store_credit_error: Te ei saa kinkekaarti rakendada pärast poekrediidi rakendamist.
     height: Kõrgus
     i18n:
       this_file_language: Eesti keel (ET)
@@ -565,7 +567,6 @@ et:
     refund_amount: Tagasimakse summa
     registration: Registreeru või vormista ost külalisena
     remove: Eemalda
-    remove_gift_card_on_completed_order_error: Te ei saa kinkekaarti eemaldada pärast tellimuse esitamist
     resellable: Edasimüüdav
     resend: Saada uuesti
     response_code: Vastuse kood

@@ -539,6 +539,15 @@ lt:
         invalid_order_routing_strategy: nėra registruota užsakymų nukreipimo strategija
         store_association_can_not_be_changed: Parduotuvės sąsajos keisti negalima
         store_is_already_set: Parduotuvė jau nustatyta
+      workflow:
+        gift_card_already_redeemed: Dovanų kortelė jau panaudota.
+        gift_card_customer_not_logged_in: Dovanų kortelės negalima taikyti svečio paskyrai.
+        gift_card_expired: Dovanų kortelė nustojo galioti.
+        gift_card_mismatched_currency: Dovanų kortelės negalima taikyti su dabartine valiuta.
+        gift_card_mismatched_customer: Ši dovanų kortelė susieta su kitu naudotoju.
+        gift_card_using_store_credit_error: Negalite taikyti dovanų kortelės po to, kai pritaikėte parduotuvės kreditą.
+        order_canceled: Užsakymas atšauktas
+        remove_gift_card_on_completed_order_error: Negalite pašalinti dovanų kortelės po to, kai užsakymas buvo pateiktas
     expired: Pasibaigęs
     export_mailer:
       export_done:
@@ -554,15 +563,9 @@ lt:
     gateway: Gateway
     gateway_error: Gateway Klaida
     gift_card: Dovanų kortelė
-    gift_card_already_redeemed: Dovanų kortelė jau panaudota.
     gift_card_applied: Dovanų kortelė sėkmingai pritaikyta jūsų užsakymui!
-    gift_card_customer_not_logged_in: Dovanų kortelės negalima taikyti svečio paskyrai.
-    gift_card_expired: Dovanų kortelė nustojo galioti.
-    gift_card_mismatched_currency: Dovanų kortelės negalima taikyti su dabartine valiuta.
-    gift_card_mismatched_customer: Ši dovanų kortelė susieta su kitu naudotoju.
     gift_card_not_found: Dovanų kortelė nerasta.
     gift_card_removed: Dovanų kortelė sėkmingai pašalinta iš jūsų užsakymo
-    gift_card_using_store_credit_error: Negalite taikyti dovanų kortelės po to, kai pritaikėte parduotuvės kreditą.
     height: Aukštis
     i18n:
       this_file_language: Lietuvių (LT)
@@ -621,7 +624,6 @@ lt:
     options: Kategorijos
     or: arba
     order: Užsakymas
-    order_canceled: Užsakymas atšauktas
     order_routing:
       strategies:
         legacy: Senoji
@@ -725,7 +727,6 @@ lt:
     registration: Registracija
     rejected: Atmestas
     remove: Panaikinti
-    remove_gift_card_on_completed_order_error: Negalite pašalinti dovanų kortelės po to, kai užsakymas buvo pateiktas
     resellable: Perparduodamas
     resend: Pakartotinis
     response_code: Response Code

@@ -551,6 +551,15 @@ fr:
         invalid_order_routing_strategy: n'est pas une stratégie de routage de commande enregistrée
         store_association_can_not_be_changed: L'association de boutique ne peut pas être modifiée
         store_is_already_set: La boutique est déjà définie
+      workflow:
+        gift_card_already_redeemed: La carte cadeau a déjà été utilisée.
+        gift_card_customer_not_logged_in: La carte cadeau ne peut pas être appliquée par un invité.
+        gift_card_expired: La carte cadeau a expiré.
+        gift_card_mismatched_currency: La carte cadeau ne peut pas être appliquée avec la devise actuelle.
+        gift_card_mismatched_customer: Cette carte cadeau est associée à un autre utilisateur.
+        gift_card_using_store_credit_error: Vous ne pouvez pas appliquer la carte cadeau après avoir appliqué l'avoir en boutique.
+        order_canceled: Commande annulée
+        remove_gift_card_on_completed_order_error: Vous ne pouvez pas retirer la carte cadeau après que la commande a été passée
     expired: Expiré
     export_mailer:
       export_done:
@@ -566,15 +575,9 @@ fr:
     gateway: Méthode de paiement
     gateway_error: Erreur de la méthode de paiement
     gift_card: Carte cadeau
-    gift_card_already_redeemed: La carte cadeau a déjà été utilisée.
     gift_card_applied: La carte cadeau a été appliquée avec succès à votre commande !
-    gift_card_customer_not_logged_in: La carte cadeau ne peut pas être appliquée par un invité.
-    gift_card_expired: La carte cadeau a expiré.
-    gift_card_mismatched_currency: La carte cadeau ne peut pas être appliquée avec la devise actuelle.
-    gift_card_mismatched_customer: Cette carte cadeau est associée à un autre utilisateur.
     gift_card_not_found: La carte cadeau est introuvable.
     gift_card_removed: La carte cadeau a été retirée avec succès de votre commande
-    gift_card_using_store_credit_error: Vous ne pouvez pas appliquer la carte cadeau après avoir appliqué l'avoir en boutique.
     height: Taille
     i18n:
       this_file_language: Français (FR)
@@ -633,7 +636,6 @@ fr:
     options: Options
     or: ou
     order: Commande
-    order_canceled: Commande annulée
     order_routing:
       strategies:
         legacy: Hérité
@@ -736,7 +738,6 @@ fr:
     refunds: Remboursements
     registration: Enregistrement
     remove: Supprimer
-    remove_gift_card_on_completed_order_error: Vous ne pouvez pas retirer la carte cadeau après que la commande a été passée
     resellable: Revendable
     resend: Renvoyer
     response_code: Code de réponse

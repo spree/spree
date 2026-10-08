@@ -429,6 +429,18 @@ The whole vocabulary:
 Everything else is ordinary Rails — `ApplicationRecord.transaction`,
 `with_lock`, `if`, `rescue`, `publish_event`.
 
+When a workflow fails with a symbol, such as `:not_active` above, the API
+returns it as a message read from `spree.errors.workflow.<symbol>`. Without a
+translation, the message is the humanized symbol ("Not active"):
+
+```yaml server/config/locales/en.yml
+en:
+  spree:
+    errors:
+      workflow:
+        not_active: This subscription is not active.
+```
+
 Two rules worth internalising:
 
 **Network calls never share a database transaction.** That's what

@@ -504,6 +504,14 @@ el:
         invalid_order_routing_strategy: δεν είναι καταχωρημένη στρατηγική δρομολόγησης παραγγελιών
         store_association_can_not_be_changed: Η συσχέτιση με το κατάστημα δεν μπορεί να αλλάξει
         store_is_already_set: Το κατάστημα έχει ήδη οριστεί
+      workflow:
+        gift_card_already_redeemed: Η δωροκάρτα έχει ήδη εξαργυρωθεί.
+        gift_card_customer_not_logged_in: Η δωροκάρτα δεν μπορεί να εφαρμοστεί από επισκέπτη.
+        gift_card_expired: Η δωροκάρτα έχει λήξει.
+        gift_card_mismatched_currency: Η δωροκάρτα δεν μπορεί να εφαρμοστεί με το τρέχον νόμισμα.
+        gift_card_mismatched_customer: Αυτή η δωροκάρτα συσχετίζεται με άλλον χρήστη.
+        gift_card_using_store_credit_error: Δεν μπορείτε να εφαρμόσετε τη δωροκάρτα αφού έχετε εφαρμόσει την πίστωση καταστήματος.
+        remove_gift_card_on_completed_order_error: Δεν μπορείτε να αφαιρέσετε τη δωροκάρτα μετά την υποβολή της παραγγελίας
     expired: Έληξε
     export_mailer:
       export_done:
@@ -519,15 +527,9 @@ el:
     gateway: Gateway
     gateway_error: Gateway Error
     gift_card: Δωροκάρτα
-    gift_card_already_redeemed: Η δωροκάρτα έχει ήδη εξαργυρωθεί.
     gift_card_applied: Η δωροκάρτα εφαρμόστηκε με επιτυχία στην παραγγελία σας!
-    gift_card_customer_not_logged_in: Η δωροκάρτα δεν μπορεί να εφαρμοστεί από επισκέπτη.
-    gift_card_expired: Η δωροκάρτα έχει λήξει.
-    gift_card_mismatched_currency: Η δωροκάρτα δεν μπορεί να εφαρμοστεί με το τρέχον νόμισμα.
-    gift_card_mismatched_customer: Αυτή η δωροκάρτα συσχετίζεται με άλλον χρήστη.
     gift_card_not_found: Η δωροκάρτα δεν βρέθηκε.
     gift_card_removed: Η δωροκάρτα αφαιρέθηκε με επιτυχία από την παραγγελία σας
-    gift_card_using_store_credit_error: Δεν μπορείτε να εφαρμόσετε τη δωροκάρτα αφού έχετε εφαρμόσει την πίστωση καταστήματος.
     height: Ύψος
     i18n:
       this_file_language: Ελληνικά (GR)
@@ -676,7 +678,6 @@ el:
     registration: Εγγραφή
     rejected: απορρίφθηκε
     remove: Αφαίρεση
-    remove_gift_card_on_completed_order_error: Δεν μπορείτε να αφαιρέσετε τη δωροκάρτα μετά την υποβολή της παραγγελίας
     resellable: Με δυνατότητα μεταπώλησης
     resend: Επαναποστολή
     response_code: Κωδικός αναφοράς

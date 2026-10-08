@@ -498,6 +498,14 @@ ku:
         invalid_order_routing_strategy: stratejiyek qeydkirî ya rêvebirina siparîşan nîn e
         store_association_can_not_be_changed: Girêdana firotgeyê nayê guhertin
         store_is_already_set: Firotge berê hatiye danîn
+      workflow:
+        gift_card_already_redeemed: Karta Diyariyê berê hat bikaranîn.
+        gift_card_customer_not_logged_in: Karta Diyariyê bi bikarhênerê mêvan nayê sepandin.
+        gift_card_expired: Karta Diyariyê qediyaye.
+        gift_card_mismatched_currency: Karta Diyariyê bi diravê niha nayê sepandin.
+        gift_card_mismatched_customer: Ev karta diyariyê bi bikarhênerek din ve girêdayî ye.
+        gift_card_using_store_credit_error: Piştî ku te krediya firotgeyê sepand, tu nikarî Karta Diyariyê bisepînî.
+        remove_gift_card_on_completed_order_error: Piştî ku siparîş hat danîn tu nikarî karta diyariyê rakî
     expired: Qediyaye
     export_mailer:
       export_done:
@@ -513,15 +521,9 @@ ku:
     gateway: Gateway
     gateway_error: Gateway Error
     gift_card: Karta Diyariyê
-    gift_card_already_redeemed: Karta Diyariyê berê hat bikaranîn.
     gift_card_applied: Karta Diyariyê bi serfirazî li siparîşa te hat sepandin!
-    gift_card_customer_not_logged_in: Karta Diyariyê bi bikarhênerê mêvan nayê sepandin.
-    gift_card_expired: Karta Diyariyê qediyaye.
-    gift_card_mismatched_currency: Karta Diyariyê bi diravê niha nayê sepandin.
-    gift_card_mismatched_customer: Ev karta diyariyê bi bikarhênerek din ve girêdayî ye.
     gift_card_not_found: Karta Diyariyê nehat dîtin.
     gift_card_removed: Karta Diyariyê bi serfirazî ji siparîşa te hat rakirin
-    gift_card_using_store_credit_error: Piştî ku te krediya firotgeyê sepand, tu nikarî Karta Diyariyê bisepînî.
     height: Height
     i18n:
       this_file_language: کردی (KU)
@@ -662,7 +664,6 @@ ku:
     refund_amount: Mîqdara Vegerandinê
     registration: Registration
     remove: Remove
-    remove_gift_card_on_completed_order_error: Piştî ku siparîş hat danîn tu nikarî karta diyariyê rakî
     resellable: Ji nû ve firotbar
     resend: Resend
     response_code: Response Code

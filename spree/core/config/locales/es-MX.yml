@@ -223,6 +223,10 @@ es-MX:
     errors:
       messages:
         cannot_delete_default_channel: No se puede eliminar el canal predeterminado. Primero promueve otro canal a predeterminado.
+      workflow:
+        gift_card_already_redeemed: La tarjeta de regalo ya fue canjeada.
+        gift_card_expired: La tarjeta de regalo ha vencido.
+        gift_card_using_store_credit_error: No puedes aplicar la tarjeta de regalo después de haber aplicado el crédito de tienda.
     expired: Vencido
     export_mailer:
       export_done:
@@ -231,9 +235,6 @@ es-MX:
     flat_rate_per_order: Cantidad fija (por pedido)
     flexible_rate: Cantidad variable
     gateway_error: Error en la pasarela
-    gift_card_already_redeemed: La tarjeta de regalo ya fue canjeada.
-    gift_card_expired: La tarjeta de regalo ha vencido.
-    gift_card_using_store_credit_error: No puedes aplicar la tarjeta de regalo después de haber aplicado el crédito de tienda.
     i18n:
       this_file_language: Español (es-MX)
     idempotency_key_reused: Esta Idempotency-Key ya fue utilizada con parámetros de solicitud distintos.

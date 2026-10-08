@@ -539,6 +539,15 @@ ne:
         invalid_order_routing_strategy: दर्ता गरिएको अर्डर राउटिङ रणनीति होइन
         store_association_can_not_be_changed: स्टोर सम्बन्ध परिवर्तन गर्न सकिँदैन
         store_is_already_set: स्टोर पहिले नै सेट गरिएको छ
+      workflow:
+        gift_card_already_redeemed: गिफ्ट कार्ड पहिले नै रिडिम भइसकेको छ।
+        gift_card_customer_not_logged_in: अतिथि प्रयोगकर्तासँग गिफ्ट कार्ड लागू गर्न सकिँदैन।
+        gift_card_expired: गिफ्ट कार्डको म्याद सकिएको छ।
+        gift_card_mismatched_currency: हालको मुद्रासँग गिफ्ट कार्ड लागू गर्न सकिँदैन।
+        gift_card_mismatched_customer: यो गिफ्ट कार्ड अर्को प्रयोगकर्तासँग सम्बन्धित छ।
+        gift_card_using_store_credit_error: स्टोर क्रेडिट लागू गरेपछि तपाईं गिफ्ट कार्ड लागू गर्न सक्नुहुन्न।
+        order_canceled: अर्डर रद्द गरियो
+        remove_gift_card_on_completed_order_error: अर्डर राखिएपछि तपाईं गिफ्ट कार्ड हटाउन सक्नुहुन्न
     expired: म्याद सकिएको
     export_mailer:
       export_done:
@@ -554,15 +563,9 @@ ne:
     gateway: गेटवे
     gateway_error: गेटवे त्रुटि
     gift_card: गिफ्ट कार्ड
-    gift_card_already_redeemed: गिफ्ट कार्ड पहिले नै रिडिम भइसकेको छ।
     gift_card_applied: गिफ्ट कार्ड तपाईंको अर्डरमा सफलतापूर्वक लागू गरियो!
-    gift_card_customer_not_logged_in: अतिथि प्रयोगकर्तासँग गिफ्ट कार्ड लागू गर्न सकिँदैन।
-    gift_card_expired: गिफ्ट कार्डको म्याद सकिएको छ।
-    gift_card_mismatched_currency: हालको मुद्रासँग गिफ्ट कार्ड लागू गर्न सकिँदैन।
-    gift_card_mismatched_customer: यो गिफ्ट कार्ड अर्को प्रयोगकर्तासँग सम्बन्धित छ।
     gift_card_not_found: गिफ्ट कार्ड फेला परेन।
     gift_card_removed: गिफ्ट कार्ड तपाईंको अर्डरबाट सफलतापूर्वक हटाइयो
-    gift_card_using_store_credit_error: स्टोर क्रेडिट लागू गरेपछि तपाईं गिफ्ट कार्ड लागू गर्न सक्नुहुन्न।
     height: उचाई
     i18n:
       this_file_language: नेपाली (NE)
@@ -621,7 +624,6 @@ ne:
     options: विकल्पहरू
     or: वा
     order: अर्डर
-    order_canceled: अर्डर रद्द गरियो
     order_routing:
       strategies:
         legacy: लिगेसी
@@ -725,7 +727,6 @@ ne:
     registration: दर्ता
     rejected: अस्वीकृत
     remove: हटाउनुहोस्
-    remove_gift_card_on_completed_order_error: अर्डर राखिएपछि तपाईं गिफ्ट कार्ड हटाउन सक्नुहुन्न
     resellable: पुनर्बिक्री गर्न मिल्ने
     resend: पुनःपठाउनुहोस्
     response_code: प्रतिक्रिया कोड

@@ -14,6 +14,16 @@ RSpec.describe Spree::Workflow do
     workflow
   end
 
+  describe '.error_message' do
+    it 'translates a rejection code from the workflow scope' do
+      expect(described_class.error_message(:gift_card_expired)).to eq(I18n.t('spree.errors.workflow.gift_card_expired'))
+    end
+
+    it 'humanizes a code without a translation' do
+      expect(described_class.error_message(:not_cancellable)).to eq('Not cancellable')
+    end
+  end
+
   describe 'the perform signature as the argument contract' do
     it 'raises Ruby argument errors for missing and unknown keywords' do
       workflow = build_workflow do

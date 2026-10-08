@@ -532,6 +532,15 @@ ar:
         invalid_order_routing_strategy: ليست استراتيجية توجيه طلبات مسجلة
         store_association_can_not_be_changed: لا يمكن تغيير ارتباط المتجر
         store_is_already_set: تم تعيين المتجر بالفعل
+      workflow:
+        gift_card_already_redeemed: تم استبدال بطاقة الهدية بالفعل.
+        gift_card_customer_not_logged_in: لا يمكن تطبيق بطاقة الهدية مع مستخدم ضيف.
+        gift_card_expired: انتهت صلاحية بطاقة الهدية.
+        gift_card_mismatched_currency: لا يمكن تطبيق بطاقة الهدية مع العملة الحالية.
+        gift_card_mismatched_customer: بطاقة الهدية هذه مرتبطة بمستخدم آخر.
+        gift_card_using_store_credit_error: لا يمكنك تطبيق بطاقة الهدية بعد تطبيق رصيد المتجر.
+        order_canceled: تم إلغاء الطلب
+        remove_gift_card_on_completed_order_error: لا يمكنك إزالة بطاقة الهدية بعد تقديم الطلب
     expired: منتهٍ
     export_mailer:
       export_done:
@@ -547,15 +556,9 @@ ar:
     gateway: " البوابة "
     gateway_error: " خطأ في البوابة "
     gift_card: بطاقة هدايا
-    gift_card_already_redeemed: تم استبدال بطاقة الهدية بالفعل.
     gift_card_applied: تم تطبيق بطاقة الهدية على طلبك بنجاح!
-    gift_card_customer_not_logged_in: لا يمكن تطبيق بطاقة الهدية مع مستخدم ضيف.
-    gift_card_expired: انتهت صلاحية بطاقة الهدية.
-    gift_card_mismatched_currency: لا يمكن تطبيق بطاقة الهدية مع العملة الحالية.
-    gift_card_mismatched_customer: بطاقة الهدية هذه مرتبطة بمستخدم آخر.
     gift_card_not_found: لم يتم العثور على بطاقة الهدية.
     gift_card_removed: تمت إزالة بطاقة الهدية من طلبك بنجاح
-    gift_card_using_store_credit_error: لا يمكنك تطبيق بطاقة الهدية بعد تطبيق رصيد المتجر.
     height: " ارتفاع "
     i18n:
       this_file_language: العربية (AR)
@@ -612,7 +615,6 @@ ar:
     options: الخيارات
     or: أو
     order: الطلب
-    order_canceled: تم إلغاء الطلب
     order_routing:
       strategies:
         legacy: القديم
@@ -716,7 +718,6 @@ ar:
     registration: " التسجيل "
     rejected: مرفوض
     remove: إزالة
-    remove_gift_card_on_completed_order_error: لا يمكنك إزالة بطاقة الهدية بعد تقديم الطلب
     resellable: قابل لإعادة البيع
     resend: إعادة الإرسال
     response_code: رمز الاستجابة

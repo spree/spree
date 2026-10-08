@@ -497,6 +497,14 @@ id:
         invalid_order_routing_strategy: bukan strategi perutean pesanan yang terdaftar
         store_association_can_not_be_changed: Asosiasi toko tidak dapat diubah
         store_is_already_set: Toko sudah ditetapkan
+      workflow:
+        gift_card_already_redeemed: Kartu Hadiah sudah ditukarkan.
+        gift_card_customer_not_logged_in: Kartu Hadiah tidak dapat diterapkan dengan pengguna tamu.
+        gift_card_expired: Kartu Hadiah telah kedaluwarsa.
+        gift_card_mismatched_currency: Kartu Hadiah tidak dapat diterapkan dengan mata uang saat ini.
+        gift_card_mismatched_customer: Kartu hadiah ini terkait dengan pengguna lain.
+        gift_card_using_store_credit_error: Anda tidak dapat menerapkan Kartu Hadiah setelah Anda menerapkan kredit toko.
+        remove_gift_card_on_completed_order_error: Anda tidak dapat menghapus kartu hadiah setelah pesanan dibuat
     expired: Kedaluwarsa
     export_mailer:
       export_done:
@@ -512,15 +520,9 @@ id:
     gateway: Gateway
     gateway_error: Kesalahan Gateway
     gift_card: Kartu Hadiah
-    gift_card_already_redeemed: Kartu Hadiah sudah ditukarkan.
     gift_card_applied: Kartu Hadiah berhasil diterapkan ke pesanan Anda!
-    gift_card_customer_not_logged_in: Kartu Hadiah tidak dapat diterapkan dengan pengguna tamu.
-    gift_card_expired: Kartu Hadiah telah kedaluwarsa.
-    gift_card_mismatched_currency: Kartu Hadiah tidak dapat diterapkan dengan mata uang saat ini.
-    gift_card_mismatched_customer: Kartu hadiah ini terkait dengan pengguna lain.
     gift_card_not_found: Kartu Hadiah tidak ditemukan.
     gift_card_removed: Kartu Hadiah berhasil dihapus dari pesanan Anda
-    gift_card_using_store_credit_error: Anda tidak dapat menerapkan Kartu Hadiah setelah Anda menerapkan kredit toko.
     height: Tinggi
     i18n:
       this_file_language: Indonesian (ID)
@@ -662,7 +664,6 @@ id:
     registration: Pendaftaran
     rejected: Penolakan
     remove: Menghapus
-    remove_gift_card_on_completed_order_error: Anda tidak dapat menghapus kartu hadiah setelah pesanan dibuat
     resellable: Dapat dijual kembali
     resend: Kirim Ulang
     response_code: Kode Respon

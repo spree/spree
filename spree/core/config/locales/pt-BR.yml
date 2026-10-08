@@ -378,6 +378,15 @@ pt-BR:
         invalid_order_routing_rule: não é uma regra de roteamento de pedidos registrada
         invalid_order_routing_strategy: não é uma estratégia de roteamento de pedidos registrada
         store_association_can_not_be_changed: A associação da loja não pode ser alterada
+      workflow:
+        gift_card_already_redeemed: O cartão-presente já foi resgatado.
+        gift_card_customer_not_logged_in: O cartão-presente não pode ser aplicado por usuário visitante.
+        gift_card_expired: O cartão-presente expirou.
+        gift_card_mismatched_currency: O cartão-presente não pode ser aplicado com a moeda atual.
+        gift_card_mismatched_customer: Este cartão-presente está associado a outro usuário.
+        gift_card_using_store_credit_error: Você não pode aplicar o cartão-presente após ter aplicado o crédito da loja.
+        order_canceled: Pedido cancelado
+        remove_gift_card_on_completed_order_error: Você não pode remover o cartão-presente após o pedido ter sido feito
     export_mailer:
       export_done:
         message: Bom trabalho, sua exportação está pronta! Use o link abaixo para baixá-la.
@@ -387,15 +396,9 @@ pt-BR:
     flexible_rate: Taxa flexível
     gateway_error: Erro no Gateway
     gift_card: Cartão-presente
-    gift_card_already_redeemed: O cartão-presente já foi resgatado.
     gift_card_applied: O cartão-presente foi aplicado ao seu pedido com sucesso!
-    gift_card_customer_not_logged_in: O cartão-presente não pode ser aplicado por usuário visitante.
-    gift_card_expired: O cartão-presente expirou.
-    gift_card_mismatched_currency: O cartão-presente não pode ser aplicado com a moeda atual.
-    gift_card_mismatched_customer: Este cartão-presente está associado a outro usuário.
     gift_card_not_found: O cartão-presente não foi encontrado.
     gift_card_removed: O cartão-presente foi removido do seu pedido com sucesso
-    gift_card_using_store_credit_error: Você não pode aplicar o cartão-presente após ter aplicado o crédito da loja.
     i18n:
       this_file_language: Português (pt-BR)
     idempotency_key_reused: Esta Idempotency-Key já foi usada com parâmetros de requisição diferentes.
@@ -426,7 +429,6 @@ pt-BR:
     only_active_products_can_be_added_to_cart: Produtos em rascunho e arquivados não podem ser adicionados ao carrinho, marque o produto como ativo antes.
     open: Abrir
     option_value: Valor da Opcional
-    order_canceled: Pedido cancelado
     orders: Pedidos
     password: Senha
     payment_method_not_supported: Esse método de pagamento não é suportado. Por favor escolha outro.
@@ -486,7 +488,6 @@ pt-BR:
     refunds: Extornos
     registration: Registro
     rejected: Rejeitado
-    remove_gift_card_on_completed_order_error: Você não pode remover o cartão-presente após o pedido ter sido feito
     resellable: Pode revender
     say_no: Não
     say_yes: Sim

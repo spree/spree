@@ -111,11 +111,7 @@ module Spree
             if result.success?
               render json: serialize_resource(@resource)
             else
-              render_error(
-                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: 'Import has no failed rows to retry',
-                status: :unprocessable_content
-              )
+              render_service_error(result.error, code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error])
             end
           end
 

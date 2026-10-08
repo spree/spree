@@ -17,10 +17,10 @@ module Spree
           order.restore_attributes([:coupon_code]) if order.has_attribute?(:coupon_code) && order.will_save_change_to_attribute?(:coupon_code)
 
           if @gift_card.expired?
-            set_error_code :gift_card_expired
+            set_workflow_error_code :gift_card_expired
             return self
           elsif @gift_card.redeemed?
-            set_error_code :gift_card_already_redeemed
+            set_workflow_error_code :gift_card_already_redeemed
             return self
           end
 
@@ -34,7 +34,7 @@ module Spree
             # the object's inspect string to the shopper.
             error = result.error.value
             if error.is_a?(Symbol)
-              set_error_code(error)
+              set_workflow_error_code(error)
             else
               @status_code = :gift_card_not_applied
               # The rejection message is what the hook author wrote for the
@@ -126,6 +126,12 @@ module Spree
       def set_error_code(code, locale_options = {})
         @status_code = code
         @error = I18n.t("spree.#{code}", **locale_options)
+      end
+
+      # Gift card codes are the gift card workflows' own rejections.
+      def set_workflow_error_code(code)
+        @status_code = code
+        @error = Spree::Workflow.error_message(code)
       end
 
       # Returns the promotion for the order

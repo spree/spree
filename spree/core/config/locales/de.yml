@@ -551,6 +551,15 @@ de:
         invalid_order_routing_strategy: ist keine registrierte Bestell-Routing-Strategie
         store_association_can_not_be_changed: Die Shop-Zuordnung kann nicht geändert werden
         store_is_already_set: Shop ist bereits festgelegt
+      workflow:
+        gift_card_already_redeemed: Die Geschenkkarte wurde bereits eingelöst.
+        gift_card_customer_not_logged_in: Geschenkkarte kann nicht als Gast angewendet werden.
+        gift_card_expired: Die Geschenkkarte ist abgelaufen.
+        gift_card_mismatched_currency: Geschenkkarte kann nicht mit der aktuellen Währung angewendet werden.
+        gift_card_mismatched_customer: Diese Geschenkkarte ist einem anderen Benutzer zugeordnet.
+        gift_card_using_store_credit_error: Sie können die Geschenkkarte nicht anwenden, nachdem Sie das Guthaben angewendet haben.
+        order_canceled: Bestellung storniert
+        remove_gift_card_on_completed_order_error: Sie können die Geschenkkarte nicht entfernen, nachdem die Bestellung aufgegeben wurde
     expired: Abgelaufen
     export_mailer:
       export_done:
@@ -566,15 +575,9 @@ de:
     gateway: Schnittstelle
     gateway_error: Schnittstellen-Fehler
     gift_card: Geschenkkarte
-    gift_card_already_redeemed: Die Geschenkkarte wurde bereits eingelöst.
     gift_card_applied: Die Geschenkkarte wurde erfolgreich auf Ihre Bestellung angewendet!
-    gift_card_customer_not_logged_in: Geschenkkarte kann nicht als Gast angewendet werden.
-    gift_card_expired: Die Geschenkkarte ist abgelaufen.
-    gift_card_mismatched_currency: Geschenkkarte kann nicht mit der aktuellen Währung angewendet werden.
-    gift_card_mismatched_customer: Diese Geschenkkarte ist einem anderen Benutzer zugeordnet.
     gift_card_not_found: Die Geschenkkarte wurde nicht gefunden.
     gift_card_removed: Die Geschenkkarte wurde erfolgreich aus Ihrer Bestellung entfernt
-    gift_card_using_store_credit_error: Sie können die Geschenkkarte nicht anwenden, nachdem Sie das Guthaben angewendet haben.
     height: Höhe
     i18n:
       this_file_language: Deutsch (DE)
@@ -633,7 +636,6 @@ de:
     options: Optionen
     or: oder
     order: Bestellung
-    order_canceled: Bestellung storniert
     order_routing:
       strategies:
         legacy: Veraltet
@@ -737,7 +739,6 @@ de:
     registration: Registrierung
     rejected: abgelehnt
     remove: Entfernen
-    remove_gift_card_on_completed_order_error: Sie können die Geschenkkarte nicht entfernen, nachdem die Bestellung aufgegeben wurde
     resellable: Wiederverkäuflich
     resend: Erneut Versenden
     response_code: Rückgabewert

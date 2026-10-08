@@ -550,6 +550,15 @@ sv:
         invalid_order_routing_strategy: är inte en registrerad orderdirigeringsstrategi
         store_association_can_not_be_changed: Butikskopplingen kan inte ändras
         store_is_already_set: Butiken är redan inställd
+      workflow:
+        gift_card_already_redeemed: Presentkortet har redan lösts in.
+        gift_card_customer_not_logged_in: Presentkort kan inte användas som gästanvändare.
+        gift_card_expired: Presentkortet har gått ut.
+        gift_card_mismatched_currency: Presentkortet kan inte användas med den aktuella valutan.
+        gift_card_mismatched_customer: Detta presentkort är kopplat till en annan användare.
+        gift_card_using_store_credit_error: Du kan inte använda presentkortet efter att du har använt butikskrediten.
+        order_canceled: Ordern annullerad
+        remove_gift_card_on_completed_order_error: Du kan inte ta bort presentkortet efter att ordern har lagts
     expired: Utgången
     export_mailer:
       export_done:
@@ -565,15 +574,9 @@ sv:
     gateway: Gateway
     gateway_error: Gateway-fel
     gift_card: Presentkort
-    gift_card_already_redeemed: Presentkortet har redan lösts in.
     gift_card_applied: Presentkortet har lagts till på din order!
-    gift_card_customer_not_logged_in: Presentkort kan inte användas som gästanvändare.
-    gift_card_expired: Presentkortet har gått ut.
-    gift_card_mismatched_currency: Presentkortet kan inte användas med den aktuella valutan.
-    gift_card_mismatched_customer: Detta presentkort är kopplat till en annan användare.
     gift_card_not_found: Presentkortet hittades inte.
     gift_card_removed: Presentkortet har tagits bort från din order
-    gift_card_using_store_credit_error: Du kan inte använda presentkortet efter att du har använt butikskrediten.
     height: Höjd
     i18n:
       this_file_language: Svenska (SE)
@@ -632,7 +635,6 @@ sv:
     options: Tillval
     or: eller
     order: Order
-    order_canceled: Ordern annullerad
     order_routing:
       strategies:
         legacy: Äldre
@@ -732,7 +734,6 @@ sv:
     registration: Registrering
     rejected: Avvisad
     remove: Ta bort
-    remove_gift_card_on_completed_order_error: Du kan inte ta bort presentkortet efter att ordern har lagts
     resellable: Kan säljas igen
     resend: Skicka igen
     response_code: Svarskod
