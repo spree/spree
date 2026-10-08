@@ -4,6 +4,7 @@ import {
   type FulfillmentCreateParams,
   type FulfillmentFulfillParams,
   type FulfillmentSplitParams,
+  type FulfillmentUpdateParams,
   type ShippingLabelCreateParams,
   SpreeError,
 } from '@spree/admin-sdk'
@@ -57,16 +58,8 @@ export function useFulfillmentActions(orderId: string) {
 
   const update = useFulfillmentMutation(
     orderId,
-    ({
-      fulfillmentId,
-      ...params
-    }: {
-      fulfillmentId: string
-      tracking?: string
-      tracking_carrier?: string
-      selected_delivery_rate_id?: string
-      stock_location_id?: string
-    }) => adminClient.orders.fulfillments.update(orderId, fulfillmentId, params),
+    ({ fulfillmentId, ...params }: { fulfillmentId: string } & FulfillmentUpdateParams) =>
+      adminClient.orders.fulfillments.update(orderId, fulfillmentId, params),
   )
 
   const split = useFulfillmentMutation(
