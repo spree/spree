@@ -710,7 +710,7 @@ RSpec.describe SpreeStripe::Gateway do
 
         it 'returns failure without calling Stripe' do
           expect(subject.success?).to be(false)
-          expect(subject.message).to eq(Spree.t('stripe.payment_errors.saved_payment_method_required'))
+          expect(subject.message).to eq(I18n.t('spree.stripe.payment_errors.saved_payment_method_required'))
         end
       end
 
@@ -723,7 +723,7 @@ RSpec.describe SpreeStripe::Gateway do
 
         it 'returns failure without calling Stripe' do
           expect(subject.success?).to be(false)
-          expect(subject.message).to eq(Spree.t('stripe.payment_errors.saved_payment_method_required'))
+          expect(subject.message).to eq(I18n.t('spree.stripe.payment_errors.saved_payment_method_required'))
         end
       end
 

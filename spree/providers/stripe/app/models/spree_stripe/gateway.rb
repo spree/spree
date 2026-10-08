@@ -324,7 +324,7 @@ module SpreeStripe
       # customer can change after that.
       if source.try(:gateway_payment_profile_id).blank? || source.try(:gateway_customer_profile_id).blank? ||
          source.customer_id.blank? || source.customer_id != payment.owner.customer_id
-        return failure(Spree.t('stripe.payment_errors.saved_payment_method_required'))
+        return failure(I18n.t('spree.stripe.payment_errors.saved_payment_method_required'))
       end
 
       payload = payment_intent_payload(
