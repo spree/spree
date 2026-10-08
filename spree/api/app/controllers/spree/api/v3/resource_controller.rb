@@ -284,6 +284,32 @@ module Spree
           nil
         end
 
+        # Whether this endpoint's list filters through Ransack on
+        # {#model_class}. An index that ignores `q`, or whose model depends on
+        # the request, has no filter table to publish.
+        #
+        # @return [Boolean]
+        def filterable?
+          true
+        end
+
+        # Sort keys this endpoint accepts beyond the model's sortable
+        # attributes, for a controller that sorts outside Ransack.
+        #
+        # @return [Array<String>]
+        def additional_sort_fields
+          []
+        end
+
+        # Whether this endpoint also filters and sorts on the store's
+        # searchable custom fields (`cf_<namespace>_<key>`), which are store
+        # data and so cannot be listed in the contract.
+        #
+        # @return [Boolean]
+        def custom_field_filters?
+          false
+        end
+
         # Override in subclass to disable distinct (e.g., for custom sorting with computed columns)
         # @return [Boolean] whether to apply distinct to the collection
         def collection_distinct?

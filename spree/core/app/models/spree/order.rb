@@ -154,6 +154,7 @@ module Spree
       order_group_id po_number
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search]
+    self.ransackable_scope_types = %w[complete incomplete refunded partially_refunded].index_with('boolean')
     # A seller never sees the buyer's email, and a company member filtering the
     # company's orders must not learn a colleague's; the risk flag and coupon
     # are back-office data. `search` matches on the email too.

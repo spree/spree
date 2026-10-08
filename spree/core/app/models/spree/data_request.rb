@@ -56,6 +56,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[number kind status email requested_at completed_at]
     self.whitelisted_ransackable_scopes = %w[access erasure in_progress]
+    self.ransackable_scope_types = %w[access erasure in_progress].index_with('boolean')
 
     before_validation :set_defaults, on: :create
 

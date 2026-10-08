@@ -22,6 +22,7 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'actions found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

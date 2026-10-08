@@ -69,6 +69,7 @@ module Spree
     # `users` is the pre-6.0 name for `customers` — removed in 6.1.
     self.whitelisted_ransackable_associations = %w[customers users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
+    self.ransackable_scope_types = %w[active expired redeemed partially_redeemed].index_with('boolean')
 
     normalizes :code, with: ->(value) { value&.to_s&.squish&.presence }
 

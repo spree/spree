@@ -191,6 +191,7 @@ module Spree
                                                     created_at updated_at last_sign_in_at]
       self.whitelisted_ransackable_scopes = %w[search with_min_total_spent with_standing_for_company
                                                anonymized]
+      self.ransackable_scope_types = { 'with_min_total_spent' => 'decimal', 'with_standing_for_company' => { list: 'id' }, 'anonymized' => 'boolean' }
 
       # Two-state scope: see Spree::Base.ransack_flag? for why the cast is
       # opted out of here and done inside the scope instead.

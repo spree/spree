@@ -23,6 +23,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'memberships listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -121,6 +122,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'members listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -183,6 +185,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'addresses listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -293,6 +296,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'orders listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }

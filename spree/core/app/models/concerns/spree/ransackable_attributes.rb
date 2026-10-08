@@ -11,6 +11,12 @@ module Spree::RansackableAttributes
     class_attribute :whitelisted_ransackable_attributes
     class_attribute :whitelisted_ransackable_scopes
 
+    # `{ 'price_between' => %w[decimal decimal], 'in_categories' => { list: 'id' } }`
+    # — the arguments a ransackable scope takes, which Ruby cannot report for
+    # a `scope` lambda. A scope taking none is `'boolean'`; an undeclared one
+    # is published as taking one text value.
+    class_attribute :ransackable_scope_types, default: {}
+
     # Associations the Store API may filter through. Empty by default: every
     # hop is a join into data the storefront was never meant to query, and a
     # join back to the model it came from lets one filter chain them forever.

@@ -40,20 +40,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Number of items per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort order. Prefix with - for descending. Values: price, -price, best_selling, name, -name, -available_on, available_on'
-      parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name containing string'
-      parameter name: 'q[in_category]', in: :query, type: :string, required: false,
-                description: 'Filter by category prefixed ID (includes descendants)'
-      parameter name: 'q[in_categories][]', in: :query, type: :string, required: false,
-                description: 'Filter by multiple category prefixed IDs (OR logic, includes descendants)'
-      parameter name: 'q[price_gte]', in: :query, type: :number, required: false,
-                description: 'Filter by minimum price'
-      parameter name: 'q[price_lte]', in: :query, type: :number, required: false,
-                description: 'Filter by maximum price'
-      parameter name: 'q[with_option_value_ids][]', in: :query, type: :string, required: false,
-                description: 'Filter by option value prefix IDs (e.g., optval_abc). Pass multiple values for OR logic.'
-      parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
-                description: 'Filter to only in-stock products'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (variants, media, categories, ' \
                              'option_types, seller, seller.policies)'
@@ -229,8 +216,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Publishable API key'
       parameter name: :category_id, in: :query, type: :string, required: false,
                 description: 'Scope filters to products in this category (prefix ID)'
-      parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name containing string'
+      filter_parameters_for Spree::Api::V3::Store::ProductsController
 
       response '200', 'filters retrieved successfully' do
         let(:'x-spree-api-key') { api_key.token }

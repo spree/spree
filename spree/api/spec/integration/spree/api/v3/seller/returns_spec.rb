@@ -37,6 +37,7 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'returns listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -291,6 +292,7 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'reasons listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

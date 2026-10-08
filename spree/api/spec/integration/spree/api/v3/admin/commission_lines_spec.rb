@@ -43,10 +43,7 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of records per page'
-      parameter name: :'q[seller_id_eq]', in: :query, type: :string, required: false,
-                description: 'Filter to one seller'
-      parameter name: :'q[order_id_eq]', in: :query, type: :string, required: false,
-                description: 'Filter to one order'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-created_at`).'
       parameter name: :expand, in: :query, type: :string, required: false,

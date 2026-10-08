@@ -26,6 +26,7 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'registrations returned' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

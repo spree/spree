@@ -31,6 +31,7 @@ RSpec.describe 'Admin Order Refunds API', type: :request, swagger_doc: 'api-refe
                 description: 'Comma-separated associations to expand (e.g., payment, refund_reason). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., amount,reason,transaction_id). id is always included.'
+      filter_parameters_for
 
       response '200', 'refunds found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

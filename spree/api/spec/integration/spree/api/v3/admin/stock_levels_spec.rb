@@ -36,12 +36,7 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[stock_location_id_eq]', in: :query, type: :string, required: false,
-                description: 'Only levels at this stock location'
-      parameter name: :'q[variant_id_eq]', in: :query, type: :string, required: false,
-                description: 'Only levels for this variant'
-      parameter name: :'q[variant_sku_or_variant_product_name_cont]', in: :query, type: :string, required: false,
-                description: 'Only levels whose variant SKU or product name contains this text'
+      filter_parameters_for
 
       response '200', 'stock levels found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

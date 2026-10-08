@@ -430,6 +430,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (`published_by`)'
+      filter_parameters_for
 
       response '200', 'revisions found' do
         before do

@@ -29,10 +29,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
                 description: 'Comma-separated associations to expand (e.g., variants, media, option_types, categories). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price,status). id is always included.'
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name (contains)'
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by status'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

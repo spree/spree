@@ -33,6 +33,8 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
 
       admin_sdk_example 'company-tax-identifiers/list'
 
+      filter_parameters_for
+
       response '200', 'registrations found' do
         run_test! do |response|
           data = JSON.parse(response.body)

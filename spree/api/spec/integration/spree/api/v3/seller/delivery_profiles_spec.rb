@@ -25,6 +25,7 @@ RSpec.describe 'Seller Delivery Profiles API', type: :request, swagger_doc: 'api
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
 
       response '200', 'delivery profiles listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

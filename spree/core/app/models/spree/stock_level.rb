@@ -39,6 +39,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[count_on_hand allocated_count reserved_count incoming_count
                                                  stock_location_id variant_id]
     self.whitelisted_ransackable_scopes = %w[with_stock_status]
+    self.ransackable_scope_types = { 'with_stock_status' => { list: 'text' } }
     self.whitelisted_ransackable_associations = %w[variant stock_location]
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }

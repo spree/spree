@@ -30,6 +30,7 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'fulfillments listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

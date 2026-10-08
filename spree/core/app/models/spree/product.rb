@@ -373,6 +373,12 @@ module Spree
                                              search in_stock out_of_stock with_option_value_ids
 
                                              ascend_by_price descend_by_price]
+    self.ransackable_scope_types = {
+      'in_taxon' => 'id', 'in_category' => 'id', 'in_collection' => 'id',
+      'in_categories' => { list: 'id' }, 'with_option_value_ids' => { list: 'id' },
+      'price_between' => %w[decimal decimal], 'price_lte' => 'decimal', 'price_gte' => 'decimal',
+      'ascend_by_price' => 'boolean', 'descend_by_price' => 'boolean'
+    }
 
     # All product-level convenience attributes delegate to the default variant —
     # one target, no branching. Reads resolve the existing default variant

@@ -23,6 +23,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (e.g., rules, custom_fields, translations).'
+      filter_parameters_for
 
       response '200', 'collections found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -233,6 +234,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :collection_id, in: :path, type: :string, required: true, description: 'Collection ID'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
