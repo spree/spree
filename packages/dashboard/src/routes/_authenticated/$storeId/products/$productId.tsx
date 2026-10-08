@@ -139,20 +139,22 @@ function ProductForm({ product }: { product: Product }) {
   // unsaved edits. After the save round-trip itself, RHF's submission
   // already cleared isDirty, so the post-save refetch still re-hydrates.
   //
-  // Also wait while the product is refetching: after a save the media list
-  // can land first, and resetting then would pair it with the pre-save
-  // product and put the old values back. Likewise for media still in flight
-  // (a retry included) or whose refetch failed — the cached list is then the
-  // pre-save one, and refilling from it would drop new uploads and library
-  // picks. The effect re-runs once both queries settle.
+  // Also wait while the product or its media is refetching (a retry
+  // included): after a save the media list can land first, and resetting
+  // then would pair it with the pre-save product and put the old values
+  // back. The effect re-runs once both queries settle.
+  //
+  // A failed media refetch leaves the pre-save list cached, and refilling
+  // from it would drop new uploads and library picks — so the form keeps its
+  // own media then, while the product's server-assigned values (variant ids,
+  // slugs) still land.
   useEffect(() => {
-    if (form.formState.isDirty || productRefetching || mediaRefetching || mediaRefetchFailed) {
-      return
-    }
-    form.reset({
+    if (form.formState.isDirty || productRefetching || mediaRefetching) return
+    const values = {
       ...productToFormValues(product, mediaItems),
       ...extensionFormValues('product', product),
-    })
+    }
+    form.reset(mediaRefetchFailed ? { ...values, media: form.getValues('media') } : values)
   }, [product, mediaItems, productRefetching, mediaRefetching, mediaRefetchFailed, form])
 
   // Media-only hydration that bypasses the isDirty guard for the

@@ -25,6 +25,18 @@ async function findTile(page: Page, text: string) {
   return tile
 }
 
+/**
+ * Holds GET requests for `ms`, to force the order in which reloads land. The
+ * app may cancel a held request meanwhile (a newer refetch supersedes it); it
+ * is already gone then, so letting it through is skipped.
+ */
+function holdGets(ms: number) {
+  return async (route: Route) => {
+    if (route.request().method() === 'GET') await new Promise((resolve) => setTimeout(resolve, ms))
+    await route.continue().catch(() => {})
+  }
+}
+
 /** A library image with a description of its own, for the product media card to show by name. */
 async function uploadDescribedImage(page: Page, storeId: string) {
   await page.goto(MEDIA_PATH(storeId))
@@ -79,6 +91,9 @@ test.describe('media library', () => {
   test('a file added to a product from the library keeps its preview after saving', async ({
     page,
   }) => {
+    // Uploads, picks and saves with reloads held back on purpose — longer
+    // than the default budget, especially against a loaded CI runner.
+    test.slow()
     const creds = await login(page)
     const { stamp, name, alt } = await uploadDescribedImage(page, creds.store_id)
     await createProduct(page, creds.store_id, `Library pick ${stamp}`)
@@ -89,13 +104,8 @@ test.describe('media library', () => {
     // from the pre-save product. Slowing both reloads makes it certain.
     const mediaReload = /\/api\/v3\/admin\/products\/prod_[^/?]+\/media(\?|$)/
     const productReload = /\/api\/v3\/admin\/products\/prod_[^/?]+\?/
-    const delay = (ms: number) => async (route: Route) => {
-      if (route.request().method() === 'GET')
-        await new Promise((resolve) => setTimeout(resolve, ms))
-      await route.continue()
-    }
-    await page.route(mediaReload, delay(2_000))
-    await page.route(productReload, delay(4_000))
+    await page.route(mediaReload, holdGets(2_000))
+    await page.route(productReload, holdGets(4_000))
     const renamed = `Library pick ${stamp} (renamed)`
     await page.getByLabel(/^name$/i).fill(renamed)
     await page.getByRole('button', { name: /save product/i }).click()
@@ -104,8 +114,9 @@ test.describe('media library', () => {
     // shows the old name only until the slowed reload lands.
     expect(await page.getByLabel(/^name$/i).inputValue()).toBe(renamed)
     await expect(page.getByRole('img', { name: alt })).toBeVisible({ timeout: 15_000 })
-    // Let any request still held by a delay finish before the reload below.
-    await page.unrouteAll({ behavior: 'wait' })
+    // A held request the app cancelled never completes, so drop the holds
+    // without waiting on them before the reload below.
+    await page.unrouteAll({ behavior: 'ignoreErrors' })
 
     await page.reload()
     await expect(page.getByRole('img', { name: alt })).toBeVisible({ timeout: 15_000 })
@@ -114,6 +125,9 @@ test.describe('media library', () => {
   test('a new library file stays on the product when the media reload after saving fails', async ({
     page,
   }) => {
+    // Uploads, picks and saves with reloads held back on purpose — longer
+    // than the default budget, especially against a loaded CI runner.
+    test.slow()
     const creds = await login(page)
     const { stamp, name, alt } = await uploadDescribedImage(page, creds.store_id)
     await createProduct(page, creds.store_id, `Library pick ${stamp}`)
@@ -128,11 +142,7 @@ test.describe('media library', () => {
         ? route.fulfill({ status: 500, json: { error: { code: 'internal', message: 'boom' } } })
         : route.continue(),
     )
-    await page.route(productReload, async (route) => {
-      if (route.request().method() === 'GET')
-        await new Promise((resolve) => setTimeout(resolve, 3_000))
-      await route.continue()
-    })
+    await page.route(productReload, holdGets(3_000))
     await page.getByRole('button', { name: /save product/i }).click()
     await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 30_000 })
     // A failed reload has nothing to show, so give the media retry and the
@@ -140,7 +150,7 @@ test.describe('media library', () => {
     // submitted tile.
     await page.waitForTimeout(5_000)
     await expect(page.getByRole('img', { name: alt })).toBeVisible()
-    await page.unrouteAll({ behavior: 'wait' })
+    await page.unrouteAll({ behavior: 'ignoreErrors' })
   })
 
   test('deletes a file from the grid after confirming', async ({ page }) => {
