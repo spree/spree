@@ -23,6 +23,41 @@ describe Spree::Price, type: :model do
       end
     end
 
+    describe 'touching the variant' do
+      let(:variant) { create(:variant) }
+      let(:price_list) { create(:price_list) }
+
+      before { variant.update_columns(updated_at: 1.day.ago) }
+
+      it 'touches the variant when a priced row is saved' do
+        expect {
+          create(:price, variant: variant, currency: 'GBP', amount: 10)
+        }.to change { variant.reload.updated_at }
+      end
+
+      it 'touches the variant when an amount is cleared' do
+        price = create(:price, variant: variant, price_list: price_list, currency: 'GBP', amount: 10)
+        variant.update_columns(updated_at: 1.day.ago)
+
+        expect { price.update!(amount: nil) }.to change { variant.reload.updated_at }
+      end
+
+      it 'touches the variant when a priced row is destroyed' do
+        price = create(:price, variant: variant, currency: 'GBP', amount: 10)
+        variant.update_columns(updated_at: 1.day.ago)
+
+        expect { price.destroy }.to change { variant.reload.updated_at }
+      end
+
+      it 'does not touch the variant for a placeholder price' do
+        expect {
+          price = create(:price, variant: variant, price_list: price_list, currency: 'GBP', amount: nil)
+          price.update!(compare_at_amount: 5)
+          price.destroy
+        }.not_to change { variant.reload.updated_at }
+      end
+    end
+
     describe 'after_commit :auto_match_collections' do
       context 'when price is discounted' do
         context 'on create' do

@@ -54,6 +54,11 @@ module Spree
         rows = price_rows
         return if rows.empty?
 
+        # A blank row only matters when it clears an amount the list held.
+        cleared_variant_ids = rows.select { |row| row[:amount].blank? }.map { |row| row[:variant_id] }
+        previously_priced_ids = price_list.prices.where(variant_id: cleared_variant_ids).
+                                where.not(amount: nil).distinct.pluck(:variant_id)
+
         # The service refuses a batch that would take a ladder past the break
         # cap. Ignoring that would answer 200 while writing nothing
         # (docs/plans/6.0-volume-pricing.md).
@@ -77,11 +82,12 @@ module Spree
           return failure(price_list)
         end
 
-        touch_variants(rows.map { |row| row[:variant_id] }.uniq)
+        priced_ids = rows.select { |row| row[:amount].present? }.map { |row| row[:variant_id] }
+        touch_variants((priced_ids + previously_priced_ids).map(&:to_s).uniq)
       end
 
       def clear_prices
-        variant_ids = price_list.prices.distinct.pluck(:variant_id)
+        variant_ids = price_list.prices.where.not(amount: nil).distinct.pluck(:variant_id)
         price_list.prices.update_all(amount: nil, compare_at_amount: nil, updated_at: Time.current)
         touch_variants(variant_ids)
       end

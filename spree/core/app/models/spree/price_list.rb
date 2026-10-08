@@ -333,9 +333,9 @@ module Spree
 
       return if prices_to_insert.empty?
 
-      # Use upsert_all with on_duplicate: :skip to handle race conditions
+      # Use upsert_all with on_duplicate: :skip to handle race conditions.
+      # Placeholders charge nothing, so the variants are not touched.
       Spree::Price.upsert_all(prices_to_insert, on_duplicate: :skip)
-      touch_variants(variant_ids)
       touch
     end
 
@@ -354,10 +354,13 @@ module Spree
       variant_ids = Spree::Variant.where(product_id: product_ids).distinct.pluck(:id)
       return if variant_ids.empty?
 
+      removed_prices = prices.where(variant_id: variant_ids)
+      priced_variant_ids = removed_prices.where.not(amount: nil).distinct.pluck(:variant_id)
+
       # Use delete_all for hard delete - this bypasses acts_as_paranoid
       # which is required for the unique index to work when re-adding products
-      prices.where(variant_id: variant_ids).delete_all
-      touch_variants(variant_ids)
+      removed_prices.delete_all
+      touch_variants(priced_variant_ids)
       touch
     end
 

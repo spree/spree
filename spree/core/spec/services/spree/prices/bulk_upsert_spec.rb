@@ -107,6 +107,25 @@ RSpec.describe Spree::Prices::BulkUpsert do
       end
     end
 
+    it 'does not touch the variant for a blank row over a placeholder' do
+      Timecop.freeze(Time.current.change(usec: 0)) do
+        other_variant = create(:variant, product: create(:product))
+        create(:price, variant: other_variant, price_list: price_list, currency: 'USD', amount: nil)
+        other_variant.update_columns(updated_at: 1.day.ago)
+        variant.update_columns(updated_at: 1.day.ago)
+
+        described_class.call(
+          rows: [
+            { variant_id: other_variant.id, currency: 'USD', price_list_id: price_list.id, amount: '' },
+            { variant_id: variant.id, currency: 'USD', price_list_id: price_list.id, amount: '' }
+          ]
+        )
+
+        expect(other_variant.reload.updated_at).to eq(1.day.ago)
+        expect(variant.reload.updated_at).to eq(Time.current)
+      end
+    end
+
     # Regression: the base-row update loop pulls existing rows via
     # `WHERE variant_id IN (...) AND currency IN (...)`, which returns
     # cross-pairs (variant_a + EUR, variant_b + USD) that the caller never

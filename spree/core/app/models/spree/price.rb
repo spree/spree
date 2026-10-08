@@ -24,7 +24,7 @@ module Spree
     # every priced line (docs/plans/6.0-volume-pricing.md).
     MAXIMUM_BREAKS_PER_VARIANT = 10
 
-    belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
+    belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices
     belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
 
     has_many :price_histories, class_name: 'Spree::PriceHistory', dependent: :delete_all
@@ -32,6 +32,8 @@ module Spree
     before_validation :ensure_currency
     before_save :remove_compare_at_amount_if_equals_amount
     after_save :record_price_history, if: :should_record_price_history?
+    after_save :touch_variant, if: -> { saved_changes? && (amount.present? || amount_before_last_save.present?) }
+    after_destroy :touch_variant, if: -> { amount.present? }
 
     # legacy behavior
     validates :amount, allow_nil: true, numericality: {
@@ -340,6 +342,15 @@ module Spree
       rungs = rows.pluck(:min_quantity, :amount).to_h
       rungs[min_quantity] = amount if price_list_id == list_id
       rungs.sort_by(&:first)
+    end
+
+    # Stands in for `touch: true` on the variant, skipping placeholder rows: a
+    # price list holds one without an amount for every variant and currency
+    # nobody has priced yet, and it charges nothing, so writing one changes no
+    # price a shopper sees — yet the touch would expire the product's cached
+    # responses and reindex it for search.
+    def touch_variant
+      variant&.touch_later
     end
 
     def should_record_price_history?
