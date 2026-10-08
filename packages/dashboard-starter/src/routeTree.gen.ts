@@ -68,6 +68,7 @@ import { Route as SettingsCustomFieldDefinitionsRouteImport } from './../../dash
 import { Route as SettingsIntegrationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/integrations'
 import { Route as SettingsMarketplaceRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/marketplace'
 import { Route as SettingsMarketsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/markets'
+import { Route as SettingsOauthClientsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/oauth-clients'
 import { Route as SettingsPackageTypesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/package-types'
 import { Route as SettingsPaymentMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as SettingsPayoutsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/payouts'
@@ -409,6 +410,11 @@ const SettingsMarketsRoute = SettingsMarketsRouteImport.update({
   path: '/markets',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsOauthClientsRoute = SettingsOauthClientsRouteImport.update({
+  id: '/oauth-clients',
+  path: '/oauth-clients',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsPackageTypesRoute = SettingsPackageTypesRouteImport.update({
   id: '/package-types',
   path: '/package-types',
@@ -694,6 +700,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/$storeId/settings/oauth-clients': typeof SettingsOauthClientsRoute
   '/$storeId/settings/package-types': typeof SettingsPackageTypesRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/payouts': typeof SettingsPayoutsRoute
@@ -796,6 +803,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/$storeId/settings/oauth-clients': typeof SettingsOauthClientsRoute
   '/$storeId/settings/package-types': typeof SettingsPackageTypesRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/payouts': typeof SettingsPayoutsRoute
@@ -902,6 +910,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/_authenticated/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/_authenticated/$storeId/settings/oauth-clients': typeof SettingsOauthClientsRoute
   '/_authenticated/$storeId/settings/package-types': typeof SettingsPackageTypesRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/_authenticated/$storeId/settings/payouts': typeof SettingsPayoutsRoute
@@ -1008,6 +1017,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/marketplace'
     | '/$storeId/settings/markets'
+    | '/$storeId/settings/oauth-clients'
     | '/$storeId/settings/package-types'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/payouts'
@@ -1110,6 +1120,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/marketplace'
     | '/$storeId/settings/markets'
+    | '/$storeId/settings/oauth-clients'
     | '/$storeId/settings/package-types'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/payouts'
@@ -1215,6 +1226,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/integrations'
     | '/_authenticated/$storeId/settings/marketplace'
     | '/_authenticated/$storeId/settings/markets'
+    | '/_authenticated/$storeId/settings/oauth-clients'
     | '/_authenticated/$storeId/settings/package-types'
     | '/_authenticated/$storeId/settings/payment-methods'
     | '/_authenticated/$storeId/settings/payouts'
@@ -1696,6 +1708,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsMarketsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/oauth-clients': {
+      id: '/_authenticated/$storeId/settings/oauth-clients'
+      path: '/oauth-clients'
+      fullPath: '/$storeId/settings/oauth-clients'
+      preLoaderRoute: typeof SettingsOauthClientsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/package-types': {
       id: '/_authenticated/$storeId/settings/package-types'
       path: '/package-types'
@@ -2017,6 +2036,7 @@ interface SettingsRouteChildren {
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
   SettingsMarketplaceRoute: typeof SettingsMarketplaceRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
+  SettingsOauthClientsRoute: typeof SettingsOauthClientsRoute
   SettingsPackageTypesRoute: typeof SettingsPackageTypesRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
   SettingsPayoutsRoute: typeof SettingsPayoutsRoute
@@ -2053,6 +2073,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,
   SettingsMarketplaceRoute: SettingsMarketplaceRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
+  SettingsOauthClientsRoute: SettingsOauthClientsRoute,
   SettingsPackageTypesRoute: SettingsPackageTypesRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
   SettingsPayoutsRoute: SettingsPayoutsRoute,

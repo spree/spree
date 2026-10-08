@@ -20,6 +20,10 @@ module Spree
         orders, units — use describe_reporting and then query_report rather than
         counting records yourself.
 
+        Which products a category, collection, catalog or price list holds is
+        curate_products — merchandising is mostly membership, and that one tool
+        covers every one of those parents.
+
         Writes are named after what they do: a tool per operation, each running
         the same workflow the dashboard runs, so validations and notifications
         behave identically. Record arguments are prefixed ids as they appear in
