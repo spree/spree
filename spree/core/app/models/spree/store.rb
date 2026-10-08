@@ -8,6 +8,12 @@ module Spree
 
     include FriendlyId
     include Spree::TranslatableResource
+
+    # The store itself is settings — see Admin::StoreController.
+    def self.translation_write_permission
+      'write_settings'
+    end
+
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::Stores::Setup
