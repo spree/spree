@@ -288,6 +288,7 @@ module Spree
     alias shipments_attributes= fulfillments_attributes=
 
     before_create :link_by_email
+    before_validation :follow_ship_address_market, if: -> { draft? && !skip_market_resolution && ship_address_country_moved? }
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
     # Record-state deletion eligibility is enforced here, not in ability rules —
     # secret-key API requests never consult CanCanCan (Axis A/B split,
@@ -1228,6 +1229,17 @@ module Spree
 
     def link_by_email
       self.email = customer.email if customer
+    end
+
+    # A draft has no storefront to say where the buyer is, so the address staff
+    # enter decides. A placed order keeps its market: the money is in its
+    # currency.
+    def follow_ship_address_market
+      market = store&.market_for_country(ship_address.country_code)
+      return if market.nil? || market == self.market
+
+      self.market = market
+      self.currency = market.currency
     end
 
     # Determine if email is required (we don't want validation errors before we hit the checkout)

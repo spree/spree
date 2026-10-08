@@ -348,6 +348,7 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 - `ship_address_id=` / `bill_address_id=` are **ownership-guarded**: an address not owned by the record's customer resolves to `nil`.
 - A signed-in customer entering checkout gets blank address slots **auto-filled from their saved defaults**.
 - **`use_billing` is deprecated** (removed in 6.1): the shipping address is canonical — use `use_shipping` to copy ship → bill.
+- **A shipping address must be in one of the market's countries.** An address in any other country is refused, the default market included, and a delivery zone covering a country does not change that. Before upgrading, add every country you ship to to a market. See [Markets — Shipping addresses](/developer/core-concepts/markets#shipping-addresses).
 - The `firstname`, `lastname` and `zipcode` **columns are renamed** to `first_name`, `last_name` and `postal_code`. The API has used the new names since 5.4, but two things carried the old ones and now change: **validation error keys** (a client sending `postal_code` used to get its error back under `zipcode`) and **Ransack filter keys** (`q[zipcode_cont]` becomes `q[postal_code_cont]`). The old method names still read for one release.
 
 ## Returns, exchanges and claims

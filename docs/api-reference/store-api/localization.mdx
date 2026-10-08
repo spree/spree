@@ -89,6 +89,8 @@ When a market is resolved from the country:
 1. The market's default locale is used (unless overridden by `X-Spree-Locale`)
 2. The market's default currency is used (unless overridden by `X-Spree-Currency`)
 
+A cart takes its market from the country when it is created, and keeps it on later requests. Its shipping address must be in one of that market's countries: send `X-Spree-Country` when creating the cart, because a cart created without it is in the default market and can only ship there. See [Markets — Shipping addresses](/developer/core-concepts/markets#shipping-addresses).
+
 You can also resolve the market explicitly using the [Markets API](/developer/sdk/store/markets):
 
 <CodeGroup>

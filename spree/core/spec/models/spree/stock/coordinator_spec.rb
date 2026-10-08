@@ -82,6 +82,7 @@ module Spree
 
         let(:netherlands) { Spree::Country.by_iso('NL') }
         let(:dutch_address) { create(:address, country: netherlands, state: nil) }
+        let!(:eu_market) { create(:market, store: store, countries: [netherlands]) }
         let(:order) { create(:order_with_line_items, store: store, ship_address: dutch_address) }
 
         before do

@@ -282,13 +282,12 @@ export function OrderCustomerCard({ order }: { order: Order }) {
           address={editing === 'shipping_address' ? order.shipping_address : order.billing_address}
           open
           onOpenChange={(open) => !open && setEditing(null)}
-          onSave={(address) =>
-            save.mutate(
-              { type: editing, address },
-              // Kept open on failure so the entered address is not lost.
-              { onSuccess: () => setEditing(null) },
-            )
-          }
+          // Kept open on failure so the entered address is not lost; awaited
+          // so the dialog can show a refusal above the form.
+          onSave={async (address) => {
+            await save.mutateAsync({ type: editing, address })
+            setEditing(null)
+          }}
           isPending={save.isPending}
         />
       )}

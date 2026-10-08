@@ -32,6 +32,9 @@ module Spree
           r << req('cart', 'line_items', I18n.t('spree.checkout_requirements.line_items_required')) unless @cart.line_items.any?
           r << req('address', 'email', I18n.t('spree.checkout_requirements.email_required')) unless @cart.email.present?
           r << req('address', 'ship_address', I18n.t('spree.checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
+          # Saving refuses such an address, so this catches the market losing
+          # the country after the address was accepted.
+          r << req('address', 'ship_address', @cart.ship_address_outside_market_message, code: 'ship_address_outside_market') if @cart.ship_address_outside_market?
           r << req('delivery', 'delivery_method', I18n.t('spree.checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
           r << req('payment', 'payment', I18n.t('spree.checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
           r << req('address', 'po_number', I18n.t('spree.checkout_requirements.po_number_required')) if po_number_missing?
