@@ -494,6 +494,14 @@ ro:
         invalid_order_routing_strategy: nu este o strategie de rutare a comenzilor înregistrată
         store_association_can_not_be_changed: Asocierea magazinului nu poate fi modificată
         store_is_already_set: Magazinul este deja setat
+      workflow:
+        gift_card_already_redeemed: Cardul cadou a fost deja folosit.
+        gift_card_customer_not_logged_in: Cardul cadou nu poate fi aplicat de un utilizator invitat.
+        gift_card_expired: Cardul cadou a expirat.
+        gift_card_mismatched_currency: Cardul cadou nu poate fi aplicat cu moneda curentă.
+        gift_card_mismatched_customer: Acest card cadou este asociat cu un alt utilizator.
+        gift_card_using_store_credit_error: Nu puteți aplica cardul cadou după ce ați aplicat creditul de magazin.
+        remove_gift_card_on_completed_order_error: Nu puteți elimina cardul cadou după ce comanda a fost plasată
     expired: Expirat
     export_mailer:
       export_done:
@@ -509,15 +517,9 @@ ro:
     gateway: Metodă de plată
     gateway_error: Eroare metodă de plată
     gift_card: Card cadou
-    gift_card_already_redeemed: Cardul cadou a fost deja folosit.
     gift_card_applied: Cardul cadou a fost aplicat cu succes comenzii dvs.!
-    gift_card_customer_not_logged_in: Cardul cadou nu poate fi aplicat de un utilizator invitat.
-    gift_card_expired: Cardul cadou a expirat.
-    gift_card_mismatched_currency: Cardul cadou nu poate fi aplicat cu moneda curentă.
-    gift_card_mismatched_customer: Acest card cadou este asociat cu un alt utilizator.
     gift_card_not_found: Cardul cadou nu a fost găsit.
     gift_card_removed: Cardul cadou a fost eliminat cu succes din comanda dvs.
-    gift_card_using_store_credit_error: Nu puteți aplica cardul cadou după ce ați aplicat creditul de magazin.
     height: Înălțime
     i18n:
       this_file_language: Romanian (RO)
@@ -658,7 +660,6 @@ ro:
     refund_amount: Sumă de rambursare
     registration: Înregistrare
     remove: Șterge
-    remove_gift_card_on_completed_order_error: Nu puteți elimina cardul cadou după ce comanda a fost plasată
     resellable: Revândabil
     resend: Trimite din nou
     response_code: Cod răspuns

@@ -468,6 +468,15 @@ fa:
         invalid_order_routing_strategy: یک راهبرد مسیریابی سفارش ثبت‌شده نیست
         store_association_can_not_be_changed: ارتباط فروشگاه قابل تغییر نیست
         store_is_already_set: فروشگاه قبلاً تنظیم شده است
+      workflow:
+        gift_card_already_redeemed: این کارت هدیه قبلاً استفاده شده است.
+        gift_card_customer_not_logged_in: کارت هدیه با کاربر مهمان قابل اعمال نیست.
+        gift_card_expired: کارت هدیه منقضی شده است.
+        gift_card_mismatched_currency: کارت هدیه با ارز فعلی قابل اعمال نیست.
+        gift_card_mismatched_customer: این کارت هدیه با کاربر دیگری مرتبط است.
+        gift_card_using_store_credit_error: پس از اعمال اعتبار فروشگاه نمی‌توانید کارت هدیه را اعمال کنید.
+        order_canceled: سفارش لغو شد
+        remove_gift_card_on_completed_order_error: پس از ثبت سفارش نمی‌توانید کارت هدیه را حذف کنید
     expired: منقضی‌شده
     export_mailer:
       export_done:
@@ -483,15 +492,9 @@ fa:
     gateway: درگاه
     gateway_error: ایراد درگاه
     gift_card: کارت هدیه
-    gift_card_already_redeemed: این کارت هدیه قبلاً استفاده شده است.
     gift_card_applied: کارت هدیه با موفقیت به سفارش شما اعمال شد!
-    gift_card_customer_not_logged_in: کارت هدیه با کاربر مهمان قابل اعمال نیست.
-    gift_card_expired: کارت هدیه منقضی شده است.
-    gift_card_mismatched_currency: کارت هدیه با ارز فعلی قابل اعمال نیست.
-    gift_card_mismatched_customer: این کارت هدیه با کاربر دیگری مرتبط است.
     gift_card_not_found: کارت هدیه یافت نشد.
     gift_card_removed: کارت هدیه با موفقیت از سفارش شما حذف شد
-    gift_card_using_store_credit_error: پس از اعمال اعتبار فروشگاه نمی‌توانید کارت هدیه را اعمال کنید.
     height: ارتفاع
     i18n:
       this_file_language: فارسی (FA)
@@ -548,7 +551,6 @@ fa:
     options: اختیارات
     or: یا
     order: سفارش
-    order_canceled: سفارش لغو شد
     order_routing:
       strategies:
         legacy: قدیمی
@@ -620,7 +622,6 @@ fa:
     registration: ثبت نام
     rejected: رد شده
     remove: حدف
-    remove_gift_card_on_completed_order_error: پس از ثبت سفارش نمی‌توانید کارت هدیه را حذف کنید
     resellable: قابل فروش مجدد
     resend: اخیرا
     response_code: Response Code

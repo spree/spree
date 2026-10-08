@@ -407,6 +407,14 @@ pt:
         invalid_order_routing_strategy: não é uma estratégia de encaminhamento de encomendas registada
         store_association_can_not_be_changed: A associação à loja não pode ser alterada
         store_is_already_set: A loja já está definida
+      workflow:
+        gift_card_already_redeemed: O cartão de oferta já foi resgatado.
+        gift_card_customer_not_logged_in: Não é possível aplicar o cartão de oferta com um utilizador convidado.
+        gift_card_expired: O cartão de oferta expirou.
+        gift_card_mismatched_currency: Não é possível aplicar o cartão de oferta com a moeda atual.
+        gift_card_mismatched_customer: Este cartão de oferta está associado a outro utilizador.
+        gift_card_using_store_credit_error: Não pode aplicar o cartão de oferta depois de ter aplicado o crédito da loja.
+        remove_gift_card_on_completed_order_error: Não pode remover o cartão de oferta depois de a encomenda ter sido efetuada
     expired: Expirado
     export_mailer:
       export_done:
@@ -422,15 +430,9 @@ pt:
     gateway: Gateway
     gateway_error: Erro na Gateway
     gift_card: Cartão de oferta
-    gift_card_already_redeemed: O cartão de oferta já foi resgatado.
     gift_card_applied: O cartão de oferta foi aplicado com sucesso à sua encomenda!
-    gift_card_customer_not_logged_in: Não é possível aplicar o cartão de oferta com um utilizador convidado.
-    gift_card_expired: O cartão de oferta expirou.
-    gift_card_mismatched_currency: Não é possível aplicar o cartão de oferta com a moeda atual.
-    gift_card_mismatched_customer: Este cartão de oferta está associado a outro utilizador.
     gift_card_not_found: O cartão de oferta não foi encontrado.
     gift_card_removed: O cartão de oferta foi removido com sucesso da sua encomenda
-    gift_card_using_store_credit_error: Não pode aplicar o cartão de oferta depois de ter aplicado o crédito da loja.
     height: Altura
     i18n:
       this_file_language: Português (PT)
@@ -555,7 +557,6 @@ pt:
     refund_amount: Montante de reembolso
     registration: Registo
     remove: Remover
-    remove_gift_card_on_completed_order_error: Não pode remover o cartão de oferta depois de a encomenda ter sido efetuada
     resellable: Revendível
     resend: Reenviar
     response_code: Código de Resposta

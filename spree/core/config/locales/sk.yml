@@ -474,6 +474,14 @@ sk:
         invalid_order_routing_strategy: nie je registrovaná stratégia smerovania objednávok
         store_association_can_not_be_changed: Priradenie obchodu nie je možné zmeniť
         store_is_already_set: Obchod je už nastavený
+      workflow:
+        gift_card_already_redeemed: Darčeková karta už bola uplatnená.
+        gift_card_customer_not_logged_in: Darčekovú kartu nie je možné použiť ako hosť.
+        gift_card_expired: Darčeková karta vypršala.
+        gift_card_mismatched_currency: Darčekovú kartu nie je možné použiť s aktuálnou menou.
+        gift_card_mismatched_customer: Táto darčeková karta je spojená s iným používateľom.
+        gift_card_using_store_credit_error: Darčekovú kartu nie je možné použiť po použití kreditu obchodu.
+        remove_gift_card_on_completed_order_error: Po zadaní objednávky nie je možné odstrániť darčekovú kartu
     expired: Vypršané
     export_mailer:
       export_done:
@@ -489,15 +497,9 @@ sk:
     gateway: Platobná brána
     gateway_error: Chyba brány
     gift_card: Darčeková karta
-    gift_card_already_redeemed: Darčeková karta už bola uplatnená.
     gift_card_applied: Darčeková karta bola úspešne použitá na vašu objednávku!
-    gift_card_customer_not_logged_in: Darčekovú kartu nie je možné použiť ako hosť.
-    gift_card_expired: Darčeková karta vypršala.
-    gift_card_mismatched_currency: Darčekovú kartu nie je možné použiť s aktuálnou menou.
-    gift_card_mismatched_customer: Táto darčeková karta je spojená s iným používateľom.
     gift_card_not_found: Darčeková karta nebola nájdená.
     gift_card_removed: Darčeková karta bola úspešne odstránená z vašej objednávky
-    gift_card_using_store_credit_error: Darčekovú kartu nie je možné použiť po použití kreditu obchodu.
     height: Výška
     i18n:
       this_file_language: Slovenčina (SK)
@@ -604,7 +606,6 @@ sk:
     refund_amount: Suma vrátenia
     registration: Registrácia
     remove: Odstráň
-    remove_gift_card_on_completed_order_error: Po zadaní objednávky nie je možné odstrániť darčekovú kartu
     resellable: Opätovne predajné
     resend: Pošli opäť
     response_code: Kód odpovede

@@ -355,6 +355,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       patch :retry_failed_rows, params: { id: product_import.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(I18n.t('spree.errors.workflow.import_has_no_failed_rows'))
       expect(product_import.reload.status).to eq('completed')
     end
   end

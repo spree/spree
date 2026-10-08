@@ -372,6 +372,14 @@ ko:
         invalid_order_routing_strategy: 은(는) 등록된 주문 라우팅 전략이 아닙니다
         store_association_can_not_be_changed: 스토어 연결은 변경할 수 없습니다
         store_is_already_set: 스토어가 이미 설정되어 있습니다
+      workflow:
+        gift_card_already_redeemed: 기프트 카드가 이미 사용되었습니다.
+        gift_card_customer_not_logged_in: 기프트 카드는 비회원으로 적용할 수 없습니다.
+        gift_card_expired: 기프트 카드가 만료되었습니다.
+        gift_card_mismatched_currency: 기프트 카드를 현재 통화로 적용할 수 없습니다.
+        gift_card_mismatched_customer: 이 기프트 카드는 다른 사용자와 연결되어 있습니다.
+        gift_card_using_store_credit_error: 적립금을 적용한 후에는 기프트 카드를 적용할 수 없습니다.
+        remove_gift_card_on_completed_order_error: 주문이 완료된 후에는 기프트 카드를 제거할 수 없습니다
     expired: 만료됨
     export_mailer:
       export_done:
@@ -384,15 +392,9 @@ ko:
     gateway: 게이트웨이
     gateway_error: 게이트웨이 에러
     gift_card: 기프트 카드
-    gift_card_already_redeemed: 기프트 카드가 이미 사용되었습니다.
     gift_card_applied: 기프트 카드가 주문에 성공적으로 적용되었습니다!
-    gift_card_customer_not_logged_in: 기프트 카드는 비회원으로 적용할 수 없습니다.
-    gift_card_expired: 기프트 카드가 만료되었습니다.
-    gift_card_mismatched_currency: 기프트 카드를 현재 통화로 적용할 수 없습니다.
-    gift_card_mismatched_customer: 이 기프트 카드는 다른 사용자와 연결되어 있습니다.
     gift_card_not_found: 기프트 카드를 찾을 수 없습니다.
     gift_card_removed: 기프트 카드가 주문에서 성공적으로 제거되었습니다
-    gift_card_using_store_credit_error: 적립금을 적용한 후에는 기프트 카드를 적용할 수 없습니다.
     height: 세로
     i18n:
       this_file_language: 한국어 (KO)
@@ -505,7 +507,6 @@ ko:
     refund_amount: 환불 금액
     registration: 등록
     remove: 삭제
-    remove_gift_card_on_completed_order_error: 주문이 완료된 후에는 기프트 카드를 제거할 수 없습니다
     resellable: 재판매 가능
     resend: 재발송
     response_code: 응답 코드

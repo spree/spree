@@ -91,6 +91,16 @@ module Spree
     class << self
       attr_reader :declared_hooks
 
+      # Text for the symbol a workflow or service fails with
+      # (`failure(order, :not_cancellable)`). The messages live in their own
+      # scope so a rejection code can never collide with an unrelated key.
+      #
+      # @param code [Symbol, String] e.g. +:gift_card_expired+
+      # @return [String] the translation, or the humanized code without one
+      def error_message(code)
+        I18n.t("spree.errors.workflow.#{code}", default: code.to_s.humanize)
+      end
+
       # Anonymous test doubles have no name to derive a model name from.
       def model_name
         @model_name ||= ActiveModel::Name.new(self, nil, name || 'Workflow')

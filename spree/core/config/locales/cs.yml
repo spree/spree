@@ -571,6 +571,15 @@ cs:
         invalid_order_routing_strategy: není registrovaná strategie směrování objednávek
         store_association_can_not_be_changed: Přiřazení k obchodu nelze změnit
         store_is_already_set: Obchod je již nastaven
+      workflow:
+        gift_card_already_redeemed: Dárková karta již byla uplatněna.
+        gift_card_customer_not_logged_in: Dárkovou kartu nelze uplatnit jako host.
+        gift_card_expired: Platnost dárkové karty vypršela.
+        gift_card_mismatched_currency: Dárkovou kartu nelze uplatnit s aktuální měnou.
+        gift_card_mismatched_customer: Tato dárková karta je spojena s jiným uživatelem.
+        gift_card_using_store_credit_error: Po uplatnění kreditu obchodu nelze uplatnit dárkovou kartu.
+        order_canceled: Objednávka zrušena
+        remove_gift_card_on_completed_order_error: Dárkovou kartu nelze odebrat po odeslání objednávky
     expired: Vypršela platnost
     export_mailer:
       export_done:
@@ -586,15 +595,9 @@ cs:
     gateway: Platební brána
     gateway_error: Chyba platební brány
     gift_card: Dárková karta
-    gift_card_already_redeemed: Dárková karta již byla uplatněna.
     gift_card_applied: Dárková karta byla úspěšně uplatněna na vaši objednávku!
-    gift_card_customer_not_logged_in: Dárkovou kartu nelze uplatnit jako host.
-    gift_card_expired: Platnost dárkové karty vypršela.
-    gift_card_mismatched_currency: Dárkovou kartu nelze uplatnit s aktuální měnou.
-    gift_card_mismatched_customer: Tato dárková karta je spojena s jiným uživatelem.
     gift_card_not_found: Dárková karta nebyla nalezena.
     gift_card_removed: Dárková karta byla úspěšně odebrána z vaší objednávky
-    gift_card_using_store_credit_error: Po uplatnění kreditu obchodu nelze uplatnit dárkovou kartu.
     height: Výška
     i18n:
       this_file_language: Čeština (CS)
@@ -653,7 +656,6 @@ cs:
     options: Volby
     or: nebo
     order: Objednávka
-    order_canceled: Objednávka zrušena
     order_routing:
       strategies:
         legacy: Starší
@@ -757,7 +759,6 @@ cs:
     registration: Registrace
     rejected: Zamítnuto
     remove: Vyjmout
-    remove_gift_card_on_completed_order_error: Dárkovou kartu nelze odebrat po odeslání objednávky
     resellable: Lze znovu prodat
     resend: Zaslat znovu
     response_code: Kód odpovědi

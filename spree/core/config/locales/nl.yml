@@ -543,6 +543,15 @@ nl:
         invalid_order_routing_strategy: is geen geregistreerde strategie voor bestelroutering
         store_association_can_not_be_changed: De winkelkoppeling kan niet worden gewijzigd
         store_is_already_set: Winkel is al ingesteld
+      workflow:
+        gift_card_already_redeemed: De cadeaubon is al ingewisseld.
+        gift_card_customer_not_logged_in: Een cadeaubon kan niet als gast worden toegepast.
+        gift_card_expired: De cadeaubon is verlopen.
+        gift_card_mismatched_currency: De cadeaubon kan niet worden toegepast met de huidige valuta.
+        gift_card_mismatched_customer: Deze cadeaubon is gekoppeld aan een andere gebruiker.
+        gift_card_using_store_credit_error: Je kunt de cadeaubon niet toepassen nadat je het winkeltegoed hebt toegepast.
+        order_canceled: Order geannuleerd
+        remove_gift_card_on_completed_order_error: Je kunt de cadeaubon niet verwijderen nadat de bestelling is geplaatst
     expired: Verlopen
     export_mailer:
       export_done:
@@ -558,15 +567,9 @@ nl:
     gateway: Gateway
     gateway_error: Gateway fout
     gift_card: Cadeaubon
-    gift_card_already_redeemed: De cadeaubon is al ingewisseld.
     gift_card_applied: De cadeaubon is succesvol op je bestelling toegepast!
-    gift_card_customer_not_logged_in: Een cadeaubon kan niet als gast worden toegepast.
-    gift_card_expired: De cadeaubon is verlopen.
-    gift_card_mismatched_currency: De cadeaubon kan niet worden toegepast met de huidige valuta.
-    gift_card_mismatched_customer: Deze cadeaubon is gekoppeld aan een andere gebruiker.
     gift_card_not_found: De cadeaubon is niet gevonden.
     gift_card_removed: De cadeaubon is succesvol van je bestelling verwijderd
-    gift_card_using_store_credit_error: Je kunt de cadeaubon niet toepassen nadat je het winkeltegoed hebt toegepast.
     height: Hoogte
     i18n:
       this_file_language: Nederlands (NL)
@@ -624,7 +627,6 @@ nl:
     options: Opties
     or: of
     order: Bestelling
-    order_canceled: Order geannuleerd
     order_routing:
       strategies:
         legacy: Verouderd
@@ -728,7 +730,6 @@ nl:
     registration: Registratie
     rejected: Afgewezen
     remove: Verwijderen
-    remove_gift_card_on_completed_order_error: Je kunt de cadeaubon niet verwijderen nadat de bestelling is geplaatst
     resellable: Doorverkoopbaar
     resend: Opnieuw verzenden
     response_code: Antwoordcode

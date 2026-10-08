@@ -203,15 +203,17 @@ es-CL:
       messages:
         cannot_delete_default_channel: No se puede eliminar el canal predeterminado. Primero promueve otro canal como predeterminado.
         store_association_can_not_be_changed: La asociación de tienda no se puede cambiar
+      workflow:
+        gift_card_already_redeemed: La tarjeta de regalo ya fue canjeada.
+        gift_card_customer_not_logged_in: La tarjeta de regalo no se puede aplicar como usuario invitado.
+        gift_card_expired: La tarjeta de regalo venció.
+        gift_card_using_store_credit_error: No puedes aplicar la tarjeta de regalo después de haber aplicado el crédito de tienda.
+        remove_gift_card_on_completed_order_error: No puedes quitar la tarjeta de regalo después de realizar el pedido
     expired: Vencido
     export_mailer:
       greeting: Hola %{user_name},
     gateway: Gateway
     gateway_error: Error en Gateway
-    gift_card_already_redeemed: La tarjeta de regalo ya fue canjeada.
-    gift_card_customer_not_logged_in: La tarjeta de regalo no se puede aplicar como usuario invitado.
-    gift_card_expired: La tarjeta de regalo venció.
-    gift_card_using_store_credit_error: No puedes aplicar la tarjeta de regalo después de haber aplicado el crédito de tienda.
     i18n:
       this_file_language: Español (es-CL)
     idempotency_key_reused: Esta Idempotency-Key ya fue usada con parámetros de solicitud distintos.
@@ -268,7 +270,6 @@ es-CL:
         name: Opción valor(es)
     refund_amount: Monto del reembolso
     remove: Quitar
-    remove_gift_card_on_completed_order_error: No puedes quitar la tarjeta de regalo después de realizar el pedido
     resellable: Reusable
     return: Volver
     say_no: 'No'

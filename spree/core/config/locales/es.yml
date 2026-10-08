@@ -548,6 +548,15 @@ es:
         invalid_order_routing_strategy: no es una estrategia de enrutamiento de pedidos registrada
         store_association_can_not_be_changed: La asociación con la tienda no se puede cambiar
         store_is_already_set: La tienda ya está establecida
+      workflow:
+        gift_card_already_redeemed: La tarjeta de regalo ya se ha canjeado.
+        gift_card_customer_not_logged_in: La tarjeta de regalo no se puede aplicar con un usuario invitado.
+        gift_card_expired: La tarjeta de regalo ha caducado.
+        gift_card_mismatched_currency: La tarjeta de regalo no se puede aplicar con la moneda actual.
+        gift_card_mismatched_customer: Esta tarjeta de regalo está asociada a otro usuario.
+        gift_card_using_store_credit_error: No puedes aplicar la tarjeta de regalo después de haber aplicado el crédito de la tienda.
+        order_canceled: Pedido Cancelado
+        remove_gift_card_on_completed_order_error: No puedes eliminar la tarjeta de regalo después de realizar el pedido
     expired: Caducado
     export_mailer:
       export_done:
@@ -563,15 +572,9 @@ es:
     gateway: Pasarela
     gateway_error: Error en pasarela
     gift_card: Tarjeta de regalo
-    gift_card_already_redeemed: La tarjeta de regalo ya se ha canjeado.
     gift_card_applied: "¡La tarjeta de regalo se aplicó correctamente a tu pedido!"
-    gift_card_customer_not_logged_in: La tarjeta de regalo no se puede aplicar con un usuario invitado.
-    gift_card_expired: La tarjeta de regalo ha caducado.
-    gift_card_mismatched_currency: La tarjeta de regalo no se puede aplicar con la moneda actual.
-    gift_card_mismatched_customer: Esta tarjeta de regalo está asociada a otro usuario.
     gift_card_not_found: No se encontró la tarjeta de regalo.
     gift_card_removed: La tarjeta de regalo se eliminó correctamente de tu pedido
-    gift_card_using_store_credit_error: No puedes aplicar la tarjeta de regalo después de haber aplicado el crédito de la tienda.
     height: Altura
     i18n:
       this_file_language: Español (ES)
@@ -630,7 +633,6 @@ es:
     options: Opciones
     or: o
     order: Pedido
-    order_canceled: Pedido Cancelado
     order_routing:
       strategies:
         legacy: Heredado
@@ -734,7 +736,6 @@ es:
     registration: Registro
     rejected: Rechazado
     remove: Eliminar
-    remove_gift_card_on_completed_order_error: No puedes eliminar la tarjeta de regalo después de realizar el pedido
     resellable: Revendible
     resend: Reenviar
     response_code: Código de respuesta

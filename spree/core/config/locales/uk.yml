@@ -552,6 +552,15 @@ uk:
         invalid_order_routing_strategy: не є зареєстрованою стратегією маршрутизації замовлень
         store_association_can_not_be_changed: Зв'язок з магазином не можна змінити
         store_is_already_set: Магазин вже встановлено
+      workflow:
+        gift_card_already_redeemed: Подарунковий сертифікат вже використано.
+        gift_card_customer_not_logged_in: Подарунковий сертифікат неможливо застосувати для гостьового користувача.
+        gift_card_expired: Термін дії подарункового сертифіката закінчився.
+        gift_card_mismatched_currency: Подарунковий сертифікат неможливо застосувати в поточній валюті.
+        gift_card_mismatched_customer: Цей подарунковий сертифікат пов’язаний з іншим користувачем.
+        gift_card_using_store_credit_error: Неможливо застосувати подарунковий сертифікат після застосування кредиту магазину.
+        order_canceled: Замовлення скасовано
+        remove_gift_card_on_completed_order_error: Неможливо видалити подарунковий сертифікат після оформлення замовлення
     expired: Прострочено
     export_mailer:
       export_done:
@@ -567,15 +576,9 @@ uk:
     gateway: Шлюз
     gateway_error: Помилка шлюзу
     gift_card: Подарунковий сертифікат
-    gift_card_already_redeemed: Подарунковий сертифікат вже використано.
     gift_card_applied: Подарунковий сертифікат успішно застосовано до вашого замовлення!
-    gift_card_customer_not_logged_in: Подарунковий сертифікат неможливо застосувати для гостьового користувача.
-    gift_card_expired: Термін дії подарункового сертифіката закінчився.
-    gift_card_mismatched_currency: Подарунковий сертифікат неможливо застосувати в поточній валюті.
-    gift_card_mismatched_customer: Цей подарунковий сертифікат пов’язаний з іншим користувачем.
     gift_card_not_found: Подарунковий сертифікат не знайдено.
     gift_card_removed: Подарунковий сертифікат успішно видалено з вашого замовлення
-    gift_card_using_store_credit_error: Неможливо застосувати подарунковий сертифікат після застосування кредиту магазину.
     height: Висота
     i18n:
       this_file_language: Українська(UK)
@@ -634,7 +637,6 @@ uk:
     options: Опції
     or: або
     order: Замовлення
-    order_canceled: Замовлення скасовано
     order_routing:
       strategies:
         legacy: Застаріла
@@ -738,7 +740,6 @@ uk:
     registration: Реєстрація
     rejected: Відхилено
     remove: Видалити
-    remove_gift_card_on_completed_order_error: Неможливо видалити подарунковий сертифікат після оформлення замовлення
     resellable: Перепродаваний
     resend: Надіслати знову
     response_code: Код відповіді

@@ -499,6 +499,14 @@ fi:
         invalid_order_routing_strategy: ei ole rekisteröity tilausten reititysstrategia
         store_association_can_not_be_changed: Kaupan liitosta ei voi muuttaa
         store_is_already_set: Kauppa on jo asetettu
+      workflow:
+        gift_card_already_redeemed: Lahjakortti on jo lunastettu.
+        gift_card_customer_not_logged_in: Lahjakorttia ei voi käyttää vieraskäyttäjänä.
+        gift_card_expired: Lahjakortti on vanhentunut.
+        gift_card_mismatched_currency: Lahjakorttia ei voi käyttää nykyisellä valuutalla.
+        gift_card_mismatched_customer: Tämä lahjakortti on liitetty toiseen käyttäjään.
+        gift_card_using_store_credit_error: Lahjakorttia ei voi käyttää sen jälkeen, kun kauppahyvitys on otettu käyttöön.
+        remove_gift_card_on_completed_order_error: Et voi poistaa lahjakorttia sen jälkeen, kun tilaus on tehty
     expired: Vanhentunut
     export_mailer:
       export_done:
@@ -514,15 +522,9 @@ fi:
     gateway: Yhdyskäytävä
     gateway_error: Virhe yhdyskäytävässä
     gift_card: Lahjakortti
-    gift_card_already_redeemed: Lahjakortti on jo lunastettu.
     gift_card_applied: Lahjakortti lisättiin onnistuneesti tilaukseesi!
-    gift_card_customer_not_logged_in: Lahjakorttia ei voi käyttää vieraskäyttäjänä.
-    gift_card_expired: Lahjakortti on vanhentunut.
-    gift_card_mismatched_currency: Lahjakorttia ei voi käyttää nykyisellä valuutalla.
-    gift_card_mismatched_customer: Tämä lahjakortti on liitetty toiseen käyttäjään.
     gift_card_not_found: Lahjakorttia ei löytynyt.
     gift_card_removed: Lahjakortti poistettiin onnistuneesti tilauksestasi
-    gift_card_using_store_credit_error: Lahjakorttia ei voi käyttää sen jälkeen, kun kauppahyvitys on otettu käyttöön.
     height: Korkeus
     i18n:
       this_file_language: Suomi (FI)
@@ -677,7 +679,6 @@ fi:
     refund_amount: Hyvityksen määrä
     registration: Rekisteröityminen
     remove: Poista
-    remove_gift_card_on_completed_order_error: Et voi poistaa lahjakorttia sen jälkeen, kun tilaus on tehty
     resellable: Jälleenmyytävissä
     resend: Lähetä uudelleen
     response_code: Vastauskoodi

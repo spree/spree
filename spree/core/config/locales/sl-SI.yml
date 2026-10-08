@@ -373,6 +373,14 @@ sl-SI:
         invalid_order_routing_strategy: ni registrirana strategija usmerjanja naročil
         store_association_can_not_be_changed: Povezave s trgovino ni mogoče spremeniti
         store_is_already_set: Trgovina je že nastavljena
+      workflow:
+        gift_card_already_redeemed: Darilna kartica je bila že unovčena.
+        gift_card_customer_not_logged_in: Darilne kartice ni mogoče uporabiti kot gost.
+        gift_card_expired: Darilna kartica je potekla.
+        gift_card_mismatched_currency: Darilne kartice ni mogoče uporabiti s trenutno valuto.
+        gift_card_mismatched_customer: Ta darilna kartica je povezana z drugim uporabnikom.
+        gift_card_using_store_credit_error: Darilne kartice ne morete uporabiti, potem ko ste uporabili dobropis trgovine.
+        remove_gift_card_on_completed_order_error: Darilne kartice ne morete odstraniti, potem ko je bilo naročilo oddano
     expired: Poteklo
     export_mailer:
       export_done:
@@ -388,15 +396,9 @@ sl-SI:
     gateway: Ponudnik
     gateway_error: Napaka ponudnika
     gift_card: Darilna kartica
-    gift_card_already_redeemed: Darilna kartica je bila že unovčena.
     gift_card_applied: Darilna kartica je bila uspešno uporabljena za vaše naročilo!
-    gift_card_customer_not_logged_in: Darilne kartice ni mogoče uporabiti kot gost.
-    gift_card_expired: Darilna kartica je potekla.
-    gift_card_mismatched_currency: Darilne kartice ni mogoče uporabiti s trenutno valuto.
-    gift_card_mismatched_customer: Ta darilna kartica je povezana z drugim uporabnikom.
     gift_card_not_found: Darilna kartica ni bila najdena.
     gift_card_removed: Darilna kartica je bila uspešno odstranjena iz vašega naročila
-    gift_card_using_store_credit_error: Darilne kartice ne morete uporabiti, potem ko ste uporabili dobropis trgovine.
     height: Višina
     i18n:
       this_file_language: Slovenščina (sl-SL)
@@ -520,7 +522,6 @@ sl-SI:
     refund_amount: Znesek vračila
     registration: Registracija
     remove: Odstrani
-    remove_gift_card_on_completed_order_error: Darilne kartice ne morete odstraniti, potem ko je bilo naročilo oddano
     resellable: Primerno za nadaljnjo prodajo
     resend: Pošlji ponovno
     response_code: Odzivna koda

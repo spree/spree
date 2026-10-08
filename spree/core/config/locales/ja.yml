@@ -484,6 +484,14 @@ ja:
         invalid_order_routing_strategy: は登録された注文ルーティング戦略ではありません
         store_association_can_not_be_changed: ストアの関連付けは変更できません
         store_is_already_set: ストアはすでに設定されています
+      workflow:
+        gift_card_already_redeemed: このギフトカードはすでに引き換え済みです。
+        gift_card_customer_not_logged_in: ゲストユーザーではギフトカードを適用できません。
+        gift_card_expired: このギフトカードは有効期限が切れています。
+        gift_card_mismatched_currency: 現在の通貨ではギフトカードを適用できません。
+        gift_card_mismatched_customer: このギフトカードは別のユーザーに関連付けられています。
+        gift_card_using_store_credit_error: ストアクレジットを適用した後にギフトカードを適用することはできません。
+        remove_gift_card_on_completed_order_error: 注文確定後にギフトカードを削除することはできません
     expired: 期限切れ
     export_mailer:
       export_done:
@@ -499,15 +507,9 @@ ja:
     gateway: ゲートウェー
     gateway_error: ゲートウェーエラー
     gift_card: ギフトカード
-    gift_card_already_redeemed: このギフトカードはすでに引き換え済みです。
     gift_card_applied: ギフトカードが注文に正常に適用されました！
-    gift_card_customer_not_logged_in: ゲストユーザーではギフトカードを適用できません。
-    gift_card_expired: このギフトカードは有効期限が切れています。
-    gift_card_mismatched_currency: 現在の通貨ではギフトカードを適用できません。
-    gift_card_mismatched_customer: このギフトカードは別のユーザーに関連付けられています。
     gift_card_not_found: ギフトカードが見つかりませんでした。
     gift_card_removed: ギフトカードが注文から正常に削除されました
-    gift_card_using_store_credit_error: ストアクレジットを適用した後にギフトカードを適用することはできません。
     height: 高さ
     i18n:
       this_file_language: 日本語 (JA)
@@ -643,7 +645,6 @@ ja:
     refund_amount: 返金額
     registration: 登録
     remove: 削除
-    remove_gift_card_on_completed_order_error: 注文確定後にギフトカードを削除することはできません
     resellable: 再販可能
     resend: 再送信
     response_code: レスポンスコード

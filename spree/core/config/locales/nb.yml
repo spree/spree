@@ -540,6 +540,15 @@ nb:
         invalid_order_routing_strategy: er ikke en registrert strategi for ordreruting
         store_association_can_not_be_changed: Butikktilknytningen kan ikke endres
         store_is_already_set: Butikk er allerede angitt
+      workflow:
+        gift_card_already_redeemed: Gavekortet er allerede innløst.
+        gift_card_customer_not_logged_in: Gavekort kan ikke brukes som gjestebruker.
+        gift_card_expired: Gavekortet har utløpt.
+        gift_card_mismatched_currency: Gavekort kan ikke brukes med gjeldende valuta.
+        gift_card_mismatched_customer: Dette gavekortet er knyttet til en annen bruker.
+        gift_card_using_store_credit_error: Du kan ikke bruke gavekortet etter at du har brukt butikkreditt.
+        order_canceled: Bestillingen kansellert
+        remove_gift_card_on_completed_order_error: Du kan ikke fjerne gavekortet etter at ordren er lagt inn
     expired: Utløpt
     export_mailer:
       export_done:
@@ -555,15 +564,9 @@ nb:
     gateway: Tjeneste
     gateway_error: Feil oppstått i tilgangstjenesten
     gift_card: Gavekort
-    gift_card_already_redeemed: Gavekortet er allerede innløst.
     gift_card_applied: Gavekortet ble lagt til ordren din!
-    gift_card_customer_not_logged_in: Gavekort kan ikke brukes som gjestebruker.
-    gift_card_expired: Gavekortet har utløpt.
-    gift_card_mismatched_currency: Gavekort kan ikke brukes med gjeldende valuta.
-    gift_card_mismatched_customer: Dette gavekortet er knyttet til en annen bruker.
     gift_card_not_found: Gavekortet ble ikke funnet.
     gift_card_removed: Gavekortet ble fjernet fra ordren din
-    gift_card_using_store_credit_error: Du kan ikke bruke gavekortet etter at du har brukt butikkreditt.
     height: Høyde
     i18n:
       this_file_language: Norsk (NB)
@@ -622,7 +625,6 @@ nb:
     options: Valg
     or: eller
     order: Ordre
-    order_canceled: Bestillingen kansellert
     order_routing:
       strategies:
         legacy: Eldre
@@ -726,7 +728,6 @@ nb:
     registration: Registrering
     rejected: Avvist
     remove: Fjern
-    remove_gift_card_on_completed_order_error: Du kan ikke fjerne gavekortet etter at ordren er lagt inn
     resellable: Selges videre
     resend: Send på nytt
     response_code: Responskode

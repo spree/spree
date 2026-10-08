@@ -550,6 +550,15 @@ it:
         invalid_order_routing_strategy: non è una strategia di instradamento ordini registrata
         store_association_can_not_be_changed: L'associazione al negozio non può essere modificata
         store_is_already_set: Il negozio è già impostato
+      workflow:
+        gift_card_already_redeemed: La gift card è già stata riscattata.
+        gift_card_customer_not_logged_in: La gift card non può essere applicata da un utente ospite.
+        gift_card_expired: La gift card è scaduta.
+        gift_card_mismatched_currency: La gift card non può essere applicata con la valuta attuale.
+        gift_card_mismatched_customer: Questa gift card è associata a un altro utente.
+        gift_card_using_store_credit_error: Non puoi applicare la gift card dopo aver applicato il credito negozio.
+        order_canceled: Ordine Annullato
+        remove_gift_card_on_completed_order_error: Non puoi rimuovere la gift card dopo che l'ordine è stato effettuato
     expired: Scaduto
     export_mailer:
       export_done:
@@ -565,15 +574,9 @@ it:
     gateway: Gateway
     gateway_error: Errore Gateway
     gift_card: Gift card
-    gift_card_already_redeemed: La gift card è già stata riscattata.
     gift_card_applied: La gift card è stata applicata con successo al tuo ordine!
-    gift_card_customer_not_logged_in: La gift card non può essere applicata da un utente ospite.
-    gift_card_expired: La gift card è scaduta.
-    gift_card_mismatched_currency: La gift card non può essere applicata con la valuta attuale.
-    gift_card_mismatched_customer: Questa gift card è associata a un altro utente.
     gift_card_not_found: La gift card non è stata trovata.
     gift_card_removed: La gift card è stata rimossa con successo dal tuo ordine
-    gift_card_using_store_credit_error: Non puoi applicare la gift card dopo aver applicato il credito negozio.
     height: Altezza
     i18n:
       this_file_language: Italiano (IT)
@@ -632,7 +635,6 @@ it:
     options: Opzioni
     or: o
     order: Ordine
-    order_canceled: Ordine Annullato
     order_routing:
       strategies:
         legacy: Legacy
@@ -736,7 +738,6 @@ it:
     registration: Registrazione
     rejected: Rifiutato
     remove: Rimuovi
-    remove_gift_card_on_completed_order_error: Non puoi rimuovere la gift card dopo che l'ordine è stato effettuato
     resellable: Rivendibile
     resend: Rinvio
     response_code: Codice di Risposta

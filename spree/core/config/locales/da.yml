@@ -516,6 +516,15 @@ da:
         invalid_order_routing_strategy: er ikke en registreret ordrerutningsstrategi
         store_association_can_not_be_changed: Butikstilknytningen kan ikke ændres
         store_is_already_set: Butikken er allerede angivet
+      workflow:
+        gift_card_already_redeemed: Gavekortet er allerede blevet indløst.
+        gift_card_customer_not_logged_in: Gavekort kan ikke anvendes som gæstebruger.
+        gift_card_expired: Gavekortet er udløbet.
+        gift_card_mismatched_currency: Gavekort kan ikke anvendes med den nuværende valuta.
+        gift_card_mismatched_customer: Dette gavekort er knyttet til en anden bruger.
+        gift_card_using_store_credit_error: Du kan ikke anvende gavekortet, efter at du har anvendt butikskredit.
+        order_canceled: Ordren er blevet annulleret
+        remove_gift_card_on_completed_order_error: Du kan ikke fjerne gavekortet, efter at ordren er afgivet
     expired: Udløbet
     export_mailer:
       export_done:
@@ -531,15 +540,9 @@ da:
     gateway: Betalingsleverandør
     gateway_error: Betalingsleverandørfejl
     gift_card: Gavekort
-    gift_card_already_redeemed: Gavekortet er allerede blevet indløst.
     gift_card_applied: Gavekortet blev anvendt på din ordre!
-    gift_card_customer_not_logged_in: Gavekort kan ikke anvendes som gæstebruger.
-    gift_card_expired: Gavekortet er udløbet.
-    gift_card_mismatched_currency: Gavekort kan ikke anvendes med den nuværende valuta.
-    gift_card_mismatched_customer: Dette gavekort er knyttet til en anden bruger.
     gift_card_not_found: Gavekortet blev ikke fundet.
     gift_card_removed: Gavekortet blev fjernet fra din ordre
-    gift_card_using_store_credit_error: Du kan ikke anvende gavekortet, efter at du har anvendt butikskredit.
     height: Højde
     i18n:
       this_file_language: Danish (DA)
@@ -593,7 +596,6 @@ da:
     options: Indstillinger
     or: eller
     order: Ordre
-    order_canceled: Ordren er blevet annulleret
     order_routing:
       strategies:
         legacy: Ældre
@@ -681,7 +683,6 @@ da:
     refund_amount: Refunderingsbeløb
     registration: Registrering
     remove: Fjern
-    remove_gift_card_on_completed_order_error: Du kan ikke fjerne gavekortet, efter at ordren er afgivet
     resellable: Kan videresælges
     resend: Gensend
     response_code: Svarkode

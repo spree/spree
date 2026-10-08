@@ -176,12 +176,13 @@ de-CH:
         invalid_order_routing_strategy: ist keine registrierte Order-Routing-Strategie
         store_association_can_not_be_changed: Die Store-Zuordnung kann nicht geändert werden
         store_is_already_set: Store ist bereits festgelegt
+      workflow:
+        gift_card_using_store_credit_error: Sie können die Geschenkkarte nicht anwenden, nachdem Sie das Store-Guthaben angewendet haben.
     export_mailer:
       export_done:
         message: Gute Arbeit, Ihr Export ist bereit! Bitte verwenden Sie den Link unten, um ihn herunterzuladen.
     free: Gratis
     gateway_error: Gateway-Fehler
-    gift_card_using_store_credit_error: Sie können die Geschenkkarte nicht anwenden, nachdem Sie das Store-Guthaben angewendet haben.
     i18n:
       this_file_language: Deutsch Schweiz (de-CH)
     in_stock: An Lager

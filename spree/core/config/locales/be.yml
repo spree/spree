@@ -571,6 +571,15 @@ be:
         invalid_order_routing_strategy: не з'яўляецца зарэгістраванай стратэгіяй маршрутызацыі заказаў
         store_association_can_not_be_changed: Прывязку да крамы немагчыма змяніць
         store_is_already_set: Крама ўжо ўсталявана
+      workflow:
+        gift_card_already_redeemed: Падарункавая карта ўжо была пагашана.
+        gift_card_customer_not_logged_in: Падарункавую карту немагчыма прымяніць для госця.
+        gift_card_expired: Тэрмін дзеяння падарункавай карты скончыўся.
+        gift_card_mismatched_currency: Падарункавую карту немагчыма прымяніць з бягучай валютай.
+        gift_card_mismatched_customer: Гэта падарункавая карта звязана з іншым карыстальнікам.
+        gift_card_using_store_credit_error: Вы не можаце прымяніць падарункавую карту пасля таго, як прымянілі крэдыт крамы.
+        order_canceled: Заказ адменены
+        remove_gift_card_on_completed_order_error: Вы не можаце выдаліць падарункавую карту пасля таго, як заказ быў аформлены
     expired: Тэрмін дзеяння скончыўся
     export_mailer:
       export_done:
@@ -586,15 +595,9 @@ be:
     gateway: Аплатны шлюз
     gateway_error: Памылка плацёжнага шлюза
     gift_card: Падарункавая карта
-    gift_card_already_redeemed: Падарункавая карта ўжо была пагашана.
     gift_card_applied: Падарункавая карта паспяхова прымянёна да вашага заказу!
-    gift_card_customer_not_logged_in: Падарункавую карту немагчыма прымяніць для госця.
-    gift_card_expired: Тэрмін дзеяння падарункавай карты скончыўся.
-    gift_card_mismatched_currency: Падарункавую карту немагчыма прымяніць з бягучай валютай.
-    gift_card_mismatched_customer: Гэта падарункавая карта звязана з іншым карыстальнікам.
     gift_card_not_found: Падарункавая карта не знойдзена.
     gift_card_removed: Падарункавая карта паспяхова выдалена з вашага заказу
-    gift_card_using_store_credit_error: Вы не можаце прымяніць падарункавую карту пасля таго, як прымянілі крэдыт крамы.
     height: Вышыня
     i18n:
       this_file_language: Belarusian (BE)
@@ -653,7 +656,6 @@ be:
     options: Опцыі
     or: ці
     order: Заказ
-    order_canceled: Заказ адменены
     order_routing:
       strategies:
         legacy: Састарэлая
@@ -757,7 +759,6 @@ be:
     registration: Рэгістрацыя
     rejected: Адхілена
     remove: Прыбраць
-    remove_gift_card_on_completed_order_error: Вы не можаце выдаліць падарункавую карту пасля таго, як заказ быў аформлены
     resellable: Можна перапрадаваць
     resend: Адаслаць паўторна
     response_code: Код адказу

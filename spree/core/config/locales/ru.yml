@@ -555,6 +555,15 @@ ru:
         invalid_order_routing_strategy: не является зарегистрированной стратегией маршрутизации заказов
         store_association_can_not_be_changed: Связь с магазином нельзя изменить
         store_is_already_set: Магазин уже назначен
+      workflow:
+        gift_card_already_redeemed: Подарочная карта уже использована.
+        gift_card_customer_not_logged_in: Подарочную карту нельзя применить в режиме гостя.
+        gift_card_expired: Срок действия подарочной карты истёк.
+        gift_card_mismatched_currency: Подарочную карту нельзя применить с текущей валютой.
+        gift_card_mismatched_customer: Эта подарочная карта связана с другим пользователем.
+        gift_card_using_store_credit_error: Подарочную карту нельзя применить после применения кредита магазина.
+        order_canceled: Заказ отменён
+        remove_gift_card_on_completed_order_error: Нельзя удалить подарочную карту после оформления заказа
     expired: Истёк
     export_mailer:
       export_done:
@@ -570,15 +579,9 @@ ru:
     gateway: Платежный шлюз
     gateway_error: Ошибка платежного шлюза
     gift_card: Подарочная карта
-    gift_card_already_redeemed: Подарочная карта уже использована.
     gift_card_applied: Подарочная карта успешно применена к вашему заказу!
-    gift_card_customer_not_logged_in: Подарочную карту нельзя применить в режиме гостя.
-    gift_card_expired: Срок действия подарочной карты истёк.
-    gift_card_mismatched_currency: Подарочную карту нельзя применить с текущей валютой.
-    gift_card_mismatched_customer: Эта подарочная карта связана с другим пользователем.
     gift_card_not_found: Подарочная карта не найдена.
     gift_card_removed: Подарочная карта успешно удалена из вашего заказа
-    gift_card_using_store_credit_error: Подарочную карту нельзя применить после применения кредита магазина.
     height: Высота
     i18n:
       this_file_language: Russian (RU)
@@ -637,7 +640,6 @@ ru:
     options: Опции
     or: или
     order: Заказ
-    order_canceled: Заказ отменён
     order_routing:
       strategies:
         legacy: Устаревшая
@@ -738,7 +740,6 @@ ru:
     refund_amount: Сумма возврата
     registration: Регистрация
     remove: Убрать
-    remove_gift_card_on_completed_order_error: Нельзя удалить подарочную карту после оформления заказа
     resellable: Пригодно для перепродажи
     resend: Отправить повторно
     response_code: Код ответа

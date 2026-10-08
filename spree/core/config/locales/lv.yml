@@ -464,6 +464,15 @@ lv:
         invalid_order_routing_strategy: nav reģistrēta pasūtījumu maršrutēšanas stratēģija
         store_association_can_not_be_changed: Veikala piesaisti nevar mainīt
         store_is_already_set: Veikals jau ir iestatīts
+      workflow:
+        gift_card_already_redeemed: Dāvanu karte jau ir izmantota.
+        gift_card_customer_not_logged_in: Dāvanu karti nevar pielietot kā nereģistrēts lietotājs.
+        gift_card_expired: Dāvanu kartes derīgums ir beidzies.
+        gift_card_mismatched_currency: Dāvanu karti nevar pielietot ar pašreizējo valūtu.
+        gift_card_mismatched_customer: Šī dāvanu karte ir saistīta ar citu lietotāju.
+        gift_card_using_store_credit_error: Jūs nevarat pielietot dāvanu karti pēc veikala kredīta pielietošanas.
+        order_canceled: Pasūtījums atcelts
+        remove_gift_card_on_completed_order_error: Jūs nevarat noņemt dāvanu karti pēc pasūtījuma veikšanas
     expired: Beidzies
     export_mailer:
       export_done:
@@ -479,15 +488,9 @@ lv:
     gateway: Gateway
     gateway_error: Gateway kļūda
     gift_card: Dāvanu karte
-    gift_card_already_redeemed: Dāvanu karte jau ir izmantota.
     gift_card_applied: Dāvanu karte tika veiksmīgi pielietota jūsu pasūtījumam!
-    gift_card_customer_not_logged_in: Dāvanu karti nevar pielietot kā nereģistrēts lietotājs.
-    gift_card_expired: Dāvanu kartes derīgums ir beidzies.
-    gift_card_mismatched_currency: Dāvanu karti nevar pielietot ar pašreizējo valūtu.
-    gift_card_mismatched_customer: Šī dāvanu karte ir saistīta ar citu lietotāju.
     gift_card_not_found: Dāvanu karte netika atrasta.
     gift_card_removed: Dāvanu karte tika veiksmīgi noņemta no jūsu pasūtījuma
-    gift_card_using_store_credit_error: Jūs nevarat pielietot dāvanu karti pēc veikala kredīta pielietošanas.
     height: Augstums
     i18n:
       this_file_language: Latvijas (LV)
@@ -538,7 +541,6 @@ lv:
     options: Iespējas
     or: vai
     order: Pasūtījums
-    order_canceled: Pasūtījums atcelts
     order_routing:
       strategies:
         legacy: Mantotā
@@ -605,7 +607,6 @@ lv:
     registration: Reģistrācija
     rejected: Atraidīts
     remove: Dzēst
-    remove_gift_card_on_completed_order_error: Jūs nevarat noņemt dāvanu karti pēc pasūtījuma veikšanas
     resellable: Pārdodams atkārtoti
     resend: Pārsūtīt
     response_code: Atbildes kods

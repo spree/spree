@@ -499,6 +499,14 @@ km:
         invalid_order_routing_strategy: មិនមែនជាយុទ្ធសាស្ត្រនាំផ្លូវការបញ្ជាទិញដែលបានចុះបញ្ជីទេ
         store_association_can_not_be_changed: ការភ្ជាប់ហាងមិនអាចផ្លាស់ប្តូរបានទេ
         store_is_already_set: ហាងត្រូវបានកំណត់រួចហើយ
+      workflow:
+        gift_card_already_redeemed: កាតអំណោយត្រូវបានដោះប្តូររួចហើយ។
+        gift_card_customer_not_logged_in: មិនអាចអនុវត្តកាតអំណោយជាមួយអ្នកប្រើជាភ្ញៀវបានទេ។
+        gift_card_expired: កាតអំណោយបានផុតកំណត់។
+        gift_card_mismatched_currency: មិនអាចអនុវត្តកាតអំណោយជាមួយរូបិយប័ណ្ណបច្ចុប្បន្នបានទេ។
+        gift_card_mismatched_customer: កាតអំណោយនេះត្រូវបានភ្ជាប់ជាមួយអ្នកប្រើផ្សេងទៀត។
+        gift_card_using_store_credit_error: អ្នកមិនអាចអនុវត្តកាតអំណោយបន្ទាប់ពីអ្នកបានអនុវត្តឥណទានហាងបានទេ។
+        remove_gift_card_on_completed_order_error: អ្នកមិនអាចដកកាតអំណោយចេញបន្ទាប់ពីការបញ្ជាទិញត្រូវបានដាក់បានទេ
     expired: ផុតកំណត់
     export_mailer:
       export_done:
@@ -514,15 +522,9 @@ km:
     gateway: ច្រកចេញចូល
     gateway_error: កំហុសផ្នែកច្រកចេញចូល
     gift_card: កាតអំណោយ
-    gift_card_already_redeemed: កាតអំណោយត្រូវបានដោះប្តូររួចហើយ។
     gift_card_applied: កាតអំណោយត្រូវបានអនុវត្តទៅការបញ្ជាទិញរបស់អ្នកដោយជោគជ័យ!
-    gift_card_customer_not_logged_in: មិនអាចអនុវត្តកាតអំណោយជាមួយអ្នកប្រើជាភ្ញៀវបានទេ។
-    gift_card_expired: កាតអំណោយបានផុតកំណត់។
-    gift_card_mismatched_currency: មិនអាចអនុវត្តកាតអំណោយជាមួយរូបិយប័ណ្ណបច្ចុប្បន្នបានទេ។
-    gift_card_mismatched_customer: កាតអំណោយនេះត្រូវបានភ្ជាប់ជាមួយអ្នកប្រើផ្សេងទៀត។
     gift_card_not_found: រកមិនឃើញកាតអំណោយទេ។
     gift_card_removed: កាតអំណោយត្រូវបានដកចេញពីការបញ្ជាទិញរបស់អ្នកដោយជោគជ័យ
-    gift_card_using_store_credit_error: អ្នកមិនអាចអនុវត្តកាតអំណោយបន្ទាប់ពីអ្នកបានអនុវត្តឥណទានហាងបានទេ។
     height: កម្ពស់
     i18n:
       this_file_language: ភាសាខ្មែរ (KM)
@@ -668,7 +670,6 @@ km:
     refund_amount: ចំនួនទឹកប្រាក់សងវិញ
     registration: ចុះឈ្មោះ
     remove: ដកចេញ
-    remove_gift_card_on_completed_order_error: អ្នកមិនអាចដកកាតអំណោយចេញបន្ទាប់ពីការបញ្ជាទិញត្រូវបានដាក់បានទេ
     resellable: អាចលក់បន្តបាន
     resend: ផ្ញើឡើងវិញ
     response_code: កូដឆ្លើយតប

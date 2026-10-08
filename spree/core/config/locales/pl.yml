@@ -551,6 +551,15 @@ pl:
         invalid_order_routing_strategy: nie jest zarejestrowaną strategią routingu zamówień
         store_association_can_not_be_changed: Powiązania ze sklepem nie można zmienić
         store_is_already_set: Sklep jest już ustawiony
+      workflow:
+        gift_card_already_redeemed: Karta podarunkowa została już wykorzystana.
+        gift_card_customer_not_logged_in: Karty podarunkowej nie można zastosować jako gość.
+        gift_card_expired: Karta podarunkowa wygasła.
+        gift_card_mismatched_currency: Karty podarunkowej nie można zastosować w bieżącej walucie.
+        gift_card_mismatched_customer: Ta karta podarunkowa jest powiązana z innym użytkownikiem.
+        gift_card_using_store_credit_error: Nie możesz zastosować karty podarunkowej po zastosowaniu kredytu sklepowego.
+        order_canceled: Zamówienie zostało odwołane
+        remove_gift_card_on_completed_order_error: Nie możesz usunąć karty podarunkowej po złożeniu zamówienia
     expired: Wygasłe
     export_mailer:
       export_done:
@@ -566,15 +575,9 @@ pl:
     gateway: Brama
     gateway_error: Błąd bramy
     gift_card: Karta podarunkowa
-    gift_card_already_redeemed: Karta podarunkowa została już wykorzystana.
     gift_card_applied: Karta podarunkowa została pomyślnie zastosowana do Twojego zamówienia!
-    gift_card_customer_not_logged_in: Karty podarunkowej nie można zastosować jako gość.
-    gift_card_expired: Karta podarunkowa wygasła.
-    gift_card_mismatched_currency: Karty podarunkowej nie można zastosować w bieżącej walucie.
-    gift_card_mismatched_customer: Ta karta podarunkowa jest powiązana z innym użytkownikiem.
     gift_card_not_found: Nie znaleziono karty podarunkowej.
     gift_card_removed: Karta podarunkowa została pomyślnie usunięta z Twojego zamówienia
-    gift_card_using_store_credit_error: Nie możesz zastosować karty podarunkowej po zastosowaniu kredytu sklepowego.
     height: Wysokość
     i18n:
       this_file_language: Polski (PL)
@@ -633,7 +636,6 @@ pl:
     options: Opcje
     or: lub
     order: Zamówienie
-    order_canceled: Zamówienie zostało odwołane
     order_routing:
       strategies:
         legacy: Tradycyjna
@@ -737,7 +739,6 @@ pl:
     registration: Rejestracja
     rejected: Odrzucono
     remove: Usuń
-    remove_gift_card_on_completed_order_error: Nie możesz usunąć karty podarunkowej po złożeniu zamówienia
     resellable: Odsprzedawalne
     resend: Prześlij ponownie
     response_code: Kod odpowiedzi

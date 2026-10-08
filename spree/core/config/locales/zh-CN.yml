@@ -519,6 +519,15 @@ zh-CN:
         invalid_order_routing_strategy: 不是已注册的订单路由策略
         store_association_can_not_be_changed: 店铺关联无法更改
         store_is_already_set: 店铺已设置
+      workflow:
+        gift_card_already_redeemed: 该礼品卡已被兑换。
+        gift_card_customer_not_logged_in: 礼品卡无法用于访客用户。
+        gift_card_expired: 该礼品卡已过期。
+        gift_card_mismatched_currency: 礼品卡无法用于当前货币。
+        gift_card_mismatched_customer: 此礼品卡与另一用户关联。
+        gift_card_using_store_credit_error: 在使用店铺积分后，您无法再应用礼品卡。
+        order_canceled: 订单已取消
+        remove_gift_card_on_completed_order_error: 订单下达后您无法移除礼品卡
     expired: 已过期
     export_mailer:
       export_done:
@@ -534,15 +543,9 @@ zh-CN:
     gateway: 网关
     gateway_error: 网关出错
     gift_card: 礼品卡
-    gift_card_already_redeemed: 该礼品卡已被兑换。
     gift_card_applied: 礼品卡已成功应用于您的订单！
-    gift_card_customer_not_logged_in: 礼品卡无法用于访客用户。
-    gift_card_expired: 该礼品卡已过期。
-    gift_card_mismatched_currency: 礼品卡无法用于当前货币。
-    gift_card_mismatched_customer: 此礼品卡与另一用户关联。
     gift_card_not_found: 未找到该礼品卡。
     gift_card_removed: 礼品卡已成功从您的订单中移除
-    gift_card_using_store_credit_error: 在使用店铺积分后，您无法再应用礼品卡。
     height: 高度
     i18n:
       this_file_language: 中文 简体 (zh-CN)
@@ -597,7 +600,6 @@ zh-CN:
     options: 选项
     or: 或
     order: 订单
-    order_canceled: 订单已取消
     order_routing:
       strategies:
         legacy: 传统
@@ -693,7 +695,6 @@ zh-CN:
     refund_amount: 退款金额
     registration: 注册
     remove: 移出
-    remove_gift_card_on_completed_order_error: 订单下达后您无法移除礼品卡
     resellable: 可转售
     resend: 重新发送
     response_code: 返回代码
