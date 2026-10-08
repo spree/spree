@@ -1,5 +1,17 @@
 # @spree/dashboard
 
+## 1.0.0-rc.2
+
+### Patch Changes
+
+- [#14846](https://github.com/spree/spree/pull/14846) [`dca32db`](https://github.com/spree/spree/commit/dca32dbbca0b72705f89f8afb62721d3c6486728) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Projects that install the dashboard packages from npm now get a single copy of the rich text editor library. `@spree/dashboard` no longer declares its own, looser TipTap ranges next to the exact versions in `@spree/dashboard-ui`, so a newer TipTap release can no longer install beside the pinned one and break type checking.
+
+- [#14845](https://github.com/spree/spree/pull/14845) [`9a0a293`](https://github.com/spree/spree/commit/9a0a293e2e91dccce3024f74013ade4599bbff08) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed type checking in projects that install the dashboard or seller panel with pnpm. The generated route file imported the routes through the package's `node_modules` link, where TypeScript cannot find the dashboard's own dependencies, so `tsc` reported hundreds of "Cannot find module" errors. It now imports them from the installed location again. Under pnpm that location includes the package version, so an upgrade rewrites the import paths in `routeTree.gen.ts`.
+
+- Updated dependencies [[`dca32db`](https://github.com/spree/spree/commit/dca32dbbca0b72705f89f8afb62721d3c6486728), [`9a0a293`](https://github.com/spree/spree/commit/9a0a293e2e91dccce3024f74013ade4599bbff08)]:
+  - @spree/dashboard-ui@1.0.0-rc.2
+  - @spree/dashboard-core@1.0.0-rc.2
+
 ## 1.0.0-rc.1
 
 ### Minor Changes

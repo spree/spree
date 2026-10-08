@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 3.2.2
+
+### Patch Changes
+
+- [#14748](https://github.com/spree/spree/pull/14748) [`012fcdb`](https://github.com/spree/spree/commit/012fcdb5c258bd5268f880c296394e8ab3b52e08) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Dashboards and seller panels added with `spree add` now pass `typecheck` and `lint` out of the box: the seller panel no longer type-checks its Vite config without Node types, and the generated `biome.json` is formatted the way Biome expects.
+
 ## 3.2.1
 
 ### Patch Changes

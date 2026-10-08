@@ -11,6 +11,7 @@ npx create-spree-app my-store
 | Flag | Description |
 |------|-------------|
 | `--no-dashboard` | Skip the Admin Dashboard app — the API still serves the built-in one at `/dashboard` (add your own copy later via `spree add dashboard`) |
+| `--seller-dashboard` | Include the marketplace seller panel without asking |
 | `--no-seller-dashboard` | Skip the marketplace seller panel (also available later via `spree add seller-dashboard`) |
 | `--no-storefront` | Skip Next.js storefront setup |
 | `--no-start` | Don't start Docker services (the first `dev` run completes setup instead) |

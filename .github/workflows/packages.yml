@@ -12,6 +12,8 @@ on:
       - "docs/integrations/**"
       - "pnpm-lock.yaml"
       - "turbo.json"
+      - "biome.json"
+      - "scripts/sync-starter.mjs"
       - ".github/workflows/packages.yml"
   pull_request:
     paths:
@@ -23,6 +25,8 @@ on:
       - "docs/integrations/**"
       - "pnpm-lock.yaml"
       - "turbo.json"
+      - "biome.json"
+      - "scripts/sync-starter.mjs"
       - ".github/workflows/packages.yml"
 
 concurrency:
@@ -73,6 +77,87 @@ jobs:
           fi
 
       - run: pnpm turbo lint typecheck test build --cache-dir=.turbo
+
+  # Creates a new project with create-spree-app the way a user would, but from
+  # this commit's packages instead of the ones on npm, and checks that the
+  # generated Dashboard and Seller Panel build, typecheck and lint cleanly.
+  # The monorepo's own checks can't catch this: inside the workspace every
+  # @spree/* package is a symlink resolved under the root overrides, while a
+  # generated app installs packed tarballs on its own.
+  scaffolded-app:
+    name: "Scaffolded app - Typecheck & Lint"
+    runs-on: ubuntu-latest
+    steps:
+      # Runs the pull request's install and build scripts; nothing needs an
+      # authenticated git afterwards.
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # Same Turbo cache as the check job.
+      - name: Cache Turbo
+        uses: actions/cache@v6
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm turbo build --cache-dir=.turbo
+
+      # `pnpm pack` rewrites workspace: ranges to real versions, exactly as
+      # `pnpm publish` does in the release jobs below.
+      - name: Pack packages
+        run: |
+          for pkg in admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli; do
+            pnpm --dir "packages/$pkg" pack --pack-destination "$RUNNER_TEMP/tarballs"
+          done
+
+      # Outside the checkout, so the project doesn't join this pnpm workspace.
+      # SPREE_CLI_VERSION points the project at the packed CLI, which carries
+      # the starter templates the apps are created from.
+      - name: Create project
+        run: |
+          CLI_TARBALL=$(ls "$RUNNER_TEMP"/tarballs/spree-cli-*.tgz)
+          SPREE_CLI_VERSION="file:$CLI_TARBALL" node packages/create-spree-app/dist/index.js "$RUNNER_TEMP/app" \
+            --no-start --no-storefront --seller-dashboard --use-pnpm
+
+      # The apps pin @spree/* to npm ranges. Overriding every package with its
+      # tarball also replaces the copies other @spree/* packages depend on.
+      - name: Point the apps at the packed packages
+        run: |
+          {
+            echo "overrides:"
+            for tarball in "$RUNNER_TEMP"/tarballs/*.tgz; do
+              NAME=$(tar -xOzf "$tarball" package/package.json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).name")
+              echo "  '$NAME': 'file:$tarball'"
+            done
+          } > "$RUNNER_TEMP/overrides.yaml"
+          cat "$RUNNER_TEMP/overrides.yaml"
+
+      - name: Check Dashboard
+        working-directory: ${{ runner.temp }}/app/apps/dashboard
+        run: |
+          cat "$RUNNER_TEMP/overrides.yaml" >> pnpm-workspace.yaml
+          pnpm install --no-frozen-lockfile
+          pnpm build && pnpm typecheck && pnpm lint
+
+      - name: Check Seller Panel
+        if: ${{ !cancelled() }}
+        working-directory: ${{ runner.temp }}/app/apps/seller-dashboard
+        run: |
+          cat "$RUNNER_TEMP/overrides.yaml" >> pnpm-workspace.yaml
+          pnpm install --no-frozen-lockfile
+          pnpm build && pnpm typecheck && pnpm lint
 
   sdk-integration:
     name: "SDK Integration Tests"
@@ -309,7 +394,7 @@ jobs:
 
   release-admin-sdk:
     name: "Admin SDK - Release"
-    needs: check
+    needs: [check, scaffolded-app]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -379,7 +464,7 @@ jobs:
     # ranges floored at the @spree/dashboard{,-ui,-core} and @spree/seller-*
     # versions being released — publishing it before those versions exist on
     # npm would ship a scaffold whose install fails until they land.
-    needs: [check, release-dashboard, release-seller]
+    needs: [check, scaffolded-app, release-dashboard, release-seller]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -466,7 +551,7 @@ jobs:
     # same-push admin-sdk version bump must land on npm first, or installs of
     # the just-published dashboard packages fail until it does. (release-cli
     # waits on this job, completing the admin-sdk → dashboard → cli chain.)
-    needs: [check, release-admin-sdk]
+    needs: [check, scaffolded-app, release-admin-sdk]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -528,7 +613,7 @@ jobs:
   # starter with ranges floored at these versions.
   release-seller:
     name: "Seller packages - Release"
-    needs: check
+    needs: [check, scaffolded-app]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -601,7 +686,7 @@ jobs:
     # the dashboard must not publish before the CLI implementing that command
     # (with the embedded starter) is on npm. Completes the release chain:
     # admin-sdk → dashboard → cli → create-spree-app.
-    needs: [check, release-cli]
+    needs: [check, scaffolded-app, release-cli]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
