@@ -326,7 +326,7 @@ function ProductsPage() {
     [storeId],
   )
 
-  const { data: definitionsResponse } = useCustomFieldDefinitions('Spree::Product')
+  const { data: definitionsResponse } = useCustomFieldDefinitions('product')
   // Searchable/sortable custom fields become full table columns: displayable
   // (opt-in via the column selector), sortable when the definition allows it,
   // and filterable with the operator set matching the field type.
@@ -627,7 +627,7 @@ function TagPickerSheet({
     >
       <Field>
         <FieldLabel>{t('admin.fields.product.tags.label')}</FieldLabel>
-        <TagCombobox taggableType="Spree::Product" value={tags} onChange={setTags} />
+        <TagCombobox taggableType="product" value={tags} onChange={setTags} />
       </Field>
     </BulkDialog>
   )

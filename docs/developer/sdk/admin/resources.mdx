@@ -122,7 +122,7 @@ await client.products.customFields.create('prod_xxx', {
 The generic escape hatch covers any owner type:
 
 ```typescript
-await client.customFields('Spree::Product', 'prod_xxx').list()
+await client.customFields('product', 'prod_xxx').list()
 ```
 
 ## Adding your own resources

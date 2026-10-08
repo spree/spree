@@ -38,7 +38,7 @@ erDiagram
 | `default` | Exactly one channel per store is the default. Used as a fallback when no channel header is present and as the auto-publish target for new products | `true` |
 | `storefront_access` | Controls what an anonymous visitor may see: `public`, `prices_hidden`, or `login_required`. Unset inherits the store's setting. See [Storefront Access Gating](#storefront-access-gating) | `login_required` |
 | `guest_checkout` | Whether an order may be placed without an account on this channel. Unset inherits the store's setting | `false` |
-| `preferred_order_routing_strategy` | Optional per-channel override of the store's [Order Routing](/developer/how-to/custom-order-routing) strategy | `Spree::OrderRouting::Strategy::Rules` |
+| `preferred_order_routing_strategy` | Optional per-channel override of the store's [Order Routing](/developer/how-to/custom-order-routing) strategy | `rules` |
 
 `code` is normalized to a URL-safe slug on save — `POS` becomes `pos`, `Point of Sale!` becomes `point-of-sale`. Leaving `code` blank derives it from `name`.
 

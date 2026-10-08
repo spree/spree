@@ -11,6 +11,8 @@ module Spree
     # Providers are stateless and constructed without arguments, so anything
     # request-specific arrives as an argument rather than through the instance.
     class Base
+      extend Spree::ApiTyped
+
       # Domains this provider cannot handle, so a merchant is warned when
       # pairing it with a market instead of silently under-collecting. Declared
       # on the class because core reads it while presenting the choice, before
@@ -63,7 +65,7 @@ module Spree
       # @return [Hash]
       def self.to_api_hash(store)
         {
-          id: name,
+          id: api_type,
           name: display_name,
           available: available_for_store?(store),
           unsupported_capabilities: unsupported_capability_details,

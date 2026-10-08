@@ -38,19 +38,19 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       get :fulfillment_providers, params: {}, as: :json
 
       expect(response).to have_http_status(:ok)
-      pickup = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Pickup' }
+      pickup = json_response['data'].find { |row| row['type'] == 'pickup' }
       expect(pickup['name']).to eq('Pickup')
       expect(pickup['pickup']).to be true
       expect(pickup['requires_address']).to be false
 
-      manual = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Manual' }
+      manual = json_response['data'].find { |row| row['type'] == 'manual' }
       expect(manual['digital']).to be false
       expect(manual['pickup']).to be false
       expect(manual['requires_address']).to be true
       # Providers without credentials are always available; carrier ones are
       # listed with available: false until their integration is connected.
       expect(manual['available']).to be true
-      expect(manual['integration_class']).to be_nil
+      expect(manual).not_to have_key('integration_class')
     end
   end
 
@@ -59,13 +59,13 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       get :rate_providers, params: {}, as: :json
 
       expect(response).to have_http_status(:ok)
-      internal = json_response['data'].find { |row| row['type'] == 'Spree::DeliveryRateProvider::Internal' }
+      internal = json_response['data'].find { |row| row['type'] == 'internal' }
       expect(internal['name']).to eq('Internal')
-      expect(internal['integration_class']).to be_nil
+      expect(internal).not_to have_key('integration_class')
       expect(internal['service_catalog']).to eq([])
       expect(internal['service_catalog_error']).to be_nil
       expect(internal['integration_type']).to be_nil
-      expect(json_response['default']).to eq('Spree::DeliveryRateProvider::Internal')
+      expect(json_response['default']).to eq('internal')
     end
 
     # Unconnected providers are listed but flagged, so the dashboard can
@@ -76,14 +76,14 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
         def self.integration_class = 'Spree::Integrations::Unconnected'
         def self.available_for_store?(_store) = false
       end
-      stub_const('UnavailableRateProvider', provider_class)
+      stub_const('SpreeUnavailable::DeliveryRateProvider', provider_class)
       Spree.delivery_rate_providers << provider_class
 
       get :rate_providers, params: {}, as: :json
 
-      row = json_response['data'].find { |entry| entry['type'] == 'UnavailableRateProvider' }
+      row = json_response['data'].find { |entry| entry['type'] == 'unavailable' }
       expect(row['available']).to be false
-      expect(json_response['data'].find { |entry| entry['type'] == 'Spree::DeliveryRateProvider::Internal' }['available']).to be true
+      expect(json_response['data'].find { |entry| entry['type'] == 'internal' }['available']).to be true
     ensure
       Spree.delivery_rate_providers.delete(provider_class)
     end
@@ -144,11 +144,12 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'persists the chosen fulfillment provider' do
       post :create, params: {
         name: 'Store pickup',
-        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup'
+        fulfillment_provider: 'pickup'
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['fulfillment_provider']).to eq('Spree::FulfillmentProvider::Pickup')
+      expect(json_response['fulfillment_provider']).to eq('pickup')
+      expect(Spree::DeliveryMethod.find_by_prefix_id(json_response['id']).fulfillment_provider).to eq('Spree::FulfillmentProvider::Pickup')
     end
 
     it 'creates a delivery method with calculator and zone' do
@@ -188,12 +189,12 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'creates a pickup method without a calculator requirement' do
       post :create, params: {
         name: 'Store pickup',
-        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup',
+        fulfillment_provider: 'pickup',
         calculator_type: 'flat_rate'
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['fulfillment_provider']).to eq('Spree::FulfillmentProvider::Pickup')
+      expect(json_response['fulfillment_provider']).to eq('pickup')
     end
 
     it 'assigns configured pickup locations' do
@@ -201,7 +202,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
 
       post :create, params: {
         name: 'Counter pickup',
-        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup',
+        fulfillment_provider: 'pickup',
         stock_location_ids: [location.prefixed_id]
       }, as: :json
 

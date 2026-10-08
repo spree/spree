@@ -1157,7 +1157,7 @@ export function CategorizationCard({ form }: FormCardProps) {
               control={form.control}
               render={({ field }) => (
                 <TagCombobox
-                  taggableType="Spree::Product"
+                  taggableType="product"
                   value={field.value ?? []}
                   onChange={field.onChange}
                 />

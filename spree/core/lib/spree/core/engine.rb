@@ -19,6 +19,7 @@ module Spree
                                :payout_providers,
                                :password_validator,
                                :fulfillment_providers,
+                               :pickup_point_providers,
                                :tracking_carriers,
                                :stock_splitters,
                                :commission_rules,
@@ -74,7 +75,7 @@ module Spree
         # Core's defaults are concatenated in after_initialize below.
         %i[subscribers actor_classes commission_rules delivery_method_rules seller_requirements
            delivery_rate_providers tax_providers pricing_providers inventory_providers
-           payout_providers digital_asset_providers delivery_profile_types].each do |registry|
+           payout_providers digital_asset_providers delivery_profile_types pickup_point_providers].each do |registry|
           app.config.spree[registry] = []
         end
         app.config.spree.line_item_comparison_hooks = Set.new

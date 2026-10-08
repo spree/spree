@@ -16,6 +16,9 @@ module Spree
     include Spree::HasListPosition
     include Spree::PreferenceSchema
     include Spree::Metadata
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.seller_requirement_types'
 
     has_prefix_id :selreq
 
@@ -85,16 +88,6 @@ module Spree
       ((DEFAULT_KINDS & registered) - existing).map do |kind|
         store.seller_requirements.create!(type: kind)
       end
-    end
-
-    # @return [String] the localized name of the kind, used by operator pickers
-    def self.human_name
-      I18n.t("spree.seller_requirement_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    # @return [String] the localized description of the kind
-    def self.human_description
-      I18n.t("spree.seller_requirement_types.#{api_type}.description", default: '')
     end
 
     # Whether the operator may configure this kind more than once per store.

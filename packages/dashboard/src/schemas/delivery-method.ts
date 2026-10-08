@@ -67,7 +67,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   name: '',
   admin_name: '',
   code: '',
-  fulfillment_provider: 'Spree::FulfillmentProvider::Manual',
+  fulfillment_provider: 'manual',
   rate_provider: '',
   storefront_visible: true,
   available_to_sellers: false,

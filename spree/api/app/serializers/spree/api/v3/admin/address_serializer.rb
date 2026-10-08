@@ -31,7 +31,9 @@ module Spree
           # customer-only shorthand the customers surface reads.
           prefixed_id_attributes :owner
 
-          attributes :owner_type
+          attribute :owner_type do |address|
+            Spree::Base.polymorphic_api_type(address.owner_type)
+          end
         end
       end
     end

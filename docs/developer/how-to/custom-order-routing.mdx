@@ -237,7 +237,11 @@ First register the class so it's selectable (this is the allowlist the model val
 Spree.order_routing.strategies << 'Acme::Oms::Strategy'.constantize
 ```
 
-Then select it by class name string — set on `Spree::Store` (default) or `Spree::Channel` (override). Setting an unregistered class fails validation.
+Then select it — set on `Spree::Store` (default) or `Spree::Channel` (override). Setting an unregistered strategy fails validation. Ruby code may name the class; the Admin API and the dashboard name a strategy by its shorthand, `api_type` (the class name's last segment, underscored — `rules` for the built-in one). Override `self.api_type` on your strategy to give it a distinct, stable shorthand:
+
+```ruby
+def self.api_type = 'acme_oms'
+```
 
 Activate on the whole store:
 

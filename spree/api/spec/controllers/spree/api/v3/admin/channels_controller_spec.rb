@@ -224,10 +224,11 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
     it 'persists preferred_order_routing_strategy' do
       patch :update, params: {
         id: channel.prefixed_id,
-        preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Rules'
+        preferred_order_routing_strategy: 'rules'
       }, as: :json
 
       expect(response).to have_http_status(:ok)
+      expect(json_response['preferred_order_routing_strategy']).to eq('rules')
       expect(channel.reload.preferred_order_routing_strategy).to eq('Spree::OrderRouting::Strategy::Rules')
     end
 

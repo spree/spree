@@ -309,6 +309,12 @@ RSpec.describe Spree::Market, type: :model do
       Spree.tax_providers.delete(SpecMarketProvider)
     end
 
+    it 'stores the class name of a provider named by its shorthand' do
+      market.tax_provider = 'internal'
+
+      expect(market.tax_provider).to eq('Spree::TaxProvider::Internal')
+    end
+
     it 'builds a fresh instance per call, providers being stateless' do
       expect(market.tax_provider_instance).not_to equal(market.tax_provider_instance)
     end

@@ -1,6 +1,10 @@
 # Base class for all promotion rules
 module Spree
   class PromotionRule < Spree.base_class
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.promotion_rule_types'
+
     has_prefix_id :prorule
 
     registers_subclasses_via { Spree.promotions.rules }
@@ -34,17 +38,6 @@ module Spree
     def eligibility_errors
       @eligibility_errors ||= ActiveModel::Errors.new(self)
     end
-
-    def self.human_name
-      I18n.t("spree.promotion_rule_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    def self.human_description
-      I18n.t("spree.promotion_rule_types.#{api_type}.description", default: '')
-    end
-
-    def human_name = self.class.human_name
-    def human_description = self.class.human_description
 
     # Returns the key of the promotion rule
     #

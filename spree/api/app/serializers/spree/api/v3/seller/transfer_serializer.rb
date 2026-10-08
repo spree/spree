@@ -12,7 +12,7 @@ module Spree
           typelize kind: :string,
                    status: :string,
                    currency: :string,
-                   provider: :string,
+                   provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
                    settled_amount: 'string | null',
                    settled_currency: 'string | null',
@@ -24,7 +24,7 @@ module Spree
                    payout_id: 'string | null',
                    reversed_from_id: 'string | null'
 
-          attributes :kind, :status, :currency, :provider, :reference,
+          attributes :kind, :status, :currency, :reference,
                      created_at: :iso8601, updated_at: :iso8601
 
           # A string, so the figure a seller is paid round-trips exactly.
@@ -42,6 +42,8 @@ module Spree
           end
 
           attribute(:order_number) { |transfer| transfer.order&.number }
+
+          api_type_attributes :provider
         end
       end
     end

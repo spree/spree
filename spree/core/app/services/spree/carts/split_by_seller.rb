@@ -242,7 +242,7 @@ module Spree
       end
 
       def clone_fulfillment(fulfillment, sibling)
-        attributes = fulfillment.attributes.except('id', 'cart_id', 'number', 'created_at', 'updated_at')
+        attributes = fulfillment.attributes.except('id', 'cart_id', 'number', 'tracking', 'created_at', 'updated_at')
         replacement = sibling.fulfillments.create!(
           attributes.merge('order_id' => sibling.id, 'address_id' => sibling.ship_address_id)
         )

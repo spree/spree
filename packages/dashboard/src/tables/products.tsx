@@ -1,5 +1,5 @@
 import type { Channel } from '@spree/admin-sdk'
-import { defineTable, formatPrice, Subject } from '@spree/dashboard-core'
+import { defineTable, formatPrice } from '@spree/dashboard-core'
 import { StatusBadge, TagList, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -121,7 +121,7 @@ defineTable('products', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: Subject.Product,
+      taggableType: 'product',
       default: false,
       render: (product) => <TagList tags={product.tags} />,
     },

@@ -865,7 +865,7 @@ A wholesale order leaves as cartons, a pallet or a container, and international 
 ```typescript Admin SDK
 await adminClient.deliveryMethods.create({
   name: 'Pallet freight',
-  rate_provider: 'Spree::DeliveryRateProvider::Freight',
+  rate_provider: 'freight',
   rules: [
     { type: 'volume_rule', preferences: { minimum_volume: 1, maximum_volume: 15 } },
     { type: 'company_rule', preferences: { company_orders_only: true } },
@@ -879,7 +879,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/delivery_methods' \
   -H 'Content-Type: application/json' \
   -d '{
         "name": "Pallet freight",
-        "rate_provider": "Spree::DeliveryRateProvider::Freight",
+        "rate_provider": "freight",
         "rules": [
           { "type": "volume_rule", "preferences": { "minimum_volume": 1, "maximum_volume": 15 } },
           { "type": "company_rule", "preferences": { "company_orders_only": true } }

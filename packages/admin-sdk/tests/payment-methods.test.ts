@@ -5,7 +5,7 @@ import { server } from './mocks/server'
 
 const samplePaymentMethod = {
   id: 'pm_1',
-  type: 'Spree::Gateway::Bogus',
+  type: 'bogus',
   name: 'Credit Card',
   description: 'Pay by card',
   active: true,
@@ -75,11 +75,11 @@ describe('paymentMethods', () => {
       )
 
       await createTestClient().paymentMethods.create({
-        type: 'Spree::Gateway::Bogus',
+        type: 'bogus',
         name: 'Credit Card',
       })
 
-      expect(body).toEqual({ type: 'Spree::Gateway::Bogus', name: 'Credit Card' })
+      expect(body).toEqual({ type: 'bogus', name: 'Credit Card' })
     })
 
     it('PATCHes the update body verbatim', async () => {
@@ -120,7 +120,7 @@ describe('paymentMethods', () => {
           return HttpResponse.json({
             data: [
               {
-                type: 'Spree::Gateway::Bogus',
+                type: 'bogus',
                 label: 'Bogus Gateway',
                 description: 'Test gateway for development',
                 preference_schema: [{ key: 'server', type: 'string', default: 'test' }],
@@ -134,7 +134,7 @@ describe('paymentMethods', () => {
 
       expect(hit).toBe(true)
       expect(res.data).toHaveLength(1)
-      expect(res.data[0]?.type).toBe('Spree::Gateway::Bogus')
+      expect(res.data[0]?.type).toBe('bogus')
     })
   })
 })

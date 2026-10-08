@@ -387,6 +387,22 @@ test.describe('customers', () => {
       .getByText(/^tags$/i)
       .click()
     await expect(page.getByText(tagName, { exact: true })).toBeVisible({ timeout: 15_000 })
+
+    // The customer tag vocabulary offers it back as an existing tag.
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await page
+      .locator('tr')
+      .filter({ hasText: emailA })
+      .getByRole('checkbox', { name: /select row/i })
+      .check()
+    await page.getByRole('button', { name: /^add tags…$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByPlaceholder(/type to add tags/i)
+      .fill(tagName)
+    await expect(page.getByRole('option', { name: tagName, exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 
   // The detail page's Customer Groups card edits one customer's membership by

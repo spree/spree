@@ -447,7 +447,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(created.meta_title).to eq('Premium T-Shirt')
         expect(created.tax_category).to eq(tax_category)
         expect(created.tag_list).to match_array(['premium', 'cotton', 'summer'])
-        expect(created.taxons).to match_array([category1, category2])
+        expect(created.categories).to match_array([category1, category2])
 
         # Cost price now lives on the variant, not delegated from the product.
         small_variant = created.variants.find_by(sku: 'PREM-TEE-S')
@@ -910,7 +910,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(updated.meta_title).to eq('Updated Premium Shirt | Shop')
         expect(updated.tax_category).to eq(tax_category)
         expect(updated.tag_list).to match_array(['updated', 'premium', 'new-arrival'])
-        expect(updated.taxons).to match_array([category1, category2])
+        expect(updated.categories).to match_array([category1, category2])
 
         # Variants created
         small = updated.variants.find_by(sku: 'UPD-SHIRT-S')
@@ -1848,8 +1848,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       positions = [
-        product.reload.classifications.find_by(category: category).position,
-        second_product.reload.classifications.find_by(category: category).position
+        product.reload.product_categories.find_by(category: category).position,
+        second_product.reload.product_categories.find_by(category: category).position
       ]
       expect(positions).to contain_exactly(1, 2)
     end
@@ -1963,8 +1963,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       positions = [
-        survivor.reload.classifications.find_by(category: category)&.position,
-        latecomer.reload.classifications.find_by(category: category)&.position
+        survivor.reload.product_categories.find_by(category: category)&.position,
+        latecomer.reload.product_categories.find_by(category: category)&.position
       ].compact.sort
 
       expect(positions).to eq([1, 2])

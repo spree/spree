@@ -634,21 +634,16 @@ function MediaDetailSheet({
   )
 }
 
-const USAGE_OWNER_LABELS: Record<string, string> = {
-  'Spree::Product': 'product',
-  'Spree::Variant': 'variant',
-  'Spree::Taxon': 'category',
-  'Spree::Category': 'category',
-  'Spree::Collection': 'collection',
-}
+const USAGE_OWNER_LABELS = new Set(['product', 'variant', 'category', 'collection'])
 
 // A placement's badge names what kind of place it is — a category placement
 // labeled "Product" would be wrong. Non-placement kinds (a bare image field, a
 // description embed) keep their kind label.
 function usageBadgeLabel(reference: MediaUsageReference, t: (key: string) => string): string {
   if (reference.kind === 'media') {
-    const owner = USAGE_OWNER_LABELS[reference.owner_type]
-    if (owner) return t(`admin.media_library.usage.owner.${owner}`)
+    if (USAGE_OWNER_LABELS.has(reference.owner_type)) {
+      return t(`admin.media_library.usage.owner.${reference.owner_type}`)
+    }
   }
 
   return t(`admin.media_library.usage.kind.${reference.kind}`)
@@ -663,25 +658,24 @@ function usageLink(
   if (!reference.owner_id) return null
 
   switch (reference.owner_type) {
-    case 'Spree::Product':
+    case 'product':
       return {
         to: '/$storeId/products/$productId',
         params: { productId: reference.owner_id },
       }
-    case 'Spree::Variant':
+    case 'variant':
       return null
-    case 'Spree::Taxon':
-    case 'Spree::Category':
+    case 'category':
       return {
         to: '/$storeId/products/categories/$categoryId',
         params: { categoryId: reference.owner_id },
       }
-    case 'Spree::Collection':
+    case 'collection':
       return {
         to: '/$storeId/products/collections/$collectionId',
         params: { collectionId: reference.owner_id },
       }
-    case 'Spree::Seller':
+    case 'seller':
       return {
         to: '/$storeId/sellers/$sellerId',
         params: { sellerId: reference.owner_id },
