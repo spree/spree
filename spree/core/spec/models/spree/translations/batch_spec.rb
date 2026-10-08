@@ -82,14 +82,25 @@ RSpec.describe Spree::Translations::Batch do
   end
 
   describe '#required_scopes' do
-    it 'returns one write_<resource> scope per distinct resource type' do
+    # Named by each resource, not derived from the type: an option type is
+    # guarded by `write_products`, so a derived `write_option_types` was a
+    # permission nothing could hold and the API could not check — which let a
+    # read-only grant rewrite translations.
+    it 'returns the permission each resource actually declares' do
       batch = described_class.new([
         entry('option_type', option_type, {}),
         entry('option_value', option_value, {}),
         entry('option_type', option_type, {})
       ])
 
-      expect(batch.required_scopes).to contain_exactly('write_option_types', 'write_option_values')
+      expect(batch.required_scopes).to contain_exactly('write_products')
+    end
+
+    it 'names a permission the catalog knows, for every translatable resource' do
+      unknown = Spree.translatable_resources.map(&:translation_write_permission).uniq.
+                reject { |key| Spree.permissions.key?(key) }
+
+      expect(unknown).to be_empty
     end
   end
 end

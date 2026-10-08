@@ -218,10 +218,15 @@ module Spree
             [:user, :mappings, { attachment_attachment: :blob }]
           end
 
+          # Narrowed to the kinds this caller may write.
+          #
+          # Filtered for every principal that carries a ceiling, not only a
+          # secret key — see the matching note on Admin::ExportsController.
+          # It matters more here: an import row carries `sample_row`, a real
+          # line from the uploaded file, so an unfiltered list handed a
+          # read-only agent live customer data rather than only metadata.
           def scope
             collection = super
-            return collection unless scope_limited_principal?
-
             collection.where(type: writable_import_types)
           end
 
@@ -334,10 +339,14 @@ module Spree
             end
           end
 
+          # `write_all` is not a catalog key, so it is asked of a secret key
+          # directly; every shipped import declares a required scope.
           def writable_import_types
             Spree::Import.available_types.select do |type|
               required = type.required_scope
-              required ? current_api_key.has_scope?("write_#{required}") : current_api_key.has_scope?('write_all')
+              next current_api_key&.has_scope?('write_all') if required.blank?
+
+              holds_permission?("write_#{required}")
             end.map(&:to_s)
           end
 

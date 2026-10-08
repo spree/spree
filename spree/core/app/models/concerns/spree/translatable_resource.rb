@@ -12,6 +12,21 @@ module Spree
         const_get(:TRANSLATABLE_FIELDS)
       end
 
+      # The permission a caller needs in order to write this resource's
+      # translations.
+      #
+      # Declared rather than derived from the class name, because several
+      # resources are guarded by a permission that is not named after them:
+      # option types and values ride `write_products`, a policy rides
+      # `write_settings`. Deriving it produced names outside the permission
+      # catalog, which a credential could never hold and which the API
+      # therefore could not check at all.
+      #
+      # @return [String]
+      def translation_write_permission
+        "write_#{Spree::Base.polymorphic_api_type(name).pluralize}"
+      end
+
       # Maps a public API field name to the internal Mobility field, for a
       # model whose translatable column is named differently from the field the
       # API exposes. The public name is what the serializer and the translation

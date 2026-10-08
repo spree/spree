@@ -49,6 +49,65 @@ RSpec.describe 'Admin API OAuth access', type: :request do
 
       expect(response).to have_http_status(:forbidden)
     end
+
+    # The narrowing lives in the scope gate, so an endpoint that skips that
+    # gate and guards itself has to ask about the caller rather than about a
+    # secret key — a token resolves as a staff user and carries none, which
+    # once let a read-only grant rewrite a product's translations.
+    it 'cannot write through an endpoint that guards itself' do
+      configure_supported_locales(store, %w[en de])
+      product = create(:product, store: store, name: 'Espresso Machine')
+
+      post '/api/v3/admin/translations/batch',
+           params: { translations: [{ resource_type: 'product', resource_id: product.prefixed_id,
+                                      translations: { de: { name: 'Rewritten' } } }] }.to_json,
+           headers: { 'Authorization' => "Bearer #{token}", 'CONTENT_TYPE' => 'application/json' }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(product.reload.name).to eq('Espresso Machine')
+    end
+
+    # Several resources are guarded by a permission not named after them, so
+    # a name derived from the resource type fell outside the catalog and went
+    # unchecked — a read-only grant could rewrite an option type's or a
+    # policy's translations.
+    it 'cannot write a resource whose permission is not named after it' do
+      configure_supported_locales(store, %w[en de])
+      option_type = create(:option_type, label: 'Size')
+
+      post '/api/v3/admin/translations/batch',
+           params: { translations: [{ resource_type: 'option_type', resource_id: option_type.prefixed_id,
+                                      values: { de: { label: 'Rewritten' } } }] }.to_json,
+           headers: { 'Authorization' => "Bearer #{token}", 'CONTENT_TYPE' => 'application/json' }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json_response['error']['details']['required_scopes']).to eq(['write_products'])
+    end
+
+    # A list filtered only for secret keys told an agent which kinds of
+    # export exist — including customers and gift cards. An import row goes
+    # further and carries a real line from the uploaded file.
+    it 'lists only the kinds of export the merchant granted' do
+      Spree::Exports::Products.create!(store: store, user: admin)
+      Spree::Exports::Customers.create!(store: store, user: admin)
+
+      get_with(token, '/api/v3/admin/exports')
+      types = json_response['data'].map { |row| row['type'] }.uniq
+
+      expect(types).to include('products')
+      expect(types).not_to include('customers')
+    end
+
+    it 'lists only the kinds of import the merchant granted' do
+      Spree::Imports::Products.create!(store: store, user: admin)
+      Spree::Imports::Customers.create!(store: store, user: admin)
+
+      get_with(token_for('write_products', resource: '/api/v3/admin'), '/api/v3/admin/imports')
+      types = json_response['data'].map { |row| row['type'] }.uniq
+
+      expect(types).to include('products')
+      expect(types).not_to include('customers')
+    end
   end
 
   # RFC 8707: a token names the resources it may be used against. A client
