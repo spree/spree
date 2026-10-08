@@ -13,7 +13,6 @@
  * should import `@spree/dashboard-core/vite` instead — no shell, no shell
  * routes to compose.
  */
-import { createRequire } from 'node:module'
 import path from 'node:path'
 import {
   type SpreeDashboardPluginOptions as CoreOptions,
@@ -21,7 +20,7 @@ import {
 } from '@spree/dashboard-core/vite'
 import {
   discoverDashboardPluginManifests,
-  linkedPackagePath,
+  resolveShellRoutesDir,
 } from '@spree/dashboard-core/vite/discover'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { index, layout, physical, rootRoute, route } from '@tanstack/virtual-file-routes'
@@ -67,16 +66,7 @@ export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}):
  * shell's dev/e2e in-repo rather than silently in hosts.
  */
 function dashboardRouterPlugin(hostRoot: string, options: SpreeDashboardPluginOptions) {
-  const fromHost = createRequire(path.join(hostRoot, 'package.json'))
-  // Resolve the shell's routes directory from wherever the host's
-  // `@spree/dashboard` lives (workspace symlink or npm install). The `.`
-  // export maps to a file in src/, so `routes/` is its sibling directory.
-  const shellEntry = fromHost.resolve('@spree/dashboard')
-  const shellRoutesDir = linkedPackagePath(
-    hostRoot,
-    '@spree/dashboard',
-    path.join(path.dirname(shellEntry), 'routes'),
-  )
+  const shellRoutesDir = resolveShellRoutesDir(hostRoot, '@spree/dashboard')
 
   const manifests = discoverDashboardPluginManifests(
     { root: hostRoot, onWarn: (msg) => console.warn(`[@spree/dashboard/vite] ${msg}`) },
