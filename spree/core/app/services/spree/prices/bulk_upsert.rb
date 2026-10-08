@@ -371,13 +371,9 @@ module Spree
         [row[:variant_id].to_s, row[:currency], row[:price_list_id].to_s]
       end
 
-      # Parses locale-aware decimal input ("1.234,56" in DE, "1,234.56"
-      # in en-US). Numeric values pass through; blank values become nil.
+      # Blank values become nil.
       def parse_amount(value)
-        return nil if value.blank?
-        return value if value.is_a?(Numeric)
-
-        Spree::LocalizedNumber.parse(value)
+        value.presence&.to_d
       end
 
       def sweep(affected_keys, clear_rows)

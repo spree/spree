@@ -113,14 +113,15 @@ describe Spree::Price, type: :model do
 
   describe '#amount=' do
     let(:price) { build :price }
-    let(:amount) { '3,0A0' }
 
-    before do
-      price.amount = amount
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
+      I18n.with_locale(:nl) { price.amount = '49.50' }
+      expect(price.amount).to eq(BigDecimal('49.50'))
     end
 
-    it 'is expected to equal to localized number' do
-      expect(price.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    it 'does not grow when what it read back is saved again' do
+      I18n.with_locale(:nl) { price.amount = '99.0' }
+      expect(price.amount).to eq(BigDecimal('99'))
     end
   end
 
@@ -132,8 +133,8 @@ describe Spree::Price, type: :model do
       price.compare_at_amount = compare_at_amount
     end
 
-    it 'is expected to equal to localized number' do
-      expect(price.compare_at_amount).to eq(Spree::LocalizedNumber.parse(compare_at_amount))
+    it 'stores a canonical decimal exactly' do
+      expect(price.compare_at_amount).to eq(BigDecimal('169.99'))
     end
 
     context 'with empty string being passed as value' do

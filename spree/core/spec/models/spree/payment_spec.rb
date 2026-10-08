@@ -1079,22 +1079,6 @@ describe Spree::Payment, type: :model do
         end
       end
 
-      context 'amount contains a dollar sign' do
-        let(:amount) { '$2.99' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
-      end
-
-      context 'amount contains a comma' do
-        let(:amount) { '$2,999.99' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2999.99'))
-        end
-      end
-
       context 'amount contains a negative sign' do
         let(:amount) { '-2.99' }
 
@@ -1130,53 +1114,12 @@ describe Spree::Payment, type: :model do
       end
     end
 
-    context 'when the locale uses a coma as a decimal separator' do
-      before do
-        I18n.backend.store_translations(:fr, number: { currency: { format: { delimiter: ' ', separator: ',' } } })
-        allow(I18n).to receive(:locale).and_return(:fr)
-        allow(I18n.config).to receive(:locale).and_return(:fr)
+    context 'when the locale writes a comma decimal' do
+      let(:amount) { '49.50' }
 
-        subject.amount = amount
-      end
-
-      context 'amount is a decimal' do
-        let(:amount) { '2,99' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
-      end
-
-      context 'amount contains a $ sign' do
-        let(:amount) { '2,99 $' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
-      end
-
-      context 'amount is a number' do
-        let(:amount) { 2.99 }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
-      end
-
-      context 'amount contains a negative sign' do
-        let(:amount) { '-2,99 $' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('-2.99'))
-        end
-      end
-
-      context 'amount uses a dot as a decimal separator' do
-        let(:amount) { '2.99' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
+      it 'stores a canonical decimal exactly' do
+        I18n.with_locale(:nl) { subject.amount = amount }
+        expect(subject.amount).to eql(BigDecimal('49.50'))
       end
     end
   end

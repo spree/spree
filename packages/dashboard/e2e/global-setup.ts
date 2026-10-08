@@ -164,8 +164,15 @@ const BOOTSTRAP_RUBY = [
   'transfer_source.stock_levels.where(variant: inventory_product.default_variant).first_or_create!.update!(count_on_hand: 500)',
   'inventory_level = transfer_destination.stock_levels.where(variant: inventory_product.default_variant).first_or_create!',
   `unless inventory_level.stock_reservations.exists?; inventory_cart = Spree::Cart.create!(store: s, currency: s.default_currency, email: 'e2e-inventory@example.com'); inventory_line = inventory_cart.line_items.create!(variant: inventory_product.default_variant, quantity: ${FIXTURE_INVENTORY_RESERVED}); inventory_level.stock_reservations.create!(cart: inventory_cart, line_item: inventory_line, quantity: ${FIXTURE_INVENTORY_RESERVED}, expires_at: 10.years.from_now); end`,
+  // A store whose language writes a comma decimal (Dutch) and prices in EUR:
+  // the server reads every request in the store's language, so this is where
+  // a price is misread if anything parses money by locale. Its name sorts after
+  // the default store's, so signing in still opens the default store first.
+  `comma_store = Spree::Store.find_by(code: 'e2e-nl') || Spree::Store.create!(code: 'e2e-nl', name: 'Winkel', url: 'nl.example.com', mail_from_address: 'no-reply@example.com', default_currency: 'EUR', default_locale: 'nl')`,
+  'Spree::Seeds::StoreResources.call(store: comma_store); Spree::Stores::ProvisionDefaults.call(store: comma_store, country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.stock_locations.exists?',
+  'comma_store.add_user(admin, Spree::Role.default_admin_role(comma_store)) unless comma_store.role_users.exists?(user: admin)',
   'port = ENV.fetch("PORT", 3010)',
-  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name)',
+  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
 ].join('; ')
 
 export default async function globalSetup() {

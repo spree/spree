@@ -15,6 +15,16 @@ Keep up with the latest features and improvements in Spree Commerce!
 
 </div>
 
+<Update label="Prices save correctly in every language" description="October 9, 2026" tags={["Pricing", "Dashboard"]}>
+  Stores whose language writes a comma as the decimal separator, such as Dutch, German or French, could save the wrong price. A price entered as €49,50 was stored as €4950,00, and saving an unchanged €99 again turned it into €990 and then €9900. Prices, costs, weights and dimensions are now saved exactly as entered, whatever the store's language.
+
+  Taxes and discounts in yen are now rounded to whole yen, and partial captures in yen are recorded at their real amount.
+
+  If you edited prices in such a store before this update, check them.
+
+  **Learn more:** [Upgrade guide](/developer/upgrades/5.6-to-6.0#money)
+</Update>
+
 <Update label="Email template editor" description="October 6, 2026" tags={["Emails", "Dashboard"]}>
   Merchants can now change what their customer emails say and how they look, right in the dashboard, without asking a developer. Order confirmations, shipping notifications, refunds, password resets, the layout around every email and the shared blocks such as item rows are all editable under **Settings → Emails → Templates**.
 

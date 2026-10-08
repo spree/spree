@@ -38,10 +38,6 @@ module Spree
       end
     end
 
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
-
     def currency
       owner&.currency
     end

@@ -237,6 +237,117 @@ test.describe('product prices — single variant', () => {
 })
 
 // ---------------------------------------------------------------------------
+// Money entry — separators, currencies and the store's language
+// ---------------------------------------------------------------------------
+
+// Prices typed with either separator must persist exactly, in every currency,
+// and saving the product again must leave them as they are. The API returns
+// "49.5" for 49.50 until amounts are written to the currency's decimals, so the
+// expectations allow the trailing zero to be missing; what they rule out is a
+// separator read the wrong way (4950, 990).
+test.describe('product prices — separators and currencies', () => {
+  function priceCell(card: Locator): Locator {
+    return card.getByRole('textbox', { name: /^price for default$/i })
+  }
+
+  async function showCurrency(page: Page, card: Locator, currency: string): Promise<void> {
+    await card.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: currency }).click()
+  }
+
+  async function saveProduct(page: Page): Promise<void> {
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+  }
+
+  // Saves the product with only its name changed, the way a merchant saves it
+  // again without opening the prices.
+  async function saveAgainUntouched(page: Page, name: string): Promise<void> {
+    await page.reload()
+    await page.getByLabel(/^name$/i).fill(name)
+    await saveProduct(page)
+  }
+
+  test('USD and EUR prices typed with either separator persist exactly and survive repeated saves', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const productName = `E2E Separators ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+
+    const card = pricesCard(page)
+    // USD is shown in English: a comma groups thousands.
+    await fillGridCell(priceCell(card), '1,234.56')
+    // EUR is shown in German: a period groups thousands, a comma is the decimal.
+    await showCurrency(page, card, 'EUR')
+    await fillGridCell(priceCell(card), '1.234,56')
+    await saveProduct(page)
+
+    await saveAgainUntouched(page, `${productName} (2)`)
+    await saveAgainUntouched(page, `${productName} (3)`)
+
+    await page.reload()
+    const reloaded = pricesCard(page)
+    await expect(priceCell(reloaded)).toHaveValue('1234.56')
+    await showCurrency(page, reloaded, 'EUR')
+    await expect(priceCell(reloaded)).toHaveValue('1234,56')
+  })
+
+  test('a EUR price typed with a comma, a period or no decimals persists exactly', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+
+    for (const [typed, shown] of [
+      ['49,50', /^49,50?$/],
+      // A period before two digits cannot be grouping: it is the decimal.
+      ['19.50', /^19,50?$/],
+      ['99', /^99(,0+)?$/],
+    ] as const) {
+      const productName = `E2E EUR ${typed} ${Date.now()}`
+      await createProduct(page, creds.store_id, productName)
+      const card = pricesCard(page)
+      await showCurrency(page, card, 'EUR')
+      await fillGridCell(priceCell(card), typed)
+      await saveProduct(page)
+      await saveAgainUntouched(page, `${productName} (2)`)
+
+      await page.reload()
+      const reloaded = pricesCard(page)
+      await showCurrency(page, reloaded, 'EUR')
+      await expect(priceCell(reloaded)).toHaveValue(shown)
+    }
+  })
+
+  // The reported bug: in a store whose language writes a comma decimal, the
+  // server read "49.50" as 4950, and every save of an unchanged 99 added a zero.
+  test('a store whose language writes a comma decimal saves its prices exactly', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+
+    for (const [typed, shown] of [
+      ['49,50', /^49,50?$/],
+      ['99', /^99(,0+)?$/],
+      ['1.234,56', /^1234,56$/],
+    ] as const) {
+      const productName = `E2E Dutch ${typed} ${Date.now()}`
+      await createProduct(page, creds.comma_store_id, productName)
+      await fillGridCell(priceCell(pricesCard(page)), typed)
+      await saveProduct(page)
+
+      await saveAgainUntouched(page, `${productName} (2)`)
+      await saveAgainUntouched(page, `${productName} (3)`)
+
+      await page.reload()
+      await expect(priceCell(pricesCard(page))).toHaveValue(shown)
+    }
+  })
+})
+
+// ---------------------------------------------------------------------------
 // Inventory grid — multi-variant: every (variant × location) editable
 // ---------------------------------------------------------------------------
 

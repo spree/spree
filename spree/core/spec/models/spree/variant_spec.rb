@@ -576,9 +576,16 @@ describe Spree::Variant, type: :model do
   end
 
   describe '#cost_price=' do
-    it 'uses LocalizedNumber.parse' do
-      expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
-      subject.cost_price = '1,599.99'
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
+      record = variant
+      I18n.with_locale(:nl) { record.cost_price = '8.50' }
+      expect(variant.cost_price).to eq(BigDecimal('8.50'))
+    end
+
+    it 'keeps the value when given a blank' do
+      variant.cost_price = '8.50'
+      variant.cost_price = ''
+      expect(variant.cost_price).to eq(BigDecimal('8.50'))
     end
   end
 
@@ -629,16 +636,17 @@ describe Spree::Variant, type: :model do
   end
 
   describe '#set_price' do
-    it 'parses a localized amount' do
-      variant.set_price('USD', '1,599.99')
-      expect(variant.price_in('USD').amount).to eq(1599.99)
+    it 'stores a canonical amount exactly' do
+      variant.set_price('USD', '1599.99')
+      expect(variant.price_in('USD').amount).to eq(BigDecimal('1599.99'))
     end
   end
 
   describe '#weight=' do
-    it 'uses LocalizedNumber.parse' do
-      expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
-      subject.weight = '1,599.99'
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
+      record = variant
+      I18n.with_locale(:nl) { record.weight = '0.2' }
+      expect(variant.weight).to eq(BigDecimal('0.2'))
     end
   end
 

@@ -1,8 +1,14 @@
 require 'spec_helper'
 
 describe Spree::LocalizedNumber do
+  it 'warns that it is deprecated' do
+    expect(Spree::Deprecation).to receive(:warn).with(/LocalizedNumber is deprecated/)
+    described_class.parse('1.5')
+  end
+
   context '.parse' do
     before do
+      allow(Spree::Deprecation).to receive(:warn)
       I18n.enforce_available_locales = false
       allow(I18n).to receive(:locale).and_return(I18n.default_locale)
       I18n.backend.store_translations(:de, number: { currency: { format: { delimiter: '.', separator: ',' } } })

@@ -255,16 +255,6 @@ module Spree
       end
     end
 
-    def amount=(amount)
-      self[:amount] =
-        case amount
-        when String
-          separator = I18n.t('number.currency.format.separator')
-          number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
-          number.to_d if number.present?
-        end || amount
-    end
-
     # Resizes a store credit payment that has not been taken yet. Completion
     # takes it against the eligibility event recorded for its amount, so the
     # new amount needs one of its own.

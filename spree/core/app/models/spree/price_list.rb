@@ -389,9 +389,8 @@ module Spree
 
         current = current_values[price_id]
 
-        # Parse amounts using LocalizedNumber for proper decimal handling
-        amount = attrs[:amount].present? ? Spree::LocalizedNumber.parse(attrs[:amount]) : nil
-        compare_at_amount = attrs[:compare_at_amount].present? ? Spree::LocalizedNumber.parse(attrs[:compare_at_amount]) : nil
+        amount = attrs[:amount].presence&.to_d
+        compare_at_amount = attrs[:compare_at_amount].presence&.to_d
 
         # Clear compare_at_amount if it equals amount
         compare_at_amount = nil if compare_at_amount == amount

@@ -320,8 +320,8 @@ module Spree
       end
 
       # Strict decimal parsing (same semantics as Shipment#cost=, which the
-      # update_columns freeze path bypasses) — the lenient LocalizedNumber
-      # would turn garbage into 0, and 0 is a legal cost here.
+      # update_columns freeze path bypasses) — a lenient parse would turn
+      # garbage into 0, and 0 is a legal cost here.
       #
       # @return [BigDecimal, Numeric, nil] nil when no cost was given (blank
       #   counts as omitted); a failure Result for malformed or negative input

@@ -82,12 +82,6 @@ module Spree
     #
     money_methods :amount, :amount_used, :amount_authorized, :amount_remaining
 
-    # Sets the amount
-    # @param amount [String]
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
-
     # Calculates the remaining amount
     # @return [Decimal]
     def amount_remaining

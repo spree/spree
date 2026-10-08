@@ -730,10 +730,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       # The Admin API contract is canonical decimal strings (`"29.99"`, period
       # decimal). Clients (the dashboard) normalize localized input
       # client-side before sending — the API is not asked to parse comma-vs-
-      # period. See docs/plans/5.5-client-side-money-normalization.md. (The
-      # models still tolerate localized input for the legacy Rails admin, but
-      # that is not part of the Admin API contract and is covered by the
-      # `Spree::LocalizedNumber` unit specs.)
+      # period. See docs/plans/5.5-client-side-money-normalization.md.
       it 'accepts amounts as canonical decimal strings (symmetric with reads)' do
         post :create, params: {
           name: 'String Price Product',
@@ -828,6 +825,37 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['name']).to eq('Updated Name')
       expect(product.reload.name).to eq('Updated Name')
+    end
+
+    # A store whose language writes a comma decimal (nl, de, fr) must still
+    # read the dashboard's canonical "49.50" as forty-nine fifty, and saving an
+    # untouched price must not grow it by a power of ten.
+    context 'when the request resolves a comma-decimal locale' do
+      let(:variant) { product.default_variant }
+
+      before { allow(controller).to receive(:current_locale).and_return('nl') }
+
+      def save_price(amount)
+        patch :update, params: {
+          id: product.prefixed_id,
+          variants: [{ id: variant.prefixed_id, prices: [{ currency: 'USD', amount: amount }] }]
+        }, as: :json
+        expect(response).to have_http_status(:ok), response.body
+        variant.prices.base_prices.find_by(currency: 'USD').amount
+      end
+
+      it 'stores a canonical amount as written' do
+        expect(save_price('49.50')).to eq(BigDecimal('49.50'))
+      end
+
+      it 'keeps a price stable across repeated saves of what the API returned' do
+        save_price('99')
+        returned = json_response['variants']&.first&.dig('prices')&.first&.dig('amount') ||
+                   variant.prices.base_prices.find_by(currency: 'USD').amount.to_s
+
+        expect(save_price(returned)).to eq(BigDecimal('99'))
+        expect(save_price(variant.prices.base_prices.find_by(currency: 'USD').amount.to_s)).to eq(BigDecimal('99'))
+      end
     end
 
     it 'assigns a product type by prefixed id and returns it' do

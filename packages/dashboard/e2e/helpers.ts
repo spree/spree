@@ -205,6 +205,8 @@ export interface E2ECredentials {
   admin_password: string
   store_id: string
   store_name: string
+  /** A store whose language writes a comma decimal (nl) and prices in EUR. */
+  comma_store_id: string
 }
 
 /** Credentials plus the JWT from the login response (Admin API Bearer auth). */
