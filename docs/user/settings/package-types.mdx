@@ -1,39 +1,92 @@
 ---
 title: "Package Types"
-description: "The boxes, envelopes, cartons and pallets your goods ship in — with the dimensions and weights carrier quotes are built on."
+description: "Learn how to define the boxes, cartons, pallets and containers your store packs goods into, and how cartons set the case quantities behind bulk orders."
 ---
 
-Package types describe what you pack into: the mailer your parcels go out in, the cartons your products come in, the pallets a wholesale order leaves on. Their size and weight feed shipping quotes, so getting them right is what keeps carrier rates honest.
+A package type defines the physical packaging that goods are packed into: a box, an envelope, a carton, a pallet or a container. Each one records its measurements, its empty weight and what it can carry, so the same packaging is described once and referenced wherever it is used.
 
-Find them under **Settings → Package types**.
+The packaging you need depends heavily on the nature of your business. A store sending single items to consumers may only ever need two or three sizes of box and a padded envelope. A wholesaler selling by the case needs the cartons those cases come in, and the pallets they are stacked on. A business doing both needs each, because an order for one unit and an order for two hundred do not leave the warehouse the same way.
 
-## Kinds
+To manage packaging, navigate to **Settings → Package types**, under the **Shipping & delivery** group.
 
-| Kind | Typical use |
+![The Package types list, showing each type's dimensions and volume](/docs/images/user/settings/package-types/1-package-types-overview.png)
+
+Each row shows the **Name**, **Kind**, **Dimensions** and **Volume**, and the default carries a **Default** badge.
+
+## How to Add a Package Type
+
+Click **Add package type**.
+
+![The Add package type panel](/docs/images/user/settings/package-types/2-add-package-type.png)
+
+- **Name** - What your team calls it, such as Small mailer or Euro pallet.
+- **Kind** - What sort of packaging it is. See the table below.
+- **Length**, **Width**, **Height** and **Unit** - The outside measurements of the packaging itself.
+- **Empty weight** and **Unit** - Weight of the packaging itself, added to whatever it holds.
+- **Max weight** - What it can carry.
+- **Default box** - Marks this as the store's default packaging. One default at a time.
+
+Click **Create**.
+
+### Package Kinds
+
+| Kind | What it is |
 |---|---|
-| Box | A parcel |
-| Envelope | Documents, flat items |
-| Carton | A case of units, as it arrives from a supplier or ships wholesale |
-| Pallet | Many cartons, for freight |
-| Container | A shipping container |
+| **Box** | Outer packaging an order is packed into |
+| **Envelope** | Flat or padded packaging for small, light items |
+| **Carton** | The case that holds multiple units of a single product |
+| **Pallet** | The platform cartons are stacked on |
+| **Container** | A shipping container |
 
-## Adding one
+**Carton** is the only kind a product points at directly. The rest are records of packaging you hold, named so your team can refer to the same thing by the same name.
 
-Click **Add package type** and give it a name, a kind, and its geometry:
+### Cartons
 
-- **Length, width, height** and their unit. Used for carrier dimensional weight, and for the cubic-metre tiers freight shipping compares.
-- **Empty weight** — the packaging itself, added to whatever it holds.
-- **Max weight** — what it can carry.
+Cartons behave differently from other packaging types and are worth understanding separately. Every other kind describes the packaging a shipment travels in. A carton describes the case that holds multiple units of a single product, so it attaches to the product rather than to anything you send.
 
-## The default box
+That might be the case the product arrived in from your supplier, or it might be packaging you make up yourself when picking a bulk order. Either way, what makes it a carton is that it holds a known quantity of one product, which is what lets Spree work out the weight and volume of a bulk order from the number of units on it.
 
-Mark one package type as the **default box**. It is the packaging your parcel quotes are built on: its size and empty weight are added to every rate a carrier returns. There is one default at a time; marking another demotes the previous one.
+#### Where the figures live
 
-## For marketplaces
+A carton is described in three places, and all three are needed before bulk orders behave properly.
 
-Sellers keep their own package types in the seller panel, alongside the marketplace's. A seller can pack into the operator's standard cartons rather than measuring them again, or record their own — and each seller has their own default box for their own quotes.
+| Where | What it records |
+|---|---|
+| **Settings → Package types** | The size of the case itself, its empty weight and what it can carry. Shared by every product packed the same way. |
+| A product's **Packing** section | Which carton this product uses, what one packed carton weighs, and how many go on a pallet. |
+| A product's **B2B ordering** section | How many units are in a carton, and whether buyers order in units or cartons. |
 
-## Related
+The split exists because the same case can hold very different products. The box is shared; what goes in it, what it weighs full and how many fit on a pallet are not.
 
-- [Delivery Profiles](/user/settings/delivery-profiles) — the delivery methods that use these dimensions when quoting
-- [Purchase Orders](/user/inventory/purchase-orders) — stock arriving in cartons
+<Warning>Filling in one product section without the other leaves the figures incomplete. A carton set in **Packing** with no **Units per carton** in **B2B ordering** tells Spree what a case weighs but not what is in it, so a buyer ordering by the carton is ordering an unknown quantity.</Warning>
+
+<Note>Both product sections only offer package types whose kind is Carton. Until you have defined at least one, the **Packing** section on every product is greyed out, with a prompt to come back here and add one.</Note>
+
+#### How many you need
+
+One carton type per distinct case size, not one per product. A case of 24 lipsticks and a case of 12 hair dryers are different sizes, so they are two carton types, each pointed at by however many products share it. Suppliers tend to standardise, so most stores need far fewer carton types than they have products.
+
+<Note>Cartons are one part of selling wholesale, alongside minimum order quantities and order multiples. See [<u>Sell to Businesses</u>](/user/how-to/selling-to-businesses) for how they fit together.</Note>
+
+<Note>**Empty weight** is the packaging on its own, before anything goes in it. It is worth entering, because what a packed case weighs is the goods plus the box, and leaving it out understates the total by the weight of the packaging.</Note>
+
+## Setting the Default
+
+Only one package type can be the default at a time, and turning it on for one takes it off whichever held it before. Make it the packaging you use most, since it is what stands in when nothing more specific applies.
+
+## How to Edit a Package Type
+
+Open the row menu and choose **Edit**.
+
+Editing a carton corrects every product packed into it at once, so fixing a measurement in one place fixes it everywhere that carton is used.
+
+## How to Delete a Package Type
+
+Open the row menu and choose **Delete**.
+
+<Warning>Check what is using a package type before removing it. Products pointing at a deleted carton lose the case measurements their bulk ordering figures were built on.</Warning>
+
+## Further Reading
+
+- [<u>Sell to Businesses</u>](/user/how-to/selling-to-businesses) - How cartons fit into wholesale ordering
+- [<u>Create a Product</u>](/user/products/creating-products) - Where a product's carton is set
