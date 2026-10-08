@@ -1949,33 +1949,6 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe 'after_touch :touch_categories' do
-    subject { product.touch }
-
-    let!(:product) { create(:product, categories: categories) }
-
-    context 'without categories' do
-      let(:categories) { [] }
-
-      it 'skips enqueuing a job for touching the categories' do
-        expect { subject }.not_to have_enqueued_job(Spree::Products::TouchCategoriesJob)
-      end
-    end
-
-    context 'with categories' do
-      let(:categories) { [child_category] }
-
-      let!(:parent_category) { create(:category) }
-      let!(:child_category) { create(:category, parent: parent_category) }
-
-      it 'enqueues a job for touching the categories and their ancestors' do
-        expect { subject }.to have_enqueued_job(Spree::Products::TouchCategoriesJob).with(
-          [parent_category.id, child_category.id]
-        )
-      end
-    end
-  end
-
   describe 'status' do
     it 'has no state machine' do
       expect(described_class).not_to respond_to(:state_machines)

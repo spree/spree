@@ -40,8 +40,7 @@ module Spree
     publishes_lifecycle_events
     publishes_events :activated, :approved, :archived, :back_in_stock, :drafted, :out_of_stock, :proposed, :rejected
 
-    MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
-                          default_variant_id tax_category default_variant variant_for_images
+    MEMOIZED_METHODS = %w[total_on_hand default_variant_id tax_category default_variant variant_for_images
                           primary_category buy_box_variants resolved_delivery_profile
                           purchasable? in_stock? backorderable? digital?]
 
@@ -243,8 +242,6 @@ module Spree
     after_create :set_default_variant
 
     after_save :auto_promote_default_variant
-    after_save :run_touch_callbacks, if: :saved_changes?
-    after_touch :touch_categories
 
     after_commit :auto_match_collections, if: :eligible_for_collection_matching?
 
@@ -994,23 +991,6 @@ module Spree
       return if seller.store_id == store_id
 
       errors.add(:seller, :invalid)
-    end
-
-    def run_touch_callbacks
-      run_callbacks(:touch)
-    end
-
-    def category_and_ancestors
-      @category_and_ancestors ||= categories.map(&:self_and_ancestors).flatten.uniq
-    end
-
-    # Iterate through this product's categories and touch their timestamps in a batch
-    def touch_categories
-      if categories.any?
-        Spree::Products::TouchCategoriesJob.
-          set(wait: 5.seconds).
-          perform_later(category_and_ancestors.map(&:id))
-      end
     end
 
     def ensure_not_in_complete_orders
