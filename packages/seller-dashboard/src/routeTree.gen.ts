@@ -9,40 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as resetPasswordRouteImport } from './routes/reset-password'
-import { Route as loginRouteImport } from './routes/login'
-import { Route as forgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as authenticatedRouteImport } from './routes/_authenticated'
+import { Route as forgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as loginRouteImport } from './routes/login'
+import { Route as resetPasswordRouteImport } from './routes/reset-password'
 import { Route as authenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as acceptInvitationDotinvitationIdRouteImport } from './routes/accept-invitation.$invitationId'
 import { Route as authenticatedSellerIdRouteImport } from './routes/_authenticated/$sellerId'
+import { Route as acceptInvitationDotinvitationIdRouteImport } from './routes/accept-invitation.$invitationId'
 import { Route as IndexRouteImport } from './routes/_authenticated/$sellerId/index'
-import { Route as SettingsRouteImport } from './routes/_authenticated/$sellerId/settings'
-import { Route as ProfileRouteImport } from './routes/_authenticated/$sellerId/profile'
 import { Route as OnboardingRouteImport } from './routes/_authenticated/$sellerId/onboarding'
-import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$sellerId/settings/index'
-import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$sellerId/products/index'
-import { Route as PayoutsIndexRouteImport } from './routes/_authenticated/$sellerId/payouts/index'
-import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$sellerId/orders/index'
+import { Route as ProfileRouteImport } from './routes/_authenticated/$sellerId/profile'
+import { Route as SettingsRouteImport } from './routes/_authenticated/$sellerId/settings'
 import { Route as EarningsIndexRouteImport } from './routes/_authenticated/$sellerId/earnings/index'
-import { Route as SettingsTeamRouteImport } from './routes/_authenticated/$sellerId/settings/team'
-import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$sellerId/settings/stock-locations'
-import { Route as SettingsPoliciesRouteImport } from './routes/_authenticated/$sellerId/settings/policies'
-import { Route as SettingsPackageTypesRouteImport } from './routes/_authenticated/$sellerId/settings/package-types'
-import { Route as SettingsDeliveryMethodsRouteImport } from './routes/_authenticated/$sellerId/settings/delivery-methods'
-import { Route as ProductsNewRouteImport } from './routes/_authenticated/$sellerId/products/new'
-import { Route as ProductsProductIdRouteImport } from './routes/_authenticated/$sellerId/products/$productId'
-import { Route as PayoutsPayoutIdRouteImport } from './routes/_authenticated/$sellerId/payouts/$payoutId'
+import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$sellerId/orders/index'
 import { Route as OrdersOrderIdRouteImport } from './routes/_authenticated/$sellerId/orders/$orderId'
+import { Route as PayoutsIndexRouteImport } from './routes/_authenticated/$sellerId/payouts/index'
+import { Route as PayoutsPayoutIdRouteImport } from './routes/_authenticated/$sellerId/payouts/$payoutId'
+import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$sellerId/products/index'
+import { Route as ProductsProductIdRouteImport } from './routes/_authenticated/$sellerId/products/$productId'
+import { Route as ProductsNewRouteImport } from './routes/_authenticated/$sellerId/products/new'
+import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$sellerId/settings/index'
+import { Route as SettingsDeliveryMethodsRouteImport } from './routes/_authenticated/$sellerId/settings/delivery-methods'
+import { Route as SettingsPackageTypesRouteImport } from './routes/_authenticated/$sellerId/settings/package-types'
+import { Route as SettingsPoliciesRouteImport } from './routes/_authenticated/$sellerId/settings/policies'
+import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$sellerId/settings/stock-locations'
+import { Route as SettingsTeamRouteImport } from './routes/_authenticated/$sellerId/settings/team'
 
-const resetPasswordRoute = resetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const loginRoute = loginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const authenticatedRoute = authenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const forgotPasswordRoute = forgotPasswordRouteImport.update({
@@ -50,13 +44,24 @@ const forgotPasswordRoute = forgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const authenticatedRoute = authenticatedRouteImport.update({
-  id: '/_authenticated',
+const loginRoute = loginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const resetPasswordRoute = resetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authenticatedIndexRoute = authenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => authenticatedRoute,
+} as any)
+const authenticatedSellerIdRoute = authenticatedSellerIdRouteImport.update({
+  id: '/$sellerId',
+  path: '/$sellerId',
   getParentRoute: () => authenticatedRoute,
 } as any)
 const acceptInvitationDotinvitationIdRoute =
@@ -65,24 +70,9 @@ const acceptInvitationDotinvitationIdRoute =
     path: '/accept-invitation/$invitationId',
     getParentRoute: () => rootRouteImport,
   } as any)
-const authenticatedSellerIdRoute = authenticatedSellerIdRouteImport.update({
-  id: '/$sellerId',
-  path: '/$sellerId',
-  getParentRoute: () => authenticatedRoute,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => authenticatedSellerIdRoute,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => authenticatedSellerIdRoute,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -90,24 +80,14 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
-const SettingsIndexRoute = SettingsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const ProductsIndexRoute = ProductsIndexRouteImport.update({
-  id: '/products/',
-  path: '/products/',
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
-const PayoutsIndexRoute = PayoutsIndexRouteImport.update({
-  id: '/payouts/',
-  path: '/payouts/',
-  getParentRoute: () => authenticatedSellerIdRoute,
-} as any)
-const OrdersIndexRoute = OrdersIndexRouteImport.update({
-  id: '/orders/',
-  path: '/orders/',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
 const EarningsIndexRoute = EarningsIndexRouteImport.update({
@@ -115,39 +95,19 @@ const EarningsIndexRoute = EarningsIndexRouteImport.update({
   path: '/earnings/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
-const SettingsTeamRoute = SettingsTeamRouteImport.update({
-  id: '/team',
-  path: '/team',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
-  id: '/stock-locations',
-  path: '/stock-locations',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsPoliciesRoute = SettingsPoliciesRouteImport.update({
-  id: '/policies',
-  path: '/policies',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsPackageTypesRoute = SettingsPackageTypesRouteImport.update({
-  id: '/package-types',
-  path: '/package-types',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsDeliveryMethodsRoute = SettingsDeliveryMethodsRouteImport.update({
-  id: '/delivery-methods',
-  path: '/delivery-methods',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const ProductsNewRoute = ProductsNewRouteImport.update({
-  id: '/products/new',
-  path: '/products/new',
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
-const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
-  id: '/products/$productId',
-  path: '/products/$productId',
+const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
+  id: '/orders/$orderId',
+  path: '/orders/$orderId',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const PayoutsIndexRoute = PayoutsIndexRouteImport.update({
+  id: '/payouts/',
+  path: '/payouts/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
 const PayoutsPayoutIdRoute = PayoutsPayoutIdRouteImport.update({
@@ -155,10 +115,50 @@ const PayoutsPayoutIdRoute = PayoutsPayoutIdRouteImport.update({
   path: '/payouts/$payoutId',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
-const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
-  id: '/orders/$orderId',
-  path: '/orders/$orderId',
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
   getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
+  id: '/products/$productId',
+  path: '/products/$productId',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const ProductsNewRoute = ProductsNewRouteImport.update({
+  id: '/products/new',
+  path: '/products/new',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsDeliveryMethodsRoute = SettingsDeliveryMethodsRouteImport.update({
+  id: '/delivery-methods',
+  path: '/delivery-methods',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsPackageTypesRoute = SettingsPackageTypesRouteImport.update({
+  id: '/package-types',
+  path: '/package-types',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsPoliciesRoute = SettingsPoliciesRouteImport.update({
+  id: '/policies',
+  path: '/policies',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
+  id: '/stock-locations',
+  path: '/stock-locations',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsTeamRoute = SettingsTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => SettingsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -329,18 +329,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof resetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof loginRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof authenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -350,11 +343,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof forgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof authenticatedRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof loginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof resetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -364,13 +364,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authenticatedIndexRouteImport
       parentRoute: typeof authenticatedRoute
     }
-    '/accept-invitation/$invitationId': {
-      id: '/accept-invitation/$invitationId'
-      path: '/accept-invitation/$invitationId'
-      fullPath: '/accept-invitation/$invitationId'
-      preLoaderRoute: typeof acceptInvitationDotinvitationIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/$sellerId': {
       id: '/_authenticated/$sellerId'
       path: '/$sellerId'
@@ -378,25 +371,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authenticatedSellerIdRouteImport
       parentRoute: typeof authenticatedRoute
     }
+    '/accept-invitation/$invitationId': {
+      id: '/accept-invitation/$invitationId'
+      path: '/accept-invitation/$invitationId'
+      fullPath: '/accept-invitation/$invitationId'
+      preLoaderRoute: typeof acceptInvitationDotinvitationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/$sellerId/': {
       id: '/_authenticated/$sellerId/'
       path: '/'
       fullPath: '/$sellerId/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof authenticatedSellerIdRoute
-    }
-    '/_authenticated/$sellerId/settings': {
-      id: '/_authenticated/$sellerId/settings'
-      path: '/settings'
-      fullPath: '/$sellerId/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof authenticatedSellerIdRoute
-    }
-    '/_authenticated/$sellerId/profile': {
-      id: '/_authenticated/$sellerId/profile'
-      path: '/profile'
-      fullPath: '/$sellerId/profile'
-      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
     '/_authenticated/$sellerId/onboarding': {
@@ -406,32 +392,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
-    '/_authenticated/$sellerId/settings/': {
-      id: '/_authenticated/$sellerId/settings/'
-      path: '/'
-      fullPath: '/$sellerId/settings/'
-      preLoaderRoute: typeof SettingsIndexRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/_authenticated/$sellerId/products/': {
-      id: '/_authenticated/$sellerId/products/'
-      path: '/products'
-      fullPath: '/$sellerId/products/'
-      preLoaderRoute: typeof ProductsIndexRouteImport
+    '/_authenticated/$sellerId/profile': {
+      id: '/_authenticated/$sellerId/profile'
+      path: '/profile'
+      fullPath: '/$sellerId/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
-    '/_authenticated/$sellerId/payouts/': {
-      id: '/_authenticated/$sellerId/payouts/'
-      path: '/payouts'
-      fullPath: '/$sellerId/payouts/'
-      preLoaderRoute: typeof PayoutsIndexRouteImport
-      parentRoute: typeof authenticatedSellerIdRoute
-    }
-    '/_authenticated/$sellerId/orders/': {
-      id: '/_authenticated/$sellerId/orders/'
-      path: '/orders'
-      fullPath: '/$sellerId/orders/'
-      preLoaderRoute: typeof OrdersIndexRouteImport
+    '/_authenticated/$sellerId/settings': {
+      id: '/_authenticated/$sellerId/settings'
+      path: '/settings'
+      fullPath: '/$sellerId/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
     '/_authenticated/$sellerId/earnings/': {
@@ -441,53 +413,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EarningsIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
-    '/_authenticated/$sellerId/settings/team': {
-      id: '/_authenticated/$sellerId/settings/team'
-      path: '/team'
-      fullPath: '/$sellerId/settings/team'
-      preLoaderRoute: typeof SettingsTeamRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/_authenticated/$sellerId/settings/stock-locations': {
-      id: '/_authenticated/$sellerId/settings/stock-locations'
-      path: '/stock-locations'
-      fullPath: '/$sellerId/settings/stock-locations'
-      preLoaderRoute: typeof SettingsStockLocationsRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/_authenticated/$sellerId/settings/policies': {
-      id: '/_authenticated/$sellerId/settings/policies'
-      path: '/policies'
-      fullPath: '/$sellerId/settings/policies'
-      preLoaderRoute: typeof SettingsPoliciesRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/_authenticated/$sellerId/settings/package-types': {
-      id: '/_authenticated/$sellerId/settings/package-types'
-      path: '/package-types'
-      fullPath: '/$sellerId/settings/package-types'
-      preLoaderRoute: typeof SettingsPackageTypesRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/_authenticated/$sellerId/settings/delivery-methods': {
-      id: '/_authenticated/$sellerId/settings/delivery-methods'
-      path: '/delivery-methods'
-      fullPath: '/$sellerId/settings/delivery-methods'
-      preLoaderRoute: typeof SettingsDeliveryMethodsRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/_authenticated/$sellerId/products/new': {
-      id: '/_authenticated/$sellerId/products/new'
-      path: '/products/new'
-      fullPath: '/$sellerId/products/new'
-      preLoaderRoute: typeof ProductsNewRouteImport
+    '/_authenticated/$sellerId/orders/': {
+      id: '/_authenticated/$sellerId/orders/'
+      path: '/orders'
+      fullPath: '/$sellerId/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
-    '/_authenticated/$sellerId/products/$productId': {
-      id: '/_authenticated/$sellerId/products/$productId'
-      path: '/products/$productId'
-      fullPath: '/$sellerId/products/$productId'
-      preLoaderRoute: typeof ProductsProductIdRouteImport
+    '/_authenticated/$sellerId/orders/$orderId': {
+      id: '/_authenticated/$sellerId/orders/$orderId'
+      path: '/orders/$orderId'
+      fullPath: '/$sellerId/orders/$orderId'
+      preLoaderRoute: typeof OrdersOrderIdRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/payouts/': {
+      id: '/_authenticated/$sellerId/payouts/'
+      path: '/payouts'
+      fullPath: '/$sellerId/payouts/'
+      preLoaderRoute: typeof PayoutsIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
     '/_authenticated/$sellerId/payouts/$payoutId': {
@@ -497,12 +441,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PayoutsPayoutIdRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
-    '/_authenticated/$sellerId/orders/$orderId': {
-      id: '/_authenticated/$sellerId/orders/$orderId'
-      path: '/orders/$orderId'
-      fullPath: '/$sellerId/orders/$orderId'
-      preLoaderRoute: typeof OrdersOrderIdRouteImport
+    '/_authenticated/$sellerId/products/': {
+      id: '/_authenticated/$sellerId/products/'
+      path: '/products'
+      fullPath: '/$sellerId/products/'
+      preLoaderRoute: typeof ProductsIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/products/$productId': {
+      id: '/_authenticated/$sellerId/products/$productId'
+      path: '/products/$productId'
+      fullPath: '/$sellerId/products/$productId'
+      preLoaderRoute: typeof ProductsProductIdRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/products/new': {
+      id: '/_authenticated/$sellerId/products/new'
+      path: '/products/new'
+      fullPath: '/$sellerId/products/new'
+      preLoaderRoute: typeof ProductsNewRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/settings/': {
+      id: '/_authenticated/$sellerId/settings/'
+      path: '/'
+      fullPath: '/$sellerId/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$sellerId/settings/delivery-methods': {
+      id: '/_authenticated/$sellerId/settings/delivery-methods'
+      path: '/delivery-methods'
+      fullPath: '/$sellerId/settings/delivery-methods'
+      preLoaderRoute: typeof SettingsDeliveryMethodsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$sellerId/settings/package-types': {
+      id: '/_authenticated/$sellerId/settings/package-types'
+      path: '/package-types'
+      fullPath: '/$sellerId/settings/package-types'
+      preLoaderRoute: typeof SettingsPackageTypesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$sellerId/settings/policies': {
+      id: '/_authenticated/$sellerId/settings/policies'
+      path: '/policies'
+      fullPath: '/$sellerId/settings/policies'
+      preLoaderRoute: typeof SettingsPoliciesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$sellerId/settings/stock-locations': {
+      id: '/_authenticated/$sellerId/settings/stock-locations'
+      path: '/stock-locations'
+      fullPath: '/$sellerId/settings/stock-locations'
+      preLoaderRoute: typeof SettingsStockLocationsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$sellerId/settings/team': {
+      id: '/_authenticated/$sellerId/settings/team'
+      path: '/team'
+      fullPath: '/$sellerId/settings/team'
+      preLoaderRoute: typeof SettingsTeamRouteImport
+      parentRoute: typeof SettingsRoute
     }
   }
 }

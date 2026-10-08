@@ -130,7 +130,6 @@ export function FillHandle({ gridRef }: { gridRef: React.RefObject<HTMLElement |
 
   return (
     <div
-      // biome-ignore lint/a11y/useSemanticElements: this is a drag handle, not actionable on its own
       role="presentation"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
