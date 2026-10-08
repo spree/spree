@@ -1,6 +1,7 @@
 require 'spree/agent_tools/registry'
 require 'spree/agent_tools/context'
 require 'spree/agent_tools/resource_map'
+require 'spree/agent_tools/membership_map'
 require 'spree/agent_tools/record_summary'
 require 'spree/agent_tools/workflow_schema'
 require 'spree/agent_tools/workflow_tool'

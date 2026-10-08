@@ -211,6 +211,20 @@ RSpec.describe Spree::Mcp::Server do
       expect(response.dig('result', 'content').first['text']).to include('prod_missing')
     end
 
+    # A refusal carries what the model needs to correct itself — the fields
+    # that can be filtered, the resources that exist. Forwarding only the
+    # message left the model guessing at a list the tool had already built.
+    it 'carries the correction hints a refusal computed' do
+      response = call('tools/call', name: 'search_resources',
+                                    arguments: { 'resource' => 'products', 'filters' => { 'notreal_eq' => 'x' } })
+      text = response.dig('result', 'content').first['text']
+
+      expect(response.dig('result', 'isError')).to be(true)
+      expect(text).to include('notreal_eq')
+      expect(text).to include('filterable_fields')
+      expect(text).to include('name')
+    end
+
     it 'refuses an id belonging to another store' do
       other_product = create(:product, store: create(:store, code: "other-#{SecureRandom.hex(4)}"), name: 'Not Ours')
 
