@@ -1,5 +1,15 @@
 # create-spree-app
 
+## 2.2.0
+
+### Minor Changes
+
+- [#14814](https://github.com/spree/spree/pull/14814) [`992b25e`](https://github.com/spree/spree/commit/992b25e00dc6b3ba9941f7223dd4d8cd17a25271) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Made the marketplace seller panel optional: `create-spree-app` now asks whether to install it (yes by default) and accepts `--no-seller-dashboard`. Added `--no-dashboard` for projects that are happy with the built-in admin dashboard; `--react-dashboard` is deprecated and does nothing. Apps are now set up in a consistent order — dashboard, seller panel, then storefront — and the storefront step looks the same as the others. `spree init` also installs the seller panel's dependencies, and both tools now point projects without their own dashboard at the built-in one instead of saying no admin is installed.
+
+### Patch Changes
+
+- [#14828](https://github.com/spree/spree/pull/14828) [`f61ff68`](https://github.com/spree/spree/commit/f61ff68db21d08385f743dc0bf46575fba0b284a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Merged `spree update` into `spree upgrade`, which now upgrades both prebuilt-image and ejected projects and also updates the `@spree/*` packages of the project root and the dashboard apps. `spree update` keeps working for one release with a deprecation warning. New projects get an `upgrade` script instead of `update`.
+
 ## 2.1.0
 
 ### Minor Changes

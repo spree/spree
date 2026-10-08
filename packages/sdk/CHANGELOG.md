@@ -1,5 +1,19 @@
 # @spree/sdk
 
+## 2.0.0-rc.1
+
+### Minor Changes
+
+- [#14837](https://github.com/spree/spree/pull/14837) [`3b80c52`](https://github.com/spree/spree/commit/3b80c52d19006dafc717e4004ec9ae4619438b7b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Changed every type value the APIs send or accept to a short name instead of a Ruby class name: delivery method, digital asset, payout, tax and pickup point providers (`manual`, `internal`, `system`, `file`), order routing strategies (`rules`), custom field definition `resource_type` (`product`, `category`), tag `taggable_type`, the owner and originator types on addresses, refunds and media usage, payment setup session `payment_source_type` (`credit_card`), and type filters such as `type_eq` and `receivable_type_eq`. Removed `integration_class` from the provider listings and the deprecated custom field `type` field (use `field_type`), and corrected the shipping label `owner_type` type to `'fulfillment' | 'return'`.
+
+- [#14799](https://github.com/spree/spree/pull/14799) [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da) Thanks [@mad-eel](https://github.com/mad-eel)! - Returns, claims and exchanges now give back the tax the customer paid. Return lines carry `included_tax_total`, `additional_tax_total`, `tax_total` and `refund_amount` (tax included), and returns carry `refund_tax_total`. On a store whose prices include VAT, a return line's `pre_tax_amount` now reads the price before tax rather than the gross price. Claim and exchange lines carry the tax on each half, tax lines name the return, claim or exchange line they belong to and whether they are a `credit`, Admin refunds carry `tax_amount`, and Seller order line items carry `additional_tax_total`. Fees gain the `exchange` kind.
+
+- [#14773](https://github.com/spree/spree/pull/14773) [`8f21572`](https://github.com/spree/spree/commit/8f21572de3aff53fa8bb3fd5931f1b44307e7936) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added typed webhook events. `@spree/sdk/webhooks` now maps every event Spree publishes to the record its `data` carries, so checking `event.name` narrows `event.data`, and `constructWebhookEvent` verifies a request and returns the typed event (optionally validated with `webhookEventSchemas` from `@spree/sdk/zod`). `WebhookEvent<Order>` keeps working but is deprecated in favour of `WebhookEvent<'order.placed'>`. The Admin SDK adds `client.webhookEvents.list()`, and the dashboard's webhook event picker now reads that list instead of a hand-kept one.
+
+### Patch Changes
+
+- [#14763](https://github.com/spree/spree/pull/14763) [`53d9925`](https://github.com/spree/spree/commit/53d9925440d62343d77efad3c8dc849c4fa54008) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added runtime Zod schemas to the Admin and Seller SDKs, exported from `@spree/admin-sdk/zod` and `@spree/seller-sdk/zod`, matching what `@spree/sdk/zod` already offers for the Store API. Schemas for inline objects, unions and records are now precise instead of accepting any value, which also tightens a few Store SDK schemas (cart warnings, payment sources, product filters).
+
 ## 2.0.0-beta.2
 
 ### Minor Changes

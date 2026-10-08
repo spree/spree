@@ -1,5 +1,23 @@
 # @spree/dashboard-core
 
+## 1.0.0-rc.1
+
+### Minor Changes
+
+- [#14785](https://github.com/spree/spree/pull/14785) [`4bd1741`](https://github.com/spree/spree/commit/4bd1741677b202f11c13b792bf16e62301d2c5cd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an email template editor under Settings → Emails → Templates. Merchants edit the emails customers receive, the email layout and shared blocks with a code editor that suggests variables and marks problems by line, next to a live preview (desktop and mobile, email and plain text). Edits save as drafts and go live when published; drafts can be discarded, templates reverted to Spree's default, test emails sent to yourself, and earlier versions restored from the history. A banner shows when a Spree upgrade changed a default the store customized, with a side-by-side comparison. The email settings page gains a Branding card for the colors and font of customer emails, with a preview. `@spree/dashboard-ui` adds a `CodeEditor` (deep import `@spree/dashboard-ui/ui/code-editor`) and a `useDebouncedValue` hook; `@spree/dashboard-core` adds the `EmailTemplate` permission subject.
+
+### Patch Changes
+
+- [#14818](https://github.com/spree/spree/pull/14818) [`7fa7a64`](https://github.com/spree/spree/commit/7fa7a647d5372641fa45ff6fc9c52892bf791a1c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Search pickers (customers, products, sellers and others) now search again each time they open, so a record created elsewhere in the dashboard shows up without reloading the page.
+
+- [#14764](https://github.com/spree/spree/pull/14764) [`291238d`](https://github.com/spree/spree/commit/291238dfc0b05f9b322f9e51d6cd3737006ba430) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the seller panel opening with an empty sidebar when a seller returned with a live session but no remembered seller, for example after the browser cleared site storage. The panel now loads the seller's permissions once it knows which seller is active.
+
+- [#14747](https://github.com/spree/spree/pull/14747) [`a0151c1`](https://github.com/spree/spree/commit/a0151c15a268356f5a5ba236850b8ee7405e9ae7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the setup screen of a new project reloading while the merchant was filling it in. The generated route file now refers to installed packages by their stable location, and `spree add` generates it right after installing, so the first dev start has nothing to rewrite. Upgrades also no longer rewrite every line of that file, so its diff shows only the pages an upgrade added.
+
+- [#14789](https://github.com/spree/spree/pull/14789) [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Tier threshold and discount inputs now carry accessible names, so screen readers announce what each field is.
+
+- [#14789](https://github.com/spree/spree/pull/14789) [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The tiers editor for the tiered percent and tiered flat rate calculators now reads and writes tiers as a list of `{ threshold, value }` entries, the shape Spree 6.0 stores them in. It still reads the old hash keyed by threshold, so a calculator the upgrade has not converted yet opens correctly.
+
 ## 1.0.0-beta.8
 
 ## 1.0.0-beta.7
