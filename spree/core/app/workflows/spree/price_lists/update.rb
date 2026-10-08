@@ -54,10 +54,16 @@ module Spree
         rows = price_rows
         return if rows.empty?
 
-        # A blank row only matters when it clears an amount the list held.
-        cleared_variant_ids = rows.select { |row| row[:amount].blank? }.map { |row| row[:variant_id] }
-        previously_priced_ids = price_list.prices.where(variant_id: cleared_variant_ids).
-                                where.not(amount: nil).distinct.pluck(:variant_id)
+        # A blank row only matters when it clears an amount the list held at
+        # that exact rung.
+        cleared_keys = rows.select { |row| row[:amount].blank? }.to_set do |row|
+          [row[:variant_id].to_s, row[:currency], (row[:min_quantity].presence || 1).to_i]
+        end
+        stored_rungs = price_list.prices.where(variant_id: cleared_keys.map(&:first)).where.not(amount: nil)
+                                 .pluck(:variant_id, :currency, :min_quantity)
+        previously_priced_ids = stored_rungs.filter_map do |variant_id, currency, quantity|
+          variant_id if cleared_keys.include?([variant_id.to_s, currency, quantity])
+        end
 
         # The service refuses a batch that would take a ladder past the break
         # cap. Ignoring that would answer 200 while writing nothing

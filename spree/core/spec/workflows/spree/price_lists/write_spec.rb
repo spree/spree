@@ -65,6 +65,18 @@ RSpec.describe 'Spree::PriceLists write workflows' do
       }.to have_enqueued_job(Spree::Variants::TouchJob).with([priced_variant.id.to_s])
     end
 
+    it 'does not touch a variant whose cleared rung had no amount' do
+      price_list.add_products([product.id])
+      price_list.prices.where(variant_id: variant.id, currency: 'USD').update_all(amount: 5)
+
+      expect {
+        described_class.call(
+          price_list: price_list,
+          attributes: { prices: [{ variant_id: variant.id, currency: 'EUR', amount: '' }] }
+        )
+      }.not_to have_enqueued_job(Spree::Variants::TouchJob)
+    end
+
     # An empty array means "clear every override", which is a different
     # instruction from sending no prices at all.
     it 'clears every override when given an empty prices array' do
