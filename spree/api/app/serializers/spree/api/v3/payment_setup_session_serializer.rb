@@ -11,9 +11,7 @@ module Spree
 
         prefixed_id_attributes :payment_method, :payment_source
 
-        attribute :payment_source_type do |session|
-          Spree::Base.polymorphic_api_type(session.payment_source_type)
-        end
+        attributes :payment_source_type
 
         prefixed_id_attributes :customer
 

@@ -19,9 +19,9 @@ RSpec.describe Spree::Api::V3::CustomFieldSerializer do
       expect(subject['label']).to eq(custom_field.label)
     end
 
-    it 'names the field type by its token, never the Ruby class' do
+    it 'includes the field type token and the deprecated class-name type' do
       expect(subject['field_type']).to eq('short_text')
-      expect(subject).not_to have_key('type')
+      expect(subject['type']).to eq(custom_field.type)
     end
 
     it 'includes serialized value' do
@@ -51,6 +51,10 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldSerializer do
         'field_type' => custom_field.field_type,
         'value' => 'admin value'
       )
+    end
+
+    it 'drops the deprecated class-name type the Store API still carries' do
+      expect(subject).not_to have_key('type')
     end
 
     it 'includes storefront_visible as false for admin-only definitions' do

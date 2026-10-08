@@ -13,6 +13,10 @@ module Spree
           attributes :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
+          attribute :originator_type do |refund|
+            Spree::Base.polymorphic_api_type(refund.originator_type)
+          end
+
           # The tax inside the amount, when what was refunded carried tax.
           attributes tax_amount: :string
           # Who issued it — an admin user, or the API key an integration

@@ -95,7 +95,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::PaymentSetupSessionsController, 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('completed')
       expect(json_response['payment_source_id']).to be_present
-      expect(json_response['payment_source_type']).to eq('credit_card')
+      expect(json_response['payment_source_type']).to eq('Spree::CreditCard')
     end
 
     context 'without authentication' do

@@ -142,7 +142,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
           data = JSON.parse(response.body)
           expect(data['status']).to eq('completed')
           expect(data['payment_source_id']).to be_present
-          expect(data['payment_source_type']).to eq('credit_card')
+          expect(data['payment_source_type']).to eq('Spree::CreditCard')
         end
       end
 

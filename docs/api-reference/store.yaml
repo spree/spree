@@ -8461,7 +8461,7 @@ paths:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id: card_UkLWZg9DAJ
-                payment_source_type: credit_card
+                payment_source_type: Spree::CreditCard
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
@@ -12746,6 +12746,9 @@ components:
           type: string
         label:
           type: string
+        type:
+          type: string
+          deprecated: true
         field_type:
           type: string
           enum:
@@ -12762,6 +12765,7 @@ components:
       required:
       - id
       - label
+      - type
       - field_type
       - key
       - value

@@ -20,9 +20,7 @@ module Spree
         # manual refund.
         prefixed_id_attributes :originator
 
-        attribute :originator_type do |refund|
-          Spree::Base.polymorphic_api_type(refund.originator_type)
-        end
+        attributes :originator_type
       end
     end
   end
