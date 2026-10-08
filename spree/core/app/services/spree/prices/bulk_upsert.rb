@@ -98,12 +98,13 @@ module Spree
             upsert_batch(base_rows, BASE_UNIQUE_BY)
           end
           upsert_batch(override_rows, OVERRIDE_UNIQUE_BY)
-          sweep(affected_keys, clear_rows)
+          cleared_variant_ids = sweep(affected_keys, clear_rows)
           # `upsert_all` and `delete_all` both skip AR callbacks, so the
           # `Price -> Variant -> Product` `touch:` chain never fires —
           # downstream caches (`cache_key_with_version`) would stay stale.
-          # Re-trigger the chain with one `.touch` per affected variant.
-          touch_variants(affected_keys.map { |k| k[0] }.uniq)
+          # A blank row clearing a rung that had no amount changes nothing,
+          # so only priced rows and cleared amounts touch their variant.
+          touch_variants((upsert_rows.map { |r| r[:variant_id].to_s } + cleared_variant_ids).uniq)
         end
 
         success(price_count: payload.length)
@@ -392,16 +393,14 @@ module Spree
           )
           .pluck(:id, :variant_id, :currency, :price_list_id, :min_quantity, :amount)
 
-        doomed_ids = candidates.filter_map do |id, variant_id, currency, price_list_id, min_quantity, amount|
+        doomed = candidates.select do |_, variant_id, currency, price_list_id, min_quantity, amount|
           key = [variant_id.to_s, currency, price_list_id&.to_s, min_quantity]
-          next unless affected_set.include?(key)
-          next id if amount.nil?
-          next id if cleared_keys.include?(key)
-
-          nil
+          affected_set.include?(key) && (amount.nil? || cleared_keys.include?(key))
         end
 
-        Spree::Price.where(id: doomed_ids).delete_all if doomed_ids.any?
+        Spree::Price.where(id: doomed.map(&:first)).delete_all if doomed.any?
+
+        doomed.filter_map { |_, variant_id, *, amount| variant_id.to_s if amount }
       end
 
       # Bumps `updated_at` on the affected variants and their parent

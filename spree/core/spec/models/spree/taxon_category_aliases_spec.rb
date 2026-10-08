@@ -69,17 +69,6 @@ RSpec.describe 'Taxon -> Category deprecation aliases' do
     end
   end
 
-  describe Spree::Products::TouchTaxonsJob do
-    it 'is a subclass of the renamed job and warns on perform' do
-      expect(described_class.superclass).to eq(Spree::Products::TouchCategoriesJob)
-
-      category = create(:category)
-      expect(Spree::Deprecation).to receive(:warn).with(/TouchCategoriesJob/)
-
-      expect { described_class.new.perform([category.id], []) }.not_to raise_error
-    end
-  end
-
   describe 'Spree.queues.taxons' do
     it 'warns and returns the categories queue' do
       expect(Spree::Deprecation).to receive(:warn).with(/Spree.queues.categories/)

@@ -461,12 +461,6 @@ describe Spree::PriceList, type: :model do
       }.to change { price_list.prices.count }.by(2) # Only EUR and GBP, not USD
     end
 
-    it 'enqueues a job to touch affected variants' do
-      expect {
-        price_list.add_products([product1.id])
-      }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.default_variant.id])
-    end
-
     it 'touches the price list to bust cache' do
       expect {
         price_list.add_products([product1.id])
@@ -597,9 +591,11 @@ describe Spree::PriceList, type: :model do
       }.to change { price_list.prices.count }.by(-6) # 2 products * 3 currencies
     end
 
-    it 'enqueues a job to touch affected variants' do
+    it 'enqueues a job to touch variants that lose an amount' do
+      price_list.prices.where(variant_id: product1.default_variant.id, currency: 'USD').update_all(amount: 10)
+
       expect {
-        price_list.remove_products([product1.id])
+        price_list.remove_products([product1.id, product2.id])
       }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.default_variant.id])
     end
 

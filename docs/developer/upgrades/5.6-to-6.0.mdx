@@ -594,6 +594,10 @@ These had no caller left in Spree, so they are removed with no replacement shim.
 | `Spree::Carts::Empty` and `cart_empty_service` | remove items through the Store API cart items endpoints, or delete the cart with `Spree.cart_destroy_service` |
 | `Spree::Payments::Create` and `payment_create_service` | the Store API payments endpoint, `Spree::StoreCredits::Apply` or `Spree.gift_card_apply_workflow` |
 
+### Products no longer touch their categories
+
+Saving or touching a product used to bump the `updated_at` of each of its categories and their parents, through `Spree::Products::TouchCategoriesJob` (formerly `TouchTaxonsJob`). That kept the old Rails storefront's page caches fresh. The Store API doesn't need it: a category's response has no product data, and product responses are cached on the products' own timestamps. Both jobs are removed. If your own code caches product data under a category's `cache_key_with_version`, include the products' timestamps in that key instead. Jobs still queued from before the upgrade fail with an unknown class error and can be discarded.
+
 ### The Legacy order-routing strategy is gone
 
 `Spree::OrderRouting::Strategy::Legacy` — the pre-5.5 escape hatch that delegated straight to `Spree::Stock::Coordinator` and consulted no routing rules — is removed and no longer registered in `Spree.order_routing.strategies`.
