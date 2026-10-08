@@ -11,7 +11,7 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node --input-type=module -e \"await (await import('vite')).resolveConfig({}, 'serve')\" && tsc --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --fix ."
   },
