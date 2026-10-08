@@ -197,43 +197,31 @@ function ProductForm({ product }: { product: Product }) {
       // hydration effect would otherwise keep isDirty true forever (since
       // we then skip the refetch's reset).
       //
-      // Media re-baselines from the persisted list, not the submitted one: a
-      // new upload or library pick only gains its id and image URLs there.
-      // The save's own invalidation refetch can land while the form is still
-      // dirty — the hydration effect skips it, and an identical later refetch
-      // never re-runs that effect — so read it here instead.
-      //
-      // If that read fails, fall back to the submitted media with the
-      // file-transport keys stripped, so a second save can't re-ship them and
-      // create a duplicate — `signed_id` would re-attach the upload,
-      // `source_media_id` would place the library file a second time.
-      // A failed refetch keeps the stale list in `data`, which would drop the
-      // new entries — only a successful read replaces the submitted media.
-      const mediaRefetch = await refetchMedia()
-      const persistedMedia = mediaRefetch.status === 'success' ? mediaRefetch.data.data : undefined
+      // Strip the file-transport keys from baseline media so a second save
+      // can't re-ship them and create a duplicate — `signed_id` would
+      // re-attach the upload, `source_media_id` would place the library file
+      // a second time. Previews stay, so tiles keep their image meanwhile.
       const baseline: ProductFormValues = {
         ...data,
         // `data` is the parsed (extension-stripped) shape — put extension
         // values back so the reset doesn't blank their inputs pre-refetch.
         ...extensionValues,
-        media:
-          persistedMedia?.map(mediaToFormValues) ??
-          (data.media ?? []).map(
-            ({
-              signed_id: _sid,
-              source_media_id: _smid,
-              poster_signed_id: _psid,
-              previewUrl: _p,
-              fullPreviewUrl: _fp,
-              posterUrl: _pu,
-              videoUrl: _vu,
-              downloadUrl: _du,
-              uploadId: _u,
-              ...rest
-            }) => rest,
-          ),
+        media: (data.media ?? []).map(
+          ({ signed_id: _sid, source_media_id: _smid, poster_signed_id: _psid, ...rest }) => rest,
+        ),
       }
       form.reset(baseline)
+
+      // New uploads and library picks gain their ids only in the persisted
+      // list. The save's own invalidation refetch can land while the form is
+      // still dirty — the hydration effect skips it, and an identical later
+      // refetch never re-runs that effect — so read it here. Applied only if
+      // the merchant hasn't touched media since, and only from a successful
+      // read: a failed refetch keeps the stale list in `data`.
+      const mediaRefetch = await refetchMedia()
+      if (mediaRefetch.status === 'success' && !form.formState.dirtyFields.media) {
+        form.resetField('media', { defaultValue: mediaRefetch.data.data.map(mediaToFormValues) })
+      }
       toastManager.add({ type: 'success', title: t('admin.messages.product_saved') })
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
