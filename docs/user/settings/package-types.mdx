@@ -72,7 +72,7 @@ One carton type per distinct case size, not one per product. A case of 24 lipsti
 
 ## Setting the Default
 
-Only one package type can be the default at a time, and turning it on for one takes it off whichever held it before. Make it the packaging you use most, since it is what stands in when nothing more specific applies.
++Only one package type can be the default for a given marketplace or seller at a time. Turning it on for one takes it off any other default in that same scope. A marketplace default and a seller default can coexist, and the seller default takes precedence for that seller. Make it the packaging you use most, since it is what stands in when nothing more specific applies.
 
 ## How to Edit a Package Type
 
@@ -84,7 +84,7 @@ Editing a carton corrects every product packed into it at once, so fixing a meas
 
 Open the row menu and choose **Delete**.
 
-<Warning>Check what is using a package type before removing it. Products pointing at a deleted carton lose the case measurements their bulk ordering figures were built on.</Warning>
+<Warning>Check which products use a carton before removing it. An in-use carton cannot be deleted until its product references are removed.</Warning>
 
 ## Further Reading
 
