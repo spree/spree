@@ -92,6 +92,8 @@ function ProductForm({ product }: { product: Product }) {
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
   const { data: mediaResponse, refetch: refetchMedia } = useProductMedia(productId)
+  // Same query as the page's, read here for its refetch state only.
+  const { isFetching: productRefetching } = useProduct(productId)
 
   const mediaItems = mediaResponse?.data
 
@@ -131,13 +133,18 @@ function ProductForm({ product }: { product: Product }) {
   // like deleting a media item) would otherwise overwrite the merchant's
   // unsaved edits. After the save round-trip itself, RHF's submission
   // already cleared isDirty, so the post-save refetch still re-hydrates.
+  //
+  // Also wait while the product is refetching: after a save the media list
+  // can land first, and resetting then would pair it with the pre-save
+  // product and put the old values back. The product's own refetch re-runs
+  // this effect once both are current.
   useEffect(() => {
-    if (form.formState.isDirty) return
+    if (form.formState.isDirty || productRefetching) return
     form.reset({
       ...productToFormValues(product, mediaItems),
       ...extensionFormValues('product', product),
     })
-  }, [product, mediaItems, form])
+  }, [product, mediaItems, productRefetching, form])
 
   // Media-only hydration that bypasses the isDirty guard for the
   // already-empty case. Scenario: page mounts with mediaResponse still

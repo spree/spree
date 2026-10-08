@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { expect, type Page, test } from '@playwright/test'
+import { expect, type Page, type Route, test } from '@playwright/test'
 import { gotoIndex, login } from './helpers'
 import { E2E_DIR } from './paths'
 import { createProduct, mediaCard, PRODUCTS_PATH } from './products-helpers'
@@ -75,17 +75,28 @@ test.describe('media library', () => {
     await expect(picker).toBeHidden()
     await expect(page.getByRole('img', { name: alt })).toBeVisible()
 
-    // The save waits on the translations refetch, so the media refetch
-    // usually lands first — while the form is still dirty. Slowing the
-    // former makes that ordering certain rather than a matter of timing.
-    await page.route('**/api/v3/admin/products/*/translations*', async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 1_500))
+    // After the save, the media list landing while the product is still
+    // reloading is the ordering that blanked new tiles and refilled the form
+    // from the pre-save product. Slowing both reloads makes it certain.
+    const mediaReload = /\/api\/v3\/admin\/products\/prod_[^/?]+\/media(\?|$)/
+    const productReload = /\/api\/v3\/admin\/products\/prod_[^/?]+\?/
+    const delay = (ms: number) => async (route: Route) => {
+      if (route.request().method() === 'GET')
+        await new Promise((resolve) => setTimeout(resolve, ms))
       await route.continue()
-    })
+    }
+    await page.route(mediaReload, delay(2_000))
+    await page.route(productReload, delay(4_000))
+    const renamed = `Library pick ${stamp} (renamed)`
+    await page.getByLabel(/^name$/i).fill(renamed)
     await page.getByRole('button', { name: /save product/i }).click()
     await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 30_000 })
+    // Read once, without retrying: a form refilled from the pre-save product
+    // shows the old name only until the slowed reload lands.
+    expect(await page.getByLabel(/^name$/i).inputValue()).toBe(renamed)
     await expect(page.getByRole('img', { name: alt })).toBeVisible({ timeout: 15_000 })
-    await page.unroute('**/api/v3/admin/products/*/translations*')
+    await page.unroute(mediaReload)
+    await page.unroute(productReload)
 
     await page.reload()
     await expect(page.getByRole('img', { name: alt })).toBeVisible({ timeout: 15_000 })
