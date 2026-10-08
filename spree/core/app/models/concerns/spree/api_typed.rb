@@ -12,20 +12,29 @@ module Spree
   #   Spree::FulfillmentProvider::Manual.api_type  # => "manual"
   #   SpreeEasyPost::FulfillmentProvider.api_type  # => "easy_post"
   module ApiTyped
-    # The demodulized + underscored leaf. Gems name their class after the
-    # family (`SpreeEasyPost::FulfillmentProvider`, `Acme::Strategy`), where the leaf would
-    # collapse every gem to one value — those derive it from the gem's module
-    # instead, matching {Spree::Integration.api_type}. Override to keep the
-    # value stable across a class rename.
+    # The demodulized + underscored leaf. A gem names its class after the
+    # family (`SpreeEasyPost::FulfillmentProvider`, `SpreeAcmeOms::Strategy`),
+    # where the leaf would collapse every gem to one value — those derive it
+    # from the gem's module instead, matching {Spree::Integration.api_type}.
+    # Any other class keeps its leaf, so two providers nested in one module
+    # never share a value. Override to keep the value stable across a rename.
     #
     # @return [String]
     def api_type
       leaf = name.to_s.demodulize
       outer = name.to_s.deconstantize.demodulize.delete_prefix('Spree')
-
-      return leaf.underscore unless (leaf.end_with?('Provider') || leaf == 'Strategy') && outer.present?
+      return leaf.underscore unless leaf == api_typed_family && outer.present?
 
       outer.underscore
+    end
+
+    # The family's own name — the module its base class sits in
+    # (`FulfillmentProvider` for `Spree::FulfillmentProvider::Base`).
+    #
+    # @return [String, nil]
+    def api_typed_family
+      base = ancestors.reverse.find { |ancestor| ancestor.is_a?(Class) && ancestor.singleton_class.include?(Spree::ApiTyped) }
+      base&.name.to_s.deconstantize.demodulize.presence
     end
 
     # The registered class answering to a wire shorthand, or nil.

@@ -47352,8 +47352,8 @@ components:
         tax_provider:
           type: string
           nullable: true
-          description: 'Tax provider; null uses the store default. Built-in: internal,
-            recorded_share. Provider gems register more.'
+          description: 'Tax provider; null uses the store default. Built-in: internal.
+            Provider gems register more.'
       required:
       - id
       - name
