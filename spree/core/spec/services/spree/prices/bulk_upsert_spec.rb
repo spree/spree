@@ -107,6 +107,14 @@ RSpec.describe Spree::Prices::BulkUpsert do
       end
     end
 
+    it 'reindexes the product for search' do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+
+      expect {
+        described_class.call(rows: [{ variant_id: variant.id, currency: 'USD', amount: '7.77' }])
+      }.to have_enqueued_job(Spree::SearchProvider::IndexJob).with('Spree::Product', product.id.to_s, product.store_id.to_s)
+    end
+
     # Regression: the base-row update loop pulls existing rows via
     # `WHERE variant_id IN (...) AND currency IN (...)`, which returns
     # cross-pairs (variant_a + EUR, variant_b + USD) that the caller never

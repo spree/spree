@@ -54,42 +54,28 @@ module Spree
         rows = price_rows
         return if rows.empty?
 
-        # A blank row only matters when it clears an amount the list held at
-        # that exact rung.
-        cleared_keys = rows.select { |row| row[:amount].blank? }.to_set do |row|
-          [row[:variant_id].to_s, row[:currency], (row[:min_quantity].presence || 1).to_i]
-        end
-        stored_rungs = price_list.prices.where(variant_id: cleared_keys.map(&:first)).where.not(amount: nil)
-                                 .pluck(:variant_id, :currency, :min_quantity)
-        previously_priced_ids = stored_rungs.filter_map do |variant_id, currency, quantity|
-          variant_id if cleared_keys.include?([variant_id.to_s, currency, quantity])
-        end
-
         # The service refuses a batch that would take a ladder past the break
         # cap. Ignoring that would answer 200 while writing nothing
         # (docs/plans/6.0-volume-pricing.md).
         result = Spree::Prices::BulkUpsert.call(rows: rows)
-        unless result.success?
-          refusal = result.error&.value
-          refusal = {} unless refusal.is_a?(Hash)
-          if refusal[:invalid_amounts].present?
-            price_list.errors.add(:base, :negative_price)
-          elsif refusal[:invalid_quantities].present?
-            price_list.errors.add(:base, :invalid_quantity)
-          elsif refusal[:quantities_on_base_prices].present?
-            price_list.errors.add(:base, :quantity_on_base_price)
-          elsif refusal[:duplicate_quantities].present?
-            price_list.errors.add(:base, :duplicate_quantity)
-          elsif refusal[:rising_ladders].present?
-            price_list.errors.add(:base, :price_rises_with_quantity)
-          else
-            price_list.errors.add(:base, :too_many_breaks, count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
-          end
-          return failure(price_list)
-        end
+        return if result.success?
 
-        priced_ids = rows.select { |row| row[:amount].present? }.map { |row| row[:variant_id] }
-        touch_variants((priced_ids + previously_priced_ids).map(&:to_s).uniq)
+        refusal = result.error&.value
+        refusal = {} unless refusal.is_a?(Hash)
+        if refusal[:invalid_amounts].present?
+          price_list.errors.add(:base, :negative_price)
+        elsif refusal[:invalid_quantities].present?
+          price_list.errors.add(:base, :invalid_quantity)
+        elsif refusal[:quantities_on_base_prices].present?
+          price_list.errors.add(:base, :quantity_on_base_price)
+        elsif refusal[:duplicate_quantities].present?
+          price_list.errors.add(:base, :duplicate_quantity)
+        elsif refusal[:rising_ladders].present?
+          price_list.errors.add(:base, :price_rises_with_quantity)
+        else
+          price_list.errors.add(:base, :too_many_breaks, count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
+        end
+        failure(price_list)
       end
 
       def clear_prices

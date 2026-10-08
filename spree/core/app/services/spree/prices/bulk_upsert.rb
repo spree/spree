@@ -409,15 +409,17 @@ module Spree
       # `Variant -> Product` `touch:` chains otherwise.
       #
       # We use `touch_all` rather than per-record `Variant#touch`: it bumps
-      # every affected row in a single UPDATE and skips AR callbacks, giving
-      # the cache bust without extra side effects.
+      # every affected row in a single UPDATE. It also skips the product's
+      # commit callbacks, so the search index, which stores prices, is
+      # refreshed here.
       def touch_variants(variant_ids)
         return if variant_ids.empty?
 
         variants = Spree::Variant.where(id: variant_ids)
-        product_ids = variants.pluck(:product_id).uniq
+        products = Spree::Product.where(id: variants.select(:product_id))
         variants.touch_all
-        Spree::Product.where(id: product_ids).touch_all if product_ids.any?
+        products.touch_all
+        products.find_each(&:enqueue_search_index)
       end
 
       # MySQL infers conflict targets from its own unique indexes and
