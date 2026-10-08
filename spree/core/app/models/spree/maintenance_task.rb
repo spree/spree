@@ -162,7 +162,7 @@ module Spree
       def resolved_description
         return nil if task_description.blank?
 
-        translated = Spree.t(task_description, default: task_description)
+        translated = I18n.t("spree.#{task_description}", default: task_description)
         translated.is_a?(String) ? translated : task_description
       end
 
