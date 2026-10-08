@@ -1034,6 +1034,8 @@ en:
     locales_not_listed: 'includes locales Spree does not support: %{codes}'
     maintenance_tasks:
       upgrade:
+        actor_types:
+          description: Fill in the actor type on past records
         adjustments_to_typed_rows:
           description: Map adjustments onto tax lines, discounts and fees
         backfill_order_markets:
@@ -1042,6 +1044,8 @@ en:
           description: Convert calculator bounds into delivery method rules
         capture_methods:
           description: Convert payment method auto capture into capture methods
+        checkout_zones_to_markets:
+          description: Convert checkout zones to markets
         consolidate_metadata:
           description: Check for leftover split metadata columns
         country_state_codes:
@@ -1054,6 +1058,8 @@ en:
           description: Assign delivery methods and stock locations to the default store
         delivery_profiles:
           description: Convert shipping categories into delivery profiles
+        encrypt_secret_preferences:
+          description: Encrypt gateway and integration secrets
         external_receives_to_purchase_orders:
           description: Turn 5.x supplier receives into purchase orders
         fulfillment_statuses:
@@ -1070,8 +1076,12 @@ en:
           description: Rename stored Asset class names to Media
         media_store_ids:
           description: Assign a store to media rows
+        order_coupon_codes:
+          description: Copy coupon codes onto placed orders
         package_types:
           description: Add the default package types to every store
+        preferences_json:
+          description: Convert leftover YAML preferences to JSON
         product_types:
           description: Bind product types to the default store and reset counters
         promotion_option_value_rules:

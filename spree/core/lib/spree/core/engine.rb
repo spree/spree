@@ -578,7 +578,12 @@ module Spree
           'Spree::MaintenanceTasks::Upgrade::CustomFieldDefinitionStores',
           'Spree::MaintenanceTasks::Upgrade::PackageTypes',
           'Spree::MaintenanceTasks::Upgrade::ExternalReceivesToPurchaseOrders',
-          'Spree::MaintenanceTasks::Upgrade::RecountStockLevels'
+          'Spree::MaintenanceTasks::Upgrade::RecountStockLevels',
+          'Spree::MaintenanceTasks::Upgrade::PreferencesJson',
+          'Spree::MaintenanceTasks::Upgrade::CheckoutZonesToMarkets',
+          'Spree::MaintenanceTasks::Upgrade::OrderCouponCodes',
+          'Spree::MaintenanceTasks::Upgrade::ActorTypes',
+          'Spree::MaintenanceTasks::Upgrade::EncryptSecretPreferences'
         ]
 
         Rails.application.config.spree.validators.addresses = [

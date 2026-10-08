@@ -44,7 +44,7 @@ steps:
 
   - id: preferences_json
     name: "Check for preferences still stored as YAML"
-    task: "spree:upgrade:preferences_json"
+    task_class: "Spree::MaintenanceTasks::Upgrade::PreferencesJson"
     notes: |
       Spree 6.0 stores preferences as JSON instead of YAML, and keeps secrets
       (preferences declared as passwords, such as gateway API keys) in a
@@ -315,7 +315,7 @@ steps:
 
   - id: migrate_checkout_zones
     name: "Convert checkout zones to markets"
-    task: "spree:markets:migrate_checkout_zones"
+    task_class: "Spree::MaintenanceTasks::Upgrade::CheckoutZonesToMarkets"
     notes: |
       Markets replace the store's checkout zone in Spree 6. Stores that have
       no market yet get a default one covering their checkout zone's
@@ -501,7 +501,7 @@ steps:
 
   - id: backfill_order_coupon_codes
     name: "Backfill coupon codes on placed orders"
-    task: "spree:backfill_order_coupon_codes"
+    task_class: "Spree::MaintenanceTasks::Upgrade::OrderCouponCodes"
     notes: |
       spree_orders gains a coupon_code column in Spree 6, matching carts.
       Historical placed orders applied coupons only through the promotion
@@ -759,7 +759,7 @@ steps:
 
   - id: backfill_actor_types
     name: "Name the kind of actor on past orders, returns, refunds and receipts"
-    task: "spree:upgrade:backfill_actor_types"
+    task_class: "Spree::MaintenanceTasks::Upgrade::ActorTypes"
     notes: |
       Orders, refunds, returns, exchanges, claims and stock receipts remember
       who cancelled, approved, created or received them. In 6.0 that can be a
@@ -795,7 +795,7 @@ steps:
 
   - id: encrypt_secret_preferences
     name: "Encrypt gateway and integration secrets"
-    task: "spree:upgrade:encrypt_secret_preferences"
+    task_class: "Spree::MaintenanceTasks::Upgrade::EncryptSecretPreferences"
     notes: |
       The 6.0 migration moves existing secrets into the secret_preferences
       column in plain text, so it never needs encryption keys. They stay
