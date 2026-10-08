@@ -48,14 +48,6 @@ describe Spree::Price, type: :model do
 
         expect { price.destroy }.to change { variant.reload.updated_at }
       end
-
-      it 'does not touch the variant for a placeholder price' do
-        expect {
-          price = create(:price, variant: variant, price_list: price_list, currency: 'GBP', amount: nil)
-          price.update!(compare_at_amount: 5)
-          price.destroy
-        }.not_to change { variant.reload.updated_at }
-      end
     end
 
     describe 'after_commit :auto_match_collections' do

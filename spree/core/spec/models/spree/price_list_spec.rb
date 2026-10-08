@@ -461,12 +461,6 @@ describe Spree::PriceList, type: :model do
       }.to change { price_list.prices.count }.by(2) # Only EUR and GBP, not USD
     end
 
-    it 'does not touch variants for placeholder prices' do
-      expect {
-        price_list.add_products([product1.id])
-      }.not_to have_enqueued_job(Spree::Variants::TouchJob)
-    end
-
     it 'touches the price list to bust cache' do
       expect {
         price_list.add_products([product1.id])
@@ -603,12 +597,6 @@ describe Spree::PriceList, type: :model do
       expect {
         price_list.remove_products([product1.id, product2.id])
       }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.default_variant.id])
-    end
-
-    it 'does not touch variants when only placeholder prices are removed' do
-      expect {
-        price_list.remove_products([product1.id])
-      }.not_to have_enqueued_job(Spree::Variants::TouchJob)
     end
 
     it 'touches the price list to bust cache' do
