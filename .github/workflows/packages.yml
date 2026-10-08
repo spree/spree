@@ -88,7 +88,11 @@ jobs:
     name: "Scaffolded app - Typecheck & Lint"
     runs-on: ubuntu-latest
     steps:
+      # Runs the pull request's install and build scripts; nothing needs an
+      # authenticated git afterwards.
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - uses: pnpm/action-setup@v6
 
