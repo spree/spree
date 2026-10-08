@@ -44,6 +44,7 @@ module Spree
                                :custom_fields,
                                :reporting,
                                :agent_tools,
+                               :agent_attachments,
                                :integrations,
                                :number_generators,
                                :subscribers,
@@ -164,7 +165,9 @@ module Spree
       # workflows in config/initializers (see docs/plans/6.0-mcp-server.md).
       initializer 'spree.register.agent_tools', before: :load_config_initializers do |app|
         app.config.spree.agent_tools = Spree::AgentTools::Registry.new
-        Spree::AgentTools::DefaultCatalog.install(app.config.spree.agent_tools)
+        app.config.spree.agent_attachments = Spree::AgentTools::AttachmentRegistry.new
+        Spree::AgentTools::DefaultCatalog.install(app.config.spree.agent_tools,
+                                                 app.config.spree.agent_attachments)
       end
 
 
