@@ -2,7 +2,11 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { discoverDashboardPluginManifests, discoverDashboardPlugins } from '../src/vite/discover'
+import {
+  discoverDashboardPluginManifests,
+  discoverDashboardPlugins,
+  resolveShellRoutesDir,
+} from '../src/vite/discover'
 
 /**
  * Each test builds a tiny fixture project on disk:
@@ -155,6 +159,27 @@ describe('discoverDashboardPlugins', () => {
   })
 })
 
+// pnpm's layout: a package really lives under a versioned `.pnpm/` directory,
+// next to its own dependencies, and is reached through a `node_modules/<name>`
+// link. Route files land in the host's route tree; imported through the link,
+// TypeScript cannot find the package's dependencies, so they must be imported
+// from the real location.
+function installThroughPnpmLink(root: string, name: string, pkg: Record<string, unknown>): string {
+  const store = path.join(
+    root,
+    `node_modules/.pnpm/${name.replace('/', '+')}@1.0.0_abc123/node_modules/${name}`,
+  )
+  fs.mkdirSync(path.join(store, 'src/routes'), { recursive: true })
+  fs.writeFileSync(
+    path.join(store, 'package.json'),
+    JSON.stringify({ name, version: '1.0.0', ...pkg }),
+  )
+  fs.writeFileSync(path.join(store, 'src/index.ts'), '')
+  fs.mkdirSync(path.join(root, 'node_modules', path.dirname(name)), { recursive: true })
+  fs.symlinkSync(store, path.join(root, 'node_modules', name), 'dir')
+  return fs.realpathSync(store)
+}
+
 describe('discoverDashboardPluginManifests', () => {
   let fixture: Fixture
 
@@ -166,32 +191,38 @@ describe('discoverDashboardPluginManifests', () => {
     fixture.cleanup()
   })
 
-  // pnpm's layout: the package really lives under a versioned `.pnpm/`
-  // directory, reached through a `node_modules/<name>` link. The routes path
-  // ends up in the host's committed route tree, so it must name the link —
-  // the versioned directory changes with every install.
-  it('reports routes through the node_modules link, not the versioned store path', () => {
-    const store = path.join(
-      fixture.root,
-      'node_modules/.pnpm/@acme+plugin@1.0.0_abc123/node_modules/@acme/plugin',
-    )
-    fs.mkdirSync(path.join(store, 'src/routes'), { recursive: true })
-    fs.writeFileSync(
-      path.join(store, 'package.json'),
-      JSON.stringify({
-        name: '@acme/plugin',
-        version: '1.0.0',
-        main: 'index.js',
-        spree: { dashboard: { plugin: true, routes: './src/routes' } },
-      }),
-    )
-    fs.writeFileSync(path.join(store, 'index.js'), '')
-    fs.mkdirSync(path.join(fixture.root, 'node_modules/@acme'), { recursive: true })
-    fs.symlinkSync(store, path.join(fixture.root, 'node_modules/@acme/plugin'), 'dir')
+  it('reports routes at the real location, not through the node_modules link', () => {
+    const store = installThroughPnpmLink(fixture.root, '@acme/plugin', {
+      main: 'src/index.ts',
+      spree: { dashboard: { plugin: true, routes: './src/routes' } },
+    })
     fixture.writeHost({ '@acme/plugin': '1.0.0' })
 
     const [manifest] = discoverDashboardPluginManifests({ root: fixture.root })
 
-    expect(manifest.routesDir).toBe(path.join(fixture.root, 'node_modules/@acme/plugin/src/routes'))
+    expect(manifest.routesDir).toBe(path.join(store, 'src/routes'))
+  })
+})
+
+describe('resolveShellRoutesDir', () => {
+  let fixture: Fixture
+
+  beforeEach(() => {
+    fixture = makeFixture()
+  })
+
+  afterEach(() => {
+    fixture.cleanup()
+  })
+
+  it('returns the routes directory at the real location, not through the node_modules link', () => {
+    const store = installThroughPnpmLink(fixture.root, '@spree/dashboard', {
+      exports: { '.': './src/index.ts' },
+    })
+    fixture.writeHost({ '@spree/dashboard': '1.0.0' })
+
+    expect(resolveShellRoutesDir(fixture.root, '@spree/dashboard')).toBe(
+      path.join(store, 'src/routes'),
+    )
   })
 })

@@ -71,9 +71,7 @@ export function discoverDashboardPluginManifests(
     const routes = pkg.spree?.dashboard?.routes
     manifests.push({
       name,
-      routesDir: routes
-        ? linkedPackagePath(root, name, path.resolve(path.dirname(manifestPath), routes))
-        : undefined,
+      routesDir: routes ? path.resolve(path.dirname(manifestPath), routes) : undefined,
     })
   }
   return manifests
@@ -128,34 +126,24 @@ export function discoverDashboardPlugins({ root, onWarn }: DiscoverOptions): str
 }
 
 /**
- * Re-expresses a path inside an installed package through the package's
- * `node_modules/<name>` link, rather than the real location Node resolves to.
+ * The routes directory of an installed dashboard shell (`@spree/dashboard`,
+ * `@spree/seller-dashboard`), at its real location. The shell's `.` export
+ * maps to a file in `src/`, so `routes/` is its sibling directory.
  *
- * Under pnpm the real location is `node_modules/.pnpm/<name>@<version>_<hash>/…`,
- * which changes with every install. The route generator writes these paths
- * into the host's committed `routeTree.gen.ts`, so a real location made the
- * file differ on a new project's first dev start and after every upgrade —
- * and each rewrite reloaded the open page. The link stays put across installs
- * and is the same inside the monorepo, so the file only changes when the
- * routes do.
+ * The route generator imports these files from the host's `routeTree.gen.ts`.
+ * Under pnpm a package is reached through a `node_modules/<name>` link, while
+ * its own dependencies sit next to its real location under
+ * `node_modules/.pnpm/`. TypeScript does not follow the link for a relative
+ * import, so a route file imported through it cannot see the shell's
+ * dependencies and the host's type check fails. Plugin routes directories
+ * resolve to their real location for the same reason.
  *
  * @param root host project root
- * @param packageName the package the path belongs to
- * @param resolvedPath a path inside that package, as Node resolved it
- * @returns the same path through the link, or `resolvedPath` when no link
- *   leads to it (the package resolving itself, an unusual layout)
+ * @param packageName the shell package the host depends on
  */
-export function linkedPackagePath(root: string, packageName: string, resolvedPath: string): string {
-  const realPath = fs.realpathSync(resolvedPath)
-  for (let dir = root; ; dir = path.dirname(dir)) {
-    const link = path.join(dir, 'node_modules', packageName)
-    if (fs.existsSync(path.join(link, 'package.json'))) {
-      const inside = path.relative(fs.realpathSync(link), realPath)
-      if (inside.startsWith('..') || path.isAbsolute(inside)) return resolvedPath
-      return path.join(link, inside)
-    }
-    if (path.dirname(dir) === dir) return resolvedPath
-  }
+export function resolveShellRoutesDir(root: string, packageName: string): string {
+  const require = createRequire(path.join(root, 'package.json'))
+  return path.join(path.dirname(fs.realpathSync(require.resolve(packageName))), 'routes')
 }
 
 interface HostManifest {
