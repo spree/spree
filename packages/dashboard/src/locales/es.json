@@ -1,5 +1,111 @@
 {
   "admin": {
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Cancelar ejecución",
+        "pause": "Pausar",
+        "resume": "Reanudar",
+        "run": "Ejecutar"
+      },
+      "already_running": "Esta tarea ya se está ejecutando",
+      "cancel_confirm": {
+        "message": "La tarea se detiene en su próximo punto de control. El trabajo ya hecho se conserva: cancelar no lo deshace.",
+        "title": "¿Cancelar esta ejecución?"
+      },
+      "description": "Ejecuta las correcciones de datos, rellenos y reindexaciones incluidos en el código de tu tienda. Cada ejecución queda registrada.",
+      "dry_run_badge": "Vista previa",
+      "empty_description": "Las tareas vienen del código de tu tienda: Spree incluye algunas, y tu desarrollador o una extensión pueden añadir más.",
+      "empty_title": "No hay tareas de mantenimiento",
+      "history": {
+        "empty_title": "Todavía no hay ejecuciones",
+        "search_placeholder": "Buscar por nombre de tarea…",
+        "table": {
+          "initiated_by": "Iniciada por",
+          "processed": "Procesados",
+          "status": "Estado",
+          "task": "Tarea"
+        },
+        "title": "Historial de ejecuciones"
+      },
+      "initiated_via": {
+        "api": "Iniciada a través de la API",
+        "cli": "Iniciada desde la línea de comandos",
+        "dashboard": "Iniciada desde el panel",
+        "inline": "Iniciada por Spree"
+      },
+      "last_run": "Última ejecución",
+      "loading": "Cargando tareas…",
+      "messages": {
+        "canceled": "Cancelando la ejecución",
+        "paused": "Pausando la ejecución",
+        "resumed": "Reanudando la ejecución",
+        "start_failed": "No se pudo iniciar la tarea",
+        "started": "Tarea iniciada"
+      },
+      "never_run": "Nunca ejecutada",
+      "run": {
+        "arguments": "Argumentos",
+        "csv_help": "Necesita una fila de encabezado. Las columnas dependen de la tarea.",
+        "csv_label": "Archivo CSV",
+        "csv_required": "Elige un archivo CSV para ejecutar esta tarea.",
+        "dry_run_help": "Informa de lo que cambiaría sin escribir nada.",
+        "dry_run_label": "Solo vista previa",
+        "duration": "Duración",
+        "ended": "Finalizada",
+        "error": "Error",
+        "initiated_by": "Iniciada por",
+        "loading": "Cargando ejecución…",
+        "no_description": "Sin descripción.",
+        "processed_count": "{{count}} procesados",
+        "progress_label": "Progreso",
+        "required_field": "Este campo es obligatorio.",
+        "results": "Resultados",
+        "seconds": "{{count}} s",
+        "show_backtrace": "Mostrar detalle técnico",
+        "start": "Ejecutar tarea",
+        "start_dry_run": "Ejecutar vista previa",
+        "started": "Iniciada",
+        "starting": "Iniciando…",
+        "write_warning": "Esto comienza de inmediato y escribe en tus datos. Se puede detener, pero no deshacer."
+      },
+      "status": {
+        "cancelled": "Cancelada",
+        "cancelling": "Cancelando…",
+        "enqueued": "En cola",
+        "errored": "Fallida",
+        "interrupted": "Reanudando…",
+        "paused": "En pausa",
+        "pausing": "Pausando…",
+        "running": "En ejecución",
+        "succeeded": "Completada"
+      },
+      "supports_dry_run": "Vista previa disponible",
+      "tabs": {
+        "history": "Historial",
+        "tasks": "Tareas",
+        "upgrade": "Actualización"
+      },
+      "title": "Tareas de mantenimiento",
+      "upgrade": {
+        "already_completed": "Completada",
+        "assumed_boundary": "Las versiones hasta la {{version}} se muestran como completadas, suponiendo que esta tienda ya estaba en ella. Si se saltó versiones, pide a tu desarrollador que ejecute los pasos anteriores desde la línea de comandos.",
+        "boundary": "Spree {{from}} → {{to}}",
+        "confirm": {
+          "message": "Los pasos tienen un orden: ejecuta primero los anteriores. Esto escribe en tus datos y no se puede deshacer.",
+          "title": "¿Ejecutar «{{name}}»?"
+        },
+        "description": "Pasos de datos que necesita esta versión, en el orden en que deben ejecutarse.",
+        "hide_steps": "Ocultar pasos",
+        "history_description": "Ya completado en esta tienda.",
+        "progress": "{{done}} de {{total}} hechos",
+        "read_guide": "Leer la guía de actualización",
+        "run_again": "Ejecutar de nuevo",
+        "run_next": "Ejecutar el siguiente paso",
+        "run_step": "Ejecutar",
+        "show_steps": "Mostrar pasos",
+        "title": "Actualizar a Spree {{version}}"
+      }
+    },
     "pages": {
       "channels": {
         "add_cta": "Nuevo canal de venta",
@@ -640,6 +746,7 @@
             "import_row": "Fila de importación",
             "invitation": "Invitación",
             "line_item": "Línea de pedido",
+            "maintenance_task_run": "Ejecución de tarea de mantenimiento",
             "media": "Medios",
             "newsletter_subscriber": "Suscriptor de newsletter",
             "order": "Pedido",
@@ -4322,6 +4429,7 @@
         "emails": "Direcciones de remitente y configuración de emails transaccionales",
         "imports": "Historial de importaciones CSV y sus resultados",
         "integrations": "Conectá proveedores de envío, impuestos y otros",
+        "maintenance_tasks": "Rellenos, reindexaciones y pasos de actualización, con un registro de cada ejecución",
         "markets": "Los países a los que vendés y sus monedas",
         "payment_methods": "Pasarelas de pago y cómo se capturan los pagos",
         "policies": "Documentos de términos, privacidad, devoluciones y envíos",
@@ -4360,6 +4468,7 @@
         "emails": "Emails",
         "imports": "Importaciones",
         "integrations": "Integraciones",
+        "maintenance_tasks": "Tareas de mantenimiento",
         "markets": "Mercados",
         "payment_methods": "Métodos de pago",
         "policies": "Políticas",
