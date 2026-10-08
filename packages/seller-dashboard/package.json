@@ -1,6 +1,6 @@
 {
   "name": "@spree/seller-dashboard",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-rc.1",
   "license": "MIT",
   "type": "module",
   "description": "Spree marketplace seller panel — the seller-facing counterpart to the admin dashboard.",
@@ -66,7 +66,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.13",
+    "@biomejs/biome": "^2.4.14",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",

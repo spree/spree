@@ -1,5 +1,30 @@
 # @spree/seller-dashboard
 
+## 1.0.0-rc.1
+
+### Minor Changes
+
+- [#14784](https://github.com/spree/spree/pull/14784) [`a4baf49`](https://github.com/spree/spree/commit/a4baf4900f24739125d8efceaba5fb7e70a7fea9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Plugins can now add cards to more detail pages. The admin dashboard has new slots on the seller payout, catalog, price list, promotion, purchase order, stock transfer and webhook endpoint pages, and the catalog, price list and promotion pages now save extension fields bound with `useHostForm()` with the page's own Save button. The seller panel has new slots on its product, order, payout and profile pages, and its product page saves extension fields the same way, under the form key `seller.product`. The slots catalog lists every slot and the context it receives.
+
+### Patch Changes
+
+- [#14776](https://github.com/spree/spree/pull/14776) [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57) Thanks [@mad-eel](https://github.com/mad-eel)! - The New claim dialog now pre-fills each line's refund with what the customer paid for those items after discounts, instead of their list price, which the claim would refuse to refund on a discounted order. The amount follows the claimed quantity until the merchant types one of their own. Code that builds the dialog's lines itself passes `discountedAmount` (the line's `discounted_amount`) in place of `price`, which `ClaimableLine` no longer accepts.
+
+- [#14776](https://github.com/spree/spree/pull/14776) [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57) Thanks [@mad-eel](https://github.com/mad-eel)! - A received return that is owed nothing, such as a free gift sent back, now offers "Complete return" instead of "Refund". The dialog explains that no money goes back and closes the return without asking for an amount or a refund method.
+
+- [#14799](https://github.com/spree/spree/pull/14799) [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da) Thanks [@mad-eel](https://github.com/mad-eel)! - The refund dialog says how much tax the pre-filled amount gives back, and the claim dialog pre-fills each line with the tax the customer paid on top of the price. Shipping an exchange whose replacement costs more asks first, because the difference is added to the order as a balance due, and that fee is labelled "Exchange" on the order.
+
+- [#14799](https://github.com/spree/spree/pull/14799) [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da) Thanks [@mad-eel](https://github.com/mad-eel)! - Admin returns carry `display_refunded_total`. A refunded return's card in the dashboard and the seller panel now shows what was actually refunded instead of what the return was worth, and names both when less went back, for example "Refunded $25.00 of $30.26".
+
+- [#14764](https://github.com/spree/spree/pull/14764) [`291238d`](https://github.com/spree/spree/commit/291238dfc0b05f9b322f9e51d6cd3737006ba430) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the seller panel opening with an empty sidebar when a seller returned with a live session but no remembered seller, for example after the browser cleared site storage. The panel now loads the seller's permissions once it knows which seller is active.
+
+- [#14747](https://github.com/spree/spree/pull/14747) [`a0151c1`](https://github.com/spree/spree/commit/a0151c15a268356f5a5ba236850b8ee7405e9ae7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the setup screen of a new project reloading while the merchant was filling it in. The generated route file now refers to installed packages by their stable location, and `spree add` generates it right after installing, so the first dev start has nothing to rewrite. Upgrades also no longer rewrite every line of that file, so its diff shows only the pages an upgrade added.
+
+- Updated dependencies [[`3b80c52`](https://github.com/spree/spree/commit/3b80c52d19006dafc717e4004ec9ae4619438b7b), [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f), [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57), [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57), [`4bd1741`](https://github.com/spree/spree/commit/4bd1741677b202f11c13b792bf16e62301d2c5cd), [`7fa7a64`](https://github.com/spree/spree/commit/7fa7a647d5372641fa45ff6fc9c52892bf791a1c), [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da), [`3a2a78b`](https://github.com/spree/spree/commit/3a2a78bb43f84a2da1570ebb29c197e6ae1f1c98), [`446d3cb`](https://github.com/spree/spree/commit/446d3cbc71b3ff980d48559317089e13eaab564e), [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da), [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da), [`291238d`](https://github.com/spree/spree/commit/291238dfc0b05f9b322f9e51d6cd3737006ba430), [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57), [`95c27af`](https://github.com/spree/spree/commit/95c27af49ace4316699f863a023671b236e2f467), [`a0151c1`](https://github.com/spree/spree/commit/a0151c15a268356f5a5ba236850b8ee7405e9ae7), [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f), [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f), [`53d9925`](https://github.com/spree/spree/commit/53d9925440d62343d77efad3c8dc849c4fa54008)]:
+  - @spree/seller-sdk@1.0.0-rc.1
+  - @spree/dashboard-ui@1.0.0-rc.1
+  - @spree/dashboard-core@1.0.0-rc.1
+
 ## 1.0.0-beta.8
 
 ### Patch Changes
