@@ -16,7 +16,8 @@ namespace :spree do
       configured — Devise's +encrypted_password+ is a plain bcrypt digest, the
       exact format +has_secure_password+ reads. The task aborts if a pepper is
       detected; when Devise is absent (so a former pepper can't be introspected)
-      it aborts until you confirm none was used with CONFIRM_NO_PEPPER=true.
+      it aborts until you confirm none was used with CONFIRM_NO_PEPPER=true. The
+      check is skipped when there are no passwords to copy.
       Source rows with a blank email, or whose email is already taken by a
       different customer, abort the task with their ids — reconcile them or pass
       SKIP_INVALID_ROWS=true to skip and continue. The legacy source table is
@@ -38,19 +39,6 @@ namespace :spree do
         next
       end
 
-      # Peppered digests can't be verified by has_secure_password. Refuse rather
-      # than silently produce accounts nobody can sign into. Once Devise is gone
-      # a former pepper can't be introspected, so require an explicit all-clear.
-      if defined?(Devise) && Devise.respond_to?(:pepper) && Devise.pepper.present?
-        abort "  Devise.pepper is configured — bcrypt digests can't be copied into password_digest. " \
-              "Use the custom-model path (keep the table, alias password_digest) or force password resets."
-      elsif !defined?(Devise) && ENV['CONFIRM_NO_PEPPER'] != 'true'
-        abort "  Devise isn't loaded, so a former Devise pepper can't be detected. A peppered digest " \
-              "copied as-is can't be verified by has_secure_password — every migrated account would be " \
-              "locked out silently. Re-run with CONFIRM_NO_PEPPER=true once you've confirmed the source " \
-              "used no pepper, or use the custom-model path / force password resets."
-      end
-
       customer_model = Spree.customer_class
       admin_model    = Spree.admin_user_class
 
@@ -59,6 +47,29 @@ namespace :spree do
       # so the source shares the customer table's connection (the id-exclusion
       # subquery below spans both).
       source = Class.new(Spree.base_class) { self.table_name = source_table }
+
+      pending = source.where.not(id: customer_model.select(:id))
+      admin_pending = if admin_model.column_names.include?('encrypted_password')
+                        admin_model.where(password_digest: [nil, '']).where.not(encrypted_password: [nil, ''])
+                      else
+                        admin_model.none
+                      end
+
+      # Peppered digests can't be verified by has_secure_password. Refuse rather
+      # than silently produce accounts nobody can sign into. Once Devise is gone
+      # a former pepper can't be introspected, so require an explicit all-clear.
+      # With no digest to copy (e.g. an empty legacy table) there is nothing to protect.
+      if pending.none? && admin_pending.none?
+        puts "  No customer or admin passwords to copy — skipping the Devise pepper check."
+      elsif defined?(Devise) && Devise.respond_to?(:pepper) && Devise.pepper.present?
+        abort "  Devise.pepper is configured — bcrypt digests can't be copied into password_digest. " \
+              "Use the custom-model path (keep the table, alias password_digest) or force password resets."
+      elsif !defined?(Devise) && ENV['CONFIRM_NO_PEPPER'] != 'true'
+        abort "  Devise isn't loaded, so a former Devise pepper can't be detected. A peppered digest " \
+              "copied as-is can't be verified by has_secure_password — every migrated account would be " \
+              "locked out silently. Re-run with CONFIRM_NO_PEPPER=true once you've confirmed the source " \
+              "used no pepper, or use the custom-model path / force password resets."
+      end
 
       # Copy only columns both tables share; map the digest column separately.
       direct_columns = customer_model.column_names & source.column_names
@@ -75,7 +86,6 @@ namespace :spree do
       #      the whole batch on the unique-email index.
       # Either kind aborts the task with the offending ids unless the operator
       # passes SKIP_INVALID_ROWS=true to skip them and continue.
-      pending = source.where.not(id: customer_model.select(:id))
       blank_email_ids = pending.where("email IS NULL OR email = ''").pluck(:id)
       # Compare case-insensitively to match Spree::Customer's uniqueness
       # (case_sensitive: false) — emails are stored case-preserved, so a legacy
@@ -140,12 +150,7 @@ namespace :spree do
 
       # Admins stay in spree_admin_users (in place) — backfill the digest from
       # the legacy column when present.
-      admin_backfilled = 0
-      if admin_model.column_names.include?('encrypted_password')
-        admin_backfilled = admin_model.where(password_digest: [nil, '']).
-                           where.not(encrypted_password: [nil, '']).
-                           update_all('password_digest = encrypted_password')
-      end
+      admin_backfilled = admin_pending.update_all('password_digest = encrypted_password')
 
       puts
       puts "  Customers copied: #{copied} (skipped #{invalid_ids.size} invalid row(s): " \
