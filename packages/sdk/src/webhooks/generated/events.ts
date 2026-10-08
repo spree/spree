@@ -154,6 +154,15 @@ export interface WebhookEventMap {
   'line_item.created': LineItem
   'line_item.deleted': LineItem
   'line_item.updated': LineItem
+  'maintenance_task_run.cancelled': WebhookRecordReference
+  'maintenance_task_run.created': WebhookRecordReference
+  'maintenance_task_run.deleted': WebhookRecordReference
+  'maintenance_task_run.errored': WebhookRecordReference
+  'maintenance_task_run.interrupted': WebhookRecordReference
+  'maintenance_task_run.paused': WebhookRecordReference
+  'maintenance_task_run.started': WebhookRecordReference
+  'maintenance_task_run.succeeded': WebhookRecordReference
+  'maintenance_task_run.updated': WebhookRecordReference
   'media.created': MediaEvent
   'media.deleted': MediaEvent
   'media.updated': MediaEvent

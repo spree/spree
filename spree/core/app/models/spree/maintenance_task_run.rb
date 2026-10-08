@@ -19,6 +19,9 @@ module Spree
     include Spree::Metadata
 
     publishes_lifecycle_events
+    publishes_events :started, :succeeded, :paused, :cancelled, :interrupted, :errored
+    # Fires at every checkpoint, so it stays off webhook endpoints.
+    publishes_event :progress, webhook: false
 
     # Terminal statuses end a run for good; a paused or errored run can still
     # be resumed from its cursor. `pausing` and `cancelling` are the operator's
