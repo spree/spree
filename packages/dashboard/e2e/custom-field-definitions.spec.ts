@@ -127,4 +127,32 @@ test.describe('custom field definitions', () => {
       timeout: 15_000,
     })
   })
+  test('a definition for customers is offered on a customer and keeps its value', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const label = `E2E Tier ${suffix}`
+    await createDefinition(page, { label, key: `tier_${suffix}`, appliesTo: /^customers$/i })
+
+    const email = `e2e-cf-customer-${suffix}@example.com`
+    await page.goto(`/${creds.store_id}/customers`)
+    await page.getByRole('button', { name: /new customer/i }).click()
+    await page.locator('#email').fill(email)
+    await page.getByRole('button', { name: /^create customer$/i }).click()
+    await expect(page.getByRole('heading', { name: email })).toBeVisible({ timeout: 15_000 })
+
+    const customFields = page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^custom fields$/i }) })
+    await customFields.getByRole('button', { name: /^edit$/i }).click()
+    await customFields.getByLabel(new RegExp(`^${label}$`, 'i')).fill('Gold')
+    await customFields.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/custom fields saved/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(customFields.getByText('Gold')).toBeVisible({ timeout: 15_000 })
+  })
 })
