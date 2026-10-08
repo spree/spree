@@ -328,23 +328,43 @@ end
 attribute :variant_id
 ```
 
-### Typed subclasses (`api_type`, never the Ruby class name)
+### Typed values (`api_type`, never the Ruby class name)
 
-STI families selected by a `type` on the wire (promotion rules/actions, price rules, delivery-method rules, collection rules, commission rules, order-routing rules, payment methods, integrations, seller requirements, calculators, imports/exports) are addressed by their **`api_type` shorthand** — the demodulized + underscored leaf, so `Spree::PriceRules::VolumeRule` is `volume_rule`:
+**No Ruby class name ever crosses the API** — not in a request, response, filter, webhook payload, permission subject, SDK type, doc example or fixture. The database keeps storing class names; the conversion happens at the boundary, so the contract survives a backend that is not Ruby. Every such value is a short name: the demodulized + underscored class (`Spree::PriceRules::VolumeRule` → `volume_rule`, `Spree::CreditCard` → `credit_card`).
 
-- Never put a Ruby class name in a request, response, SDK type, doc example or fixture — `subclassed_via` and `find_by_api_type` match on `api_type` **only**, so a class name is rejected as an unknown type. A few surfaces (exports/imports, calculators, collection rules) also accept it as a compat fallback; never document or generate that form
-- Serialize with `attribute :type { |record| record.class.api_type }`
+**STI families** selected by a `type` (promotion rules/actions, price rules, delivery-method rules, collection rules, commission rules, order-routing rules, payment methods, integrations, seller requirements, calculators, imports/exports):
+
+- Serialize with `Model.api_type_for(record.type)` (or `record.class.api_type`); resolve writes with `subclassed_via` / `find_by_api_type` / `Model.class_name_for_api_type`, which match the registry only, so a class name is rejected as an unknown type
 - Override `def self.api_type` to keep the wire value stable across a class rename — the default is derived, so renaming otherwise changes a public identifier
 - Build pickers from the family's `…/types` endpoint (`{ type, label, preference_schema }`), never a hardcoded list — extension kinds then appear for free
 - Adding a built-in kind means updating the serializer's `comment:` list in the same change (see the value-list tiers below)
-- Polymorphic columns are different: `resource_type`, `taggable_type`, `owner_type` hold real class names and stay as they are (`Spree::Base.polymorphic_api_type` shortens where needed)
+
+**Registry-selected strategy classes** (fulfillment, delivery-rate, pickup-point, payout, tax and digital-asset providers, order routing strategies — plain Ruby, stored as a class-name string on a column or preference):
+
+- The family's base class `extend Spree::ApiTyped`; a gem class named after its family (`SpreeEasyPost::FulfillmentProvider`) answers its gem's name (`easy_post`)
+- The model converts incoming values: `normalizes :rate_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.delivery_rate_providers, value) }` (`parse_on_set:` for a preference), plus an inclusion validation against the registry; a filterable column gets `ransacker :provider, formatter: ->(value) { Spree::ApiTyped.class_name_for(…) }`
+- The serializer declares `api_type_attributes :rate_provider, :fulfillment_provider`
+- Turn a stored value into a class with `Spree::ApiTyped.registered_class(registry, value)` — never `constantize` a stored string; an unregistered value falls back to the default
+- Every new strategy family gets a registry (`Spree.<family>s`) — a column a merchant writes must never name an arbitrary class
+
+**Polymorphic columns** (`owner_type`, `resource_type`, `taggable_type`, `originator_type`, …):
+
+- Serialize with `Spree::Base.polymorphic_api_type(record.owner_type)` — the configured customer and admin user classes always read `customer` / `admin_user`
+- Accept with `Spree::Base.polymorphic_type_for(value, candidates)` against the classes that column may hold
+- **Filters**: the base `ResourceController` translates `type_*` and polymorphic `*_type_*` predicates (`q[receivable_type_eq]=purchase_order`) to class names; a plain column holding class names (`CustomFieldDefinition#resource_type`) overrides `api_type_resolver`
+
+**Permission subjects** follow the same rule: `/me` serializes class subjects through `polymorphic_api_type` (`product`, `category`), and the dashboard checks them with the `Subject` constants.
+
+Never special-case old class names (`Spree::Taxon`) in this conversion — upgrade tasks migrate stored data. A changed Store API value or webhook field goes in the upgrade guide.
 
 ```ruby
 # ✅ Wire shorthand
 { type: 'volume_rule', preferences: { min_quantity: 10 } }
+{ fulfillment_provider: 'manual', resource_type: 'product' }
 
-# ❌ Rejected as an unknown type
+# ❌ Never on the wire
 { type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 10 } }
+{ fulfillment_provider: 'Spree::FulfillmentProvider::Manual', resource_type: 'Spree::Product' }
 ```
 
 ### Serializers (Alba)
@@ -393,7 +413,7 @@ end
 - Value lists come in three tiers — picking the wrong one is a contract bug:
   - **Closed** (nothing can extend it — units, match policies): `enum: Model::KINDS` → closed TS union, plain OpenAPI `enum`
   - **Open** (extensions may add, built-ins known at class-load — `has_status`, `Spree::Fee::KINDS`): add `enum_type_name: 'ModelStatus'` → open TS union (`'a' | 'b' | (string & {})`) + OpenAPI `anyOf`, so clients autocomplete the built-ins and still accept extension values
-  - **Registry-driven `type`** (the typed-subclass families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
+  - **Registry-driven `type`** (the typed families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
 - Never use `typelize_from` — it connects to the database
 - Customize via inheritance + `Spree.api.product_serializer = 'MyApp::ProductSerializer'`
 - NEVER create custom hash/arrays to represent associations or records inside the serializer - each record or a variant of a record (eg. lightweight variant of an existing serializer) should be it's own serializer
