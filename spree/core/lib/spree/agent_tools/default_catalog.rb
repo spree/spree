@@ -19,6 +19,7 @@ module Spree
         Spree::AgentTools::CreateResource
         Spree::AgentTools::UpdateResource
         Spree::AgentTools::DeleteResource
+        Spree::AgentTools::CurateProducts
         Spree::AgentTools::QueryReport
         Spree::AgentTools::DescribeReporting
         Spree::AgentTools::CreateExport

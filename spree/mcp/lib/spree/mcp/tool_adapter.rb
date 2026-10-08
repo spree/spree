@@ -61,6 +61,12 @@ module Spree
         # comes back as a tool error rather than a protocol error, which the
         # model never sees.
         #
+        # A refusal carries more than its message: the resources that do
+        # exist, the fields that can be filtered, the import's own column
+        # names. Forwarding only `:error` threw all of that away, so a model
+        # told "Unknown filter(s): notreal_eq" had to guess again instead of
+        # reading the list the tool had already computed.
+        #
         # Public because the definition block calls it through a closure.
         #
         # @param tool [Spree::AgentTool]
@@ -70,7 +76,7 @@ module Spree
           result = tool.call(**arguments.symbolize_keys.except(:server_context))
 
           if result.is_a?(Hash) && result[:error].present?
-            ::MCP::Tool::Response.new([{ type: 'text', text: result[:error].to_s }], error: true)
+            ::MCP::Tool::Response.new([{ type: 'text', text: refusal_text(result) }], error: true)
           else
             ::MCP::Tool::Response.new([{ type: 'text', text: text_for(result) }], structured_content: result)
           end
@@ -108,6 +114,17 @@ module Spree
         #
         # A count is a description of an answer, never the answer. The only
         # text that may stand in for a payload is one the tool wrote itself.
+        # The message, then whatever the refusal offered to correct it with.
+        #
+        # @param result [Hash]
+        # @return [String]
+        def refusal_text(result)
+          hints = result.except(:error).compact_blank
+          return result[:error].to_s if hints.empty?
+
+          "#{result[:error]}\n#{JSON.generate(hints)}"
+        end
+
         def text_for(result)
           return result.to_s unless result.is_a?(Hash)
 
