@@ -39,13 +39,7 @@ module Spree
         end
 
         def process
-          load_engine_rake_tasks(self.class.rake_task_name)
-
-          with_environment do
-            task = ::Rake::Task[self.class.rake_task_name]
-            task.reenable
-            task.invoke
-          end
+          with_environment { invoke_rake_task(self.class.rake_task_name) }
 
           tally(:completed)
         end

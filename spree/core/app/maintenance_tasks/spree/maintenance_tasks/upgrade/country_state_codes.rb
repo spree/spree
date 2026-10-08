@@ -1,3 +1,5 @@
+require 'spree/country_state_code_migrator'
+
 module Spree
   module MaintenanceTasks
     module Upgrade

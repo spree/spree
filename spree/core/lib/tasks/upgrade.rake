@@ -186,11 +186,18 @@ module Spree
         abort "    #{result.error}" if result.failure?
 
         run = result.value.reload
-        run.tallies.each { |key, value| puts "      #{key}: #{value}" }
+        (run.tallies || {}).each { |key, value| puts "      #{key}: #{value}" }
 
         if run.errored?
           puts "    #{run.error_class}: #{run.error_message}"
           abort '    Step failed. Fix the cause, then re-run this step.'
+        end
+
+        # Anything short of success — paused, cancelled, still running — means
+        # the step's data is not converted, and the steps after it depend on it.
+        unless run.succeeded?
+          puts "    The step did not finish (#{run.status})."
+          abort '    Re-run this step once it can finish.'
         end
 
         true

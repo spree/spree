@@ -175,6 +175,39 @@ RSpec.describe 'the upgrade manifest' do
     end
   end
 
+  describe Spree::MaintenanceTasks::Upgrade::RakeStep do
+    before do
+      require 'rake'
+      Rake::Task.define_task('spec:aborting_step') { abort 'Set the pepper first.' }
+      stub_const('SpecAbortingStep', Class.new(described_class) do
+        def self.name = 'SpecAbortingStep'
+
+        runs_rake_task 'spec:aborting_step'
+      end)
+      Spree.maintenance_tasks << 'SpecAbortingStep'
+    end
+
+    after do
+      Spree.maintenance_tasks.delete('SpecAbortingStep')
+      Rake::Task['spec:aborting_step'].clear
+    end
+
+    # Rake bodies stop with `abort`, which is not an ordinary error; left
+    # alone it would leave the run marked running for good and the task
+    # impossible to start again.
+    it 'records a rake body that aborts as a failure' do
+      run = nil
+
+      expect do
+        run = Spree::MaintenanceTasks::Start.call(task_name: 'SpecAbortingStep', initiated_via: 'cli', inline: true).value
+      end.to output.to_stderr
+
+      expect(run.reload).to be_errored
+      expect(run.error_message).to eq('Set the pepper first.')
+      expect(run).to be_resumable
+    end
+  end
+
   describe 'the walk' do
     before(:all) do
       require 'rake'
@@ -201,6 +234,16 @@ RSpec.describe 'the upgrade manifest' do
 
       expect { runner.call }.to output(/Skipping/).to_stdout
       expect(Spree::MaintenanceTaskRun.where(task_name: 'SpreeStripe::MaintenanceTasks::MigrateWebhookKeys')).to be_empty
+    end
+
+    # An inline run never slices itself, so anything short of success means
+    # the step did not finish; the walk must stop rather than record the
+    # release complete on top of it.
+    it 'stops when a step did not succeed' do
+      allow(Spree::MaintenanceTasks::RunJob).to receive(:perform_now)
+      runner = Spree::Upgrade::Runner.new(target_version: '6.0', step_id: 'migrate_capture_methods')
+
+      expect { runner.call }.to raise_error(SystemExit).and output(/did not finish/).to_stdout
     end
 
     it 'records a run for a rake-backed step of a released manifest' do

@@ -39,6 +39,9 @@ module Spree
     # through MaintenanceTaskRun#display_arguments.
     MASKED_VALUE = '••••••••'.freeze
 
+    # A rake body that stopped itself with `abort`.
+    class RakeTaskAborted < StandardError; end
+
     DEFAULT_BATCH_SIZE = 100
     DEFAULT_MAX_RUN_TIME = 5.minutes
 
@@ -292,6 +295,25 @@ module Spree
 
       path = rake_file_defining(task_name)
       load(path) if path
+    end
+
+    # Runs an engine rake task as part of this task.
+    #
+    # Rake bodies stop themselves with `abort`, which raises SystemExit — not
+    # an error the runner records. Left alone it would end the whole process
+    # from the command line and, in a worker, leave the run marked running
+    # with nothing to finish it.
+    #
+    # @param task_name [String]
+    # @raise [RakeTaskAborted] carrying the body's own message
+    def invoke_rake_task(task_name)
+      load_engine_rake_tasks(task_name)
+
+      task = ::Rake::Task[task_name]
+      task.reenable
+      task.invoke
+    rescue SystemExit => e
+      raise RakeTaskAborted, e.message
     end
 
     # Finds the file that defines a task by reading the files rather than

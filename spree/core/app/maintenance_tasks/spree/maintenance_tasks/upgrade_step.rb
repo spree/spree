@@ -19,12 +19,7 @@ module Spree
       validate :step_must_exist
 
       def process
-        load_engine_rake_tasks(manifest_step.fetch('task'))
-
-        step = manifest_step
-        rake_task = ::Rake::Task[step.fetch('task')]
-        rake_task.reenable
-        rake_task.invoke
+        invoke_rake_task(manifest_step.fetch('task'))
 
         tally(:completed_steps)
       end
