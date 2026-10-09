@@ -4,6 +4,8 @@
 
 **Decision:** The Seller API reaches no associations through filters, as today; related-data filters for sellers are scopes. `_in` and `_not_in` accept arrays only, never comma-separated strings. There is no 5.x deprecation release: the upgrade guide covers the change, and PR C adds a `Spree.api.strict_filters` setting (default on) that a store can turn off for one release.
 
+The published predicate set also gains `i_cont` for text and `not_eq`/`in`/`not_in` for true/false attributes, which the dashboard's filters already send.
+
 **Consequences:** Seller SDK filter types stay attribute-only. A client sending `q[status_in]=a,b` gets a 400 once enforcement lands, which is the same empty result it already gets, made visible. Self-hosted stores learn of undeclared filters from the upgrade guide and the escape hatch, not from a warning in production.
 
 **Plan:** `6.0-typed-filters.md`.

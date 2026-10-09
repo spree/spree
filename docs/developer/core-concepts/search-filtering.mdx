@@ -261,6 +261,21 @@ The Store API uses query parameters prefixed with `q[]` for filtering any resour
 Only attributes explicitly allowed by each resource can be used for filtering. Attempting to filter on unsupported fields will be silently ignored.
 </Info>
 
+### Making a field filterable
+
+A resource's filters come from its model's allowlists, and nowhere else. The API reference and the SDK types are generated from them, so whatever you add appears in the [Querying](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts) reference and in the typed `list()` parameters without further work.
+
+```ruby server/config/initializers/spree.rb
+Spree.ransack.add_attribute(Spree::Product, :erp_id)
+Spree.ransack.add_association(Spree::Product, :brand)
+Spree.ransack.add_scope(Spree::Product, :featured, type: 'boolean')
+Spree.ransack.add_scope(Spree::Product, :by_brand, type: 'id')
+```
+
+Declare the `type` of a scope's argument: `'boolean'` for a scope taking none (`q[featured]=true`), or `'text'`, `'id'`, `'decimal'`, `'integer'`, `'date'` or `'datetime'` for one value. A list of kinds (`%w[decimal decimal]`) means several arguments in order, and `{ list: 'id' }` means any number of them. A scope declared without a type is published as taking one text value.
+
+Every entry is a filter any caller of that API can run. Keep back-office fields out of the Store API with `private_ransackable_attributes`, and add associations the storefront may filter through to `storefront_ransackable_associations`.
+
 ## Pagination
 
 All list endpoints support pagination:
