@@ -176,6 +176,12 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
     end
 
     context 'with a partial amount' do
+      it 'still accepts a JSON number' do
+        expect(Spree.payment_capture_workflow).to receive(:call).with(payment: payment, amount: 115).and_call_original
+
+        patch :capture, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id, amount: 1.15 }, as: :json
+      end
+
       it 'hands the gateway exact hundredths' do
         expect(Spree.payment_capture_workflow).to receive(:call).with(payment: payment, amount: 115).and_call_original
 
@@ -186,7 +192,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
         }, as: :json
       end
 
-      [1.15, '1,15', '1.155', '-5.00', '0'].each do |amount|
+      ['1,15', '1.155', '-5.00', '0', 'abc'].each do |amount|
         it "refuses #{amount.inspect} with invalid_money_format" do
           expect(Spree.payment_capture_workflow).not_to receive(:call)
 

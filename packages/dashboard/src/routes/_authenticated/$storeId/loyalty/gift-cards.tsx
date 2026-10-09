@@ -10,6 +10,7 @@ import {
   resourceSearchSchema,
   StoreDatePicker,
   Subject,
+  useMoneyLocale,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -36,7 +37,6 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import i18n from 'i18next'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -424,9 +424,10 @@ function AmountCurrencyRow<T extends GiftCardCreateFormValues | GiftCardEditForm
 }) {
   const { t } = useTranslation()
   const errors = form.formState.errors as Record<string, { message?: string } | undefined>
+  const moneyLocale = useMoneyLocale()
   const { symbol: currencySymbol } = currencyParts(
     (form.watch('currency' as never) as unknown as string) || 'USD',
-    i18n.language,
+    moneyLocale,
   )
   return (
     <div className="grid grid-cols-2 gap-3">

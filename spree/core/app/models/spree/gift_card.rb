@@ -5,6 +5,9 @@ module Spree
     extend DisplayMoney
     include Spree::SingleStoreResource
     include Spree::HasCustomFields
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
     publishes_lifecycle_events

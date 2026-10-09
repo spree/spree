@@ -31,11 +31,11 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[12]).to eq '19.99'
       expect(subject[13]).to eq '0.00'
       expect(subject[14]).to eq store.default_currency
-      expect(subject[15]).to eq variant.width
-      expect(subject[16]).to eq variant.height
-      expect(subject[17]).to eq variant.depth
+      expect(subject[15]).to eq Spree::Money::Rounding.format_decimal(variant.width)
+      expect(subject[16]).to eq Spree::Money::Rounding.format_decimal(variant.height)
+      expect(subject[17]).to eq Spree::Money::Rounding.format_decimal(variant.depth)
       expect(subject[18]).to eq 'in'
-      expect(subject[19]).to eq variant.weight
+      expect(subject[19]).to eq Spree::Money::Rounding.format_decimal(variant.weight)
       expect(subject[20]).to eq 'lb'
       expect(subject[21]).to eq default_publication.published_at&.strftime('%Y-%m-%d %H:%M:%S')
       expect(subject[22]).to eq(

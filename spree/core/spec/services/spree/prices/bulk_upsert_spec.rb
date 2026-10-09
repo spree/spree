@@ -129,11 +129,11 @@ RSpec.describe Spree::Prices::BulkUpsert do
       expect(base.amount).to eq(BigDecimal('7.77'))
     end
 
-    it 'refuses an amount it would otherwise misread' do
-      expect {
-        described_class.call(rows: [{ variant_id: variant.id, currency: 'USD', amount: '1,599.99' }])
-      }.to raise_error(Spree::Money::InvalidFormat)
-      expect(variant.prices.find_by(currency: 'USD', price_list_id: nil)&.amount).not_to eq(BigDecimal('1'))
+    it 'refuses an amount it would otherwise misread, naming the row' do
+      result = described_class.call(rows: [{ variant_id: variant.id, currency: 'USD', amount: '1,599.99' }])
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(malformed_amounts: [{ index: 0 }])
     end
 
     it 'drops rows missing variant_id or currency' do

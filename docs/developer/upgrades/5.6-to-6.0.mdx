@@ -657,7 +657,7 @@ Also note:
 
 - **Ransack:** `default_price` is no longer a searchable association on `Variant`; query `prices` instead.
 - **Prices in permitted params:** the dead `:price` and `:compare_at_price` entries are gone. Prices were already written as nested `prices: [{ amount:, currency: }]` under variants — the top-level keys had no writer behind them. (`Spree::PermittedAttributes` itself is removed in 6.0 — see below.)
-- Localized number parsing still happens: `Spree::Price#amount=` runs `Spree::LocalizedNumber.parse`, so `set_price(currency, '1,599.99')` works as `price=` did.
+- Prices are written as numbers or canonical decimal strings: `set_price(currency, '1599.99')`. A localized string such as `'1,599.99'` raises `Spree::Money::InvalidFormat` (see [Money](#money)).
 - The variant validation that inferred a missing price from the product's default variant is gone. Set prices explicitly (the product and variant factories already do).
 
 ### `Spree::PermittedAttributes` is removed
@@ -820,9 +820,9 @@ Other changes that come with it:
 
 ## Money
 
-- **Numbers are no longer parsed by locale.** Price, variant, payment, refund, store credit, gift card, discount and fee amounts are stored as sent. Before 6.0 they were re-read under the request's language, so a store whose language writes a comma decimal (Dutch, German, French) saved the dashboard's `49.50` as 4950, and an unchanged price grew tenfold on each save. Send canonical decimal strings (`"1234.56"`) and convert localized input in the client. `Spree::LocalizedNumber` still works with a warning until 6.1. If your prices were saved in a comma-decimal store before upgrading, check them.
+- **Numbers are no longer parsed by locale.** Price, variant, payment, refund, store credit, gift card, discount and fee amounts take a number or a canonical decimal string (`"1234.56"`); any other text raises `Spree::Money::InvalidFormat`, which the API answers with `invalid_money_format`. Before 6.0 they were re-read under the request's language, so a store whose language writes a comma decimal (Dutch, German, French) saved the dashboard's `49.50` as 4950, and an unchanged price grew tenfold on each save. Send canonical decimal strings (`"1234.56"`) and convert localized input in the client. `Spree::LocalizedNumber` still works with a warning until 6.1. If your prices were saved in a comma-decimal store before upgrading, check them.
 - **Rounding follows the currency.** Taxes, percentage discounts, promotion splits and shipping markups round to the currency's own decimal places from the ISO 4217 table: whole yen, three decimals for dinar. Two-decimal currencies are unchanged. Open carts in other currencies may change by less than one minor unit the next time they are recalculated. Placed orders do not change. Spree now gives the Hungarian forint two decimal places, as ISO 4217 does.
-- **Capture records in yen and dinar may be wrong.** A capture in a currency without two decimals could be recorded in the wrong unit: 100 times too much in yen, a tenth in dinar. To list those records, writing nothing, run:
+- **Capture records in yen and dinar may be wrong.** An admin capture in a currency without two decimals is recorded in the wrong unit: 100 times too much in yen, a tenth in dinar. This is fixed when gateways start receiving amounts with their currency, later in 6.0. To list the affected records, writing nothing, run:
 
 <CodeGroup>
 

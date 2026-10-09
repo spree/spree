@@ -415,9 +415,9 @@ module Spree
 
     # Returns the subtotal used for analytics integrations
     # It's a sum of the item total and the promo total
-    # @return [BigDecimal]
+    # @return [Float] a JSON number, as analytics providers expect
     def analytics_subtotal
-      item_total + line_items.sum(:discount_total)
+      (item_total + line_items.sum(:discount_total)).to_f
     end
 
 

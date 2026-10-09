@@ -119,6 +119,10 @@ describe Spree::Price, type: :model do
       expect(price.amount).to eq(BigDecimal('49.50'))
     end
 
+    it 'refuses text it would otherwise misread, naming the attribute' do
+      expect { price.amount = '1,599.99' }.to raise_error(Spree::Money::InvalidFormat) { |error| expect(error.field).to eq(:amount) }
+    end
+
     it 'does not grow when what it read back is saved again' do
       I18n.with_locale(:nl) { price.amount = '99.0' }
       expect(price.amount).to eq(BigDecimal('99'))

@@ -1,11 +1,14 @@
 module Spree
   # Shared shape of the typed adjustment rows (TaxLine, Discount, Fee):
   # dual-FK cart/order owner (exactly one), consolidated +metadata+ JSON
-  # column, money display and localized amount parsing.
+  # column, money display and strict amount parsing.
   module TypedAdjustmentLine
     extend ActiveSupport::Concern
 
     included do
+      include Spree::CanonicalDecimals
+
+      canonical_decimals :amount
       attribute :metadata, default: -> { {} }
 
       belongs_to :order, class_name: 'Spree::Order', optional: true

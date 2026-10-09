@@ -542,7 +542,8 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
 /**
  * Switches the shared admin account and this browser to a dashboard language
  * together, and returns a function that hands the account back its previous
- * language. Call it before `login`, and the returned function in `afterEach`.
+ * language. Call it before the page next loads (before `login`, or before a
+ * `reload`), and the returned function in `afterEach`.
  *
  * Both must agree: when they differ the auth provider reloads to bring the
  * browser in line with the account, and a reload during the boot refresh

@@ -5,6 +5,9 @@ module Spree
     include Spree::ActedBy
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     include Spree::InstrumentsGatewayCalls
     if defined?(Spree::Security::Refunds)
       include Spree::Security::Refunds

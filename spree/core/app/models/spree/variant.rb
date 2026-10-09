@@ -8,6 +8,7 @@ module Spree
     include Spree::MemoizedData
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
     include Spree::HasExternalReferences
     include Spree::Searchable
     include Spree::StorePreferences
@@ -290,13 +291,7 @@ module Spree
     end
 
     # A blank value leaves these as they were rather than clearing them.
-    KEPT_WHEN_BLANK = %w(cost_price weight depth width height)
-
-    KEPT_WHEN_BLANK.each do |m|
-      define_method("#{m}=") do |argument|
-        super(argument) if argument.present?
-      end
-    end
+    canonical_decimals :cost_price, :weight, :depth, :width, :height, ignore_blank: true
 
     accepts_nested_attributes_for(
       :stock_levels,

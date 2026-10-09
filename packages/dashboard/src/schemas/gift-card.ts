@@ -18,8 +18,8 @@ const currencyRequired = () =>
   i18n.t('admin.pages.promotions.gift_cards.validation.currency_required')
 
 // Amounts stay STRINGS, from a number input that always yields a canonical
-// value ("49.5"); `Number()` coercion would lose precision. "Is positive" is
-// still checked with a lightweight string regex.
+// value ("49.5"), and are sent as typed. `Number()` is used only to check the
+// value is positive, never to compute or send an amount.
 const positiveAmountString = z.string().refine(
   (s) => {
     const n = Number(s.replace(',', '.'))

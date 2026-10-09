@@ -6,6 +6,9 @@ module Spree
     derives_number infix: 'P'
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments
     end

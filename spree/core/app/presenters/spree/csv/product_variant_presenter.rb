@@ -101,14 +101,14 @@ module Spree
           unit_price(variant.amount_in(currency) || 0),
           unit_price(variant.compare_at_amount_in(currency) || 0),
           currency,
-          variant.width,
-          variant.height,
-          variant.depth,
+          decimal(variant.width),
+          decimal(variant.height),
+          decimal(variant.depth),
           # The stored columns, not the resolved readers: importing this file
           # into a store on another unit system must not silently write this
           # store's units onto every variant.
           variant[:dimensions_unit],
-          variant.weight,
+          decimal(variant.weight),
           variant[:weight_unit],
           publication_available_on&.strftime('%Y-%m-%d %H:%M:%S'),
           (variant.discontinue_on || publication_discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
@@ -153,6 +153,11 @@ module Spree
 
       def unit_price(amount)
         Spree::Money::Rounding.format(amount, currency, unit_price: true)
+      end
+
+      # "1.5", never Ruby's "0.15e1", which the import refuses.
+      def decimal(value)
+        Spree::Money::Rounding.format_decimal(value)
       end
 
       # Default-channel publication for the export's store. 5.5 transitional:

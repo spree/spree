@@ -195,7 +195,7 @@ module SpreeEasyPost
       {
         description: variant.customs_description_for_declaration,
         quantity: item.quantity,
-        value: Spree::Money::Rounding.to_currency(item.price * item.quantity, package.owner&.currency).to_f, # EasyPost reads customs values as JSON numbers
+        value: Spree::Money::Rounding.to_currency(item.price * item.quantity, package.currency).to_f, # EasyPost reads customs values as JSON numbers
         weight: ounces(item.weight, store),
         origin_country: variant.country_of_origin.presence,
         hs_tariff_number: variant.hs_code.presence,

@@ -8,7 +8,7 @@ module Spree
       end
 
       def compute_package(package)
-        compute_from_price(total(package.contents), package.owner&.currency)
+        compute_from_price(total(package.contents), package.currency)
       end
 
       # @param price [BigDecimal]

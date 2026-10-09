@@ -4,6 +4,9 @@ module Spree
 
     extend DisplayMoney
     include Spree::SingleStoreResource
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
 
     publishes_lifecycle_events
 

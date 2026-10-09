@@ -19,7 +19,10 @@ module Spree
         # @return [BigDecimal, nil] nil when the parameter is absent
         # @raise [Spree::Money::InvalidFormat]
         def money_param(name, currency, unit_price: false)
-          Spree::Money::Rounding.parse_canonical(params[name], currency, unit_price: unit_price)
+          value = params[name]
+          # JSON numbers stay accepted until the 6.0 wire contract (money plan, PR B).
+          value = value.to_s if value.is_a?(Integer) || value.is_a?(Float)
+          Spree::Money::Rounding.parse_canonical(value, currency, unit_price: unit_price)
         rescue Spree::Money::InvalidFormat => error
           raise Spree::Money::InvalidFormat.new(error.message, field: name)
         end

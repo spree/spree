@@ -1087,13 +1087,11 @@ describe Spree::Payment, type: :model do
         end
       end
 
-      context 'amount is invalid' do
-        let(:amount) { 'invalid' }
+      context 'amount is not a number' do
+        let(:amount) { nil }
 
-        # this is a strange default for ActiveRecord
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('0'))
+        it 'is refused instead of being read as zero' do
+          expect { subject.amount = 'invalid' }.to raise_error(Spree::Money::InvalidFormat)
         end
       end
 

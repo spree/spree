@@ -11,6 +11,9 @@ module Spree
 
     include Spree::VatPriceCalculation
     include Spree::StorePreferences
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount, :compare_at_amount
 
     publishes_lifecycle_events
 

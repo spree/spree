@@ -5,6 +5,9 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
 
     publishes_lifecycle_events
 

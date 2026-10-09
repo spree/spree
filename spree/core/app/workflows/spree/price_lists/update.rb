@@ -72,7 +72,9 @@ module Spree
         unless result.success?
           refusal = result.error&.value
           refusal = {} unless refusal.is_a?(Hash)
-          if refusal[:invalid_amounts].present?
+          if refusal[:malformed_amounts].present?
+            price_list.errors.add(:base, :malformed_price)
+          elsif refusal[:invalid_amounts].present?
             price_list.errors.add(:base, :negative_price)
           elsif refusal[:invalid_quantities].present?
             price_list.errors.add(:base, :invalid_quantity)

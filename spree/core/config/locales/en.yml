@@ -381,6 +381,7 @@ en:
             base:
               duplicate_quantity: each quantity break must have its own quantity
               invalid_quantity: each quantity break must start at a whole number of units
+              malformed_price: a price must be a number like 16.50
               negative_price: a price cannot be below zero
               nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
               price_rises_with_quantity: a quantity break cannot cost more than the price a buyer pays below it

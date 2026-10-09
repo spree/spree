@@ -848,6 +848,17 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(save_price('49.50')).to eq(BigDecimal('49.50'))
       end
 
+      it 'refuses an amount it would otherwise misread' do
+        patch :update, params: {
+          id: product.prefixed_id,
+          variants: [{ id: variant.prefixed_id, prices: [{ currency: 'USD', amount: '1,599.99' }] }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_money_format')
+        expect(json_response['error']['details']).to have_key('amount')
+      end
+
       it 'keeps a price stable across repeated saves of what the API returned' do
         save_price('99')
         returned = json_response['variants']&.first&.dig('prices')&.first&.dig('amount') ||
