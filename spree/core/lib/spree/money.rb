@@ -124,10 +124,10 @@ module Spree
       # @return [BigDecimal, nil]
       # @raise [Spree::Money::InvalidFormat]
       def parse_decimal(value)
-        return if value.blank?
+        return if value.nil? || (value.is_a?(String) && value.strip.empty?)
         return BigDecimal(value.to_s) if value.is_a?(Numeric)
 
-        parse_canonical_decimal(value.to_s.strip)
+        parse_canonical_decimal(value.is_a?(String) ? value.strip : value)
       end
 
       # Writes an amount the way the API and exports carry it: exactly the

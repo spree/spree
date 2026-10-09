@@ -318,8 +318,10 @@ describe Spree::Money do
         expect(described_class.parse_decimal('')).to be_nil
       end
 
-      it 'refuses text it would otherwise misread' do
-        expect { described_class.parse_decimal('1,599.99') }.to raise_error(Spree::Money::InvalidFormat)
+      it 'refuses text it would otherwise misread, and values that are not numbers' do
+        ['1,599.99', false, true, []].each do |value|
+          expect { described_class.parse_decimal(value) }.to raise_error(Spree::Money::InvalidFormat)
+        end
       end
     end
 

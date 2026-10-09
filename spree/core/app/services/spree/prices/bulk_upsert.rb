@@ -171,9 +171,8 @@ module Spree
         Integer(raw.to_s.strip, 10, exception: false)
       end
 
-      # Rows pricing below zero. This path runs no model validations, so the
-      # sign is checked here for every caller rather than in each of them.
-      # Rows whose amount is text that is not a plain decimal ("1,599.99").
+      # Rows whose amount is not a number or plain decimal text ("1,599.99",
+      # `false`), refused before a malformed value can read as "clear".
       def rows_with_malformed_amount(rows)
         rows.each_with_index.filter_map do |row, index|
           Spree::Money::Rounding.parse_decimal(row[:amount])
@@ -184,6 +183,8 @@ module Spree
         end
       end
 
+      # Rows pricing below zero. This path runs no model validations, so the
+      # sign is checked here for every caller rather than in each of them.
       def rows_with_negative_amount(rows)
         rows.each_with_index.filter_map do |row, index|
           { index: index } if row[:amount]&.negative? || row[:compare_at_amount]&.negative?
