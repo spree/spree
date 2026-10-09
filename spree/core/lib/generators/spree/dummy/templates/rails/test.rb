@@ -42,9 +42,28 @@ Dummy::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
-  # Spree's own code must not call the deprecated Spree.t.
+  # Spree's own code and specs must not call these deprecated APIs. A spec
+  # covering one on purpose stubs Spree::Deprecation.warn or silences it.
   config.active_support.disallowed_deprecation = :raise
-  config.active_support.disallowed_deprecation_warnings = [/Spree\.t is deprecated/]
+  config.active_support.disallowed_deprecation_warnings = [
+    /Spree\.t is deprecated/,
+    /Spree::Product#(master|variants_including_master) is deprecated/,
+    /Spree::(Order|Cart)#(shipment_total|promo_total|item_count|shipping_discount) is deprecated/,
+    /Spree::Order#finalize! is deprecated/,
+    /Spree::Payment#state=? is deprecated/,
+    /Spree::Payment#(process|authorize|purchase|capture|void_transaction)! is deprecated/,
+    /Spree::(Category|Product)#classifications is deprecated/,
+    /Spree::Product#taxons=? is deprecated/,
+    /Spree::Promotion::Rules::Category#taxon/,
+    /Spree::Fulfillment#(add_)?shipping_method is deprecated/,
+    /Spree::Stock::Package#shipping_methods is deprecated/,
+    /Calling Spree::(Carts::AddItem|StockReservations::(Reserve|Extend)) with order: is deprecated/,
+    /Spree::Config\[:admin_url\] is deprecated/,
+    /private_metadata=? is deprecated/,
+    /Spree::Pricing::Resolver is deprecated/,
+    /Spree::Invitation#accept! is deprecated/,
+    /`preference :\w+, in:` is deprecated/
+  ]
 
   config.active_job.queue_adapter = :test
 

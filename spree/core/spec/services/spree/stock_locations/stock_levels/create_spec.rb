@@ -83,7 +83,7 @@ module Spree
 
           result
 
-          expect(stock_location.stock_levels.pluck(:variant_id)).to match_array(own.product.variants_including_master.ids)
+          expect(stock_location.stock_levels.pluck(:variant_id)).to match_array(own.product.variants.ids)
         end
       end
 

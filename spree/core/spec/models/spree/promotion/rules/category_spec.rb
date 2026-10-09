@@ -68,7 +68,7 @@ describe Spree::Promotion::Rules::Category, type: :model do
         order.products.first.categories << category2
         order.products.last.categories << category
 
-        rule.taxons = [category, category2]
+        rule.categories = [category, category2]
 
         expect(rule).to be_eligible(order)
       end
@@ -100,29 +100,29 @@ describe Spree::Promotion::Rules::Category, type: :model do
     end
   end
 
-  describe '#add_taxons' do
+  describe '#category_ids_to_add=' do
     let(:taxons) { create_list(:category, 3) }
 
-    it 'adds the taxons to the rule' do
-      rule.taxon_ids_to_add = taxons.map(&:id)
+    it 'adds the categories to the rule' do
+      rule.category_ids_to_add = taxons.map(&:id)
       rule.save!
-      expect(rule.taxons).to match_array(taxons)
+      expect(rule.categories).to match_array(taxons)
     end
 
-    it 'removes the taxons from the rule' do
-      rule.taxon_ids_to_add = taxons.map(&:id)
+    it 'removes the categories from the rule' do
+      rule.category_ids_to_add = taxons.map(&:id)
       rule.save!
-      rule.taxon_ids_to_add = []
+      rule.category_ids_to_add = []
       rule.save!
-      expect(rule.taxons).to be_empty
+      expect(rule.categories).to be_empty
     end
 
-    it 'does not remove the taxons when nil is passed' do
-      rule.taxon_ids_to_add = taxons.map(&:id)
+    it 'does not remove the categories when nil is passed' do
+      rule.category_ids_to_add = taxons.map(&:id)
       rule.save!
-      rule.taxon_ids_to_add = nil
+      rule.category_ids_to_add = nil
       rule.save!
-      expect(rule.taxons).to match_array(taxons)
+      expect(rule.categories).to match_array(taxons)
     end
   end
 

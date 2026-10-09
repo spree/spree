@@ -38,7 +38,7 @@ describe Spree::Order, type: :model do
       expect(order.reload.status).to eq('canceled')
       expect(order.canceled_at).to be_present
       expect(order.fulfillments.reload).to all(be_canceled)
-      expect(order.payments.reload.map(&:state)).to eq(%w[void])
+      expect(order.payments.reload.map(&:status)).to eq(%w[void])
     end
 
     it 'refuses to cancel when not allowed' do
@@ -55,6 +55,7 @@ describe Spree::Order, type: :model do
     let(:admin) { create(:admin_user) }
 
     it 'records the canceler and cancels through the service' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Order#canceled_by is deprecated/)
       order.canceled_by(admin)
 
       expect(order.reload.status).to eq('canceled')

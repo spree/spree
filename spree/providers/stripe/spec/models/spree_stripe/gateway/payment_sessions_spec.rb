@@ -282,7 +282,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
 
     context 'when the payment intent is accepted and succeeded' do
       let(:stripe_pi) { Stripe::StripeObject.construct_from(id: 'pi_complete_123', status: 'succeeded', latest_charge: 'ch_test_123', payment_method: { type: 'card' }) }
-      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, state: 'checkout') }
+      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, status: 'checkout') }
 
       before do
         allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)
@@ -472,7 +472,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           next_action: { type: 'setup_future_usage' }
         )
       end
-      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, state: 'checkout') }
+      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, status: 'checkout') }
 
       before do
         allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)
@@ -517,7 +517,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           payment_method: { type: 'card' }
         )
       end
-      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, state: 'checkout') }
+      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, status: 'checkout') }
 
       before do
         allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)

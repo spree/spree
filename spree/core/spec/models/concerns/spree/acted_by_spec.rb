@@ -63,6 +63,7 @@ RSpec.describe Spree::ActedBy do
     end
 
     it 'resolves through the admin user class' do
+      allow(Spree::Deprecation).to receive(:warn)
       expect(order.reload.canceler).to eq(admin_user)
     end
 
@@ -93,6 +94,7 @@ RSpec.describe Spree::ActedBy do
         count
       end
 
+      allow(Spree::Deprecation).to receive(:warn)
       3.times { create(:order, store: store, canceler: admin_user) }
       read_page = -> { Spree::Order.preload_associations_lazily.last(3).each(&:canceler) }
 
@@ -104,6 +106,7 @@ RSpec.describe Spree::ActedBy do
     end
 
     it 'names the type in memory only, never saving it' do
+      allow(Spree::Deprecation).to receive(:warn)
       order.reload.canceler
 
       expect(Spree::Order.where(id: order.id).pick(:canceler_type)).to be_nil

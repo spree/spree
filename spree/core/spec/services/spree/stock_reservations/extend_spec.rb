@@ -10,7 +10,7 @@ describe Spree::StockReservations::Extend do
 
     it 'pushes expires_at out by the store TTL' do
       Timecop.freeze do
-        described_class.call(order: order)
+        described_class.call(cart: order)
         expect(reservation.reload.expires_at).to be_within(1.second).of(12.minutes.from_now)
       end
     end
@@ -20,7 +20,7 @@ describe Spree::StockReservations::Extend do
       other_reservation = create(:stock_reservation, order: other_order, expires_at: 1.minute.from_now)
       original_other_expires_at = other_reservation.expires_at
 
-      described_class.call(order: order)
+      described_class.call(cart: order)
 
       expect(other_reservation.reload.expires_at).to be_within(1.second).of(original_other_expires_at)
     end
@@ -31,7 +31,7 @@ describe Spree::StockReservations::Extend do
 
     it 'leaves expires_at untouched' do
       original = reservation.expires_at
-      described_class.call(order: order)
+      described_class.call(cart: order)
       expect(reservation.reload.expires_at).to be_within(1.second).of(original)
     end
   end

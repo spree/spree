@@ -315,6 +315,8 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
   describe '#metafields_attributes=' do
     let(:definition) { create(:custom_field_definition, namespace: 'custom', key: 'legacy', resource_type: 'Spree::Product') }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     # Legacy payloads name the foreign key `metafield_definition_id`, which the
     # current writer would otherwise reject and silently drop.
     it 'accepts the legacy definition key' do
@@ -324,6 +326,7 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
       }.to change { product.custom_fields.count }.by(1)
 
       expect(product.get_custom_field('custom.legacy').value).to eq('legacy value')
+      expect(Spree::Deprecation).to have_received(:warn).with(/metafields_attributes= is deprecated/)
     end
 
     it 'still accepts the current definition key' do

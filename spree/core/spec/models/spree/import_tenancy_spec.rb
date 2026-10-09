@@ -69,6 +69,7 @@ RSpec.describe 'import and export tenancy' do
 
       it 'still accepts a seller on write' do
         import = build(:product_import, user: user)
+        expect(Spree::Deprecation).to receive(:warn).with(/Import#owner= is deprecated/)
         import.owner = seller
 
         expect(import.seller).to eq(seller)

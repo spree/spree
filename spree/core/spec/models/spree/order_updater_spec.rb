@@ -5,6 +5,8 @@ module Spree
     let(:order) { create(:order) }
     let(:updater) { order.updater }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'order totals' do
       before do
         create_list(:line_item, 2, order: order, price: 10)
@@ -27,7 +29,7 @@ module Spree
         create(:fulfillment, order: order, cost: 10)
         order.reload
         updater.update_shipment_total
-        expect(order.shipment_total).to eq(10)
+        expect(order.delivery_total).to eq(10)
       end
 
       context 'with order promotion followed by line item addition' do
@@ -49,7 +51,7 @@ module Spree
         end
 
         it 'updates promotion total' do
-          expect(order.promo_total).to eq(-3)
+          expect(order.discount_total).to eq(-3)
         end
       end
 
@@ -67,7 +69,7 @@ module Spree
         expect(order.adjustment_total).to eq(2.55)
         expect(order.additional_tax_total).to eq(0.05)
         expect(order.fee_total).to eq(5)
-        expect(order.promo_total).to eq(0)
+        expect(order.discount_total).to eq(0)
       end
     end
 
@@ -78,7 +80,7 @@ module Spree
 
         order.recalculate_totals!
 
-        expect(order.item_count).to eq(2)
+        expect(order.total_quantity).to eq(2)
       end
     end
 

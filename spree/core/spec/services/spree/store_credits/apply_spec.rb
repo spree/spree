@@ -141,7 +141,7 @@ describe Spree::StoreCredits::Apply, type: :service do
 
         described_class.call(order: order.reload)
         payment = order.reload.payments.store_credits.checkout.first
-        payment.purchase!
+        Spree.payment_process_workflow.call(payment: payment, action: :purchase)
 
         expect(payment.reload).to be_completed
         expect(store_credit.reload.amount_used).to eq(300)

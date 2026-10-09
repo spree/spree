@@ -389,6 +389,7 @@ RSpec.describe Spree::Purchase::Addresses do
       let(:order) { build(:order) }
 
       before do
+        allow(Spree::Deprecation).to receive(:warn)
         order.bill_address = create(:address)
         order.ship_address = nil
       end
@@ -410,6 +411,7 @@ RSpec.describe Spree::Purchase::Addresses do
         it 'does not clone the bill address to the shipping' do
           order.valid?
           expect(order.ship_address).to be_nil
+          expect(Spree::Deprecation).to have_received(:warn).with(/use_billing is deprecated/)
         end
       end
 

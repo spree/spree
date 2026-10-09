@@ -101,7 +101,7 @@ RSpec.describe Spree::OrderStatusSubscriber do
     payment = create(:payment, order: order, cart: nil, amount: order.total, status: 'pending')
     order.update_columns(payment_status: 'none')
 
-    payment.capture!
+    Spree.payment_capture_workflow.call(payment: payment)
 
     expect(order.reload.payment_status).to eq('paid')
   end

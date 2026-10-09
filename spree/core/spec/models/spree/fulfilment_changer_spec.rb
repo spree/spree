@@ -397,7 +397,7 @@ describe Spree::FulfillmentChanger do
 
       subject
 
-      expect(desired_shipment.reload.shipping_method).to eq(shipping_method_that_should_be_selected)
+      expect(desired_shipment.reload.delivery_method).to eq(shipping_method_that_should_be_selected)
       expect(desired_shipment.reload.cost).to eq(10)
     end
 
