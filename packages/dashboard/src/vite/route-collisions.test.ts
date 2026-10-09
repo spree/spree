@@ -88,4 +88,43 @@ describe('assertNoRouteCollisions', () => {
       assertNoRouteCollisions([{ label: '@acme/nested', routesDir: dir }, other]),
     ).toThrow(/@acme\/nested/)
   })
+
+  it('catches a root page claiming a built-in shell page', () => {
+    const sources = [
+      makeSource('@spree/dashboard', { 'login.tsx': '/login' }),
+      makeSource('@acme/onboarding', { 'login.tsx': '/login' }),
+    ]
+    expect(() => assertNoRouteCollisions(sources)).toThrow(/Route "\/login"/)
+  })
+
+  it('compares the URL a route serves, ignoring pathless layouts', () => {
+    const sources = [
+      makeSource('@acme/account', { 'account.tsx': '/_authenticated/account' }),
+      makeSource('@other/account', { 'account.tsx': '/account' }),
+    ]
+    expect(() => assertNoRouteCollisions(sources)).toThrow(/Route "\/account"/)
+    expect(() => assertNoRouteCollisions(sources)).toThrow(/"\/_authenticated\/account"/)
+  })
+
+  it('catches a signed-in root index claiming the store selection page', () => {
+    const sources = [
+      makeSource('@spree/dashboard', {
+        '_authenticated.tsx': '/_authenticated',
+        'index.tsx': '/_authenticated/',
+      }),
+      makeSource('@acme/home', { 'index.tsx': '/_authenticated/' }),
+    ]
+    expect(() => assertNoRouteCollisions(sources)).toThrow(/@acme\/home/)
+  })
+
+  it('does not treat a pathless layout as a page', () => {
+    const sources = [
+      makeSource('@spree/dashboard', { 'index.tsx': '/_authenticated/' }),
+      makeSource('@acme/wizard', {
+        'wizard.tsx': '/_authenticated/_wizard',
+        'step.tsx': '/_authenticated/_wizard/step',
+      }),
+    ]
+    expect(() => assertNoRouteCollisions(sources)).not.toThrow()
+  })
 })
