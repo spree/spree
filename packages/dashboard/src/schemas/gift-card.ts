@@ -22,7 +22,7 @@ const currencyRequired = () =>
 // value is positive, never to compute or send an amount.
 const positiveAmountString = z.string().refine(
   (s) => {
-    const n = Number(s.replace(',', '.'))
+    const n = Number(s)
     return Number.isFinite(n) && n > 0
   },
   { error: amountPositive },

@@ -192,6 +192,16 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
         }, as: :json
       end
 
+      it 'refuses a dinar amount too small to send to a gateway' do
+        order_with_payment.update_columns(currency: 'KWD')
+        expect(Spree.payment_capture_workflow).not_to receive(:call)
+
+        patch :capture, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id, amount: '0.001' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_money_format')
+      end
+
       ['1,15', '1.155', '-5.00', '0', 'abc'].each do |amount|
         it "refuses #{amount.inspect} with invalid_money_format" do
           expect(Spree.payment_capture_workflow).not_to receive(:call)

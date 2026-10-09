@@ -255,6 +255,11 @@ describe Spree::Money do
         expect(described_class.parse_canonical('1.500', 'KWD')).to eq(BigDecimal('1.5'))
       end
 
+      it 'ignores trailing zeros, which carry no value' do
+        expect(described_class.parse_canonical('1000.0', 'JPY')).to eq(BigDecimal('1000'))
+        expect(described_class.parse_canonical('19.990', 'USD')).to eq(BigDecimal('19.99'))
+      end
+
       it 'allows a unit price four decimals' do
         expect(described_class.parse_canonical('0.0125', 'USD', unit_price: true)).to eq(BigDecimal('0.0125'))
         expect { described_class.parse_canonical('0.01255', 'USD', unit_price: true) }.to raise_error(Spree::Money::InvalidFormat)
@@ -309,7 +314,7 @@ describe Spree::Money do
     describe '.parse_decimal' do
       it 'reads a plain decimal, passes a number and leaves a blank empty' do
         expect(described_class.parse_decimal(' 16.50 ')).to eq(BigDecimal('16.50'))
-        expect(described_class.parse_decimal(16.5)).to eq(16.5)
+        expect(described_class.parse_decimal(16.5)).to eql(BigDecimal('16.5'))
         expect(described_class.parse_decimal('')).to be_nil
       end
 

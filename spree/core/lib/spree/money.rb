@@ -121,11 +121,11 @@ module Spree
       # never read as a wrong number the way `"1,599.99".to_d` reads 1.
       #
       # @param value [Numeric, String, nil]
-      # @return [BigDecimal, Numeric, nil]
+      # @return [BigDecimal, nil]
       # @raise [Spree::Money::InvalidFormat]
       def parse_decimal(value)
         return if value.blank?
-        return value if value.is_a?(Numeric)
+        return BigDecimal(value.to_s) if value.is_a?(Numeric)
 
         parse_canonical_decimal(value.to_s.strip)
       end
@@ -160,8 +160,9 @@ module Spree
         BigDecimal(value.to_s).to_s('F').sub(/\.?0+\z/, '')
       end
 
+      # Trailing zeros carry no value, so "1000.0" is a whole yen.
       def decimal_places(value)
-        value.include?('.') ? value.split('.').last.length : 0
+        value.include?('.') ? value.split('.').last.sub(/0+\z/, '').length : 0
       end
       private_class_method :decimal_places
 
