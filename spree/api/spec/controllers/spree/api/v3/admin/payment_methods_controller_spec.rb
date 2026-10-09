@@ -18,6 +18,14 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(json_response['data'].map { |pm| pm['id'] }).to include(payment_method.prefixed_id)
     end
 
+    it 'filters by whether a method is active' do
+      inactive = create(:check_payment_method, store: store, active: false)
+
+      get :index, params: { q: { active_eq: false } }, as: :json
+
+      expect(json_response['data'].pluck('id')).to eq([inactive.prefixed_id])
+    end
+
     it 'returns payment methods in list order' do
       create(:check_payment_method, store: store, name: 'Second method')
       third = create(:check_payment_method, store: store, name: 'Third method')

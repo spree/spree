@@ -55,8 +55,8 @@ module Spree
     scope :storefront_visible, -> { where(storefront_visible: true) }
     scope :admin_only, -> { where(storefront_visible: false) }
 
-    # Real column, so admin clients filter it directly — no ransacker needed.
-    self.whitelisted_ransackable_attributes = %w[storefront_visible]
+    # Real columns, so admin clients filter them directly — no ransacker needed.
+    self.whitelisted_ransackable_attributes = %w[storefront_visible active type]
 
     after_initialize :set_name, if: :new_record?
 

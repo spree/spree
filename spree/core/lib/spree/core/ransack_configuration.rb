@@ -6,7 +6,7 @@ module Spree
   #
   # @example Adding custom searchable fields
   #   Spree.ransack.add_attribute(Spree::Product, :seller_id)
-  #   Spree.ransack.add_scope(Spree::Product, :by_seller)
+  #   Spree.ransack.add_scope(Spree::Product, :by_seller, type: 'id')
   #   Spree.ransack.add_association(Spree::Product, :seller)
   #
   class RansackConfiguration
@@ -14,6 +14,7 @@ module Spree
       @custom_attributes = Hash.new { |h, k| h[k] = [] }
       @custom_associations = Hash.new { |h, k| h[k] = [] }
       @custom_scopes = Hash.new { |h, k| h[k] = [] }
+      @custom_scope_types = Hash.new { |h, k| h[k] = {} }
     end
 
     # Add a custom ransackable attribute to a model.
@@ -38,8 +39,11 @@ module Spree
     #
     # @param model [Class] the model class to configure (e.g., Spree::Product)
     # @param scope [String, Symbol] the scope to add
+    # @param type [String, Array<String>, Hash, nil] the arguments it takes, as
+    #   in `ransackable_scope_types` — `'boolean'` for a scope taking none
     # @return [Array<String>] the updated list of custom scopes
-    def add_scope(model, scope)
+    def add_scope(model, scope, type: nil)
+      @custom_scope_types[model.name.to_sym][scope.to_s] = type unless type.nil?
       @custom_scopes[model.name.to_sym] |= [scope.to_s]
     end
 
@@ -67,6 +71,12 @@ module Spree
       @custom_scopes[model.name.to_sym]
     end
 
+    # @param model [Class] the model class to query
+    # @return [Hash{String => Object}] argument types declared with {#add_scope}
+    def custom_scope_types_for(model)
+      @custom_scope_types[model.name.to_sym]
+    end
+
     # Reset all custom configurations. Useful for testing.
     #
     # @return [void]
@@ -74,6 +84,7 @@ module Spree
       @custom_attributes.clear
       @custom_associations.clear
       @custom_scopes.clear
+      @custom_scope_types.clear
     end
   end
 end

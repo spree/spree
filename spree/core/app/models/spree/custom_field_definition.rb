@@ -52,7 +52,7 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type storefront_visible searchable sortable]
+    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable]
     self.whitelisted_ransackable_scopes = %w[search]
 
     # API-facing token for the STI subclass name stored in the `field_type`

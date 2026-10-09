@@ -10,7 +10,7 @@ module Spree
         RANGE = (EQUALITY + %w[lt lteq gt gteq] + NULLITY).freeze
 
         BY_KIND = {
-          'text' => (EQUALITY + %w[cont not_cont start end] + NULLITY + %w[present blank]).freeze,
+          'text' => (EQUALITY + %w[cont i_cont not_cont start end] + NULLITY + %w[present blank]).freeze,
           'decimal' => RANGE,
           'integer' => RANGE,
           'date' => RANGE,
@@ -18,7 +18,7 @@ module Spree
           'enum' => (EQUALITY + NULLITY).freeze,
           'id' => (EQUALITY + NULLITY).freeze,
           'type' => (EQUALITY + NULLITY).freeze,
-          'boolean' => %w[eq true false null].freeze
+          'boolean' => (EQUALITY + %w[true false null]).freeze
         }.freeze
 
         KINDS = BY_KIND.keys.freeze

@@ -112,7 +112,8 @@ module Spree
         #   `{ 'list' => kind }` for any number of arguments
         def scopes
           @scopes ||= begin
-            declared = (model.respond_to?(:ransackable_scope_types) ? model.ransackable_scope_types : {}).stringify_keys
+            declared = (model.respond_to?(:ransackable_scope_types) ? model.ransackable_scope_types : {}).
+                       merge(Spree.ransack.custom_scope_types_for(model)).stringify_keys
             model.ransackable_scopes(audience).map(&:to_s).sort.index_with do |scope|
               normalize_scope_type(declared.fetch(scope) { inferred_scope_type(scope) })
             end
@@ -159,6 +160,7 @@ module Spree
           return 'id' if id_attribute?(attribute)
           return 'type' if type_attribute?(attribute)
           return { 'enum' => model.statuses } if attribute == 'status' && model.respond_to?(:statuses)
+          return { 'enum' => model.defined_enums[attribute].keys } if model.defined_enums.key?(attribute)
           if (values = inclusion_values(attribute))
             return { 'enum' => values }
           end

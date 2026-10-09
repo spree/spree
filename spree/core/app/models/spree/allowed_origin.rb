@@ -10,6 +10,8 @@ module Spree
 
     include Spree::SingleStoreResource
 
+    self.whitelisted_ransackable_attributes = %w[origin]
+
 
     validates :origin, presence: true
     validates :origin, uniqueness: { scope: [:store_id, *spree_base_uniqueness_scope] }
