@@ -38,6 +38,11 @@ export type ChannelFields = Filter.BooleanFilters<'active' | 'default'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'store_id'>
 
+export type ClaimFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+  & Filter.TextFilters<'number'>
+  & Filter.EnumFilters<'status', 'open' | 'approved' | 'resolved' | 'denied' | 'canceled'>
+
 export type ClaimReasonFields = Filter.BooleanFilters<'active'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -71,8 +76,18 @@ export type CompanyFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.BooleanFilters<'po_number_required'>
   & Filter.EnumFilters<'kind', 'company' | 'division'>
 
+export type CompanyInvitationFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.TextFilters<'email'>
+  & Filter.IdFilters<'id'>
+
 export type CompanyMembershipFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
+
+export type ConsentRecordFields = Filter.BooleanFilters<'accepted'>
+  & Filter.RangeFilters<'created_at' | 'recorded_at' | 'updated_at'>
+  & Filter.TextFilters<'email' | 'purpose'>
+  & Filter.IdFilters<'id'>
+  & Filter.EnumFilters<'source', 'checkout' | 'registration' | 'account' | 'admin' | 'newsletter' | 'anonymization' | 'unknown' | 'import' | 'storefront'>
 
 export type CouponCodeFields = Filter.TextFilters<'code'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -100,6 +115,12 @@ export type CustomerGroupFields = Filter.RangeFilters<'created_at' | 'updated_at
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
 
+export type DataRequestFields = Filter.RangeFilters<'completed_at' | 'created_at' | 'requested_at' | 'updated_at'>
+  & Filter.TextFilters<'email' | 'number'>
+  & Filter.IdFilters<'id'>
+  & Filter.EnumFilters<'kind', 'access' | 'erasure'>
+  & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed'>
+
 export type DeliveryFields = Filter.TextFilters<'carrier' | 'tracking_number'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -110,16 +131,39 @@ export type DeliveryMethodFields = Filter.BooleanFilters<'available_to_sellers' 
   & Filter.IdFilters<'id' | 'seller_id'>
   & Filter.TextFilters<'name'>
 
+export type DeliveryMethodRuleFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+
+export type DeliveryOriginGroupFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+  & Filter.TextFilters<'name'>
+  & Filter.RangeFilters<'position', number>
+
 export type DeliveryProfileFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
   & Filter.RangeFilters<'position', number>
+
+export type DeliveryZoneFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'delivery_profile_id' | 'id'>
+  & Filter.TextFilters<'name'>
+
+export type DigitalAssetFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+
+export type DigitalLinkFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
 
 export type DiscountFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
 
 export type EmailTemplateRevisionFields = Filter.RangeFilters<'created_at'>
   & Filter.IdFilters<'id'>
+
+export type ExchangeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+  & Filter.TextFilters<'number'>
+  & Filter.EnumFilters<'status', 'requested' | 'approved' | 'received' | 'fulfilled' | 'canceled'>
 
 export type ExportFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'seller_id' | 'type'>
@@ -129,6 +173,9 @@ export type ExportFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type ExternalReferenceFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.TextFilters<'external_id' | 'system'>
   & Filter.IdFilters<'id' | 'resource_type'>
+
+export type FeeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
 
 export type FulfillmentFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -287,6 +334,11 @@ export type RefundReasonFields = Filter.BooleanFilters<'active'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
 
+export type ReturnFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+  & Filter.TextFilters<'number'>
+  & Filter.EnumFilters<'status', 'requested' | 'approved' | 'received' | 'refunded' | 'canceled'>
+
 export type ReturnReasonFields = Filter.BooleanFilters<'active'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -296,15 +348,35 @@ export type RoleFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
 
+export type SavedReportFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+  & Filter.TextFilters<'name'>
+  & Filter.BooleanFilters<'seeded'>
+
 export type SellerFields = Filter.TextFilters<'contact_email' | 'name'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.EnumFilters<'status', 'pending' | 'invited' | 'canceled' | 'onboarding' | 'ready_for_review' | 'approved' | 'rejected' | 'suspended'>
 
+export type SellerPayoutFields = Filter.RangeFilters<'amount' | 'created_at' | 'period_end' | 'period_start' | 'updated_at'>
+  & Filter.TextFilters<'currency' | 'provider' | 'reference'>
+  & Filter.IdFilters<'id' | 'seller_id'>
+  & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
+
 export type SellerRequirementFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
   & Filter.RangeFilters<'position', number>
+
+export type SellerRequirementSubmissionFields = Filter.RangeFilters<'created_at' | 'reviewed_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+  & Filter.EnumFilters<'status', 'pending' | 'accepted' | 'rejected' | 'waived'>
+
+export type SellerTransferFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
+  & Filter.TextFilters<'currency' | 'provider' | 'reference'>
+  & Filter.IdFilters<'id' | 'order_id' | 'payout_id' | 'seller_id'>
+  & Filter.EnumFilters<'kind', 'earning' | 'refund_reversal'>
+  & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
 
 export type ShippingLabelFields = Filter.TextFilters<'carrier' | 'tracking_number'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -330,6 +402,10 @@ export type StockMovementFields = Filter.RangeFilters<'created_at' | 'unit_cost'
 export type StockReceiptFields = Filter.RangeFilters<'created_at' | 'received_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'receivable_id' | 'receivable_type' | 'received_by_id' | 'received_by_type'>
   & Filter.TextFilters<'number' | 'reference'>
+
+export type StockReservationFields = Filter.RangeFilters<'created_at' | 'expires_at' | 'updated_at'>
+  & Filter.IdFilters<'id' | 'line_item_id' | 'order_id' | 'stock_item_id' | 'stock_level_id'>
+  & Filter.RangeFilters<'quantity', number>
 
 export type StockTransferFields = Filter.RangeFilters<'closed_short_at' | 'created_at' | 'received_at' | 'shipped_at' | 'updated_at'>
   & Filter.IdFilters<'destination_location_id' | 'id' | 'source_location_id'>
@@ -575,6 +651,31 @@ export type ChannelFilters = ChannelFields
 export type ChannelSort = Filter.SortKey<'active' | 'code' | 'created_at' | 'default' | 'id' | 'name' | 'store_id' | 'updated_at' | (keyof ChannelSortExtensions & string)>
 
 /**
+ * Filters your app adds to Claim lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ClaimFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface ClaimFilterExtensions {}
+
+/** Sort fields your app adds to Claim lists, as keys: `{ erp_id: true }`. */
+export interface ClaimSortExtensions {}
+
+export type ClaimFilters = ClaimFields
+  & Filter.Prefixed<'order_', OrderFields & Filter.Prefixed<'bill_address_', AddressFields> & Filter.Prefixed<'channel_', ChannelFields> & Filter.Prefixed<'customer_', CustomerFields> & Filter.Prefixed<'fulfillments_', FulfillmentFields> & Filter.Prefixed<'line_items_', LineItemFields> & Filter.Prefixed<'order_group_', OrderGroupFields> & Filter.Prefixed<'promotions_', PromotionFields> & Filter.Prefixed<'seller_', SellerFields> & Filter.Prefixed<'ship_address_', AddressFields> & Filter.Prefixed<'shipments_', FulfillmentFields> & Filter.Prefixed<'store_', StoreFields> & Filter.Prefixed<'tags_', TagFields>>
+  & Filter.Prefixed<'reason_', ClaimReasonFields>
+  & {
+    search?: string
+  }
+  & Filter.OrFilters
+  & ClaimFilterExtensions
+
+export type ClaimSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'status' | 'updated_at' | (keyof ClaimSortExtensions & string)>
+
+/**
  * Filters your app adds to ClaimReason lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -691,6 +792,26 @@ export type CompanyFilters = CompanyFields
 export type CompanySort = Filter.SortKey<'created_at' | 'id' | 'kind' | 'name' | 'parent_id' | 'po_number_required' | 'updated_at' | (keyof CompanySortExtensions & string)>
 
 /**
+ * Filters your app adds to CompanyInvitation lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CompanyInvitationFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface CompanyInvitationFilterExtensions {}
+
+/** Sort fields your app adds to CompanyInvitation lists, as keys: `{ erp_id: true }`. */
+export interface CompanyInvitationSortExtensions {}
+
+export type CompanyInvitationFilters = CompanyInvitationFields
+  & Filter.OrFilters
+  & CompanyInvitationFilterExtensions
+
+export type CompanyInvitationSort = Filter.SortKey<'created_at' | 'email' | 'id' | 'updated_at' | (keyof CompanyInvitationSortExtensions & string)>
+
+/**
  * Filters your app adds to CompanyMembership lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -709,6 +830,26 @@ export type CompanyMembershipFilters = CompanyMembershipFields
   & CompanyMembershipFilterExtensions
 
 export type CompanyMembershipSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof CompanyMembershipSortExtensions & string)>
+
+/**
+ * Filters your app adds to ConsentRecord lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ConsentRecordFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface ConsentRecordFilterExtensions {}
+
+/** Sort fields your app adds to ConsentRecord lists, as keys: `{ erp_id: true }`. */
+export interface ConsentRecordSortExtensions {}
+
+export type ConsentRecordFilters = ConsentRecordFields
+  & Filter.OrFilters
+  & ConsentRecordFilterExtensions
+
+export type ConsentRecordSort = Filter.SortKey<'accepted' | 'created_at' | 'email' | 'id' | 'purpose' | 'recorded_at' | 'source' | 'updated_at' | (keyof ConsentRecordSortExtensions & string)>
 
 /**
  * Filters your app adds to CouponCode lists. Generate them with `spree filters types`,
@@ -851,6 +992,31 @@ export type CustomFieldDefinitionFilters = CustomFieldDefinitionFields
 export type CustomFieldDefinitionSort = Filter.SortKey<'created_at' | 'field_type' | 'id' | 'key' | 'label' | 'namespace' | 'resource_type' | 'searchable' | 'sortable' | 'storefront_visible' | 'updated_at' | (keyof CustomFieldDefinitionSortExtensions & string)>
 
 /**
+ * Filters your app adds to DataRequest lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DataRequestFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface DataRequestFilterExtensions {}
+
+/** Sort fields your app adds to DataRequest lists, as keys: `{ erp_id: true }`. */
+export interface DataRequestSortExtensions {}
+
+export type DataRequestFilters = DataRequestFields
+  & {
+    access?: boolean
+    erasure?: boolean
+    in_progress?: boolean
+  }
+  & Filter.OrFilters
+  & DataRequestFilterExtensions
+
+export type DataRequestSort = Filter.SortKey<'completed_at' | 'created_at' | 'email' | 'id' | 'kind' | 'number' | 'requested_at' | 'status' | 'updated_at' | (keyof DataRequestSortExtensions & string)>
+
+/**
  * Filters your app adds to Delivery lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -895,6 +1061,46 @@ export type DeliveryMethodFilters = DeliveryMethodFields
 export type DeliveryMethodSort = Filter.SortKey<'available_to_sellers' | 'created_at' | 'id' | 'name' | 'seller_id' | 'storefront_visible' | 'updated_at' | (keyof DeliveryMethodSortExtensions & string)>
 
 /**
+ * Filters your app adds to DeliveryMethodRule lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DeliveryMethodRuleFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface DeliveryMethodRuleFilterExtensions {}
+
+/** Sort fields your app adds to DeliveryMethodRule lists, as keys: `{ erp_id: true }`. */
+export interface DeliveryMethodRuleSortExtensions {}
+
+export type DeliveryMethodRuleFilters = DeliveryMethodRuleFields
+  & Filter.OrFilters
+  & DeliveryMethodRuleFilterExtensions
+
+export type DeliveryMethodRuleSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof DeliveryMethodRuleSortExtensions & string)>
+
+/**
+ * Filters your app adds to DeliveryOriginGroup lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DeliveryOriginGroupFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface DeliveryOriginGroupFilterExtensions {}
+
+/** Sort fields your app adds to DeliveryOriginGroup lists, as keys: `{ erp_id: true }`. */
+export interface DeliveryOriginGroupSortExtensions {}
+
+export type DeliveryOriginGroupFilters = DeliveryOriginGroupFields
+  & Filter.OrFilters
+  & DeliveryOriginGroupFilterExtensions
+
+export type DeliveryOriginGroupSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'position' | 'updated_at' | (keyof DeliveryOriginGroupSortExtensions & string)>
+
+/**
  * Filters your app adds to DeliveryProfile lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -916,6 +1122,66 @@ export type DeliveryProfileFilters = DeliveryProfileFields
   & DeliveryProfileFilterExtensions
 
 export type DeliveryProfileSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'position' | 'updated_at' | (keyof DeliveryProfileSortExtensions & string)>
+
+/**
+ * Filters your app adds to DeliveryZone lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DeliveryZoneFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface DeliveryZoneFilterExtensions {}
+
+/** Sort fields your app adds to DeliveryZone lists, as keys: `{ erp_id: true }`. */
+export interface DeliveryZoneSortExtensions {}
+
+export type DeliveryZoneFilters = DeliveryZoneFields
+  & Filter.OrFilters
+  & DeliveryZoneFilterExtensions
+
+export type DeliveryZoneSort = Filter.SortKey<'created_at' | 'delivery_profile_id' | 'id' | 'name' | 'updated_at' | (keyof DeliveryZoneSortExtensions & string)>
+
+/**
+ * Filters your app adds to DigitalAsset lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DigitalAssetFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface DigitalAssetFilterExtensions {}
+
+/** Sort fields your app adds to DigitalAsset lists, as keys: `{ erp_id: true }`. */
+export interface DigitalAssetSortExtensions {}
+
+export type DigitalAssetFilters = DigitalAssetFields
+  & Filter.OrFilters
+  & DigitalAssetFilterExtensions
+
+export type DigitalAssetSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof DigitalAssetSortExtensions & string)>
+
+/**
+ * Filters your app adds to DigitalLink lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DigitalLinkFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface DigitalLinkFilterExtensions {}
+
+/** Sort fields your app adds to DigitalLink lists, as keys: `{ erp_id: true }`. */
+export interface DigitalLinkSortExtensions {}
+
+export type DigitalLinkFilters = DigitalLinkFields
+  & Filter.OrFilters
+  & DigitalLinkFilterExtensions
+
+export type DigitalLinkSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof DigitalLinkSortExtensions & string)>
 
 /**
  * Filters your app adds to Discount lists. Generate them with `spree filters types`,
@@ -958,6 +1224,31 @@ export type EmailTemplateRevisionFilters = EmailTemplateRevisionFields
 export type EmailTemplateRevisionSort = Filter.SortKey<'created_at' | 'id' | (keyof EmailTemplateRevisionSortExtensions & string)>
 
 /**
+ * Filters your app adds to Exchange lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ExchangeFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface ExchangeFilterExtensions {}
+
+/** Sort fields your app adds to Exchange lists, as keys: `{ erp_id: true }`. */
+export interface ExchangeSortExtensions {}
+
+export type ExchangeFilters = ExchangeFields
+  & Filter.Prefixed<'order_', OrderFields & Filter.Prefixed<'bill_address_', AddressFields> & Filter.Prefixed<'channel_', ChannelFields> & Filter.Prefixed<'customer_', CustomerFields> & Filter.Prefixed<'fulfillments_', FulfillmentFields> & Filter.Prefixed<'line_items_', LineItemFields> & Filter.Prefixed<'order_group_', OrderGroupFields> & Filter.Prefixed<'promotions_', PromotionFields> & Filter.Prefixed<'seller_', SellerFields> & Filter.Prefixed<'ship_address_', AddressFields> & Filter.Prefixed<'shipments_', FulfillmentFields> & Filter.Prefixed<'store_', StoreFields> & Filter.Prefixed<'tags_', TagFields>>
+  & Filter.Prefixed<'reason_', ReturnReasonFields>
+  & {
+    search?: string
+  }
+  & Filter.OrFilters
+  & ExchangeFilterExtensions
+
+export type ExchangeSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'status' | 'updated_at' | (keyof ExchangeSortExtensions & string)>
+
+/**
  * Filters your app adds to Export lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -977,6 +1268,26 @@ export type ExportFilters = ExportFields
   & ExportFilterExtensions
 
 export type ExportSort = Filter.SortKey<'created_at' | 'format' | 'id' | 'number' | 'seller_id' | 'type' | 'updated_at' | (keyof ExportSortExtensions & string)>
+
+/**
+ * Filters your app adds to Fee lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface FeeFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface FeeFilterExtensions {}
+
+/** Sort fields your app adds to Fee lists, as keys: `{ erp_id: true }`. */
+export interface FeeSortExtensions {}
+
+export type FeeFilters = FeeFields
+  & Filter.OrFilters
+  & FeeFilterExtensions
+
+export type FeeSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof FeeSortExtensions & string)>
 
 /**
  * Filters your app adds to Fulfillment lists. Generate them with `spree filters types`,
@@ -1288,6 +1599,28 @@ export type OrderCancellationReasonFilters = OrderCancellationReasonFields
 export type OrderCancellationReasonSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at' | (keyof OrderCancellationReasonSortExtensions & string)>
 
 /**
+ * Filters your app adds to OrderGroup lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface OrderGroupFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface OrderGroupFilterExtensions {}
+
+/** Sort fields your app adds to OrderGroup lists, as keys: `{ erp_id: true }`. */
+export interface OrderGroupSortExtensions {}
+
+export type OrderGroupFilters = OrderGroupFields
+  & Filter.Prefixed<'customer_', CustomerFields & Filter.Prefixed<'addresses_', AddressFields> & Filter.Prefixed<'bill_address_', AddressFields> & Filter.Prefixed<'customer_groups_', CustomerGroupFields> & Filter.Prefixed<'orders_', OrderFields> & Filter.Prefixed<'ship_address_', AddressFields> & Filter.Prefixed<'spree_roles_', RoleFields> & Filter.Prefixed<'tags_', TagFields>>
+  & Filter.Prefixed<'orders_', OrderFields & Filter.Prefixed<'bill_address_', AddressFields> & Filter.Prefixed<'channel_', ChannelFields> & Filter.Prefixed<'customer_', CustomerFields> & Filter.Prefixed<'fulfillments_', FulfillmentFields> & Filter.Prefixed<'line_items_', LineItemFields> & Filter.Prefixed<'order_group_', OrderGroupFields> & Filter.Prefixed<'promotions_', PromotionFields> & Filter.Prefixed<'seller_', SellerFields> & Filter.Prefixed<'ship_address_', AddressFields> & Filter.Prefixed<'shipments_', FulfillmentFields> & Filter.Prefixed<'store_', StoreFields> & Filter.Prefixed<'tags_', TagFields>>
+  & Filter.OrFilters
+  & OrderGroupFilterExtensions
+
+export type OrderGroupSort = Filter.SortKey<'created_at' | 'currency' | 'email' | 'id' | 'number' | 'updated_at' | (keyof OrderGroupSortExtensions & string)>
+
+/**
  * Filters your app adds to OrderRoutingRule lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -1527,7 +1860,7 @@ export type ProductSearchFilters = ProductFields
     with_option_value_ids?: string | string[]
   }
   & Filter.OrFilters
-  & Filter.CustomFieldFilters
+  & Filter.CustomFieldValueFilters
   & ProductFilterExtensions
 
 export type ProductSearchSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | (keyof ProductSortExtensions & string) | `cf_${string}`>
@@ -1691,6 +2024,31 @@ export type RefundReasonFilters = RefundReasonFields
 export type RefundReasonSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at' | (keyof RefundReasonSortExtensions & string)>
 
 /**
+ * Filters your app adds to Return lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ReturnFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface ReturnFilterExtensions {}
+
+/** Sort fields your app adds to Return lists, as keys: `{ erp_id: true }`. */
+export interface ReturnSortExtensions {}
+
+export type ReturnFilters = ReturnFields
+  & Filter.Prefixed<'order_', OrderFields & Filter.Prefixed<'bill_address_', AddressFields> & Filter.Prefixed<'channel_', ChannelFields> & Filter.Prefixed<'customer_', CustomerFields> & Filter.Prefixed<'fulfillments_', FulfillmentFields> & Filter.Prefixed<'line_items_', LineItemFields> & Filter.Prefixed<'order_group_', OrderGroupFields> & Filter.Prefixed<'promotions_', PromotionFields> & Filter.Prefixed<'seller_', SellerFields> & Filter.Prefixed<'ship_address_', AddressFields> & Filter.Prefixed<'shipments_', FulfillmentFields> & Filter.Prefixed<'store_', StoreFields> & Filter.Prefixed<'tags_', TagFields>>
+  & Filter.Prefixed<'reason_', ReturnReasonFields>
+  & {
+    search?: string
+  }
+  & Filter.OrFilters
+  & ReturnFilterExtensions
+
+export type ReturnSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'status' | 'updated_at' | (keyof ReturnSortExtensions & string)>
+
+/**
  * Filters your app adds to ReturnReason lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -1731,6 +2089,29 @@ export type RoleFilters = RoleFields
 export type RoleSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at' | (keyof RoleSortExtensions & string)>
 
 /**
+ * Filters your app adds to SavedReport lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface SavedReportFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface SavedReportFilterExtensions {}
+
+/** Sort fields your app adds to SavedReport lists, as keys: `{ erp_id: true }`. */
+export interface SavedReportSortExtensions {}
+
+export type SavedReportFilters = SavedReportFields
+  & {
+    search?: string
+  }
+  & Filter.OrFilters
+  & SavedReportFilterExtensions
+
+export type SavedReportSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'seeded' | 'updated_at' | (keyof SavedReportSortExtensions & string)>
+
+/**
  * Filters your app adds to Seller lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -1754,6 +2135,30 @@ export type SellerFilters = SellerFields
 export type SellerSort = Filter.SortKey<'contact_email' | 'created_at' | 'id' | 'name' | 'status' | 'updated_at' | (keyof SellerSortExtensions & string)>
 
 /**
+ * Filters your app adds to SellerPayout lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface SellerPayoutFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface SellerPayoutFilterExtensions {}
+
+/** Sort fields your app adds to SellerPayout lists, as keys: `{ erp_id: true }`. */
+export interface SellerPayoutSortExtensions {}
+
+export type SellerPayoutFilters = SellerPayoutFields
+  & Filter.Prefixed<'seller_', SellerFields>
+  & {
+    search?: string
+  }
+  & Filter.OrFilters
+  & SellerPayoutFilterExtensions
+
+export type SellerPayoutSort = Filter.SortKey<'amount' | 'created_at' | 'currency' | 'id' | 'period_end' | 'period_start' | 'provider' | 'reference' | 'seller_id' | 'status' | 'updated_at' | (keyof SellerPayoutSortExtensions & string)>
+
+/**
  * Filters your app adds to SellerRequirement lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -1775,6 +2180,54 @@ export type SellerRequirementFilters = SellerRequirementFields
   & SellerRequirementFilterExtensions
 
 export type SellerRequirementSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'position' | 'updated_at' | (keyof SellerRequirementSortExtensions & string)>
+
+/**
+ * Filters your app adds to SellerRequirementSubmission lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface SellerRequirementSubmissionFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface SellerRequirementSubmissionFilterExtensions {}
+
+/** Sort fields your app adds to SellerRequirementSubmission lists, as keys: `{ erp_id: true }`. */
+export interface SellerRequirementSubmissionSortExtensions {}
+
+export type SellerRequirementSubmissionFilters = SellerRequirementSubmissionFields
+  & Filter.Prefixed<'requirement_', SellerRequirementFields>
+  & Filter.Prefixed<'seller_', SellerFields>
+  & Filter.OrFilters
+  & SellerRequirementSubmissionFilterExtensions
+
+export type SellerRequirementSubmissionSort = Filter.SortKey<'created_at' | 'id' | 'reviewed_at' | 'status' | 'updated_at' | (keyof SellerRequirementSubmissionSortExtensions & string)>
+
+/**
+ * Filters your app adds to SellerTransfer lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface SellerTransferFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface SellerTransferFilterExtensions {}
+
+/** Sort fields your app adds to SellerTransfer lists, as keys: `{ erp_id: true }`. */
+export interface SellerTransferSortExtensions {}
+
+export type SellerTransferFilters = SellerTransferFields
+  & Filter.Prefixed<'payout_', SellerPayoutFields & Filter.Prefixed<'seller_', SellerFields>>
+  & Filter.Prefixed<'refund_', RefundFields>
+  & Filter.Prefixed<'seller_', SellerFields>
+  & {
+    search?: string
+  }
+  & Filter.OrFilters
+  & SellerTransferFilterExtensions
+
+export type SellerTransferSort = Filter.SortKey<'amount' | 'created_at' | 'currency' | 'id' | 'kind' | 'order_id' | 'payout_id' | 'provider' | 'reference' | 'seller_id' | 'status' | 'updated_at' | (keyof SellerTransferSortExtensions & string)>
 
 /**
  * Filters your app adds to ShippingLabel lists. Generate them with `spree filters types`,
@@ -1888,6 +2341,29 @@ export type StockReceiptFilters = StockReceiptFields
 export type StockReceiptSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'receivable_id' | 'receivable_type' | 'received_at' | 'received_by_id' | 'received_by_type' | 'reference' | 'updated_at' | (keyof StockReceiptSortExtensions & string)>
 
 /**
+ * Filters your app adds to StockReservation lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface StockReservationFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface StockReservationFilterExtensions {}
+
+/** Sort fields your app adds to StockReservation lists, as keys: `{ erp_id: true }`. */
+export interface StockReservationSortExtensions {}
+
+export type StockReservationFilters = StockReservationFields
+  & Filter.Prefixed<'line_item_', LineItemFields & Filter.Prefixed<'order_', OrderFields> & Filter.Prefixed<'tax_category_', TaxCategoryFields> & Filter.Prefixed<'variant_', VariantFields>>
+  & Filter.Prefixed<'order_', OrderFields & Filter.Prefixed<'bill_address_', AddressFields> & Filter.Prefixed<'channel_', ChannelFields> & Filter.Prefixed<'customer_', CustomerFields> & Filter.Prefixed<'fulfillments_', FulfillmentFields> & Filter.Prefixed<'line_items_', LineItemFields> & Filter.Prefixed<'order_group_', OrderGroupFields> & Filter.Prefixed<'promotions_', PromotionFields> & Filter.Prefixed<'seller_', SellerFields> & Filter.Prefixed<'ship_address_', AddressFields> & Filter.Prefixed<'shipments_', FulfillmentFields> & Filter.Prefixed<'store_', StoreFields> & Filter.Prefixed<'tags_', TagFields>>
+  & Filter.Prefixed<'stock_level_', StockLevelFields & Filter.Prefixed<'stock_location_', StockLocationFields> & Filter.Prefixed<'variant_', VariantFields>>
+  & Filter.OrFilters
+  & StockReservationFilterExtensions
+
+export type StockReservationSort = Filter.SortKey<'created_at' | 'expires_at' | 'id' | 'line_item_id' | 'order_id' | 'quantity' | 'stock_item_id' | 'stock_level_id' | 'updated_at' | (keyof StockReservationSortExtensions & string)>
+
+/**
  * Filters your app adds to StockTransfer lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -1984,6 +2460,29 @@ export type SupplierFilters = SupplierFields
   & SupplierFilterExtensions
 
 export type SupplierSort = Filter.SortKey<'city' | 'contact_name' | 'country_code' | 'created_at' | 'email' | 'id' | 'name' | 'phone' | 'updated_at' | (keyof SupplierSortExtensions & string)>
+
+/**
+ * Filters your app adds to TaxCategory lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface TaxCategoryFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface TaxCategoryFilterExtensions {}
+
+/** Sort fields your app adds to TaxCategory lists, as keys: `{ erp_id: true }`. */
+export interface TaxCategorySortExtensions {}
+
+export type TaxCategoryFilters = TaxCategoryFields
+  & {
+    search?: string
+  }
+  & Filter.OrFilters
+  & TaxCategoryFilterExtensions
+
+export type TaxCategorySort = Filter.SortKey<'created_at' | 'id' | 'is_default' | 'name' | 'tax_code' | 'updated_at' | (keyof TaxCategorySortExtensions & string)>
 
 /**
  * Filters your app adds to TaxExemptionCertificate lists. Generate them with `spree filters types`,

@@ -95,4 +95,56 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
 
     end
   end
+
+  path '/api/v3/admin/consent_records' do
+    get 'List consent records' do
+      tags 'Customers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns the consents customers gave or withdrew, newest first, as evidence of what each one agreed to and when.'
+      admin_scope :read, :customers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'consent records found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:consent_record) { create(:consent_record, store: store, owner: customer) }
+
+        schema SwaggerSchemaHelpers.paginated('ConsentRecord')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(consent_record.prefixed_id)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/data_requests' do
+    get 'List data requests' do
+      tags 'Customers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns the requests customers made to export or erase their personal data, newest first.'
+      admin_scope :read, :customers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'data requests found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:data_request) { create(:data_request, store: store, customer: customer) }
+
+        schema SwaggerSchemaHelpers.paginated('DataRequest')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(data_request.prefixed_id)
+        end
+      end
+    end
+  end
 end

@@ -19,7 +19,11 @@ import type {
   Export,
   Fulfillment,
   Import,
+  ImportFilters,
   ImportRow,
+  ImportRowFilters,
+  ImportRowSort,
+  ImportSort,
   Invitation,
   InvitationAcceptanceLink,
   Order,
@@ -1334,7 +1338,7 @@ export class SellerClient {
    */
   readonly imports = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ImportFilters, ImportSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Import>> =>
       this.request<PaginatedResponse<Import>>('GET', '/imports', {
@@ -1367,7 +1371,7 @@ export class SellerClient {
     rows: {
       list: (
         importId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ImportRowFilters, ImportRowSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<ImportRow>> =>
         this.request<PaginatedResponse<ImportRow>>('GET', `/imports/${importId}/rows`, {

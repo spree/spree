@@ -288,35 +288,31 @@ Every entry is a filter any caller of that API can run. Keep back-office fields 
 
 The SDKs type each `list()` call with the filters Spree itself declares. A filter your app adds works in the API at once, but TypeScript rejects it until it is declared, because the published types cannot know about it. There are three ways to use it.
 
-**Generate the declarations (recommended).** This reads your app's filters, the ones Spree declares and the ones you added, and writes a declaration file for one SDK. Each frontend uses its own SDK, so generate a file for each app in your project, from the project root:
-
-| App | SDK | `--api` |
-|---|---|---|
-| `apps/storefront` | `@spree/sdk` | `store` |
-| `apps/dashboard` | `@spree/admin-sdk` | `admin` |
-| `apps/seller-dashboard` (marketplaces) | `@spree/seller-sdk` | `seller` |
+**Generate the declarations (recommended).** This reads your app's filters, the ones Spree declares and the ones you added, and writes a declaration file into each app in your project, for the SDK that app uses. Run it from the project root:
 
 <Tabs>
   <Tab title="Spree CLI">
     ```bash
-    spree filters types --api store --out apps/storefront/src/types/spree-filters.d.ts
-    spree filters types --api admin --out apps/dashboard/src/types/spree-filters.d.ts
-    spree filters types --api seller --out apps/seller-dashboard/src/types/spree-filters.d.ts
+    spree filters types
     ```
   </Tab>
   <Tab title="Without CLI">
     ```bash
-    cd server
-    bin/rails spree:api:filter_tables > ../filter-tables.json
-    cd ..
-    npx @spree/cli filters types --from filter-tables.json --api store --out apps/storefront/src/types/spree-filters.d.ts
-    npx @spree/cli filters types --from filter-tables.json --api admin --out apps/dashboard/src/types/spree-filters.d.ts
-    npx @spree/cli filters types --from filter-tables.json --api seller --out apps/seller-dashboard/src/types/spree-filters.d.ts
+    (cd server && bin/rails spree:api:filter_tables > ../filter-tables.json)
+    npx @spree/cli filters types --from filter-tables.json
     ```
   </Tab>
 </Tabs>
 
-Run them again after you add or change a filter, and commit the generated files with the app code that uses them. Match `--api` to the app: a storefront file generated with `--api admin` compiles, but declares the Admin API's filters. After that, every `list()` call accepts and autocompletes your filters and sort fields, and a misspelled one is still a compile error.
+It writes `src/types/spree-filters.d.ts` into each app that exists:
+
+| App | SDK |
+|---|---|
+| `apps/storefront` | `@spree/sdk` |
+| `apps/dashboard` | `@spree/admin-sdk` |
+| `apps/seller-dashboard` (marketplaces) | `@spree/seller-sdk` |
+
+Run it again after you add or change a filter, and commit the generated files with the app code that uses them. For an app outside this layout, write one file for the SDK it uses: `spree filters types --api store --out path/to/spree-filters.d.ts`. After that, every `list()` call accepts and autocompletes your filters and sort fields, and a misspelled one is still a compile error.
 
 **Send it unchecked.** Filters inside `q` are sent as given, without type checking or autocomplete:
 

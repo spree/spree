@@ -253,15 +253,13 @@ spree generate migration AddPositionToSpreeBrands position:integer  # Rails buil
 
 ### `spree filters types`
 
-Generate TypeScript declarations for your app's list filters, so the SDKs accept and autocomplete the filters and sort fields your app adds. It reads them from the running app and writes one file per run, so run it once for each app that uses an SDK, and again after you change a filter.
+Generate TypeScript declarations for your app's list filters, so the SDKs accept and autocomplete the filters and sort fields your app adds. It reads them from the running app and writes `src/types/spree-filters.d.ts` into each app under `apps/` (storefront, dashboard, seller panel), for the SDK that app uses. Run it again after you change a filter.
 
 ```bash
-spree filters types --api store --out apps/storefront/src/types/spree-filters.d.ts         # @spree/sdk
-spree filters types --api admin --out apps/dashboard/src/types/spree-filters.d.ts          # @spree/admin-sdk
-spree filters types --api seller --out apps/seller-dashboard/src/types/spree-filters.d.ts  # @spree/seller-sdk
+spree filters types                                                    # every app under apps/
+spree filters types --api store --out ../my-storefront/src/types/spree-filters.d.ts   # one app elsewhere
+spree filters types --from filter-tables.json                         # from `bin/rails spree:api:filter_tables` output
 ```
-
-`--from <file>` reads the tables from `bin/rails spree:api:filter_tables` output instead of the running app.
 
 See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript).
 

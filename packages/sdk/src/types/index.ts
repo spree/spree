@@ -325,7 +325,7 @@ export type CompanyAddressParams = AddressParams & {
 // that extends them (see `spree filters types`).
 export type {
   BooleanFilters,
-  CustomFieldFilters,
+  CustomFieldValueFilters,
   EnumFilters,
   IdFilters,
   OrFilters,

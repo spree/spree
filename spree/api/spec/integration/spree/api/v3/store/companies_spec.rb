@@ -174,6 +174,35 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
     end
   end
 
+  path '/api/v3/store/companies/{company_id}/invitations' do
+    parameter name: :company_id, in: :path, type: :string, required: true, description: 'Company node ID (comp_...)'
+
+    get 'List pending company invitations' do
+      tags 'Companies'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'The invitations to this node that nobody has accepted or revoked yet. Requires standing over the node.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'invitations listed' do
+        let!(:membership) { create(:company_membership, company: company, customer: user) }
+        let!(:invitation) { create(:company_invitation, company: company, email: 'colleague@acme.test') }
+        let(:company_id) { company.prefixed_id }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        schema SwaggerSchemaHelpers.paginated('CompanyInvitation')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['data'].map { |row| row['id'] }).to eq([invitation.prefixed_id])
+        end
+      end
+    end
+  end
+
   path '/api/v3/store/companies/{company_id}/addresses' do
     parameter name: :company_id, in: :path, type: :string, required: true, description: 'Company node ID (comp_...)'
 

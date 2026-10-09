@@ -69,7 +69,7 @@ export type Prefixed<P extends string, T> = { [Key in keyof T as `${P}${Key & st
 export type OrFilters = { [key: `${string}_or_${string}`]: string | string[] | boolean | undefined }
 
 /** The store's searchable custom fields (`cf_<namespace>_<key>_<predicate>`), which vary per store. */
-export type CustomFieldFilters = {
+export type CustomFieldValueFilters = {
   [key: `cf_${string}`]: string | number | boolean | string[] | undefined
 }
 

@@ -575,8 +575,8 @@ paths:
                   is_child: false
                   is_leaf: false
                 - id: ctg_gbHJdmfrXB
-                  name: category_3
-                  permalink: catalog/category-3
+                  name: category_4
+                  permalink: catalog/category-4
                   position: 0
                   depth: 1
                   meta_title:
@@ -592,8 +592,8 @@ paths:
                   is_child: true
                   is_leaf: false
                 - id: ctg_EfhxLZ9ck8
-                  name: category_4
-                  permalink: catalog/category-3/category-4
+                  name: category_5
+                  permalink: catalog/category-4/category-5
                   position: 0
                   depth: 2
                   meta_title:
@@ -692,8 +692,8 @@ paths:
             application/json:
               example:
                 id: ctg_gbHJdmfrXB
-                name: category_12
-                permalink: catalog/category-12
+                name: category_13
+                permalink: catalog/category-13
                 position: 0
                 depth: 1
                 meta_title:
@@ -1128,8 +1128,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2516979
-                  slug: product-2516979
+                  name: Product 2706979
+                  slug: product-2706979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1419,8 +1419,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2989085
-                  slug: product-2989085
+                  name: Product 3189085
+                  slug: product-3189085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1449,8 +1449,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 2998209
-                  slug: product-2998209
+                  name: Product 3198209
+                  slug: product-3198209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1577,8 +1577,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3266885
-                slug: product-3266885
+                name: Product 3466885
+                slug: product-3466885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1865,7 +1865,7 @@ paths:
                   options:
                   - id: ctg_gbHJdmfrXB
                     name: Shirts
-                    permalink: category-34/shirts
+                    permalink: category-35/shirts
                     count: 2
                 sort_options:
                 - id: manual
@@ -2162,8 +2162,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 225715
-                    slug: product-225715
+                    name: Product 243715
+                    slug: product-243715
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2283,8 +2283,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2262171
-                    slug: product-2262171
+                    name: Product 2442171
+                    slug: product-2442171
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2596,7 +2596,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 230307 was removed because it was sold out
+                  message: Product 248307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2838,8 +2838,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2313263
-                  slug: product-2313263
+                  name: Product 2493263
+                  slug: product-2493263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3126,8 +3126,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2338992
-                  slug: product-2338992
+                  name: Product 2518992
+                  slug: product-2518992
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3158,7 +3158,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 255 Lovely Street
+                  address1: 283 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3180,7 +3180,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 254 Lovely Street
+                  address1: 282 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3341,8 +3341,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2364794
-                  slug: product-2364794
+                  name: Product 2544794
+                  slug: product-2544794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3396,8 +3396,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 113
-                    code: UPS_GROUND_130
+                    name: UPS Ground 127
+                    code: UPS_GROUND_144
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -3418,7 +3418,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 113
+                    name: UPS Ground 127
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -3437,8 +3437,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 113
-                      code: UPS_GROUND_130
+                      name: UPS Ground 127
+                      code: UPS_GROUND_144
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -3476,7 +3476,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 261 Lovely Street
+                  address1: 289 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3498,7 +3498,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 260 Lovely Street
+                  address1: 288 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3683,8 +3683,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2652614
-                  slug: product-2652614
+                  name: Product 2852614
+                  slug: product-2852614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3884,8 +3884,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2663461
-                  slug: product-2663461
+                  name: Product 2863461
+                  slug: product-2863461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4073,8 +4073,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2688182
-                  slug: product-2688182
+                  name: Product 2888182
+                  slug: product-2888182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4128,8 +4128,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 130
-                    code: UPS_GROUND_148
+                    name: UPS Ground 146
+                    code: UPS_GROUND_164
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -4150,7 +4150,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 130
+                    name: UPS Ground 146
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -4169,8 +4169,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 130
-                      code: UPS_GROUND_148
+                      name: UPS Ground 146
+                      code: UPS_GROUND_164
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -4184,7 +4184,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 357 Lovely Street
+                  address1: 395 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4372,8 +4372,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2705702
-                  slug: product-2705702
+                  name: Product 2905702
+                  slug: product-2905702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4622,8 +4622,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2749569
-                  slug: product-2749569
+                  name: Product 2949569
+                  slug: product-2949569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4778,10 +4778,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 27763 cannot be delivered to the selected address
+                  message: Product 29763 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 278298 cannot be delivered to the selected address
+                  message: Product 298298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4839,8 +4839,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 27763
-                  slug: product-27763
+                  name: Product 29763
+                  slug: product-29763
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4870,8 +4870,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 278298
-                  slug: product-278298
+                  name: Product 298298
+                  slug: product-298298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5102,8 +5102,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2849165
-                  slug: product-2849165
+                  name: Product 3049165
+                  slug: product-3049165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5393,7 +5393,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 121
+                  name: Credit Card 141
                   description:
                   type: bogus
                   session_required: true
@@ -5494,7 +5494,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 122
+                  name: Credit Card 142
                   description:
                   type: bogus
                   session_required: true
@@ -5562,7 +5562,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 124
+                  name: Credit Card 144
                   description:
                   type: bogus
                   session_required: true
@@ -5670,7 +5670,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 125
+                  name: Credit Card 145
                   description:
                   type: bogus
                   session_required: true
@@ -5936,8 +5936,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3469789
-                  slug: product-3469789
+                  name: Product 3679789
+                  slug: product-3679789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6150,8 +6150,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 348179
-                  slug: product-348179
+                  name: Product 369179
+                  slug: product-369179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6195,6 +6195,121 @@ paths:
                   - en
               schema:
                 "$ref": "#/components/schemas/Cart"
+  "/api/v3/store/orders/{order_id}/claims":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      description: Order prefixed ID
+      schema:
+        type: string
+    get:
+      summary: List claims
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: The damage or missing-item claims opened on one of the customer's
+        orders, newest first. Accessible via JWT or the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `open`, `approved`, `resolved`, `denied`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Claim
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
+      responses:
+        '200':
+          description: claims listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: claim_UkLWZg9DAJ
+                  number: CLM1001
+                  status: open
+                  resolution:
+                  order_id: or_UkLWZg9DAJ
+                  reason_id:
+                  refund_total: '10.00'
+                  display_refund_total: "$10.00"
+                  approved_at:
+                  resolved_at:
+                  denied_at:
+                  canceled_at:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Claim"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/orders/{id}":
     get:
       summary: Get an order
@@ -6331,8 +6446,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 288496
-                  slug: product-288496
+                  name: Product 308496
+                  slug: product-308496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6395,8 +6510,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 144
-                    code: UPS_GROUND_162
+                    name: UPS Ground 160
+                    code: UPS_GROUND_178
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6417,7 +6532,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 144
+                    name: UPS Ground 160
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -6436,8 +6551,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 144
-                      code: UPS_GROUND_162
+                      name: UPS Ground 160
+                      code: UPS_GROUND_178
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6450,7 +6565,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 413 Lovely Street
+                  address1: 451 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6472,7 +6587,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 414 Lovely Street
+                  address1: 452 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6514,6 +6629,122 @@ paths:
                   message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders/{order_id}/returns":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      description: Order prefixed ID
+      schema:
+        type: string
+    get:
+      summary: List returns
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: The returns opened on one of the customer's orders, newest first.
+        Accessible via JWT or the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `refunded`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Return
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
+      responses:
+        '200':
+          description: returns listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: ret_UkLWZg9DAJ
+                  number: RET1001
+                  status: requested
+                  order_id: or_UkLWZg9DAJ
+                  reason_id:
+                  refund_total: '10.00'
+                  display_refund_total: "$10.00"
+                  refund_tax_total: '0.00'
+                  display_refund_tax_total: "$0.00"
+                  approved_at:
+                  received_at:
+                  refunded_at:
+                  canceled_at:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Return"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/customers/me/addresses":
     get:
       summary: List customer addresses
@@ -6629,7 +6860,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 219 Lovely Street
+                  address1: 247 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6650,7 +6881,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 220 Lovely Street
+                  address1: 248 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6671,7 +6902,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 221 Lovely Street
+                  address1: 249 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6929,7 +7160,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 233 Lovely Street
+                address1: 261 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -7011,7 +7242,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 239 Lovely Street
+                address1: 267 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -7579,8 +7810,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2535270
-                    slug: product-2535270
+                    name: Product 2725270
+                    slug: product-2725270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -7643,8 +7874,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 123
-                      code: UPS_GROUND_140
+                      name: UPS Ground 138
+                      code: UPS_GROUND_155
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -7665,7 +7896,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 123
+                      name: UPS Ground 138
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -7684,8 +7915,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 123
-                        code: UPS_GROUND_140
+                        name: UPS Ground 138
+                        code: UPS_GROUND_155
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -7698,7 +7929,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 305 Lovely Street
+                    address1: 339 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -7720,7 +7951,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 306 Lovely Street
+                    address1: 340 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -7903,8 +8134,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2555633
-                  slug: product-2555633
+                  name: Product 2745633
+                  slug: product-2745633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -7967,8 +8198,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 125
-                    code: UPS_GROUND_142
+                    name: UPS Ground 140
+                    code: UPS_GROUND_157
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -7989,7 +8220,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 125
+                    name: UPS Ground 140
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -8008,8 +8239,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 125
-                      code: UPS_GROUND_142
+                      name: UPS Ground 140
+                      code: UPS_GROUND_157
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8022,7 +8253,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 311 Lovely Street
+                  address1: 345 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8044,7 +8275,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 312 Lovely Street
+                  address1: 346 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8267,7 +8498,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 317 Lovely Street
+                  address1: 351 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8288,7 +8519,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 318 Lovely Street
+                  address1: 352 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8310,7 +8541,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 318 Lovely Street
+                  address1: 352 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8332,7 +8563,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 317 Lovely Street
+                  address1: 351 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8424,7 +8655,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 319 Lovely Street
+                  address1: 353 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8445,7 +8676,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 320 Lovely Street
+                  address1: 354 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8467,7 +8698,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 320 Lovely Street
+                  address1: 354 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8489,7 +8720,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 319 Lovely Street
+                  address1: 353 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9113,7 +9344,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 127
+                  name: Credit Card 147
                   description:
                   type: bogus
                   session_required: true
@@ -9214,7 +9445,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 130
+                  name: Credit Card 150
                   description:
                   type: bogus
                   session_required: true
@@ -9295,7 +9526,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 132
+                  name: Credit Card 152
                   description:
                   type: bogus
                   session_required: true
@@ -10694,7 +10925,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-436
+                  sku: SKU-462
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11684,6 +11915,99 @@ paths:
                   example: colleague@acme.test
               required:
               - customer_email
+  "/api/v3/store/companies/{company_id}/invitations":
+    parameters:
+    - name: company_id
+      in: path
+      required: true
+      description: Company node ID (comp_...)
+      schema:
+        type: string
+    get:
+      summary: List pending company invitations
+      tags:
+      - Companies
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: The invitations to this node that nobody has accepted or revoked
+        yet. Requires standing over the node.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[email_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `email` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `email`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CompanyInvitation
+        sortable:
+        - created_at
+        - email
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: invitations listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: cinv_UkLWZg9DAJ
+                  email: colleague@acme.test
+                  expires_at: '2026-02-14T12:00:00.000Z'
+                  company_id: comp_UkLWZg9DAJ
+                  status: pending
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanyInvitation"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/companies/{company_id}/addresses":
     parameters:
     - name: company_id
@@ -11773,7 +12097,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 278 Lovely Street
+                  address1: 312 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -11844,7 +12168,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 281 Lovely Street
+                address1: 315 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -12108,8 +12432,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2525649
-                    slug: product-2525649
+                    name: Product 2715649
+                    slug: product-2715649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -12171,8 +12495,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 114
-                      code: UPS_GROUND_131
+                      name: UPS Ground 129
+                      code: UPS_GROUND_146
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -12193,7 +12517,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 114
+                      name: UPS Ground 129
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -12212,8 +12536,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 114
-                        code: UPS_GROUND_131
+                        name: UPS Ground 129
+                        code: UPS_GROUND_146
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -12226,7 +12550,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 289 Lovely Street
+                    address1: 323 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -12248,7 +12572,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 290 Lovely Street
+                    address1: 324 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -12566,6 +12890,93 @@ paths:
                   state_text: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
+  "/api/v3/store/customers/me/digital_links":
+    get:
+      summary: List my digital links
+      tags:
+      - Digital Links
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: The signed-in customer's downloads in this store, newest first.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: DigitalLink
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: digital links listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: dl_UkLWZg9DAJ
+                  access_counter: 0
+                  filename: thinking-cat.jpg
+                  content_type: image/jpeg
+                  download_url: "/api/v3/store/digital_links/PyFLkSrH72mE2GaBLUeZnXXF"
+                  expires_at: '2026-01-22T12:00:00Z'
+                  authorizable: true
+                  expired: false
+                  access_limit_exceeded: false
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DigitalLink"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/digital_links/{token}":
     get:
       summary: Download a digital product
@@ -13853,7 +14264,9 @@ components:
           type: string
           nullable: true
         ancestors:
-          type: object
+          type: array
+          items:
+            type: object
       required:
       - id
       - name
@@ -13956,8 +14369,7 @@ components:
           - json
         key:
           type: string
-        value:
-          type: object
+        value: {}
       required:
       - id
       - label
@@ -16294,7 +16706,9 @@ components:
         total_count:
           type: number
         filters:
-          type: object
+          type: array
+          items:
+            type: object
         sort_options:
           type: array
           items:
@@ -17399,6 +17813,22 @@ components:
       associations: {}
       scopes:
         search: text
+    Claim:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - open
+          - approved
+          - resolved
+          - denied
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
     Collection:
       attributes:
         automatic: boolean
@@ -17422,6 +17852,14 @@ components:
       associations: {}
       scopes:
         search: text
+    CompanyInvitation:
+      attributes:
+        created_at: datetime
+        email: text
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     CompanyMembership:
       attributes:
         created_at: datetime
@@ -17473,6 +17911,13 @@ components:
       associations: {}
       scopes:
         search: text
+    DigitalLink:
+      attributes:
+        created_at: datetime
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     GiftCard:
       attributes:
         code: text
@@ -17635,6 +18080,22 @@ components:
         search_by_name: text
         with_option_value_ids:
           list: id
+    Return:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - refunded
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
     Seller:
       attributes:
         created_at: datetime

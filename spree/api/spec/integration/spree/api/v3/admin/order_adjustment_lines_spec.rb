@@ -104,6 +104,30 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
   end
 
   path '/api/v3/admin/orders/{order_id}/fees' do
+    get 'List fees' do
+      tags 'Orders'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description "Returns the order's fees, such as surcharges, handling and gift wrap, on the whole order or on one item or delivery."
+      admin_scope :read, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      filter_parameters_for
+
+      response '200', 'fees found' do
+        let!(:fee) { create(:fee, order: order, label: 'Gift wrap', kind: 'gift_wrap', amount: '4.00') }
+
+        schema SwaggerSchemaHelpers.paginated('Fee')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(fee.prefixed_id)
+        end
+      end
+    end
+
     post 'Create fee' do
       tags 'Orders'
       consumes 'application/json'

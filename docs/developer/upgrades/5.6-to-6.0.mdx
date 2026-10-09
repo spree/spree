@@ -1035,10 +1035,10 @@ Each `list()` method now takes the filters and sort fields its endpoint accepts.
 - **Filters your backend adds are compile errors until you declare them.** The published types list only the filters Spree itself declares. Any filter or scope your backend adds (through `Spree.ransack.add_attribute`, `add_scope` or a model decorator) still works in the API, but TypeScript rejects the key. Generate the declarations from your app, and run the command again whenever a filter changes:
 
   ```bash
-  spree filters types --api store --out apps/storefront/src/types/spree-filters.d.ts
+  spree filters types
   ```
 
-  Generate one for the dashboard (`--api admin --out apps/dashboard/src/types/spree-filters.d.ts`) and the seller panel (`--api seller`) too, if they use your filters. For a one-off filter, send it inside `q` instead (`list({ q: { erp_id_eq: 'ERP-1' } })`), which is not type checked. See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript) for both, and for declaring filters by hand.
+  It writes a declaration file into each app under `apps/`, for the SDK that app uses (the storefront, the dashboard and the seller panel). For a one-off filter, send it inside `q` instead (`list({ q: { erp_id_eq: 'ERP-1' } })`), which is not type checked. See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript) for both, and for declaring filters by hand.
 
 - **Amount filters take decimal strings.** `price_gte`, `price_lte` and the other money filters are typed as strings, like every money value in 6.0. Send `'20.00'`, not `20`.
 
