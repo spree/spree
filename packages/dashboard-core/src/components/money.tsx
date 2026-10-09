@@ -1,5 +1,5 @@
+import { useMoneyLocale } from '../hooks/use-money-locale'
 import { formatAmount } from '../lib/formatters'
-import { useMoneyLocale } from '../products/use-money-locale'
 import { useOptionalStore } from '../providers/store-provider'
 
 /**

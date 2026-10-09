@@ -26,8 +26,8 @@ import {
 import { PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { currencyParts } from '../products/currency-parts'
-import { useMoneyLocale } from '../products/use-money-locale'
+import { useMoneyLocale } from '../hooks/use-money-locale'
+import { currencyParts } from '../lib/currency-parts'
 import { CurrencySelect } from './currency-select'
 import { StoreDatePicker } from './store-date-picker'
 
