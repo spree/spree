@@ -17,15 +17,13 @@ module Spree
                    reference: 'string | null',
                    period_start: 'string | null',
                    period_end: 'string | null',
-                   transfers_count: :number,
-                   display_amount: :string
+                   transfers_count: :number
 
           attributes :status, :currency, :reference, :metadata,
                      period_start: :iso8601, period_end: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute(:amount) { |payout| Spree::Money::Rounding.format(payout.amount, payout.currency) }
-          attribute(:display_amount) { |payout| payout.display_amount.to_s }
           attribute(:seller_id) { |payout| payout.seller&.prefixed_id }
           attribute(:seller_name) { |payout| payout.seller&.name }
 

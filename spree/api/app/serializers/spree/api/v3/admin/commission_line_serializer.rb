@@ -23,10 +23,7 @@ module Spree
                    taxability_reason: 'string | null',
                    country_code: 'string | null',
                    state_code: 'string | null',
-                   currency: :string,
-                   display_amount: :string,
-                   display_tax_amount: :string,
-                   display_total: :string
+                   currency: :string
 
           # The treatment, in Spree::TaxLine's vocabulary — a seller's invoice
           # has to explain why its fee was taxed the way it was, and the
@@ -39,10 +36,6 @@ module Spree
           typelize rate: [:string, nullable: false], tax_rate: [:string, nullable: false],
                    amount: [:string, nullable: false], tax_amount: [:string, nullable: false],
                    total: [:string, nullable: false]
-
-          %i[display_amount display_tax_amount display_total].each do |formatted|
-            attribute(formatted) { |line| line.public_send(formatted).to_s }
-          end
 
           %i[order seller line_item fulfillment commission_rate].each do |association|
             attribute(:"#{association}_id") { |line| line.public_send(association)&.prefixed_id }

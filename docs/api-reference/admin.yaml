@@ -5242,7 +5242,6 @@ paths:
                   email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Dan Ebert
                   available_store_credit_total: '0.00'
-                  display_available_store_credit_total: "$0.00"
                   failed_attempts: 0
                   metadata: {}
                   email_marketing_consent_source: unknown
@@ -5257,7 +5256,6 @@ paths:
                   default_shipping_address_id:
                   orders_count: 0
                   total_spent: '0.00'
-                  display_total_spent: "$0.00"
                   last_order_completed_at:
                   customer_group_ids:
                   - cg_UkLWZg9DAJ
@@ -5550,7 +5548,6 @@ paths:
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Redacted Redacted
                 available_store_credit_total: '0.00'
-                display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
                 email_marketing_consent_source: anonymization
@@ -5565,7 +5562,6 @@ paths:
                 default_shipping_address_id:
                 orders_count: 0
                 total_spent: '0.00'
-                display_total_spent: "$0.00"
                 last_order_completed_at:
                 customer_group_ids: []
               schema:
@@ -6240,9 +6236,6 @@ paths:
                   amount: '50.00'
                   amount_used: '0.00'
                   amount_remaining: '50.00'
-                  display_amount: "$50.00"
-                  display_amount_used: "$0.00"
-                  display_amount_remaining: "$50.00"
                   currency: USD
                   memo:
                   metadata: {}
@@ -6250,7 +6243,6 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount_authorized: '0.00'
                   outstanding: true
-                  display_amount_authorized: "$0.00"
                   customer_id: cust_UkLWZg9DAJ
                   created_by_id: adm_UkLWZg9DAJ
                   originator_type:
@@ -6322,9 +6314,6 @@ paths:
                 amount: '25.00'
                 amount_used: '0.00'
                 amount_remaining: '25.00'
-                display_amount: "$25.00"
-                display_amount_used: "$0.00"
-                display_amount_remaining: "$25.00"
                 currency: USD
                 memo: Goodwill
                 metadata: {}
@@ -6332,7 +6321,6 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount_authorized: '0.00'
                 outstanding: true
-                display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_gbHJdmfrXB
                 originator_type:
@@ -6415,9 +6403,6 @@ paths:
                 amount: '50.00'
                 amount_used: '0.00'
                 amount_remaining: '50.00'
-                display_amount: "$50.00"
-                display_amount_used: "$0.00"
-                display_amount_remaining: "$50.00"
                 currency: USD
                 memo: Updated
                 metadata: {}
@@ -6425,7 +6410,6 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount_authorized: '0.00'
                 outstanding: true
-                display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_UkLWZg9DAJ
                 originator_type:
@@ -6580,7 +6564,6 @@ paths:
                   email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Jane Doe
                   available_store_credit_total: '0.00'
-                  display_available_store_credit_total: "$0.00"
                   failed_attempts: 0
                   metadata: {}
                   email_marketing_consent_source: unknown
@@ -6595,7 +6578,6 @@ paths:
                   default_shipping_address_id:
                   orders_count: 0
                   total_spent: '0.00'
-                  display_total_spent: "$0.00"
                   last_order_completed_at:
                   customer_group_ids: []
                 meta:
@@ -6668,7 +6650,6 @@ paths:
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: New Customer
                 available_store_credit_total: '0.00'
-                display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
                 email_marketing_consent_source: unknown
@@ -6683,7 +6664,6 @@ paths:
                 default_shipping_address_id:
                 orders_count: 0
                 total_spent: '0.00'
-                display_total_spent: "$0.00"
                 last_order_completed_at:
                 customer_group_ids: []
       requestBody:
@@ -6788,7 +6768,6 @@ paths:
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Jane Doe
                 available_store_credit_total: '0.00'
-                display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
                 email_marketing_consent_source: unknown
@@ -6803,7 +6782,6 @@ paths:
                 default_shipping_address_id:
                 orders_count: 0
                 total_spent: '0.00'
-                display_total_spent: "$0.00"
                 last_order_completed_at:
                 customer_group_ids: []
     patch:
@@ -6866,7 +6844,6 @@ paths:
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Updated Doe
                 available_store_credit_total: '0.00'
-                display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
                 email_marketing_consent_source: unknown
@@ -6881,7 +6858,6 @@ paths:
                 default_shipping_address_id:
                 orders_count: 0
                 total_spent: '0.00'
-                display_total_spent: "$0.00"
                 last_order_completed_at:
                 customer_group_ids: []
       requestBody:
@@ -9093,17 +9069,11 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   unpriced: false
                   cost: '100.00'
-                  display_cost: "$100.00"
                   total: '100.00'
-                  display_total: "$100.00"
                   discount_total: '0.00'
-                  display_discount_total: "$0.00"
                   additional_tax_total: '0.00'
-                  display_additional_tax_total: "$0.00"
                   included_tax_total: '0.00'
-                  display_included_tax_total: "$0.00"
                   tax_total: '0.00'
-                  display_tax_total: "$0.00"
                   status: unfulfilled
                   fulfillment_type: shipping
                   fulfilled_at:
@@ -9210,17 +9180,11 @@ paths:
                 selected_delivery_rate_id: dr_EfhxLZ9ck8
                 unpriced: false
                 cost: '100.00'
-                display_cost: "$100.00"
                 total: '100.00'
-                display_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 status: fulfilled
                 fulfillment_type: shipping
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
@@ -9402,17 +9366,11 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
                 cost: '100.00'
-                display_cost: "$100.00"
                 total: '100.00'
-                display_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 status: unfulfilled
                 fulfillment_type: shipping
                 fulfilled_at:
@@ -9511,17 +9469,11 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
                 cost: '100.00'
-                display_cost: "$100.00"
                 total: '100.00'
-                display_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 status: unfulfilled
                 fulfillment_type: shipping
                 fulfilled_at:
@@ -9634,17 +9586,11 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
                 cost: '100.00'
-                display_cost: "$100.00"
                 total: '100.00'
-                display_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 status: fulfilled
                 fulfillment_type: shipping
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
@@ -9747,17 +9693,11 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
                 cost: '100.00'
-                display_cost: "$100.00"
                 total: '100.00'
-                display_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 status: delivered
                 fulfillment_type: shipping
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
@@ -9878,17 +9818,11 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
                 cost: '100.00'
-                display_cost: "$100.00"
                 total: '100.00'
-                display_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 status: canceled
                 fulfillment_type: shipping
                 fulfilled_at:
@@ -9998,17 +9932,11 @@ paths:
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   unpriced: false
                   cost: '10.00'
-                  display_cost: "$10.00"
                   total: '10.00'
-                  display_total: "$10.00"
                   discount_total: '0.00'
-                  display_discount_total: "$0.00"
                   additional_tax_total: '0.00'
-                  display_additional_tax_total: "$0.00"
                   included_tax_total: '0.00'
-                  display_included_tax_total: "$0.00"
                   tax_total: '0.00'
-                  display_tax_total: "$0.00"
                   status: unfulfilled
                   fulfillment_type: shipping
                   fulfilled_at:
@@ -10430,9 +10358,6 @@ paths:
                   amount_used: '0.00'
                   amount_authorized: '0.00'
                   amount_remaining: '50.00'
-                  display_amount: "$50.00"
-                  display_amount_used: "$0.00"
-                  display_amount_remaining: "$50.00"
                   expires_at:
                   redeemed_at:
                   expired: false
@@ -10449,9 +10374,6 @@ paths:
                   amount_used: '0.00'
                   amount_authorized: '0.00'
                   amount_remaining: '25.00'
-                  display_amount: "$25.00"
-                  display_amount_used: "$0.00"
-                  display_amount_remaining: "$25.00"
                   expires_at:
                   redeemed_at:
                   expired: false
@@ -10552,9 +10474,6 @@ paths:
                 amount_used: '0.00'
                 amount_authorized: '0.00'
                 amount_remaining: '25.00'
-                display_amount: "$25.00"
-                display_amount_used: "$0.00"
-                display_amount_remaining: "$25.00"
                 expires_at: '2030-12-31'
                 redeemed_at:
                 expired: false
@@ -10680,9 +10599,6 @@ paths:
                 amount_used: '0.00'
                 amount_authorized: '0.00'
                 amount_remaining: '50.00'
-                display_amount: "$50.00"
-                display_amount_used: "$0.00"
-                display_amount_remaining: "$50.00"
                 expires_at:
                 redeemed_at:
                 expired: false
@@ -10758,9 +10674,6 @@ paths:
                 amount_used: '0.00'
                 amount_authorized: '0.00'
                 amount_remaining: '75.00'
-                display_amount: "$75.00"
-                display_amount_used: "$0.00"
-                display_amount_remaining: "$75.00"
                 expires_at:
                 redeemed_at:
                 expired: false
@@ -13542,7 +13455,6 @@ paths:
                   claim_line_item_id:
                   exchange_line_item_id:
                   amount: '1.50'
-                  display_amount: "$1.50"
                   provider_id: internal
                   metadata: {}
                   taxability_reason:
@@ -13623,7 +13535,6 @@ paths:
                   line_item_id: li_UkLWZg9DAJ
                   fulfillment_id:
                   amount: "-2.00"
-                  display_amount: "-$2.00"
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -13704,7 +13615,6 @@ paths:
                   line_item_id: li_UkLWZg9DAJ
                   fulfillment_id:
                   amount: "-3.00"
-                  display_amount: "-$3.00"
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -13805,7 +13715,6 @@ paths:
                 line_item_id:
                 fulfillment_id:
                 amount: '4.00'
-                display_amount: "$4.00"
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -13917,9 +13826,6 @@ paths:
                 amount_used: '10.00'
                 amount_authorized: '0.00'
                 amount_remaining: '0.00'
-                display_amount: "$10.00"
-                display_amount_used: "$10.00"
-                display_amount_remaining: "$0.00"
                 expires_at:
                 redeemed_at:
                 expired: false
@@ -14071,22 +13977,13 @@ paths:
                   slug: product-479180
                   options_text: 'Size: S'
                   price: '10.00'
-                  display_price: "$10.00"
                   total: '20.00'
-                  display_total: "$20.00"
                   adjustment_total: '0.00'
-                  display_adjustment_total: "$0.00"
                   additional_tax_total: '0.00'
-                  display_additional_tax_total: "$0.00"
                   included_tax_total: '0.00'
-                  display_included_tax_total: "$0.00"
                   discount_total: '0.00'
-                  display_discount_total: "$0.00"
                   pre_tax_amount: '20.00'
-                  display_pre_tax_amount: "$20.00"
                   discounted_amount: '20.00'
-                  display_discounted_amount: "$20.00"
-                  display_compare_at_amount: "$0.00"
                   compare_at_amount:
                   thumbnail_url:
                   option_values:
@@ -14188,22 +14085,13 @@ paths:
                 slug: product-4999
                 options_text: 'Size: S'
                 price: '19.99'
-                display_price: "$19.99"
                 total: '59.97'
-                display_total: "$59.97"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 pre_tax_amount: '59.97'
-                display_pre_tax_amount: "$59.97"
                 discounted_amount: '59.97'
-                display_discounted_amount: "$59.97"
-                display_compare_at_amount: "$0.00"
                 compare_at_amount:
                 thumbnail_url:
                 option_values:
@@ -14327,22 +14215,13 @@ paths:
                 slug: product-502714
                 options_text: 'Size: S'
                 price: '10.00'
-                display_price: "$10.00"
                 total: '20.00'
-                display_total: "$20.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 pre_tax_amount: '20.00'
-                display_pre_tax_amount: "$20.00"
                 discounted_amount: '20.00'
-                display_discounted_amount: "$20.00"
-                display_compare_at_amount: "$0.00"
                 compare_at_amount:
                 thumbnail_url:
                 option_values:
@@ -14439,22 +14318,13 @@ paths:
                 slug: product-519758
                 options_text: 'Size: S'
                 price: '19.99'
-                display_price: "$19.99"
                 total: '99.95'
-                display_total: "$99.95"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 pre_tax_amount: '99.95'
-                display_pre_tax_amount: "$99.95"
                 discounted_amount: '99.95'
-                display_discounted_amount: "$99.95"
-                display_compare_at_amount: "$0.00"
                 compare_at_amount:
                 thumbnail_url:
                 option_values:
@@ -14618,29 +14488,17 @@ paths:
                 payment_status:
                 completed_at:
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
                 amount_due: '60.00'
-                display_amount_due: "$60.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 fee_total: '0.00'
-                display_fee_total: "$0.00"
                 store_credit_total: '50.00'
-                display_store_credit_total: "-$50.00"
                 covered_by_store_credit: false
                 gift_card:
                 market:
@@ -14672,13 +14530,9 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -14884,29 +14738,17 @@ paths:
                   payment_status:
                   completed_at:
                   item_total: '0.00'
-                  display_item_total: "$0.00"
                   adjustment_total: '0.00'
-                  display_adjustment_total: "$0.00"
                   discount_total: '0.00'
-                  display_discount_total: "$0.00"
                   tax_total: '0.00'
-                  display_tax_total: "$0.00"
                   included_tax_total: '0.00'
-                  display_included_tax_total: "$0.00"
                   additional_tax_total: '0.00'
-                  display_additional_tax_total: "$0.00"
                   total: '0.00'
-                  display_total: "$0.00"
                   gift_card_total: '0.00'
-                  display_gift_card_total: "$0.00"
                   amount_due: '0.00'
-                  display_amount_due: "$0.00"
                   delivery_total: '0.00'
-                  display_delivery_total: "$0.00"
                   fee_total:
-                  display_fee_total: "$0.00"
                   store_credit_total: '0.00'
-                  display_store_credit_total: "$0.00"
                   covered_by_store_credit: false
                   gift_card:
                   market:
@@ -14938,13 +14780,9 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   payment_total: '0.00'
-                  display_payment_total: "$0.00"
                   commission_amount_total: '0.00'
-                  display_commission_amount_total: "$0.00"
                   commission_tax_total: '0.00'
-                  display_commission_tax_total: "$0.00"
                   commission_total: '0.00'
-                  display_commission_total: "$0.00"
                   preferred_stock_location_id:
                   po_document_url:
                   seller_id:
@@ -15127,29 +14965,17 @@ paths:
                 payment_status:
                 completed_at:
                 item_total: '0.00'
-                display_item_total: "$0.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 total: '0.00'
-                display_total: "$0.00"
                 gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
                 amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '0.00'
-                display_delivery_total: "$0.00"
                 fee_total: '0.00'
-                display_fee_total: "$0.00"
                 store_credit_total: '0.00'
-                display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
                 market:
@@ -15181,13 +15007,9 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 preferred_stock_location_id: sloc_UkLWZg9DAJ
                 po_document_url:
                 seller_id:
@@ -15403,29 +15225,17 @@ paths:
                 payment_status:
                 completed_at:
                 item_total: '0.00'
-                display_item_total: "$0.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 total: '0.00'
-                display_total: "$0.00"
                 gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
                 amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '0.00'
-                display_delivery_total: "$0.00"
                 fee_total:
-                display_fee_total: "$0.00"
                 store_credit_total: '0.00'
-                display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
                 market:
@@ -15457,13 +15267,9 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -15567,29 +15373,17 @@ paths:
                 payment_status: none
                 completed_at:
                 item_total: '0.00'
-                display_item_total: "$0.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 total: '0.00'
-                display_total: "$0.00"
                 gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
                 amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '0.00'
-                display_delivery_total: "$0.00"
                 fee_total: '0.00'
-                display_fee_total: "$0.00"
                 store_credit_total: '0.00'
-                display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
                 market:
@@ -15621,13 +15415,9 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -15850,29 +15640,17 @@ paths:
                 payment_status: paid
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
                 amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 fee_total: '0.00'
-                display_fee_total: "$0.00"
                 store_credit_total: '0.00'
-                display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
                 market:
@@ -15904,13 +15682,9 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '110.00'
-                display_payment_total: "$110.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -16049,29 +15823,17 @@ paths:
                 payment_status: none
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
                 amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 fee_total: '0.00'
-                display_fee_total: "$0.00"
                 store_credit_total: '0.00'
-                display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
                 market:
@@ -16103,13 +15865,9 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -16226,29 +15984,17 @@ paths:
                 payment_status:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
                 amount_due: '110.00'
-                display_amount_due: "$110.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 fee_total: '0.00'
-                display_fee_total: "$0.00"
                 store_credit_total: '0.00'
-                display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
                 market:
@@ -16280,13 +16026,9 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -16377,29 +16119,17 @@ paths:
                 payment_status:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
                 amount_due: '110.00'
-                display_amount_due: "$110.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 fee_total: '0.00'
-                display_fee_total: "$0.00"
                 store_credit_total: '0.00'
-                display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
                 market:
@@ -16431,13 +16161,9 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -16764,7 +16490,6 @@ paths:
                   number: R1001-P1
                   status: completed
                   amount: '110.00'
-                  display_amount: "$110.00"
                   source_type: credit_card
                   source_id: card_UkLWZg9DAJ
                   source:
@@ -16859,7 +16584,6 @@ paths:
                 number: R1002-P1
                 status: checkout
                 amount: '110.00'
-                display_amount: "$110.00"
                 source_type:
                 source_id:
                 source:
@@ -16965,7 +16689,6 @@ paths:
                 number: R1001-P1
                 status: completed
                 amount: '110.00'
-                display_amount: "$110.00"
                 source_type: credit_card
                 source_id: card_UkLWZg9DAJ
                 source:
@@ -17054,7 +16777,6 @@ paths:
                 number: R1001-P1
                 status: completed
                 amount: '110.00'
-                display_amount: "$110.00"
                 source_type: credit_card
                 source_id: card_UkLWZg9DAJ
                 source:
@@ -17152,7 +16874,6 @@ paths:
                 number: R1001-P1
                 status: void
                 amount: '110.00'
-                display_amount: "$110.00"
                 source_type: credit_card
                 source_id: card_UkLWZg9DAJ
                 source:
@@ -18001,8 +17722,6 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
                   price_list_id:
                   min_quantity: 1
                   variant_id: variant_UkLWZg9DAJ
@@ -18012,8 +17731,6 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
                   price_list_id:
                   min_quantity: 1
                   variant_id: variant_gbHJdmfrXB
@@ -18023,8 +17740,6 @@ paths:
                   currency: USD
                   amount: '5.00'
                   compare_at_amount:
-                  display_amount: "$5.00"
-                  display_compare_at_amount:
                   price_list_id: pl_UkLWZg9DAJ
                   min_quantity: 1
                   variant_id: variant_gbHJdmfrXB
@@ -18105,8 +17820,6 @@ paths:
                 currency: EUR
                 amount: '9.99'
                 compare_at_amount:
-                display_amount: "€9.99"
-                display_compare_at_amount:
                 price_list_id:
                 min_quantity: 1
                 variant_id: variant_EfhxLZ9ck8
@@ -18192,8 +17905,6 @@ paths:
                 currency: USD
                 amount: '5.00'
                 compare_at_amount:
-                display_amount: "$5.00"
-                display_compare_at_amount:
                 price_list_id: pl_UkLWZg9DAJ
                 min_quantity: 1
                 variant_id: variant_gbHJdmfrXB
@@ -18257,8 +17968,6 @@ paths:
                 currency: USD
                 amount: '12.34'
                 compare_at_amount:
-                display_amount: "$12.34"
-                display_compare_at_amount:
                 price_list_id: pl_UkLWZg9DAJ
                 min_quantity: 1
                 variant_id: variant_gbHJdmfrXB
@@ -19072,8 +18781,6 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
-                    display_amount: "$19.99"
-                    display_compare_at_amount:
                     price_list_id:
                     min_quantity: 1
                     variant_id: variant_UkLWZg9DAJ
@@ -19465,8 +19172,6 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
                   price_list_id:
                   min_quantity: 1
                   variant_id: variant_UkLWZg9DAJ
@@ -19587,8 +19292,6 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
                   price_list_id:
                   min_quantity: 1
                   variant_id: variant_UkLWZg9DAJ
@@ -23780,13 +23483,13 @@ paths:
                   description: Order total meets these criteria
                   preference_schema:
                   - key: amount_min
-                    type: decimal
+                    type: money
                     default: '100'
                   - key: operator_min
                     type: string
                     default: ">"
                   - key: amount_max
-                    type: decimal
+                    type: money
                     default:
                   - key: operator_max
                     type: string
@@ -27498,9 +27201,6 @@ paths:
                   amount: '50.00'
                   amount_used: '0.00'
                   amount_remaining: '50.00'
-                  display_amount: "$50.00"
-                  display_amount_used: "$0.00"
-                  display_amount_remaining: "$50.00"
                   currency: USD
                   memo:
                   metadata: {}
@@ -27508,7 +27208,6 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount_authorized: '0.00'
                   outstanding: true
-                  display_amount_authorized: "$0.00"
                   customer_id: cust_UkLWZg9DAJ
                   created_by_id: adm_UkLWZg9DAJ
                   originator_type:
@@ -27525,14 +27224,10 @@ paths:
                   next:
                   totals:
                   - currency: USD
-                    amount: '50.0'
-                    amount_used: '0.0'
-                    amount_authorized: '0.0'
-                    amount_remaining: '50.0'
-                    display_amount: "$50.00"
-                    display_amount_used: "$0.00"
-                    display_amount_authorized: "$0.00"
-                    display_amount_remaining: "$50.00"
+                    amount: '50.00'
+                    amount_used: '0.00'
+                    amount_authorized: '0.00'
+                    amount_remaining: '50.00'
               schema:
                 type: object
                 properties:
@@ -27614,9 +27309,6 @@ paths:
                 amount: '50.00'
                 amount_used: '0.00'
                 amount_remaining: '50.00'
-                display_amount: "$50.00"
-                display_amount_used: "$0.00"
-                display_amount_remaining: "$50.00"
                 currency: USD
                 memo:
                 metadata: {}
@@ -27624,7 +27316,6 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount_authorized: '0.00'
                 outstanding: true
-                display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_UkLWZg9DAJ
                 originator_type:
@@ -27712,7 +27403,6 @@ paths:
                   authorization_code: 1-SC-20260115120000000000
                   display_action: Added
                   amount: '50.00'
-                  display_amount: "$50.00"
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   store_credit_id: credit_UkLWZg9DAJ
@@ -27848,9 +27538,11 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
-                    display_amount: "$19.99"
-                    display_compare_at_amount:
                     price_list_id:
+                    min_quantity: 1
+                    variant_id: variant_UkLWZg9DAJ
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
                   original_price:
                   seller_id:
                   option_values: []
@@ -27905,9 +27597,11 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
-                    display_amount: "$19.99"
-                    display_compare_at_amount:
                     price_list_id:
+                    min_quantity: 1
+                    variant_id: variant_gbHJdmfrXB
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
                   original_price:
                   seller_id:
                   option_values:
@@ -28049,9 +27743,11 @@ paths:
                   currency: USD
                   amount: '24.99'
                   compare_at_amount:
-                  display_amount: "$24.99"
-                  display_compare_at_amount:
                   price_list_id:
+                  min_quantity: 1
+                  variant_id: variant_EfhxLZ9ck8
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 original_price:
                 seller_id:
                 option_values:
@@ -28296,9 +27992,11 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
                   price_list_id:
+                  min_quantity: 1
+                  variant_id: variant_gbHJdmfrXB
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 original_price:
                 seller_id:
                 option_values:
@@ -28434,9 +28132,11 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
                   price_list_id:
+                  min_quantity: 1
+                  variant_id: variant_gbHJdmfrXB
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 original_price:
                 seller_id:
                 option_values:
@@ -31514,7 +31214,6 @@ paths:
                     source: automatic
                     break_count: 0
                     amount: '80.00'
-                    display_amount: "$80.00"
                     tiers: []
                 meta:
                   page: 1
@@ -31674,7 +31373,6 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount: '500.00'
-                  display_amount: "$500.00"
                 meta:
                   page: 1
                   limit: 25
@@ -31723,7 +31421,6 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '500.00'
-                display_amount: "$500.00"
         '422':
           description: invalid request
           content:
@@ -31798,7 +31495,6 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '750.00'
-                display_amount: "$750.00"
       requestBody:
         content:
           application/json:
@@ -32807,9 +32503,6 @@ paths:
                   amount: '10.00'
                   tax_amount: '2.10'
                   total: '12.10'
-                  display_amount: "$10.00"
-                  display_tax_amount: "$2.10"
-                  display_total: "$12.10"
                   order_id: or_UkLWZg9DAJ
                   seller_id: sel_UkLWZg9DAJ
                   line_item_id: li_UkLWZg9DAJ
@@ -32894,9 +32587,6 @@ paths:
                 amount: '10.00'
                 tax_amount: '2.10'
                 total: '12.10'
-                display_amount: "$10.00"
-                display_tax_amount: "$2.10"
-                display_total: "$12.10"
                 order_id: or_UkLWZg9DAJ
                 seller_id: sel_UkLWZg9DAJ
                 line_item_id: li_UkLWZg9DAJ
@@ -33328,10 +33018,10 @@ paths:
                   description: Charges this rate only on sales within a value range
                   preference_schema:
                   - key: min_amount
-                    type: decimal
+                    type: money
                     default:
                   - key: max_amount
-                    type: decimal
+                    type: money
                     default:
                   association_fields: []
               schema:
@@ -35135,7 +34825,7 @@ paths:
                   calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
-                    amount: '10.0'
+                    amount: '10.00'
                     currency: USD
                 meta:
                   page: 1
@@ -35227,7 +34917,7 @@ paths:
                 calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
-                  amount: '12.5'
+                  amount: '12.50'
                   currency: USD
       requestBody:
         content:
@@ -35337,7 +35027,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -35346,10 +35036,10 @@ paths:
                   name: Flexible Rate per package item
                   preference_schema:
                   - key: first_item
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: additional_item
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: max_items
                     type: integer
@@ -35364,7 +35054,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -35373,13 +35063,13 @@ paths:
                   name: Price sack
                   preference_schema:
                   - key: minimal_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: normal_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: discount_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -35391,7 +35081,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -36644,7 +36334,6 @@ paths:
                   owner_id: ful_UkLWZg9DAJ
                   owner_type: fulfillment
                   cost: '7.25'
-                  display_cost: "$7.25"
                   integration_id:
                   file_pending: false
                   download_url:
@@ -36738,7 +36427,6 @@ paths:
                 owner_id: ful_UkLWZg9DAJ
                 owner_type: fulfillment
                 cost: '7.25'
-                display_cost: "$7.25"
                 integration_id:
                 file_pending: true
                 download_url: "/api/v3/admin/orders/or_UkLWZg9DAJ/fulfillments/ful_UkLWZg9DAJ/labels/lbl_UkLWZg9DAJ/download"
@@ -36850,7 +36538,6 @@ paths:
                 owner_id: ful_UkLWZg9DAJ
                 owner_type: fulfillment
                 cost: '7.25'
-                display_cost: "$7.25"
                 integration_id:
                 file_pending: false
                 download_url:
@@ -36987,7 +36674,6 @@ paths:
                 owner_id: ful_UkLWZg9DAJ
                 owner_type: fulfillment
                 cost: '7.25'
-                display_cost: "$7.25"
                 integration_id:
                 file_pending: false
                 download_url:
@@ -37576,10 +37262,8 @@ paths:
                     source: base
                     break_count: 1
                     amount: '100.00'
-                    display_amount: "$100.00"
                     tiers:
                     - min_quantity: 24
-                      display_amount: "$80.00"
                       amount: '80.00'
                 meta:
                   page: 1
@@ -38208,7 +37892,6 @@ paths:
                   quantity_ordered_total: 100
                   editable: true
                   subtotal: '1250.00'
-                  display_subtotal: "$1,250.00"
                   supplier_id: sup_UkLWZg9DAJ
                   destination_location_id: sloc_UkLWZg9DAJ
                 meta:
@@ -38320,7 +38003,6 @@ paths:
                 quantity_ordered_total: 100
                 editable: true
                 subtotal: '1250.00'
-                display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
               schema:
@@ -38449,7 +38131,6 @@ paths:
                 quantity_ordered_total: 100
                 editable: true
                 subtotal: '1250.00'
-                display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
                 items:
@@ -38463,9 +38144,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   unit_cost: '12.50'
-                  display_unit_cost: "$12.50"
                   total_cost: '1250.00'
-                  display_total_cost: "$1,250.00"
                   purchase_order_id: po_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
@@ -38567,7 +38246,6 @@ paths:
                 quantity_ordered_total: 100
                 editable: false
                 subtotal: '1250.00'
-                display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
               schema:
@@ -38871,7 +38549,6 @@ paths:
                 quantity_ordered_total: 100
                 editable: true
                 subtotal: '1250.00'
-                display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
               schema:
@@ -38958,7 +38635,6 @@ paths:
                 quantity_ordered_total: 100
                 editable: false
                 subtotal: '1250.00'
-                display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
               schema:
@@ -39037,7 +38713,6 @@ paths:
                 quantity_ordered_total: 100
                 editable: false
                 subtotal: '1250.00'
-                display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
               schema:
@@ -40845,15 +40520,10 @@ paths:
                   converted: false
                   seller_id: sel_UkLWZg9DAJ
                   earned: '40.00'
-                  display_earned: "$40.00"
-                  payable: '40.00'
-                  display_payable: "$40.00"
-                  paid: '0.00'
-                  display_paid: "$0.00"
-                  balance: '40.00'
-                  display_balance: "$40.00"
                   pending: '0.00'
-                  display_pending: "$0.00"
+                  payable: '40.00'
+                  paid: '0.00'
+                  balance: '40.00'
               schema:
                 type: object
                 properties:
@@ -40934,7 +40604,6 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount: '40.00'
-                  display_amount: "$40.00"
                   seller_id: sel_UkLWZg9DAJ
                   seller_name: Sparks Audio
                   transfers_count: 1
@@ -41016,7 +40685,6 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '40.00'
-                display_amount: "$40.00"
                 seller_id: sel_UkLWZg9DAJ
                 seller_name: Sparks Audio
                 transfers_count: 0
@@ -41451,7 +41119,6 @@ paths:
                   stock_transfer_number:
                   purchase_order_number:
                   unit_cost:
-                  display_unit_cost:
                 meta:
                   page: 1
                   limit: 25
@@ -41567,7 +41234,6 @@ paths:
                 stock_transfer_number:
                 purchase_order_number:
                 unit_cost:
-                display_unit_cost:
               schema:
                 "$ref": "#/components/schemas/StockMovement"
         '404':
@@ -43771,8 +43437,6 @@ components:
           nullable: true
         amount:
           type: string
-        display_amount:
-          type: string
         created_at:
           type: string
         updated_at:
@@ -43784,7 +43448,6 @@ components:
       - description
       - code
       - amount
-      - display_amount
       - created_at
       - updated_at
       x-typelizer: true
@@ -43846,73 +43509,37 @@ components:
         item_total:
           type: string
           nullable: true
-        display_item_total:
-          type: string
-          nullable: true
         adjustment_total:
-          type: string
-          nullable: true
-        display_adjustment_total:
           type: string
           nullable: true
         discount_total:
           type: string
           nullable: true
-        display_discount_total:
-          type: string
-          nullable: true
         tax_total:
-          type: string
-          nullable: true
-        display_tax_total:
           type: string
           nullable: true
         included_tax_total:
           type: string
           nullable: true
-        display_included_tax_total:
-          type: string
-          nullable: true
         additional_tax_total:
-          type: string
-          nullable: true
-        display_additional_tax_total:
           type: string
           nullable: true
         total:
           type: string
           nullable: true
-        display_total:
-          type: string
-          nullable: true
         gift_card_total:
-          type: string
-          nullable: true
-        display_gift_card_total:
           type: string
           nullable: true
         amount_due:
           type: string
           nullable: true
-        display_amount_due:
-          type: string
-          nullable: true
         delivery_total:
-          type: string
-          nullable: true
-        display_delivery_total:
           type: string
           nullable: true
         fee_total:
           type: string
           nullable: true
-        display_fee_total:
-          type: string
-          nullable: true
         store_credit_total:
-          type: string
-          nullable: true
-        display_store_credit_total:
           type: string
           nullable: true
         covered_by_store_credit:
@@ -43990,29 +43617,17 @@ components:
       - warnings
       - coupon_code
       - item_total
-      - display_item_total
       - adjustment_total
-      - display_adjustment_total
       - discount_total
-      - display_discount_total
       - tax_total
-      - display_tax_total
       - included_tax_total
-      - display_included_tax_total
       - additional_tax_total
-      - display_additional_tax_total
       - total
-      - display_total
       - gift_card_total
-      - display_gift_card_total
       - amount_due
-      - display_amount_due
       - delivery_total
-      - display_delivery_total
       - fee_total
-      - display_fee_total
       - store_credit_total
-      - display_store_credit_total
       - covered_by_store_credit
       - current_step
       - completed_steps
@@ -44068,15 +43683,12 @@ components:
           type: string
         amount:
           type: string
-        display_amount:
-          type: string
       required:
       - id
       - currency
       - created_at
       - updated_at
       - amount
-      - display_amount
       x-typelizer: true
     CatalogPrice:
       type: object
@@ -44102,8 +43714,6 @@ components:
           type: number
         amount:
           type: string
-        display_amount:
-          type: string
         tiers:
           type: array
           items:
@@ -44116,7 +43726,6 @@ components:
       - source
       - break_count
       - amount
-      - display_amount
       - tiers
       x-typelizer: true
     CatalogPriceTier:
@@ -44124,13 +43733,10 @@ components:
       properties:
         min_quantity:
           type: number
-        display_amount:
-          type: string
         amount:
           type: string
       required:
       - min_quantity
-      - display_amount
       - amount
       x-typelizer: true
     CatalogProduct:
@@ -44457,8 +44063,6 @@ components:
           type: string
         tax_total:
           type: string
-        display_refund_amount:
-          type: string
         variant_id:
           type: string
           nullable: true
@@ -44487,7 +44091,6 @@ components:
       - included_tax_total
       - additional_tax_total
       - tax_total
-      - display_refund_amount
       - variant_id
       - replacement_variant_id
       - line_item_id
@@ -44547,8 +44150,6 @@ components:
           nullable: true
         refund_total:
           type: string
-        display_refund_total:
-          type: string
         approved_at:
           type: string
           nullable: true
@@ -44605,7 +44206,6 @@ components:
       - order_id
       - reason_id
       - refund_total
-      - display_refund_total
       - approved_at
       - resolved_at
       - denied_at
@@ -44754,12 +44354,6 @@ components:
           type: string
         total:
           type: string
-        display_amount:
-          type: string
-        display_tax_amount:
-          type: string
-        display_total:
-          type: string
         order_id:
           type: string
         seller_id:
@@ -44792,9 +44386,6 @@ components:
       - amount
       - tax_amount
       - total
-      - display_amount
-      - display_tax_amount
-      - display_total
       - order_id
       - seller_id
       - line_item_id
@@ -45332,8 +44923,6 @@ components:
           type: string
         available_store_credit_total:
           type: string
-        display_available_store_credit_total:
-          type: string
         addresses:
           type: array
           items:
@@ -45390,8 +44979,6 @@ components:
           type: number
         total_spent:
           type: string
-        display_total_spent:
-          type: string
         last_order_completed_at:
           type: string
           nullable: true
@@ -45421,7 +45008,6 @@ components:
       - email_marketing_consent_updated_at
       - full_name
       - available_store_credit_total
-      - display_available_store_credit_total
       - failed_attempts
       - metadata
       - email_marketing_consent_source
@@ -45436,7 +45022,6 @@ components:
       - default_shipping_address_id
       - orders_count
       - total_spent
-      - display_total_spent
       - last_order_completed_at
       - customer_group_ids
       x-typelizer: true
@@ -45844,16 +45429,6 @@ components:
           allOf:
           - "$ref": "#/components/schemas/FreightSummary"
           nullable: true
-        display_cost:
-          type: string
-        display_total:
-          type: string
-        display_additional_tax_total:
-          type: string
-        display_included_tax_total:
-          type: string
-        display_tax_total:
-          type: string
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
         metadata:
@@ -45878,11 +45453,6 @@ components:
       - estimated_delivery_date
       - unpriced
       - freight_summary
-      - display_cost
-      - display_total
-      - display_additional_tax_total
-      - display_included_tax_total
-      - display_tax_total
       - metadata
       - created_at
       - updated_at
@@ -46168,8 +45738,6 @@ components:
           nullable: true
         amount:
           type: string
-        display_amount:
-          type: string
         metadata:
           type: object
           nullable: true
@@ -46188,7 +45756,6 @@ components:
       - line_item_id
       - fulfillment_id
       - amount
-      - display_amount
       - metadata
       - created_at
       - updated_at
@@ -46459,8 +46026,6 @@ components:
           nullable: true
         price_difference:
           type: string
-        display_price_difference:
-          type: string
         approved_at:
           type: string
           nullable: true
@@ -46521,7 +46086,6 @@ components:
       - order_id
       - reason_id
       - price_difference
-      - display_price_difference
       - approved_at
       - received_at
       - fulfilled_at
@@ -46620,8 +46184,6 @@ components:
           nullable: true
         amount:
           type: string
-        display_amount:
-          type: string
         metadata:
           type: object
           nullable: true
@@ -46636,7 +46198,6 @@ components:
       - line_item_id
       - fulfillment_id
       - amount
-      - display_amount
       - metadata
       - created_at
       - updated_at
@@ -46781,27 +46342,15 @@ components:
           type: boolean
         cost:
           type: string
-        display_cost:
-          type: string
         total:
-          type: string
-        display_total:
           type: string
         discount_total:
           type: string
-        display_discount_total:
-          type: string
         additional_tax_total:
-          type: string
-        display_additional_tax_total:
           type: string
         included_tax_total:
           type: string
-        display_included_tax_total:
-          type: string
         tax_total:
-          type: string
-        display_tax_total:
           type: string
         status:
           anyOf:
@@ -46886,17 +46435,11 @@ components:
       - selected_delivery_rate_id
       - unpriced
       - cost
-      - display_cost
       - total
-      - display_total
       - discount_total
-      - display_discount_total
       - additional_tax_total
-      - display_additional_tax_total
       - included_tax_total
-      - display_included_tax_total
       - tax_total
-      - display_tax_total
       - status
       - fulfillment_type
       - fulfilled_at
@@ -46980,12 +46523,6 @@ components:
           type: string
         amount_remaining:
           type: string
-        display_amount:
-          type: string
-        display_amount_used:
-          type: string
-        display_amount_remaining:
-          type: string
         expires_at:
           type: string
           nullable: true
@@ -47025,9 +46562,6 @@ components:
       - amount_used
       - amount_authorized
       - amount_remaining
-      - display_amount
-      - display_amount_used
-      - display_amount_remaining
       - expires_at
       - redeemed_at
       - expired
@@ -47332,39 +46866,20 @@ components:
           type: string
         price:
           type: string
-        display_price:
-          type: string
         total:
-          type: string
-        display_total:
           type: string
         adjustment_total:
           type: string
-        display_adjustment_total:
-          type: string
         additional_tax_total:
-          type: string
-        display_additional_tax_total:
           type: string
         included_tax_total:
           type: string
-        display_included_tax_total:
-          type: string
         discount_total:
-          type: string
-        display_discount_total:
           type: string
         pre_tax_amount:
           type: string
-        display_pre_tax_amount:
-          type: string
         discounted_amount:
           type: string
-        display_discounted_amount:
-          type: string
-        display_compare_at_amount:
-          type: string
-          nullable: true
         compare_at_amount:
           type: string
           nullable: true
@@ -47431,22 +46946,13 @@ components:
       - slug
       - options_text
       - price
-      - display_price
       - total
-      - display_total
       - adjustment_total
-      - display_adjustment_total
       - additional_tax_total
-      - display_additional_tax_total
       - included_tax_total
-      - display_included_tax_total
       - discount_total
-      - display_discount_total
       - pre_tax_amount
-      - display_pre_tax_amount
       - discounted_amount
-      - display_discounted_amount
-      - display_compare_at_amount
       - compare_at_amount
       - thumbnail_url
       - option_values
@@ -47819,13 +47325,7 @@ components:
         total:
           type: string
           nullable: true
-        display_total:
-          type: string
-          nullable: true
         item_total:
-          type: string
-          nullable: true
-        display_item_total:
           type: string
           nullable: true
         fulfillment_status:
@@ -47896,9 +47396,7 @@ components:
       - email
       - currency
       - total
-      - display_total
       - item_total
-      - display_item_total
       - fulfillment_status
       - payment_status
       - completed_at
@@ -48030,51 +47528,27 @@ components:
           nullable: true
         item_total:
           type: string
-        display_item_total:
-          type: string
         adjustment_total:
-          type: string
-        display_adjustment_total:
           type: string
         discount_total:
           type: string
-        display_discount_total:
-          type: string
         tax_total:
-          type: string
-        display_tax_total:
           type: string
         included_tax_total:
           type: string
-        display_included_tax_total:
-          type: string
         additional_tax_total:
-          type: string
-        display_additional_tax_total:
           type: string
         total:
           type: string
-        display_total:
-          type: string
         gift_card_total:
-          type: string
-        display_gift_card_total:
           type: string
         amount_due:
           type: string
-        display_amount_due:
-          type: string
         delivery_total:
-          type: string
-        display_delivery_total:
           type: string
         fee_total:
           type: string
-        display_fee_total:
-          type: string
         store_credit_total:
-          type: string
-        display_store_credit_total:
           type: string
         covered_by_store_credit:
           type: boolean
@@ -48140,19 +47614,11 @@ components:
           type: string
         payment_total:
           type: string
-        display_payment_total:
-          type: string
         commission_amount_total:
-          type: string
-        display_commission_amount_total:
           type: string
         commission_tax_total:
           type: string
-        display_commission_tax_total:
-          type: string
         commission_total:
-          type: string
-        display_commission_total:
           type: string
         preferred_stock_location_id:
           type: string
@@ -48293,29 +47759,17 @@ components:
       - payment_status
       - completed_at
       - item_total
-      - display_item_total
       - adjustment_total
-      - display_adjustment_total
       - discount_total
-      - display_discount_total
       - tax_total
-      - display_tax_total
       - included_tax_total
-      - display_included_tax_total
       - additional_tax_total
-      - display_additional_tax_total
       - total
-      - display_total
       - gift_card_total
-      - display_gift_card_total
       - amount_due
-      - display_amount_due
       - delivery_total
-      - display_delivery_total
       - fee_total
-      - display_fee_total
       - store_credit_total
-      - display_store_credit_total
       - covered_by_store_credit
       - gift_card
       - market
@@ -48332,13 +47786,9 @@ components:
       - created_at
       - updated_at
       - payment_total
-      - display_payment_total
       - commission_amount_total
-      - display_commission_amount_total
       - commission_tax_total
-      - display_commission_tax_total
       - commission_total
-      - display_commission_total
       - preferred_stock_location_id
       - po_document_url
       - seller_id
@@ -48547,8 +47997,6 @@ components:
             more.
         amount:
           type: string
-        display_amount:
-          type: string
         source_type:
           type: string
           nullable: true
@@ -48604,7 +48052,6 @@ components:
       - number
       - status
       - amount
-      - display_amount
       - source_type
       - source_id
       - source
@@ -48651,27 +48098,15 @@ components:
           type: string
         authorized_amount:
           type: string
-        display_authorized_amount:
-          type: string
         captured_amount:
-          type: string
-        display_captured_amount:
           type: string
         refunded_amount:
           type: string
-        display_refunded_amount:
-          type: string
         claimed_amount:
-          type: string
-        display_claimed_amount:
           type: string
         net_captured_amount:
           type: string
-        display_net_captured_amount:
-          type: string
         refundable_amount:
-          type: string
-        display_refundable_amount:
           type: string
         payment_id:
           type: string
@@ -48689,17 +48124,11 @@ components:
       - created_at
       - updated_at
       - authorized_amount
-      - display_authorized_amount
       - captured_amount
-      - display_captured_amount
       - refunded_amount
-      - display_refunded_amount
       - claimed_amount
-      - display_claimed_amount
       - net_captured_amount
-      - display_net_captured_amount
       - refundable_amount
-      - display_refundable_amount
       - payment_id
       - payment_number
       - order_id
@@ -48786,8 +48215,6 @@ components:
         amount:
           type: string
           nullable: true
-        display_amount:
-          type: string
         recorded_at:
           type: string
         variant_id:
@@ -48803,7 +48230,6 @@ components:
       - id
       - currency
       - amount
-      - display_amount
       - recorded_at
       - variant_id
       - price_id
@@ -48971,12 +48397,6 @@ components:
         compare_at_amount:
           type: string
           nullable: true
-        display_amount:
-          type: string
-          nullable: true
-        display_compare_at_amount:
-          type: string
-          nullable: true
         price_list_id:
           type: string
           nullable: true
@@ -48996,8 +48416,6 @@ components:
       - currency
       - amount
       - compare_at_amount
-      - display_amount
-      - display_compare_at_amount
       - price_list_id
       - min_quantity
       - variant_id
@@ -49588,11 +49006,7 @@ components:
           type: string
         unit_cost:
           type: string
-        display_unit_cost:
-          type: string
         total_cost:
-          type: string
-        display_total_cost:
           type: string
         purchase_order_id:
           type: string
@@ -49626,9 +49040,7 @@ components:
       - created_at
       - updated_at
       - unit_cost
-      - display_unit_cost
       - total_cost
-      - display_total_cost
       - purchase_order_id
       - variant_id
       - product_id
@@ -49692,8 +49104,6 @@ components:
           type: boolean
         subtotal:
           type: string
-        display_subtotal:
-          type: string
         supplier_id:
           type: string
           nullable: true
@@ -49735,7 +49145,6 @@ components:
       - quantity_ordered_total
       - editable
       - subtotal
-      - display_subtotal
       - supplier_id
       - destination_location_id
       x-typelizer: true
@@ -49838,19 +49247,13 @@ components:
           type: boolean
         pre_tax_amount:
           type: string
-        display_pre_tax_amount:
-          type: string
         included_tax_total:
           type: string
         additional_tax_total:
           type: string
         tax_total:
           type: string
-        display_tax_total:
-          type: string
         refund_amount:
-          type: string
-        display_refund_amount:
           type: string
         variant_id:
           type: string
@@ -49879,13 +49282,10 @@ components:
       - received_quantity
       - resellable
       - pre_tax_amount
-      - display_pre_tax_amount
       - included_tax_total
       - additional_tax_total
       - tax_total
-      - display_tax_total
       - refund_amount
-      - display_refund_amount
       - variant_id
       - line_item_id
       - fulfillment_item_id
@@ -49942,11 +49342,7 @@ components:
           nullable: true
         refund_total:
           type: string
-        display_refund_total:
-          type: string
         refund_tax_total:
-          type: string
-        display_refund_tax_total:
           type: string
         approved_at:
           type: string
@@ -49995,8 +49391,6 @@ components:
           "$ref": "#/components/schemas/Actor"
         refunded_total:
           type: string
-        display_refunded_total:
-          type: string
         refundable_total:
           type: string
         order:
@@ -50024,9 +49418,7 @@ components:
       - order_id
       - reason_id
       - refund_total
-      - display_refund_total
       - refund_tax_total
-      - display_refund_tax_total
       - approved_at
       - received_at
       - refunded_at
@@ -50039,7 +49431,6 @@ components:
       - created_by_id
       - created_by_type
       - refunded_total
-      - display_refunded_total
       - refundable_total
       - documents
       - labels
@@ -50125,23 +49516,13 @@ components:
           type: string
         earned:
           type: string
-        display_earned:
+        pending:
           type: string
         payable:
           type: string
-        display_payable:
-          type: string
         paid:
           type: string
-        display_paid:
-          type: string
         balance:
-          type: string
-        display_balance:
-          type: string
-        pending:
-          type: string
-        display_pending:
           type: string
       required:
       - currency
@@ -50149,15 +49530,10 @@ components:
       - converted
       - seller_id
       - earned
-      - display_earned
-      - payable
-      - display_payable
-      - paid
-      - display_paid
-      - balance
-      - display_balance
       - pending
-      - display_pending
+      - payable
+      - paid
+      - balance
       x-typelizer: true
     SellerPayout:
       type: object
@@ -50195,8 +49571,6 @@ components:
           type: string
         amount:
           type: string
-        display_amount:
-          type: string
         seller_id:
           type: string
         seller_name:
@@ -50219,7 +49593,6 @@ components:
       - created_at
       - updated_at
       - amount
-      - display_amount
       - seller_id
       - seller_name
       - transfers_count
@@ -50588,8 +49961,6 @@ components:
           type: string
         amount:
           type: string
-        display_amount:
-          type: string
         settled_amount:
           type: string
           nullable: true
@@ -50632,7 +50003,6 @@ components:
       - created_at
       - updated_at
       - amount
-      - display_amount
       - settled_amount
       - settled_currency
       - converted
@@ -50715,9 +50085,6 @@ components:
           - return
         cost:
           type: string
-        display_cost:
-          type: string
-          nullable: true
         integration_id:
           type: string
           nullable: true
@@ -50744,7 +50111,6 @@ components:
       - owner_id
       - owner_type
       - cost
-      - display_cost
       - integration_id
       - file_pending
       - download_url
@@ -51038,9 +50404,6 @@ components:
         unit_cost:
           type: string
           nullable: true
-        display_unit_cost:
-          type: string
-          nullable: true
       required:
       - id
       - quantity
@@ -51067,7 +50430,6 @@ components:
       - stock_transfer_number
       - purchase_order_number
       - unit_cost
-      - display_unit_cost
       x-typelizer: true
     StockReceiptItem:
       type: object
@@ -51395,8 +50757,6 @@ components:
           nullable: true
         amount:
           type: string
-        display_amount:
-          type: string
         created_at:
           type: string
         updated_at:
@@ -51415,7 +50775,6 @@ components:
       - authorization_code
       - display_action
       - amount
-      - display_amount
       - created_at
       - updated_at
       - store_credit_id
@@ -51433,12 +50792,6 @@ components:
           type: string
         amount_remaining:
           type: string
-        display_amount:
-          type: string
-        display_amount_used:
-          type: string
-        display_amount_remaining:
-          type: string
         currency:
           type: string
         memo:
@@ -51454,8 +50807,6 @@ components:
           type: string
         outstanding:
           type: boolean
-        display_amount_authorized:
-          type: string
         customer_id:
           type: string
           nullable: true
@@ -51477,9 +50828,6 @@ components:
       - amount
       - amount_used
       - amount_remaining
-      - display_amount
-      - display_amount_used
-      - display_amount_remaining
       - currency
       - memo
       - metadata
@@ -51487,7 +50835,6 @@ components:
       - updated_at
       - amount_authorized
       - outstanding
-      - display_amount_authorized
       - customer_id
       - created_by_id
       - originator_type
@@ -52024,8 +51371,6 @@ components:
           nullable: true
         amount:
           type: string
-        display_amount:
-          type: string
         provider_id:
           type: string
           nullable: true
@@ -52065,7 +51410,6 @@ components:
       - claim_line_item_id
       - exchange_line_item_id
       - amount
-      - display_amount
       - provider_id
       - metadata
       - taxability_reason

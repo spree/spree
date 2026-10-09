@@ -5,6 +5,8 @@ module Spree
         # Admin API Variant Serializer
         # Full variant data including admin-only fields
         class VariantSerializer < V3::VariantSerializer
+          without_formatted_money
+
           include Concerns::ExternalReferencesAttribute
 
 

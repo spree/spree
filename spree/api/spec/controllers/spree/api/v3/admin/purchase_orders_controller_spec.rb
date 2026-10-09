@@ -237,8 +237,7 @@ RSpec.describe Spree::Api::V3::Admin::PurchaseOrdersController, type: :controlle
 
       expect(response).to have_http_status(:ok)
       line = json_response['items'].sole
-      expect(line).to include('quantity_ordered' => 100, 'unit_cost' => '12.50',
-                              'display_unit_cost' => '$12.50', 'outstanding' => 100)
+      expect(line).to include('quantity_ordered' => 100, 'unit_cost' => '12.50', 'outstanding' => 100)
       expect(json_response['supplier']['name']).to eq('Acme Wholesale')
     end
   end

@@ -89,7 +89,7 @@ module Spree
     # What a seller's balance must reach before a settlement is worth sending;
     # below it the balance carries to the next period. Zero pays whatever is
     # owed, which is right for a provider that moves money for free.
-    preference :default_minimum_payout_amount, :decimal, default: 0
+    preference :default_minimum_payout_amount, :money, default: 0
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.

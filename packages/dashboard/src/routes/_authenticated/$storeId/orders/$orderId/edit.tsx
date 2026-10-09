@@ -2,9 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { compareMoney, isZeroMoney, type Order, SpreeError, type Variant } from '@spree/admin-sdk'
 import {
   adminClient,
-  formatPrice,
   GONE_STATUSES,
   isPositiveMoney,
+  Money,
   mapSpreeErrorsToForm,
   PageHeader,
 } from '@spree/dashboard-core'
@@ -34,7 +34,6 @@ import { OrderEditItemsTable } from '../../../../../components/spree/orders/orde
 import { useOrder, useOrderMutation } from '../../../../../hooks/use-order'
 import {
   buildOrderItemsPayload,
-  formatAmount,
   type OrderEditFormValues,
   type OrderEditItemValues,
   type OrderItemsPayload,
@@ -83,33 +82,36 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
             subtotalChanged ? (
               <span className="flex items-center justify-end gap-2">
                 <span className="text-muted-foreground line-through">
-                  {order.display_item_total}
+                  <Money amount={order.item_total} currency={order.currency} />
                 </span>
                 <span className="font-medium">
-                  {formatAmount(projected as string, order.currency)}
+                  <Money amount={projected} currency={order.currency} />
                 </span>
               </span>
             ) : (
-              order.display_item_total
+              <Money amount={order.item_total} currency={order.currency} />
             )
           }
         />
 
         {isPositiveMoney(order.delivery_total) && (
-          <TotalRow label={t('admin.fields.shipping.label')} value={order.display_delivery_total} />
+          <TotalRow
+            label={t('admin.fields.shipping.label')}
+            value={<Money amount={order.delivery_total} currency={order.currency} />}
+          />
         )}
 
         {!isZeroMoney(order.discount_total) && (
           <TotalRow
             label={t('admin.orders.detail.summary.promotions')}
-            value={order.display_discount_total}
+            value={<Money amount={order.discount_total} currency={order.currency} />}
           />
         )}
 
         {isPositiveMoney(order.included_tax_total) && (
           <TotalRow
             label={t('admin.orders.detail.summary.tax_included')}
-            value={order.display_included_tax_total}
+            value={<Money amount={order.included_tax_total} currency={order.currency} />}
           />
         )}
 
@@ -117,7 +119,7 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
           (Boolean(order.completed_at) && isZeroMoney(order.included_tax_total))) && (
           <TotalRow
             label={t('admin.orders.detail.summary.tax_additional')}
-            value={order.display_additional_tax_total}
+            value={<Money amount={order.additional_tax_total} currency={order.currency} />}
           />
         )}
 
@@ -129,12 +131,14 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
             totalProjectable ? (
               <span className="flex items-center justify-end gap-2">
                 <span className="font-normal text-muted-foreground line-through">
-                  {order.display_total}
+                  <Money amount={order.total} currency={order.currency} />
                 </span>
-                <span>{formatAmount(projected as string, order.currency)}</span>
+                <span>
+                  <Money amount={projected} currency={order.currency} />
+                </span>
               </span>
             ) : (
-              order.display_total
+              <Money amount={order.total} currency={order.currency} />
             )
           }
           bold
@@ -276,8 +280,7 @@ function OrderEditPage() {
       name: variant.product_name,
       options_text: variant.options_text ?? '',
       thumbnail_url: variant.thumbnail_url,
-      display_price: formatPrice(variant.price),
-      display_total: '',
+      total: null,
     })
   }
 

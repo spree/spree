@@ -9,8 +9,10 @@ module Spree
         # Built on the shared V3 serializer rather than the admin one, which
         # expands the order and the customer behind it.
         class ExchangeSerializer < V3::ExchangeSerializer
+          without_formatted_money(:seller)
+
           # No guest price gating here, so the inherited money fields are always present.
-          typelize price_difference: [:string, nullable: false], display_price_difference: [:string, nullable: false]
+          typelize price_difference: [:string, nullable: false]
 
           typelize memo: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true]

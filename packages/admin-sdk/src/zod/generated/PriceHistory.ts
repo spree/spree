@@ -5,7 +5,6 @@ export const PriceHistorySchema = z.object({
   id: z.string(),
   currency: z.string(),
   amount: z.string().nullable(),
-  display_amount: z.string(),
   recorded_at: z.string(),
   variant_id: z.string(),
   price_id: z.string(),

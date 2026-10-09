@@ -1,9 +1,8 @@
 import { type Customer, decimalPlaces } from '@spree/admin-sdk'
-import { isPositiveMoney, useMoneyLocale, useStore } from '@spree/dashboard-core'
+import { formatAmount, isPositiveMoney, useMoneyLocale, useStore } from '@spree/dashboard-core'
 import { Card, CardContent, RelativeTime } from '@spree/dashboard-ui'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { formatAmount } from '../../../lib/delivery-method-summary'
 
 export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) {
   const { t } = useTranslation()
@@ -11,9 +10,6 @@ export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) 
   const { defaultCurrency } = useStore()
   const orders = customer.orders_count ?? 0
   const totalSpent = customer.total_spent
-  // Format the average from the amount rather than rewriting the digits inside
-  // `display_total_spent`: that string is already localized, so substituting a
-  // period-decimal figure into it mixes separators (`1.234,56 €` → `1234.57 €`).
   // Dividing needs a number; the average is only displayed, never sent or compared.
   const averageForDisplay =
     orders > 0 && isPositiveMoney(totalSpent)
@@ -27,13 +23,13 @@ export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) 
       <CardContent className="grid grid-cols-2 lg:grid-cols-5 gap-6 py-6">
         <Stat
           label={t('admin.pages.customers.detail.stat_total_spent')}
-          value={customer.display_total_spent ?? '—'}
+          value={formatAmount(totalSpent, defaultCurrency, moneyLocale)}
         />
         <Stat label={t('admin.pages.customers.detail.stat_orders')} value={String(orders)} />
         <Stat label={t('admin.pages.customers.detail.stat_avg_order_value')} value={aovDisplay} />
         <Stat
           label={t('admin.pages.customers.detail.section_store_credit')}
-          value={customer.display_available_store_credit_total ?? '—'}
+          value={formatAmount(customer.available_store_credit_total, defaultCurrency, moneyLocale)}
         />
         <Stat
           label={t('admin.customers.detail.customer_since')}

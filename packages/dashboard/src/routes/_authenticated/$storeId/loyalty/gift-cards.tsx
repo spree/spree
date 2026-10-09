@@ -61,6 +61,7 @@ import {
   giftCardSingleValuesToParams,
 } from '../../../../schemas/gift-card'
 import '../../../../tables/gift-cards'
+import { Money } from '@spree/dashboard-core'
 
 const giftCardsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
@@ -604,14 +605,16 @@ function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
       <div className="mb-2 font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
       <div className="grid grid-cols-2 gap-1 text-muted-foreground">
         <span>{t('admin.fields.amount.label')}</span>
-        <span className="text-right text-foreground tabular-nums">{giftCard.display_amount}</span>
+        <span className="text-right text-foreground tabular-nums">
+          <Money amount={giftCard.amount} currency={giftCard.currency} />
+        </span>
         <span>{t('admin.pages.promotions.gift_cards.usage.used')}</span>
         <span className="text-right text-foreground tabular-nums">
-          {giftCard.display_amount_used}
+          <Money amount={giftCard.amount_used} currency={giftCard.currency} />
         </span>
         <span>{t('admin.pages.promotions.gift_cards.usage.remaining')}</span>
         <span className="text-right text-foreground tabular-nums">
-          {giftCard.display_amount_remaining}
+          <Money amount={giftCard.amount_remaining} currency={giftCard.currency} />
         </span>
         {giftCard.created_by && (
           <>

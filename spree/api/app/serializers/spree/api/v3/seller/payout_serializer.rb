@@ -8,7 +8,6 @@ module Spree
                    currency: :string,
                    provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
-                   display_amount: :string,
                    reference: 'string | null',
                    period_start: 'string | null',
                    period_end: 'string | null',
@@ -19,7 +18,6 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute(:amount) { |payout| Spree::Money::Rounding.format(payout.amount, payout.currency) }
-          attribute(:display_amount) { |payout| payout.display_amount.to_s }
 
           # How many earnings this settlement covers. Read from a count the
           # controller made for the whole page when there is one; a single

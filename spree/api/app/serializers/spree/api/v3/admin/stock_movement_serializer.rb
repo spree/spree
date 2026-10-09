@@ -13,7 +13,6 @@ module Spree
                    stock_transfer_number: [:string, nullable: true],
                    purchase_order_number: [:string, nullable: true],
                    unit_cost: [:string, nullable: true],
-                   display_unit_cost: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
                    stock_location_name: [:string, nullable: true],
                    variant_id: [:string, nullable: true],
@@ -103,10 +102,6 @@ module Spree
           attribute :unit_cost do |movement|
             currency = movement.purchase_order&.currency || (current_store || Spree::Current.store)&.default_currency
             Spree::Money::Rounding.format(movement.unit_cost, currency, unit_price: true)
-          end
-
-          attribute :display_unit_cost do |movement|
-            movement.display_unit_cost&.to_s
           end
         end
       end

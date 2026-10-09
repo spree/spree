@@ -1,4 +1,4 @@
-import { defineTable, formatStoreDateTime } from '@spree/dashboard-core'
+import { defineTable, formatMoney, formatStoreDateTime } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import type { Payout } from '@spree/seller-sdk'
@@ -81,7 +81,7 @@ defineTable<Payout>('seller-payouts', {
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
-      render: (payout) => payout.display_amount,
+      render: (payout) => formatMoney(payout.amount, payout.currency, i18n.language),
     },
   ],
 })

@@ -1,4 +1,5 @@
 import type { CatalogPrice } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import type { ProductMembershipRow, SubRowLayout } from '@spree/dashboard-ui'
 import {
   Badge,
@@ -147,14 +148,18 @@ function TierBadge({ price, namespace }: { price: CatalogPrice; namespace: strin
               <td className="whitespace-nowrap pr-4 text-muted-foreground">
                 {text(namespace, 'tier_from', { count: 1 })}
               </td>
-              <td className="whitespace-nowrap text-right">{price.display_amount}</td>
+              <td className="whitespace-nowrap text-right">
+                <Money amount={price.amount} currency={price.currency} />
+              </td>
             </tr>
             {tiers.map((tier) => (
               <tr key={tier.min_quantity}>
                 <td className="whitespace-nowrap pr-4 text-muted-foreground">
                   {text(namespace, 'tier_from', { count: tier.min_quantity })}
                 </td>
-                <td className="whitespace-nowrap text-right">{tier.display_amount}</td>
+                <td className="whitespace-nowrap text-right">
+                  <Money amount={tier.amount} currency={price.currency} />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -229,7 +234,7 @@ export function catalogVariantRows<Row extends { id: string }>({
         </TableCell>
         <TableCell className="text-right tabular-nums">
           <span className="inline-flex items-center justify-end gap-1.5">
-            {price.display_amount}
+            <Money amount={price.amount} currency={price.currency} />
             {price.break_count > 0 && <TierBadge price={price} namespace={namespace} />}
           </span>
         </TableCell>

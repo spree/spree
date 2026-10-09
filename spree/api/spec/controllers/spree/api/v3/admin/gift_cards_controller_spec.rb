@@ -29,10 +29,10 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(ids).not_to include(other_card.prefixed_id)
     end
 
-    it 'surfaces display_amount as a formatted money string and ISO timestamps' do
+    it 'surfaces the amount as a decimal string and ISO timestamps' do
       subject
       entry = json_response['data'].find { |g| g['id'] == gift_card.prefixed_id }
-      expect(entry['display_amount']).to match(/\$50\.00/)
+      expect(entry['amount']).to eq('50.00')
       expect(entry['currency']).to eq('USD')
       expect(entry['created_at']).to match(/\A\d{4}-\d{2}-\d{2}T/)
     end
@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect { post :create, params: create_params, as: :json }.to change(Spree::GiftCard, :count).by(1)
 
       expect(response).to have_http_status(:created)
-      expect(json_response['display_amount']).to match(/\$25\.00/)
+      expect(json_response['amount']).to eq('25.00')
       expect(json_response['currency']).to eq('USD')
       created = Spree::GiftCard.last
       expect(created.store).to eq(store)
@@ -203,7 +203,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
     it 'updates editable attributes on an active card' do
       patch :update, params: { id: gift_card.prefixed_id, amount: '75.00' }, as: :json
       expect(response).to have_http_status(:ok)
-      expect(json_response['display_amount']).to match(/\$75\.00/)
+      expect(json_response['amount']).to eq('75.00')
     end
 
     it 'returns 404 for a card from another store' do

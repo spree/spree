@@ -1,3 +1,4 @@
+import { formatMoney, useMoneyLocale } from '@spree/dashboard-core'
 import { FulfillmentEditDialog as SharedFulfillmentEditDialog } from '@spree/dashboard-ui'
 import { type Fulfillment, isZeroMoney, SpreeError } from '@spree/seller-sdk'
 import { useState } from 'react'
@@ -27,7 +28,8 @@ export function FulfillmentEditDialog({
   const { t } = useTranslation()
   const { update } = useFulfillmentActions(orderId)
   const { data: locationsData } = useStockLocations(open)
-  const { refetch: refetchOrder } = useOrder(orderId)
+  const { data: order, refetch: refetchOrder } = useOrder(orderId)
+  const locale = useMoneyLocale()
   const [errorMessage, setErrorMessage] = useState<string>()
 
   const originOptions = (locationsData?.data ?? []).map((location) => ({
@@ -38,7 +40,12 @@ export function FulfillmentEditDialog({
   const rateOptions = (fulfillment.delivery_rates ?? []).map((rate) => ({
     value: rate.id,
     label: `${rate.name} — ${
-      isZeroMoney(rate.cost) ? t('orders.fulfillments.free') : rate.display_cost
+      rate.unpriced
+        ? t('orders.fulfillments.quoted_after_review')
+        : isZeroMoney(rate.cost)
+          ? t('orders.fulfillments.free')
+          : // A rate is quoted in its order's currency.
+            formatMoney(rate.cost, order?.currency ?? '', locale) || rate.cost
     }`,
   }))
 

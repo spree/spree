@@ -163,6 +163,10 @@ describe Spree::Preferences::Preferable, type: :model do
         expect(@a.get_preference(:if_decimal)).to eq(0.0)
       end
 
+      it 'refuses text it would otherwise misread' do
+        expect { @a.set_preference(:if_decimal, '1,599.99') }.to raise_error(Spree::Money::InvalidFormat)
+      end
+
       it 'stores and returns a decimal default as a BigDecimal, so setting the same amount is not a change' do
         A.preference :decimal_with_default, :decimal, default: 0.0
         record = A.create!
@@ -172,6 +176,16 @@ describe Spree::Preferences::Preferable, type: :model do
         expect(loaded.preferred_decimal_with_default).to be_a(BigDecimal)
 
         loaded.preferred_decimal_with_default = 0
+        expect(loaded).not_to be_changed
+      end
+
+      it 'treats a money preference the same way' do
+        A.preference :money_with_default, :money, default: 0
+        loaded = A.find(A.create!.id)
+
+        expect(loaded.preferred_money_with_default).to be_a(BigDecimal)
+
+        loaded.preferred_money_with_default = '0'
         expect(loaded).not_to be_changed
       end
     end

@@ -438,9 +438,9 @@ test.describe('promotions', () => {
     await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
 
     await openAdjustmentAction(page, /flat rate/i)
-    // Preferences carry no currency of their own, so the value reads back
-    // without trailing zeros.
-    await expect(page.getByRole('dialog').locator('#preference-amount')).toHaveValue(/^12\.50?$/)
+    // A money preference is written to its calculator's currency, so the
+    // amount keeps its cents.
+    await expect(page.getByRole('dialog').locator('#preference-amount')).toHaveValue('12.50')
     await cancelEditor(page)
 
     await page

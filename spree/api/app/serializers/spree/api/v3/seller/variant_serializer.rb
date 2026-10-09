@@ -10,6 +10,8 @@ module Spree
         # those are marketplace configuration and the seller cannot write them,
         # so showing them would invite an edit that silently does nothing.
         class VariantSerializer < V3::VariantSerializer
+          without_formatted_money(:seller)
+
           typelize position: :number,
                    cost_price: [:string, nullable: true],
                    cost_currency: [:string, nullable: true],
@@ -60,7 +62,7 @@ module Spree
                if: proc { expand?('media') }
 
           many :prices,
-               resource: proc { Spree.api.price_serializer },
+               resource: proc { Spree.api.seller_price_serializer },
                if: proc { expand?('prices') }
 
           many :stock_levels,

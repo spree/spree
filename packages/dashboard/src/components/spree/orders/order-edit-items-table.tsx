@@ -1,4 +1,5 @@
 import { compareMoney, isDecimalString, multiplyMoney } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -16,7 +17,6 @@ import { PackageIcon, RotateCcwIcon, Undo2Icon, XIcon } from '@spree/dashboard-u
 import { Controller, type FieldArrayWithId, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
-  formatAmount,
   type OrderEditFormValues,
   projectedLineTotal,
   projectedPrice,
@@ -217,7 +217,9 @@ function OrderEditItemRow({
             )}
           </div>
         ) : (
-          <span className="whitespace-nowrap">{row.display_price}</span>
+          <span className="whitespace-nowrap">
+            <Money amount={row.price} currency={currency} />
+          </span>
         )}
       </TableCell>
 
@@ -252,15 +254,19 @@ function OrderEditItemRow({
           projectedTotal === null ? (
             '—'
           ) : (
-            formatAmount(projectedTotal, currency)
+            <Money amount={projectedTotal} currency={currency} />
           )
         ) : totalChanged ? (
           <span className="flex items-center justify-end gap-2">
-            <span className="text-muted-foreground line-through">{row.display_total}</span>
-            <span className="font-medium">{formatAmount(projectedTotal as string, currency)}</span>
+            <span className="text-muted-foreground line-through">
+              <Money amount={row.total} currency={currency} />
+            </span>
+            <span className="font-medium">
+              <Money amount={projectedTotal} currency={currency} />
+            </span>
           </span>
         ) : (
-          row.display_total
+          <Money amount={row.total} currency={currency} />
         )}
       </TableCell>
 

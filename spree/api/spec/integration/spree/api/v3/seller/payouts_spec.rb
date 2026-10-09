@@ -76,7 +76,7 @@ RSpec.describe 'Seller Payouts API', type: :request, swagger_doc: 'api-reference
         schema '$ref' => '#/components/schemas/Payout'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['display_amount']).to eq('$120.00')
+          expect(JSON.parse(response.body)['amount']).to eq('120.00')
         end
       end
 

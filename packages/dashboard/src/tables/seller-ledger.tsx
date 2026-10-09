@@ -1,5 +1,5 @@
 import type { SellerPayout, SellerTransfer } from '@spree/admin-sdk'
-import { defineTable, formatStoreDateTime, useStore } from '@spree/dashboard-core'
+import { defineTable, formatStoreDateTime, Money, useStore } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { BanknoteIcon, HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -137,7 +137,7 @@ defineTable<SellerTransfer>('seller-transfers', {
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
-      render: (transfer) => transfer.display_amount,
+      render: (transfer) => <Money amount={transfer.amount} currency={transfer.currency} />,
     },
   ],
 })
@@ -224,7 +224,7 @@ defineTable<SellerPayout>('seller-payouts', {
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
-      render: (payout) => payout.display_amount,
+      render: (payout) => <Money amount={payout.amount} currency={payout.currency} />,
     },
   ],
 })

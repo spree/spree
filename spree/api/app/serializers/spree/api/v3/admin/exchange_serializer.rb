@@ -5,8 +5,10 @@ module Spree
     module V3
       module Admin
         class ExchangeSerializer < V3::ExchangeSerializer
+          without_formatted_money
+
           # No guest price gating here, so the inherited money fields are always present.
-          typelize price_difference: [:string, nullable: false], display_price_difference: [:string, nullable: false]
+          typelize price_difference: [:string, nullable: false]
 
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',

@@ -12,17 +12,17 @@ module Spree
                    selected: :boolean,
                    carrier: [:string, nullable: true],
                    service_level: [:string, nullable: true],
-                   estimated_delivery_date: [:string, nullable: true]
+                   estimated_delivery_date: [:string, nullable: true],
+                   unpriced: :boolean
 
           attributes :name, :selected
 
           money_attributes :cost, :total
 
-          attributes :carrier, :service_level, :estimated_delivery_date
+          attributes :carrier, :service_level, :estimated_delivery_date, :unpriced
 
-          money_attributes :display_cost, :display_total
-          typelize cost: [:string, nullable: false], display_cost: [:string, nullable: false],
-                   total: [:string, nullable: false], display_total: [:string, nullable: false]
+          typelize cost: [:string, nullable: false],
+                   total: [:string, nullable: false]
         end
       end
     end

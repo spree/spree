@@ -474,6 +474,7 @@
       "packing_slip_title": "قائمة التعبئة — الطلب {{number}}",
       "print_label": "طباعة الملصق",
       "print_packing_slip": "طباعة قائمة التعبئة",
+      "quoted_after_review": "يُسعَّر بعد المراجعة",
       "ship_to": "الشحن إلى",
       "ships_from_label": "يُشحن من",
       "split": "تقسيم",

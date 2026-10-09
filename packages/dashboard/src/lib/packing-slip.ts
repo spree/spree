@@ -7,10 +7,9 @@ import {
   type Order,
   sumMoney,
 } from '@spree/admin-sdk'
-import { fulfillmentItemRows } from '@spree/dashboard-core'
+import { formatAmount, fulfillmentItemRows } from '@spree/dashboard-core'
 import type { TFunction } from 'i18next'
 import i18n from 'i18next'
-import { formatAmount } from '../schemas/order'
 
 function escapeHtml(value: string): string {
   return value
@@ -108,14 +107,14 @@ function buildRows(order: Order, fulfillment: Fulfillment): PackingSlipRow[] {
     const unitPrice = lineItem?.price
     const canPrice = lineItem != null && isDecimalString(unitPrice)
 
-    // Prefer the server's formatted total when this parcel holds the whole
-    // line; compute per-parcel only when a partial quantity ships, so the
-    // number reflects what is actually in the box.
+    // Prefer the server's total when this parcel holds the whole line;
+    // compute per-parcel only when a partial quantity ships, so the number
+    // reflects what is actually in the box.
     const lineTotal = !canPrice
       ? null
       : row.quantity === lineItem.quantity
-        ? lineItem.display_total
-        : formatAmount(multiplyMoney(unitPrice, row.quantity, currency), currency)
+        ? formatAmount(lineItem.total, currency, i18n.language)
+        : formatAmount(multiplyMoney(unitPrice, row.quantity, currency), currency, i18n.language)
 
     return {
       key: row.key,
@@ -123,7 +122,9 @@ function buildRows(order: Order, fulfillment: Fulfillment): PackingSlipRow[] {
       optionsText: row.optionsText,
       thumbnailUrl: row.thumbnailUrl,
       sku: lineItem?.variant?.sku ?? null,
-      displayUnitPrice: lineItem?.display_price ?? row.displayPrice,
+      displayUnitPrice: canPrice
+        ? formatAmount(unitPrice, currency, i18n.language)
+        : row.displayPrice,
       displayLineTotal: lineTotal,
       quantity: row.quantity,
     }
@@ -148,30 +149,38 @@ function buildSummary(
 
   if (isWholeOrder) {
     const lines: SummaryLine[] = [
-      { label: key('packing_slip_subtotal'), value: order.display_item_total, emphasized: false },
+      {
+        label: key('packing_slip_subtotal'),
+        value: formatAmount(order.item_total, order.currency, i18n.language),
+        emphasized: false,
+      },
     ]
     if (!isZeroMoney(order.delivery_total)) {
       lines.push({
         label: key('packing_slip_shipping'),
-        value: order.display_delivery_total,
+        value: formatAmount(order.delivery_total, order.currency, i18n.language),
         emphasized: false,
       })
     }
     if (!isZeroMoney(order.discount_total)) {
       lines.push({
         label: key('packing_slip_discount'),
-        value: order.display_discount_total,
+        value: formatAmount(order.discount_total, order.currency, i18n.language),
         emphasized: false,
       })
     }
     if (!isZeroMoney(order.tax_total)) {
       lines.push({
         label: key('packing_slip_tax'),
-        value: order.display_tax_total,
+        value: formatAmount(order.tax_total, order.currency, i18n.language),
         emphasized: false,
       })
     }
-    lines.push({ label: key('packing_slip_total'), value: order.display_total, emphasized: true })
+    lines.push({
+      label: key('packing_slip_total'),
+      value: formatAmount(order.total, order.currency, i18n.language),
+      emphasized: true,
+    })
     return lines
   }
 
@@ -182,7 +191,7 @@ function buildSummary(
     }),
     order.currency,
   )
-  const formatted = formatAmount(subtotal, order.currency)
+  const formatted = formatAmount(subtotal, order.currency, i18n.language)
 
   return [
     { label: key('packing_slip_subtotal'), value: formatted, emphasized: false },

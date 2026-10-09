@@ -37,7 +37,6 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
       expect(row['amount']).to eq('10.00')
       expect(row['tax_amount']).to eq('2.10')
       expect(row['total']).to eq('12.10')
-      expect(row['display_total']).to eq('$12.10')
     end
 
     # The order page lists an order's commission by its id; filtering through

@@ -78,7 +78,9 @@ module Spree
           wire[:choices] = field[:choices] if field[:choices].present?
           wire[:default] = nil if field[:type] == :password
           # A decimal default goes out as the decimal string the API takes back.
-          wire[:default] = Spree::Money::Rounding.format_decimal(field[:default]) if field[:type] == :decimal && field[:default].is_a?(Numeric)
+          if %i[decimal money].include?(field[:type]) && field[:default].is_a?(Numeric)
+            wire[:default] = Spree::Money::Rounding.format_decimal(field[:default])
+          end
           wire.freeze
         end.freeze
       end

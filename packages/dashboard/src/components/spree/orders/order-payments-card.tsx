@@ -1,5 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
-import { adminClient, currencyParts } from '@spree/dashboard-core'
+import { adminClient, currencyParts, Money } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -158,12 +158,16 @@ export function PaymentsCard({ order }: { order: Order }) {
                     <StatusBadge status={payment.status} />
                   </TableCell>
                   <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
-                    {payment.display_amount}
+                    <Money amount={payment.amount} currency={order.currency} />
                   </TableCell>
                   {grouped && (
                     <TableCell className="text-right whitespace-nowrap tabular-nums">
-                      {splits.find((split) => split.payment_id === payment.id)
-                        ?.display_captured_amount ?? '—'}
+                      <Money
+                        amount={
+                          splits.find((split) => split.payment_id === payment.id)?.captured_amount
+                        }
+                        currency={order.currency}
+                      />
                     </TableCell>
                   )}
                   <TableCell>

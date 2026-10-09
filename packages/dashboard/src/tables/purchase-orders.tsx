@@ -1,5 +1,5 @@
 import type { PurchaseOrder } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { TruckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
@@ -87,11 +87,11 @@ defineTable<PurchaseOrder>('purchase-orders', {
       render: (po) => `${po.quantity_received_total} / ${po.quantity_ordered_total}`,
     },
     {
-      key: 'display_subtotal',
+      key: 'subtotal',
       label: i18n.t('admin.purchase_orders.columns.subtotal'),
       default: true,
       className: 'tabular-nums',
-      render: (po) => po.display_subtotal,
+      render: (po) => <Money amount={po.subtotal} currency={po.currency} />,
     },
     {
       key: 'expected_at',

@@ -2148,8 +2148,10 @@ export type CommissionRateUpdateParams = Partial<CommissionRateCreateParams>
  * a STI subclass (payment provider, promotion action, promotion rule).
  *
  * The `type` mirrors Spree's preference type system — `string`, `text`,
- * `integer`, `decimal`, `boolean`, `array`, `password` — so admin UIs
- * can switch on it to render the right input widget.
+ * `integer`, `decimal`, `money`, `boolean`, `array`, `password` — so admin UIs
+ * can switch on it to render the right input widget. A `money` value is a
+ * decimal string in the currency of the record's `currency` preference, when
+ * it has one; a `decimal` is a rate or measure, such as a percentage or a weight.
  */
 export interface PreferenceField {
   key: string
@@ -3115,8 +3117,8 @@ export type SavedReportUpdateParams = Partial<SavedReportCreateParams>
 
 /**
  * The outstanding balance for one currency, summed over the filter the list
- * request used. Amounts are canonical decimal strings; the `display_*` twins
- * are pre-formatted in that currency.
+ * request used. Amounts are decimal strings written with the currency's
+ * decimals; format them for display on the client.
  */
 export interface StoreCreditCurrencyTotal {
   currency: string
@@ -3128,10 +3130,6 @@ export interface StoreCreditCurrencyTotal {
   amount_authorized: string
   /** What the store still owes: issued minus used minus authorized. */
   amount_remaining: string
-  display_amount: string
-  display_amount_used: string
-  display_amount_authorized: string
-  display_amount_remaining: string
 }
 
 export interface StoreCreditListMeta extends PaginationMeta {

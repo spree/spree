@@ -5,14 +5,16 @@ module Spree
     module V3
       module Admin
         class ReturnSerializer < V3::ReturnSerializer
+          without_formatted_money
+
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    documents: "Array<{ kind: string; url: string }>",
                    stock_location_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
                    created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
-                   refund_total: [:string, nullable: false], display_refund_total: [:string, nullable: false],
-                   refund_tax_total: [:string, nullable: false], display_refund_tax_total: [:string, nullable: false]
+                   refund_total: [:string, nullable: false],
+                   refund_tax_total: [:string, nullable: false]
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
@@ -20,8 +22,8 @@ module Spree
 
           actor_attributes :created_by
 
-          money_attributes :refunded_total, :display_refunded_total, :refundable_total
-          typelize refunded_total: [:string, nullable: false], display_refunded_total: [:string, nullable: false],
+          money_attributes :refunded_total, :refundable_total
+          typelize refunded_total: [:string, nullable: false],
                    refundable_total: [:string, nullable: false]
 
           many :return_line_items,

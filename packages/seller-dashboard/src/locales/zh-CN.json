@@ -469,6 +469,7 @@
       "packing_slip_title": "装箱单 — 订单 {{number}}",
       "print_label": "打印面单",
       "print_packing_slip": "打印装箱单",
+      "quoted_after_review": "审核后报价",
       "ship_to": "收货地址",
       "ships_from_label": "发货地",
       "split": "拆分",

@@ -79,7 +79,7 @@ module Spree
         # single-seller catalog winner and default variant are the same row.
         attribute :price do |product|
           price = price_for(featured_variant(product))
-          Spree.api.price_serializer.new(price, params: params).to_h if price.present?
+          price_serializer.new(price, params: params).to_h if price.present?
         end
 
         # Original price - base price without price list resolution (for showing strikethrough)
@@ -90,7 +90,7 @@ module Spree
           base = price_in(variant)
 
           if calculated.present? && base.present? && calculated.id != base.id
-            Spree.api.price_serializer.new(base, params: params).to_h
+            price_serializer.new(base, params: params).to_h
           end
         end
 
@@ -148,7 +148,7 @@ module Spree
         attribute :prior_price,
                   if: proc { expand?('prior_price') } do |product|
           record = price_in(featured_variant(product))&.prior_price
-          Spree.api.price_history_serializer.new(record, params: params).to_h if record
+          price_history_serializer.new(record, params: params).to_h if record
         end
       end
     end

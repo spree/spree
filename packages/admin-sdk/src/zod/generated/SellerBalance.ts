@@ -7,15 +7,10 @@ export const SellerBalanceSchema = z.object({
   converted: z.boolean(),
   seller_id: z.string(),
   earned: z.string(),
-  display_earned: z.string(),
-  payable: z.string(),
-  display_payable: z.string(),
-  paid: z.string(),
-  display_paid: z.string(),
-  balance: z.string(),
-  display_balance: z.string(),
   pending: z.string(),
-  display_pending: z.string(),
+  payable: z.string(),
+  paid: z.string(),
+  balance: z.string(),
 });
 
 export type SellerBalance = z.infer<typeof SellerBalanceSchema>;

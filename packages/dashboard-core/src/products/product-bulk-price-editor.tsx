@@ -3,10 +3,10 @@ import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useMoneyLocale } from '../hooks/use-money-locale'
+import { currencyParts } from '../lib/currency-parts'
+import { normalizeMoneyInput } from '../lib/normalize-money'
 import { composeOptionsText } from '../products/variants-matrix'
-import { currencyParts } from './currency-parts'
-import { normalizeMoneyInput } from './normalize-money'
-import { useMoneyLocale } from './use-money-locale'
 import { useFormOptionTypes as useOptionTypes } from './use-product-form-data'
 
 interface Props {

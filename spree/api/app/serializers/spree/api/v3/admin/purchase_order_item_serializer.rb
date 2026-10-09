@@ -22,10 +22,10 @@ module Spree
                      :outstanding, :currency,
                      created_at: :iso8601, updated_at: :iso8601
 
-          money_attributes :unit_cost, :display_unit_cost, unit_price: true
-          money_attributes :total_cost, :display_total_cost
-          typelize unit_cost: [:string, nullable: false], display_unit_cost: [:string, nullable: false],
-                   total_cost: [:string, nullable: false], display_total_cost: [:string, nullable: false]
+          money_attributes :unit_cost, unit_price: true
+          money_attributes :total_cost
+          typelize unit_cost: [:string, nullable: false],
+                   total_cost: [:string, nullable: false]
 
           attribute :purchase_order_id do |item|
             Spree::PurchaseOrder.prefixed_id_for(item.purchase_order_id)

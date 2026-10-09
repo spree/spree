@@ -10,7 +10,6 @@ export const TransferSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   amount: z.string(),
-  display_amount: z.string(),
   settled_amount: z.string().nullable(),
   settled_currency: z.string().nullable(),
   converted: z.boolean(),

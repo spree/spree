@@ -5,6 +5,8 @@ module Spree
     module V3
       module Admin
         class PriceHistorySerializer < V3::PriceHistorySerializer
+          without_formatted_money
+
           typelize variant_id: :string,
                    price_id: :string,
                    created_at: :string

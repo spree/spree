@@ -8,18 +8,17 @@ All monetary values in the Admin API are **canonical decimal strings** (period d
 
 ## Reading
 
-Every monetary field is returned as a string, alongside a `display_` companion that includes currency formatting:
+Every monetary field is returned as a decimal string, with its currency on the record or on the record it belongs to (an order's payments and fulfillments are in the order's currency):
 
 ```json
 {
   "amount": "29.99",
-  "display_amount": "$29.99",
   "compare_at_amount": "39.99",
-  "display_compare_at_amount": "$39.99"
+  "currency": "USD"
 }
 ```
 
-Use `display_*` for rendering and the raw string fields for calculations, with a decimal library rather than `parseFloat`. The SDK exports `sumMoney`, `subtractMoney`, `multiplyMoney`, `compareMoney` and `isZeroMoney`, which work on the strings exactly.
+The Admin and Seller APIs return amounts only, with no `display_*` formatted copies: format them for the person reading them, in their own language. In JavaScript, pass the string to `Intl.NumberFormat` (`new Intl.NumberFormat('de', { style: 'currency', currency: 'EUR' }).format('1234.5')` gives `1.234,50 €`), which reads a numeric string exactly. Calculate with a decimal library rather than `parseFloat`: the SDK exports `sumMoney`, `subtractMoney`, `multiplyMoney`, `compareMoney` and `isZeroMoney`, which work on the strings exactly. The [Store API](/api-reference/store-api/monetary-amounts) keeps `display_*` fields for storefronts, and webhook payloads and email templates carry them too.
 
 ## Writing
 

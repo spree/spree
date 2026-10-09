@@ -1,6 +1,6 @@
 import type { Order } from '@spree/admin-sdk'
 import { isZeroMoney } from '@spree/admin-sdk'
-import { adminClient, useResourceKey } from '@spree/dashboard-core'
+import { adminClient, Money, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -106,7 +106,8 @@ export function DiscountsCard({ order }: { order: Order }) {
               </span>
               {order.gift_card ? (
                 <span className="text-xs text-muted-foreground">
-                  {order.gift_card.code} · {order.display_gift_card_total}
+                  {order.gift_card.code} ·{' '}
+                  <Money amount={order.gift_card_total} currency={order.currency} />
                 </span>
               ) : (
                 <span className="text-xs text-muted-foreground">

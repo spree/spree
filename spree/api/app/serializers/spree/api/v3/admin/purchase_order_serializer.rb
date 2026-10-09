@@ -54,8 +54,8 @@ module Spree
 
           attribute :editable, &:editable?
 
-          money_attributes :subtotal, :display_subtotal
-          typelize subtotal: [:string, nullable: false], display_subtotal: [:string, nullable: false]
+          money_attributes :subtotal
+          typelize subtotal: [:string, nullable: false]
 
           prefixed_id_attributes :supplier, :destination_location
 

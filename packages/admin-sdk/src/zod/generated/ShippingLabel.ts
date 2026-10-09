@@ -19,7 +19,6 @@ export const ShippingLabelSchema = z.object({
   owner_id: z.string(),
   owner_type: z.string(),
   cost: z.string(),
-  display_cost: z.string().nullable(),
   integration_id: z.string().nullable(),
   file_pending: z.boolean(),
   download_url: z.string().nullable(),

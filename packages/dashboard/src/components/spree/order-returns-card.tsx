@@ -1,10 +1,11 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
 import {
   currencyParts,
+  formatAmount,
   isPositiveMoney,
   returnOwesNothing,
   returnRefundSummary,
-  useStore,
+  useMoneyLocale,
 } from '@spree/dashboard-core'
 import {
   Badge,
@@ -37,7 +38,6 @@ import {
   TagIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
-import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
@@ -201,7 +201,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                 )}
               </CardContent>
 
-              <RefundSummaryFooter returnRecord={returnRecord} />
+              <RefundSummaryFooter returnRecord={returnRecord} currency={order.currency} />
             </Card>
           ))}
         </CardContent>
@@ -232,6 +232,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
       {refunding && (
         <RefundDialog
           returnRecord={refunding}
+          currency={order.currency}
           onClose={() => setRefunding(null)}
           onSubmit={(params) => {
             refund.mutate({ returnId: refunding.id, ...params })
@@ -320,9 +321,16 @@ function ReturnLabel({
   )
 }
 
-function RefundSummaryFooter({ returnRecord }: { returnRecord: Return }) {
+function RefundSummaryFooter({
+  returnRecord,
+  currency,
+}: {
+  returnRecord: Return
+  currency: string
+}) {
   const { t } = useTranslation()
-  const summary = returnRefundSummary(returnRecord)
+  const moneyLocale = useMoneyLocale()
+  const summary = returnRefundSummary(returnRecord, currency, moneyLocale)
 
   return (
     <CardFooter className="justify-between text-sm">
@@ -399,15 +407,17 @@ function ReceiveDialog({
 
 function RefundDialog({
   returnRecord,
+  currency,
   onClose,
   onSubmit,
 }: {
   returnRecord: Return
+  currency: string
   onClose: () => void
   onSubmit: (params: { refundMethod: RefundMethod; amount?: string }) => void
 }) {
-  const { defaultCurrency } = useStore()
-  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
+  const moneyLocale = useMoneyLocale()
+  const { symbol: currencySymbol } = currencyParts(currency, moneyLocale)
 
   return (
     <ReturnRefundDialog
@@ -415,7 +425,7 @@ function RefundDialog({
       owesNothing={returnOwesNothing(returnRecord.refundable_total)}
       refundTaxTotal={
         isPositiveMoney(returnRecord.refund_tax_total)
-          ? returnRecord.display_refund_tax_total
+          ? formatAmount(returnRecord.refund_tax_total, currency, moneyLocale)
           : undefined
       }
       currencySymbol={currencySymbol}

@@ -15,7 +15,6 @@ export const PaymentSchema = z.object({
   number: z.string(),
   status: z.string(),
   amount: z.string(),
-  display_amount: z.string(),
   source_type: z.string().nullable(),
   source_id: z.string().nullable(),
   get source() { return z.union([CreditCardSchema, StoreCreditSchema, PaymentSourceSchema]).nullable(); },

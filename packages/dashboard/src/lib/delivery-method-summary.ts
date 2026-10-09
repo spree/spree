@@ -1,5 +1,5 @@
 import { type DeliveryMethodRule, isDecimalString, isZeroMoney } from '@spree/admin-sdk'
-import { formatMoney } from '@spree/dashboard-core'
+import { formatAmount } from '@spree/dashboard-core'
 import type { TFunction } from 'i18next'
 
 /**
@@ -179,15 +179,6 @@ export function listedAmounts(
  */
 export function flatAmount(preferences: Record<string, unknown> | null | undefined): string | null {
   return toDecimal(preferences?.amount)
-}
-
-/** Formats an amount in the given currency, falling back to a bare number. */
-export function formatAmount(amount: string, currency: string, locale?: string): string {
-  try {
-    return formatMoney(amount, currency, locale)
-  } catch {
-    return `${amount} ${currency}`
-  }
 }
 
 /**

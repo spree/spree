@@ -1,5 +1,5 @@
 import type { Claim, Exchange, Return } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -84,11 +84,11 @@ defineTable<Return>('returns', {
     statusColumn(['requested', 'approved', 'received', 'refunded', 'canceled']),
     orderColumn<Return>(),
     {
-      key: 'display_refund_total',
+      key: 'refund_total',
       label: i18n.t('admin.pages.orders.detail.returns.refund_total'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (r) => r.display_refund_total,
+      render: (r) => <Money amount={r.refund_total} currency={r.order?.currency} />,
     },
     createdColumn<Return>(),
   ],
@@ -115,11 +115,11 @@ defineTable<Exchange>('exchanges', {
     statusColumn(['requested', 'approved', 'received', 'fulfilled', 'canceled']),
     orderColumn<Exchange>(),
     {
-      key: 'display_price_difference',
+      key: 'price_difference',
       label: i18n.t('admin.pages.orders.detail.exchanges.price_difference'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (e) => e.display_price_difference,
+      render: (e) => <Money amount={e.price_difference} currency={e.order?.currency} />,
     },
     createdColumn<Exchange>(),
   ],

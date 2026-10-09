@@ -41,8 +41,7 @@ RSpec.describe Spree::Api::V3::Seller::BalancesController, type: :controller do
       expect(response).to have_http_status(:ok)
       usd = json_response['data'].find { |row| row['currency'] == 'USD' }
       expect(json_response['data'].map { |row| row['currency'] }).to eq(%w[EUR USD])
-      expect(usd).to include('earned' => '40.00', 'paid' => '15.00', 'balance' => '25.00', 'pending' => '10.00',
-                             'display_balance' => '$25.00')
+      expect(usd).to include('earned' => '40.00', 'paid' => '15.00', 'balance' => '25.00', 'pending' => '10.00')
       expect(usd).not_to have_key('id')
     end
 

@@ -16,6 +16,21 @@ module Spree
           object.prefixed_id
         end
 
+        # Display strings that are labels, not formatted money.
+        FORMATTED_LABELS = %i[display_name display_description display_code display_action].freeze
+
+        # Back-office serializers leave formatting money to the client, which
+        # shows it in the admin's own language (docs/plans/6.0-money-correctness.md,
+        # PR E): inherited display_* attributes are dropped, and nested prices
+        # are written with the admin price serializers, which carry none.
+        #
+        # @param surface [Symbol] :admin or :seller, whose price serializers to use
+        def self.without_formatted_money(surface = :admin)
+          _attributes.delete_if { |key, _| key.to_s.start_with?('display_') && !FORMATTED_LABELS.include?(key.to_sym) }
+          define_method(:price_serializer) { Spree.api.public_send(:"#{surface}_price_serializer") }
+          define_method(:price_history_serializer) { Spree.api.public_send(:"#{surface}_price_history_serializer") }
+        end
+
         # Declares money attributes, written as decimal strings with exactly
         # the currency's decimal places ("10.00", "1.500", "100"), or up to
         # four for unit prices ("0.0125"). +display_*+ names pass through as
@@ -167,6 +182,10 @@ module Spree
         def featured_variant(product)
           product.featured_variant(currency: current_currency)
         end
+
+        def price_serializer = Spree.api.price_serializer
+
+        def price_history_serializer = Spree.api.price_history_serializer
 
         # Returns price for a variant using full Price List resolution
         # This may return a price from a price list if applicable

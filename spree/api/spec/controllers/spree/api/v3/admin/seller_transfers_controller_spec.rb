@@ -23,7 +23,6 @@ RSpec.describe Spree::Api::V3::Admin::SellerTransfersController, type: :controll
       expect(row['seller_name']).to eq('Sparks Audio')
       expect(row['order_number']).to eq(order.number)
       expect(row['amount']).to eq('42.50')
-      expect(row['display_amount']).to eq('$42.50')
       expect(row['kind']).to eq('earning')
     end
 

@@ -88,7 +88,7 @@ module Spree
         # Price object - calculated price with price list resolution
         attribute :price do |variant|
           price = price_for(variant)
-          Spree.api.price_serializer.new(price, params: params).to_h if price.present?
+          price_serializer.new(price, params: params).to_h if price.present?
         end
 
         # Original price - base price without price list resolution (for showing strikethrough)
@@ -98,7 +98,7 @@ module Spree
           base = price_in(variant)
 
           if calculated.present? && base.present? && calculated.id != base.id
-            Spree.api.price_serializer.new(base, params: params).to_h
+            price_serializer.new(base, params: params).to_h
           end
         end
 
@@ -137,7 +137,7 @@ module Spree
         attribute :prior_price,
                   if: proc { expand?('prior_price') } do |variant|
           record = price_in(variant)&.prior_price
-          Spree.api.price_history_serializer.new(record, params: params).to_h if record
+          price_history_serializer.new(record, params: params).to_h if record
         end
       end
     end

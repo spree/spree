@@ -51,12 +51,9 @@ RSpec.describe Spree::Api::V3::Admin::PriceHistorySerializer do
 
   subject { described_class.new(price_history, params: base_params).to_h }
 
-  it 'includes store serializer fields' do
-    expect(subject).to include(
-      'amount' => '9.99',
-      'currency' => 'USD',
-      'display_amount' => '$9.99'
-    )
+  it 'includes store serializer fields, leaving formatting to the client' do
+    expect(subject).to include('amount' => '9.99', 'currency' => 'USD')
+    expect(subject).not_to have_key('display_amount')
   end
 
   it 'includes admin-only fields' do

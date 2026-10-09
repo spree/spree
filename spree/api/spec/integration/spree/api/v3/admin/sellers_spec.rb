@@ -566,7 +566,7 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
-          expect(data.first['display_amount']).to eq('$40.00')
+          expect(data.first['amount']).to eq('40.00')
         end
       end
 

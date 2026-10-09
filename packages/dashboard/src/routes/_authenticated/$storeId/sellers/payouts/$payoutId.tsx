@@ -1,6 +1,7 @@
 import {
   adminClient,
   formatStoreDateTime,
+  Money,
   PageHeader,
   Slot,
   Subject,
@@ -81,7 +82,7 @@ function PayoutDetailPage() {
       <ResourceLayout
         header={
           <PageHeader
-            title={payout.display_amount}
+            title={<Money amount={payout.amount} currency={payout.currency} />}
             subtitle={payout.seller_name ?? undefined}
             backTo="sellers/payouts"
             badges={
@@ -166,7 +167,7 @@ function PayoutDetailPage() {
                           })}
                         </TableCell>
                         <TableCell className="text-right tabular-nums">
-                          {transfer.display_amount}
+                          <Money amount={transfer.amount} currency={transfer.currency} />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -187,7 +188,9 @@ function PayoutDetailPage() {
                 <CardTitle>{t('admin.payouts.detail.settlement')}</CardTitle>
               </CardHeader>
               <div className="flex flex-col gap-3 px-6 pb-6">
-                <ReadRow label={t('admin.fields.amount.label')}>{payout.display_amount}</ReadRow>
+                <ReadRow label={t('admin.fields.amount.label')}>
+                  <Money amount={payout.amount} currency={payout.currency} />
+                </ReadRow>
                 <ReadRow label={t('admin.payouts.columns.reference')}>{payout.reference}</ReadRow>
                 <ReadRow label={t('admin.payouts.columns.provider')}>{payout.provider}</ReadRow>
                 <ReadRow label={t('admin.payouts.detail.period')}>

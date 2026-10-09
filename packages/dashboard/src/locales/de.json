@@ -2865,6 +2865,7 @@
           "packing_slip_total": "Gesamt",
           "print_label": "Label drucken",
           "print_packing_slip": "Lieferschein drucken",
+          "quoted_after_review": "Preis nach Prüfung",
           "rates_pending_origin": "Speichern Sie den neuen Ursprung, um die dort verfügbaren Versandarten zu sehen.",
           "refund_label": "Etikett erstatten",
           "retry_refund_label": "Erstattung erneut anfordern",

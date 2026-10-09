@@ -9,8 +9,8 @@ module Spree
 
           attributes :currency, created_at: :iso8601, updated_at: :iso8601
 
-          money_attributes :amount, :display_amount
-          typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false]
+          money_attributes :amount
+          typelize amount: [:string, nullable: false]
         end
       end
     end

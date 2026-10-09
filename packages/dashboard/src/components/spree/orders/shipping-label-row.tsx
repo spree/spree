@@ -1,5 +1,5 @@
 import type { ShippingLabel } from '@spree/admin-sdk'
-import { downloadFromApi, getApiClient, useAuth } from '@spree/dashboard-core'
+import { downloadFromApi, getApiClient, Money, useAuth } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -91,7 +91,8 @@ export function ShippingLabelRow({
         {/* What the merchant paid the carrier — accounting data, never the
             shopper's shipping charge. */}
         <span className="text-muted-foreground">
-          {t('admin.orders.detail.fulfillments.label_cost')}: {label.display_cost}
+          {t('admin.orders.detail.fulfillments.label_cost')}:{' '}
+          <Money amount={label.cost} currency={label.currency} />
         </span>
       </div>
 

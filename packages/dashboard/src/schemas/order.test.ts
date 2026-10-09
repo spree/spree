@@ -24,8 +24,7 @@ function row(overrides: Partial<OrderEditItemValues>): OrderEditItemValues {
     name: 'Shirt',
     options_text: '',
     thumbnail_url: null,
-    display_price: '$10.00',
-    display_total: '$10.00',
+    total: '10.0',
     ...overrides,
   }
 }

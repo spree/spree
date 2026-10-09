@@ -8,7 +8,6 @@ export const AppliedPromotionSchema = z.object({
   description: z.string().nullable(),
   code: z.string().nullable(),
   amount: z.string(),
-  display_amount: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
 });

@@ -1,6 +1,6 @@
 import type { Order } from '@spree/admin-sdk'
 import { isZeroMoney } from '@spree/admin-sdk'
-import { isPositiveMoney, LocaleLabel, useStore } from '@spree/dashboard-core'
+import { isPositiveMoney, LocaleLabel, Money, useStore } from '@spree/dashboard-core'
 import { Card, CardHeader, CardTitle, cn, Separator } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
@@ -166,33 +166,36 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         <Separator />
 
-        <SummaryRow label={t('admin.fields.subtotal.label')} value={order.display_item_total} />
+        <SummaryRow
+          label={t('admin.fields.subtotal.label')}
+          value={<Money amount={order.item_total} currency={order.currency} />}
+        />
 
         {isPositiveMoney(order.delivery_total) && (
           <SummaryRow
             label={t('admin.fields.shipping.label')}
-            value={order.display_delivery_total}
+            value={<Money amount={order.delivery_total} currency={order.currency} />}
           />
         )}
 
         {!isZeroMoney(order.discount_total) && (
           <SummaryRow
             label={t('admin.orders.detail.summary.promotions')}
-            value={order.display_discount_total}
+            value={<Money amount={order.discount_total} currency={order.currency} />}
           />
         )}
 
         {!isZeroMoney(order.adjustment_total) && (
           <SummaryRow
             label={t('admin.orders.detail.summary.adjustments')}
-            value={order.display_adjustment_total}
+            value={<Money amount={order.adjustment_total} currency={order.currency} />}
           />
         )}
 
         {isPositiveMoney(order.included_tax_total) && (
           <SummaryRow
             label={t('admin.orders.detail.summary.tax_included')}
-            value={order.display_included_tax_total}
+            value={<Money amount={order.included_tax_total} currency={order.currency} />}
           />
         )}
 
@@ -200,13 +203,17 @@ export function OrderSummaryCard({ order }: { order: Order }) {
           (Boolean(order.completed_at) && isZeroMoney(order.included_tax_total))) && (
           <SummaryRow
             label={t('admin.orders.detail.summary.tax_additional')}
-            value={order.display_additional_tax_total}
+            value={<Money amount={order.additional_tax_total} currency={order.currency} />}
           />
         )}
 
         <Separator />
 
-        <SummaryRow label={t('admin.fields.total.label')} value={order.display_total} bold />
+        <SummaryRow
+          label={t('admin.fields.total.label')}
+          value={<Money amount={order.total} currency={order.currency} />}
+          bold
+        />
 
         {/* Labelled "marketplace fee" rather than a bare "fee": Spree::Fee is
             a buyer-facing charge (handling, gift wrap, COD) that rolls into
@@ -217,17 +224,17 @@ export function OrderSummaryCard({ order }: { order: Order }) {
             <Separator />
             <SummaryRow
               label={t('admin.orders.detail.summary.commission_fee')}
-              value={order.display_commission_amount_total}
+              value={<Money amount={order.commission_amount_total} currency={order.currency} />}
             />
             {commissionTaxed && (
               <SummaryRow
                 label={t('admin.orders.detail.summary.commission_tax')}
-                value={order.display_commission_tax_total}
+                value={<Money amount={order.commission_tax_total} currency={order.currency} />}
               />
             )}
             <SummaryRow
               label={t('admin.orders.detail.summary.commission_total')}
-              value={order.display_commission_total}
+              value={<Money amount={order.commission_total} currency={order.currency} />}
               bold
             />
           </>
@@ -237,12 +244,12 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         <SummaryRow
           label={t('admin.orders.detail.summary.payment_total')}
-          value={order.display_payment_total}
+          value={<Money amount={order.payment_total} currency={order.currency} />}
           highlight
         />
         <SummaryRow
           label={t('admin.orders.detail.summary.outstanding_balance')}
-          value={order.display_amount_due}
+          value={<Money amount={order.amount_due} currency={order.currency} />}
           highlight
           danger={outstanding}
         />

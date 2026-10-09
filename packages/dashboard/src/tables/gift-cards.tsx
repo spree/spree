@@ -1,5 +1,5 @@
 import type { GiftCard } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { GiftIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
@@ -69,25 +69,25 @@ defineTable<GiftCard>('gift-cards', {
       },
     },
     {
-      key: 'display_amount',
+      key: 'amount',
       label: i18n.t('admin.fields.gift_card.amount.label'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (g) => g.display_amount,
+      render: (g) => <Money amount={g.amount} currency={g.currency} />,
     },
     {
-      key: 'display_amount_used',
+      key: 'amount_used',
       label: i18n.t('admin.gift_cards.columns.used'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap',
-      render: (g) => g.display_amount_used,
+      render: (g) => <Money amount={g.amount_used} currency={g.currency} />,
     },
     {
-      key: 'display_amount_remaining',
+      key: 'amount_remaining',
       label: i18n.t('admin.gift_cards.columns.remaining'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap',
-      render: (g) => g.display_amount_remaining,
+      render: (g) => <Money amount={g.amount_remaining} currency={g.currency} />,
     },
     {
       key: 'currency',
