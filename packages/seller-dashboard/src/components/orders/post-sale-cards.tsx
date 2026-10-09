@@ -1,4 +1,4 @@
-import { currencyParts, isPositiveMoney } from '@spree/dashboard-core'
+import { currencyParts, formatMoney, isPositiveMoney, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -48,6 +48,7 @@ const CLAIM_ACTIONABLE = ['open', 'approved']
  */
 export function ExchangesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
   const confirm = useConfirm()
   const { data } = useOrderExchanges(order.id)
   const { approve, receive, fulfill, cancel } = useExchangeActions(order.id)
@@ -153,7 +154,7 @@ export function ExchangesCard({ order }: { order: Order }) {
               ))}
               <p className="text-muted-foreground text-sm">
                 {t('orders.post_sale.exchanges.price_difference', {
-                  amount: exchange.display_price_difference,
+                  amount: formatMoney(exchange.price_difference, order.currency, locale),
                 })}
               </p>
             </CardContent>

@@ -27,6 +27,7 @@ import { useQuery } from '@tanstack/react-query'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
+import { Money } from '../money'
 
 export function DiscountsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
@@ -106,7 +107,8 @@ export function DiscountsCard({ order }: { order: Order }) {
               </span>
               {order.gift_card ? (
                 <span className="text-xs text-muted-foreground">
-                  {order.gift_card.code} · {order.display_gift_card_total}
+                  {order.gift_card.code} ·{' '}
+                  <Money amount={order.gift_card_total} currency={order.currency} />
                 </span>
               ) : (
                 <span className="text-xs text-muted-foreground">

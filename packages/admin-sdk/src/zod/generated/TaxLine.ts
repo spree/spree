@@ -15,7 +15,6 @@ export const TaxLineSchema = z.object({
   claim_line_item_id: z.string().nullable(),
   exchange_line_item_id: z.string().nullable(),
   amount: z.string(),
-  display_amount: z.string(),
   provider_id: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()).nullable(),
   taxability_reason: z.string().nullable(),

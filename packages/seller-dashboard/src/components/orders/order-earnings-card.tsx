@@ -1,4 +1,4 @@
-import { formatStoreDateTime } from '@spree/dashboard-core'
+import { formatMoney, formatStoreDateTime, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -30,6 +30,7 @@ import { useStoreTimezone } from '../../hooks/use-store-timezone'
  */
 export function OrderEarningsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
   const timezone = useStoreTimezone()
   const { data } = useTransfers({ order_id_eq: order.id })
@@ -88,7 +89,9 @@ export function OrderEarningsCard({ order }: { order: Order }) {
                     </span>
                   )}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">{transfer.display_amount}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  {formatMoney(transfer.amount, transfer.currency, locale)}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

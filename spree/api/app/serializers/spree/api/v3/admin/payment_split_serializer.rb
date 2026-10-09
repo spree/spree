@@ -16,18 +16,17 @@ module Spree
                    payment_number: 'string | null',
                    order_id: :string,
                    order_number: 'string | null',
-                   authorized_amount: :string, display_authorized_amount: :string,
-                   captured_amount: :string, display_captured_amount: :string,
-                   refunded_amount: :string, display_refunded_amount: :string,
-                   claimed_amount: :string, display_claimed_amount: :string,
-                   net_captured_amount: :string, display_net_captured_amount: :string,
-                   refundable_amount: :string, display_refundable_amount: :string
+                   authorized_amount: :string,
+                   captured_amount: :string,
+                   refunded_amount: :string,
+                   claimed_amount: :string,
+                   net_captured_amount: :string,
+                   refundable_amount: :string
 
           attributes :currency, created_at: :iso8601, updated_at: :iso8601
 
           AMOUNTS.each do |amount|
             attribute(amount) { |split| Spree::Money::Rounding.format(split.public_send(amount), split.currency) }
-            attribute(:"display_#{amount}") { |split| split.public_send(:"display_#{amount}").to_s }
           end
 
           attribute(:payment_id) { |split| split.payment&.prefixed_id }

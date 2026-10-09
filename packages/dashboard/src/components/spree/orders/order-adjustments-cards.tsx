@@ -7,13 +7,7 @@ import {
   type Order,
   sumMoney,
 } from '@spree/admin-sdk'
-import {
-  adminClient,
-  currencyParts,
-  formatMoney,
-  formatPrice,
-  percentOf,
-} from '@spree/dashboard-core'
+import { adminClient, currencyParts, formatMoney, percentOf } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -77,6 +71,7 @@ import {
   type TaxLineGroup,
 } from '../../../lib/tax-line-groups'
 import { FEE_KINDS, SYSTEM_FEE_KINDS } from '../../../schemas/order'
+import { Money } from '../money'
 
 /** The API accepts any kind string, so unknown values fall back to the raw value. */
 function feeKindLabel(kind: string) {
@@ -199,11 +194,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
                     </div>
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
-                    {formatPrice({
-                      amount: group.amount,
-                      currency: order.currency,
-                      display_amount: null,
-                    })}
+                    <Money amount={group.amount} currency={order.currency} />
                   </TableCell>
                 </TableRow>
               )
@@ -289,7 +280,9 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
                 <TableCell className="text-muted-foreground">
                   {row.code ? <Badge variant="outline">{row.code}</Badge> : '—'}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">{row.display_amount}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  <Money amount={row.amount} currency={order.currency} />
+                </TableCell>
                 <AdjustmentDeleteCell
                   onDelete={row.kind === 'promotion' ? undefined : () => handleDeleteDiscount(row)}
                   deleting={deleteDiscountMutation.isPending}
@@ -368,7 +361,9 @@ export function FeesCard({ order }: { order: Order }) {
                 <TableCell className="text-muted-foreground">
                   {row.kind ? <Badge variant="outline">{feeKindLabel(row.kind)}</Badge> : '—'}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">{row.display_amount}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  <Money amount={row.amount} currency={order.currency} />
+                </TableCell>
                 <AdjustmentDeleteCell
                   onDelete={() => handleDeleteFee(row)}
                   deleting={deleteFeeMutation.isPending}

@@ -10,6 +10,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { Money } from '../money'
 
 export function CustomerLastOrderCard({ order }: { order: Order }) {
   const { t } = useTranslation()
@@ -38,7 +39,9 @@ export function CustomerLastOrderCard({ order }: { order: Order }) {
               </div>
             )}
           </div>
-          <div className="font-semibold">{order.display_total}</div>
+          <div className="font-semibold">
+            <Money amount={order.total} currency={order.currency} />
+          </div>
         </div>
         {order.items?.slice(0, 5).map((item) => (
           <div key={item.id} className="border-t flex items-center gap-3 px-6 py-3 text-sm">
@@ -50,7 +53,9 @@ export function CustomerLastOrderCard({ order }: { order: Order }) {
               )}
             </div>
             <div className="text-muted-foreground">×{item.quantity}</div>
-            <div className="font-medium tabular-nums">{item.display_total}</div>
+            <div className="font-medium tabular-nums">
+              <Money amount={item.total} currency={item.currency} />
+            </div>
           </div>
         ))}
       </CardContent>

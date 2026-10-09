@@ -472,6 +472,7 @@
       "packing_slip_title": "List przewozowy — zamówienie {{number}}",
       "print_label": "Drukuj etykietę",
       "print_packing_slip": "Drukuj list przewozowy",
+      "quoted_after_review": "Wycena po weryfikacji",
       "ship_to": "Wysyłka do",
       "ships_from_label": "Wysyłka z",
       "split": "Podziel",

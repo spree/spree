@@ -6,6 +6,7 @@ import {
   ResourceTable,
   resourceSearchSchema,
   Subject,
+  useMoneyLocale,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -33,6 +34,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { Money } from '../../../../components/spree/money'
 import { EditStoreCreditDialog } from '../../../../components/spree/store-credits/edit-store-credit-dialog'
 import { IssueStoreCreditDialog } from '../../../../components/spree/store-credits/issue-store-credit-dialog'
 import { useDeleteCustomerStoreCredit } from '../../../../hooks/use-customer-store-credits'
@@ -42,6 +44,7 @@ import {
   useStoreCreditEvents,
 } from '../../../../hooks/use-store-credits'
 import { erasedFieldValue } from '../../../../lib/erased-customer'
+import { formatAmount } from '../../../../lib/format-amount'
 import { originLabel } from '../../../../tables/store-credits'
 
 const storeCreditsSearchSchema = resourceSearchSchema.extend({
@@ -259,14 +262,16 @@ function OutstandingTotals({
               <Badge variant="outline">{total.currency}</Badge>
             </div>
             <span className="font-semibold text-2xl tabular-nums">
-              {total.display_amount_remaining}
+              <Money amount={total.amount_remaining} currency={total.currency} />
             </span>
             <div className="flex gap-4 text-muted-foreground text-xs tabular-nums">
               <span>
-                {t('admin.store_credits.totals.issued')} {total.display_amount}
+                {t('admin.store_credits.totals.issued')}{' '}
+                <Money amount={total.amount} currency={total.currency} />
               </span>
               <span>
-                {t('admin.store_credits.totals.used')} {total.display_amount_used}
+                {t('admin.store_credits.totals.used')}{' '}
+                <Money amount={total.amount_used} currency={total.currency} />
               </span>
             </div>
           </CardContent>
@@ -295,6 +300,7 @@ function StoreCreditSheet({
   onDelete: (credit: StoreCredit) => void
 }) {
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const [ledgerPage, setLedgerPage] = useState(1)
   const { data: credit, isLoading, isError } = useStoreCredit(id, ['customer', 'created_by'])
   const {
@@ -329,22 +335,22 @@ function StoreCreditSheet({
               <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                 <DetailRow
                   label={t('admin.fields.store_credit.amount.label')}
-                  value={credit.display_amount}
+                  value={formatAmount(credit.amount, credit.currency, moneyLocale)}
                   numeric
                 />
                 <DetailRow
                   label={t('admin.store_credits.columns.used')}
-                  value={credit.display_amount_used}
+                  value={formatAmount(credit.amount_used, credit.currency, moneyLocale)}
                   numeric
                 />
                 <DetailRow
                   label={t('admin.store_credits.columns.authorized')}
-                  value={credit.display_amount_authorized}
+                  value={formatAmount(credit.amount_authorized, credit.currency, moneyLocale)}
                   numeric
                 />
                 <DetailRow
                   label={t('admin.store_credits.columns.remaining')}
-                  value={credit.display_amount_remaining}
+                  value={formatAmount(credit.amount_remaining, credit.currency, moneyLocale)}
                   numeric
                   emphasis
                 />
@@ -386,7 +392,9 @@ function StoreCreditSheet({
                         >
                           <span className="text-sm">{event.display_action ?? event.action}</span>
                           <span className="flex items-baseline gap-3">
-                            <span className="text-sm tabular-nums">{event.display_amount}</span>
+                            <span className="text-sm tabular-nums">
+                              <Money amount={event.amount} currency={credit.currency} />
+                            </span>
                             <span className="whitespace-nowrap text-muted-foreground text-xs">
                               <RelativeTime iso={event.created_at} />
                             </span>

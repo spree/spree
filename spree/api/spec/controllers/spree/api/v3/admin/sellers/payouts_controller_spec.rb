@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::PayoutsController, type: :control
 
       expect(response).to have_http_status(:created)
       row = json_response['data'].first
-      expect(row['display_amount']).to eq('$70.00')
+      expect(row['amount']).to eq('70.00')
       expect(seller.seller_transfers.unsettled).to be_empty
     end
 

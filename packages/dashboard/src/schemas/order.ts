@@ -107,8 +107,8 @@ export const orderEditItemSchema = z
     name: z.string(),
     options_text: z.string(),
     thumbnail_url: z.string().nullable(),
-    display_price: z.string(),
-    display_total: z.string(),
+    /** The line's saved total; null for a line added in this edit. */
+    total: z.string().nullable(),
   })
   .superRefine((item, ctx) => {
     // Neither case sends a price, so refusing the form over one would block a
@@ -162,8 +162,7 @@ export function lineItemToEditRow(item: LineItem, fulfilledQuantity = 0): OrderE
     name: item.name,
     options_text: item.options_text ?? '',
     thumbnail_url: item.thumbnail_url,
-    display_price: item.display_price,
-    display_total: item.display_total,
+    total: item.total,
   }
 }
 
@@ -176,7 +175,7 @@ export function orderToEditForm(
   return { items: items.map((item) => lineItemToEditRow(item, fulfilled.get(item.id) ?? 0)) }
 }
 
-/** Formats a client-computed preview amount; server money arrives as `display_*`. */
+/** Formats a client-computed preview amount. */
 export function formatAmount(amount: string, currency: string): string {
   return formatMoney(amount, currency, i18n.language)
 }

@@ -32,7 +32,6 @@ RSpec.describe Spree::Api::V3::Admin::StoreCreditsController, type: :controller 
       subject
       entry = json_response['data'].find { |c| c['id'] == store_credit.prefixed_id }
       expect(entry['amount_authorized']).to eq('10.00')
-      expect(entry['display_amount_authorized']).to match(/\$10\.00/)
     end
 
     it 'reports the originator as a polymorphic shorthand with a prefixed id' do
@@ -76,11 +75,9 @@ RSpec.describe Spree::Api::V3::Admin::StoreCreditsController, type: :controller 
         usd = totals.find { |row| row['currency'] == 'USD' }
 
         expect(totals.map { |row| row['currency'] }).to eq(%w[EUR USD])
-        expect(usd['amount']).to eq('50.0')
-        expect(usd['amount_used']).to eq('20.0')
-        expect(usd['amount_authorized']).to eq('5.0')
-        expect(usd['amount_remaining']).to eq('25.0')
-        expect(usd['display_amount_remaining']).to match(/\$25\.00/)
+        expect(usd).to include('amount' => '50.00', 'amount_used' => '20.00', 'amount_authorized' => '5.00',
+                               'amount_remaining' => '25.00')
+        expect(usd.keys.grep(/\Adisplay_/)).to be_empty
       end
 
       it 'follows the active filter rather than the whole store' do
@@ -88,7 +85,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreCreditsController, type: :controller 
 
         totals = json_response['meta']['totals']
         expect(totals.map { |row| row['currency'] }).to eq(['EUR'])
-        expect(totals.first['amount']).to eq('30.0')
+        expect(totals.first['amount']).to eq('30.00')
       end
 
       it 'counts every match, not only the current page' do

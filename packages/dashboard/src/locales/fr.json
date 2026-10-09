@@ -2865,6 +2865,7 @@
           "packing_slip_total": "Total",
           "print_label": "Imprimer l'étiquette",
           "print_packing_slip": "Imprimer le bordereau de colisage",
+          "quoted_after_review": "Prix après vérification",
           "rates_pending_origin": "Enregistrez la nouvelle origine pour voir les modes de livraison proposés.",
           "refund_label": "Rembourser l'étiquette",
           "retry_refund_label": "Relancer le remboursement",

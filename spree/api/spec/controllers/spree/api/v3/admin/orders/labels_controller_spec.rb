@@ -60,7 +60,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::LabelsController, type: :controlle
 
         expect(response).to have_http_status(:created)
         expect(json_response['source']).to eq('uploaded')
-        expect(json_response['display_cost']).to eq('$6.50')
+        expect(json_response['cost']).to eq('6.50')
         expect(fulfillment.reload.tracking).to eq('1Z879E930346834440')
       end
 

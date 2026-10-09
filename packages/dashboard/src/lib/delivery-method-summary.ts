@@ -1,6 +1,6 @@
 import { type DeliveryMethodRule, isDecimalString, isZeroMoney } from '@spree/admin-sdk'
-import { formatMoney } from '@spree/dashboard-core'
 import type { TFunction } from 'i18next'
+import { formatAmount } from './format-amount'
 
 /**
  * A stored preference as a decimal string. The API answers with strings; a
@@ -181,14 +181,7 @@ export function flatAmount(preferences: Record<string, unknown> | null | undefin
   return toDecimal(preferences?.amount)
 }
 
-/** Formats an amount in the given currency, falling back to a bare number. */
-export function formatAmount(amount: string, currency: string, locale?: string): string {
-  try {
-    return formatMoney(amount, currency, locale)
-  } catch {
-    return `${amount} ${currency}`
-  }
-}
+export { formatAmount }
 
 /**
  * The glance price for a calculator-priced method on the delivery profile

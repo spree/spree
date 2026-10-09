@@ -1,3 +1,4 @@
+import { formatMoney, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Card,
   CardAction,
@@ -31,7 +32,10 @@ import { ReadRow } from '../read-row'
  */
 export function OrderPaymentCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
   const splits = order.payment_splits ?? []
+  const money = (amount: string | null | undefined, currency = order.currency) =>
+    formatMoney(amount, currency, locale)
 
   return (
     <Card>
@@ -53,10 +57,8 @@ export function OrderPaymentCard({ order }: { order: Order }) {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-3">
-        <ReadRow label={t('orders.summary.payment_total')}>{order.display_payment_total}</ReadRow>
-        <ReadRow label={t('orders.summary.outstanding_balance')}>
-          {order.display_amount_due}
-        </ReadRow>
+        <ReadRow label={t('orders.summary.payment_total')}>{money(order.payment_total)}</ReadRow>
+        <ReadRow label={t('orders.summary.outstanding_balance')}>{money(order.amount_due)}</ReadRow>
       </CardContent>
 
       {splits.length > 0 && (
@@ -77,11 +79,17 @@ export function OrderPaymentCard({ order }: { order: Order }) {
             <TableBody>
               {splits.map((split) => (
                 <TableRow key={split.id}>
-                  <TableCell className="tabular-nums">{split.display_authorized_amount}</TableCell>
-                  <TableCell className="tabular-nums">{split.display_captured_amount}</TableCell>
-                  <TableCell className="tabular-nums">{split.display_refunded_amount}</TableCell>
+                  <TableCell className="tabular-nums">
+                    {money(split.authorized_amount, split.currency)}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {money(split.captured_amount, split.currency)}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {money(split.refunded_amount, split.currency)}
+                  </TableCell>
                   <TableCell className="text-right tabular-nums">
-                    {split.display_refundable_amount}
+                    {money(split.refundable_amount, split.currency)}
                   </TableCell>
                 </TableRow>
               ))}

@@ -17,6 +17,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { Money } from '../money'
 
 export function CustomerOrdersCard({
   customer,
@@ -106,7 +107,7 @@ export function CustomerOrdersCard({
                     </span>
                   </TableCell>
                   <TableCell className="text-right font-medium tabular-nums">
-                    {order.display_total}
+                    <Money amount={order.total} currency={order.currency} />
                   </TableCell>
                 </TableRow>
               ))}

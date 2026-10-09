@@ -11,9 +11,9 @@ module Spree
         class CatalogPriceTierSerializer < V3::BaseSerializer
           _attributes.delete(:id)
 
-          typelize min_quantity: :number, display_amount: :string
+          typelize min_quantity: :number
 
-          attributes :min_quantity, :display_amount
+          attributes :min_quantity
 
           money_attributes :amount, unit_price: true
           typelize amount: [:string, nullable: false]

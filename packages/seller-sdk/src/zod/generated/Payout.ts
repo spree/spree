@@ -11,7 +11,6 @@ export const PayoutSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   amount: z.string(),
-  display_amount: z.string(),
   transfers_count: z.number(),
   provider: z.string(),
 });

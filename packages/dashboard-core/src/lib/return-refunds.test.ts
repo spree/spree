@@ -4,35 +4,39 @@ import { paidForUnits, returnOwesNothing, returnRefundSummary } from './return-r
 const figures = {
   status: 'received',
   refund_total: '20.00',
-  display_refund_total: '$20.00',
   refunded_total: '0.00',
-  display_refunded_total: '$0.00',
 }
 
 describe('returnRefundSummary', () => {
   it('reports what is owed until money goes back', () => {
-    expect(returnRefundSummary(figures)).toEqual({ kind: 'owed', amount: '$20.00' })
+    expect(returnRefundSummary(figures, 'USD', 'en')).toEqual({ kind: 'owed', amount: '$20.00' })
   })
 
   it('names the full amount when less went back than was owed', () => {
     expect(
-      returnRefundSummary({
-        ...figures,
-        status: 'refunded',
-        refunded_total: '15.00',
-        display_refunded_total: '$15.00',
-      }),
+      returnRefundSummary(
+        {
+          ...figures,
+          status: 'refunded',
+          refunded_total: '15.00',
+        },
+        'USD',
+        'en',
+      ),
     ).toEqual({ kind: 'refunded_short', amount: '$15.00', total: '$20.00' })
   })
 
   it('reports a full refund', () => {
     expect(
-      returnRefundSummary({
-        ...figures,
-        status: 'refunded',
-        refunded_total: '20.00',
-        display_refunded_total: '$20.00',
-      }),
+      returnRefundSummary(
+        {
+          ...figures,
+          status: 'refunded',
+          refunded_total: '20.00',
+        },
+        'USD',
+        'en',
+      ),
     ).toEqual({ kind: 'refunded', amount: '$20.00' })
   })
 })

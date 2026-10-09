@@ -3,6 +3,7 @@ import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
+import { Money } from '../components/spree/money'
 import { channelAutocompleteProps } from '../hooks/use-channels'
 import { customerAutocompleteProps } from '../hooks/use-customers'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
@@ -159,7 +160,7 @@ defineTable('orders', {
       default: true,
       filterType: 'number',
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (order) => order.display_total ?? '—',
+      render: (order) => <Money amount={order.total} currency={order.currency} />,
     },
     // Off by default — most stores never see one — but a B2B merchant turns it
     // on and reconciles against the buyer's own reference.

@@ -9,8 +9,10 @@ module Spree
         # Built on the shared V3 serializer rather than the admin one, which
         # expands the order and the customer behind it.
         class ClaimSerializer < V3::ClaimSerializer
+          without_formatted_money(:seller)
+
           # No guest price gating here, so the inherited money fields are always present.
-          typelize refund_total: [:string, nullable: false], display_refund_total: [:string, nullable: false]
+          typelize refund_total: [:string, nullable: false]
 
           typelize memo: [:string, nullable: true]
 

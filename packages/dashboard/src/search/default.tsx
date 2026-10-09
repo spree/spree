@@ -9,7 +9,13 @@ import type {
   Promotion,
   Seller,
 } from '@spree/admin-sdk'
-import { adminClient, defineSearchEntry, Subject, searchRegistry } from '@spree/dashboard-core'
+import {
+  adminClient,
+  defineSearchEntry,
+  Subject,
+  searchRegistry,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import { StatusBadge, Thumbnail } from '@spree/dashboard-ui'
 import {
   Building2Icon,
@@ -22,6 +28,7 @@ import {
   UsersRoundIcon,
 } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { formatAmount } from '../lib/format-amount'
 
 // Each entry teaches the command palette how to search one resource: how to
 // fetch matches, render a result row, and where a row navigates. Resources are
@@ -239,12 +246,13 @@ searchRegistry.add(
  *  variants apart. Renders nothing when neither is known. */
 function ProductMeta({ product }: { product: Product }) {
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const stock = product.in_stock
     ? t('admin.pages.products.inventory.in_stock_short')
     : product.backorderable
       ? t('admin.pages.products.inventory.on_backorder')
       : t('admin.pages.products.inventory.out_of_stock')
-  const price = product.price?.display_amount
+  const price = formatAmount(product.price?.amount, product.price?.currency, moneyLocale, '')
 
   return (
     <span className="truncate text-muted-foreground text-xs">

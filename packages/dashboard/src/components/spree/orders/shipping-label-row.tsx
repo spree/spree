@@ -13,6 +13,7 @@ import {
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PrinterIcon, ReceiptIcon, TrashIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Money } from '../money'
 
 /**
  * The label bound to a parcel: what it cost, how to print it, and how to give
@@ -91,7 +92,8 @@ export function ShippingLabelRow({
         {/* What the merchant paid the carrier — accounting data, never the
             shopper's shipping charge. */}
         <span className="text-muted-foreground">
-          {t('admin.orders.detail.fulfillments.label_cost')}: {label.display_cost}
+          {t('admin.orders.detail.fulfillments.label_cost')}:{' '}
+          <Money amount={label.cost} currency={label.currency} />
         </span>
       </div>
 

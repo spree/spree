@@ -38,6 +38,7 @@ import {
   useOrderExchanges,
 } from '../../hooks/use-post-sale'
 import { variantLabel } from '../../lib/variant-label'
+import { Money } from './money'
 import {
   CreateClaimDialog,
   CreateExchangeDialog,
@@ -199,7 +200,9 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.exchanges.price_difference')}
                 </span>
-                <span className="font-medium">{exchange.display_price_difference}</span>
+                <span className="font-medium">
+                  <Money amount={exchange.price_difference} currency={order.currency} />
+                </span>
               </CardFooter>
             </Card>
           ))}
@@ -359,7 +362,9 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.returns.refund_total')}
                 </span>
-                <span className="font-medium">{claim.display_refund_total}</span>
+                <span className="font-medium">
+                  <Money amount={claim.refund_total} currency={order.currency} />
+                </span>
               </CardFooter>
             </Card>
           ))}

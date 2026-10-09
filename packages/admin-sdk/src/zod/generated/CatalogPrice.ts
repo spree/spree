@@ -10,7 +10,6 @@ export const CatalogPriceSchema = z.object({
   source: z.string(),
   break_count: z.number(),
   amount: z.string(),
-  display_amount: z.string(),
   tiers: z.array(CatalogPriceTierSchema),
 });
 

@@ -13,6 +13,7 @@ import {
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useSellerBalances, useSettleSeller } from '../../../hooks/use-seller-ledger'
+import { Money } from '../money'
 import { ReadRow } from './seller-read-row'
 
 /**
@@ -72,7 +73,9 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
             <ReadRow
               label={t('admin.payouts.balance.owed', { currency: balance.settlement_currency })}
             >
-              <span className="font-medium">{balance.display_balance}</span>
+              <span className="font-medium">
+                <Money amount={balance.balance} currency={balance.settlement_currency} />
+              </span>
             </ReadRow>
             <ReadRow
               label={
@@ -81,15 +84,19 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
                   : t('admin.payouts.balance.earned')
               }
             >
-              {balance.display_earned}
+              <Money amount={balance.earned} currency={balance.settlement_currency} />
             </ReadRow>
             {balance.converted && (
               <ReadRow label={t('admin.payouts.balance.payable')}>
-                {balance.display_payable}
+                <Money amount={balance.payable} currency={balance.settlement_currency} />
               </ReadRow>
             )}
-            <ReadRow label={t('admin.payouts.balance.paid')}>{balance.display_paid}</ReadRow>
-            <ReadRow label={t('admin.payouts.balance.pending')}>{balance.display_pending}</ReadRow>
+            <ReadRow label={t('admin.payouts.balance.paid')}>
+              <Money amount={balance.paid} currency={balance.settlement_currency} />
+            </ReadRow>
+            <ReadRow label={t('admin.payouts.balance.pending')}>
+              <Money amount={balance.pending} currency={balance.settlement_currency} />
+            </ReadRow>
           </div>
         ))}
 

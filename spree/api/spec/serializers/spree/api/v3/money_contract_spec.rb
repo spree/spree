@@ -95,6 +95,53 @@ RSpec.describe 'API v3 money contract' do
     end
   end
 
+  # The dashboards format money in the admin's own language, so the
+  # back-office APIs send amounts only.
+  it 'leaves formatted money out of the Admin and Seller APIs, nested records included' do
+    order = create(:completed_order_with_totals, store: store)
+    variant = order.line_items.first.variant
+    expand = { expand: %w[prices default_variant variants line_items] }
+
+    found = {
+      Spree::Api::V3::Admin::OrderSerializer => order,
+      Spree::Api::V3::Seller::OrderSerializer => order,
+      Spree::Api::V3::Admin::ProductSerializer => variant.product,
+      Spree::Api::V3::Seller::ProductSerializer => variant.product,
+      Spree::Api::V3::Admin::VariantSerializer => variant,
+      Spree::Api::V3::Seller::VariantSerializer => variant
+    }.to_h { |serializer, record| [serializer.name, formatted_money_paths(serialize(serializer, record, **expand))] }
+      .reject { |_, paths| paths.empty? }
+
+    expect(found).to eq({})
+    expect(serialize(Spree::Api::V3::OrderSerializer, order)).to include('display_total')
+  end
+
+  # Every money display_* key at any depth, as "path.to.key".
+  def formatted_money_paths(node, path = [])
+    case node
+    when Hash
+      node.flat_map do |key, value|
+        own = key.start_with?('display_') && !Spree::Api::V3::BaseSerializer::FORMATTED_LABELS.include?(key.to_sym) ? [(path + [key]).join('.')] : []
+        own + formatted_money_paths(value, path + [key])
+      end
+    when Array then node.each_with_index.flat_map { |item, index| formatted_money_paths(item, path + [index]) }
+    else []
+    end
+  end
+
+  # Earnings are in the sale currency; what the account holds is in the one
+  # it settles in, so a yen sale settled in dollars has no yen cents.
+  it 'writes a converted seller balance in the currency of each side' do
+    balance = Spree::SellerBalance.new(seller: build(:seller), currency: 'JPY', settlement_currency: 'USD',
+                                       earned: BigDecimal('1500'), pending: BigDecimal('200'),
+                                       payable: BigDecimal('9.87'), paid: BigDecimal('4'))
+
+    [Spree::Api::V3::Seller::BalanceSerializer, Spree::Api::V3::Admin::SellerBalanceSerializer].each do |serializer|
+      expect(serialize(serializer, balance)).to include('earned' => '1500', 'pending' => '200', 'payable' => '9.87',
+                                                        'paid' => '4.00', 'balance' => '5.87')
+    end
+  end
+
   it 'writes rates as decimal strings without trailing zeros' do
     rate = create(:tax_rate, amount: BigDecimal('0.23'))
     payload = serialize(Spree::Api::V3::Admin::TaxRateSerializer, rate)

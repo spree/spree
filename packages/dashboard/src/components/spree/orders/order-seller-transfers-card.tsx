@@ -16,6 +16,7 @@ import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useSellerTransfers } from '../../../hooks/use-seller-ledger'
+import { Money } from '../money'
 
 /**
  * What this order earned its seller, and what a refund has taken back.
@@ -84,7 +85,9 @@ export function SellerTransfersCard({ order }: { order: Order }) {
                   </span>
                 )}
               </TableCell>
-              <TableCell className="text-right tabular-nums">{transfer.display_amount}</TableCell>
+              <TableCell className="text-right tabular-nums">
+                <Money amount={transfer.amount} currency={transfer.currency} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -9,11 +9,11 @@ module Spree
           typelize currency: :string,
                    settlement_currency: :string,
                    converted: :boolean,
-                   earned: :string, display_earned: :string,
-                   payable: :string, display_payable: :string,
-                   paid: :string, display_paid: :string,
-                   balance: :string, display_balance: :string,
-                   pending: :string, display_pending: :string
+                   earned: :string,
+                   payable: :string,
+                   paid: :string,
+                   balance: :string,
+                   pending: :string
 
           _attributes.delete(:id)
 
@@ -24,9 +24,14 @@ module Spree
 
           attribute(:converted) { |balance| balance.converted? }
 
-          %i[earned payable paid balance pending].each do |figure|
+          # Earnings are in the currency the sales were priced in; what the
+          # account holds is in the one it settles in.
+          %i[earned pending].each do |figure|
+            attribute(figure) { |balance| Spree::Money::Rounding.format(balance.public_send(figure), balance.currency) }
+          end
+
+          %i[payable paid balance].each do |figure|
             attribute(figure) { |balance| Spree::Money::Rounding.format(balance.public_send(figure), balance.settlement_currency) }
-            attribute(:"display_#{figure}") { |balance| balance.public_send(:"display_#{figure}").to_s }
           end
         end
       end

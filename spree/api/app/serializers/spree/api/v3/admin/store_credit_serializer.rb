@@ -3,14 +3,14 @@ module Spree
     module V3
       module Admin
         class StoreCreditSerializer < V3::StoreCreditSerializer
+          without_formatted_money
+
           typelize customer_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
                    memo: [:string, nullable: true],
                    amount: [:string, nullable: false], amount_used: [:string, nullable: false],
-                   amount_remaining: [:string, nullable: false], display_amount: [:string, nullable: false],
-                   display_amount_used: [:string, nullable: false], display_amount_remaining: [:string, nullable: false],
+                   amount_remaining: [:string, nullable: false],
                    amount_authorized: [:string, nullable: false],
-                   display_amount_authorized: [:string, nullable: false],
                    outstanding: :boolean,
                    originator_type: [:string, nullable: true],
                    originator_id: [:string, nullable: true],
@@ -24,10 +24,9 @@ module Spree
           # and the filter cannot disagree.
           attribute :outstanding, &:outstanding?
 
-          money_attributes :display_amount_authorized
           # money_attributes types its fields nullable for gated guests; the
           # Admin API never gates prices.
-          typelize amount_authorized: [:string, nullable: false], display_amount_authorized: [:string, nullable: false]
+          typelize amount_authorized: [:string, nullable: false]
           prefixed_id_attributes :customer, :created_by
 
           # Why the credit exists: the return, exchange, claim or gift card

@@ -3117,8 +3117,8 @@ export type SavedReportUpdateParams = Partial<SavedReportCreateParams>
 
 /**
  * The outstanding balance for one currency, summed over the filter the list
- * request used. Amounts are canonical decimal strings; the `display_*` twins
- * are pre-formatted in that currency.
+ * request used. Amounts are decimal strings written with the currency's
+ * decimals; format them for display on the client.
  */
 export interface StoreCreditCurrencyTotal {
   currency: string
@@ -3130,10 +3130,6 @@ export interface StoreCreditCurrencyTotal {
   amount_authorized: string
   /** What the store still owes: issued minus used minus authorized. */
   amount_remaining: string
-  display_amount: string
-  display_amount_used: string
-  display_amount_authorized: string
-  display_amount_remaining: string
 }
 
 export interface StoreCreditListMeta extends PaginationMeta {

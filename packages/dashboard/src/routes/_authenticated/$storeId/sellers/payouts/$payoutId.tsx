@@ -28,6 +28,7 @@ import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Money } from '../../../../../components/spree/money'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { PayoutCompleteDialog } from '../../../../../components/spree/sellers/payout-complete-dialog'
 import { ReadRow } from '../../../../../components/spree/sellers/seller-read-row'
@@ -81,7 +82,7 @@ function PayoutDetailPage() {
       <ResourceLayout
         header={
           <PageHeader
-            title={payout.display_amount}
+            title={<Money amount={payout.amount} currency={payout.currency} />}
             subtitle={payout.seller_name ?? undefined}
             backTo="sellers/payouts"
             badges={
@@ -166,7 +167,7 @@ function PayoutDetailPage() {
                           })}
                         </TableCell>
                         <TableCell className="text-right tabular-nums">
-                          {transfer.display_amount}
+                          <Money amount={transfer.amount} currency={transfer.currency} />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -187,7 +188,9 @@ function PayoutDetailPage() {
                 <CardTitle>{t('admin.payouts.detail.settlement')}</CardTitle>
               </CardHeader>
               <div className="flex flex-col gap-3 px-6 pb-6">
-                <ReadRow label={t('admin.fields.amount.label')}>{payout.display_amount}</ReadRow>
+                <ReadRow label={t('admin.fields.amount.label')}>
+                  <Money amount={payout.amount} currency={payout.currency} />
+                </ReadRow>
                 <ReadRow label={t('admin.payouts.columns.reference')}>{payout.reference}</ReadRow>
                 <ReadRow label={t('admin.payouts.columns.provider')}>{payout.provider}</ReadRow>
                 <ReadRow label={t('admin.payouts.detail.period')}>

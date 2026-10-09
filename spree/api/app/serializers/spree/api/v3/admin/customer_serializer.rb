@@ -5,13 +5,14 @@ module Spree
         # Admin API Customer Serializer
         # Full customer data including admin-only fields
         class CustomerSerializer < V3::CustomerSerializer
+          without_formatted_money
+
           typelize failed_attempts: :number,
                    tags: [:string, multi: true],
                    internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    orders_count: :number,
                    total_spent: :string,
-                   display_total_spent: :string,
                    last_order_completed_at: [:string, nullable: true],
                    default_billing_address_id: [:string, nullable: true],
                    default_shipping_address_id: [:string, nullable: true],
@@ -55,12 +56,6 @@ module Spree
           attribute :total_spent do |user|
             amount = user.attributes['total_spent'] || user.orders.complete.sum(:total)
             Spree::Money::Rounding.format(amount, (current_store || Spree::Current.store)&.default_currency)
-          end
-
-          attribute :display_total_spent do |user|
-            amount = user.attributes['total_spent'] || user.orders.complete.sum(:total)
-            currency = Spree::Current.currency || Spree::Current.store&.default_currency
-            Spree::Money.new(amount, currency: currency).to_s
           end
 
           attribute :last_order_completed_at do |user|

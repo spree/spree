@@ -85,7 +85,6 @@ RSpec.describe Spree::Api::V3::Admin::StockMovementsController, type: :controlle
       row = json_response['data'].find { |m| m['purchase_order_id'] == purchase_order.prefixed_id }
       expect(row['purchase_order_number']).to eq(purchase_order.number)
       expect(row['unit_cost']).to eq('9.50')
-      expect(row['display_unit_cost']).to eq('$9.50')
     end
 
     # spree_stock_movements carries no store of its own, so tenancy is the walk

@@ -10,9 +10,7 @@ export const ReturnSchema = z.object({
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
   refund_total: z.string(),
-  display_refund_total: z.string(),
   refund_tax_total: z.string(),
-  display_refund_tax_total: z.string(),
   approved_at: z.string().nullable(),
   received_at: z.string().nullable(),
   refunded_at: z.string().nullable(),
@@ -23,7 +21,6 @@ export const ReturnSchema = z.object({
   stock_location_id: z.string().nullable(),
   refunded_total: z.string(),
   refundable_total: z.string(),
-  display_refunded_total: z.string(),
 });
 
 export type Return = z.infer<typeof ReturnSchema>;

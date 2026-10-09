@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 export const CatalogPriceTierSchema = z.object({
   min_quantity: z.number(),
-  display_amount: z.string(),
   amount: z.string(),
 });
 

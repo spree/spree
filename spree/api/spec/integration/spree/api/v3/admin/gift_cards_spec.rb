@@ -97,7 +97,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['display_amount']).to match(/\$25\.00/)
+          expect(data['amount']).to eq('25.00')
           expect(data['status']).to eq('active')
         end
       end
@@ -185,7 +185,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['display_amount']).to match(/\$75\.00/)
+          expect(data['amount']).to eq('75.00')
         end
       end
     end

@@ -75,7 +75,7 @@ Rails.application.config.after_initialize do
     # serializer this branch inherits references them, so their types still
     # have to exist in the package.
     store_nested_for_seller = %w[
-      Address Category CustomField OptionType OptionValue Price PriceHistory Seller
+      Address Category CustomField OptionType OptionValue Seller
     ].to_set
 
     config.writer(:seller) do |c|

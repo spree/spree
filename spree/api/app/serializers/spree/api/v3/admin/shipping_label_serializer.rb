@@ -15,7 +15,6 @@ module Spree
                    service: [:string, nullable: true],
                    tracking_number: [:string, nullable: true],
                    currency: [:string, nullable: true],
-                   display_cost: :string,
                    format: [:string, nullable: true],
                    external_id: [:string, nullable: true],
                    integration_id: [:string, nullable: true],
@@ -33,7 +32,7 @@ module Spree
             Spree::Base.polymorphic_api_type(shipping_label.owner_type)
           end
 
-          money_attributes :cost, :display_cost, currency: ->(label) { label.currency.presence || label.store.default_currency }
+          money_attributes :cost, currency: ->(label) { label.currency.presence || label.store.default_currency }
           typelize cost: [:string, nullable: false]
 
           prefixed_id_attributes :integration

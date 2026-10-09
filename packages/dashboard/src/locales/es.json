@@ -2652,6 +2652,7 @@
           "packing_slip_total": "Total",
           "print_label": "Imprimir etiqueta",
           "print_packing_slip": "Imprimir nota de despacho",
+          "quoted_after_review": "Precio tras revisión",
           "rates_pending_origin": "Guardá el nuevo origen para ver los métodos de entrega que ofrece.",
           "refund_label": "Reembolsar etiqueta",
           "retry_refund_label": "Reintentar reembolso",

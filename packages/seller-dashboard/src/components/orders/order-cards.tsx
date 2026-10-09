@@ -1,4 +1,10 @@
-import { AddressFormDialog, formatStoreDateTime, isPositiveMoney } from '@spree/dashboard-core'
+import {
+  AddressFormDialog,
+  formatMoney,
+  formatStoreDateTime,
+  isPositiveMoney,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import {
   AddressBlock,
   Button,
@@ -70,6 +76,8 @@ function formatDate(iso: string | null | undefined, timezone: string) {
  */
 export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
+  const money = (amount: string | null) => formatMoney(amount, order.currency, locale)
   const timezone = useStoreTimezone()
 
   const outstanding = isPositiveMoney(order.amount_due)
@@ -118,27 +126,27 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         <Separator />
 
-        <SummaryRow label={t('orders.summary.subtotal')} value={order.display_item_total} />
+        <SummaryRow label={t('orders.summary.subtotal')} value={money(order.item_total)} />
 
         {isPositiveMoney(order.delivery_total) && (
-          <SummaryRow label={t('orders.summary.shipping')} value={order.display_delivery_total} />
+          <SummaryRow label={t('orders.summary.shipping')} value={money(order.delivery_total)} />
         )}
 
         {!isZeroMoney(order.discount_total) && (
-          <SummaryRow label={t('orders.summary.promotions')} value={order.display_discount_total} />
+          <SummaryRow label={t('orders.summary.promotions')} value={money(order.discount_total)} />
         )}
 
         {!isZeroMoney(order.adjustment_total) && (
           <SummaryRow
             label={t('orders.summary.adjustments')}
-            value={order.display_adjustment_total}
+            value={money(order.adjustment_total)}
           />
         )}
 
         {isPositiveMoney(order.included_tax_total) && (
           <SummaryRow
             label={t('orders.summary.tax_included')}
-            value={order.display_included_tax_total}
+            value={money(order.included_tax_total)}
           />
         )}
 
@@ -148,13 +156,13 @@ export function OrderSummaryCard({ order }: { order: Order }) {
           (placed && isZeroMoney(order.included_tax_total))) && (
           <SummaryRow
             label={t('orders.summary.tax_additional')}
-            value={order.display_additional_tax_total}
+            value={money(order.additional_tax_total)}
           />
         )}
 
         <Separator />
 
-        <SummaryRow label={t('orders.summary.total')} value={order.display_total} bold />
+        <SummaryRow label={t('orders.summary.total')} value={money(order.total)} bold />
 
         {/* What the marketplace charged the seller on this sale. Below the
             order total because it is not part of what the buyer paid — it is
@@ -178,19 +186,19 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
             <SummaryRow
               label={t('orders.summary.commission_fee')}
-              value={order.display_commission_amount_total}
+              value={money(order.commission_amount_total)}
             />
 
             {isPositiveMoney(order.commission_tax_total) && (
               <SummaryRow
                 label={t('orders.summary.commission_tax')}
-                value={order.display_commission_tax_total}
+                value={money(order.commission_tax_total)}
               />
             )}
 
             <SummaryRow
               label={t('orders.summary.commission_total')}
-              value={order.display_commission_total}
+              value={money(order.commission_total)}
               bold
             />
           </>
@@ -200,12 +208,12 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         <SummaryRow
           label={t('orders.summary.payment_total')}
-          value={order.display_payment_total}
+          value={money(order.payment_total)}
           highlight
         />
         <SummaryRow
           label={t('orders.summary.outstanding_balance')}
-          value={order.display_amount_due}
+          value={money(order.amount_due)}
           highlight
           danger={outstanding}
         />

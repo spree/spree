@@ -2865,6 +2865,7 @@
           "packing_slip_total": "Total",
           "print_label": "Print label",
           "print_packing_slip": "Print packing slip",
+          "quoted_after_review": "Quoted after review",
           "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
           "refund_label": "Refund label",
           "retry_refund_label": "Retry refund",

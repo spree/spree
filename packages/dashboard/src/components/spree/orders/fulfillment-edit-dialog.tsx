@@ -1,11 +1,12 @@
 import { type Fulfillment, isZeroMoney, type Order, SpreeError } from '@spree/admin-sdk'
-import { useStockLocations } from '@spree/dashboard-core'
+import { useMoneyLocale, useStockLocations } from '@spree/dashboard-core'
 import { FulfillmentEditDialog as SharedFulfillmentEditDialog } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 import { useOrder } from '../../../hooks/use-order'
 import { useStockCoverage } from '../../../hooks/use-stock-coverage'
+import { formatAmount } from '../../../lib/format-amount'
 
 /**
  * Where the fulfillment ships from and which priced service carries it.
@@ -26,6 +27,7 @@ export function FulfillmentEditDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const { update } = useFulfillmentActions(order.id)
   const { data: stockLocations } = useStockLocations()
   const { refetch: refetchOrder } = useOrder(order.id)
@@ -58,9 +60,11 @@ export function FulfillmentEditDialog({
   const rateOptions = (fulfillment.delivery_rates ?? []).map((rate) => ({
     value: rate.id,
     label: `${rate.name} — ${
-      !rate.unpriced && isZeroMoney(rate.cost)
-        ? t('admin.orders.detail.fulfillments.free')
-        : rate.display_cost
+      rate.unpriced
+        ? t('admin.orders.detail.fulfillments.quoted_after_review')
+        : isZeroMoney(rate.cost)
+          ? t('admin.orders.detail.fulfillments.free')
+          : formatAmount(rate.cost, order.currency, moneyLocale)
     }`,
   }))
 

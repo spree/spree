@@ -50,7 +50,7 @@ module Spree
            order_line_item fulfillment fulfillment_item delivery delivery_rate shipping_label return
            return_line_item exchange exchange_line_item claim claim_line_item reason package_type stock_location
            requirement_custom_field tax_identifier requirement_status import import_row import_mapping
-           requirement_submission export transfer payout balance payment_split].freeze
+           requirement_submission export transfer payout balance payment_split price price_history].freeze
 
       INJECTION_POINTS_WITH_DEFAULTS = {
         **STORE_SERIALIZERS.to_h { |name| [:"#{name}_serializer", "Spree::Api::V3::#{name.to_s.camelize}Serializer"] },

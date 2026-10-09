@@ -2883,6 +2883,7 @@
           "packing_slip_total": "الإجمالي",
           "print_label": "طباعة الملصق",
           "print_packing_slip": "طباعة قائمة التعبئة",
+          "quoted_after_review": "يُسعَّر بعد المراجعة",
           "rates_pending_origin": "احفظ مصدر الشحن الجديد لعرض طرق التوصيل المتاحة منه.",
           "refund_label": "استرداد الملصق",
           "retry_refund_label": "إعادة محاولة الاسترداد",

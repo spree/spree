@@ -14,7 +14,8 @@ function lineItem(overrides: Partial<GroupableLineItem> = {}): GroupableLineItem
     options_text: 'Blue / M',
     quantity: 2,
     thumbnail_url: 'https://example.test/shirt.jpg',
-    display_price: '$10.00',
+    price: '10.00',
+    currency: 'USD',
     ...overrides,
   }
 }

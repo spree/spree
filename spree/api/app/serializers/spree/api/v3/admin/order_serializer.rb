@@ -5,6 +5,8 @@ module Spree
         # Admin API Order Serializer
         # Full order data including admin-only fields
         class OrderSerializer < V3::OrderSerializer
+          without_formatted_money
+
           include Concerns::ExternalReferencesAttribute
 
 
@@ -16,18 +18,18 @@ module Spree
 
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
-          typelize item_total: [:string, nullable: false], display_item_total: [:string, nullable: false],
-                   delivery_total: [:string, nullable: false], display_delivery_total: [:string, nullable: false],
-                   adjustment_total: [:string, nullable: false], display_adjustment_total: [:string, nullable: false],
-                   discount_total: [:string, nullable: false], display_discount_total: [:string, nullable: false],
-                   tax_total: [:string, nullable: false], display_tax_total: [:string, nullable: false],
-                   included_tax_total: [:string, nullable: false], display_included_tax_total: [:string, nullable: false],
-                   additional_tax_total: [:string, nullable: false], display_additional_tax_total: [:string, nullable: false],
-                   store_credit_total: [:string, nullable: false], display_store_credit_total: [:string, nullable: false],
-                   gift_card_total: [:string, nullable: false], display_gift_card_total: [:string, nullable: false],
-                   fee_total: [:string, nullable: false], display_fee_total: [:string, nullable: false],
-                   total: [:string, nullable: false], display_total: [:string, nullable: false],
-                   amount_due: [:string, nullable: false], display_amount_due: [:string, nullable: false]
+          typelize item_total: [:string, nullable: false],
+                   delivery_total: [:string, nullable: false],
+                   adjustment_total: [:string, nullable: false],
+                   discount_total: [:string, nullable: false],
+                   tax_total: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false],
+                   additional_tax_total: [:string, nullable: false],
+                   store_credit_total: [:string, nullable: false],
+                   gift_card_total: [:string, nullable: false],
+                   fee_total: [:string, nullable: false],
+                   total: [:string, nullable: false],
+                   amount_due: [:string, nullable: false]
 
           typelize status: [:string, enum: Spree::Order::STATUSES],
                    last_ip_address: [:string, nullable: true],
@@ -55,8 +57,8 @@ module Spree
                      canceled_at: :iso8601, approved_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          money_attributes :payment_total, :display_payment_total
-          typelize payment_total: [:string, nullable: false], display_payment_total: [:string, nullable: false]
+          money_attributes :payment_total
+          typelize payment_total: [:string, nullable: false]
 
           # Back-office only: what the marketplace earned on this sale — the fee,
           # the tax charged on it, and the two together. Never on the store
@@ -65,15 +67,12 @@ module Spree
           #
           # The tax stands on its own because it is separately reportable —
           # the platform files it as output tax on a B2B supply to the seller.
-          money_attributes :commission_amount_total, :display_commission_amount_total,
-                           :commission_tax_total, :display_commission_tax_total,
-                           :commission_total, :display_commission_total
+          money_attributes :commission_amount_total,
+                           :commission_tax_total,
+                           :commission_total
           typelize commission_amount_total: [:string, nullable: false],
-                   display_commission_amount_total: [:string, nullable: false],
                    commission_tax_total: [:string, nullable: false],
-                   display_commission_tax_total: [:string, nullable: false],
-                   commission_total: [:string, nullable: false],
-                   display_commission_total: [:string, nullable: false]
+                   commission_total: [:string, nullable: false]
 
           prefixed_id_attributes :preferred_stock_location
 

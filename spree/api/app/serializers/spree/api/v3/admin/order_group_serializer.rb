@@ -9,6 +9,8 @@ module Spree
         # place and this adds only what an operator needs on top: the payment
         # shares, and the timestamps every admin surface carries.
         class OrderGroupSerializer < V3::OrderGroupSerializer
+          without_formatted_money
+
           typelize customer_id: 'string | null',
                    cart_id: 'string | null',
                    seller_count: :number,

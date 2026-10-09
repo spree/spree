@@ -1,4 +1,5 @@
 import type { SellerPayout } from '@spree/admin-sdk'
+import { useMoneyLocale } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -16,6 +17,7 @@ import {
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCompletePayout } from '../../../hooks/use-seller-ledger'
+import { formatAmount } from '../../../lib/format-amount'
 
 /**
  * The operator saying a settlement reached the seller's bank.
@@ -36,6 +38,7 @@ export function PayoutCompleteDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const [reference, setReference] = useState(payout.reference ?? '')
   const complete = useCompletePayout(payout.id)
 
@@ -53,7 +56,7 @@ export function PayoutCompleteDialog({
             <DialogTitle>{t('admin.payouts.complete.title')}</DialogTitle>
             <DialogDescription>
               {t('admin.payouts.complete.description', {
-                amount: payout.display_amount,
+                amount: formatAmount(payout.amount, payout.currency, moneyLocale),
                 seller: payout.seller_name ?? '',
               })}
             </DialogDescription>

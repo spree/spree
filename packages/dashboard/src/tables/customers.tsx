@@ -3,6 +3,7 @@ import { ActiveBadge, Badge, RelativeTime, TagList } from '@spree/dashboard-ui'
 import { UsersIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
+import { Money } from '../components/spree/money'
 import { companyAutocompleteProps } from '../hooks/use-companies'
 import { customerGroupAutocompleteProps } from '../hooks/use-customer-groups'
 import { customerDisplayName, erasedFieldValue } from '../lib/erased-customer'
@@ -62,7 +63,7 @@ defineTable('customers', {
       label: i18n.t('admin.customers.columns.total_spent'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (c) => c.display_total_spent ?? '—',
+      render: (c) => <Money amount={c.total_spent} />,
     },
     {
       key: 'last_order_completed_at',

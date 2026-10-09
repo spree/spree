@@ -21,6 +21,7 @@ import {
   projectedLineTotal,
   projectedPrice,
 } from '../../../schemas/order'
+import { Money } from '../money'
 
 /**
  * The staged items table. Every control writes to form state only; nothing is
@@ -217,7 +218,9 @@ function OrderEditItemRow({
             )}
           </div>
         ) : (
-          <span className="whitespace-nowrap">{row.display_price}</span>
+          <span className="whitespace-nowrap">
+            <Money amount={row.price} currency={currency} />
+          </span>
         )}
       </TableCell>
 
@@ -256,11 +259,13 @@ function OrderEditItemRow({
           )
         ) : totalChanged ? (
           <span className="flex items-center justify-end gap-2">
-            <span className="text-muted-foreground line-through">{row.display_total}</span>
+            <span className="text-muted-foreground line-through">
+              <Money amount={row.total} currency={currency} />
+            </span>
             <span className="font-medium">{formatAmount(projectedTotal as string, currency)}</span>
           </span>
         ) : (
-          row.display_total
+          <Money amount={row.total} currency={currency} />
         )}
       </TableCell>
 

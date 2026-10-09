@@ -10,11 +10,13 @@ module Spree
         # its option values but no product name, so a card built from the
         # variant alone would show a bare id for anything unSKU'd.
         class ReturnLineItemSerializer < V3::ReturnLineItemSerializer
+          without_formatted_money(:seller)
+
           # No guest price gating here, so the inherited money fields are always present.
-          typelize pre_tax_amount: [:string, nullable: false], display_pre_tax_amount: [:string, nullable: false],
+          typelize pre_tax_amount: [:string, nullable: false],
                    included_tax_total: [:string, nullable: false], additional_tax_total: [:string, nullable: false],
-                   tax_total: [:string, nullable: false], display_tax_total: [:string, nullable: false],
-                   refund_amount: [:string, nullable: false], display_refund_amount: [:string, nullable: false]
+                   tax_total: [:string, nullable: false],
+                   refund_amount: [:string, nullable: false]
 
           typelize name: [:string, nullable: true]
 

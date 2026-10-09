@@ -1,4 +1,4 @@
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, formatPrice } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Product } from '@spree/seller-sdk'
@@ -50,7 +50,7 @@ defineTable<Product>('seller-products', {
       key: 'price',
       label: i18n.t('products.columns.price'),
       default: true,
-      render: (product) => product.price?.display_amount ?? '—',
+      render: (product) => formatPrice(product.price ?? null),
     },
   ],
 })
