@@ -146,7 +146,7 @@ module Spree
         kept = unit_price ? [places, UNIT_PRICE_DECIMALS].max : places
         rounded = quantize(amount, kept)
         whole, fraction = (rounded.zero? ? BigDecimal(0) : rounded).to_s('F').split('.')
-        fraction = fraction.to_s.sub(/0+\z/, '').ljust(places, '0')
+        fraction = without_trailing_zeros(fraction.to_s).ljust(places, '0')
         fraction.empty? ? whole : "#{whole}.#{fraction}"
       end
 
@@ -157,14 +157,21 @@ module Spree
       def format_decimal(value)
         return if value.nil?
 
-        BigDecimal(value.to_s).to_s('F').sub(/\.?0+\z/, '')
+        without_trailing_zeros(BigDecimal(value.to_s).to_s('F')).delete_suffix('.')
       end
 
       # Trailing zeros carry no value, so "1000.0" is a whole yen.
       def decimal_places(value)
-        value.include?('.') ? value.split('.').last.sub(/0+\z/, '').length : 0
+        value.include?('.') ? without_trailing_zeros(value.split('.').last).length : 0
       end
       private_class_method :decimal_places
+
+      # Scans back to the last other digit, in linear time on request input.
+      def without_trailing_zeros(text)
+        last = text.rindex(/[^0]/)
+        last ? text[0..last] : ''
+      end
+      private_class_method :without_trailing_zeros
 
       # An amount as a whole number of the currency's smallest unit — cents for
       # most currencies, whole yen for one written without decimals.
