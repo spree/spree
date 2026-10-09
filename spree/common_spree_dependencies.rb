@@ -3,7 +3,7 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
+gem 'tzinfo-data', platforms: [:windows]
 gem 'rails', ENV.fetch('RAILS_VERSION', '~> 8.1.0'), require: false
 
 # Held below 3.0: json 3.0 made JSON.parse's options keyword-only, and Active

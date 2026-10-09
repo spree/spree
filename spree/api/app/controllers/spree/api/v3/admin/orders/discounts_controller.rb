@@ -32,7 +32,7 @@ module Spree
                 if result.success?
                   render json: { data: serialize_collection(result.value) }, status: :created
                 else
-                  render_error(code: ERROR_CODES[:validation_error], message: result.error.to_s, status: :unprocessable_entity)
+                  render_error(code: ERROR_CODES[:validation_error], message: result.error.to_s, status: :unprocessable_content)
                 end
               end
             end
@@ -93,7 +93,7 @@ module Spree
               render_error(
                 code: ERROR_CODES[:discount_not_editable],
                 message: I18n.t('spree.errors.messages.promotion_discount_not_editable'),
-                status: :unprocessable_entity
+                status: :unprocessable_content
               )
             end
           end

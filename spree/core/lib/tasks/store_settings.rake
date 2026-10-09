@@ -1,5 +1,8 @@
-namespace :spree do
-  namespace :store_settings do
+module Spree
+  # Constants for `rake spree:store_settings:backfill_from_config`. A rake
+  # `namespace` block does not scope constants, so they live here instead of
+  # on Object.
+  module StoreSettingsBackfill
     # Settings that moved from Spree::Config onto Spree::Store, mapped to the
     # default they carried as globals and — where the two differ — the name the
     # store preference goes by. A global still at its default says nothing about
@@ -39,7 +42,11 @@ namespace :spree do
     # is no "explicitly set" flag to read. Without this marker, a merchant who
     # turns a copied setting off would have it turned back on by the next run.
     BACKFILL_MARKER = 'store_settings_backfilled_from_config'.freeze
+  end
+end
 
+namespace :spree do
+  namespace :store_settings do
     desc <<~DESC
       Copies commerce settings that moved from Spree::Config onto every store
       (Spree 6.0).
@@ -54,11 +61,11 @@ namespace :spree do
       afterwards — the globals are deprecated and are deleted in 6.1.
     DESC
     task backfill_from_config: :environment do
-      changed = MOVED_SETTINGS.reject do |name, config|
+      changed = Spree::StoreSettingsBackfill::MOVED_SETTINGS.reject do |name, config|
         Spree::Config.send(name) == config[:default]
       end
 
-      capture_method = CAPTURE_METHOD_FROM_CONFIG.call
+      capture_method = Spree::StoreSettingsBackfill::CAPTURE_METHOD_FROM_CONFIG.call
       capture_method = nil if capture_method == Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
 
       if changed.empty? && capture_method.nil?
@@ -69,7 +76,7 @@ namespace :spree do
       Spree::Store.find_each do |store|
         metadata = store.metadata || {}
 
-        if metadata[BACKFILL_MARKER]
+        if metadata[Spree::StoreSettingsBackfill::BACKFILL_MARKER]
           puts "  #{store.name} (#{store.id}): already backfilled — skipped."
           next
         end
@@ -97,7 +104,7 @@ namespace :spree do
           end
         end
 
-        store.metadata = metadata.merge(BACKFILL_MARKER => true)
+        store.metadata = metadata.merge(Spree::StoreSettingsBackfill::BACKFILL_MARKER => true)
         store.save!
       end
     end

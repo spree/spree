@@ -252,7 +252,7 @@ module Spree
   # Example:
   #
   #   Spree.dependencies do |dependency|
-  #     dependency.cart_add_item_service = MyCustomAddToCart
+  #     dependency.cart_add_item_workflow = MyCustomAddToCart
   #   end
   #
   # This method is defined within the core gem on purpose.
@@ -543,10 +543,10 @@ module Spree
     # Dynamic methods for core dependencies
     #
     # @example Getting a dependency (returns resolved class)
-    #   Spree.cart_add_item_service.call(order: order, variant: variant)
+    #   Spree.cart_add_item_workflow.call(cart: cart, variant: variant)
     #
     # @example Setting a dependency
-    #   Spree.cart_add_item_service = MyApp::CartAddItem
+    #   Spree.cart_add_item_workflow = MyApp::CartAddItem
     def method_missing(method_name, *args, &block)
       base_name = method_name.to_s.chomp('=').to_sym
 
