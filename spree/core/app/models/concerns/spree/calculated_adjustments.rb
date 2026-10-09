@@ -26,8 +26,7 @@ module Spree
       def calculator_type=(calculator_type)
         return if calculator_type.blank?
 
-        registry = self.class.respond_to?(:calculators) ? self.class.calculators : []
-        klass = registry.find { |k| k.api_type == calculator_type.to_s }
+        klass = registered_calculator_class(calculator_type)
         self.calculator = klass.new if klass && !calculator.instance_of?(klass)
       end
 
@@ -44,25 +43,36 @@ module Spree
 
         attrs = attrs.to_h.with_indifferent_access
         type = attrs[:type].to_s
+        target = calculator
         if type.present? && calculator&.class&.api_type != type
-          registry = self.class.respond_to?(:calculators) ? self.class.calculators : []
-          registered = registry.find { |klass| klass.api_type == type }
-          return errors.add(:calculator, :invalid) unless registered
+          klass = registered_calculator_class(type)
+          return errors.add(:calculator, :invalid) unless klass
 
-          # Resolved from the registry entry's own name, never the request's:
-          # in development the registry can hold a class from an earlier
-          # reload, whose instances fail the association's type check.
-          self.calculator = registered.to_s.constantize.new
+          target = klass.new
         end
-        return if attrs[:preferences].blank?
 
-        # Preferences sent without a type land on the default calculator
-        # rather than on nothing, where the model builds one.
-        ensure_calculator if respond_to?(:ensure_calculator, true)
-        calculator&.assign_preferences(attrs[:preferences], pointer: "#{pointer}/preferences")
+        if attrs[:preferences].present?
+          # Preferences sent without a type land on the default calculator
+          # rather than on nothing, for a model that has one.
+          target ||= default_calculator if respond_to?(:default_calculator, true)
+          target&.assign_preferences(attrs[:preferences], pointer: "#{pointer}/preferences")
+        end
+
+        # Attached only once its settings are accepted: on a saved owner,
+        # assigning a has_one replaces the stored calculator immediately.
+        self.calculator = target unless target.equal?(calculator)
       end
 
       private
+
+      # The registered calculator for an API shorthand, resolved from the
+      # registry entry's own name: nothing user-supplied reaches
+      # `constantize`, and in development the registry can hold a class from
+      # an earlier reload whose instances fail the association's type check.
+      def registered_calculator_class(type)
+        registry = self.class.respond_to?(:calculators) ? self.class.calculators : []
+        registry.find { |klass| klass.api_type == type.to_s }&.to_s&.constantize
+      end
 
       def self.model_name_without_spree_namespace
         to_s.tableize.tr('/', '_').sub('spree_', '')

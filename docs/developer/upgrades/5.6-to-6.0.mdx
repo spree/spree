@@ -549,7 +549,9 @@ Settings no longer reach the Admin and Seller APIs in the shape of Ruby's prefer
 
 **Id lists read as prefixed ids.** Preferences listing records, such as a rule's `channel_ids` or `customer_group_ids`, now return prefixed ids rather than database ids, the same form a write accepts.
 
-**Delivery methods nest their calculator.** `calculator_type` and `calculator_preferences` are replaced by `calculator: { type, preferences }` on read and write, the shape promotion actions already use.
+**Delivery methods nest their calculator.** `calculator_type` and `calculator_preferences` are replaced by `calculator: { type, preferences }` on read and write, the shape promotion actions already use. Writes still accept the old two parameters until Spree 6.1, with a deprecation warning.
+
+A preference marked deprecated, such as a flat rate calculator's `minimum_item_total`, is still accepted on write until its removal, with its deprecation warning, but is not read back.
 
 **For extension authors:** declare every preference's full type (`of:` on arrays, `keys:` and `values:` on hashes, `money: true`, `choices:`, `format:`). An incomplete declaration still works in 6.0 with a deprecation warning, and its schema accepts any value. Replace `normalize_id_preference` with `preference :ids, :array, of: :id, model:, scope:`, and `in:` with `choices:`. See [Model preferences](/developer/customization/model-preferences#declaring-the-full-type).
 

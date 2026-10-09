@@ -144,6 +144,8 @@ export interface PreferencePropertySchema {
   'x-spree-prefix'?: string
   /** A longer text, best edited in a multi-line field. */
   'x-spree-widget'?: 'textarea'
+  /** Still accepted on write until its removal, but never read back; don't offer it. */
+  deprecated?: boolean
 }
 
 /**

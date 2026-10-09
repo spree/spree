@@ -26,6 +26,14 @@ module Spree
         properties = fields.to_h do |field|
           [field[:key].to_s, property_schema(definitions.fetch(field[:key]), default: field[:default])]
         end
+        # A deprecated preference is still written until its removal, so it
+        # stays in the schema, marked, though no form offers it and no read
+        # returns it.
+        definitions.each do |name, definition|
+          next unless definition[:deprecated] && !definition[:internal]
+
+          properties[name.to_s] = property_schema(definition).merge('deprecated' => true)
+        end
 
         { 'type' => 'object', 'properties' => properties, 'additionalProperties' => false }
       end

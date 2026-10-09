@@ -3,6 +3,10 @@ module Spree
     module V3
       module Admin
         class DeliveryMethodsController < ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_calculator_params
+
           scoped_resource :delivery_methods
 
           # GET /api/v3/admin/delivery_methods/calculators

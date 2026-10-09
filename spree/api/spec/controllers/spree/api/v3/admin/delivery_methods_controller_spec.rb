@@ -235,6 +235,28 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.calculator.preferred_amount).to eq(99)
     end
 
+    it 'keeps the current calculator when the new one\'s settings are refused' do
+      calculator = delivery_method.calculator
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        calculator: { type: 'flexi_rate', preferences: { first_item: 5 } }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']).to have_key('/calculator/preferences/first_item')
+      expect(delivery_method.reload.calculator).to eq(calculator)
+    end
+
+    it 'still accepts the pre-6.0 calculator parameters for one release' do
+      expect(Spree::Deprecation).to receive(:warn).with(/`calculator_type` and `calculator_preferences` parameters are deprecated/)
+
+      patch :update, params: { id: delivery_method.prefixed_id, calculator_preferences: { amount: '42' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(delivery_method.reload.calculator.preferred_amount).to eq(42)
+    end
+
     it 'stores per-currency amounts' do
       patch :update, params: {
         id: delivery_method.prefixed_id,

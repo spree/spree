@@ -94,15 +94,18 @@ function fieldType(property: PreferencePropertySchema): string {
 export function preferenceFields(
   schema: PreferenceSchema | null | undefined,
 ): PreferenceFieldDef[] {
-  return Object.entries(schema?.properties ?? {}).map(([key, property]) => ({
-    key,
-    type: fieldType(property),
-    format: property.format ?? property.items?.format,
-    default: property.default ?? null,
-    choices: property.enum?.filter((choice): choice is string => typeof choice === 'string'),
-    nullable: Array.isArray(property.type) && property.type.includes('null'),
-    schema: property,
-  }))
+  // A deprecated setting is still accepted on write, but no form offers it.
+  return Object.entries(schema?.properties ?? {})
+    .filter(([, property]) => !property.deprecated)
+    .map(([key, property]) => ({
+      key,
+      type: fieldType(property),
+      format: property.format ?? property.items?.format,
+      default: property.default ?? null,
+      choices: property.enum?.filter((choice): choice is string => typeof choice === 'string'),
+      nullable: Array.isArray(property.type) && property.type.includes('null'),
+      schema: property,
+    }))
 }
 
 /**

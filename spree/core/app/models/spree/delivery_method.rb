@@ -227,7 +227,11 @@ module Spree
     end
 
     def ensure_calculator
-      self.calculator ||= Spree::Calculator::Shipping::FlatRate.new(preferred_amount: 0)
+      self.calculator ||= default_calculator
+    end
+
+    def default_calculator
+      Spree::Calculator::Shipping::FlatRate.new(preferred_amount: 0)
     end
 
     def assign_default_delivery_profile

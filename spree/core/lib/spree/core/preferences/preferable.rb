@@ -187,14 +187,16 @@ module Spree::Preferences::Preferable
 
   # A stored value in the form the schema describes. Rows written before the
   # declarations were typed can hold a number where an exact decimal string
-  # is declared (an `amounts` hash, a decimal default from YAML); read back
-  # as they are, a client sending them unchanged would be refused.
+  # is declared (an `amounts` hash, a decimal default from YAML), or a string
+  # where a number or boolean is; read back as they are, a client sending
+  # them unchanged would be refused.
   #
   # @param value [Object] the stored value
   # @param definition [Hash] its preference definition
   # @return [Object]
   def wire_preference_value(value, definition)
     return BigDecimal(value.to_s).as_json if definition[:type] == :decimal && value.is_a?(Numeric)
+    return cast_preference_item(value, definition[:type]) if %i[integer boolean].include?(definition[:type]) && value.is_a?(String)
     return value if value.nil? || (definition[:type] == :array && !value.is_a?(Array))
 
     cast_preference_contents(value, definition)
@@ -239,6 +241,12 @@ module Spree::Preferences::Preferable
       # cross-store IDs). `arity.abs > 1` covers both the `(value, owner)` and
       # `(value, owner = nil)` shapes.
       value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
+    end
+    # Spree 6.0 bridge, removed with incomplete declarations in 6.1: an id list
+    # an extension declared without `of: :id` still has its prefixed ids
+    # decoded, as the API did for every `*_ids` key before.
+    if definition[:type] == :array && definition[:of].nil? && name.to_s.end_with?('_ids')
+      value = Array.wrap(value).map { |id| Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id }
     end
     value = convert_preference_value(value, definition[:type], nullable: definition[:nullable])
     value = cast_preference_contents(value, definition)

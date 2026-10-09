@@ -50,6 +50,14 @@ describe Spree::PreferenceSchema::JsonSchema do
       expect(secret).not_to have_key('default')
     end
 
+    it 'keeps a deprecated preference writable until its removal, marked deprecated' do
+      expect(property(Spree::Calculator::Shipping::FlatRate, :minimum_item_total)).to include('deprecated' => true)
+
+      calculator = Spree::Calculator::Shipping::FlatRate.new
+      Spree::Deprecation.silence { calculator.assign_preferences({ 'minimum_item_total' => '10' }) }
+      expect(calculator.preferred_minimum_item_total).to eq(10)
+    end
+
     it 'leaves out internal preferences' do
       expect(Spree::Store.preference_json_schema['properties']).not_to have_key('install_id')
     end

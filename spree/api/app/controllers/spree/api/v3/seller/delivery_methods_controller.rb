@@ -17,6 +17,10 @@ module Spree
         # `Spree::DeliveryMethod` validates and why neither provider is
         # writable here.
         class DeliveryMethodsController < Seller::ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_calculator_params
+
           scoped_resource :delivery_methods
 
           # GET /api/v3/seller/delivery_methods/calculators

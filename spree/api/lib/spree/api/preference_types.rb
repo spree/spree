@@ -63,7 +63,8 @@ module Spree
         label = family.titleize.downcase
         parts = members.map do |type, schema|
           name = PreferenceFamilies.member_name(family, type)
-          properties = schema['properties']
+          # Deprecated settings are still accepted on write but never read back.
+          properties = schema['properties'].reject { |_key, property| property['deprecated'] }
           next "/** Settings of the `#{type}` #{label}: none. */\nexport type #{name} = Record<string, never>\n" if properties.empty?
 
           fields = properties.map { |key, property| "#{field_comment(property)}  #{key}: #{ts_type(property)}\n" }.join

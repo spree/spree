@@ -516,6 +516,19 @@ describe Spree::Preferences::Preferable, type: :model do
       end
     end
 
+    it 'still decodes prefixed ids in an id list declared without `of:`, for one release' do
+      Spree::Deprecation.silence { preferable_class.preference :warehouse_ids, :array, default: [] }
+
+      record.set_preference(:warehouse_ids, [channel.prefixed_id])
+
+      expect(record.preferences[:warehouse_ids]).to eq([channel.id])
+    end
+
+    it 'reads back an integer or boolean stored as a string by older code as its type' do
+      expect(record.wire_preference_value('5', type: :integer)).to eq(5)
+      expect(record.wire_preference_value('true', type: :boolean)).to be(true)
+    end
+
     it 'warns about a declaration that does not state its full type' do
       expect(Spree::Deprecation).to receive(:warn).with(/needs `of:`/)
       preferable_class.preference :untyped_list, :array, default: []
