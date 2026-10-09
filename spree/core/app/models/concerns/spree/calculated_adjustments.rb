@@ -42,7 +42,11 @@ module Spree
 
         return if calculator.nil? || attrs[:preferences].blank?
 
-        calculator.assign_preferences(attrs[:preferences])
+        begin
+          calculator.assign_preferences(attrs[:preferences])
+        rescue Spree::Preferences::InvalidPreferences => e
+          raise e.within('/calculator')
+        end
       end
 
       private

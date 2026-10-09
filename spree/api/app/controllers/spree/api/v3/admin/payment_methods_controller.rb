@@ -19,7 +19,7 @@ module Spree
           # create picker leaves those out so a provider is not installed
           # twice, and the edit form still finds an installed one's schema.
           def types
-            authorize! :create, model_class
+            authorize! :show, model_class
 
             installed_class_names = current_store.payment_methods.pluck(:type)
             installed_shorthands = installed_class_names.filter_map do |name|

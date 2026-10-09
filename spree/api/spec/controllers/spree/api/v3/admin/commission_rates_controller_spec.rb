@@ -150,7 +150,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('invalid_preferences')
-      expect(json_response['error']['details']).to have_key('/preferences/seller_ids')
+      expect(json_response['error']['details']).to have_key('/rules/0/preferences/seller_ids')
       expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::SellerRule])
     end
 

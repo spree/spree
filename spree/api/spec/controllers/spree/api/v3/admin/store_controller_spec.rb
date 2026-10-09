@@ -19,6 +19,17 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       expect(response).to have_http_status(:ok)
     end
 
+    # `url` is where customer links point; `storefront_url` is the setting
+    # itself, so an unset one is null rather than the fallback.
+    it 'returns the storefront url setting as stored, not its fallback' do
+      allow_any_instance_of(Spree::Store).to receive(:preferred_storefront_url).and_return(nil)
+
+      subject
+
+      expect(json_response['storefront_url']).to be_nil
+      expect(json_response['url']).to be_present
+    end
+
     # The dashboard shell (store name, logo, timezone, currencies, locales)
     # can't render without this, so reading the store is not gated on the
     # settings permission — only writing is.
@@ -339,6 +350,21 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
         store.reload
         expect(store.preferred_storefront_access).to eq('login_required')
         expect(store.preferred_guest_checkout).to eq(false)
+      end
+    end
+
+    context 'with a pre-6.0 preferred_ key' do
+      let(:params) { { preferred_guest_checkout: false } }
+
+      it 'still saves it for one release, with a deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/`preferred_guest_checkout` parameter is deprecated/)
+
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(store.reload.preferred_guest_checkout).to eq(false)
+        expect(json_response).to include('guest_checkout' => false)
+        expect(json_response).not_to have_key('preferred_guest_checkout')
       end
     end
 

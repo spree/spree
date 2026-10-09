@@ -89,7 +89,8 @@ module Spree
 
         # Declares a model's settings under their plain names (see
         # `exposes_preferences`), typed from their declarations so the
-        # generated SDK types never drift from the model.
+        # generated SDK types never drift from the model. Each reads the
+        # stored setting, never a reader the model overrides with a fallback.
         #
         #   preference_attributes Spree::Store, :guest_checkout, :timezone
         def self.preference_attributes(model, *names)
@@ -97,7 +98,7 @@ module Spree
           names.each do |name|
             typelize name => preference_type_hint(Spree::PreferenceSchema::JsonSchema.property_schema(definitions.fetch(name)))
             attribute(name) do |object|
-              value = object.public_send(name)
+              value = object.public_send(:"preferred_#{name}")
               value.is_a?(BigDecimal) ? value.to_s('F') : value
             end
           end

@@ -251,7 +251,11 @@ module Spree
             delivery_method.ensure_calculator
             return if delivery_method.calculator.nil?
 
-            delivery_method.calculator.assign_preferences(preferences)
+            begin
+              delivery_method.calculator.assign_preferences(preferences)
+            rescue Spree::Preferences::InvalidPreferences => e
+              raise e.within('/calculator')
+            end
           end
         end
       end

@@ -11,6 +11,7 @@ import {
   type adminClient,
   Can,
   currencyParts,
+  defaultPreferences,
   PreferencesForm,
   ResourceMultiAutocomplete,
   Subject,
@@ -1070,7 +1071,18 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                 <Select
                   items={calculatorOptions}
                   value={field.value ?? ''}
-                  onValueChange={field.onChange}
+                  onValueChange={(next) => {
+                    field.onChange(next)
+                    // Each calculator declares its own settings, and the server
+                    // refuses any it does not, so a switch starts from the new
+                    // calculator's defaults rather than the old one's values.
+                    const schema = (calculators?.data ?? []).find((c) => c.type === next)?.schema
+                    form.setValue(
+                      'calculator.preferences',
+                      schema ? defaultPreferences(schema, { currency: defaultCurrency }) : {},
+                      { shouldDirty: true },
+                    )
+                  }}
                 >
                   <SelectTrigger id="calculator-type">
                     <SelectValue />

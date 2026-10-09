@@ -20,6 +20,7 @@ import {
   useUpdatePaymentMethod,
 } from '../../../hooks/use-payment-methods'
 import {
+  filterPaymentMethodProviderTypes,
   PAYMENT_METHOD_BASE_DEFAULTS,
   PAYMENT_METHOD_CREATE_DEFAULTS,
   paymentMethodBaseFormSchema,
@@ -56,7 +57,7 @@ export function CreatePaymentMethodSheet({
   const createMutation = useCreatePaymentMethod()
   const { data: typesResponse, isLoading: loadingTypes } = usePaymentMethodTypes()
   const providerTypes = useMemo(
-    () => (typesResponse?.data ?? []).filter((type) => !type.installed),
+    () => filterPaymentMethodProviderTypes(typesResponse?.data ?? []),
     [typesResponse],
   )
   // Seed `currency`-typed preferences with the store default so the merchant

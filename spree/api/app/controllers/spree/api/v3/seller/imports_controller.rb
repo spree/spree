@@ -22,6 +22,10 @@ module Spree
         # says; a seller reaches `active` only through review
         # (docs/plans/6.0-seller-product-submission.md).
         class ImportsController < Seller::ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_preference_params Spree::Import
+
           include ActiveStorage::SetCurrent
 
           # The import types a seller may run. An operator's `customers` or

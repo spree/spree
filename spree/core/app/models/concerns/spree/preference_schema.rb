@@ -78,8 +78,10 @@ module Spree
       # @return [Array<Hash{Symbol => String}>] `{ pointer:, message: }` per failure, empty when it matches
       def preference_failures(values)
         schema = preference_json_schema
-        return [] if schema.nil?
-
+        # Rebuilt whenever the schema is, so a schema computed before the
+        # database was up is not validated against for the life of the process.
+        @preference_schemer = nil unless @preference_schemer_source.equal?(schema)
+        @preference_schemer_source = schema
         @preference_schemer ||= JSONSchemer.schema(schema)
         @preference_schemer.validate(values).map do |error|
           { pointer: error['data_pointer'], message: error['error'] }

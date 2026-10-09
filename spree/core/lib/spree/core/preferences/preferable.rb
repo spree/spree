@@ -178,6 +178,22 @@ module Spree::Preferences::Preferable
     end
   end
 
+  # A stored value in the form the schema describes. Rows written before the
+  # declarations were typed can hold a number where an exact decimal string
+  # is declared (an `amounts` hash, a decimal default from YAML); read back
+  # as they are, a client sending them unchanged would be refused.
+  #
+  # @param value [Object] the stored value
+  # @param definition [Hash] its preference definition
+  # @return [Object]
+  def wire_preference_value(value, definition)
+    return BigDecimal(value.to_s).as_json if definition[:type] == :decimal && value.is_a?(Numeric)
+    return value if value.nil? || definition[:of] == :id
+    return value if definition[:type] == :array && !value.is_a?(Array)
+
+    cast_preference_contents(value, definition)
+  end
+
   # Names of the preferences the last save changed, secrets included.
   #
   # @return [Array<Symbol>]

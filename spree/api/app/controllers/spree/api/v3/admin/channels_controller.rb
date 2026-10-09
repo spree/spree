@@ -3,6 +3,10 @@ module Spree
     module V3
       module Admin
         class ChannelsController < ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_preference_params Spree::Channel
+
           scoped_resource :settings
 
           # POST /api/v3/admin/channels/:id/add_products

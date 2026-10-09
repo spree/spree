@@ -23,4 +23,14 @@ describe('filterPaymentMethodProviderTypes', () => {
 
     expect(filterPaymentMethodProviderTypes(types).map((t) => t.type)).toEqual(['stripe', 'check'])
   })
+
+  it('removes providers this store already has installed', () => {
+    const schema = { type: 'object' as const, properties: {}, additionalProperties: false as const }
+    const types = [
+      { type: 'stripe', label: 'Stripe', schema, installed: true },
+      { type: 'check', label: 'Check', schema, installed: false },
+    ]
+
+    expect(filterPaymentMethodProviderTypes(types).map((t) => t.type)).toEqual(['check'])
+  })
 })

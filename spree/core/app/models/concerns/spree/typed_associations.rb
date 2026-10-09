@@ -53,7 +53,7 @@ module Spree
 
     def reconcile_typed_association(association, rows)
       collection = public_send(association)
-      kept_ids = rows.filter_map { |row| save_typed_association_row(collection, row) }
+      kept_ids = rows.each_with_index.filter_map { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
       if kept_ids.any? || rows.empty?
         collection.where.not(id: kept_ids).destroy_all
         # `where.not(...).destroy_all` deletes the dropped rows from the DB but
@@ -64,7 +64,8 @@ module Spree
       end
     end
 
-    def save_typed_association_row(collection, row)
+    # @param pointer [String] where the row sits in the request, e.g. `/rules/1`
+    def save_typed_association_row(collection, row, pointer)
       record = find_or_build_typed_association_row(collection, row)
       return nil unless record
 
@@ -78,8 +79,12 @@ module Spree
       deferred_ids, scalar_attrs = attrs.partition { |k, _| record.new_record? && k.to_s.end_with?('_ids') }
       record.assign_attributes(scalar_attrs.to_h) if scalar_attrs.any?
 
-      record.assign_preferences(preferences) if preferences
-      record.assign_calculator_attributes(calculator) if calculator.present? && record.respond_to?(:assign_calculator_attributes)
+      begin
+        record.assign_preferences(preferences) if preferences
+        record.assign_calculator_attributes(calculator) if calculator.present? && record.respond_to?(:assign_calculator_attributes)
+      rescue Spree::Preferences::InvalidPreferences => e
+        raise e.within(pointer)
+      end
 
       # Always save — `record.changed?` doesn't reflect preferences
       # (serialized hash) or calculator association changes.

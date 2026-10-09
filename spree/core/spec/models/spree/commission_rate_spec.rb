@@ -360,7 +360,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
 
       expect {
         rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [foreign_seller.prefixed_id] } }])
-      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/seller_ids})
+      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/rules/0/preferences/seller_ids})
     end
 
     it 'builds rules on a rate that does not exist yet' do

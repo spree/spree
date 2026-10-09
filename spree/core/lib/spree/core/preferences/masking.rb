@@ -86,7 +86,13 @@ module Spree
           value = preferable.stored_preference(field[:key]) { nil }
           definition = definitions.fetch(field[:key])
           hash[field[:key_string] || field[:key].to_s] =
-            definition[:of] == :id ? prefixed_ids(value, definition) : wire_value(preferable, field[:type], value)
+            if definition[:of] == :id
+              prefixed_ids(value, definition)
+            elsif %i[password money].include?(field[:type])
+              wire_value(preferable, field[:type], value)
+            else
+              preferable.wire_preference_value(value, definition)
+            end
         end
       end
 

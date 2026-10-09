@@ -3,7 +3,10 @@ module Spree
     module V3
       module Admin
         class StoreController < Admin::BaseController
+          include Spree::Api::V3::LegacyPreferenceParams
+
           scoped_resource :settings
+          accepts_legacy_preference_params Spree::Store
 
           # Reading the current store is shell data — the dashboard needs the
           # name, logo, timezone, currency and locales to render anything at
@@ -85,6 +88,10 @@ module Spree
               :address_requires_company,
               :address_requires_phone,
               :capture_method,
+              # @deprecated Superseded by capture_method; the model maps them
+              #   onto it. Removed in 6.1.
+              :preferred_auto_capture,
+              :preferred_auto_capture_on_dispatch,
               :track_inventory_levels,
               :stock_reservations_enabled,
               :low_stock_threshold,

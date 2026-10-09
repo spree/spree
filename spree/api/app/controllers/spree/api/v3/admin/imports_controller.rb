@@ -11,6 +11,10 @@ module Spree
         # Spree::Import.required_scope). The index is filtered to the types
         # the key can write.
         class ImportsController < ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_preference_params Spree::Import
+
           include ActiveStorage::SetCurrent
 
           # The index spans many import types — `scope` filters it to the

@@ -356,25 +356,17 @@ export function PreferenceField({
       return (
         <Field>
           <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
-          <Input
+          <NumberPreferenceInput
             id={id}
-            type="number"
-            step={field.type === 'integer' ? 1 : 'any'}
+            integer={field.type === 'integer'}
+            nullable={!!field.nullable}
             // An empty optional field means "no limit" — surface that
             // rather than leaving it looking like a required blank.
             placeholder={
               field.nullable ? t('admin.components.preferences_form.unlimited') : undefined
             }
-            value={value === null || value === undefined ? '' : String(value)}
-            onChange={(e) => {
-              const raw = e.target.value
-              if (raw === '') return onChange(null)
-              // A decimal (an amount, a percentage) stays the canonical string
-              // the number input yields; the API refuses money sent as a JSON number.
-              if (field.type === 'decimal') return onChange(isDecimalString(raw) ? raw : null)
-              const parsed = parseInt(raw, 10)
-              onChange(Number.isNaN(parsed) ? null : parsed)
-            }}
+            value={value}
+            onChange={onChange}
           />
         </Field>
       )
@@ -465,6 +457,63 @@ export function PreferenceField({
         </Field>
       )
   }
+}
+
+/**
+ * A number setting. Keeps what is typed locally and passes on only values the
+ * server accepts: decimals as exact strings (`.5` becomes `0.5`), integers as
+ * numbers, and an empty field as `null` only when the setting may be unset —
+ * a required one keeps its last value until a number is typed.
+ */
+function NumberPreferenceInput({
+  id,
+  integer,
+  nullable,
+  placeholder,
+  value,
+  onChange,
+}: {
+  id: string
+  integer: boolean
+  nullable: boolean
+  placeholder?: string
+  value: unknown
+  onChange: (value: unknown) => void
+}) {
+  const external = value === null || value === undefined ? '' : String(value)
+  const [text, setText] = useState(external)
+  const [lastExternal, setLastExternal] = useState(external)
+  if (external !== lastExternal) {
+    setLastExternal(external)
+    setText(external)
+  }
+
+  function commit(raw: string) {
+    setText(raw)
+    const trimmed = raw.trim()
+    if (trimmed === '') {
+      if (nullable) onChange(null)
+      return
+    }
+    const number = Number(trimmed)
+    if (!Number.isFinite(number)) return
+    if (integer) {
+      if (Number.isInteger(number)) onChange(number)
+      return
+    }
+    onChange(new RegExp(DECIMAL_PATTERN).test(trimmed) ? trimmed : String(number))
+  }
+
+  return (
+    <Input
+      id={id}
+      type="number"
+      step={integer ? 1 : 'any'}
+      placeholder={placeholder}
+      value={text}
+      onChange={(e) => commit(e.target.value)}
+    />
+  )
 }
 
 function humanizeKey(key: string): string {
