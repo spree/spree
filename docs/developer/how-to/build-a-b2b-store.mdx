@@ -937,7 +937,7 @@ To add your own B2B cards, such as a credit account or an ERP reference, the com
 The B2B building blocks are ordinary Spree resources, so the usual customization paths apply:
 
 - **Events.** Companies, company invitations and catalogs publish lifecycle events, and orders publish `order.placed`. Subscribe to them to sync accounts and orders with an ERP or CRM. See [Events](/developer/core-concepts/events).
-- **External references.** Companies accept `external_references`, so an ERP can address a company by its own account number.
+- **[External references](/developer/core-concepts/external-references).** Companies accept `external_references`, so an ERP can address a company by its own account number.
 - **Tax identifier validators.** Register a validator that checks numbers against a live registry.
 - **Checkout requirements.** Register an extra requirement, such as "a cost center is required", and it appears in the cart's `requirements` next to the built-in ones. See [Checkout customization](/developer/customization/checkout).
 
