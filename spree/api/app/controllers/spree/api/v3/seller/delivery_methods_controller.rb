@@ -70,7 +70,7 @@ module Spree
             rederive_origin_group(@resource)
             @resource.assign_calculator_attributes(permitted_params[:calculator])
 
-            if @resource.errors.empty? && @resource.save
+            if @resource.save
               render json: serialize_resource(@resource), status: :created
             else
               render_validation_error(@resource.errors)
@@ -78,11 +78,16 @@ module Spree
           end
 
           def update
-            @resource.assign_attributes(assignable_params)
-            rederive_origin_group(@resource)
-            @resource.assign_calculator_attributes(permitted_params[:calculator])
+            # A new calculator replaces the stored one as soon as it is
+            # assigned, so the whole update rolls back if anything is refused.
+            saved = model_class.transaction do
+              @resource.assign_attributes(assignable_params)
+              rederive_origin_group(@resource)
+              @resource.assign_calculator_attributes(permitted_params[:calculator])
+              @resource.save || raise(ActiveRecord::Rollback)
+            end
 
-            if @resource.errors.empty? && @resource.save
+            if saved
               render json: serialize_resource(@resource)
             else
               render_validation_error(@resource.errors)

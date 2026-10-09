@@ -248,6 +248,19 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.reload.calculator).to eq(calculator)
     end
 
+    it 'keeps the current calculator when the rest of the update is refused' do
+      calculator = delivery_method.calculator
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        name: '',
+        calculator: { type: 'flexi_rate', preferences: { first_item: '5' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(delivery_method.reload.calculator).to eq(calculator)
+    end
+
     it 'still accepts the pre-6.0 calculator parameters for one release' do
       expect(Spree::Deprecation).to receive(:warn).with(/`calculator_type` and `calculator_preferences` parameters are deprecated/)
 

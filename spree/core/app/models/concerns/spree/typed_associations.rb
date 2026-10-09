@@ -82,8 +82,6 @@ module Spree
       record.assign_preferences(preferences, pointer: "#{pointer}/preferences") if preferences
       if calculator.present? && record.respond_to?(:assign_calculator_attributes)
         record.assign_calculator_attributes(calculator, pointer: "#{pointer}/calculator")
-        # Saving runs validation, which would clear an unknown-type error.
-        raise ActiveRecord::RecordInvalid, record if record.errors.any?
       end
 
       # Always save — `record.changed?` doesn't reflect preferences

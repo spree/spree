@@ -549,7 +549,7 @@ Settings no longer reach the Admin and Seller APIs in the shape of Ruby's prefer
 
 **Id lists read as prefixed ids.** Preferences listing records, such as a rule's `channel_ids` or `customer_group_ids`, now return prefixed ids rather than database ids, the same form a write accepts.
 
-**Delivery methods nest their calculator.** `calculator_type` and `calculator_preferences` are replaced by `calculator: { type, preferences }` on read and write, the shape promotion actions already use. Writes still accept the old two parameters until Spree 6.1, with a deprecation warning.
+**Delivery methods nest their calculator.** `calculator_type` and `calculator_preferences` are replaced by `calculator: { type, preferences }` on read and write, the shape promotion actions already use. Writes still accept the old two parameters until Spree 6.1, with a deprecation warning; their values follow the new rules (decimals as strings).
 
 A preference marked deprecated, such as a flat rate calculator's `minimum_item_total`, is still accepted on write until its removal, with its deprecation warning, but is not read back.
 

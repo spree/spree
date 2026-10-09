@@ -196,7 +196,9 @@ module Spree::Preferences::Preferable
   # @return [Object]
   def wire_preference_value(value, definition)
     return BigDecimal(value.to_s).as_json if definition[:type] == :decimal && value.is_a?(Numeric)
-    return cast_preference_item(value, definition[:type]) if %i[integer boolean].include?(definition[:type]) && value.is_a?(String)
+    if %i[integer boolean].include?(definition[:type]) && value.is_a?(String)
+      return convert_preference_value(value, definition[:type], nullable: definition[:nullable])
+    end
     return value if value.nil? || (definition[:type] == :array && !value.is_a?(Array))
 
     cast_preference_contents(value, definition)
@@ -245,8 +247,8 @@ module Spree::Preferences::Preferable
     # Spree 6.0 bridge, removed with incomplete declarations in 6.1: an id list
     # an extension declared without `of: :id` still has its prefixed ids
     # decoded, as the API did for every `*_ids` key before.
-    if definition[:type] == :array && definition[:of].nil? && name.to_s.end_with?('_ids')
-      value = Array.wrap(value).map { |id| Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id }
+    if definition[:type] == :array && definition[:of].nil? && name.to_s.end_with?('_ids') && value.is_a?(Array)
+      value = value.map { |id| (Spree::PrefixedId.decode_prefixed_id(id) if Spree::PrefixedId.prefixed_id?(id)) || id }
     end
     value = convert_preference_value(value, definition[:type], nullable: definition[:nullable])
     value = cast_preference_contents(value, definition)

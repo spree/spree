@@ -19,18 +19,17 @@ module Spree
       }.freeze
 
       # @param klass [Class] a class including {Spree::PreferenceSchema}
+      # @param writable [Boolean] also list deprecated preferences, which a
+      #   write still accepts until their removal but no read returns
       # @return [Hash] a JSON Schema object (string keys)
-      def self.for(klass)
+      def self.for(klass, writable: false)
         fields = klass.preference_schema
         definitions = klass.preference_definitions
         properties = fields.to_h do |field|
           [field[:key].to_s, property_schema(definitions.fetch(field[:key]), default: field[:default])]
         end
-        # A deprecated preference is still written until its removal, so it
-        # stays in the schema, marked, though no form offers it and no read
-        # returns it.
         definitions.each do |name, definition|
-          next unless definition[:deprecated] && !definition[:internal]
+          next unless writable && definition[:deprecated] && !definition[:internal]
 
           properties[name.to_s] = property_schema(definition).merge('deprecated' => true)
         end

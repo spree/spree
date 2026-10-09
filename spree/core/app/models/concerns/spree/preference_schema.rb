@@ -72,16 +72,16 @@ module Spree
         schema
       end
 
-      # Checks a `preferences` payload against {#preference_json_schema}.
+      # Checks a `preferences` payload against {#preference_json_schema}, which
+      # also accepts deprecated preferences until their removal.
       #
       # @param values [Hash{String => Object}]
       # @return [Array<Hash{Symbol => String}>] `{ pointer:, message: }` per failure, empty when it matches
       def preference_failures(values)
-        schema = preference_json_schema
-        # Keyed by the schema itself, so one computed before the database was
-        # up is not validated against for the life of the process.
-        @preference_schemers = {}.compare_by_identity unless @preference_schemers&.key?(schema)
-        schemer = @preference_schemers[schema] ||= JSONSchemer.schema(schema)
+        # The published schema plus deprecated preferences, which a write
+        # still accepts until their removal. Memoized like the published one.
+        schemer = @preference_schemer || JSONSchemer.schema(Spree::PreferenceSchema::JsonSchema.for(self, writable: true))
+        @preference_schemer = schemer if @preference_schema
         schemer.validate(values).map do |error|
           { pointer: error['data_pointer'], message: error['error'] }
         end
