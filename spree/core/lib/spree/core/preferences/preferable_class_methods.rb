@@ -133,8 +133,10 @@ module Spree::Preferences
       end
     end
 
-    # Gives each named preference a plain reader and writer, so the API reads
-    # and writes `guest_checkout` rather than the DSL's `preferred_guest_checkout`.
+    # Gives each named preference a plain reader, writer and predicate, so the
+    # API reads and writes `guest_checkout` rather than the DSL's
+    # `preferred_guest_checkout` — the methods Rails' `has_delegated_json`
+    # defines, so callers would not change if the storage ever moved to it.
     # Grants no write access: each API controller still lists what it permits.
     #
     #   exposes_preferences :guest_checkout, :timezone
@@ -149,6 +151,9 @@ module Spree::Preferences
 
         define_method(name) { public_send(:"preferred_#{name}") }
         define_method(:"#{name}=") { |value| public_send(:"preferred_#{name}=", value) }
+        # As `has_json` defines one; a predicate the model already has (one
+        # that falls back to another setting, say) is kept.
+        define_method(:"#{name}?") { public_send(:"preferred_#{name}").present? } unless method_defined?(:"#{name}?")
       end
       self.exposed_preference_names = (exposed_preference_names | names.map(&:to_sym)).freeze
     end

@@ -19,6 +19,8 @@ module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
   BOOLEAN_TYPE = ActiveModel::Type::Boolean.new
+  INTEGER_TYPE = ActiveModel::Type::Integer.new
+  STRING_TYPE = ActiveModel::Type::String.new
 
   included do
     serialize :preferences, coder: Spree::Metadata::HashSerializer
@@ -347,15 +349,21 @@ module Spree::Preferences::Preferable
     end
   end
 
+  def blank_preference_value?(value)
+    value.nil? || (value.respond_to?(:empty?) && value.empty?)
+  end
+
   def convert_preference_value(value, type, nullable: false)
     case type
+    # Strings, integers and booleans cast the way Rails casts attributes (and
+    # `has_json` its keys). Our own rule on top: a blank value stays nil for a
+    # nullable preference, so it can fall back to another, and becomes the
+    # type's empty value otherwise.
     when :string, :text
-      # A nullable string keeps "unset" (nil / empty string) as nil so it can
-      # fall back to another value, instead of collapsing it to "".
-      if nullable && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
-        nil
+      if blank_preference_value?(value)
+        nullable ? nil : ''
       else
-        value.to_s
+        STRING_TYPE.cast(value)
       end
     when :password
       value.to_s
@@ -366,23 +374,17 @@ module Spree::Preferences::Preferable
       decimal_value ||= 0 unless nullable
       decimal_value.nil? ? nil : Spree::Money::Rounding.parse_decimal(decimal_value)
     when :integer
-      int_value = value.presence
-      int_value ||= 0 unless nullable
-      int_value.present? ? int_value.to_i : int_value
-    when :boolean
-      # A nullable boolean keeps "unset" (nil / empty string) as nil so it can
-      # fall back to another value, instead of collapsing it to false. An
-      # explicit false is preserved (it is neither nil nor empty).
-      if nullable && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
-        nil
-      elsif value.is_a?(FalseClass) ||
-          value.nil? ||
-          value == 0 ||
-          value&.to_s =~ /^(f|false|0)$/i ||
-          (value.respond_to?(:empty?) && value.empty?)
-        false
+      if blank_preference_value?(value)
+        nullable ? nil : 0
       else
-        true
+        INTEGER_TYPE.cast(value) || 0
+      end
+    when :boolean
+      # An explicit false is kept: it is neither nil nor empty.
+      if blank_preference_value?(value)
+        nullable ? nil : false
+      else
+        BOOLEAN_TYPE.cast(value)
       end
     when :array
       value.is_a?(Array) ? value : Array.wrap(value)

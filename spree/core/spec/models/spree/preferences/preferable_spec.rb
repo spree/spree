@@ -473,8 +473,20 @@ describe Spree::Preferences::Preferable, type: :model do
 
     it 'exposes a preference under its plain name' do
       expect(record.flavor).to eq('vanilla')
+      expect(record.flavor?).to be(true)
       record.flavor = 'mint'
       expect(record.preferred_flavor).to eq('mint')
+    end
+
+    it 'casts strings, integers and booleans the way Rails casts attributes' do
+      preferable_class.preference :enabled, :boolean, default: true
+      preferable_class.preference :limit, :integer, default: 1
+
+      record.set_preference(:enabled, 'off')
+      record.set_preference(:limit, '42')
+
+      expect(record.preferred_enabled).to be(false)
+      expect(record.preferred_limit).to eq(42)
     end
 
     it 'refuses to expose a name that is not a preference or is already a method' do

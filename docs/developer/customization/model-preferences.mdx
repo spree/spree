@@ -95,7 +95,9 @@ The SDKs also type the settings of every type Spree ships. `TypedPromotionRule` 
 
 A write is checked against the schema before anything is saved. An unknown key, a value of the wrong type, a value outside `choices`, or an id of the wrong model or another store is refused with a `422` whose `code` is `invalid_preferences`; `details` names each failing value by its JSON pointer, such as `/preferences/channel_ids/1`. A secret reads back masked; sending the masked value back keeps the stored secret, and `null` clears it.
 
-Settings of a single resource, such as the store's, are read and written under their plain names (`guest_checkout`, `timezone`), never the `preferred_` methods. A model gives a preference that name with `exposes_preferences :guest_checkout, :timezone`; the API controller still lists what it accepts.
+Settings of a single resource, such as the store's, are read and written under their plain names (`guest_checkout`, `timezone`), never the `preferred_` methods. A model gives a preference that name with `exposes_preferences :guest_checkout, :timezone`, which defines `guest_checkout`, `guest_checkout=` and `guest_checkout?`; the API controller still lists what it accepts.
+
+Strings, integers and booleans are cast the way Rails casts attributes (`"1"`, `"true"` and `"on"` are true; `"42"` is 42). A blank value is `nil` for a `nullable: true` preference, and the type's empty value otherwise.
 
 ## Accessing Model Preferences
 
