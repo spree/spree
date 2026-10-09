@@ -125,7 +125,7 @@ In the dashboard, references show in the **JSON** view on each record's detail p
 
 ## Addressing records by your keys
 
-Anywhere the Admin API takes a record ID in the path, you can write `external:<system>:<key>` instead. An integration that only ever learned the ERP's key can then read, update and delete without first asking Spree for the record's ID.
+For any record type listed in [What can carry external references](#what-can-carry-external-references), you can write `external:<system>:<key>` in the path instead of its Spree ID. An integration that only ever learned the ERP's key can then read, update and delete without first asking Spree for the record's ID.
 
 <CodeGroup>
 
