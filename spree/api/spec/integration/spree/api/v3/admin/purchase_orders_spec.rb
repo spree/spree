@@ -48,8 +48,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: "Filter by status ('draft', 'ordered', 'partially_received', 'received', 'over_received', 'canceled')"
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed: items, supplier, destination_location'
 
@@ -250,6 +249,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
+      filter_parameters_for
 
       response '200', 'deliveries found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

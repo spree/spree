@@ -24,6 +24,10 @@ module Spree
 
           protected
 
+          def filterable?
+            false
+          end
+
           def model_class
             Spree::Country
           end

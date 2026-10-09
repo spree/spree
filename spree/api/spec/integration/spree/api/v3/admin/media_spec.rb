@@ -27,6 +27,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
+      filter_parameters_for
 
       response '200', 'media found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

@@ -122,6 +122,7 @@ module Spree
     # needed. `seller_id` is what the operator's list filters by to see one
     # seller's methods, or (blank) the marketplace's own.
     self.whitelisted_ransackable_attributes = %w[storefront_visible available_to_sellers seller_id]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[seller]
 
     validates :name, presence: true

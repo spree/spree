@@ -22,6 +22,7 @@ import {
   mapSpreeErrorsToForm,
   ResourceTable,
   resourceSearchSchema,
+  runtimeListParams,
   Subject,
   useDirectUpload,
   usePermissions,
@@ -156,7 +157,9 @@ function OptionTypesPage() {
       <ResourceTable<OptionType>
         tableKey="option-types"
         queryKey="option-types"
-        queryFn={(params) => adminClient.optionTypes.list({ ...params, expand: ['option_values'] })}
+        queryFn={(params: Record<string, unknown>) =>
+          adminClient.optionTypes.list(runtimeListParams({ ...params, expand: ['option_values'] }))
+        }
         searchParams={search}
         rowActions={(optionType) => (
           <RowActions

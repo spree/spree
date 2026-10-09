@@ -32,6 +32,7 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      filter_parameters_for
 
       response '200', 'seller requirements found' do
         let!(:requirement) { create(:accept_terms_requirement, store: store) }

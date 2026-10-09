@@ -24,6 +24,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      filter_parameters_for
 
       response '200', 'tax lines found' do
         before { create(:tax_line, order: order, line_item: line_item, amount: 1.5, rate: 0.15, label: 'VAT 15%') }
@@ -49,6 +50,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      filter_parameters_for
 
       response '200', 'discounts found' do
         before { create(:discount, order: order, line_item: line_item, amount: -2, label: 'Loyalty', kind: 'manual') }

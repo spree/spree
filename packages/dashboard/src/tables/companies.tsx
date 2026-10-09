@@ -9,7 +9,7 @@ defineTable<Company>('companies', {
   docsPath: 'customers/companies',
   title: i18n.t('admin.nav.companies'),
   description: i18n.t('admin.table_descriptions.companies'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.companies.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <Building2Icon className="size-8 text-muted-foreground" />,

@@ -188,9 +188,10 @@ module Spree
 
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
-                                                    created_at updated_at last_sign_in_at]
+                                                    created_at updated_at]
       self.whitelisted_ransackable_scopes = %w[search with_min_total_spent with_standing_for_company
                                                anonymized]
+      self.ransackable_scope_types = { 'with_min_total_spent' => 'decimal', 'with_standing_for_company' => { list: 'id' }, 'anonymized' => 'boolean' }
 
       # Two-state scope: see Spree::Base.ransack_flag? for why the cast is
       # opted out of here and done inside the scope instead.
@@ -222,10 +223,11 @@ module Spree
       }
 
       # Customers with standing for a company: members of the node or of any
-      # ancestor (see #standing_for?). Accepts a record, an id, or an array.
-      scope :with_standing_for_company, ->(companies) {
+      # ancestor (see #standing_for?). Accepts records, ids, or an array; a
+      # splat because Ransack passes each value of a list as its own argument.
+      scope :with_standing_for_company, ->(*companies) {
         scoped = Spree::Current.store&.companies || Spree::Company.none
-        nodes = Array.wrap(companies).filter_map do |company|
+        nodes = companies.flatten.filter_map do |company|
           company.is_a?(Spree::Company) ? company : scoped.find_by_param(company)
         end
         next none if nodes.empty?

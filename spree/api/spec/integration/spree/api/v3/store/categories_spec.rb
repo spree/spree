@@ -23,8 +23,7 @@ RSpec.describe 'Categories API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
-      parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name'
+      filter_parameters_for
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 

@@ -110,6 +110,9 @@ module Spree
       #
       #   Spree::Product.in_taxon(taxon).count(distinct: true)
       scope :in_taxon, ->(taxon) {
+        taxon = Spree::Category.find_by_prefix_id(taxon) if taxon.is_a?(String)
+        next none if taxon.nil?
+
         joins(:product_categories).
           where("#{Spree::ProductCategory.table_name}.category_id" => taxon.cached_self_and_descendants_ids).distinct
       }

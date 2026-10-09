@@ -10,6 +10,146 @@ import type {
   RequestOptions,
 } from '@spree/sdk-core'
 import { getParams, transformListParams } from '@spree/sdk-core'
+import type {
+  AddressFilters,
+  AddressSort,
+  AdminUserFilters,
+  AdminUserSort,
+  AllowedOriginFilters,
+  AllowedOriginSort,
+  ApiKeyFilters,
+  ApiKeySort,
+  CatalogFilters,
+  CatalogOrderMinimumFilters,
+  CatalogOrderMinimumSort,
+  CatalogSort,
+  CategoryFilters,
+  CategorySort,
+  ChannelFilters,
+  ChannelSort,
+  ClaimReasonFilters,
+  ClaimReasonSort,
+  CollectionFilters,
+  CollectionSort,
+  CommissionLineFilters,
+  CommissionLineSort,
+  CommissionRateFilters,
+  CommissionRateSort,
+  CompanyFilters,
+  CompanyMembershipFilters,
+  CompanyMembershipSort,
+  CompanySort,
+  CouponCodeFilters,
+  CouponCodeSort,
+  CreditCardFilters,
+  CreditCardSort,
+  CustomerFilters,
+  CustomerGroupFilters,
+  CustomerGroupSort,
+  CustomerSort,
+  CustomFieldDefinitionFilters,
+  CustomFieldDefinitionSort,
+  DeliveryMethodFilters,
+  DeliveryMethodSort,
+  DeliveryProfileFilters,
+  DeliveryProfileSort,
+  DiscountFilters,
+  DiscountSort,
+  ExportFilters,
+  ExportSort,
+  FulfillmentFilters,
+  FulfillmentSort,
+  GiftCardBatchFilters,
+  GiftCardBatchSort,
+  GiftCardFilters,
+  GiftCardSort,
+  ImportFilters,
+  ImportRowFilters,
+  ImportRowSort,
+  ImportSort,
+  IntegrationFilters,
+  IntegrationSort,
+  InvitationFilters,
+  InvitationSort,
+  LineItemFilters,
+  LineItemSort,
+  MarketFilters,
+  MarketSort,
+  MediaFilters,
+  MediaSort,
+  OptionTypeFilters,
+  OptionTypeSort,
+  OrderCancellationReasonFilters,
+  OrderCancellationReasonSort,
+  OrderFilters,
+  OrderRoutingRuleFilters,
+  OrderRoutingRuleSort,
+  OrderSort,
+  PackageTypeFilters,
+  PackageTypeSort,
+  PaymentFilters,
+  PaymentMethodFilters,
+  PaymentMethodSort,
+  PaymentSort,
+  PolicyFilters,
+  PolicySort,
+  PriceFilters,
+  PriceListFilters,
+  PriceListSort,
+  PriceSort,
+  ProductSearchFilters,
+  ProductSearchSort,
+  ProductTypeFilters,
+  ProductTypeSort,
+  PromotionActionFilters,
+  PromotionActionSort,
+  PromotionFilters,
+  PromotionRuleFilters,
+  PromotionRuleSort,
+  PromotionSort,
+  PurchaseOrderFilters,
+  PurchaseOrderSort,
+  RefundFilters,
+  RefundReasonFilters,
+  RefundReasonSort,
+  RefundSort,
+  ReturnReasonFilters,
+  ReturnReasonSort,
+  RoleFilters,
+  RoleSort,
+  SellerFilters,
+  SellerRequirementFilters,
+  SellerRequirementSort,
+  SellerSort,
+  StockLevelFilters,
+  StockLevelSort,
+  StockLocationFilters,
+  StockLocationSort,
+  StockMovementFilters,
+  StockMovementSort,
+  StockTransferFilters,
+  StockTransferSort,
+  StoreCreditEventFilters,
+  StoreCreditEventSort,
+  StoreCreditFilters,
+  StoreCreditSort,
+  SupplierFilters,
+  SupplierSort,
+  TaxExemptionCertificateFilters,
+  TaxExemptionCertificateSort,
+  TaxIdentifierFilters,
+  TaxIdentifierSort,
+  TaxLineFilters,
+  TaxLineSort,
+  TaxRateFilters,
+  TaxRateSort,
+  VariantFilters,
+  VariantSort,
+  WebhookDeliveryFilters,
+  WebhookDeliverySort,
+  WebhookEndpointFilters,
+  WebhookEndpointSort,
+} from './types/filters.generated'
 
 // ============================================
 // Semantic reporting contract (docs/plans/6.0-analytics-semantic-layer.md)
@@ -736,7 +876,7 @@ export class AdminClient {
 
   readonly customFieldDefinitions = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CustomFieldDefinitionFilters, CustomFieldDefinitionSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<CustomFieldDefinition>> =>
       this.request<PaginatedResponse<CustomFieldDefinition>>('GET', '/custom_field_definitions', {
@@ -1059,7 +1199,7 @@ export class AdminClient {
 
   readonly products = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ProductSearchFilters, ProductSearchSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Product>> =>
       this.request<PaginatedResponse<Product>>('GET', '/products', {
@@ -1276,7 +1416,7 @@ export class AdminClient {
     variants: {
       list: (
         productId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<VariantFilters, VariantSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Variant>> =>
         this.request<PaginatedResponse<Variant>>('GET', `/products/${productId}/variants`, {
@@ -1408,7 +1548,7 @@ export class AdminClient {
 
   readonly orders = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<OrderFilters, OrderSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Order>> =>
       this.request<PaginatedResponse<Order>>('GET', '/orders', {
@@ -1493,7 +1633,7 @@ export class AdminClient {
     items: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<LineItemFilters, LineItemSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<LineItem>> =>
         this.request<PaginatedResponse<LineItem>>('GET', `/orders/${orderId}/items`, {
@@ -1537,7 +1677,7 @@ export class AdminClient {
     fulfillments: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<FulfillmentFilters, FulfillmentSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Fulfillment>> =>
         this.request<PaginatedResponse<Fulfillment>>('GET', `/orders/${orderId}/fulfillments`, {
@@ -2102,7 +2242,7 @@ export class AdminClient {
     payments: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<PaymentFilters, PaymentSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Payment>> =>
         this.request<PaginatedResponse<Payment>>('GET', `/orders/${orderId}/payments`, {
@@ -2138,7 +2278,7 @@ export class AdminClient {
     refunds: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<RefundFilters, RefundSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Refund>> =>
         this.request<PaginatedResponse<Refund>>('GET', `/orders/${orderId}/refunds`, {
@@ -2157,7 +2297,7 @@ export class AdminClient {
     taxLines: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<TaxLineFilters, TaxLineSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<TaxLine>> =>
         this.request<PaginatedResponse<TaxLine>>('GET', `/orders/${orderId}/tax_lines`, {
@@ -2172,7 +2312,7 @@ export class AdminClient {
     discounts: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<DiscountFilters, DiscountSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Discount>> =>
         this.request<PaginatedResponse<Discount>>('GET', `/orders/${orderId}/discounts`, {
@@ -2294,7 +2434,7 @@ export class AdminClient {
 
   readonly optionTypes = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<OptionTypeFilters, OptionTypeSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<OptionType>> =>
       this.request<PaginatedResponse<OptionType>>('GET', '/option_types', {
@@ -2336,7 +2476,7 @@ export class AdminClient {
 
   readonly deliveryMethods = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<DeliveryMethodFilters, DeliveryMethodSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<DeliveryMethod>> =>
       this.request<PaginatedResponse<DeliveryMethod>>('GET', '/delivery_methods', {
@@ -2472,7 +2612,7 @@ export class AdminClient {
 
   readonly deliveryProfiles = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<DeliveryProfileFilters, DeliveryProfileSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<DeliveryProfile>> =>
       this.request<PaginatedResponse<DeliveryProfile>>('GET', '/delivery_profiles', {
@@ -2604,7 +2744,7 @@ export class AdminClient {
 
   readonly packageTypes = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PackageTypeFilters, PackageTypeSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PackageType>> =>
       this.request<PaginatedResponse<PackageType>>('GET', '/package_types', {
@@ -2633,7 +2773,7 @@ export class AdminClient {
 
   readonly paymentMethods = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PaymentMethodFilters, PaymentMethodSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PaymentMethod>> =>
       this.request<PaginatedResponse<PaymentMethod>>('GET', '/payment_methods', {
@@ -2674,7 +2814,7 @@ export class AdminClient {
 
   readonly integrations = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<IntegrationFilters, IntegrationSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Integration>> =>
       this.request<PaginatedResponse<Integration>>('GET', '/integrations', {
@@ -2730,7 +2870,7 @@ export class AdminClient {
    */
   readonly priceLists = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PriceListFilters, PriceListSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PriceList>> =>
       this.request<PaginatedResponse<PriceList>>('GET', '/price_lists', {
@@ -2802,7 +2942,7 @@ export class AdminClient {
    */
   readonly prices = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PriceFilters, PriceSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Price>> =>
       this.request<PaginatedResponse<Price>>('GET', '/prices', {
@@ -2850,7 +2990,7 @@ export class AdminClient {
 
   readonly promotions = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PromotionFilters, PromotionSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Promotion>> =>
       this.request<PaginatedResponse<Promotion>>('GET', '/promotions', {
@@ -2884,7 +3024,7 @@ export class AdminClient {
     actions: {
       list: (
         promotionId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<PromotionActionFilters, PromotionActionSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<PromotionAction>> =>
         this.request<PaginatedResponse<PromotionAction>>(
@@ -2929,7 +3069,7 @@ export class AdminClient {
     rules: {
       list: (
         promotionId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<PromotionRuleFilters, PromotionRuleSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<PromotionRule>> =>
         this.request<PaginatedResponse<PromotionRule>>(
@@ -2973,7 +3113,7 @@ export class AdminClient {
     couponCodes: {
       list: (
         promotionId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CouponCodeFilters, CouponCodeSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CouponCode>> =>
         this.request<PaginatedResponse<CouponCode>>(
@@ -3028,7 +3168,7 @@ export class AdminClient {
 
   readonly customerGroups = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CustomerGroupFilters, CustomerGroupSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<CustomerGroup>> =>
       this.request<PaginatedResponse<CustomerGroup>>('GET', '/customer_groups', {
@@ -3075,7 +3215,7 @@ export class AdminClient {
    */
   readonly sellers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerFilters, SellerSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Seller>> =>
       this.request<PaginatedResponse<Seller>>('GET', '/sellers', {
@@ -3271,7 +3411,7 @@ export class AdminClient {
    */
   readonly sellerRequirements = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerRequirementFilters, SellerRequirementSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<SellerRequirement>> =>
       this.request<PaginatedResponse<SellerRequirement>>('GET', '/seller_requirements', {
@@ -3317,7 +3457,7 @@ export class AdminClient {
    */
   readonly commissionRates = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CommissionRateFilters, CommissionRateSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<CommissionRate>> =>
       this.request<PaginatedResponse<CommissionRate>>('GET', '/commission_rates', {
@@ -3370,7 +3510,7 @@ export class AdminClient {
    */
   readonly commissionLines = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CommissionLineFilters, CommissionLineSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<CommissionLine>> =>
       this.request<PaginatedResponse<CommissionLine>>('GET', '/commission_lines', {
@@ -3494,7 +3634,7 @@ export class AdminClient {
    */
   readonly giftCards = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<GiftCardFilters, GiftCardSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<GiftCard>> =>
       this.request<PaginatedResponse<GiftCard>>('GET', '/gift_cards', {
@@ -3542,7 +3682,7 @@ export class AdminClient {
    */
   readonly storeCredits = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StoreCreditFilters, StoreCreditSort>,
       options?: RequestOptions,
     ): Promise<StoreCreditListResponse> =>
       this.request<StoreCreditListResponse>('GET', '/store_credits', {
@@ -3564,7 +3704,7 @@ export class AdminClient {
     events: {
       list: (
         storeCreditId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<StoreCreditEventFilters, StoreCreditEventSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<StoreCreditEvent>> =>
         this.request<PaginatedResponse<StoreCreditEvent>>(
@@ -3651,7 +3791,7 @@ export class AdminClient {
    */
   readonly giftCardBatches = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<GiftCardBatchFilters, GiftCardBatchSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<GiftCardBatch>> =>
       this.request<PaginatedResponse<GiftCardBatch>>('GET', '/gift_card_batches', {
@@ -3677,7 +3817,7 @@ export class AdminClient {
    */
   readonly taxRates = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<TaxRateFilters, TaxRateSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<TaxRate>> =>
       this.request<PaginatedResponse<TaxRate>>('GET', '/tax_rates', {
@@ -3742,7 +3882,7 @@ export class AdminClient {
    */
   readonly companies = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CompanyFilters, CompanySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Company>> =>
       this.request<PaginatedResponse<Company>>('GET', '/companies', {
@@ -3813,7 +3953,7 @@ export class AdminClient {
     memberships: {
       list: (
         companyId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CompanyMembershipFilters, CompanyMembershipSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CompanyMembership>> =>
         this.request<PaginatedResponse<CompanyMembership>>(
@@ -3878,7 +4018,7 @@ export class AdminClient {
     taxIdentifiers: {
       list: (
         companyId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<TaxIdentifierFilters, TaxIdentifierSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<TaxIdentifier>> =>
         this.request<PaginatedResponse<TaxIdentifier>>(
@@ -3950,7 +4090,7 @@ export class AdminClient {
     taxExemptionCertificates: {
       list: (
         companyId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<TaxExemptionCertificateFilters, TaxExemptionCertificateSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<TaxExemptionCertificate>> =>
         this.request<PaginatedResponse<TaxExemptionCertificate>>(
@@ -4048,7 +4188,7 @@ export class AdminClient {
    */
   readonly catalogs = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CatalogFilters, CatalogSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Catalog>> =>
       this.request<PaginatedResponse<Catalog>>('GET', '/catalogs', {
@@ -4137,7 +4277,7 @@ export class AdminClient {
     orderMinimums: {
       list: (
         catalogId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CatalogOrderMinimumFilters, CatalogOrderMinimumSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CatalogOrderMinimum>> =>
         this.request<PaginatedResponse<CatalogOrderMinimum>>(
@@ -4191,7 +4331,7 @@ export class AdminClient {
    */
   readonly exports = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ExportFilters, ExportSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Export>> =>
       this.request<PaginatedResponse<Export>>('GET', '/exports', {
@@ -4227,7 +4367,7 @@ export class AdminClient {
    */
   readonly imports = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ImportFilters, ImportSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Import>> =>
       this.request<PaginatedResponse<Import>>('GET', '/imports', {
@@ -4260,7 +4400,7 @@ export class AdminClient {
     rows: {
       list: (
         importId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ImportRowFilters, ImportRowSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<ImportRow>> =>
         this.request<PaginatedResponse<ImportRow>>('GET', `/imports/${importId}/rows`, {
@@ -4276,7 +4416,7 @@ export class AdminClient {
 
   readonly customers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CustomerFilters, CustomerSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Customer>> =>
       this.request<PaginatedResponse<Customer>>('GET', '/customers', {
@@ -4297,7 +4437,7 @@ export class AdminClient {
     creditCards: {
       list: (
         customerId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CreditCardFilters, CreditCardSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CreditCard>> =>
         this.request<PaginatedResponse<CreditCard>>(
@@ -4388,7 +4528,7 @@ export class AdminClient {
     addresses: {
       list: (
         customerId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<AddressFilters, AddressSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Address>> =>
         this.request<PaginatedResponse<Address>>('GET', `/customers/${customerId}/addresses`, {
@@ -4499,7 +4639,7 @@ export class AdminClient {
     storeCredits: {
       list: (
         customerId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<StoreCreditFilters, StoreCreditSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<StoreCredit>> =>
         this.request<PaginatedResponse<StoreCredit>>(
@@ -4562,7 +4702,7 @@ export class AdminClient {
    */
   readonly media = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<MediaFilters, MediaSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Media>> =>
       this.request<PaginatedResponse<Media>>('GET', '/media', {
@@ -4602,7 +4742,7 @@ export class AdminClient {
 
   readonly categories = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CategoryFilters, CategorySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Category>> =>
       this.request<PaginatedResponse<Category>>('GET', '/categories', {
@@ -4655,7 +4795,7 @@ export class AdminClient {
 
   readonly collections = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CollectionFilters, CollectionSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Collection>> =>
       this.request<PaginatedResponse<Collection>>('GET', '/collections', {
@@ -4742,7 +4882,7 @@ export class AdminClient {
 
   readonly productTypes = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ProductTypeFilters, ProductTypeSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ProductType>> =>
       this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
@@ -4829,7 +4969,7 @@ export class AdminClient {
    */
   readonly policies = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PolicyFilters, PolicySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Policy>> =>
       this.request<PaginatedResponse<Policy>>('GET', '/policies', {
@@ -4861,7 +5001,7 @@ export class AdminClient {
   /** Why a customer sent something back. Shared by returns and exchanges. */
   readonly returnReasons = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ReturnReasonFilters, ReturnReasonSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ReturnReason>> =>
       this.request<PaginatedResponse<ReturnReason>>('GET', '/return_reasons', {
@@ -4889,7 +5029,7 @@ export class AdminClient {
   /** What went wrong with a delivery — damaged, missing, wrong item. */
   readonly claimReasons = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ClaimReasonFilters, ClaimReasonSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ClaimReason>> =>
       this.request<PaginatedResponse<ClaimReason>>('GET', '/claim_reasons', {
@@ -4917,7 +5057,7 @@ export class AdminClient {
   /** Why an order was called off before it shipped. */
   readonly orderCancellationReasons = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<OrderCancellationReasonFilters, OrderCancellationReasonSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<OrderCancellationReason>> =>
       this.request<PaginatedResponse<OrderCancellationReason>>(
@@ -4961,7 +5101,7 @@ export class AdminClient {
    */
   readonly refundReasons = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<RefundReasonFilters, RefundReasonSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<RefundReason>> =>
       this.request<PaginatedResponse<RefundReason>>('GET', '/refund_reasons', {
@@ -4992,7 +5132,7 @@ export class AdminClient {
 
   readonly channels = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ChannelFilters, ChannelSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Channel>> =>
       this.request<PaginatedResponse<Channel>>('GET', '/channels', {
@@ -5057,7 +5197,7 @@ export class AdminClient {
     orderRoutingRules: {
       list: (
         channelId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<OrderRoutingRuleFilters, OrderRoutingRuleSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<OrderRoutingRule>> =>
         this.request<PaginatedResponse<OrderRoutingRule>>(
@@ -5117,7 +5257,7 @@ export class AdminClient {
    */
   readonly markets = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<MarketFilters, MarketSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Market>> =>
       this.request<PaginatedResponse<Market>>('GET', '/markets', {
@@ -5147,7 +5287,7 @@ export class AdminClient {
 
   readonly stockLocations = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockLocationFilters, StockLocationSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockLocation>> =>
       this.request<PaginatedResponse<StockLocation>>('GET', '/stock_locations', {
@@ -5185,7 +5325,7 @@ export class AdminClient {
 
   readonly stockLevels = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockLevelFilters, StockLevelSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockLevel>> =>
       this.request<PaginatedResponse<StockLevel>>('GET', '/stock_levels', {
@@ -5238,7 +5378,7 @@ export class AdminClient {
   // caused it.
   readonly stockMovements = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockMovementFilters, StockMovementSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockMovement>> =>
       this.request<PaginatedResponse<StockMovement>>('GET', '/stock_movements', {
@@ -5270,7 +5410,7 @@ export class AdminClient {
    */
   readonly stockTransfers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockTransferFilters, StockTransferSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockTransfer>> =>
       this.request<PaginatedResponse<StockTransfer>>('GET', '/stock_transfers', {
@@ -5393,7 +5533,7 @@ export class AdminClient {
   /** The merchant's supplier address book. */
   readonly suppliers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SupplierFilters, SupplierSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Supplier>> =>
       this.request<PaginatedResponse<Supplier>>('GET', '/suppliers', {
@@ -5436,7 +5576,7 @@ export class AdminClient {
    */
   readonly purchaseOrders = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PurchaseOrderFilters, PurchaseOrderSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PurchaseOrder>> =>
       this.request<PaginatedResponse<PurchaseOrder>>('GET', '/purchase_orders', {
@@ -5581,7 +5721,7 @@ export class AdminClient {
 
   readonly adminUsers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<AdminUserFilters, AdminUserSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<AdminUser>> =>
       this.request<PaginatedResponse<AdminUser>>('GET', '/admin_users', {
@@ -5622,7 +5762,7 @@ export class AdminClient {
 
   readonly invitations = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<InvitationFilters, InvitationSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Invitation>> =>
       this.request<PaginatedResponse<Invitation>>('GET', '/invitations', {
@@ -5664,7 +5804,7 @@ export class AdminClient {
 
   readonly apiKeys = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ApiKeyFilters, ApiKeySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ApiKey>> =>
       this.request<PaginatedResponse<ApiKey>>('GET', '/api_keys', {
@@ -5722,7 +5862,7 @@ export class AdminClient {
    */
   readonly allowedOrigins = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<AllowedOriginFilters, AllowedOriginSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<AllowedOrigin>> =>
       this.request<PaginatedResponse<AllowedOrigin>>('GET', '/allowed_origins', {
@@ -5920,7 +6060,7 @@ export class AdminClient {
    */
   readonly webhookEndpoints = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<WebhookEndpointFilters, WebhookEndpointSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<WebhookEndpoint>> =>
       this.request<PaginatedResponse<WebhookEndpoint>>('GET', '/webhook_endpoints', {
@@ -5979,7 +6119,7 @@ export class AdminClient {
     deliveries: {
       list: (
         endpointId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<WebhookDeliveryFilters, WebhookDeliverySort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<WebhookDelivery>> =>
         this.request<PaginatedResponse<WebhookDelivery>>(
@@ -6018,7 +6158,7 @@ export class AdminClient {
 
   readonly roles = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<RoleFilters, RoleSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Role>> =>
       this.request<PaginatedResponse<Role>>('GET', '/roles', {

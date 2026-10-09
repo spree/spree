@@ -101,6 +101,7 @@ module Spree
     }
 
     self.whitelisted_ransackable_attributes = %w[name kind parent_id po_number_required]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[parent children memberships external_references]
 
     # The node a buyer browses and buys as when they name none: the single

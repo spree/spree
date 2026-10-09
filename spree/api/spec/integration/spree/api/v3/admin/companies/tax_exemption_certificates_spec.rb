@@ -42,6 +42,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
 
       admin_sdk_example 'tax-exemption-certificates/list'
 
+      filter_parameters_for
+
       response '200', 'certificates found' do
         run_test! do |response|
           data = JSON.parse(response.body)

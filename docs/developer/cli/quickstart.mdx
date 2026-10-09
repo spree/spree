@@ -251,6 +251,20 @@ spree generate migration AddPositionToSpreeBrands position:integer  # Rails buil
 
 `spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
 
+### `spree filters types`
+
+Generate TypeScript declarations for your app's list filters, so the SDKs accept and autocomplete the filters and sort fields your app adds. It reads them from the running app and writes one file per run, so run it once for each app that uses an SDK, and again after you change a filter.
+
+```bash
+spree filters types --api store --out apps/storefront/src/types/spree-filters.d.ts         # @spree/sdk
+spree filters types --api admin --out apps/dashboard/src/types/spree-filters.d.ts          # @spree/admin-sdk
+spree filters types --api seller --out apps/seller-dashboard/src/types/spree-filters.d.ts  # @spree/seller-sdk
+```
+
+`--from <file>` reads the tables from `bin/rails spree:api:filter_tables` output instead of the running app.
+
+See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript).
+
 ### `spree migrate`
 
 Install pending Spree migrations from gems, then run `db:migrate` — the canonical post-update sequence.

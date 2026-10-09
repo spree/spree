@@ -24,6 +24,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'API keys found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

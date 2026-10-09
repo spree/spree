@@ -18,6 +18,15 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |z| z['name'] }).to include('Domestic')
     end
+
+    it 'filters by delivery profile' do
+      profile = create(:delivery_profile, store: store)
+      create(:delivery_zone, store: store, delivery_profile: profile, name: 'Profile zone')
+
+      get :index, params: { q: { delivery_profile_id_eq: profile.prefixed_id } }, as: :json
+
+      expect(json_response['data'].map { |z| z['name'] }).to eq(['Profile zone'])
+    end
   end
 
   describe 'POST #create' do

@@ -25,16 +25,6 @@ module Spree
     scope :for_resource_type, ->(resource_type) { where(resource_type: resource_type) }
     scope :storefront_visible, -> { where(storefront_visible: true) }
     scope :admin_only, -> { where(storefront_visible: false) }
-    scope :search, ->(query) do
-      return all if query.blank?
-
-      search_term = "%#{query.downcase}%"
-      namespace_condition = arel_table[:namespace].lower.matches(search_term)
-      key_condition = arel_table[:key].lower.matches(search_term)
-      label_condition = arel_table[:label].lower.matches(search_term)
-
-      where(namespace_condition.or(key_condition).or(label_condition))
-    end
 
     #
     # Callbacks
@@ -52,8 +42,17 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type storefront_visible searchable sortable]
-    self.whitelisted_ransackable_scopes = %w[search]
+    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable]
+
+    # Both columns store class names; filters take the short names clients see.
+    def self.api_type_resolver(attribute)
+      case attribute
+      when 'resource_type' then ->(api_type) { normalize_value_for(:resource_type, api_type) }
+      when 'field_type' then ->(api_type) { Spree::CustomField::TYPE_TOKENS[api_type] }
+      else super
+      end
+    end
+    search_by :namespace, :key, :label
 
     # API-facing token for the STI subclass name stored in the `field_type`
     # column. Reader returns the registered token (`short_text`); writer

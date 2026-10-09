@@ -16,7 +16,7 @@ defineTable<WebhookEndpoint>('webhook-endpoints', {
   docsPath: 'settings/webhooks',
   description: i18n.t('admin.table_descriptions.webhook_endpoints'),
   title: i18n.t('admin.pages.settings.webhooks.title'),
-  searchParam: 'url_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.pages.settings.webhooks.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <WebhookIcon className="size-8 text-muted-foreground" />,

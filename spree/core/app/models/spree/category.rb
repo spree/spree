@@ -133,8 +133,9 @@ module Spree
     #  Ransack
     #
     self.whitelisted_ransackable_associations = %w[parent]
-    self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
+    self.whitelisted_ransackable_attributes = %w[name permalink automatic depth children_count
                                                  products_count pretty_name parent_id]
+    search_by :name, :pretty_name
 
     #
     # Translations

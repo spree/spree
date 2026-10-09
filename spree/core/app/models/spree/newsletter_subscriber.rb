@@ -48,6 +48,7 @@ module Spree
     #
     self.whitelisted_ransackable_attributes = %w[email verified_at]
     self.whitelisted_ransackable_scopes = %w[verified unverified]
+    self.ransackable_scope_types = %w[verified unverified].index_with('boolean')
 
     def accepts_email_marketing
       return customer.accepts_email_marketing if customer.present?

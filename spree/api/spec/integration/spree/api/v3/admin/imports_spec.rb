@@ -27,6 +27,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'imports found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -363,12 +364,11 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :import_id, in: :path, type: :string, required: true
-      parameter name: 'q[status_eq]', in: :query, type: :string, required: false,
-                description: 'Filter rows by status: pending, processing, completed, failed.'
+      filter_parameters_for
 
       response '200', 'rows found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:'q[status_eq]') { 'failed' }
+        let(:q) { { status_eq: 'failed' } }
 
         run_test! do |response|
           data = JSON.parse(response.body)

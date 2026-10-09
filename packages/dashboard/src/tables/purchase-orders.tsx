@@ -20,7 +20,7 @@ defineTable<PurchaseOrder>('purchase-orders', {
   docsPath: 'inventory/purchase-orders',
   title: i18n.t('admin.purchase_orders.title'),
   description: i18n.t('admin.table_descriptions.purchase_orders'),
-  searchParam: 'number_or_reference_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.purchase_orders.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <TruckIcon className="size-8 text-muted-foreground" />,

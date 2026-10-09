@@ -8,7 +8,7 @@ defineTable<Channel>('channels', {
   title: i18n.t('admin.pages.channels.title'),
   docsPath: 'settings/sales-channels',
   description: i18n.t('admin.table_descriptions.channels'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.common.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <RadioTowerIcon className="size-8 text-muted-foreground" />,

@@ -20,6 +20,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'delivery methods found' do
         before { create(:delivery_method, name: 'UPS Ground') }

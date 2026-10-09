@@ -25,14 +25,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort field (e.g., created_at, -created_at, completed_at)'
-      parameter name: :'q[state_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by state (cart, address, delivery, payment, confirm, complete, canceled)'
-      parameter name: :'q[email_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by email (contains)'
-      parameter name: :'q[number_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by order number'
-      parameter name: :'q[completed_at_gt]', in: :query, type: :string, required: false,
-                description: 'Filter by completed after date'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (e.g., items, fulfillments, payments, customer, discounts, billing_address, shipping_address). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,

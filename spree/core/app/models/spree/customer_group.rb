@@ -5,6 +5,7 @@ module Spree
     acts_as_paranoid
 
     include Spree::SingleStoreResource
+    search_by :name
 
     #
     # Associations

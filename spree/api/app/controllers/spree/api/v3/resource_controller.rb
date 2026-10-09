@@ -284,6 +284,32 @@ module Spree
           nil
         end
 
+        # Whether this endpoint's list filters through Ransack on
+        # {#model_class}. An index that ignores `q`, or whose model depends on
+        # the request, has no filter table to publish.
+        #
+        # @return [Boolean]
+        def filterable?
+          true
+        end
+
+        # Sort keys this endpoint accepts beyond the model's sortable
+        # attributes, for a controller that sorts outside Ransack.
+        #
+        # @return [Array<String>]
+        def additional_sort_fields
+          []
+        end
+
+        # Whether this endpoint also filters and sorts on the store's
+        # searchable custom fields (`cf_<namespace>_<key>`), which are store
+        # data and so cannot be listed in the contract.
+        #
+        # @return [Boolean]
+        def custom_field_filters?
+          false
+        end
+
         # Override in subclass to disable distinct (e.g., for custom sorting with computed columns)
         # @return [Boolean] whether to apply distinct to the collection
         def collection_distinct?
@@ -372,15 +398,27 @@ module Spree
           end
         end
 
-        # @param attribute [String, nil] a `*type` column of {#model_class}
+        # A `*type` column of {#model_class}, or of a model it reaches through
+        # its associations (`payment_method_type`), as the filter tables publish.
+        #
+        # @param attribute [String, nil]
         # @return [Proc, nil] shorthand → stored class name
-        def api_type_resolver(attribute)
-          return if attribute.nil? || !model_class.respond_to?(:api_type_registry)
+        def api_type_resolver(attribute, model = model_class, depth = 0)
+          return if attribute.nil? || !model.respond_to?(:api_type_resolver)
 
-          if attribute == model_class.inheritance_column && model_class.api_type_registry.any?
-            ->(api_type) { model_class.class_name_for_api_type(api_type) }
-          elsif model_class.reflect_on_all_associations(:belongs_to).any? { |reflection| reflection.polymorphic? && reflection.foreign_type == attribute }
-            ->(api_type) { Spree::Base.polymorphic_type_for(api_type) }
+          model.api_type_resolver(attribute) || begin
+            return if depth >= Spree::Api::V3::FilterTable::MAX_DEPTH
+
+            model.reflect_on_all_associations.each do |reflection|
+              next if reflection.polymorphic? || !attribute.start_with?("#{reflection.name}_")
+
+              resolver = api_type_resolver(attribute.delete_prefix("#{reflection.name}_"), reflection.klass, depth + 1)
+              return resolver if resolver
+            rescue NameError
+              # A reflection naming a class this installation does not load.
+              next
+            end
+            nil
           end
         end
 

@@ -12405,6 +12405,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -12417,6 +12423,43 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `available_to_sellers` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `storefront_visible` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `available_to_sellers`, `created_at`, `id`, `name`, `seller_id`, `storefront_visible`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: DeliveryMethod
+        sortable:
+        - available_to_sellers
+        - created_at
+        - id
+        - name
+        - seller_id
+        - storefront_visible
+        - updated_at
       responses:
         '200':
           description: delivery methods listed
@@ -13069,6 +13112,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -13081,6 +13130,39 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: DeliveryProfile
+        sortable:
+        - created_at
+        - id
+        - name
+        - position
+        - updated_at
       responses:
         '200':
           description: delivery profiles listed
@@ -13156,6 +13238,39 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `delivery_profile_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `delivery_profile_id`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: DeliveryZone
+        sortable:
+        - created_at
+        - delivery_profile_id
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: delivery zones listed
@@ -13421,6 +13536,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -13433,6 +13554,41 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `owner_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `owner_type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `owner_id`, `owner_type`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Policy
+        sortable:
+        - created_at
+        - id
+        - name
+        - owner_id
+        - owner_type
+        - updated_at
       responses:
         '200':
           description: policies listed
@@ -13641,6 +13797,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -13653,6 +13815,37 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ProductType
+        sortable:
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: product types listed
@@ -13734,6 +13927,105 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches product name or variant SKU (partial, case-insensitive),
+          and the store's searchable custom fields.
+      - name: q[ascend_by_price]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `ascend_by_price`.
+      - name: q[descend_by_price]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `descend_by_price`.
+      - name: q[in_categories][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        description: Applies `in_categories` to the given value.
+      - name: q[in_category]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_category` to the given value.
+      - name: q[in_collection]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_collection` to the given value.
+      - name: q[in_stock]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `in_stock`.
+      - name: q[in_taxon]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_taxon` to the given value.
+      - name: q[not_discontinued]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `not_discontinued`.
+      - name: q[out_of_stock]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `out_of_stock`.
+      - name: q[price_between][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+        description: Applies `price_between` to the given value.
+      - name: q[price_gte]
+        in: query
+        required: false
+        schema:
+          type: number
+        description: Applies `price_gte` to the given value.
+      - name: q[price_lte]
+        in: query
+        required: false
+        schema:
+          type: number
+        description: Applies `price_lte` to the given value.
+      - name: q[search_by_name]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `search_by_name` to the given value.
+      - name: q[with_option_value_ids][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        description: Applies `with_option_value_ids` to the given value.
       - name: page
         in: query
         required: false
@@ -13752,6 +14044,51 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `available_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `description` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Product
+        sortable:
+        - available_on
+        - created_at
+        - description
+        - discontinue_on
+        - id
+        - name
+        - price
+        - seller_id
+        - slug
+        - status
+        - updated_at
       responses:
         '200':
           description: products listed
@@ -14370,6 +14707,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -14388,6 +14731,53 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `pickup_enabled` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `returns_enabled` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `state_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: StockLocation
+        sortable:
+        - active
+        - country_code
+        - created_at
+        - default
+        - id
+        - kind
+        - name
+        - pickup_enabled
+        - returns_enabled
+        - seller_id
+        - state_code
+        - updated_at
       responses:
         '200':
           description: stock locations listed
@@ -15034,10 +15424,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--685d4d35ee0893406644de01b3a620fa83d60919
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--1f5050701bdb56c56ae8346d9fef78a0405b680c
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--af56ca8eaae24da2ded09307646bc7e0eb2e0c3e
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -15136,6 +15526,45 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `open`, `approved`, `resolved`, `denied`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Claim
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: claims listed
@@ -15431,6 +15860,39 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ClaimReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -15481,6 +15943,45 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `fulfilled`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Exchange
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: exchanges listed
@@ -15855,6 +16356,37 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Fulfillment
+        sortable:
+        - created_at
+        - id
+        - number
+        - updated_at
       responses:
         '200':
           description: fulfillments listed
@@ -16317,6 +16849,30 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[complete]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `complete`.
+      - name: q[incomplete]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `incomplete`.
+      - name: q[partially_refunded]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `partially_refunded`.
+      - name: q[refunded]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `refunded`.
       - name: page
         in: query
         required: false
@@ -16335,6 +16891,67 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `channel_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `completed_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `po_number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `draft`, `placed`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `total_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Order
+        sortable:
+        - channel_id
+        - completed_at
+        - created_at
+        - currency
+        - customer_id
+        - delivery_total
+        - fulfillment_status
+        - id
+        - item_total
+        - number
+        - order_group_id
+        - payment_state
+        - payment_status
+        - po_number
+        - seller_id
+        - shipment_state
+        - status
+        - total
+        - total_quantity
+        - updated_at
       responses:
         '200':
           description: orders listed
@@ -17493,6 +18110,39 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: OrderCancellationReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -17547,6 +18197,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: owner
         in: query
         required: false
@@ -17568,6 +18224,43 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `box`, `envelope`, `carton`, `pallet`, `container` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `default`, `id`, `kind`, `name`, `seller_id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: PackageType
+        sortable:
+        - created_at
+        - default
+        - id
+        - kind
+        - name
+        - seller_id
+        - updated_at
       responses:
         '200':
           description: package types listed
@@ -17910,6 +18603,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of reference (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -17922,17 +18621,51 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
-      - name: q[status_eq]
+      - name: q
         in: query
         required: false
+        style: deepObject
+        explode: true
         schema:
-          type: string
-          enum:
-          - pending
-          - processing
-          - completed
-          - failed
-          - unresolved
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `period_end` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `period_start` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `provider` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `reference` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `processing`, `completed`, `failed`, `unresolved` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `amount`, `created_at`, `currency`, `id`, `period_end`, `period_start`, `provider`, `reference`, `seller_id`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: SellerPayout
+        sortable:
+        - amount
+        - created_at
+        - currency
+        - id
+        - period_end
+        - period_start
+        - provider
+        - reference
+        - seller_id
+        - status
+        - updated_at
       responses:
         '200':
           description: payouts listed
@@ -18050,6 +18783,45 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `refunded`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Return
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: returns listed
@@ -18431,6 +19203,39 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ReturnReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -18481,6 +19286,35 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: TaxIdentifier
+        sortable:
+        - created_at
+        - id
+        - updated_at
       responses:
         '200':
           description: registrations returned
@@ -18676,6 +19510,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of reference (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -18688,37 +19528,53 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
-      - name: q[order_id_eq]
+      - name: q
         in: query
         required: false
-        description: Only the rows for this order
+        style: deepObject
+        explode: true
         schema:
-          type: string
-      - name: q[payout_id_eq]
-        in: query
-        required: false
-        description: Only the rows this settlement covers
-        schema:
-          type: string
-      - name: q[status_eq]
-        in: query
-        required: false
-        schema:
-          type: string
-          enum:
-          - pending
-          - processing
-          - completed
-          - failed
-          - unresolved
-      - name: q[kind_eq]
-        in: query
-        required: false
-        schema:
-          type: string
-          enum:
-          - earning
-          - refund_reversal
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `earning`, `refund_reversal` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `payout_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `provider` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `reference` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `processing`, `completed`, `failed`, `unresolved` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `amount`, `created_at`, `currency`, `id`, `kind`, `order_id`, `payout_id`, `provider`, `reference`, `seller_id`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: SellerTransfer
+        sortable:
+        - amount
+        - created_at
+        - currency
+        - id
+        - kind
+        - order_id
+        - payout_id
+        - provider
+        - reference
+        - seller_id
+        - status
+        - updated_at
       responses:
         '200':
           description: transfers listed
@@ -22396,3 +23252,434 @@ components:
       required:
       - type
       - preferences
+  x-spree-filter-tables:
+    Claim:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - open
+          - approved
+          - resolved
+          - denied
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    ClaimReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    DeliveryMethod:
+      attributes:
+        available_to_sellers: boolean
+        created_at: datetime
+        id: id
+        name: text
+        seller_id: id
+        storefront_visible: boolean
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    DeliveryProfile:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        position: integer
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    DeliveryZone:
+      attributes:
+        created_at: datetime
+        delivery_profile_id: id
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Exchange:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - fulfilled
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    Fulfillment:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Order:
+      attributes:
+        channel_id: id
+        completed_at: datetime
+        created_at: datetime
+        currency: text
+        customer_id: id
+        delivery_total: decimal
+        fulfillment_status:
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
+        id: id
+        item_total: decimal
+        number: text
+        order_group_id: id
+        payment_state:
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
+          - balance_due
+          - credit_owed
+          - failed
+          - void
+        payment_status:
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
+          - balance_due
+          - credit_owed
+          - failed
+          - void
+        po_number: text
+        seller_id: id
+        shipment_state:
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
+        status:
+          enum:
+          - draft
+          - placed
+          - canceled
+        total: decimal
+        total_quantity: integer
+        updated_at: datetime
+      associations: {}
+      scopes:
+        complete: boolean
+        incomplete: boolean
+        partially_refunded: boolean
+        refunded: boolean
+    OrderCancellationReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    PackageType:
+      attributes:
+        created_at: datetime
+        default: boolean
+        id: id
+        kind:
+          enum:
+          - box
+          - envelope
+          - carton
+          - pallet
+          - container
+        name: text
+        seller_id: id
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    Policy:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        owner_id: id
+        owner_type: type
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    Product:
+      attributes:
+        available_on: datetime
+        created_at: datetime
+        description: text
+        discontinue_on: datetime
+        id: id
+        name: text
+        price: decimal
+        seller_id: id
+        slug: text
+        status:
+          enum:
+          - draft
+          - active
+          - archived
+          - proposed
+          - rejected
+        updated_at: datetime
+      associations: {}
+      scopes:
+        ascend_by_price: boolean
+        descend_by_price: boolean
+        in_categories:
+          list: id
+        in_category: id
+        in_collection: id
+        in_stock: boolean
+        in_taxon: id
+        not_discontinued: boolean
+        out_of_stock: boolean
+        price_between:
+        - decimal
+        - decimal
+        price_gte: decimal
+        price_lte: decimal
+        search: text
+        search_by_name: text
+        with_option_value_ids:
+          list: id
+    ProductType:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    Return:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - refunded
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    ReturnReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    SellerPayout:
+      attributes:
+        amount: decimal
+        created_at: datetime
+        currency: text
+        id: id
+        period_end: datetime
+        period_start: datetime
+        provider: text
+        reference: text
+        seller_id: id
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    SellerTransfer:
+      attributes:
+        amount: decimal
+        created_at: datetime
+        currency: text
+        id: id
+        kind:
+          enum:
+          - earning
+          - refund_reversal
+        order_id: id
+        payout_id: id
+        provider: text
+        reference: text
+        seller_id: id
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    StockLocation:
+      attributes:
+        active: boolean
+        country_code: text
+        created_at: datetime
+        default: boolean
+        id: id
+        kind: text
+        name: text
+        pickup_enabled: boolean
+        returns_enabled: boolean
+        seller_id: id
+        state_code: text
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    TaxIdentifier:
+      attributes:
+        created_at: datetime
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+  x-spree-filter-predicates:
+    text:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - cont
+    - i_cont
+    - not_cont
+    - start
+    - end
+    - 'null'
+    - not_null
+    - present
+    - blank
+    decimal:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    integer:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    date:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    datetime:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    enum:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    id:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    type:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    boolean:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'true'
+    - 'false'
+    - 'null'

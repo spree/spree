@@ -100,7 +100,7 @@ export function stockLocationAutocompleteProps(queryKey: string) {
   return {
     queryKey,
     search: (query: string) =>
-      adminClient.stockLocations.list({ name_cont: query, limit: 100, sort: 'name' }),
+      adminClient.stockLocations.list({ search: query, limit: 100, sort: 'name' }),
     hydrate: (ids: string[]) => adminClient.stockLocations.list({ id_in: ids, limit: ids.length }),
     // Every warehouse, so the filter opens as a list rather than a search
     // box: a store has a handful, and the API caps the page at 100 anyway.

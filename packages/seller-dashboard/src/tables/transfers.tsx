@@ -51,7 +51,7 @@ defineTable<Transfer>('seller-transfers', {
   // Without this the toolbar sends `name_cont`, which the ledger does not
   // whitelist — Ransack drops an unknown condition, so the box would look
   // like it worked and return everything.
-  searchParam: 'reference_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('earnings.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <BanknoteIcon className="size-8 text-muted-foreground" />,

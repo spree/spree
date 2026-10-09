@@ -39,14 +39,6 @@ module Spree
                           :searchable, :sortable)
           end
 
-          # `resource_type` is a plain column rather than a polymorphic
-          # association, so its filter goes through the model's own normalizer.
-          def api_type_resolver(attribute)
-            return super unless attribute == 'resource_type'
-
-            ->(api_type) { model_class.normalize_value_for(:resource_type, api_type) }
-          end
-
           # Pure registry discovery — maps to the read scope.
           def read_actions
             super + %w[resource_types]

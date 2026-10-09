@@ -679,6 +679,25 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe 'the price filter' do
+    let!(:cheap) { create(:product, price: 5) }
+    let!(:pricey) { create(:product, price: 500) }
+
+    before { Spree::Current.currency = cheap.store.default_currency }
+
+    it "filters on the default variant's base price in the current currency" do
+      expect(described_class.ransack(price_gt: 100).result).to include(pricey)
+      expect(described_class.ransack(price_gt: 100).result).not_to include(cheap)
+    end
+
+    it 'ignores price list prices' do
+      price_list = create(:price_list, store: cheap.store)
+      create(:price, variant: cheap.default_variant, price_list: price_list, amount: 900, currency: cheap.store.default_currency)
+
+      expect(described_class.ransack(price_gt: 100).result).not_to include(cheap)
+    end
+  end
+
   describe '#total_on_hand' do
     let(:product) { create(:product) }
 

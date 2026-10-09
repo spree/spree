@@ -106,6 +106,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[name code kind enabled position value
                                                  tax_inclusive include_shipping]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[commission_rules]
 
     # @return [Boolean]

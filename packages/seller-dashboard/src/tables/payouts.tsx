@@ -22,7 +22,7 @@ const STATUSES = ['pending', 'processing', 'completed', 'failed', 'unresolved'] 
 
 defineTable<Payout>('seller-payouts', {
   title: i18n.t('payouts.title'),
-  searchParam: 'reference_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('payouts.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <HandCoinsIcon className="size-8 text-muted-foreground" />,

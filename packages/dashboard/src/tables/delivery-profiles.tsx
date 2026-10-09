@@ -8,7 +8,7 @@ defineTable<DeliveryProfile>('delivery-profiles', {
   title: i18n.t('admin.settings_nav.items.delivery_profiles'),
   description: i18n.t('admin.table_descriptions.delivery_profiles'),
   docsPath: 'settings/shipping-methods',
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.delivery_profiles.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <TruckIcon className="size-8 text-muted-foreground" />,

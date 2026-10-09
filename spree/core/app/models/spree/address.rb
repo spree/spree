@@ -206,7 +206,7 @@ module Spree
       scope.first
     end
 
-    self.whitelisted_ransackable_attributes = ADDRESS_FIELDS + %w[country_code state_code]
+    self.whitelisted_ransackable_attributes = ADDRESS_FIELDS - %w[country state] + %w[country_code state_code]
     self.whitelisted_ransackable_associations = %w[owner]
 
     def self.required_fields

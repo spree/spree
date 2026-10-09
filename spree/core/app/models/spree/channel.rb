@@ -60,6 +60,7 @@ module Spree
     scope :default, -> { where(default: true) }
 
     self.whitelisted_ransackable_attributes = %w[name code active default store_id]
+    search_by :name
 
     # Publishes the given products on this channel by creating/upserting ProductPublications.
     # Optionally sets the publication window; if not given, the products will be published immediately

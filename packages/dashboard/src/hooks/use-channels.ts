@@ -68,7 +68,7 @@ export function channelAutocompleteProps(queryKey: string) {
     queryKey,
     search: (q: string) =>
       adminClient.channels.list({
-        name_cont: q,
+        search: q,
         limit: 100,
         sort: 'name',
         fields: ['name', 'code'],

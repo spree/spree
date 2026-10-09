@@ -27,8 +27,7 @@ RSpec.describe 'Sellers API', type: :request, swagger_doc: 'api-reference/store.
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
-      parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (`policies`). ' \
                              'A seller\'s policies are their own published legal documents.'

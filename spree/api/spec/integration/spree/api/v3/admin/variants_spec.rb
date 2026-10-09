@@ -29,6 +29,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
                 description: 'Comma-separated associations to expand (e.g., images, prices, stock_levels, option_values). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., sku,price,stock). id is always included.'
+      filter_parameters_for
 
       response '200', 'variants found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

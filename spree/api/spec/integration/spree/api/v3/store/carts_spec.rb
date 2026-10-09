@@ -22,10 +22,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of results per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort order. Prefix with - for descending. Values: created_at, -created_at, updated_at, -updated_at'
-      parameter name: 'q[created_at_gt]', in: :query, type: :string, required: false,
-                description: 'Filter by created after date (ISO 8601)'
-      parameter name: 'q[updated_at_gt]', in: :query, type: :string, required: false,
-                description: 'Filter by updated after date (ISO 8601)'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (items, fulfillments, payments, discounts, billing_address, shipping_address, gift_card, payment_methods). Use "none" to skip associations.'
       parameter name: :fields, in: :query, type: :string, required: false,

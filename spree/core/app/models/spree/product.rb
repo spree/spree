@@ -361,7 +361,21 @@ module Spree
       super(manual_ids | collections.automatic.ids)
     end
 
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id price]
+
+    # The default variant's base price in the current currency — what the
+    # product lists show — so a list can filter on it like a column.
+    ransacker :price, type: :decimal do |parent|
+      prices = Spree::Price.arel_table
+      Arel::Nodes::Grouping.new(
+        prices.project(prices[:amount]).
+          where(prices[:variant_id].eq(parent.table[:default_variant_id])).
+          where(prices[:currency].eq(Spree::Current.currency)).
+          where(prices[:price_list_id].eq(nil)).
+          where(prices[:deleted_at].eq(nil)).
+          take(1)
+      )
+    end
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
                                                    product_type product_categories option_types seller]
     # The storefront filters by tag, category and collection; every other hop
@@ -373,6 +387,12 @@ module Spree
                                              search in_stock out_of_stock with_option_value_ids
 
                                              ascend_by_price descend_by_price]
+    self.ransackable_scope_types = {
+      'in_taxon' => 'id', 'in_category' => 'id', 'in_collection' => 'id',
+      'in_categories' => { list: 'id' }, 'with_option_value_ids' => { list: 'id' },
+      'price_between' => %w[decimal decimal], 'price_lte' => 'decimal', 'price_gte' => 'decimal',
+      'ascend_by_price' => 'boolean', 'descend_by_price' => 'boolean'
+    }
 
     # All product-level convenience attributes delegate to the default variant —
     # one target, no branching. Reads resolve the existing default variant

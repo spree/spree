@@ -1016,6 +1016,55 @@ Both internal-note serializers now return the pair. Previously orders exposed on
 
 Stored markup is also held to a narrower allowlist than 5.6 — see [the rich-text migration](#move-rich-text-out-of-action-text) for what is permitted and how to widen it.
 
+## Upgrading a storefront
+
+A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefront](https://github.com/spree/storefront), needs `@spree/sdk` 2.0 and the changes below. Most are type errors that point at the line to change.
+
+### List filters and sort are typed
+
+Each `list()` method now takes the filters and sort fields its endpoint accepts. A misspelled filter, a filter the endpoint doesn't support, or an unknown sort field used to return the unfiltered list; it is now a compile error. `ProductListParams`, `CategoryListParams`, `CollectionListParams` and `OrderListParams` keep their names but no longer accept arbitrary keys.
+
+- **A sort value read from the URL is a plain `string`.** Narrow it where you read it; the API still validates the value at runtime:
+
+  ```ts src/lib/utils/product-query.ts
+  import type { ProductListParams, ProductSort } from '@spree/sdk'
+
+  params.sort = filters.sortBy as ProductSort
+  ```
+
+- **Filters your backend adds are compile errors until you declare them.** The published types list only the filters Spree itself declares. Any filter or scope your backend adds (through `Spree.ransack.add_attribute`, `add_scope` or a model decorator) still works in the API, but TypeScript rejects the key. Generate the declarations from your app, and run the command again whenever a filter changes:
+
+  ```bash
+  spree filters types --api store --out apps/storefront/src/types/spree-filters.d.ts
+  ```
+
+  Generate one for the dashboard (`--api admin --out apps/dashboard/src/types/spree-filters.d.ts`) and the seller panel (`--api seller`) too, if they use your filters. For a one-off filter, send it inside `q` instead (`list({ q: { erp_id_eq: 'ERP-1' } })`), which is not type checked. See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript) for both, and for declaring filters by hand.
+
+- **Amount filters take decimal strings.** `price_gte`, `price_lte` and the other money filters are typed as strings, like every money value in 6.0. Send `'20.00'`, not `20`.
+
+- **Prefer `search`.** Products, categories and collections take `q[search]` (the SDK's `search` key), which matches more than `name_cont`. See [which filters an endpoint accepts](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+### Completing a cart can return an order group
+
+`carts.complete()` returns `Order | OrderGroup`. In a marketplace, a cart holding several sellers' goods divides into one order per seller and returns the group. Narrow the result with `isOrderGroup` before reading order fields:
+
+```ts
+import { isOrderGroup } from '@spree/sdk'
+
+const result = await client.carts.complete(cartId)
+const orders = isOrderGroup(result) ? result.orders : [result]
+```
+
+### Other Store API changes to check
+
+| Change | What to update | Details |
+|---|---|---|
+| Delivery requirement renamed | Match `delivery_method` (field) and `delivery_method_required` (code) instead of `shipping_method` | [Checkout without a state machine](#checkout-without-a-state-machine) |
+| Type values are short names | Compare `payment_source_type` with `credit_card`, and read custom field `field_type` | [Type values are short names](#type-values-are-short-names-not-class-names) |
+| Rich text comes in two shapes | Render `description_html` for markup; `description` is plain text | [Rich-text fields](#rich-text-fields-read-as-plain-text-plus-html) |
+| Payment source IDs | Stored `source_id` values change prefix from `ps_` to `psrc_` | [Payment source IDs](#payment-source-ids-use-the-psrc_-prefix) |
+| Completed carts are read-only | Read post-checkout data from the order, not the cart | [The Cart/Order split](#the-cartorder-split) |
+
 ## For extension authors
 
 - **Don't reach for model business methods from services** — 6.0 code style writes behavior inline in service/workflow steps; models keep data, validations, predicates and persistence primitives. Extensions patching removed model methods (`finalize!` internals, updater hooks) should move to workflow hooks (`Spree.hooks.register('carts.complete.before_finalize') { |flow| ... }` — handlers receive the workflow instance) or event subscribers.

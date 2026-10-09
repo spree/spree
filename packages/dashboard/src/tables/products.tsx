@@ -111,7 +111,6 @@ defineTable('products', {
       filterable: true,
       default: true,
       filterType: 'number',
-      ransackAttribute: 'master_price',
       className: 'text-right tabular-nums whitespace-nowrap',
       render: (product) => formatPrice(product.price),
     },
@@ -133,8 +132,8 @@ defineTable('products', {
     // separate scope. Restoring this needs `filtersToRansack` to learn how to
     // emit a bare scope key, which is a change to the filter contract rather
     // than a column flag.
-    // Filter-only — Ransack joins through `products.taxons`, so the predicate
-    // emitted is `taxons_id_in`. We don't render a categories cell on the
+    // Filter-only — Ransack joins through `products.categories`, so the
+    // predicate emitted is `categories_id_in`. We don't render a categories cell on the
     // index to avoid expanding categories on every list refetch; users can
     // see attached categories on the product edit page.
     // On a marketplace this list holds the operator's own products and every
@@ -169,7 +168,7 @@ defineTable('products', {
       filterable: true,
       filterType: 'resource',
       filterResource: categoryAutocompleteProps('products-table-category-filter'),
-      ransackAttribute: 'taxons_id',
+      ransackAttribute: 'categories_id',
       displayable: false,
       default: false,
     },

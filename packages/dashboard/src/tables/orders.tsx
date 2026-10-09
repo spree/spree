@@ -74,7 +74,6 @@ defineTable('orders', {
     {
       key: 'channel',
       label: i18n.t('admin.fields.order.channel.label'),
-      sortable: true,
       filterable: true,
       filterType: 'resource',
       filterResource: channelAutocompleteProps('orders-table-channel-filter'),
@@ -257,7 +256,7 @@ defineTable('orders', {
       label: i18n.t('admin.fields.first_name.label'),
       filterable: true,
       displayable: false,
-      ransackAttribute: 'bill_address_first_name_i',
+      ransackAttribute: 'bill_address_first_name',
     },
     {
       key: 'last_name',

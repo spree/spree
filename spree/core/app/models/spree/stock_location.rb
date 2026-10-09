@@ -50,6 +50,7 @@ module Spree
       country_code state_code created_at updated_at
       seller_id
     ]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[seller]
 
     scope :active, -> { where(active: true) }

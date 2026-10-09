@@ -22,8 +22,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed. Supported: `price_rules`.'
@@ -466,6 +465,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated. `price_list_price` adds the resolved price to every row.',
                 example: 'price_list_price'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

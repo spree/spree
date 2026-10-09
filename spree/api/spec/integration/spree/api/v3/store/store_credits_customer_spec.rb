@@ -22,6 +22,7 @@ RSpec.describe 'Customer Store Credits API', type: :request, swagger_doc: 'api-r
       parameter name: :limit, in: :query, type: :integer, required: false
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., amount,currency). id is always included.'
+      filter_parameters_for
 
       response '200', 'store credits found' do
         let(:'x-spree-api-key') { api_key.token }

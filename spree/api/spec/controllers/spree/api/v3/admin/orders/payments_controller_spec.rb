@@ -18,6 +18,16 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(json_response['data']).to be_an(Array)
       expect(json_response['data'].length).to be >= 1
     end
+
+    it "filters by the payment method's type short name" do
+      api_type = payment.payment_method.class.api_type
+
+      get :index, params: { order_id: order_with_payment.prefixed_id, q: { payment_method_type_eq: api_type } }, as: :json
+      expect(json_response['data'].pluck('id')).to include(payment.prefixed_id)
+
+      get :index, params: { order_id: order_with_payment.prefixed_id, q: { payment_method_type_eq: 'store_credit' } }, as: :json
+      expect(json_response['data'].pluck('id')).not_to include(payment.prefixed_id)
+    end
   end
 
   describe 'GET #show' do

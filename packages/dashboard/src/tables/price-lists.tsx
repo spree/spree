@@ -9,7 +9,7 @@ defineTable<PriceList>('price-lists', {
   title: i18n.t('admin.nav.price_lists'),
   description: i18n.t('admin.table_descriptions.price_lists'),
   docsPath: 'pricing/price-lists',
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.common.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <TagsIcon className="size-8 text-muted-foreground" />,

@@ -33,7 +33,6 @@ export function filterOptionValues(optionValues: OptionValue[], query: string): 
 interface UseOptionTypesParams {
   page?: number
   limit?: number
-  q?: Record<string, unknown>
 }
 
 /**
@@ -45,7 +44,7 @@ export function optionTypeAutocompleteProps(queryKey: string) {
     queryKey,
     search: (q: string) =>
       adminClient.optionTypes.list({
-        name_cont: q,
+        search: q,
         limit: 100,
         sort: 'name',
         fields: ['name', 'label'],
@@ -58,14 +57,13 @@ export function optionTypeAutocompleteProps(queryKey: string) {
   }
 }
 
-export function useOptionTypes({ page = 1, limit = 100, q }: UseOptionTypesParams = {}) {
+export function useOptionTypes({ page = 1, limit = 100 }: UseOptionTypesParams = {}) {
   return useQuery({
-    queryKey: useResourceKey('option-types', { page, limit, q }),
+    queryKey: useResourceKey('option-types', { page, limit }),
     queryFn: () =>
       adminClient.optionTypes.list({
         page,
         limit,
-        q,
         expand: ['option_values'],
       }),
     staleTime: 1000 * 60 * 5,

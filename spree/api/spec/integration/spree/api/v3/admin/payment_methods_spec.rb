@@ -24,6 +24,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
                 description: 'Comma-separated associations to expand. Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,type,active). id is always included.'
+      filter_parameters_for
 
       response '200', 'payment methods found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

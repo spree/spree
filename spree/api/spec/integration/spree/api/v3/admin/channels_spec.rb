@@ -21,6 +21,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      filter_parameters_for
 
       response '200', 'channels found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

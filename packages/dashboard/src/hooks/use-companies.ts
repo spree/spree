@@ -36,7 +36,7 @@ export function useCompany(id: string | undefined) {
 export function companyAutocompleteProps(queryKey: string) {
   return {
     queryKey,
-    search: (q: string) => adminClient.companies.list({ name_cont: q, limit: 100, sort: 'name' }),
+    search: (q: string) => adminClient.companies.list({ search: q, limit: 100, sort: 'name' }),
     hydrate: (ids: string[]) => adminClient.companies.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (company: Company) => company.name ?? company.id,
     placeholder: i18n.t('admin.companies.autocomplete.placeholder'),
@@ -52,7 +52,7 @@ export function useCompanyChildren(parentId: string | undefined, page = 1, limit
       adminClient.companies.list(
         parentId
           ? { page, limit, parent_id_eq: parentId, sort: 'name' }
-          : { page, limit, parent_id_null: 1, sort: 'name' },
+          : { page, limit, parent_id_null: true, sort: 'name' },
       ),
     placeholderData: (previous) => previous,
   })

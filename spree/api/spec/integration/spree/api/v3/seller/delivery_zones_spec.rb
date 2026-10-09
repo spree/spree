@@ -31,6 +31,7 @@ RSpec.describe 'Seller Delivery Zones API', type: :request, swagger_doc: 'api-re
                 description: 'Only zones under this delivery profile'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
 
       response '200', 'delivery zones listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

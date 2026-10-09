@@ -93,6 +93,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[alt media_type created_at updated_at]
     self.whitelisted_ransackable_scopes = %w[attached unattached filename_cont]
+    self.ransackable_scope_types = { 'attached' => 'boolean', 'unattached' => 'boolean' }
 
     delegate :key, :attached?, :variant, :variable?, :blob, :filename, :variation, to: :attachment
 

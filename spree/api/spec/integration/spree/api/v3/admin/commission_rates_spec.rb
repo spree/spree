@@ -37,10 +37,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of records per page'
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name (contains)'
-      parameter name: :'q[enabled_eq]', in: :query, type: :boolean, required: false,
-                description: 'Filter by whether the rate is in use'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-position`).'
 
