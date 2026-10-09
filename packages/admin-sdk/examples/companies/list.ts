@@ -6,7 +6,7 @@ const client = createAdminClient({
 })
 
 // region:example
-const { data: companies } = await client.companies.list({ name_cont: 'Acme' })
+const { data: companies } = await client.companies.list({ search: 'Acme' })
 
 // endregion:example
 

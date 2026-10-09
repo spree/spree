@@ -20555,14 +20555,14 @@ paths:
           })
 
           const { data: products } = await client.products.list({
-            name_cont: 'shirt',
+            search: 'shirt',
             status_eq: 'active',
             sort: '-created_at',
             limit: 25,
           })
       - lang: bash
         label: Spree CLI
-        source: spree api get /products -d '{"name_cont":"shirt","status_eq":"active","sort":"-created_at","limit":25}'
+        source: spree api get /products -d '{"search":"shirt","status_eq":"active","sort":"-created_at","limit":25}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37547,10 +37547,10 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          const { data: companies } = await client.companies.list({ name_cont: 'Acme' })
+          const { data: companies } = await client.companies.list({ search: 'Acme' })
       - lang: bash
         label: Spree CLI
-        source: spree api get /companies -d '{"name_cont":"Acme"}'
+        source: spree api get /companies -d '{"search":"Acme"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -46840,10 +46840,10 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          const { data: suppliers } = await client.suppliers.list({ name_cont: 'Acme' })
+          const { data: suppliers } = await client.suppliers.list({ search: 'Acme' })
       - lang: bash
         label: Spree CLI
-        source: spree api get /suppliers -d '{"name_cont":"Acme"}'
+        source: spree api get /suppliers -d '{"search":"Acme"}'
       parameters:
       - name: x-spree-api-key
         in: header
