@@ -196,6 +196,7 @@ module Spree::Preferences::Preferable
   # @return [Object]
   def wire_preference_value(value, definition)
     return BigDecimal(value.to_s).as_json if definition[:type] == :decimal && value.is_a?(Numeric)
+    return nil if value == '' && definition[:nullable] && %i[integer boolean].include?(definition[:type])
     return cast_preference_item(value, :integer) if definition[:type] == :integer && value.is_a?(String)
     return convert_preference_value(value, :boolean, nullable: definition[:nullable]) if definition[:type] == :boolean && value.is_a?(String)
     return value if value.nil? || (definition[:type] == :array && !value.is_a?(Array))

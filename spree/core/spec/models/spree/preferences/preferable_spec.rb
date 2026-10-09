@@ -527,6 +527,7 @@ describe Spree::Preferences::Preferable, type: :model do
     it 'reads back an integer or boolean stored as a string by older code as its type' do
       expect(record.wire_preference_value('5', type: :integer)).to eq(5)
       expect(record.wire_preference_value('true', type: :boolean)).to be(true)
+      expect(record.wire_preference_value('', type: :integer, nullable: true)).to be_nil
     end
 
     it 'warns about a declaration that does not state its full type' do
