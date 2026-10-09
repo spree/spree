@@ -12405,6 +12405,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -12425,9 +12431,25 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `available_to_sellers` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `storefront_visible` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `available_to_sellers`, `created_at`, `id`, `name`, `seller_id`, `storefront_visible`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: DeliveryMethod
         sortable:
@@ -12981,6 +13003,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -13001,9 +13029,23 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: DeliveryProfile
         sortable:
@@ -13095,9 +13137,23 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `delivery_profile_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `delivery_profile_id`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: DeliveryZone
         sortable:
@@ -13371,6 +13427,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -13391,9 +13453,24 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `owner_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `owner_type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `owner_id`, `owner_type`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Policy
         sortable:
@@ -13611,6 +13688,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -13631,9 +13714,22 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: ProductType
         sortable:
@@ -13722,6 +13818,105 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches product name or variant SKU (partial, case-insensitive),
+          and the store's searchable custom fields.
+      - name: q[ascend_by_price]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `ascend_by_price`.
+      - name: q[descend_by_price]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `descend_by_price`.
+      - name: q[in_categories][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        description: Applies `in_categories` to the given value.
+      - name: q[in_category]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_category` to the given value.
+      - name: q[in_collection]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_collection` to the given value.
+      - name: q[in_stock]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `in_stock`.
+      - name: q[in_taxon]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_taxon` to the given value.
+      - name: q[not_discontinued]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `not_discontinued`.
+      - name: q[out_of_stock]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `out_of_stock`.
+      - name: q[price_between][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+        description: Applies `price_between` to the given value.
+      - name: q[price_gte]
+        in: query
+        required: false
+        schema:
+          type: number
+        description: Applies `price_gte` to the given value.
+      - name: q[price_lte]
+        in: query
+        required: false
+        schema:
+          type: number
+        description: Applies `price_lte` to the given value.
+      - name: q[search_by_name]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `search_by_name` to the given value.
+      - name: q[with_option_value_ids][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        description: Applies `with_option_value_ids` to the given value.
       - name: page
         in: query
         required: false
@@ -13748,9 +13943,28 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `available_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `description` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -14398,6 +14612,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -14424,9 +14644,30 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `pickup_enabled` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `returns_enabled` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `state_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: StockLocation
         sortable:
@@ -15195,6 +15436,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
       - name: q
         in: query
         required: false
@@ -15203,9 +15450,23 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `open`, `approved`, `resolved`, `denied`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Claim
         sortable:
@@ -15522,9 +15783,23 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: ClaimReason
         sortable:
@@ -15583,6 +15858,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
       - name: q
         in: query
         required: false
@@ -15591,9 +15872,23 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `fulfilled`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Exchange
         sortable:
@@ -15987,9 +16282,22 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Fulfillment
         sortable:
@@ -16463,6 +16771,30 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[complete]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `complete`.
+      - name: q[incomplete]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `incomplete`.
+      - name: q[partially_refunded]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `partially_refunded`.
+      - name: q[refunded]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `refunded`.
       - name: page
         in: query
         required: false
@@ -16489,9 +16821,36 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `channel_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `completed_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `po_number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `draft`, `placed`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `total_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Order
         sortable:
@@ -17783,9 +18142,23 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: OrderCancellationReason
         sortable:
@@ -17848,6 +18221,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: owner
         in: query
         required: false
@@ -17877,9 +18256,25 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `box`, `envelope`, `carton`, `pallet`, `container` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `default`, `id`, `kind`, `name`, `seller_id`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: PackageType
         sortable:
@@ -18232,6 +18627,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of reference (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -18252,9 +18653,29 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `period_end` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `period_start` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `provider` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `reference` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `processing`, `completed`, `failed`, `unresolved` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `amount`, `created_at`, `currency`, `id`, `period_end`, `period_start`, `provider`, `reference`, `seller_id`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: SellerPayout
         sortable:
@@ -18388,6 +18809,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
       - name: q
         in: query
         required: false
@@ -18396,9 +18823,23 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `refunded`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Return
         sortable:
@@ -18814,9 +19255,23 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: ReturnReason
         sortable:
@@ -18883,9 +19338,21 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: TaxIdentifier
         sortable:
@@ -19087,6 +19554,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of reference (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -19107,9 +19580,30 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `earning`, `refund_reversal` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `payout_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `provider` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `reference` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `processing`, `completed`, `failed`, `unresolved` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `amount`, `created_at`, `currency`, `id`, `kind`, `order_id`, `payout_id`, `provider`, `reference`, `seller_id`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: SellerTransfer
         sortable:
@@ -22773,7 +23267,8 @@ components:
           - canceled
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     ClaimReason:
       attributes:
         active: boolean
@@ -22793,7 +23288,8 @@ components:
         storefront_visible: boolean
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     DeliveryProfile:
       attributes:
         created_at: datetime
@@ -22802,7 +23298,8 @@ components:
         position: integer
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     DeliveryZone:
       attributes:
         created_at: datetime
@@ -22826,7 +23323,8 @@ components:
           - canceled
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     Fulfillment:
       attributes:
         created_at: datetime
@@ -22938,7 +23436,8 @@ components:
         seller_id: id
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     Policy:
       attributes:
         created_at: datetime
@@ -22948,7 +23447,8 @@ components:
         owner_type: type
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     Product:
       attributes:
         available_on: datetime
@@ -22995,7 +23495,8 @@ components:
         name: text
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     Return:
       attributes:
         created_at: datetime
@@ -23010,7 +23511,8 @@ components:
           - canceled
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     ReturnReason:
       attributes:
         active: boolean
@@ -23040,7 +23542,8 @@ components:
           - unresolved
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     SellerTransfer:
       attributes:
         amount: decimal
@@ -23065,7 +23568,8 @@ components:
           - unresolved
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     StockLocation:
       attributes:
         active: boolean
@@ -23081,7 +23585,8 @@ components:
         state_code: text
         updated_at: datetime
       associations: {}
-      scopes: {}
+      scopes:
+        search: text
     TaxIdentifier:
       attributes:
         created_at: datetime

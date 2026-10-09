@@ -5,6 +5,7 @@ require 'rswag/specs'
 
 # Load OpenAPI helpers
 require 'spree/api/openapi/schema_helper'
+require 'spree/api/openapi/filter_documentation'
 
 RSpec.configure do |config|
   # Output to the main spree docs directory at /docs/api-reference/

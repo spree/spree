@@ -105,6 +105,9 @@ export interface ClaimFilterExtensions {}
 
 export type ClaimFilters = ClaimFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & ClaimFilterExtensions
 
 export type ClaimSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'status' | 'updated_at'>
@@ -121,6 +124,9 @@ export interface DeliveryMethodFilterExtensions {}
 
 export type DeliveryMethodFilters = DeliveryMethodFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & DeliveryMethodFilterExtensions
 
 export type DeliveryMethodSort = Filter.SortKey<'available_to_sellers' | 'created_at' | 'id' | 'name' | 'seller_id' | 'storefront_visible' | 'updated_at'>
@@ -129,6 +135,9 @@ export interface DeliveryProfileFilterExtensions {}
 
 export type DeliveryProfileFilters = DeliveryProfileFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & DeliveryProfileFilterExtensions
 
 export type DeliveryProfileSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'position' | 'updated_at'>
@@ -145,6 +154,9 @@ export interface ExchangeFilterExtensions {}
 
 export type ExchangeFilters = ExchangeFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & ExchangeFilterExtensions
 
 export type ExchangeSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'status' | 'updated_at'>
@@ -183,6 +195,9 @@ export interface PackageTypeFilterExtensions {}
 
 export type PackageTypeFilters = PackageTypeFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & PackageTypeFilterExtensions
 
 export type PackageTypeSort = Filter.SortKey<'created_at' | 'default' | 'id' | 'kind' | 'name' | 'seller_id' | 'updated_at'>
@@ -191,6 +206,9 @@ export interface PolicyFilterExtensions {}
 
 export type PolicyFilters = PolicyFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & PolicyFilterExtensions
 
 export type PolicySort = Filter.SortKey<'created_at' | 'id' | 'name' | 'owner_id' | 'owner_type' | 'updated_at'>
@@ -224,6 +242,9 @@ export interface ProductTypeFilterExtensions {}
 
 export type ProductTypeFilters = ProductTypeFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & ProductTypeFilterExtensions
 
 export type ProductTypeSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
@@ -232,6 +253,9 @@ export interface ReturnFilterExtensions {}
 
 export type ReturnFilters = ReturnFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & ReturnFilterExtensions
 
 export type ReturnSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'status' | 'updated_at'>
@@ -248,6 +272,9 @@ export interface SellerPayoutFilterExtensions {}
 
 export type SellerPayoutFilters = SellerPayoutFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & SellerPayoutFilterExtensions
 
 export type SellerPayoutSort = Filter.SortKey<'amount' | 'created_at' | 'currency' | 'id' | 'period_end' | 'period_start' | 'provider' | 'reference' | 'seller_id' | 'status' | 'updated_at'>
@@ -256,6 +283,9 @@ export interface SellerTransferFilterExtensions {}
 
 export type SellerTransferFilters = SellerTransferFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & SellerTransferFilterExtensions
 
 export type SellerTransferSort = Filter.SortKey<'amount' | 'created_at' | 'currency' | 'id' | 'kind' | 'order_id' | 'payout_id' | 'provider' | 'reference' | 'seller_id' | 'status' | 'updated_at'>
@@ -264,6 +294,9 @@ export interface StockLocationFilterExtensions {}
 
 export type StockLocationFilters = StockLocationFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & StockLocationFilterExtensions
 
 export type StockLocationSort = Filter.SortKey<'active' | 'country_code' | 'created_at' | 'default' | 'id' | 'kind' | 'name' | 'pickup_enabled' | 'returns_enabled' | 'seller_id' | 'state_code' | 'updated_at'>

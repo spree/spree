@@ -40,12 +40,17 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Number of items per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort order. Prefix with - for descending. Values: price, -price, best_selling, name, -name, -available_on, available_on'
-      filter_parameters_for notes: <<~NOTES.squish
-        `in_category` takes a category's prefixed ID and includes its descendants; `in_categories[]` matches
-        any of several. `with_option_value_ids[]` takes option value IDs (`optval_…`), matching any of them.
-        `price_gte` and `price_lte` bound the price in the current currency, and `in_stock` / `out_of_stock`
-        narrow by availability.
-      NOTES
+      filter_parameters_for scopes: {
+        in_category: "A category's prefixed ID; includes products in its descendants.",
+        in_categories: 'Category prefixed IDs; matches products in any of them, including descendants.',
+        in_collection: "A collection's prefixed ID.",
+        with_option_value_ids: 'Option value IDs (`optval_…`); matches products with any of them.',
+        price_gte: 'Lowest price, in the current currency.',
+        price_lte: 'Highest price, in the current currency.',
+        price_between: 'Lowest and highest price, in the current currency.',
+        in_stock: 'Set to `true` for products available to buy.',
+        out_of_stock: 'Set to `true` for products that are sold out.'
+      }
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (variants, media, categories, ' \
                              'option_types, seller, seller.policies)'

@@ -94,6 +94,14 @@ module Spree
           kinds.select { |_, kind| kind == :unclassified }.keys
         end
 
+        # Deprecated names that resolve to another attribute (`payment_state`),
+        # published until they are removed but left out of the reference.
+        #
+        # @return [Array<String>]
+        def aliased_attributes
+          attributes.keys.select { |attribute| model._ransack_aliases.key?(attribute) || model.attribute_aliases.key?(attribute) }
+        end
+
         # @return [Hash{String => FilterTable}]
         def associations
           @associations ||= model.ransackable_associations(audience).sort.each_with_object({}) do |name, tables|

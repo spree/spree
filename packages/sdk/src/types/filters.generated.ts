@@ -92,6 +92,9 @@ export interface CategoryFilterExtensions {}
 
 export type CategoryFilters = CategoryFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & CategoryFilterExtensions
 
 export type CategorySort = Filter.SortKey<'automatic' | 'children_count' | 'created_at' | 'depth' | 'id' | 'name' | 'parent_id' | 'permalink' | 'position' | 'pretty_name' | 'products_count' | 'updated_at'>
@@ -100,6 +103,9 @@ export interface CollectionFilterExtensions {}
 
 export type CollectionFilters = CollectionFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & CollectionFilterExtensions
 
 export type CollectionSort = Filter.SortKey<'automatic' | 'created_at' | 'id' | 'name' | 'permalink' | 'position' | 'products_count' | 'sort_order' | 'updated_at'>
@@ -137,6 +143,9 @@ export interface DeliveryMethodFilterExtensions {}
 
 export type DeliveryMethodFilters = DeliveryMethodFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & DeliveryMethodFilterExtensions
 
 export type DeliveryMethodSort = Filter.SortKey<'available_to_sellers' | 'created_at' | 'id' | 'name' | 'seller_id' | 'storefront_visible' | 'updated_at'>
@@ -150,6 +159,7 @@ export type GiftCardFilters = GiftCardFields
     expired?: boolean
     partially_redeemed?: boolean
     redeemed?: boolean
+    search?: string
   }
   & GiftCardFilterExtensions
 
@@ -173,6 +183,9 @@ export interface PolicyFilterExtensions {}
 
 export type PolicyFilters = PolicyFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & PolicyFilterExtensions
 
 export type PolicySort = Filter.SortKey<'created_at' | 'id' | 'name' | 'owner_id' | 'owner_type' | 'updated_at'>
@@ -210,6 +223,9 @@ export interface SellerFilterExtensions {}
 
 export type SellerFilters = SellerFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & SellerFilterExtensions
 
 export type SellerSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>

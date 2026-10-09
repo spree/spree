@@ -272,6 +272,14 @@ Spree.ransack.add_scope(Spree::Product, :featured, type: 'boolean')
 Spree.ransack.add_scope(Spree::Product, :by_brand, type: 'id')
 ```
 
+Give a model a `search` filter (`q[search]=term`) by naming the attributes it matches, partially and case-insensitively. Attributes of associated records are named with the association as a prefix:
+
+```ruby server/app/models/spree/brand_decorator.rb
+base.search_by :name, :code
+```
+
+`search` is offered to the Store and Seller APIs only when each attribute it matches is one that API may filter on. The API reference describes it from the attributes.
+
 Declare the `type` of a scope's argument: `'boolean'` for a scope taking none (`q[featured]=true`), or `'text'`, `'id'`, `'decimal'`, `'integer'`, `'date'` or `'datetime'` for one value. A list of kinds (`%w[decimal decimal]`) means several arguments in order, and `{ list: 'id' }` means any number of them. A scope declared without a type is published as taking one text value.
 
 The published SDK types cannot know about filters your own app adds. Declare them once in your storefront or dashboard code, and every `list()` call accepts them:

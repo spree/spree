@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/api/openapi/filter_documentation'
 
 RSpec.describe Spree::Api::V3::FilterTable do
   after { described_class.reset! }
@@ -22,6 +23,10 @@ RSpec.describe Spree::Api::V3::FilterTable do
         next unless endpoint.filterable?
 
         endpoint.to_h
+        # Every search needs a description in the reference.
+        Spree::Api::OpenAPI::FilterDocumentation.new(
+          endpoint, querying_path: '/', search: FilterParametersHelper::SEARCH_DESCRIPTIONS[endpoint.table.name]
+        ).parameters
         endpoint.tables.each do |name, table|
           table.to_h
           unclassified[name] = table.unclassified_attributes if table.unclassified_attributes.any?

@@ -432,6 +432,9 @@ export interface AllowedOriginFilterExtensions {}
 
 export type AllowedOriginFilters = AllowedOriginFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & AllowedOriginFilterExtensions
 
 export type AllowedOriginSort = Filter.SortKey<'created_at' | 'id' | 'origin' | 'updated_at'>
@@ -448,6 +451,9 @@ export interface CatalogFilterExtensions {}
 
 export type CatalogFilters = CatalogFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & CatalogFilterExtensions
 
 export type CatalogSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'position' | 'updated_at'>
@@ -465,6 +471,9 @@ export interface CategoryFilterExtensions {}
 export type CategoryFilters = CategoryFields
   & Filter.Prefixed<'parent_', CategoryFields & Filter.Prefixed<'parent_', CategoryFields>>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & CategoryFilterExtensions
 
 export type CategorySort = Filter.SortKey<'automatic' | 'children_count' | 'created_at' | 'depth' | 'id' | 'name' | 'parent_id' | 'permalink' | 'position' | 'pretty_name' | 'products_count' | 'updated_at'>
@@ -473,6 +482,9 @@ export interface ChannelFilterExtensions {}
 
 export type ChannelFilters = ChannelFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & ChannelFilterExtensions
 
 export type ChannelSort = Filter.SortKey<'active' | 'code' | 'created_at' | 'default' | 'id' | 'name' | 'store_id' | 'updated_at'>
@@ -489,6 +501,9 @@ export interface CollectionFilterExtensions {}
 
 export type CollectionFilters = CollectionFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & CollectionFilterExtensions
 
 export type CollectionSort = Filter.SortKey<'automatic' | 'created_at' | 'id' | 'name' | 'permalink' | 'position' | 'products_count' | 'sort_order' | 'updated_at'>
@@ -508,6 +523,9 @@ export interface CommissionRateFilterExtensions {}
 export type CommissionRateFilters = CommissionRateFields
   & Filter.Prefixed<'commission_rules_', CommissionRuleFields>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & CommissionRateFilterExtensions
 
 export type CommissionRateSort = Filter.SortKey<'code' | 'created_at' | 'enabled' | 'id' | 'include_shipping' | 'kind' | 'name' | 'position' | 'tax_inclusive' | 'updated_at' | 'value'>
@@ -520,6 +538,9 @@ export type CompanyFilters = CompanyFields
   & Filter.Prefixed<'memberships_', CompanyMembershipFields>
   & Filter.Prefixed<'parent_', CompanyFields & Filter.Prefixed<'children_', CompanyFields> & Filter.Prefixed<'external_references_', ExternalReferenceFields> & Filter.Prefixed<'memberships_', CompanyMembershipFields> & Filter.Prefixed<'parent_', CompanyFields>>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & CompanyFilterExtensions
 
 export type CompanySort = Filter.SortKey<'created_at' | 'id' | 'kind' | 'name' | 'parent_id' | 'po_number_required' | 'updated_at'>
@@ -574,6 +595,9 @@ export interface CustomerGroupFilterExtensions {}
 
 export type CustomerGroupFilters = CustomerGroupFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & CustomerGroupFilterExtensions
 
 export type CustomerGroupSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
@@ -610,6 +634,9 @@ export interface DeliveryMethodFilterExtensions {}
 export type DeliveryMethodFilters = DeliveryMethodFields
   & Filter.Prefixed<'seller_', SellerFields>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & DeliveryMethodFilterExtensions
 
 export type DeliveryMethodSort = Filter.SortKey<'available_to_sellers' | 'created_at' | 'id' | 'name' | 'seller_id' | 'storefront_visible' | 'updated_at'>
@@ -618,6 +645,9 @@ export interface DeliveryProfileFilterExtensions {}
 
 export type DeliveryProfileFilters = DeliveryProfileFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & DeliveryProfileFilterExtensions
 
 export type DeliveryProfileSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'position' | 'updated_at'>
@@ -668,6 +698,7 @@ export type GiftCardFilters = GiftCardFields
     expired?: boolean
     partially_redeemed?: boolean
     redeemed?: boolean
+    search?: string
   }
   & GiftCardFilterExtensions
 
@@ -686,6 +717,9 @@ export interface ImportFilterExtensions {}
 export type ImportFilters = ImportFields
   & Filter.Prefixed<'seller_', SellerFields>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & ImportFilterExtensions
 
 export type ImportSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'seller_id' | 'status' | 'type' | 'updated_at'>
@@ -729,6 +763,9 @@ export interface MarketFilterExtensions {}
 
 export type MarketFilters = MarketFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & MarketFilterExtensions
 
 export type MarketSort = Filter.SortKey<'created_at' | 'currency' | 'default_locale' | 'id' | 'name' | 'position' | 'updated_at'>
@@ -751,6 +788,7 @@ export interface OptionTypeFilterExtensions {}
 export type OptionTypeFilters = OptionTypeFields
   & Filter.OrFilters
   & {
+    search?: string
     search_by_name?: string
   }
   & OptionTypeFilterExtensions
@@ -805,6 +843,9 @@ export interface PackageTypeFilterExtensions {}
 export type PackageTypeFilters = PackageTypeFields
   & Filter.Prefixed<'seller_', SellerFields>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & PackageTypeFilterExtensions
 
 export type PackageTypeSort = Filter.SortKey<'created_at' | 'default' | 'id' | 'kind' | 'name' | 'seller_id' | 'updated_at'>
@@ -823,6 +864,9 @@ export interface PaymentMethodFilterExtensions {}
 
 export type PaymentMethodFilters = PaymentMethodFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & PaymentMethodFilterExtensions
 
 export type PaymentMethodSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'position' | 'storefront_visible' | 'type' | 'updated_at'>
@@ -831,6 +875,9 @@ export interface PolicyFilterExtensions {}
 
 export type PolicyFilters = PolicyFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & PolicyFilterExtensions
 
 export type PolicySort = Filter.SortKey<'created_at' | 'id' | 'name' | 'owner_id' | 'owner_type' | 'updated_at'>
@@ -852,6 +899,9 @@ export interface PriceListFilterExtensions {}
 
 export type PriceListFilters = PriceListFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & PriceListFilterExtensions
 
 export type PriceListSort = Filter.SortKey<'catalog_id' | 'created_at' | 'ends_at' | 'id' | 'match_policy' | 'name' | 'position' | 'starts_at' | 'status' | 'updated_at'>
@@ -934,6 +984,9 @@ export interface ProductTypeFilterExtensions {}
 export type ProductTypeFilters = ProductTypeFields
   & Filter.Prefixed<'option_types_', OptionTypeFields>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & ProductTypeFilterExtensions
 
 export type ProductTypeSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
@@ -943,6 +996,9 @@ export interface PromotionFilterExtensions {}
 export type PromotionFilters = PromotionFields
   & Filter.Prefixed<'coupon_codes_', CouponCodeFields & Filter.Prefixed<'promotion_', PromotionFields>>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & PromotionFilterExtensions
 
 export type PromotionSort = Filter.SortKey<'code' | 'created_at' | 'expires_at' | 'id' | 'kind' | 'name' | 'path' | 'promotion_category_id' | 'starts_at' | 'updated_at'>
@@ -975,6 +1031,7 @@ export type PurchaseOrderFilters = PurchaseOrderFields
     open?: boolean
     overdue?: boolean
     past_cancel_by?: boolean
+    search?: string
   }
   & PurchaseOrderFilterExtensions
 
@@ -1016,6 +1073,9 @@ export interface SellerFilterExtensions {}
 
 export type SellerFilters = SellerFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & SellerFilterExtensions
 
 export type SellerSort = Filter.SortKey<'contact_email' | 'created_at' | 'id' | 'name' | 'status' | 'updated_at'>
@@ -1024,6 +1084,9 @@ export interface SellerRequirementFilterExtensions {}
 
 export type SellerRequirementFilters = SellerRequirementFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & SellerRequirementFilterExtensions
 
 export type SellerRequirementSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'position' | 'updated_at'>
@@ -1043,6 +1106,7 @@ export type StockLevelFilters = StockLevelFields
   & Filter.Prefixed<'variant_', VariantFields & Filter.Prefixed<'option_values_', OptionValueFields> & Filter.Prefixed<'prices_', PriceFields> & Filter.Prefixed<'product_', ProductFields> & Filter.Prefixed<'seller_', SellerFields> & Filter.Prefixed<'tax_category_', TaxCategoryFields>>
   & Filter.OrFilters
   & {
+    search?: string
     with_stock_status?: string | string[]
   }
   & StockLevelFilterExtensions
@@ -1054,6 +1118,9 @@ export interface StockLocationFilterExtensions {}
 export type StockLocationFilters = StockLocationFields
   & Filter.Prefixed<'seller_', SellerFields>
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & StockLocationFilterExtensions
 
 export type StockLocationSort = Filter.SortKey<'active' | 'country_code' | 'created_at' | 'default' | 'id' | 'kind' | 'name' | 'pickup_enabled' | 'returns_enabled' | 'seller_id' | 'state_code' | 'updated_at'>
@@ -1085,6 +1152,7 @@ export type StockTransferFilters = StockTransferFields
   & {
     closed?: boolean
     open?: boolean
+    search?: string
   }
   & StockTransferFilterExtensions
 
@@ -1099,6 +1167,7 @@ export type StoreCreditFilters = StoreCreditFields
   & {
     from_gift_card?: boolean
     outstanding?: boolean
+    search?: string
   }
   & StoreCreditFilterExtensions
 
@@ -1116,6 +1185,9 @@ export interface SupplierFilterExtensions {}
 
 export type SupplierFilters = SupplierFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & SupplierFilterExtensions
 
 export type SupplierSort = Filter.SortKey<'city' | 'contact_name' | 'country_code' | 'created_at' | 'email' | 'id' | 'name' | 'phone' | 'updated_at'>
@@ -1148,6 +1220,9 @@ export interface TaxRateFilterExtensions {}
 
 export type TaxRateFilters = TaxRateFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & TaxRateFilterExtensions
 
 export type TaxRateSort = Filter.SortKey<'amount' | 'country_code' | 'created_at' | 'id' | 'included_in_price' | 'name' | 'state_code' | 'tax_category_id' | 'updated_at'>
@@ -1175,6 +1250,9 @@ export interface WebhookDeliveryFilterExtensions {}
 
 export type WebhookDeliveryFilters = WebhookDeliveryFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & WebhookDeliveryFilterExtensions
 
 export type WebhookDeliverySort = Filter.SortKey<'created_at' | 'delivered_at' | 'event_name' | 'execution_time' | 'id' | 'response_code' | 'success' | 'updated_at'>
@@ -1183,6 +1261,9 @@ export interface WebhookEndpointFilterExtensions {}
 
 export type WebhookEndpointFilters = WebhookEndpointFields
   & Filter.OrFilters
+  & {
+    search?: string
+  }
   & WebhookEndpointFilterExtensions
 
 export type WebhookEndpointSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at' | 'url'>

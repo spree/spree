@@ -8,6 +8,8 @@ The published predicate set also gains `i_cont` for text and `not_eq`/`in`/`not_
 
 **Consequences:** Seller SDK filter types stay attribute-only. A client sending `q[status_in]=a,b` gets a 400 once enforcement lands, which is the same empty result it already gets, made visible. Self-hosted stores learn of undeclared filters from the upgrade guide and the escape hatch, not from a warning in production.
 
+Every searchable list gets a `q[search]` filter declared with `search_by`, which the dashboard's search boxes use; the API reference documents filters as a generated table per endpoint rather than as thousands of expanded parameters.
+
 **Plan:** `6.0-typed-filters.md`.
 
 ## 2026-10-09: Spree stops parsing numbers by locale
