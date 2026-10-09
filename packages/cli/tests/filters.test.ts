@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Command } from 'commander'
@@ -6,11 +6,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { parseFilterTables, registerFiltersCommand } from '../src/commands/filters'
 import { rakeTask } from '../src/docker'
 
+let projectDir = '/proj'
 vi.mock('../src/context', () => ({
-  detectProject: () => ({ mode: 'docker', projectDir: '/proj', port: 3000 }),
+  detectProject: () => ({ mode: 'docker', projectDir, port: 3000 }),
 }))
 vi.mock('../src/docker', () => ({ rakeTask: vi.fn() }))
-vi.mock('@clack/prompts', () => ({ log: { success: vi.fn(), error: vi.fn() } }))
+vi.mock('@clack/prompts', () => ({ log: { success: vi.fn(), error: vi.fn(), info: vi.fn() } }))
 
 const predicates = {
   text: [
@@ -69,6 +70,31 @@ describe('spree filters types', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     dir = mkdtempSync(join(tmpdir(), 'spree-filters-'))
+    projectDir = '/proj'
+  })
+
+  it('writes one file into each app under apps/, for the SDK it uses', async () => {
+    projectDir = dir
+    mkdirSync(join(dir, 'apps', 'storefront'), { recursive: true })
+    mkdirSync(join(dir, 'apps', 'dashboard'), { recursive: true })
+    vi.mocked(rakeTask).mockResolvedValue(taskOutput)
+
+    await run([])
+
+    expect(rakeTask).toHaveBeenCalledTimes(1)
+    const types = (app: string) => join(dir, 'apps', app, 'src', 'types', 'spree-filters.d.ts')
+    expect(readFileSync(types('storefront'), 'utf8')).toContain("declare module '@spree/sdk'")
+    expect(readFileSync(types('dashboard'), 'utf8')).toContain("declare module '@spree/admin-sdk'")
+    expect(existsSync(types('seller-dashboard'))).toBe(false)
+  })
+
+  it('says so when the project has no apps', async () => {
+    projectDir = dir
+    await run([])
+
+    expect(rakeTask).not.toHaveBeenCalled()
+    expect(process.exitCode).toBe(1)
+    process.exitCode = undefined
   })
 
   it("declares the app's filters and sort fields for the chosen SDK", async () => {
