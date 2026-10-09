@@ -120,9 +120,7 @@ module Spree
     def perform!
       return true if transaction_id.present?
 
-      credit_cents = Spree::Money.new(amount, currency: currency).amount_in_cents
-
-      @response = process!(credit_cents)
+      @response = process!(payment.payment_method.gateway_amount(amount, currency))
 
       self.transaction_id = @response.authorization
       update_columns(transaction_id: transaction_id)
@@ -165,19 +163,20 @@ module Spree
     end
 
     # return a payment response object if successful or else raise an error
-    def process!(credit_cents)
-      refund_total_in_cents = calculate_refund_amount(credit_cents)
+    # @param credit_amount [Spree::Money, Integer] as PaymentMethod#gateway_amount returns it
+    def process!(credit_amount)
+      refund_total = calculate_refund_amount(credit_amount)
 
       response = instrument_gateway_call(:credit, payment.payment_method) do
         if payment.payment_method.payment_profiles_supported?
-          payment.payment_method.credit(refund_total_in_cents, payment.source, payment.transaction_id, originator: self)
+          payment.payment_method.credit(refund_total, payment.source, payment.transaction_id, originator: self)
         else
-          payment.payment_method.credit(refund_total_in_cents, payment.transaction_id, originator: self)
+          payment.payment_method.credit(refund_total, payment.transaction_id, originator: self)
         end
       end
 
       if response.success?
-        track_order_as_refunded(refund_total_in_cents)
+        track_order_as_refunded(refund_total)
       else
         Rails.logger.error(I18n.t('spree.gateway_error') + "  #{response.to_yaml}")
         text = response.params['message'] || response.params['response_reason_text'] || response.message
@@ -190,12 +189,12 @@ module Spree
       raise Core::GatewayError, I18n.t('spree.unable_to_connect_to_gateway')
     end
 
-    def calculate_refund_amount(credit_cents)
+    def calculate_refund_amount(credit_amount)
       # Overwrite this for more complex calculations
-      credit_cents
+      credit_amount
     end
 
-    def track_order_as_refunded(credit_cents)
+    def track_order_as_refunded(credit_amount)
       # You can track refunds here
     end
 

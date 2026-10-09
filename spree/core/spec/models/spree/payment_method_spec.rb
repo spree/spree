@@ -117,6 +117,22 @@ describe Spree::PaymentMethod, type: :model do
     end
   end
 
+  describe '#gateway_amount' do
+    it 'hands a method that takes money amounts the amount with its currency' do
+      method = Spree::Gateway::Bogus.new
+
+      expect(method.gateway_amount(BigDecimal('1000'), 'JPY')).to eq(Spree::Money.new(BigDecimal('1000'), currency: 'JPY'))
+    end
+
+    it 'hands any other method hundredths, warning once that the bridge is going' do
+      legacy = Class.new(Spree::PaymentMethod) { def self.name = 'LegacyGateway' }.new
+      expect(Spree::Deprecation).to receive(:warn).once.with(/accepts_money_amounts/)
+
+      expect(legacy.gateway_amount(BigDecimal('19.99'), 'USD')).to eq(1999)
+      expect(legacy.gateway_amount(BigDecimal('1000'), 'JPY')).to eq(100_000)
+    end
+  end
+
   describe '#auto_capture?' do
     class TestGateway < Spree::Gateway
       def provider_class

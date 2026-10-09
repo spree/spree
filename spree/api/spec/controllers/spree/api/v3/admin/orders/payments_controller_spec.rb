@@ -177,29 +177,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
     context 'with a partial amount' do
       it 'still accepts a JSON number' do
-        expect(Spree.payment_capture_workflow).to receive(:call).with(payment: payment, amount: 115).and_call_original
+        expect(Spree.payment_capture_workflow).to receive(:call).with(payment: payment, amount: BigDecimal('1.15')).and_call_original
 
         patch :capture, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id, amount: 1.15 }, as: :json
       end
 
-      it 'hands the gateway exact hundredths' do
-        expect(Spree.payment_capture_workflow).to receive(:call).with(payment: payment, amount: 115).and_call_original
+      it 'hands the workflow the exact amount' do
+        expect(Spree.payment_capture_workflow).to receive(:call).with(payment: payment, amount: BigDecimal('1.15')).and_call_original
 
         patch :capture, params: {
           order_id: order_with_payment.prefixed_id,
           id: payment.prefixed_id,
           amount: '1.15'
         }, as: :json
-      end
-
-      it 'refuses a dinar amount too small to send to a gateway' do
-        order_with_payment.update_columns(currency: 'KWD')
-        expect(Spree.payment_capture_workflow).not_to receive(:call)
-
-        patch :capture, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id, amount: '0.001' }, as: :json
-
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']['code']).to eq('invalid_money_format')
       end
 
       ['1,15', '1.155', '-5.00', '0', 'abc'].each do |amount|

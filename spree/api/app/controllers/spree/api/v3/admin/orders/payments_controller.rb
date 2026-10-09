@@ -56,9 +56,6 @@ module Spree
               unless amount.nil? || amount.positive?
                 raise Spree::Money::InvalidFormat.new('must be greater than 0', field: :amount)
               end
-              amount = Spree::Money::Rounding.to_hundredths(amount) if amount
-              # A thousandth of a dinar is below what gateways are sent in.
-              raise Spree::Money::InvalidFormat.new('is too small to capture', field: :amount) if amount&.zero?
 
               result = Spree.payment_capture_workflow.call(payment: @resource, amount: amount)
 

@@ -25,7 +25,7 @@ describe Spree::Refund, type: :model do
     let(:refund) { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
     let(:amount) { 100.0 }
-    let(:amount_in_cents) { amount * 100 }
+    let(:gateway_amount) { Spree::Money.new(BigDecimal(amount.to_s), currency: payment.currency) }
 
     let(:authorization) { generate(:refund_transaction_id) }
 
@@ -51,18 +51,17 @@ describe Spree::Refund, type: :model do
     before do
       allow(payment.payment_method).
         to receive(:credit).
-        with(amount_in_cents, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+        with(gateway_amount, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
         and_return(gateway_response)
     end
 
     context 'with an amount a float cannot hold exactly' do
       let(:amount) { BigDecimal('1.15') }
-      let(:amount_in_cents) { 115 }
 
-      it 'credits the exact hundredths at the gateway' do
+      it 'credits the exact amount at the gateway' do
         subject
 
-        expect(payment.payment_method).to have_received(:credit).with(115, any_args)
+        expect(payment.payment_method).to have_received(:credit).with(Spree::Money.new(BigDecimal('1.15'), currency: 'USD'), any_args)
       end
     end
 
@@ -139,7 +138,7 @@ describe Spree::Refund, type: :model do
       it 'does not supply the payment source' do
         expect(payment.payment_method).
           to receive(:credit).
-          with(amount * 100, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+          with(gateway_amount, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
           and_return(gateway_response)
 
         subject
@@ -154,7 +153,7 @@ describe Spree::Refund, type: :model do
       it 'supplies the payment source' do
         expect(payment.payment_method).
           to receive(:credit).
-          with(amount_in_cents, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+          with(gateway_amount, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
           and_return(gateway_response)
 
         subject
@@ -164,7 +163,7 @@ describe Spree::Refund, type: :model do
     context 'with a gateway connection error' do
       before do
         expect(payment.payment_method).to receive(:credit).with(
-          amount_in_cents,
+          gateway_amount,
           payment.source,
           payment.transaction_id,
           originator: an_instance_of(Spree::Refund)

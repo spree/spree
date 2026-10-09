@@ -466,7 +466,7 @@ RSpec.describe SpreeStripe::Gateway do
   end
 
   describe '#credit' do
-    subject { gateway.credit(amount_in_cents, nil, payment_intent_id, {}) }
+    subject { gateway.credit(Spree::Money.new(BigDecimal(amount_in_cents) / 100, currency: 'USD'), nil, payment_intent_id, {}) }
 
     let(:amount_in_cents) { 800 }
     let(:payment_intent_id) { 'pi_3QXmL12ESifGlJez0v0B8tUn' }
@@ -510,7 +510,7 @@ RSpec.describe SpreeStripe::Gateway do
   end
 
   describe '#capture' do
-    subject { gateway.capture(amount_in_cents, payment_intent_id) }
+    subject { gateway.capture(Spree::Money.new(BigDecimal(amount_in_cents) / 100, currency: 'USD'), payment_intent_id) }
 
     let(:amount_in_cents) { 1000 }
 

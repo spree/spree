@@ -1,5 +1,7 @@
 module Spree
   class PaymentMethod::StoreCredit < ::Spree::PaymentMethod
+    self.accepts_money_amounts = true
+
     def payment_source_class
       ::Spree::StoreCredit
     end
@@ -20,13 +22,13 @@ module Spree
       payment.pending?
     end
 
-    def authorize(amount_in_cents, store_credit, gateway_options = {})
+    def authorize(money, store_credit, gateway_options = {})
       if store_credit.nil?
         Spree::PaymentResponse.new(false, I18n.t('spree.store_credit_payment_method.unable_to_find'), {}, {})
       else
         action = lambda do |store_credit|
           store_credit.authorize(
-            Spree::Money::Rounding.from_hundredths(amount_in_cents),
+            money.to_d,
             gateway_options[:currency],
             action_originator: gateway_options[:originator]
           )
@@ -35,10 +37,10 @@ module Spree
       end
     end
 
-    def capture(amount_in_cents, auth_code, gateway_options = {})
+    def capture(money, auth_code, gateway_options = {})
       action = lambda do |store_credit|
         store_credit.capture(
-          Spree::Money::Rounding.from_hundredths(amount_in_cents),
+          money.to_d,
           auth_code,
           gateway_options[:currency],
           action_originator: gateway_options[:originator]
@@ -47,9 +49,9 @@ module Spree
       handle_action(action, :capture, auth_code)
     end
 
-    def purchase(amount_in_cents, store_credit, gateway_options = {})
+    def purchase(money, store_credit, gateway_options = {})
       eligible_events = store_credit.store_credit_events.where(
-        amount: Spree::Money::Rounding.from_hundredths(amount_in_cents),
+        amount: money.to_d,
         action: Spree::StoreCredit::ELIGIBLE_ACTION
       )
       event = eligible_events.detect do |eligible_event|
@@ -60,7 +62,7 @@ module Spree
       if event.blank?
         Spree::PaymentResponse.new(false, I18n.t('spree.store_credit_payment_method.unable_to_find'), {}, {})
       else
-        capture(amount_in_cents, event.authorization_code, gateway_options)
+        capture(money, event.authorization_code, gateway_options)
       end
     end
 
@@ -71,12 +73,12 @@ module Spree
       handle_action(action, :void, auth_code)
     end
 
-    def credit(amount_in_cents, auth_code, gateway_options)
+    def credit(money, auth_code, gateway_options)
       action = lambda do |store_credit|
         currency = gateway_options[:currency] || store_credit.currency
         originator = gateway_options[:originator]
 
-        store_credit.credit(Spree::Money::Rounding.from_hundredths(amount_in_cents), auth_code, currency, action_originator: originator)
+        store_credit.credit(money.to_d, auth_code, currency, action_originator: originator)
       end
 
       handle_action(action, :credit, auth_code)

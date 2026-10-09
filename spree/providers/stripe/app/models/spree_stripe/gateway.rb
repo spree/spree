@@ -3,6 +3,8 @@ module SpreeStripe
   # created and confirmed through sessions; core's payment lifecycle then drives
   # capture, refund and cancellation against the resulting intent.
   class Gateway < ::Spree::Gateway
+    self.accepts_money_amounts = true
+
     include SpreeStripe::Gateway::PaymentSessions
     include SpreeStripe::Gateway::PaymentSetupSessions
     include SpreeStripe::Gateway::Webhooks
@@ -86,26 +88,26 @@ module SpreeStripe
     # is already confirmed client-side in the session flow, so this reads back the
     # intent rather than initiating a charge.
     #
-    # @param amount_in_cents [Integer]
+    # @param money [Spree::Money]
     # @param payment_source [Spree::PaymentSource, Spree::CreditCard]
     # @param gateway_options [Hash] Spree::Payment::GatewayOptions#to_hash
     # @return [Spree::PaymentResponse]
-    def authorize(amount_in_cents, payment_source, gateway_options = {})
-      handle_authorize_or_purchase(amount_in_cents, payment_source, gateway_options)
+    def authorize(money, payment_source, gateway_options = {})
+      handle_authorize_or_purchase(money, payment_source, gateway_options)
     end
 
     # @see #authorize — capture vs authorize is decided by the intent's capture
     #   method, so both resolve the same way.
-    def purchase(amount_in_cents, payment_source, gateway_options = {})
-      handle_authorize_or_purchase(amount_in_cents, payment_source, gateway_options)
+    def purchase(money, payment_source, gateway_options = {})
+      handle_authorize_or_purchase(money, payment_source, gateway_options)
     end
 
-    def capture(amount_in_cents, payment_intent_id, _gateway_options = {})
+    def capture(money, payment_intent_id, _gateway_options = {})
       protect_from_error do
         stripe_payment_intent = retrieve_payment_intent(payment_intent_id)
 
         response = if payment_intent_requires_capture?(stripe_payment_intent)
-                     capture_payment_intent(payment_intent_id, amount_in_cents)
+                     capture_payment_intent(payment_intent_id, SpreeStripe::Units.to_stripe(money, money.currency))
                    elsif stripe_payment_intent.status == 'succeeded'
                      stripe_payment_intent
                    else
@@ -116,10 +118,10 @@ module SpreeStripe
       end
     end
 
-    def credit(amount_in_cents, _source, payment_intent_id, _gateway_options = {})
+    def credit(money, _source, payment_intent_id, _gateway_options = {})
       protect_from_error do
         response = send_request do |opts|
-          Stripe::Refund.create({ amount: amount_in_cents, payment_intent: payment_intent_id }, opts)
+          Stripe::Refund.create({ amount: SpreeStripe::Units.to_stripe(money, money.currency), payment_intent: payment_intent_id }, opts)
         end
 
         success(response.id, response)
@@ -269,7 +271,7 @@ module SpreeStripe
 
     private
 
-    def handle_authorize_or_purchase(amount_in_cents, _payment_source, gateway_options)
+    def handle_authorize_or_purchase(_money, _payment_source, gateway_options)
       # Scoped through this gateway's own payments — a cart-owned payment
       # (checkout is still in flight) has no order to join through, and the
       # payment method already belongs to exactly one store. Found by the

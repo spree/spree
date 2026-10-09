@@ -6,19 +6,23 @@ describe Spree::PaymentMethod::StoreCredit do
   let(:payment) { create(:payment, order: order) }
   let(:gateway_options) { payment.gateway_options }
 
+  def money(amount)
+    Spree::Money.new(BigDecimal(amount.to_s), currency: 'USD')
+  end
+
   context '#authorize' do
     subject do
       described_class.new.authorize(auth_amount, store_credit, gateway_options)
     end
 
-    let(:auth_amount) { store_credit.amount_remaining * 100 }
+    let(:auth_amount) { money(store_credit.amount_remaining) }
     let(:store_credit) { create(:store_credit, store: store) }
     let(:gateway_options) { super().merge(originator: originator) }
     let(:originator) { nil }
 
     context 'without an invalid store credit' do
       let(:store_credit) { nil }
-      let(:auth_amount) { 10 }
+      let(:auth_amount) { money(10) }
 
       it 'declines an unknown store credit' do
         expect(subject.success?).to be false
@@ -27,7 +31,7 @@ describe Spree::PaymentMethod::StoreCredit do
     end
 
     context 'with insuffient funds' do
-      let(:auth_amount) { (store_credit.amount_remaining * 100) + 1 }
+      let(:auth_amount) { money(store_credit.amount_remaining + BigDecimal('0.01')) }
 
       it 'declines a store credit' do
         expect(subject.success?).to be false
@@ -64,14 +68,14 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#capture' do
     subject do
-      described_class.new.capture(capture_amount, auth_code, gateway_options)
+      described_class.new.capture(money(capture_amount), auth_code, gateway_options)
     end
 
-    let(:capture_amount) { 10_00 }
+    let(:capture_amount) { BigDecimal('10') }
     let(:auth_code) { auth_event.authorization_code }
     let(:gateway_options) { super().merge(originator: originator) }
 
-    let(:authorized_amount) { capture_amount / 100.0 }
+    let(:authorized_amount) { capture_amount }
     let(:auth_event) { create(:store_credit_auth_event, store_credit: store_credit, amount: authorized_amount) }
     let(:store_credit) { create(:store_credit, amount_authorized: authorized_amount, store: store) }
     let(:originator) { nil }
@@ -86,7 +90,7 @@ describe Spree::PaymentMethod::StoreCredit do
     end
 
     context 'when unable to authorize the amount' do
-      let(:authorized_amount) { (capture_amount - 1) / 100 }
+      let(:authorized_amount) { capture_amount - BigDecimal('0.01') }
 
       before do
         allow_any_instance_of(Spree::StoreCredit).to receive_messages(authorize: true)
@@ -180,7 +184,7 @@ describe Spree::PaymentMethod::StoreCredit do
       store_credit.store_credit_events.create!(action: Spree::StoreCredit::CAPTURE_ACTION,
                                                amount: amount, authorization_code: auth_code)
 
-      response = subject.purchase(amount * 100.0, store_credit, gateway_options)
+      response = subject.purchase(money(amount), store_credit, gateway_options)
       expect(response.success?).to be false
       expect(response.message).to include I18n.t('spree.store_credit_payment_method.unable_to_find')
     end
@@ -192,7 +196,7 @@ describe Spree::PaymentMethod::StoreCredit do
       store_credit.store_credit_events.create!(action: Spree::StoreCredit::ELIGIBLE_ACTION,
                                                amount: amount, authorization_code: auth_code)
 
-      response = subject.purchase(amount * 100.0, store_credit, gateway_options)
+      response = subject.purchase(money(amount), store_credit, gateway_options)
       expect(response.success?).to be true
       expect(response.message).to include I18n.t('spree.store_credit_payment_method.successful_action',
                                                   action: Spree::StoreCredit::CAPTURE_ACTION)
@@ -201,10 +205,10 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#credit' do
     subject do
-      described_class.new.credit(credit_amount, auth_code, gateway_options)
+      described_class.new.credit(money(credit_amount), auth_code, gateway_options)
     end
 
-    let(:credit_amount) { 100.0 }
+    let(:credit_amount) { BigDecimal('1') }
     let(:auth_code) { auth_event.authorization_code }
     let(:gateway_options) { super().merge(originator: originator) }
     let(:auth_event) { create(:store_credit_auth_event) }

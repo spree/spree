@@ -258,7 +258,7 @@ module SpreeStripe
       wanted = currency.to_s.downcase
       minor = balance.available.select { |entry| entry.currency == wanted }.sum(&:amount)
 
-      Spree::Money::Rounding.from_minor_units(minor, currency)
+      SpreeStripe::Units.from_stripe(minor, currency)
     rescue *AMBIGUOUS_ERRORS => e
       # The sweep must not read silence as "nothing to send" and settle a
       # smaller batch than the seller is owed, nor as "no limit" and ask for
@@ -290,8 +290,7 @@ module SpreeStripe
       return {} if balance_transaction.blank? || balance_transaction.try(:currency).blank?
 
       {
-        settled_amount: Spree::Money::Rounding.from_minor_units(balance_transaction.amount,
-                                                                balance_transaction.currency),
+        settled_amount: SpreeStripe::Units.from_stripe(balance_transaction.amount, balance_transaction.currency),
         settled_currency: balance_transaction.currency.upcase
       }
     end
@@ -322,7 +321,7 @@ module SpreeStripe
     end
 
     def minor_units(record)
-      Spree::Money::Rounding.to_minor_units(record.amount.abs, record.currency)
+      SpreeStripe::Units.to_stripe(record.amount.abs, record.currency)
     end
 
     # Ties transfers paid from the platform balance to the checkout they

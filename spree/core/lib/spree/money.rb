@@ -223,7 +223,27 @@ module Spree
       def from_minor_units(units, currency)
         BigDecimal(units) / (10**precision(currency))
       end
+
+      # Makes the Money gem agree with {EXPONENTS}, so formatting, `cents`
+      # and anything else built on it use ISO 4217 decimals too.
+      def register_with_money_gem!
+        EXPONENTS.each do |code, exponent|
+          subunit_to_unit = 10**exponent
+          currency = ::Money::Currency.find(code)
+
+          if currency.nil?
+            ::Money::Currency.register(
+              iso_code: code, name: code, symbol: code, subunit: nil, subunit_to_unit: subunit_to_unit,
+              priority: 100, symbol_first: false, thousands_separator: ',', decimal_mark: '.'
+            )
+          elsif currency.subunit_to_unit != subunit_to_unit
+            ::Money::Currency.inherit(code.downcase.to_sym, subunit_to_unit: subunit_to_unit)
+          end
+        end
+      end
     end
+
+    Rounding.register_with_money_gem!
 
     include Comparable
 

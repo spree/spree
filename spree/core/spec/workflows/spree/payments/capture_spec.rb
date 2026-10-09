@@ -18,12 +18,16 @@ RSpec.describe Spree::Payments::Capture do
   end
   let(:failed_response) { Spree::PaymentResponse.new(false, 'card declined') }
 
+  def money(amount, currency = 'USD')
+    Spree::Money.new(BigDecimal(amount.to_s), currency: currency)
+  end
+
   before { Spree.hooks.clear! }
   after { Spree.hooks.clear! }
 
   describe 'capturing' do
     it 'captures at the gateway, records the capture event and publishes' do
-      expect(gateway).to receive(:capture).with(4575, '123', anything).and_return(success_response)
+      expect(gateway).to receive(:capture).with(money('45.75'), '123', anything).and_return(success_response)
       expect(payment).to receive(:publish_event).with('payment.completed')
       expect(payment).to receive(:publish_event).with('payment.captured')
 
@@ -35,11 +39,11 @@ RSpec.describe Spree::Payments::Capture do
     end
 
     it 'splits a partial capture into a pending remainder and re-authorizes it' do
-      expect(gateway).to receive(:capture).with(1000, '123', anything).and_return(success_response)
+      expect(gateway).to receive(:capture).with(money('10'), '123', anything).and_return(success_response)
       expect(gateway).to receive(:authorize)
         .and_return(Spree::PaymentResponse.new(true, nil, {}, authorization: '456'))
 
-      result = described_class.call(payment: payment, amount: 1000)
+      result = described_class.call(payment: payment, amount: BigDecimal('10'))
 
       expect(result).to be_success
       expect(payment.reload).to be_completed
@@ -50,16 +54,45 @@ RSpec.describe Spree::Payments::Capture do
     end
 
     context 'with exact amounts' do
-      { '0.29' => 29, '1.15' => 115, '1234567.89' => 123_456_789 }.each do |amount, hundredths|
+      %w[0.29 1.15 1234567.89].each do |amount|
         it "records a capture of #{amount} to the cent" do
           payment.update_columns(amount: BigDecimal(amount))
           order.update_columns(total: BigDecimal(amount))
-          expect(gateway).to receive(:capture).with(hundredths, '123', anything).and_return(success_response)
+          expect(gateway).to receive(:capture).with(money(amount), '123', anything).and_return(success_response)
 
           described_class.call(payment: payment)
 
           expect(payment.reload.captured_amount).to eq(BigDecimal(amount))
         end
+      end
+
+      it 'records a yen capture in yen and hands the gateway yen' do
+        payment.update_columns(amount: BigDecimal('1000'))
+        order.update_columns(currency: 'JPY', total: BigDecimal('1000'))
+        expect(gateway).to receive(:capture).with(money('1000', 'JPY'), '123', anything).and_return(success_response)
+
+        expect(described_class.call(payment: payment)).to be_success
+
+        expect(payment.reload.captured_amount).to eq(BigDecimal('1000'))
+        expect(payment.amount).to eq(BigDecimal('1000'))
+      end
+
+      it 'records a dinar capture to the thousandth' do
+        payment.update_columns(amount: BigDecimal('1.5'))
+        order.update_columns(currency: 'KWD', total: BigDecimal('1.5'))
+        expect(gateway).to receive(:capture).with(money('1.5', 'KWD'), '123', anything).and_return(success_response)
+
+        described_class.call(payment: payment)
+
+        expect(payment.reload.captured_amount).to eq(BigDecimal('1.5'))
+      end
+
+      it 'still reads an Integer amount as hundredths, with a deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/Integer amount/)
+        expect(gateway).to receive(:capture).with(money('10'), '123', anything).and_return(success_response)
+        allow(gateway).to receive(:authorize).and_return(Spree::PaymentResponse.new(true, nil, {}, authorization: '456'))
+
+        described_class.call(payment: payment, amount: 1000)
       end
     end
 
@@ -72,7 +105,7 @@ RSpec.describe Spree::Payments::Capture do
 
     it 'retries a failed capture — a failure can be a transient gateway outage' do
       payment.update_column(:status, 'failed')
-      expect(gateway).to receive(:capture).with(4575, '123', anything).and_return(success_response)
+      expect(gateway).to receive(:capture).with(money('45.75'), '123', anything).and_return(success_response)
 
       result = described_class.call(payment: payment)
 
