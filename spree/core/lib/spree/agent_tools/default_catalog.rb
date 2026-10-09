@@ -20,6 +20,7 @@ module Spree
         Spree::AgentTools::UpdateResource
         Spree::AgentTools::DeleteResource
         Spree::AgentTools::CurateProducts
+        Spree::AgentTools::UploadFile
         Spree::AgentTools::QueryReport
         Spree::AgentTools::DescribeReporting
         Spree::AgentTools::CreateExport
@@ -150,7 +151,9 @@ module Spree
           'Settles a payout against the payment provider. Belongs to the payouts pipeline, which ' \
           'reconciles against provider state the agent cannot see.',
         import_start_mapping_workflow:
-          'Step of the CSV import wizard, driven by a file upload. MCP carries no files.',
+          'Reads the uploaded file and proposes its column mapping. Runs as part of creating ' \
+          'an import rather than on its own — a mapping proposal against a file nobody has ' \
+          'attached yet means nothing.',
         import_complete_mapping_workflow:
           'Step of the CSV import wizard; the mapping proposal that feeds it stays in the ' \
           'dashboard assistant, which has the model.',

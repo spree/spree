@@ -30,6 +30,10 @@ module Spree
         search results. You are only offered the tools this credential permits,
         so a tool you cannot see is one this store has not granted.
 
+        A file the merchant gives you goes the other way: upload_file stores it
+        and answers with an id, which you then pass to whatever uses it.
+        Storing one changes nothing by itself.
+
         Files are MCP resources, not tool results. A finished export is one:
         after create_export, read its contents from resources rather than
         reporting a download path — the path is for the merchant, the
