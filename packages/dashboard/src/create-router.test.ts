@@ -70,6 +70,11 @@ describe('createDashboardRouter', () => {
     expect(() => createDashboardRouter(shellTree())).toThrow(/"home" path "\/"/)
   })
 
+  it('refuses a root route whose params only differ in name from another page', () => {
+    pluginRoutes.add({ key: 'shop', scope: 'public', path: '/$slug', component: Page })
+    expect(() => createDashboardRouter(shellTree())).toThrow(/"shop" path "\/\$slug"/)
+  })
+
   it('refuses two root routes on the same path', () => {
     pluginRoutes.add({ key: 'a', scope: 'public', path: '/account', component: Page })
     pluginRoutes.add({ key: 'b', scope: 'authenticated', path: '/account/', component: Page })

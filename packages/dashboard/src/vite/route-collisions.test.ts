@@ -106,6 +106,14 @@ describe('assertNoRouteCollisions', () => {
     expect(() => assertNoRouteCollisions(sources)).toThrow(/"\/_authenticated\/account"/)
   })
 
+  it('treats an index route and a leaf route on the same path as one URL', () => {
+    const sources = [
+      makeSource('@acme/account', { 'account.index.tsx': '/account/' }),
+      makeSource('@other/account', { 'account.tsx': '/_authenticated/account' }),
+    ]
+    expect(() => assertNoRouteCollisions(sources)).toThrow(/Route "\/account"/)
+  })
+
   it('catches a signed-in root index claiming the store selection page', () => {
     const sources = [
       makeSource('@spree/dashboard', {

@@ -81,14 +81,15 @@ export function assertNoRouteCollisions(sources: RouteSource[]): void {
 
 /**
  * Drop pathless layout segments (`_authenticated`), which group routes
- * without adding to the URL. A trailing slash is kept: it marks an index
- * route, which may sit beside a layout route of the same path. A pathless
- * layout itself serves no URL, so it returns `null`.
+ * without adding to the URL, and the trailing slash that marks an index
+ * route: `/account/` and `/account` serve the same URL. A pathless layout
+ * itself serves no URL, so it returns `null`.
  */
 function toUrlPath(routePath: string): string | null {
   const segments = routePath.split('/')
   if (segments[segments.length - 1].startsWith('_')) return null
-  return segments.filter((segment) => !segment.startsWith('_')).join('/') || '/'
+  const urlPath = segments.filter((segment) => !segment.startsWith('_')).join('/')
+  return urlPath.replace(/\/$/, '') || '/'
 }
 
 /** Extract the `createFileRoute` literal from every route file under `dir`. */

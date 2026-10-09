@@ -140,7 +140,12 @@ function routePaths(route: AnyRoute, parentPath: string): string[] {
   })
 }
 
-/** `/a//b/` and `/a/b` reach the same page. */
+/** `/a//b/` and `/a/b` reach the same page, as do `/a/$id` and `/a/$slug`. */
 function comparablePath(path: string): string {
-  return path.replace(/\/{2,}/g, '/').replace(/\/$/, '') || '/'
+  return (
+    path
+      .replace(/\/{2,}/g, '/')
+      .replace(/\/\$[^/]+/g, '/$')
+      .replace(/\/$/, '') || '/'
+  )
 }

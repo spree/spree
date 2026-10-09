@@ -60,7 +60,7 @@ Two packages can't own the same route path. If a plugin declares a path that ano
 
 ```
 Dashboard route collision.
-Route "/$storeId/brands/" is declared by more than one package:
+Route "/$storeId/brands" is declared by more than one package:
   - @acme/brands: "/_authenticated/$storeId/brands/" (…/node_modules/@acme/brands/src/routes/brands.index.tsx)
   - @other/brands: "/_authenticated/$storeId/brands/" (…/node_modules/@other/brands/src/routes/brands.index.tsx)
 ```
