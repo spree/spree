@@ -53,6 +53,15 @@ module Spree
     # Ransack
     #
     self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable]
+
+    # Both columns store class names; filters take the short names clients see.
+    def self.api_type_resolver(attribute)
+      case attribute
+      when 'resource_type' then ->(api_type) { normalize_value_for(:resource_type, api_type) }
+      when 'field_type' then ->(api_type) { Spree::CustomField::TYPE_TOKENS[api_type] }
+      else super
+      end
+    end
     self.whitelisted_ransackable_scopes = %w[search]
 
     # API-facing token for the STI subclass name stored in the `field_type`

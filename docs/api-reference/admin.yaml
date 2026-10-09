@@ -54123,12 +54123,12 @@ components:
     CustomFieldDefinition:
       attributes:
         created_at: datetime
-        field_type: text
+        field_type: type
         id: id
         key: text
         label: text
         namespace: text
-        resource_type: text
+        resource_type: type
         searchable: boolean
         sortable: boolean
         storefront_visible: boolean

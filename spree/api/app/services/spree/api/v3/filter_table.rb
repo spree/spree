@@ -83,10 +83,7 @@ module Spree
         # @return [Hash{String => String, Hash}] attribute => value kind, or
         #   `{ 'enum' => [values] }` for a status
         def attributes
-          @attributes ||= ransackable_attribute_names.each_with_object({}) do |attribute, kinds|
-            kind = attribute_kind(attribute)
-            kinds[attribute] = kind unless kind.nil?
-          end
+          @attributes ||= kinds.reject { |_, kind| kind == :unclassified }.compact
         end
 
         # Declared attributes whose value kind could not be determined; a
@@ -94,7 +91,7 @@ module Spree
         #
         # @return [Array<String>]
         def unclassified_attributes
-          ransackable_attribute_names.select { |attribute| attribute_kind(attribute) == :unclassified }
+          kinds.select { |_, kind| kind == :unclassified }.keys
         end
 
         # @return [Hash{String => FilterTable}]
@@ -144,7 +141,7 @@ module Spree
         # @return [Hash]
         def to_h
           {
-            'attributes' => attributes.sort.to_h,
+            'attributes' => attributes,
             'associations' => associations.transform_values(&:name),
             'scopes' => scopes
           }
@@ -152,8 +149,8 @@ module Spree
 
         private
 
-        def ransackable_attribute_names
-          @ransackable_attribute_names ||= model.ransackable_attributes(audience).map(&:to_s).uniq.sort
+        def kinds
+          @kinds ||= model.ransackable_attributes(audience).map(&:to_s).uniq.sort.index_with { |attribute| attribute_kind(attribute) }
         end
 
         # @return [String, Hash, Symbol, nil] the kind; nil for a default
@@ -196,12 +193,8 @@ module Spree
             model.reflect_on_all_associations(:belongs_to).any? { |reflection| reflection.foreign_key.to_s == attribute }
         end
 
-        # The STI column of a typed family and polymorphic `*_type` columns
-        # carry short names on the wire (see ResourceController#decode_api_type_predicates).
         def type_attribute?(attribute)
-          return true if attribute == model.inheritance_column && model.respond_to?(:api_type_registry) && model.api_type_registry.any?
-
-          model.reflect_on_all_associations(:belongs_to).any? { |reflection| reflection.polymorphic? && reflection.foreign_type.to_s == attribute }
+          model.respond_to?(:api_type_resolver) && model.api_type_resolver(attribute).present?
         end
 
         def translated_attribute?(attribute)
@@ -267,7 +260,7 @@ module Spree
           # @return [Hash{String => FilterTable}] the tables this endpoint's
           #   filters reach, keyed by name
           def tables
-            table.reachable.sort.to_h
+            table.reachable
           end
 
           # The `x-spree-filters` extension of the endpoint's OpenAPI operation.

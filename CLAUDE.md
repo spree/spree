@@ -351,7 +351,7 @@ attribute :variant_id
 
 - Serialize with `Spree::Base.polymorphic_api_type(record.owner_type)` — the configured customer and admin user classes always read `customer` / `admin_user`
 - Accept with `Spree::Base.polymorphic_type_for(value, candidates)` against the classes that column may hold
-- **Filters**: the base `ResourceController` translates `type_*` and polymorphic `*_type_*` predicates (`q[receivable_type_eq]=purchase_order`) to class names; a plain column holding class names (`CustomFieldDefinition#resource_type`) overrides `api_type_resolver`
+- **Filters**: the base `ResourceController` translates `type_*` and polymorphic `*_type_*` predicates (`q[receivable_type_eq]=purchase_order`) to class names; a plain column holding class names (`CustomFieldDefinition#resource_type`) overrides the model's `api_type_resolver`, which the published filter tables read too
 
 **Permission subjects** follow the same rule: `/me` serializes class subjects through `polymorphic_api_type` (`product`, `category`), and the dashboard checks them with the `Subject` constants.
 

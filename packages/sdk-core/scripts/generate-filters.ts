@@ -77,23 +77,26 @@ const MAX_DEPTH = 2
 const HEADER =
   '// This file is auto-generated from the filter tables in docs/api-reference by `pnpm generate:filters`. Do not edit directly.\n'
 
-const VALUE_TYPES: Record<Kind, string> = {
-  text: 'string',
-  decimal: 'string | number',
-  integer: 'number',
-  date: 'string',
-  datetime: 'string',
-  enum: 'string',
-  id: 'string',
-  type: 'string',
-  boolean: 'boolean',
+// Each kind's TypeScript value and the sdk-core building block typing its
+// predicates. Enum attributes carry their values and use `EnumFilters`.
+const KIND_TYPES: Record<Exclude<Kind, 'enum'>, { value: string; block: string }> = {
+  text: { value: 'string', block: 'TextFilters<$names>' },
+  decimal: { value: 'string | number', block: 'RangeFilters<$names, string | number>' },
+  integer: { value: 'number', block: 'RangeFilters<$names, number>' },
+  date: { value: 'string', block: 'RangeFilters<$names>' },
+  datetime: { value: 'string', block: 'RangeFilters<$names>' },
+  id: { value: 'string', block: 'IdFilters<$names>' },
+  type: { value: 'string', block: 'IdFilters<$names>' },
+  boolean: { value: 'boolean', block: 'BooleanFilters<$names>' },
 }
+
+const valueType = (kind: Kind) => (kind === 'enum' ? 'string' : KIND_TYPES[kind].value)
 
 const literal = (value: string) => `'${value.replace(/'/g, "\\'")}'`
 const union = (values: string[]) => values.map(literal).join(' | ')
 
 function fieldsType(table: FilterTable): string {
-  const byKind = new Map<string, string[]>()
+  const byBlock = new Map<string, string[]>()
   const enums: string[] = []
 
   for (const [attribute, kind] of Object.entries(table.attributes)) {
@@ -101,30 +104,22 @@ function fieldsType(table: FilterTable): string {
       enums.push(`Filter.EnumFilters<${literal(attribute)}, ${union(kind.enum)}>`)
       continue
     }
-    byKind.set(kind, [...(byKind.get(kind) ?? []), attribute])
+    const block = KIND_TYPES[kind as Exclude<Kind, 'enum'>].block
+    byBlock.set(block, [...(byBlock.get(block) ?? []), attribute])
   }
 
-  const parts: string[] = []
-  const group = (kinds: Kind[]) => kinds.flatMap((kind) => byKind.get(kind) ?? [])
-  const add = (attributes: string[], build: (names: string) => string) => {
-    if (attributes.length) parts.push(build(union(attributes)))
-  }
-
-  add(group(['text']), (names) => `Filter.TextFilters<${names}>`)
-  add(group(['decimal']), (names) => `Filter.RangeFilters<${names}, string | number>`)
-  add(group(['date', 'datetime']), (names) => `Filter.RangeFilters<${names}>`)
-  add(group(['integer']), (names) => `Filter.RangeFilters<${names}, number>`)
-  add(group(['id', 'type', 'enum']), (names) => `Filter.IdFilters<${names}>`)
-  add(group(['boolean']), (names) => `Filter.BooleanFilters<${names}>`)
+  const parts = [...byBlock].map(
+    ([block, names]) => `Filter.${block.replace('$names', union(names))}`,
+  )
   parts.push(...enums)
 
   return parts.length ? parts.join('\n  & ') : 'Record<never, never>'
 }
 
 function scopeValueType(type: ScopeType): string {
-  if (Array.isArray(type)) return `[${type.map((kind) => VALUE_TYPES[kind]).join(', ')}]`
-  if (typeof type === 'object') return `${VALUE_TYPES[type.list]} | ${VALUE_TYPES[type.list]}[]`
-  return VALUE_TYPES[type]
+  if (Array.isArray(type)) return `[${type.map(valueType).join(', ')}]`
+  if (typeof type === 'object') return `${valueType(type.list)} | ${valueType(type.list)}[]`
+  return valueType(type)
 }
 
 function scopesType(table: FilterTable): string | null {
@@ -151,7 +146,7 @@ function associationsType(
 function render(spec: Spec): string {
   checkPredicates(spec.components?.['x-spree-filter-predicates'])
   const tables = spec.components?.['x-spree-filter-tables'] ?? {}
-  const roots = new Map<string, EndpointFilters>()
+  const roots = new Map<string, Omit<EndpointFilters, 'table'>>()
 
   // Endpoints listing the same records share one type; their sort fields and
   // custom-field support combine.
@@ -161,7 +156,6 @@ function render(spec: Spec): string {
 
     const known = roots.get(filters.table)
     roots.set(filters.table, {
-      table: filters.table,
       sortable: [...new Set([...(known?.sortable ?? []), ...filters.sortable])].sort(),
       custom_fields: Boolean(known?.custom_fields || filters.custom_fields),
     })
@@ -173,8 +167,7 @@ function render(spec: Spec): string {
     out.push(`export type ${name}Fields = ${fieldsType(tables[name])}`, '')
   }
 
-  for (const name of [...roots.keys()].sort()) {
-    const endpoint = roots.get(name) as EndpointFilters
+  for (const [name, endpoint] of [...roots].sort(([a], [b]) => a.localeCompare(b))) {
     const table = tables[name]
     const parts = [`${name}Fields`, ...associationsType(tables, table, 0), 'Filter.OrFilters']
     const scopes = scopesType(table)
@@ -188,7 +181,6 @@ function render(spec: Spec): string {
 
     // Filters an app adds through its own extensions, which the published
     // types cannot know about: `declare module` the SDK and add them here.
-    out.push(`// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging`)
     out.push(`export interface ${name}FilterExtensions {}`, '')
     parts.push(`${name}FilterExtensions`)
     out.push(`export type ${name}Filters = ${parts.join('\n  & ')}`, '')

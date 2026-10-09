@@ -151,6 +151,22 @@ class Spree::Base < ApplicationRecord
     end
   end
 
+  # How a filter on one of this model's columns turns the short name a client
+  # sends (`purchase_order`) into the class name the column stores, or nil
+  # when the column does not store class names. Covers the STI column of a
+  # typed family and polymorphic `*_type` columns; a model with another such
+  # column overrides this.
+  #
+  # @param attribute [String]
+  # @return [Proc, nil] short name → stored class name
+  def self.api_type_resolver(attribute)
+    if attribute == inheritance_column && api_type_registry.any?
+      ->(api_type) { class_name_for_api_type(api_type) }
+    elsif reflect_on_all_associations(:belongs_to).any? { |reflection| reflection.polymorphic? && reflection.foreign_type == attribute }
+      ->(api_type) { Spree::Base.polymorphic_type_for(api_type) }
+    end
+  end
+
   # Shorthand for a *polymorphic* `*_type` column (`owner_type`,
   # `viewable_type`, …), where the value names an arbitrary model rather than a
   # subclass of the serialized one — so `api_type_for`'s registry lookup does

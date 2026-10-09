@@ -401,13 +401,9 @@ module Spree
         # @param attribute [String, nil] a `*type` column of {#model_class}
         # @return [Proc, nil] shorthand → stored class name
         def api_type_resolver(attribute)
-          return if attribute.nil? || !model_class.respond_to?(:api_type_registry)
+          return if attribute.nil? || !model_class.respond_to?(:api_type_resolver)
 
-          if attribute == model_class.inheritance_column && model_class.api_type_registry.any?
-            ->(api_type) { model_class.class_name_for_api_type(api_type) }
-          elsif model_class.reflect_on_all_associations(:belongs_to).any? { |reflection| reflection.polymorphic? && reflection.foreign_type == attribute }
-            ->(api_type) { Spree::Base.polymorphic_type_for(api_type) }
-          end
+          model_class.api_type_resolver(attribute)
         end
 
         # Matches both prefixed-FK predicates (`product_id_in`, `tax_category_id_eq`)
