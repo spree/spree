@@ -12441,11 +12441,12 @@ paths:
                   editable: true
                   delivery_profile_id: fp_UkLWZg9DAJ
                   delivery_zone_id:
-                  calculator_type: flat_rate
-                  calculator_preferences:
-                    amounts: {}
-                    amount: '10.00'
-                    currency: USD
+                  calculator:
+                    type: flat_rate
+                    preferences:
+                      amounts: {}
+                      amount: '10.00'
+                      currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
                   code: UPS_GROUND_74
@@ -12463,11 +12464,12 @@ paths:
                   editable: false
                   delivery_profile_id: fp_UkLWZg9DAJ
                   delivery_zone_id:
-                  calculator_type: flat_rate
-                  calculator_preferences:
-                    amounts: {}
-                    amount: '10.00'
-                    currency: USD
+                  calculator:
+                    type: flat_rate
+                    preferences:
+                      amounts: {}
+                      amount: '10.00'
+                      currency: USD
                 meta:
                   page: 1
                   limit: 25
@@ -12532,11 +12534,12 @@ paths:
                 editable: true
                 delivery_profile_id: fp_gbHJdmfrXB
                 delivery_zone_id:
-                calculator_type: flat_rate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '9.99'
-                  currency: USD
+                calculator:
+                  type: flat_rate
+                  preferences:
+                    amounts: {}
+                    amount: '9.99'
+                    currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
         '422':
@@ -12584,10 +12587,18 @@ paths:
                 estimated_transit_business_days_max:
                   type: integer
                   nullable: true
-                calculator_type:
-                  type: string
-                calculator_preferences:
+                calculator:
                   type: object
+                  description: 'How the method is priced: a type from `/delivery_methods/calculators`
+                    and its preferences, per that type''s `schema`.'
+                  properties:
+                    type:
+                      type: string
+                      example: flat_rate
+                    preferences:
+                      type: object
+                      example:
+                        amount: '12.5'
                 rules:
                   type: array
                   description: Conditions on the method, from `/delivery_methods/rule_types`
@@ -12642,11 +12653,12 @@ paths:
                 editable: true
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_zone_id:
-                calculator_type: flat_rate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '10.00'
-                  currency: USD
+                calculator:
+                  type: flat_rate
+                  preferences:
+                    amounts: {}
+                    amount: '10.00'
+                    currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
     patch:
@@ -12681,11 +12693,12 @@ paths:
                 editable: true
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_zone_id:
-                calculator_type: flat_rate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '10.00'
-                  currency: USD
+                calculator:
+                  type: flat_rate
+                  preferences:
+                    amounts: {}
+                    amount: '10.00'
+                    currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
       requestBody:
@@ -12720,10 +12733,18 @@ paths:
                 estimated_transit_business_days_max:
                   type: integer
                   nullable: true
-                calculator_type:
-                  type: string
-                calculator_preferences:
+                calculator:
                   type: object
+                  description: 'How the method is priced: a type from `/delivery_methods/calculators`
+                    and its preferences, per that type''s `schema`.'
+                  properties:
+                    type:
+                      type: string
+                      example: flat_rate
+                    preferences:
+                      type: object
+                      example:
+                        amount: '12.5'
                 rules:
                   type: array
                   description: Replaces the whole set — a rule dropped here is deleted,
@@ -12772,43 +12793,69 @@ paths:
                   name: Item total
                   description: Limits the delivery method to carts within an item
                     total range
-                  preference_schema:
-                  - key: minimum_amount
-                    type: money
-                    default:
-                  - key: maximum_amount
-                    type: money
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      minimum_amount:
+                        type:
+                        - string
+                        - 'null'
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                      maximum_amount:
+                        type:
+                        - string
+                        - 'null'
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                    additionalProperties: false
                 - type: weight_rule
                   name: Weight
                   description: Limits the delivery method to packages within a weight
                     range
-                  preference_schema:
-                  - key: minimum_weight
-                    type: decimal
-                    default:
-                  - key: maximum_weight
-                    type: decimal
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      minimum_weight:
+                        type:
+                        - string
+                        - 'null'
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                      maximum_weight:
+                        type:
+                        - string
+                        - 'null'
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                    additionalProperties: false
                 - type: volume_rule
                   name: Volume
                   description: Limits the delivery method to shipments within a volume
                     range, in cubic meters
-                  preference_schema:
-                  - key: minimum_volume
-                    type: decimal
-                    default:
-                  - key: maximum_volume
-                    type: decimal
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      minimum_volume:
+                        type:
+                        - string
+                        - 'null'
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                      maximum_volume:
+                        type:
+                        - string
+                        - 'null'
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                    additionalProperties: false
                 - type: company_rule
                   name: Company
                   description: Offers the delivery method only to orders placed for
                     a company, or only to orders that are not
-                  preference_schema:
-                  - key: company_orders_only
-                    type: boolean
-                    default: true
+                  schema:
+                    type: object
+                    properties:
+                      company_orders_only:
+                        type: boolean
+                        default: true
+                    additionalProperties: false
               schema:
                 type: object
                 properties:
@@ -12823,10 +12870,9 @@ paths:
                           type: string
                         description:
                           type: string
-                        preference_schema:
-                          type: array
-                          items:
-                            type: object
+                        schema:
+                          type: object
+                          description: JSON Schema of the type's `preferences`
                 required:
                 - data
   "/api/v3/seller/delivery_methods/calculators":
@@ -12851,76 +12897,140 @@ paths:
                 data:
                 - type: flat_percent_item_total
                   name: Flat Percent
-                  preference_schema:
-                  - key: flat_percent
-                    type: decimal
-                    default: '0'
+                  schema:
+                    type: object
+                    properties:
+                      flat_percent:
+                        type: string
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                    additionalProperties: false
                 - type: flat_rate
                   name: Flat rate
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: money
-                    default: '0'
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: flexi_rate
                   name: Flexible Rate per package item
-                  preference_schema:
-                  - key: first_item
-                    type: money
-                    default: '0'
-                  - key: additional_item
-                    type: money
-                    default: '0'
-                  - key: max_items
-                    type: integer
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      first_item:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      additional_item:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      max_items:
+                        type: integer
+                        default: 0
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: per_item
                   name: Flat rate per package item
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: money
-                    default: '0'
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: price_sack
                   name: Price sack
-                  preference_schema:
-                  - key: minimal_amount
-                    type: money
-                    default: '0'
-                  - key: normal_amount
-                    type: money
-                    default: '0'
-                  - key: discount_amount
-                    type: money
-                    default: '0'
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      minimal_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      normal_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      discount_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: digital_delivery
                   name: Digital Delivery
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: money
-                    default: '0'
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
               schema:
                 type: object
                 properties:
@@ -12933,10 +13043,9 @@ paths:
                           type: string
                         name:
                           type: string
-                        preference_schema:
-                          type: array
-                          items:
-                            type: object
+                        schema:
+                          type: object
+                          description: JSON Schema of the type's `preferences`
                 required:
                 - data
   "/api/v3/seller/delivery_profiles":
@@ -14079,7 +14188,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
-                preferred_timezone: UTC
+                timezone: UTC
                 status: approved
                 legal_name:
                 registration_number:
@@ -14152,7 +14261,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
-                preferred_timezone: UTC
+                timezone: UTC
                 status: approved
                 legal_name:
                 registration_number:
@@ -14925,10 +15034,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ec7df9540f9e5a58f349aa7f06f79714cb0b3186
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--685d4d35ee0893406644de01b3a620fa83d60919
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -19013,50 +19122,21 @@ components:
       - id
       - name
       - code
-    PreferenceField:
+    PreferenceSchema:
       type: object
-      description: A single configurable preference on a payment method, promotion
-        rule/action, or calculator. The frontend uses `type` + `default` to render
-        a sensible input.
-      properties:
-        key:
-          type: string
-          example: amount_min
-        type:
-          type: string
-          example: decimal
-          description: string | text | password | integer | decimal | boolean | array
-            | hash
-        default:
-          description: Default value (any JSON type), null when there is no default
-          nullable: true
-      required:
-      - key
-      - type
-    PromotionActionCalculator:
-      type: object
-      description: The action's nested calculator (when the action carries one — null
-        for actions like `free_shipping`)
-      properties:
-        type:
-          type: string
-          example: flat_rate
-          description: Wire shorthand for the calculator subclass
-        label:
-          type: string
-          example: Flat Rate
-        preferences:
-          type: object
-          additionalProperties: true
-        preference_schema:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PreferenceField"
-      required:
-      - type
-      - label
-      - preferences
-      - preference_schema
+      description: 'The JSON Schema (draft 2020-12) of a type''s `preferences`: one
+        property per setting, with `format` (`money`, `currency`, `iso-country`, `prefixed-id`,
+        …), `enum`, `default`, `x-spree-secret` for a secret and `x-spree-prefix`
+        for an id list. Unknown keys are refused.'
+      additionalProperties: true
+      example:
+        type: object
+        properties:
+          amount:
+            type: string
+            format: money
+            default: '0.0'
+        additionalProperties: false
     PromotionActionLineItem:
       type: object
       description: One row in a `create_line_items` action — the variant added to
@@ -19690,15 +19770,12 @@ components:
           description: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule,
             channel_rule, volume_rule, company_rule. Extensions may register more.'
         preferences:
-          type: object
-        preference_schema:
-          type: object
+          "$ref": "#/components/schemas/DeliveryMethodRulePreferences"
       required:
       - id
       - active
       - type
       - preferences
-      - preference_schema
       x-typelizer: true
     DeliveryMethod:
       type: object
@@ -19746,11 +19823,9 @@ components:
         delivery_zone_id:
           type: string
           nullable: true
-        calculator_type:
-          type: string
-          nullable: true
-        calculator_preferences:
-          type: object
+        calculator:
+          allOf:
+          - "$ref": "#/components/schemas/DeliveryMethodCalculator"
           nullable: true
       required:
       - id
@@ -19770,8 +19845,7 @@ components:
       - editable
       - delivery_profile_id
       - delivery_zone_id
-      - calculator_type
-      - calculator_preferences
+      - calculator
       x-typelizer: true
     DeliveryProfile:
       type: object
@@ -20301,7 +20375,7 @@ components:
         processing_errors:
           type: string
           nullable: true
-        preferred_delimiter:
+        delimiter:
           type: string
         original_filename:
           type: string
@@ -20344,7 +20418,7 @@ components:
       - owner_id
       - user_id
       - processing_errors
-      - preferred_delimiter
+      - delimiter
       - original_filename
       - original_byte_size
       - original_file_url
@@ -21145,7 +21219,7 @@ components:
         cover_photo_url:
           type: string
           nullable: true
-        preferred_timezone:
+        timezone:
           type: string
           nullable: true
         status:
@@ -21220,7 +21294,7 @@ components:
       - logo_url
       - square_logo_url
       - cover_photo_url
-      - preferred_timezone
+      - timezone
       - status
       - legal_name
       - registration_number
@@ -22084,3 +22158,241 @@ components:
       - square_logo_url
       - cover_photo_url
       x-typelizer: true
+    DeliveryCalculatorDigitalDeliveryPreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorFlatPercentItemTotalPreferences:
+      type: object
+      properties:
+        flat_percent:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+      additionalProperties: false
+    DeliveryCalculatorFlatRatePreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorFlexiRatePreferences:
+      type: object
+      properties:
+        first_item:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        additional_item:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        max_items:
+          type: integer
+          default: 0
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPerItemPreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPriceSackPreferences:
+      type: object
+      properties:
+        minimal_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        normal_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        discount_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPreferences:
+      description: Settings of a delivery calculator, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/DeliveryCalculatorDigitalDeliveryPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlatPercentItemTotalPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlatRatePreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlexiRatePreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorPerItemPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorPriceSackPreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        digital_delivery: "#/components/schemas/DeliveryCalculatorDigitalDeliveryPreferences"
+        flat_percent_item_total: "#/components/schemas/DeliveryCalculatorFlatPercentItemTotalPreferences"
+        flat_rate: "#/components/schemas/DeliveryCalculatorFlatRatePreferences"
+        flexi_rate: "#/components/schemas/DeliveryCalculatorFlexiRatePreferences"
+        per_item: "#/components/schemas/DeliveryCalculatorPerItemPreferences"
+        price_sack: "#/components/schemas/DeliveryCalculatorPriceSackPreferences"
+    DeliveryMethodRuleChannelRulePreferences:
+      type: object
+      properties:
+        channel_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^ch_[A-Za-z0-9]+$"
+            x-spree-prefix: ch
+          default: []
+      additionalProperties: false
+    DeliveryMethodRuleCompanyRulePreferences:
+      type: object
+      properties:
+        company_orders_only:
+          type: boolean
+          default: true
+      additionalProperties: false
+    DeliveryMethodRuleExcludedProductsRulePreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    DeliveryMethodRuleItemTotalRulePreferences:
+      type: object
+      properties:
+        minimum_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRuleVolumeRulePreferences:
+      type: object
+      properties:
+        minimum_volume:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_volume:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRuleWeightRulePreferences:
+      type: object
+      properties:
+        minimum_weight:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_weight:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRulePreferences:
+      description: Settings of a delivery method rule, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/DeliveryMethodRuleChannelRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleCompanyRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleExcludedProductsRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleItemTotalRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleVolumeRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleWeightRulePreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        channel_rule: "#/components/schemas/DeliveryMethodRuleChannelRulePreferences"
+        company_rule: "#/components/schemas/DeliveryMethodRuleCompanyRulePreferences"
+        excluded_products_rule: "#/components/schemas/DeliveryMethodRuleExcludedProductsRulePreferences"
+        item_total_rule: "#/components/schemas/DeliveryMethodRuleItemTotalRulePreferences"
+        volume_rule: "#/components/schemas/DeliveryMethodRuleVolumeRulePreferences"
+        weight_rule: "#/components/schemas/DeliveryMethodRuleWeightRulePreferences"
+    DeliveryMethodCalculator:
+      type: object
+      description: How the delivery method prices a shipment
+      properties:
+        type:
+          type: string
+          example: flat_rate
+          description: Wire shorthand for the calculator subclass
+        preferences:
+          "$ref": "#/components/schemas/DeliveryCalculatorPreferences"
+      required:
+      - type
+      - preferences

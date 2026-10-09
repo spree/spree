@@ -82,7 +82,7 @@ module Spree
         when :text then { 'type' => 'string', 'x-spree-widget' => 'textarea' }
         when :boolean then { 'type' => 'boolean' }
         when :integer then { 'type' => 'integer' }
-        when :decimal then item_schema(definition[:money] ? :money : :decimal, definition)
+        when :decimal, :money then item_schema(definition[:type], definition)
         when :password then { 'type' => 'string', 'x-spree-secret' => true }
         when :date then { 'type' => 'string', 'format' => 'date' }
         when :datetime then { 'type' => 'string', 'format' => 'date-time' }
@@ -128,7 +128,7 @@ module Spree
       # string without trailing zeros ("100", "0.23"), as every API decimal is.
       def self.wire_default(default, definition)
         return default if default.nil?
-        return Spree::Money::Rounding.format_decimal(default) if definition[:type] == :decimal
+        return Spree::Money::Rounding.format_decimal(default) if %i[decimal money].include?(definition[:type])
 
         default.as_json
       end

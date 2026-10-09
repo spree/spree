@@ -277,7 +277,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['calculator']['preferences']['amounts']).to eq('EUR' => '15.0')
+      expect(json_response['calculator']['preferences']['amounts']).to eq('EUR' => '15.00')
 
       calculator = delivery_method.reload.calculator
       expect(calculator.preferred_amounts).to eq('EUR' => '15.0')

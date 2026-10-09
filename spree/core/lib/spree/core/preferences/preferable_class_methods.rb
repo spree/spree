@@ -52,7 +52,7 @@ module Spree::Preferences
     # The declaration is the preference's contract on the wire, so it states
     # the full type:
     #
-    #   preference :amount_min,    :decimal, money: true
+    #   preference :amount_min,    :money
     #   preference :channel_ids,   :array, of: :id, model: 'Spree::Channel', scope: ->(rule) { rule.store.channels }
     #   preference :country_codes, :array, of: :string, format: :iso_country
     #   preference :match_policy,  :string, choices: %w[any all none]
@@ -60,13 +60,12 @@ module Spree::Preferences
     #   preference :tiers,         :array, of: :object, properties: { threshold: :money, value: :decimal }
     #
     # @param name [Symbol]
-    # @param type [Symbol] `:string`, `:text`, `:boolean`, `:integer`, `:decimal`,
+    # @param type [Symbol] `:string`, `:text`, `:boolean`, `:integer`, `:decimal`, `:money`,
     #   `:array`, `:hash`, `:password`, `:date` or `:datetime`
     # @option options [Symbol] :of the type of each item of an `:array`
     # @option options [Symbol] :keys the type of a `:hash`'s keys (`:string` or `:currency`)
     # @option options [Symbol] :values the type of a `:hash`'s values
     # @option options [Hash{Symbol => Symbol}] :properties the fields of each `of: :object` item
-    # @option options [Boolean] :money a `:decimal` that is an amount of money
     # @option options [Symbol] :format a string's domain format (see {Spree::PreferenceSchema::JsonSchema::FORMATS})
     # @option options [String, Proc] :model the record class an `of: :id` list points at
     # @option options [Proc] :scope `->(owner) { relation }` the ids must be found in
@@ -81,7 +80,7 @@ module Spree::Preferences
 
       options = args.extract_options!
       options.assert_valid_keys(:default, :deprecated, :in, :choices, :internal, :nullable, :parse_on_set,
-                                :of, :keys, :values, :properties, :money, :format, :model, :scope)
+                                :of, :keys, :values, :properties, :format, :model, :scope)
       if options.key?(:in)
         Spree::Deprecation.warn("`preference :#{name}, in:` is deprecated. Use `choices:` instead.")
         options[:choices] ||= options.delete(:in)
@@ -109,7 +108,6 @@ module Spree::Preferences
         keys: options[:keys],
         values: options[:values],
         properties: options[:properties],
-        money: options[:money],
         format: options[:format],
         model: options[:model],
         scope: options[:scope]
@@ -179,9 +177,6 @@ module Spree::Preferences
       end
       if (options[:keys] || options[:values]) && type != :hash
         raise ArgumentError, "`keys:` and `values:` apply to a :hash preference, not `#{name}` (#{type})"
-      end
-      if options[:money] && type != :decimal
-        raise ArgumentError, "`money:` applies to a :decimal preference, not `#{name}` (#{type})"
       end
       [options[:of], options[:values], *options[:properties]&.values].compact.each do |item_type|
         raise ArgumentError, "Unknown item type `#{item_type}` on preference `#{name}`" unless ITEM_TYPES.include?(item_type)

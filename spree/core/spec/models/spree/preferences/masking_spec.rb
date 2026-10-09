@@ -144,8 +144,8 @@ RSpec.describe Spree::Preferences::Masking do
 
       result = described_class.serialize(calculator)
 
-      expect(result['amounts']).to eq('EUR' => '12.5')
-      expect(result['amount']).to eq('3.0')
+      expect(result['amounts']).to eq('EUR' => '12.50')
+      expect(result['amount']).to eq('3.00')
     end
 
     it 'returns an id list as prefixed ids, the form a write accepts' do

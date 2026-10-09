@@ -90,9 +90,22 @@ module Spree
               prefixed_ids(value, definition)
             elsif %i[password money].include?(field[:type])
               wire_value(preferable, field[:type], value)
+            elsif definition[:keys] == :currency && definition[:values] == :money
+              money_by_currency(preferable.wire_preference_value(value, definition))
             else
               preferable.wire_preference_value(value, definition)
             end
+        end
+      end
+
+      # Amounts keyed by currency (`{ "EUR" => "12.5" }`), each written with
+      # the decimals of its own currency, as every money value is.
+      def self.money_by_currency(value)
+        return value unless value.is_a?(Hash)
+
+        value.to_h do |currency, amount|
+          decimal = BigDecimal(amount.to_s, exception: false)
+          [currency, decimal ? Spree::Money::Rounding.format(decimal, currency, unit_price: true) : amount]
         end
       end
 

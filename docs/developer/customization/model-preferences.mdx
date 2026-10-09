@@ -48,7 +48,7 @@ module MyApp
   module Promotion
     module Rules
       class LoyaltyTier < Spree::PromotionRule
-        preference :minimum_spend, :decimal, money: true, default: 0
+        preference :minimum_spend, :money, default: 0
         preference :tier,          :string, choices: %w[silver gold platinum], default: 'silver'
         preference :channel_ids,   :array, of: :id, model: 'Spree::Channel', default: [],
                                    scope: ->(rule) { rule.promotion.store.channels }
@@ -66,7 +66,6 @@ end
 | `properties:` | `of: :object` | The fields of each item, e.g. `{ threshold: :money, value: :decimal }` |
 | `keys:` / `values:` | `:hash` | The type of the keys (`:string` or `:currency`) and of the values |
 | `model:` / `scope:` | `of: :id` | The records the ids point at, and the records they must be found in. The API accepts and returns their prefixed ids (`ch_…`); an id of another model, or one outside the scope, is refused |
-| `money:` | `:decimal` | The value is an amount of money |
 | `format:` | `:string`, list items | `:currency`, `:iso_country`, `:timezone`, `:locale`, `:url` or `:color` |
 | `choices:` | any | The fixed set the value must come from; admin forms show a picker |
 
@@ -81,7 +80,7 @@ Configurable types — promotion rules and actions, calculators, payment methods
 ```typescript Admin SDK
 const { data } = await adminClient.promotionRules.types()
 const itemTotal = data.find((entry) => entry.type === 'item_total')
-itemTotal.schema.properties.amount_min // { type: 'string', format: 'money', default: '100.0', … }
+itemTotal.schema.properties.amount_min // { type: 'string', format: 'money', default: '100', … }
 ```
 
 ```bash cURL
