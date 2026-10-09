@@ -1,6 +1,6 @@
-// Re-export shared types from sdk-core
-// The building blocks of the generated filter types, for a declaration file
-// that extends them (see `spree filters types`).
+// Re-export shared types from sdk-core, including the building blocks of the
+// generated filter types for a declaration file that extends them (see
+// `spree filters types`).
 export type {
   BooleanFilters,
   CustomFieldFilters,
