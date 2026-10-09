@@ -61,7 +61,7 @@ describe Spree::Order, type: :model do
       context 'when newsletter is not accepted for the order' do
         let(:accept_marketing) { false }
 
-        it 'does not subscribe to newsletter' do
+        it 'does not subscribe to newsletter', :events do
           expect(Spree::NewsletterSubscriber).not_to receive(:subscribe)
           order.finalize!
         end
@@ -115,10 +115,10 @@ describe Spree::Order, type: :model do
 
       context 'with signup_for_an_account set to false' do
         before do
-          allow(order).to receive(:signup_for_an_account?).and_return(false)
+          order.update_column(:signup_for_an_account, false)
         end
 
-        it 'does not create a new user' do
+        it 'does not create a new user', :events do
           expect { order.finalize! }.not_to change { Spree.customer_class.count }
         end
       end

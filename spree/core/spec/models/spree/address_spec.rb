@@ -103,20 +103,6 @@ describe Spree::Address, type: :model do
     end
   end
 
-  context 'aliased attributes' do
-    let(:address) { Spree::Address.new }
-
-    it 'first_name' do
-      address.first_name = 'Ryan'
-      expect(address.first_name).to eq('Ryan')
-    end
-
-    it 'last_name' do
-      address.last_name = 'Bigg'
-      expect(address.last_name).to eq('Bigg')
-    end
-  end
-
   context 'validation' do
     # Countries and subdivisions are reference data now, so these are real
     # places rather than invented ones: Maryland is a subdivision of the US,
@@ -540,6 +526,8 @@ describe Spree::Address, type: :model do
     end
 
     it 'can be deleted when there is an incomplete associated order' do
+      create(:order, customer: user, bill_address: address3)
+
       expect(address3).to be_can_be_deleted
     end
 

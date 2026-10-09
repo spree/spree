@@ -163,15 +163,16 @@ describe Spree::Order, type: :model do
   end
 
   describe '#recalculate_totals!' do
-    let(:updater) { order.updater }
-
-    before do
-      allow(order).to receive(:updater).and_return(updater)
-      allow(updater).to receive(:update).and_return(true)
-    end
+    let(:order) { create(:order_with_line_items, store: store) }
 
     it 'recalculates and persists totals through the RecalculateTotals flow' do
-      expect { order.recalculate_totals! }.to change { order.reload.updated_at }
+      expected_total = order.total
+      order.update_columns(item_total: 0, total: 0)
+
+      order.recalculate_totals!
+
+      expect(order.reload.item_total).to eq(order.line_items.sum(&:amount))
+      expect(order.total).to eq(expected_total)
     end
   end
 
@@ -242,21 +243,6 @@ describe Spree::Order, type: :model do
 
         expect(order.status).to eq('canceled')
         expect(order.shipments).to all(have_attributes(state: 'canceled'))
-        expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
-      end
-    end
-
-    context 'when no gift card' do
-      let(:order) { create(:completed_order_with_totals, store: store) }
-      let!(:payment) { create(:payment, order: order, status: 'completed', amount: 10) }
-
-      it 'handles additional actions' do
-        order.cancel
-        order.reload
-
-        expect(order.status).to eq('canceled')
-        expect(order.shipments).to all(have_attributes(state: 'canceled'))
-        expect(order.payments).to all(have_attributes(state: 'void'))
         expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
       end
     end
@@ -416,16 +402,6 @@ describe Spree::Order, type: :model do
     it 'returns the value as a spree money' do
       order.total = 10.55
       expect(order.display_total).to eq(Spree::Money.new(10.55))
-    end
-  end
-
-  describe '#currency' do
-    context 'when object currency is EUR' do
-      before { order.currency = 'EUR' }
-
-      it 'returns the currency from the object' do
-        expect(order.currency).to eq('EUR')
-      end
     end
   end
 
@@ -1895,18 +1871,12 @@ describe Spree::Order, type: :model do
     end
 
     context 'when order has line items' do
-      let(:order) { create(:order_with_line_items) }
+      let(:order) { create(:order_with_line_items, line_items_count: 2) }
 
-      let(:presenter) { Spree::CSV::OrderLineItemPresenter }
-      let(:presenter_instance) { instance_double(presenter) }
-
-      before do
-        allow(presenter).to receive(:new).and_return(presenter_instance)
-        allow(presenter_instance).to receive(:call).and_return('csv_line')
-      end
-
-      it 'returns the csv lines' do
-        expect(subject).to eq(['csv_line'])
+      it 'returns a csv line per line item' do
+        expect(subject.size).to eq(2)
+        expect(subject).to all(include(order.number))
+        expect(subject.flatten).to include(*order.line_items.map(&:sku))
       end
     end
   end

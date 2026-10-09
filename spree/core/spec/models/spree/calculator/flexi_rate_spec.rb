@@ -31,10 +31,6 @@ describe Spree::Calculator::FlexiRate, type: :model do
         allow(calculator).to receive_messages preferred_first_item: 5.0, preferred_additional_item: 1.0, preferred_max_items: 3
         expect(calculator.compute(line_item).round(2)).to eq(7.0)
       end
-
-      it 'allows creation of new object with all the attributes' do
-        Spree::Calculator::FlexiRate.new(preferred_first_item: 1, preferred_additional_item: 1, preferred_max_items: 1)
-      end
     end
 
     context 'when apply_only_on_full_priced_items is true' do

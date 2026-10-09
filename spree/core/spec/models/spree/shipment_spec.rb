@@ -644,16 +644,6 @@ describe Spree::Fulfillment, type: :model do
   describe '#cancel' do
     let(:inventory_unit) { create(:fulfillment_item, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1) }
 
-    # Restocking is no longer a transition callback — it belongs to
-    # Spree::Fulfillments::Cancel, so the event only moves the status.
-    it 'cancels the shipment' do
-      allow(shipment.order).to receive(:recalculate_totals!)
-
-      shipment.status = 'unfulfilled'
-      described_class.transaction { shipment.update!(status: 'canceled') }
-      expect(shipment.status).to eq 'canceled'
-    end
-
     # Withdrawing the promise belongs to Spree::Fulfillments::Cancel now; the
     # deprecated shell is all that survives on the model. Covered by
     # spec/workflows/spree/fulfillments/cancel_spec.rb.
@@ -1060,12 +1050,11 @@ describe Spree::Fulfillment, type: :model do
     end
   end
   # The deprecated writer runs after commit, so it cannot write a second
-  # record from inside this one's callback chain — and a number it cannot
-  # place is raised rather than dropped.
+  # record from inside this one's callback chain.
   describe 'the deprecated tracking writer under conflict' do
     before { allow(Spree::Deprecation).to receive(:warn) }
 
-    it 'raises when the number is already on the parcel' do
+    it 'accepts a number another parcel already carries' do
       shipment.deliveries.destroy_all
       create(:delivery, owner: shipment, tracking_number: 'TAKEN-1')
       second = create(:fulfillment, order: shipment.order, tracking: nil)

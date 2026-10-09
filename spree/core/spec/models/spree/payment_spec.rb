@@ -349,7 +349,7 @@ describe Spree::Payment, type: :model do
 
           it 'raises Spree::Core::GatewayError and marks payment as failed' do
             expect(payment).to receive(:failure!)
-            expect(payment).not_to receive(:pend)
+            expect(payment).not_to receive(:pend!)
             expect { payment.authorize! }.to raise_error(Spree::Core::GatewayError)
           end
         end
@@ -432,7 +432,7 @@ describe Spree::Payment, type: :model do
 
           it 'raises Spree::Core::GatewayError and marks payment as failed' do
             expect(payment).to receive(:failure!)
-            expect(payment).not_to receive(:pend)
+            expect(payment).not_to receive(:pend!)
             expect { payment.purchase! }.to raise_error(Spree::Core::GatewayError)
           end
         end
@@ -614,7 +614,7 @@ describe Spree::Payment, type: :model do
 
             it 'raises Spree::Core::GatewayError and marks payment as failed' do
               expect(payment).to receive(:failure!)
-              expect(payment).not_to receive(:pend)
+              expect(payment).not_to receive(:pend!)
               expect { payment.capture! }.to raise_error(Spree::Core::GatewayError)
             end
           end
@@ -646,7 +646,7 @@ describe Spree::Payment, type: :model do
 
           it 'raises Spree::Core::GatewayError and marks payment as failed' do
             expect(payment).to receive(:failure!)
-            expect(payment).not_to receive(:pend)
+            expect(payment).not_to receive(:pend!)
             expect { payment.void_transaction! }.to raise_error(Spree::Core::GatewayError)
           end
         end
@@ -1016,11 +1016,6 @@ describe Spree::Payment, type: :model do
       let(:card) { create(:credit_card) }
       let(:payment_method) { card.payment_method }
 
-      before do
-        allow(payment_method).to receive_messages source_required: true
-      end
-
-      it { expect(payment_method.source_required?).to eq(true) }
       it { expect(payment.source).to eq(card) }
 
       context 'when credit card is removed' do

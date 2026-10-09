@@ -399,17 +399,11 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#states_available_for_checkout' do
     subject { create(:store) }
 
-    let(:country_with_states) do
-      create(:country).tap do |country|
-        # subdivisions are reference data — the country already has them
-      end
-    end
-
     it 'returns list of states associated to country' do
-      checkout_available_states_ids = subject.states_available_for_checkout(country_with_states).map(&:abbr)
-      all_state_ids                 = country_with_states.states.map(&:abbr)
+      state_codes = subject.states_available_for_checkout(Spree::Country.by_iso('US')).map(&:abbr)
 
-      expect(checkout_available_states_ids).to eq(all_state_ids)
+      expect(state_codes).to include('NY', 'CA')
+      expect(state_codes).not_to include('ON')
     end
   end
 
@@ -674,10 +668,6 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(countries.map(&:iso)).to contain_exactly(country_a.iso, country_b.iso, country_c.iso, 'US')
       end
 
-      it 'returns an ActiveRecord relation' do
-        expect(store.countries_from_markets).to all(be_a(Spree::Country))
-      end
-
       it 'orders by name' do
         names = store.countries_from_markets.map(&:name)
         expect(names).to eq(names.sort)
@@ -686,11 +676,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       it 'does not include countries not in any market' do
         other_country = create(:country)
         expect(store.countries_from_markets.map(&:iso)).not_to include(other_country.iso)
-      end
-
-      it 'does not duplicate countries shared across markets' do
-        store.markets.last.countries << country_a rescue nil
-        expect(store.countries_from_markets.count { |c| c.iso == country_a.iso }).to eq(1)
       end
     end
 

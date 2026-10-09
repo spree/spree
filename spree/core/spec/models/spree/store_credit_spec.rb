@@ -384,7 +384,7 @@ describe Spree::StoreCredit, type: :model do
       end
 
       it 'does not update the store credit model' do
-        expect { subject }.not_to change { store_credit }
+        expect { subject }.not_to change { store_credit.reload.slice(:amount_used, :amount_authorized) }
       end
     end
 
@@ -402,7 +402,7 @@ describe Spree::StoreCredit, type: :model do
       end
 
       it 'does not update the store credit model' do
-        expect { subject }.not_to change { store_credit }
+        expect { subject }.not_to change { store_credit.reload.slice(:amount_used, :amount_authorized) }
       end
     end
 
