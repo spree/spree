@@ -7,13 +7,13 @@ module Spree
         # Serializes Spree::PromotionAction (and its STI subclasses) for the
         # admin promotion editor. The shape is intentionally generic so a
         # single component can render any subclass — `preferences` is the
-        # current value hash, `preference_schema` describes its fields.
+        # current value hash, described by the `schema` its type's entry in
+        # `/promotion_actions/types` carries.
         class PromotionActionSerializer < BaseSerializer
           typelize type: [:string, comment: 'Action type. Built-in: create_adjustment, create_item_adjustments, create_line_items, free_shipping. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
-                   calculator: "{ type: string; preferences: Record<string, unknown>; preference_schema: Array<{ key: string; type: string; default: unknown }> } | null",
+                   calculator: '{ type: string; preferences: Record<string, unknown> } | null',
                    line_items: 'Array<{ variant_id: string; quantity: number }> | null'
 
           attributes created_at: :iso8601, updated_at: :iso8601
@@ -25,7 +25,6 @@ module Spree
           prefixed_id_attributes :promotion
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
 
           # Calculator is exposed as a nested object so the SPA can render
           # the calculator picker + its own preference fields. Null for
@@ -38,8 +37,7 @@ module Spree
             calc = action.calculator
             {
               type: calc.class.api_type,
-              preferences: calc.serialized_preferences,
-              preference_schema: calc.serialized_preference_schema
+              preferences: calc.serialized_preferences
             }
           end
 

@@ -101,13 +101,13 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       post :create,
            params: {
              type: 'products',
-             preferred_delimiter: ';',
+             delimiter: ';',
              attachment: csv_signed_id("slug;sku;name;price\nwidget;W-1;Widget;10.00\n")
            },
            as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['preferred_delimiter']).to eq(';')
+      expect(json_response['delimiter']).to eq(';')
       expect(json_response['csv_headers']).to eq(%w[slug sku name price])
     end
 

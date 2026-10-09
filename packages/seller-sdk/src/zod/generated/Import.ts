@@ -16,7 +16,7 @@ export const ImportSchema = z.object({
   owner_id: z.string().nullable(),
   user_id: z.string().nullable(),
   processing_errors: z.string().nullable(),
-  preferred_delimiter: z.string(),
+  delimiter: z.string(),
   original_filename: z.string().nullable(),
   original_byte_size: z.number().nullable(),
   original_file_url: z.string().nullable(),

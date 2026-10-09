@@ -75,8 +75,7 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryMethodsController, type: :control
       {
         name: 'Next day',
         delivery_profile_id: profile.prefixed_id,
-        calculator_type: 'flat_rate',
-        calculator_preferences: { amount: '9.99', currency: 'USD' }
+        calculator: { type: 'flat_rate', preferences: { amount: '9.99', currency: 'USD' } }
       }
     end
 
@@ -111,17 +110,17 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryMethodsController, type: :control
     # carrying preferences without naming a calculator used to drop them and
     # save a free rate over the amount the seller typed.
     it 'keeps the amount when no calculator is named' do
-      post :create, params: valid_params.except(:calculator_type), as: :json
+      post :create, params: valid_params.merge(calculator: { preferences: { amount: '9.99', currency: 'USD' } }), as: :json
 
       expect(response).to have_http_status(:created)
       expect(Spree::DeliveryMethod.find_by(name: 'Next day').calculator.preferred_amount).to eq(9.99)
     end
 
     it 'refuses a calculator this store does not offer' do
-      post :create, params: valid_params.merge(calculator_type: 'NoSuchCalculator'), as: :json
+      post :create, params: valid_params.merge(calculator: { type: 'NoSuchCalculator' }), as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['details']).to have_key('calculator_type')
+      expect(json_response['error']['details']).to have_key('calculator')
     end
 
     it 'refuses to share the seller’s own method with the marketplace' do
@@ -141,7 +140,7 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryMethodsController, type: :control
 
     it 'accepts an eligibility rule the seller may set' do
       post :create, params: valid_params.merge(
-        rules: [{ type: 'item_total_rule', preferences: { amount_min: '50', currency: 'USD' } }]
+        rules: [{ type: 'item_total_rule', preferences: { minimum_amount: '50' } }]
       ), as: :json
 
       expect(response).to have_http_status(:created)

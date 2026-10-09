@@ -82,7 +82,7 @@ test.describe('settings / channels', () => {
 
     // Pick the routing strategy by its human label — the dropdown must surface
     // readable option labels, never the raw strategy class name.
-    await page.locator('#preferred_order_routing_strategy').click()
+    await page.locator('#order_routing_strategy').click()
     await page.getByRole('option', { name: /^rules \(ordered\)$/i }).click()
 
     await page.getByRole('button', { name: /^save$/i }).click()
@@ -92,9 +92,7 @@ test.describe('settings / channels', () => {
     // Reopening reads the saved strategy back into the same readable option.
     await rowButton(page, updated).click()
     await expect(page.getByRole('heading', { name: updated })).toBeVisible({ timeout: 15_000 })
-    await expect(page.locator('#preferred_order_routing_strategy')).toContainText(
-      /^rules \(ordered\)$/i,
-    )
+    await expect(page.locator('#order_routing_strategy')).toContainText(/^rules \(ordered\)$/i)
   })
 
   test('names the default catalog picker for assistive technology', async ({ page }) => {
@@ -137,7 +135,7 @@ test.describe('settings / channels', () => {
     // Wait for the select popup to fully close after the pick so a lingering
     // overlay can't intercept the next click. (No Escape here — the popup
     // closes on selection, and a stray Escape would close the sheet instead.)
-    await page.locator('#preferred_order_routing_strategy').click()
+    await page.locator('#order_routing_strategy').click()
     await page.getByRole('option', { name: /^rules \(ordered\)$/i }).click()
     await expect(page.getByRole('listbox')).toBeHidden()
     await expect(ruleRow(/preferred location/i)).toBeVisible()

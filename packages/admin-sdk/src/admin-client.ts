@@ -4,6 +4,7 @@ import type {
   LoginCredentials,
   PaginatedResponse,
   PaginationMeta,
+  PreferenceSchema,
   ProviderLogin,
   RequestFn,
   RequestOptions,
@@ -318,7 +319,6 @@ import type {
   PaymentMethodUpdateParams,
   PolicyCreateParams,
   PolicyUpdateParams,
-  PreferenceField,
   PriceBulkUpsertRow,
   PriceCreateParams,
   PriceListCreateParams,
@@ -2363,11 +2363,11 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/delivery_methods/${id}`, options),
 
-    /** Registered delivery calculator classes with preference schemas. */
+    /** Registered delivery calculator classes, each with the JSON Schema of its preferences. */
     calculators: (
       options?: RequestOptions,
-    ): Promise<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }> =>
-      this.request<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }>(
+    ): Promise<{ data: Array<{ type: string; name: string; schema: PreferenceSchema }> }> =>
+      this.request<{ data: Array<{ type: string; name: string; schema: PreferenceSchema }> }>(
         'GET',
         '/delivery_methods/calculators',
         options,
@@ -2454,7 +2454,7 @@ export class AdminClient {
         type: string
         name: string
         description: string
-        preference_schema: PreferenceField[]
+        schema: PreferenceSchema
         /** Association-backed config the rule accepts, e.g. `['product_ids']`. */
         association_fields: string[]
       }>
@@ -2464,7 +2464,7 @@ export class AdminClient {
           type: string
           name: string
           description: string
-          preference_schema: PreferenceField[]
+          schema: PreferenceSchema
           association_fields: string[]
         }>
       }>('GET', '/delivery_method_rules/types', options),
@@ -2775,7 +2775,7 @@ export class AdminClient {
       this.request<PriceList>('PATCH', `/price_lists/${id}/deactivate`, options),
 
     /**
-     * Returns `[{ type, label, description, preference_schema }]` for
+     * Returns `[{ type, label, description, schema }]` for
      * every registered subclass in `Spree.pricing.rules`. Used to build
      * the "Add rule" picker + render a generic preferences form per
      * subclass. Rules themselves are not a separate REST resource —

@@ -39,6 +39,64 @@ end
 
 Any model inheriting from `Spree.base_class` can declare preferences — the reader and writer methods come with it, so there is nothing to include. The values live in that model's `preferences` column.
 
+### Declaring the full type
+
+A declaration is also the preference's contract in the API: Spree turns it into a JSON Schema that the API publishes, the SDKs type and every write is checked against. So a declaration states everything a client needs to know about the value:
+
+```ruby server/app/models/my_app/promotion/rules/loyalty_tier.rb
+module MyApp
+  module Promotion
+    module Rules
+      class LoyaltyTier < Spree::PromotionRule
+        preference :minimum_spend, :decimal, money: true, default: 0
+        preference :tier,          :string, choices: %w[silver gold platinum], default: 'silver'
+        preference :channel_ids,   :array, of: :id, model: 'Spree::Channel', default: [],
+                                   scope: ->(rule) { rule.promotion.store.channels }
+        preference :country_codes, :array, of: :string, format: :iso_country, default: []
+        preference :bonus_amounts, :hash, keys: :currency, values: :money, default: {}
+      end
+    end
+  end
+end
+```
+
+| Option | Applies to | What it says |
+|---|---|---|
+| `of:` | `:array` | The type of each item: `:string`, `:integer`, `:decimal`, `:money`, `:boolean`, `:id` or `:object` |
+| `properties:` | `of: :object` | The fields of each item, e.g. `{ threshold: :money, value: :decimal }` |
+| `keys:` / `values:` | `:hash` | The type of the keys (`:string` or `:currency`) and of the values |
+| `model:` / `scope:` | `of: :id` | The records the ids point at, and the records they must be found in. The API accepts and returns their prefixed ids (`ch_…`); an id of another model, or one outside the scope, is refused |
+| `money:` | `:decimal` | The value is an amount of money |
+| `format:` | `:string`, list items | `:currency`, `:iso_country`, `:timezone`, `:locale`, `:url` or `:color` |
+| `choices:` | any | The fixed set the value must come from; admin forms show a picker |
+
+Decimals and amounts travel as exact strings (`"9.99"`), never as numbers. An `:array` without `of:`, a `:hash` without `keys:` and `values:`, or the `:any` type still works in Spree 6.0, with a deprecation warning and a schema that accepts any value. Spree 6.1 refuses them.
+
+### Preferences in the API
+
+Configurable types — promotion rules and actions, calculators, payment methods, integrations, and price, delivery, commission and order routing rules — send their settings as a `preferences` object next to their `type`. Each family's `/types` endpoint returns the JSON Schema of every registered type's preferences, extensions included, so a client can render a form for a type it has never seen:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data } = await adminClient.promotionRules.types()
+const itemTotal = data.find((entry) => entry.type === 'item_total')
+itemTotal.schema.properties.amount_min // { type: 'string', format: 'money', default: '100.0', … }
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/promotion_rules/types' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
+The SDKs also type the settings of every type Spree ships. `TypedPromotionRule` narrows `preferences` by `type`, and an extension adds its own types to `PromotionRulePreferencesMap` by declaration merging.
+
+A write is checked against the schema before anything is saved. An unknown key, a value of the wrong type, a value outside `choices`, or an id of the wrong model or another store is refused with a `422` whose `code` is `invalid_preferences`; `details` names each failing value by its JSON pointer, such as `/preferences/channel_ids/1`. A secret reads back masked; sending the masked value back keeps the stored secret, and `null` clears it.
+
+Settings of a single resource, such as the store's, are read and written under their plain names (`guest_checkout`, `timezone`), never the `preferred_` methods. A model gives a preference that name with `exposes_preferences :guest_checkout, :timezone`; the API controller still lists what it accepts.
+
 ## Accessing Model Preferences
 
 Once preferences have been defined for a model, they can be accessed either using the shortcut methods that are generated for each preference or the generic methods that are not specific to a particular preference.
@@ -148,4 +206,3 @@ Around fifty models use preferences, and the pattern is always the same: a famil
 | `Spree::Store`, `Spree::Channel` and `Spree::Market` | Merchant settings — timezone, units, currency behaviour |
 
 This is why preferences exist rather than columns: `Spree::Calculator::FlatRate` and `Spree::Calculator::TieredPercent` are rows in one table with entirely different settings, and neither wants a column the other leaves null.
-* `Spree::Theme`

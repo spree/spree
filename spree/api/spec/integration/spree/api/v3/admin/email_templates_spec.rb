@@ -309,7 +309,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
           email_key: { type: :string, example: 'spree.order_mailer.confirm_email', description: 'For the layout or a partial, the email to show it in' },
           branding: {
             type: :object,
-            description: "Unsaved colors and font to preview, named like the store's `preferred_email_*` settings without the prefix",
+            description: "Unsaved colors and font to preview, named like the store's `email_*` settings",
             properties: {
               accent_color: { type: :string, example: '#FF5500' },
               background_color: { type: :string },

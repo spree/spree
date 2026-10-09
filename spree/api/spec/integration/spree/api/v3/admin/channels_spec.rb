@@ -57,11 +57,11 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
           code: { type: :string, example: 'pos', description: 'Slug — auto-derived from `name` when blank.' },
           active: { type: :boolean, default: true },
           default: { type: :boolean, default: false },
-          preferred_order_routing_strategy: { type: :string, nullable: true,
+          order_routing_strategy: { type: :string, nullable: true,
                                               description: 'Routing strategy shorthand (built-in: `rules`). `null` inherits the store setting.' },
-          preferred_storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
+          storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
                                          description: 'Anonymous-visitor access posture. `null` inherits the store setting.' },
-          preferred_guest_checkout: { type: :boolean, nullable: true,
+          guest_checkout: { type: :boolean, nullable: true,
                                       description: 'Whether guests can check out without an account. `null` inherits the store setting.' }
         }
       }
@@ -119,11 +119,11 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
           code: { type: :string },
           active: { type: :boolean },
           default: { type: :boolean },
-          preferred_order_routing_strategy: { type: :string, nullable: true,
+          order_routing_strategy: { type: :string, nullable: true,
                                               description: 'Routing strategy shorthand (built-in: `rules`). `null` inherits the store setting.' },
-          preferred_storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
+          storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
                                          description: 'Anonymous-visitor access posture. `null` inherits the store setting.' },
-          preferred_guest_checkout: { type: :boolean, nullable: true,
+          guest_checkout: { type: :boolean, nullable: true,
                                       description: 'Whether guests can check out without an account. `null` inherits the store setting.' }
         }
       }
@@ -132,7 +132,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { channel.prefixed_id }
         let(:body) do
-          { name: 'Wholesale (Updated)', preferred_storefront_access: 'login_required', preferred_guest_checkout: false }
+          { name: 'Wholesale (Updated)', storefront_access: 'login_required', guest_checkout: false }
         end
 
         run_test! do |response|

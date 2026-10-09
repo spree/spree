@@ -417,7 +417,7 @@ export interface PanelImport {
   completed_rows_count: number
   failed_rows_count: number
   processing_errors?: string | null
-  preferred_delimiter?: string
+  delimiter?: string
   schema_fields: Array<{ name: string; label: string; required: boolean }>
   csv_headers: string[]
   sample_row: Record<string, string | null>
@@ -458,7 +458,7 @@ export interface PanelImportCreateParams {
   /** Signed blob id of the already direct-uploaded CSV. */
   attachment: string
   /** CSV column separator — the four both APIs accept. */
-  preferred_delimiter?: PanelImportDelimiter
+  delimiter?: PanelImportDelimiter
   /** The price list a `price_list_prices` import merges into. */
   price_list_id?: string
   results_url?: string

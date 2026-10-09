@@ -360,7 +360,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.map { |type| type['type'] }).to contain_exactly('tag', 'sale', 'available_on')
-          expect(data.first).to include('label', 'description', 'preference_schema')
+          expect(data.first).to include('label', 'description', 'schema')
         end
       end
     end

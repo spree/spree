@@ -312,14 +312,14 @@ Price history tracking is enabled by default. To disable it (e.g., for non-EU st
 <CodeGroup>
 
 ```typescript Admin SDK
-await client.store.update({ preferred_track_price_history: false })
+await client.store.update({ track_price_history: false })
 ```
 
 ```bash cURL
 curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "preferred_track_price_history": false }'
+  -d '{ "track_price_history": false }'
 ```
 
 </CodeGroup>

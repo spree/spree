@@ -6,7 +6,7 @@ import type {
   CustomerGroup,
   Market,
   OptionValue,
-  PreferenceField,
+  PreferenceSchema,
   Product,
   PromotionAction,
   PromotionActionCalculatorParams,
@@ -18,16 +18,15 @@ import type {
 import { defaultPreferences } from '@spree/dashboard-core'
 
 /**
- * Form-state row for a promotion rule. Carries everything the editor
- * needs to render (`key`, `preference_schema`) plus the payload fields
- * the SDK ships on save (extends `PromotionRuleDraft`). The rule's name
- * is resolved from `type` at render time, so no copy is stored here.
+ * Form-state row for a promotion rule: the payload fields the SDK ships on
+ * save (extends `PromotionRuleDraft`) plus display-only embeds. The rule's
+ * name and preference schema are resolved from `type` at render time, so no
+ * copy is stored here.
  *
  * Drafts seeded from existing rules carry the server's `id`; drafts
  * created via the picker have no id until the parent form saves.
  */
 export interface PromotionRuleFormDraft extends PromotionRuleDraft {
-  preference_schema: PreferenceField[]
   /** Client-side row id, used for React keys when the row has no server id yet. */
   _localId: string
   /**
@@ -49,19 +48,16 @@ export interface PromotionRuleFormDraft extends PromotionRuleDraft {
 
 /** Mirrors `PromotionRuleFormDraft` for actions. */
 export interface PromotionActionFormDraft extends Omit<PromotionActionDraft, 'calculator'> {
-  preference_schema: PreferenceField[]
   _localId: string
   /**
    * Form-only calculator shape — extends the API's `{ type, preferences }`
-   * payload with `preference_schema` so the action-row summary can render
-   * the calculator preview without round-tripping. Stripped at payload
-   * time by `actionDraftToPayload`.
+   * payload with the catalog's display name. Stripped at payload time by
+   * `actionDraftToPayload`.
    */
   calculator?: PromotionActionCalculatorFormDraft
 }
 
 export interface PromotionActionCalculatorFormDraft extends PromotionActionCalculatorParams {
-  preference_schema?: PreferenceField[]
   /**
    * The catalog's English name, carried only as the fallback for a
    * calculator this dashboard has no translation for. Display resolves from
@@ -145,32 +141,24 @@ export function newLocalId(): string {
  * `:currency`-typed prefs). Schema defaults still take precedence.
  */
 export function ruleDraftFromType(
-  type: {
-    type: string
-    preference_schema: PreferenceField[]
-  },
+  type: { type: string; schema: PreferenceSchema },
   contextDefaults: Record<string, unknown> = {},
 ): PromotionRuleFormDraft {
   return {
     _localId: newLocalId(),
     type: type.type,
-    preference_schema: type.preference_schema,
-    preferences: defaultPreferences(type.preference_schema, contextDefaults),
+    preferences: defaultPreferences(type.schema, contextDefaults),
   }
 }
 
 export function actionDraftFromType(
-  type: {
-    type: string
-    preference_schema: PreferenceField[]
-  },
+  type: { type: string; schema: PreferenceSchema },
   contextDefaults: Record<string, unknown> = {},
 ): PromotionActionFormDraft {
   return {
     _localId: newLocalId(),
     type: type.type,
-    preference_schema: type.preference_schema,
-    preferences: defaultPreferences(type.preference_schema, contextDefaults),
+    preferences: defaultPreferences(type.schema, contextDefaults),
   }
 }
 
@@ -180,7 +168,6 @@ export function ruleDraftFromRule(rule: PromotionRule): PromotionRuleFormDraft {
     _localId: rule.id,
     id: rule.id,
     type: rule.type,
-    preference_schema: rule.preference_schema,
     preferences: rule.preferences,
     product_ids: rule.product_ids ?? undefined,
     category_ids: rule.category_ids ?? undefined,
@@ -201,7 +188,6 @@ export function actionDraftFromAction(action: PromotionAction): PromotionActionF
     _localId: action.id,
     id: action.id,
     type: action.type,
-    preference_schema: action.preference_schema,
     preferences: action.preferences,
     calculator: calculatorFromAction(action.calculator),
     line_items: action.line_items ?? undefined,
@@ -215,7 +201,6 @@ function calculatorFromAction(
   return {
     type: c.type,
     preferences: c.preferences,
-    preference_schema: c.preference_schema,
   }
 }
 
@@ -223,22 +208,21 @@ function calculatorFromAction(
 export function ruleDraftToPayload(draft: PromotionRuleFormDraft): PromotionRuleDraft {
   const {
     _localId: _,
-    preference_schema: __,
-    products: ___,
-    categories: ____,
-    customers: _____,
-    customer_groups: ______,
-    countries: _______,
-    channels: ________,
-    markets: _________,
-    option_values: __________,
+    products: __,
+    categories: ___,
+    customers: ____,
+    customer_groups: _____,
+    countries: ______,
+    channels: _______,
+    markets: ________,
+    option_values: _________,
     ...rest
   } = draft
   return rest
 }
 
 export function actionDraftToPayload(draft: PromotionActionFormDraft): PromotionActionDraft {
-  const { _localId: _, preference_schema: __, calculator, ...rest } = draft
+  const { _localId: _, calculator, ...rest } = draft
   return {
     ...rest,
     calculator: calculator

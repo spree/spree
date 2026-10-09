@@ -123,7 +123,11 @@ describe('paymentMethods', () => {
                 type: 'bogus',
                 label: 'Bogus Gateway',
                 description: 'Test gateway for development',
-                preference_schema: [{ key: 'server', type: 'string', default: 'test' }],
+                schema: {
+                  type: 'object',
+                  properties: { server: { type: 'string', default: 'test' } },
+                  additionalProperties: false,
+                },
               },
             ],
           })

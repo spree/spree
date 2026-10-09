@@ -2017,22 +2017,22 @@
           "invalid": "只能使用大写字母、数字、连字符和 #。",
           "label": "后缀"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "后台语言",
           "placeholder": "使用默认语言"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "关闭后，将不会发送订单确认、发货或退款邮件。",
           "label": "向客户发送交易类邮件"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "时区",
           "placeholder": "选择时区"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "单位制"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "重量单位"
         },
         "show_products_without_price": {
@@ -2110,14 +2110,14 @@
         "digital_asset_authorized_days": {
           "label": "可用天数"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "高",
           "help": "常用的发货纸箱尺寸,承运商费率提供方据此计算体积重量——英制为英寸,公制为厘米。三项都填写后才生效。",
           "label": "默认包裹尺寸",
           "length": "长",
           "width": "宽"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。",
           "label": "默认包裹重量"
         },
@@ -2138,22 +2138,22 @@
           "help": "当佣金费率和税务服务商都未给出税率时，按此税率对佣金计税。若佣金不计税，保持为 0。",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "强调色"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "背景色"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "卡片颜色"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "文字颜色"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "标题颜色"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "字体",
           "help": "无法加载该字体的邮件应用会使用相近的字体。"
         }

@@ -22,8 +22,7 @@ module Spree
                    editable: :boolean,
                    delivery_profile_id: [:string, nullable: true],
                    delivery_zone_id: [:string, nullable: true],
-                   calculator_type: [:string, nullable: true],
-                   calculator_preferences: ['Record<string, unknown>', nullable: true]
+                   calculator: '{ type: string; preferences: Record<string, unknown> } | null'
 
           attributes :admin_name, :storefront_visible, :tracking_url,
                      created_at: :iso8601, updated_at: :iso8601
@@ -39,12 +38,9 @@ module Spree
 
           prefixed_id_attributes :delivery_profile, :delivery_zone
 
-          attribute :calculator_type do |record|
-            record.calculator&.class&.api_type
-          end
-
-          attribute :calculator_preferences do |record|
-            record.calculator.respond_to?(:serialized_preferences) ? record.calculator.serialized_preferences : record.calculator&.preferences
+          attribute :calculator do |record|
+            calculator = record.calculator
+            { type: calculator.class.api_type, preferences: calculator.serialized_preferences } if calculator
           end
         end
       end

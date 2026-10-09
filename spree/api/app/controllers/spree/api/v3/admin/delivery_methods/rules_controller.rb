@@ -86,11 +86,7 @@ module Spree
             end
 
             def assign_rule_preferences(rule)
-              (permitted_params[:preferences] || {}).each do |key, value|
-                next unless rule.has_preference?(key)
-
-                rule.set_preference(key, value)
-              end
+              rule.assign_preferences(permitted_params[:preferences]) if permitted_params[:preferences]
             end
 
             # Association-backed rule config (ExcludedProductsRule). Products are

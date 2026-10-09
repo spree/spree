@@ -37,7 +37,7 @@ import {
   useRowClickBridge,
 } from '@spree/dashboard-ui'
 import { PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
-import type { DeliveryMethod, DeliveryPreferenceField } from '@spree/seller-sdk'
+import type { DeliveryMethod, PreferenceSchema } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
@@ -166,8 +166,7 @@ interface DeliveryMethodFormValues {
   storefront_visible: boolean
   delivery_profile_id: string
   delivery_zone_id: string
-  calculator_type: string
-  calculator_preferences: Record<string, unknown>
+  calculator: { type: string; preferences: Record<string, unknown> }
   rules: RuleDraft[]
 }
 
@@ -177,8 +176,7 @@ const DEFAULTS: DeliveryMethodFormValues = {
   storefront_visible: true,
   delivery_profile_id: '',
   delivery_zone_id: '',
-  calculator_type: '',
-  calculator_preferences: {},
+  calculator: { type: '', preferences: {} },
   rules: [],
 }
 
@@ -231,7 +229,7 @@ function DeliveryMethodSheet({
 
   const form = useForm<DeliveryMethodFormValues>({ defaultValues: DEFAULTS })
   const profileId = form.watch('delivery_profile_id')
-  const calculatorType = form.watch('calculator_type')
+  const calculatorType = form.watch('calculator.type')
   const rules = form.watch('rules')
 
   // A zone only means something under its profile, so the picker follows
@@ -252,8 +250,10 @@ function DeliveryMethodSheet({
       storefront_visible: method.storefront_visible,
       delivery_profile_id: method.delivery_profile_id ?? '',
       delivery_zone_id: method.delivery_zone_id ?? '',
-      calculator_type: method.calculator_type ?? '',
-      calculator_preferences: method.calculator_preferences ?? {},
+      calculator: {
+        type: method.calculator?.type ?? '',
+        preferences: method.calculator?.preferences ?? {},
+      },
       rules: (method.rules ?? []).map((rule) => ({
         id: rule.id,
         type: rule.type,
@@ -274,19 +274,18 @@ function DeliveryMethodSheet({
   // the picker blank would show an empty Pricing box while the server
   // quietly created the method free.
   useEffect(() => {
-    if (methodId || form.getValues('calculator_type')) return
+    if (methodId || form.getValues('calculator.type')) return
     const flatRate = calculators?.data.find((calculator) => calculator.type === 'flat_rate')
     if (!flatRate) return
 
-    form.setValue('calculator_type', flatRate.type)
-    form.setValue(
-      'calculator_preferences',
-      defaultPreferences(renderableSchema(flatRate.preference_schema)),
-    )
+    form.setValue('calculator', {
+      type: flatRate.type,
+      preferences: defaultPreferences(renderableSchema(flatRate.schema)),
+    })
   }, [calculators, methodId, form])
 
   const calculatorSchema = renderableSchema(
-    calculators?.data.find((calculator) => calculator.type === calculatorType)?.preference_schema,
+    calculators?.data.find((calculator) => calculator.type === calculatorType)?.schema,
   )
 
   const save = useMutation({
@@ -297,8 +296,10 @@ function DeliveryMethodSheet({
         storefront_visible: values.storefront_visible,
         delivery_profile_id: values.delivery_profile_id || undefined,
         delivery_zone_id: values.delivery_zone_id || null,
-        ...(values.calculator_type ? { calculator_type: values.calculator_type } : {}),
-        calculator_preferences: values.calculator_preferences,
+        calculator: {
+          ...(values.calculator.type ? { type: values.calculator.type } : {}),
+          preferences: values.calculator.preferences,
+        },
         // The array replaces the whole set: a rule dropped here is deleted,
         // which is why every surviving row is re-sent with its id.
         rules: values.rules.map((rule) => ({
@@ -329,9 +330,7 @@ function DeliveryMethodSheet({
   const { errors } = form.formState
 
   function addRule(type: string) {
-    const schema = renderableSchema(
-      ruleTypes?.data.find((rule) => rule.type === type)?.preference_schema,
-    )
+    const schema = renderableSchema(ruleTypes?.data.find((rule) => rule.type === type)?.schema)
     form.setValue('rules', [...rules, { type, preferences: defaultPreferences(schema) }])
   }
 
@@ -482,7 +481,7 @@ function DeliveryMethodSheet({
                   </FieldLabel>
                   <Controller
                     control={form.control}
-                    name="calculator_type"
+                    name="calculator.type"
                     render={({ field }) => (
                       <Select
                         value={field.value}
@@ -490,9 +489,9 @@ function DeliveryMethodSheet({
                           field.onChange(next)
                           const schema = renderableSchema(
                             calculators?.data.find((calculator) => calculator.type === next)
-                              ?.preference_schema,
+                              ?.schema,
                           )
-                          form.setValue('calculator_preferences', defaultPreferences(schema))
+                          form.setValue('calculator.preferences', defaultPreferences(schema))
                         }}
                       >
                         <SelectTrigger id="delivery-method-calculator">
@@ -521,7 +520,7 @@ function DeliveryMethodSheet({
 
                 <Controller
                   control={form.control}
-                  name="calculator_preferences"
+                  name="calculator.preferences"
                   render={({ field }) => (
                     <PreferencesForm
                       schema={calculatorSchema}
@@ -582,7 +581,7 @@ function DeliveryMethodSheet({
                       </div>
 
                       <PreferencesForm
-                        schema={renderableSchema(definition?.preference_schema)}
+                        schema={renderableSchema(definition?.schema)}
                         currencyOptions={currencyOptions}
                         values={rule.preferences}
                         onChange={(next) =>
@@ -632,16 +631,19 @@ function DeliveryMethodSheet({
 }
 
 /**
- * The fields of a preference schema the shared form can render.
+ * The part of a preference schema the shared form can render.
  *
- * Drops `hash`-typed preferences — today the flat-rate calculator's
+ * Drops keyed maps — today the flat-rate calculator's
  * per-currency `amounts` map, which the operator edits through a dedicated
  * multi-currency control and the generic form would show as the hash itself
  * in a text box. A seller quotes in the store's currency, so `amount` and
  * `currency` are the whole question.
  */
-function renderableSchema(
-  schema: DeliveryPreferenceField[] | undefined,
-): DeliveryPreferenceField[] {
-  return (schema ?? []).filter((field) => field.type !== 'hash')
+function renderableSchema(schema: PreferenceSchema | undefined): PreferenceSchema | undefined {
+  if (!schema) return undefined
+
+  const properties = Object.entries(schema.properties).filter(
+    ([, property]) => typeof property.additionalProperties !== 'object',
+  )
+  return { ...schema, properties: Object.fromEntries(properties) }
 }

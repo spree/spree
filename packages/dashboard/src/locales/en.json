@@ -2022,22 +2022,22 @@
           "invalid": "Use only uppercase letters, digits, dashes and #.",
           "label": "Suffix"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Admin language",
           "placeholder": "Use the default language"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "When off, no order confirmation, shipping, or refund emails are sent.",
           "label": "Send transactional emails to customers"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Timezone",
           "placeholder": "Select a timezone"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "Unit system"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Weight unit"
         },
         "show_products_without_price": {
@@ -2115,14 +2115,14 @@
         "digital_asset_authorized_days": {
           "label": "Days available"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Height",
           "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect.",
           "label": "Default package dimensions",
           "length": "Length",
           "width": "Width"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable.",
           "label": "Default package weight"
         },
@@ -2143,22 +2143,22 @@
           "help": "Charged on your commission when neither the commission rate nor your tax provider gives a rate of its own. Leave at 0 if you charge no tax on your fee.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Accent color"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Background color"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Card color"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Text color"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Heading color"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Font",
           "help": "Email apps that can't load it fall back to a similar font."
         }

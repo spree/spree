@@ -29,6 +29,10 @@ module Spree
         # The typed webhook events in @spree/sdk, from the event catalog.
         require Spree::Api::Engine.root.join('lib/spree/api/webhook_event_types').to_s
         Spree::Api::WebhookEventTypes.new.write!(api_root.join('../..'))
+
+        # Each configurable family's preferences, typed by `type`, in the Admin and Seller SDKs.
+        require Spree::Api::Engine.root.join('lib/spree/api/preference_types').to_s
+        Spree::Api::PreferenceTypes.new.write!(api_root.join('../..'))
       end
     end
   end

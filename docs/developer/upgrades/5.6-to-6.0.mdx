@@ -526,7 +526,32 @@ If your storefront or webhook receiver reads any of these fields, compare agains
 | `payment_source_type` | Store API payment setup sessions, `payment_setup_session.*` webhooks | `Spree::CreditCard` | `credit_card` |
 | `type` | Custom fields on products, variants, categories and collections | `Spree::CustomFields::ShortText` | removed — read `field_type` (`short_text`) |
 
-The Admin API follows the same rule everywhere: providers and strategies (`fulfillment_provider: 'manual'`, `preferred_order_routing_strategy: 'rules'`), custom field definition `resource_type` (`product`, `category`), tag `taggable_type`, the owner and originator types on records, the permission subjects `/me` returns (`product`, `category`), and filters such as `q[type_eq]=orders`. An integration written against the Admin API preview sends and expects these short names; the [Admin SDK](/developer/sdk/admin/resources) types list them.
+The Admin API follows the same rule everywhere: providers and strategies (`fulfillment_provider: 'manual'`, `order_routing_strategy: 'rules'`), custom field definition `resource_type` (`product`, `category`), tag `taggable_type`, the owner and originator types on records, the permission subjects `/me` returns (`product`, `category`), and filters such as `q[type_eq]=orders`. An integration written against the Admin API preview sends and expects these short names; the [Admin SDK](/developer/sdk/admin/resources) types list them.
+
+## Preferences are typed in the API
+
+Settings no longer reach the Admin and Seller APIs in the shape of Ruby's preference methods. The Store API is not affected.
+
+**Settings use plain names.** Every `preferred_*` field is renamed, on read and on write:
+
+| Resource | Before | After |
+|---|---|---|
+| Store (`/admin/store`) | `preferred_timezone`, `preferred_guest_checkout`, `preferred_storefront_url`, … every `preferred_*` field | `timezone`, `guest_checkout`, `storefront_url`, … the same name without the prefix |
+| Channel | `preferred_storefront_access`, `preferred_guest_checkout`, `preferred_order_routing_strategy` | `storefront_access`, `guest_checkout`, `order_routing_strategy` |
+| Import (Admin and Seller) | `preferred_delimiter` | `delimiter` |
+| Seller profile | `preferred_timezone` | `timezone` |
+
+`order.preferred_stock_location_id` keeps its name: it is an association, not a setting. Validation errors name the field without the prefix too. `preferred_auto_capture` and `preferred_auto_capture_on_dispatch` are no longer accepted; send `capture_method`. The store's `default_minimum_payout_amount` and `default_commission_tax_rate` are now exact decimal strings (`"0.23"`) instead of numbers.
+
+**`preference_schema` is replaced by `schema`.** Rules, actions, payment methods and integrations no longer carry `preference_schema` on every row. Each family's `/types` endpoint (and the delivery-method and promotion-action calculator lists) returns a `schema` per type instead: the JSON Schema of its `preferences`, with `format`, `enum`, `default` and `x-spree-secret`. Read a row's type, then look up its schema there.
+
+**Writes are validated.** A `preferences` payload with an unknown key, a value of the wrong type, a value outside the declared choices, or an id of another model or another store is refused with a `422` whose `code` is `invalid_preferences`. `details` names each failing value by its JSON pointer (`/preferences/channel_ids/1`). Before, unknown keys were silently dropped. Send decimals as strings (`"10.0"`) and record ids as prefixed ids (`ch_…`).
+
+**Id lists read as prefixed ids.** Preferences listing records, such as a rule's `channel_ids` or `customer_group_ids`, now return prefixed ids rather than database ids, the same form a write accepts.
+
+**Delivery methods nest their calculator.** `calculator_type` and `calculator_preferences` are replaced by `calculator: { type, preferences }` on read and write, the shape promotion actions already use.
+
+**For extension authors:** declare every preference's full type (`of:` on arrays, `keys:` and `values:` on hashes, `money: true`, `choices:`, `format:`). An incomplete declaration still works in 6.0 with a deprecation warning, and its schema accepts any value. Replace `normalize_id_preference` with `preference :ids, :array, of: :id, model:, scope:`, and `in:` with `choices:`. See [Model preferences](/developer/customization/model-preferences#declaring-the-full-type).
 
 ## Every event is declared
 
@@ -602,7 +627,7 @@ Saving or touching a product used to bump the `updated_at` of each of its catego
 
 `Spree::OrderRouting::Strategy::Legacy` — the pre-5.5 escape hatch that delegated straight to `Spree::Stock::Coordinator` and consulted no routing rules — is removed and no longer registered in `Spree.order_routing.strategies`.
 
-A store or channel still carrying `preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Legacy'` **keeps working**: `Order#order_routing_strategy` ignores unregistered classes, logs a warning, and falls back to `Strategy::Rules`. Clear the stale preference to silence the warning — note that saving such a record now fails validation, since the value is no longer in the registry.
+A store or channel still carrying `order_routing_strategy: 'Spree::OrderRouting::Strategy::Legacy'` **keeps working**: `Order#order_routing_strategy` ignores unregistered classes, logs a warning, and falls back to `Strategy::Rules`. Clear the stale preference to silence the warning — note that saving such a record now fails validation, since the value is no longer in the registry.
 
 `Spree::Stock::Coordinator` itself stays — cart fulfillment building, exchanges, and claims still use it.
 
@@ -875,6 +900,9 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `Address#firstname`, `#lastname`, `#zipcode` | `#first_name`, `#last_name`, `#postal_code` (columns renamed) |
 | `Address.normalize_zipcode`, `#normalized_zipcode` | `.normalize_postal_code`, `#normalized_postal_code` |
 | `Order#bill_address_firstname`, `#bill_address_lastname` | `#bill_address_first_name`, `#bill_address_last_name` |
+| `preference … parse_on_set: normalize_id_preference(klass:, scope:)` | `preference …, :array, of: :id, model:, scope:` |
+| `preference …, in: [...]` | `preference …, choices: [...]` |
+| `:array` without `of:`, `:hash` without `keys:`/`values:`, the `:any` type | A complete declaration (see [Model preferences](/developer/customization/model-preferences#declaring-the-full-type)) |
 | `OptionType#presentation`, `OptionValue#presentation` | `#label` (column renamed, translations included). Reads and writes on an instance only — `where(presentation:)` and `find_by(presentation:)` raise, because Mobility owns `label` so the bridge cannot be an attribute alias. Query by `label`. |
 | `OptionValue#option_type_presentation` | `#option_type_label` |
 | `q[presentation_cont]` (option type / value filters) | `q[label_cont]` — the Ransack whitelist publishes the column, so the filter key moves with it |

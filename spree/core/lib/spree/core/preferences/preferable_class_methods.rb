@@ -90,10 +90,14 @@ module Spree::Preferences
       check_preference_declaration(name, type, options)
 
       default = options[:default]
-      default = -> { options[:default] } unless default.is_a?(Proc)
+      dynamic_default = default.is_a?(Proc)
+      default = -> { options[:default] } unless dynamic_default
       own_preference_definitions[name] = {
         type: type,
         default: default,
+        # Computed when read (the default store's currency, say), so it
+        # differs between stores and is not part of the preference's schema.
+        dynamic_default: dynamic_default,
         deprecated: options[:deprecated],
         # Whether the system writes the value rather than the operator — a
         # value a provider hands back, kept out of every admin form.
@@ -146,7 +150,18 @@ module Spree::Preferences
 
         define_method(name) { public_send(:"preferred_#{name}") }
         define_method(:"#{name}=") { |value| public_send(:"preferred_#{name}=", value) }
+        own_exposed_preference_names << name
       end
+    end
+
+    # Whether the preference is read and written under its plain name, so an
+    # error on `preferred_<name>` can be reported as `<name>`.
+    #
+    # @param name [Symbol, String]
+    # @return [Boolean]
+    def exposed_preference?(name)
+      own_exposed_preference_names.include?(name.to_sym) ||
+        (superclass.respond_to?(:exposed_preference?) && superclass.exposed_preference?(name))
     end
 
     private
@@ -182,6 +197,10 @@ module Spree::Preferences
         "#{self.name} preference `#{name}` (#{type}) needs #{missing}; until it has one, its schema accepts any value. " \
         'Spree 6.1 will raise for an incomplete declaration.'
       )
+    end
+
+    def own_exposed_preference_names
+      @own_exposed_preference_names ||= Set.new
     end
 
     def own_preference_definitions

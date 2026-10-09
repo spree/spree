@@ -52,16 +52,16 @@ Three store preferences decide how sellers get paid. All three are writable thro
 
 | Preference | Default | What it decides |
 |---|---|---|
-| `preferred_payout_provider` | blank | Who moves the money. Blank means core's record-only provider: the ledger is kept correctly and the operator settles by hand. |
-| `preferred_default_payouts_schedule_interval` | `monthly` | How often sellers are settled. One of `daily`, `weekly`, `biweekly`, `monthly`, `manual`. A seller can carry its own interval, which wins. |
-| `preferred_default_minimum_payout_amount` | `0` | What a seller's balance must reach before a settlement is worth sending. Below it the balance carries to the next period. |
+| `payout_provider` | blank | Who moves the money. Blank means core's record-only provider: the ledger is kept correctly and the operator settles by hand. |
+| `default_payouts_schedule_interval` | `monthly` | How often sellers are settled. One of `daily`, `weekly`, `biweekly`, `monthly`, `manual`. A seller can carry its own interval, which wins. |
+| `default_minimum_payout_amount` | `0` | What a seller's balance must reach before a settlement is worth sending. Below it the balance carries to the next period. |
 
 <CodeGroup>
 
 ```typescript Admin SDK
 await adminClient.store.update({
-  preferred_default_payouts_schedule_interval: 'weekly',
-  preferred_default_minimum_payout_amount: 25,
+  default_payouts_schedule_interval: 'weekly',
+  default_minimum_payout_amount: '25.00',
 })
 ```
 
@@ -70,8 +70,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
-        "preferred_default_payouts_schedule_interval": "weekly",
-        "preferred_default_minimum_payout_amount": 25
+        "default_payouts_schedule_interval": "weekly",
+        "default_minimum_payout_amount": "25.00"
       }'
 ```
 
@@ -92,19 +92,19 @@ Admin API like the payout ones.
 
 | Preference | Default | What it decides |
 |---|---|---|
-| `preferred_auto_approve_sellers` | `false` | Admit a seller the moment they finish the checklist, with nobody looking at them. |
-| `preferred_auto_approve_seller_products` | `false` | Put a seller's product on sale the moment they submit it. |
-| `preferred_send_seller_transactional_emails` | `true` | Whether Spree emails sellers. Turn it off if you front seller communications yourself. |
-| `preferred_default_commission_tax_rate` | `0` | Tax on your commission when neither the rate nor the tax provider names one. |
+| `auto_approve_sellers` | `false` | Admit a seller the moment they finish the checklist, with nobody looking at them. |
+| `auto_approve_seller_products` | `false` | Put a seller's product on sale the moment they submit it. |
+| `send_seller_transactional_emails` | `true` | Whether Spree emails sellers. Turn it off if you front seller communications yourself. |
+| `default_commission_tax_rate` | `0` | Tax on your commission when neither the rate nor the tax provider names one. |
 
 <CodeGroup>
 
 ```typescript Admin SDK
 await adminClient.store.update({
-  preferred_auto_approve_sellers: false,
-  preferred_auto_approve_seller_products: false,
-  preferred_send_seller_transactional_emails: true,
-  preferred_default_commission_tax_rate: 0.23,
+  auto_approve_sellers: false,
+  auto_approve_seller_products: false,
+  send_seller_transactional_emails: true,
+  default_commission_tax_rate: '0.23',
 })
 ```
 
@@ -113,10 +113,10 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
-        "preferred_auto_approve_sellers": false,
-        "preferred_auto_approve_seller_products": false,
-        "preferred_send_seller_transactional_emails": true,
-        "preferred_default_commission_tax_rate": 0.23
+        "auto_approve_sellers": false,
+        "auto_approve_seller_products": false,
+        "send_seller_transactional_emails": true,
+        "default_commission_tax_rate": "0.23"
       }'
 ```
 
@@ -426,7 +426,7 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx/reject' \
 
 Filter the review queue with a Ransack query on status: `adminClient.products.list({ status_eq: 'proposed' })`.
 
-With `preferred_auto_approve_seller_products` on, submitting chains straight into approval. The submission row still gets written and carries an `auto_approved` marker, so a blank reviewer reads as "this store does not review listings" rather than as a lost name.
+With `auto_approve_seller_products` on, submitting chains straight into approval. The submission row still gets written and carries an `auto_approved` marker, so a blank reviewer reads as "this store does not review listings" rather than as a lost name.
 
 There is no bulk route onto `active` for sellers, and that is deliberate: reaching it is the operator's decision on one listing at a time.
 
@@ -495,7 +495,7 @@ curl 'https://api.mystore.com/api/v3/admin/commission_lines?q[seller_id_eq]=sel_
 
 There is no write path. Correcting a charge is a reversal, not an edit.
 
-In the EU the fee is a separate supply from the sale, so it is taxed separately — that is what `preferred_default_commission_tax_rate` from step 1 is for, and a rate or a tax provider can name its own.
+In the EU the fee is a separate supply from the sale, so it is taxed separately — that is what `default_commission_tax_rate` from step 1 is for, and a rate or a tax provider can name its own.
 
 **Read more:** [Commissions](/developer/core-concepts/commissions) covers the four rule types, gross-versus-net, how delivery is treated, currency floors and caps, and commission tax in full. [Commission rates](/user/sellers/commission-rates) is the operator's screen.
 
@@ -620,7 +620,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/payouts' \
 
 ### Payout providers
 
-A provider is a stateless class registered in `Spree.payout_providers` and chosen per store with `preferred_payout_provider`.
+A provider is a stateless class registered in `Spree.payout_providers` and chosen per store with `payout_provider`.
 
 | Provider | Moves money? | Completion |
 |---|---|---|

@@ -101,45 +101,41 @@ const TIMEZONES: string[] = (() => {
 function storeToFormValues(store: Store): StoreSettingsFormValues {
   return {
     name: store.name,
-    preferred_admin_locale: store.preferred_admin_locale ?? '',
-    preferred_timezone: store.preferred_timezone,
-    preferred_unit_system: (store.preferred_unit_system as 'metric' | 'imperial') ?? 'metric',
-    preferred_weight_unit: store.preferred_weight_unit,
-    preferred_storefront_access:
-      (store.preferred_storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
-    preferred_guest_checkout: store.preferred_guest_checkout ?? true,
-    preferred_always_include_confirm_step: store.preferred_always_include_confirm_step ?? false,
-    preferred_company_field_enabled: store.preferred_company_field_enabled ?? false,
-    preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
-    preferred_capture_method:
-      (store.preferred_capture_method as (typeof CAPTURE_METHODS)[number]) ?? 'checkout',
-    preferred_pricing_provider: store.preferred_pricing_provider || INTERNAL_PROVIDER_KEY,
-    preferred_inventory_provider: store.preferred_inventory_provider || INTERNAL_PROVIDER_KEY,
-    preferred_pricing_provider_failure_policy:
-      (store.preferred_pricing_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
+    admin_locale: store.admin_locale ?? '',
+    timezone: store.timezone,
+    unit_system: (store.unit_system as 'metric' | 'imperial') ?? 'metric',
+    weight_unit: store.weight_unit,
+    storefront_access:
+      (store.storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
+    guest_checkout: store.guest_checkout ?? true,
+    always_include_confirm_step: store.always_include_confirm_step ?? false,
+    company_field_enabled: store.company_field_enabled ?? false,
+    address_requires_phone: store.address_requires_phone ?? false,
+    capture_method: (store.capture_method as (typeof CAPTURE_METHODS)[number]) ?? 'checkout',
+    pricing_provider: store.pricing_provider || INTERNAL_PROVIDER_KEY,
+    inventory_provider: store.inventory_provider || INTERNAL_PROVIDER_KEY,
+    pricing_provider_failure_policy:
+      (store.pricing_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
       'strict',
-    preferred_inventory_provider_failure_policy:
-      (store.preferred_inventory_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
+    inventory_provider_failure_policy:
+      (store.inventory_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
       'fallback',
-    preferred_tax_using_ship_address: store.preferred_tax_using_ship_address ?? true,
-    preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
-    preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
-    preferred_low_stock_threshold: store.preferred_low_stock_threshold ?? 5,
-    preferred_track_price_history: store.preferred_track_price_history ?? true,
-    preferred_show_products_without_price: store.preferred_show_products_without_price ?? false,
-    preferred_disable_sku_validation: store.preferred_disable_sku_validation ?? false,
-    preferred_document_number_format:
-      (store.preferred_document_number_format as (typeof DOCUMENT_NUMBER_FORMATS)[number]) ??
-      'sequential',
-    preferred_order_number_prefix: store.preferred_order_number_prefix ?? 'R',
-    preferred_order_number_suffix: store.preferred_order_number_suffix ?? '',
-    preferred_order_number_sequence_start: Number(
-      store.preferred_order_number_sequence_start ?? 1001,
-    ),
-    preferred_limit_digital_download_count: store.preferred_limit_digital_download_count ?? true,
-    preferred_digital_asset_authorized_clicks: store.preferred_digital_asset_authorized_clicks ?? 5,
-    preferred_limit_digital_download_days: store.preferred_limit_digital_download_days ?? true,
-    preferred_digital_asset_authorized_days: store.preferred_digital_asset_authorized_days ?? 7,
+    tax_using_ship_address: store.tax_using_ship_address ?? true,
+    track_inventory_levels: store.track_inventory_levels ?? true,
+    stock_reservations_enabled: store.stock_reservations_enabled ?? true,
+    low_stock_threshold: store.low_stock_threshold ?? 5,
+    track_price_history: store.track_price_history ?? true,
+    show_products_without_price: store.show_products_without_price ?? false,
+    disable_sku_validation: store.disable_sku_validation ?? false,
+    document_number_format:
+      (store.document_number_format as (typeof DOCUMENT_NUMBER_FORMATS)[number]) ?? 'sequential',
+    order_number_prefix: store.order_number_prefix ?? 'R',
+    order_number_suffix: store.order_number_suffix ?? '',
+    order_number_sequence_start: Number(store.order_number_sequence_start ?? 1001),
+    limit_digital_download_count: store.limit_digital_download_count ?? true,
+    digital_asset_authorized_clicks: store.digital_asset_authorized_clicks ?? 5,
+    limit_digital_download_days: store.limit_digital_download_days ?? true,
+    digital_asset_authorized_days: store.digital_asset_authorized_days ?? 7,
   }
 }
 
@@ -196,26 +192,25 @@ function StoreSettingsForm({ store }: { store: Store }) {
   const sequenceStarted = store.order_number_sequence_started ?? false
   // The failure-policy selects only render for a provider that can fail —
   // Spree's own records cannot, so 'internal' has no policy to choose.
-  const externalPricingSelected = form.watch('preferred_pricing_provider') !== INTERNAL_PROVIDER_KEY
-  const externalInventorySelected =
-    form.watch('preferred_inventory_provider') !== INTERNAL_PROVIDER_KEY
+  const externalPricingSelected = form.watch('pricing_provider') !== INTERNAL_PROVIDER_KEY
+  const externalInventorySelected = form.watch('inventory_provider') !== INTERNAL_PROVIDER_KEY
 
-  const numberFormat = form.watch('preferred_document_number_format')
-  const numberPrefix = form.watch('preferred_order_number_prefix')
-  const numberSuffix = form.watch('preferred_order_number_suffix')
-  const numberStart = form.watch('preferred_order_number_sequence_start')
+  const numberFormat = form.watch('document_number_format')
+  const numberPrefix = form.watch('order_number_prefix')
+  const numberSuffix = form.watch('order_number_suffix')
+  const numberStart = form.watch('order_number_sequence_start')
   const orderNumberPreview = `${numberPrefix ?? ''}${
     numberFormat === 'random' ? '482910375' : (numberStart ?? 1001)
   }${numberSuffix ?? ''}`
 
   // When unit_system flips, reset weight_unit to the first valid option for
   // that system so the form never holds an inconsistent pair.
-  const unitSystem = form.watch('preferred_unit_system')
+  const unitSystem = form.watch('unit_system')
   useEffect(() => {
     const validUnits = WEIGHT_UNITS[unitSystem] ?? []
-    const current = form.getValues('preferred_weight_unit')
+    const current = form.getValues('weight_unit')
     if (current && !validUnits.includes(current)) {
-      form.setValue('preferred_weight_unit', validUnits[0] ?? '', { shouldDirty: true })
+      form.setValue('weight_unit', validUnits[0] ?? '', { shouldDirty: true })
     }
   }, [unitSystem, form])
 
@@ -224,44 +219,43 @@ function StoreSettingsForm({ store }: { store: Store }) {
     // store's currently-persisted value, not RHF's `dirtyFields` (which a Base UI
     // Select via Controller doesn't reliably populate). Saving unrelated fields
     // (name, timezone, units) must not touch the admin's UI language.
-    const code = values.preferred_admin_locale
-    const localeChanged = (code ?? '') !== (store.preferred_admin_locale ?? '')
+    const code = values.admin_locale
+    const localeChanged = (code ?? '') !== (store.admin_locale ?? '')
     // Extension fields come from live form state — the Zod parse behind
     // `values` strips keys the first-party schema doesn't know.
     const extensionValues = extensionSubmitValues('store', form)
     try {
       await updateMutation.mutateAsync({
         name: values.name,
-        preferred_admin_locale: values.preferred_admin_locale || undefined,
-        preferred_timezone: values.preferred_timezone,
-        preferred_unit_system: values.preferred_unit_system,
-        preferred_weight_unit: values.preferred_weight_unit,
-        preferred_storefront_access: values.preferred_storefront_access,
-        preferred_guest_checkout: values.preferred_guest_checkout,
-        preferred_always_include_confirm_step: values.preferred_always_include_confirm_step,
-        preferred_company_field_enabled: values.preferred_company_field_enabled,
-        preferred_address_requires_phone: values.preferred_address_requires_phone,
-        preferred_capture_method: values.preferred_capture_method,
-        preferred_pricing_provider: values.preferred_pricing_provider,
-        preferred_inventory_provider: values.preferred_inventory_provider,
-        preferred_pricing_provider_failure_policy: values.preferred_pricing_provider_failure_policy,
-        preferred_inventory_provider_failure_policy:
-          values.preferred_inventory_provider_failure_policy,
-        preferred_tax_using_ship_address: values.preferred_tax_using_ship_address,
-        preferred_track_inventory_levels: values.preferred_track_inventory_levels,
-        preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
-        preferred_low_stock_threshold: values.preferred_low_stock_threshold,
-        preferred_track_price_history: values.preferred_track_price_history,
-        preferred_show_products_without_price: values.preferred_show_products_without_price,
-        preferred_disable_sku_validation: values.preferred_disable_sku_validation,
-        preferred_document_number_format: values.preferred_document_number_format,
-        preferred_order_number_prefix: values.preferred_order_number_prefix,
-        preferred_order_number_suffix: values.preferred_order_number_suffix,
-        preferred_order_number_sequence_start: values.preferred_order_number_sequence_start,
-        preferred_limit_digital_download_count: values.preferred_limit_digital_download_count,
-        preferred_digital_asset_authorized_clicks: values.preferred_digital_asset_authorized_clicks,
-        preferred_limit_digital_download_days: values.preferred_limit_digital_download_days,
-        preferred_digital_asset_authorized_days: values.preferred_digital_asset_authorized_days,
+        admin_locale: values.admin_locale || undefined,
+        timezone: values.timezone,
+        unit_system: values.unit_system,
+        weight_unit: values.weight_unit,
+        storefront_access: values.storefront_access,
+        guest_checkout: values.guest_checkout,
+        always_include_confirm_step: values.always_include_confirm_step,
+        company_field_enabled: values.company_field_enabled,
+        address_requires_phone: values.address_requires_phone,
+        capture_method: values.capture_method,
+        pricing_provider: values.pricing_provider,
+        inventory_provider: values.inventory_provider,
+        pricing_provider_failure_policy: values.pricing_provider_failure_policy,
+        inventory_provider_failure_policy: values.inventory_provider_failure_policy,
+        tax_using_ship_address: values.tax_using_ship_address,
+        track_inventory_levels: values.track_inventory_levels,
+        stock_reservations_enabled: values.stock_reservations_enabled,
+        low_stock_threshold: values.low_stock_threshold,
+        track_price_history: values.track_price_history,
+        show_products_without_price: values.show_products_without_price,
+        disable_sku_validation: values.disable_sku_validation,
+        document_number_format: values.document_number_format,
+        order_number_prefix: values.order_number_prefix,
+        order_number_suffix: values.order_number_suffix,
+        order_number_sequence_start: values.order_number_sequence_start,
+        limit_digital_download_count: values.limit_digital_download_count,
+        digital_asset_authorized_clicks: values.digital_asset_authorized_clicks,
+        limit_digital_download_days: values.limit_digital_download_days,
+        digital_asset_authorized_days: values.digital_asset_authorized_days,
         ...extensionValues,
       })
       toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })
@@ -368,11 +362,11 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // Admin-UI language options come from the dashboard's own shipped locale
   // bundles (getAvailableUiLocales) — the SAME canonical source the profile
   // picker and top-bar switcher use, so the lists never desync. The leading
-  // empty option clears the store-wide override (preferred_admin_locale is
+  // empty option clears the store-wide override (admin_locale is
   // nullable → "no override, fall back to the app default").
   const adminLocaleOptions = useMemo(
     () => [
-      { value: '', label: t('admin.fields.store.preferred_admin_locale.placeholder') },
+      { value: '', label: t('admin.fields.store.admin_locale.placeholder') },
       ...getAvailableUiLocales().map((l) => ({ value: l.code, label: l.name })),
     ],
     [t],
@@ -428,31 +422,31 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   <FieldGroup>
                     <SelectField
                       id="store-admin-locale"
-                      label={t('admin.fields.store.preferred_admin_locale.label')}
-                      placeholder={t('admin.fields.store.preferred_admin_locale.placeholder')}
-                      name="preferred_admin_locale"
+                      label={t('admin.fields.store.admin_locale.label')}
+                      placeholder={t('admin.fields.store.admin_locale.placeholder')}
+                      name="admin_locale"
                       control={form.control}
                       options={adminLocaleOptions}
                     />
                     <SelectField
                       id="store-timezone"
-                      label={t('admin.fields.store.preferred_timezone.label')}
-                      placeholder={t('admin.fields.store.preferred_timezone.placeholder')}
-                      name="preferred_timezone"
+                      label={t('admin.fields.store.timezone.label')}
+                      placeholder={t('admin.fields.store.timezone.placeholder')}
+                      name="timezone"
                       control={form.control}
                       options={timezoneOptions}
                     />
                     <SelectField
                       id="store-unit-system"
-                      label={t('admin.fields.store.preferred_unit_system.label')}
-                      name="preferred_unit_system"
+                      label={t('admin.fields.store.unit_system.label')}
+                      name="unit_system"
                       control={form.control}
                       options={unitSystemOptions}
                     />
                     <SelectField
                       id="store-weight-unit"
-                      label={t('admin.fields.store.preferred_weight_unit.label')}
-                      name="preferred_weight_unit"
+                      label={t('admin.fields.store.weight_unit.label')}
+                      name="weight_unit"
                       control={form.control}
                       options={weightOptions}
                     />
@@ -469,7 +463,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     <SelectField
                       id="store-storefront-access"
                       label={t('admin.fields.store.storefront_access.label')}
-                      name="preferred_storefront_access"
+                      name="storefront_access"
                       control={form.control}
                       options={storefrontAccessOptions}
                       help={t('admin.fields.store.storefront_access.help')}
@@ -485,7 +479,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           </span>
                         </div>
                         <Controller
-                          name="preferred_guest_checkout"
+                          name="guest_checkout"
                           control={form.control}
                           render={({ field }) => (
                             <Switch
@@ -501,7 +495,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       id="store-always-include-confirm-step"
                       label={t('admin.fields.store.always_include_confirm_step.label')}
                       help={t('admin.fields.store.always_include_confirm_step.help')}
-                      name="preferred_always_include_confirm_step"
+                      name="always_include_confirm_step"
                       control={form.control}
                     />
                   </FieldGroup>
@@ -517,14 +511,14 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       id="store-company-field-enabled"
                       label={t('admin.fields.store.company_field_enabled.label')}
                       help={t('admin.fields.store.company_field_enabled.help')}
-                      name="preferred_company_field_enabled"
+                      name="company_field_enabled"
                       control={form.control}
                     />
                     <SwitchField
                       id="store-address-requires-phone"
                       label={t('admin.fields.store.address_requires_phone.label')}
                       help={t('admin.fields.store.address_requires_phone.help')}
-                      name="preferred_address_requires_phone"
+                      name="address_requires_phone"
                       control={form.control}
                     />
                   </FieldGroup>
@@ -539,7 +533,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     <SelectField
                       id="store-document-number-format"
                       label={t('admin.fields.store.document_number_format.label')}
-                      name="preferred_document_number_format"
+                      name="document_number_format"
                       control={form.control}
                       options={documentNumberFormatOptions}
                       help={t('admin.fields.store.document_number_format.help')}
@@ -551,10 +545,10 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         </FieldLabel>
                         <Input
                           id="store-order-number-prefix"
-                          aria-invalid={!!errors.preferred_order_number_prefix || undefined}
-                          {...form.register('preferred_order_number_prefix')}
+                          aria-invalid={!!errors.order_number_prefix || undefined}
+                          {...form.register('order_number_prefix')}
                         />
-                        <FieldError errors={[errors.preferred_order_number_prefix]} />
+                        <FieldError errors={[errors.order_number_prefix]} />
                       </Field>
                       <Field>
                         <FieldLabel htmlFor="store-order-number-suffix">
@@ -562,10 +556,10 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         </FieldLabel>
                         <Input
                           id="store-order-number-suffix"
-                          aria-invalid={!!errors.preferred_order_number_suffix || undefined}
-                          {...form.register('preferred_order_number_suffix')}
+                          aria-invalid={!!errors.order_number_suffix || undefined}
+                          {...form.register('order_number_suffix')}
                         />
-                        <FieldError errors={[errors.preferred_order_number_suffix]} />
+                        <FieldError errors={[errors.order_number_suffix]} />
                       </Field>
                     </div>
                     {numberFormat === 'sequential' && (
@@ -578,15 +572,15 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           type="number"
                           min={1}
                           disabled={sequenceStarted}
-                          aria-invalid={!!errors.preferred_order_number_sequence_start || undefined}
-                          {...form.register('preferred_order_number_sequence_start')}
+                          aria-invalid={!!errors.order_number_sequence_start || undefined}
+                          {...form.register('order_number_sequence_start')}
                         />
                         <FieldDescription>
                           {sequenceStarted
                             ? t('admin.fields.store.order_number_sequence_start.locked')
                             : t('admin.fields.store.order_number_sequence_start.help')}
                         </FieldDescription>
-                        <FieldError errors={[errors.preferred_order_number_sequence_start]} />
+                        <FieldError errors={[errors.order_number_sequence_start]} />
                       </Field>
                     )}
                     <Field>
@@ -608,7 +602,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   <FieldGroup>
                     <Controller
                       control={form.control}
-                      name="preferred_capture_method"
+                      name="capture_method"
                       render={({ field }) => (
                         <ChoiceCardPicker
                           label={t('admin.fields.store.capture_method.label')}
@@ -623,7 +617,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       id="store-tax-using-ship-address"
                       label={t('admin.fields.store.tax_using_ship_address.label')}
                       help={t('admin.fields.store.tax_using_ship_address.help')}
-                      name="preferred_tax_using_ship_address"
+                      name="tax_using_ship_address"
                       control={form.control}
                     />
                   </FieldGroup>
@@ -639,14 +633,14 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       id="store-track-inventory-levels"
                       label={t('admin.fields.store.track_inventory_levels.label')}
                       help={t('admin.fields.store.track_inventory_levels.help')}
-                      name="preferred_track_inventory_levels"
+                      name="track_inventory_levels"
                       control={form.control}
                     />
                     <SwitchField
                       id="store-stock-reservations-enabled"
                       label={t('admin.fields.store.stock_reservations_enabled.label')}
                       help={t('admin.fields.store.stock_reservations_enabled.help')}
-                      name="preferred_stock_reservations_enabled"
+                      name="stock_reservations_enabled"
                       control={form.control}
                     />
                     <Field>
@@ -659,8 +653,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           type="number"
                           min={0}
                           step={1}
-                          aria-invalid={!!errors.preferred_low_stock_threshold || undefined}
-                          {...form.register('preferred_low_stock_threshold')}
+                          aria-invalid={!!errors.low_stock_threshold || undefined}
+                          {...form.register('low_stock_threshold')}
                         />
                         <InputGroupAddon align="inline-end">
                           <InputGroupText>
@@ -671,7 +665,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       <FieldDescription>
                         {t('admin.fields.store.low_stock_threshold.help')}
                       </FieldDescription>
-                      <FieldError errors={[errors.preferred_low_stock_threshold]} />
+                      <FieldError errors={[errors.low_stock_threshold]} />
                     </Field>
                   </FieldGroup>
                 </CardContent>
@@ -689,7 +683,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       id="store-pricing-provider"
                       label={t('admin.fields.store.data_sources.pricing_provider.label')}
                       help={t('admin.fields.store.data_sources.pricing_provider.help')}
-                      name="preferred_pricing_provider"
+                      name="pricing_provider"
                       control={form.control}
                       options={providerOptions(dataSources?.pricing_providers)}
                     />
@@ -701,7 +695,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         id="store-pricing-failure-policy"
                         label={t('admin.fields.store.data_sources.pricing_failure_policy.label')}
                         help={t('admin.fields.store.data_sources.pricing_failure_policy.help')}
-                        name="preferred_pricing_provider_failure_policy"
+                        name="pricing_provider_failure_policy"
                         control={form.control}
                         options={failurePolicyOptions}
                       />
@@ -727,7 +721,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       id="store-inventory-provider"
                       label={t('admin.fields.store.data_sources.inventory_provider.label')}
                       help={t('admin.fields.store.data_sources.inventory_provider.help')}
-                      name="preferred_inventory_provider"
+                      name="inventory_provider"
                       control={form.control}
                       options={providerOptions(dataSources?.inventory_providers)}
                     />
@@ -736,7 +730,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         id="store-inventory-failure-policy"
                         label={t('admin.fields.store.data_sources.inventory_failure_policy.label')}
                         help={t('admin.fields.store.data_sources.inventory_failure_policy.help')}
-                        name="preferred_inventory_provider_failure_policy"
+                        name="inventory_provider_failure_policy"
                         control={form.control}
                         options={failurePolicyOptions}
                       />
@@ -759,21 +753,21 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       id="store-show-products-without-price"
                       label={t('admin.fields.store.show_products_without_price.label')}
                       help={t('admin.fields.store.show_products_without_price.help')}
-                      name="preferred_show_products_without_price"
+                      name="show_products_without_price"
                       control={form.control}
                     />
                     <SwitchField
                       id="store-track-price-history"
                       label={t('admin.fields.store.track_price_history.label')}
                       help={t('admin.fields.store.track_price_history.help')}
-                      name="preferred_track_price_history"
+                      name="track_price_history"
                       control={form.control}
                     />
                     <SwitchField
                       id="store-disable-sku-validation"
                       label={t('admin.fields.store.disable_sku_validation.label')}
                       help={t('admin.fields.store.disable_sku_validation.help')}
-                      name="preferred_disable_sku_validation"
+                      name="disable_sku_validation"
                       control={form.control}
                     />
                   </FieldGroup>
@@ -802,7 +796,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           </span>
                         </div>
                         <Controller
-                          name="preferred_limit_digital_download_count"
+                          name="limit_digital_download_count"
                           control={form.control}
                           render={({ field }) => (
                             <Switch
@@ -814,7 +808,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         />
                       </div>
                     </Field>
-                    {form.watch('preferred_limit_digital_download_count') && (
+                    {form.watch('limit_digital_download_count') && (
                       <Field>
                         <FieldLabel htmlFor="store-authorized-clicks">
                           {t('admin.fields.store.digital_asset_authorized_clicks.label')}
@@ -823,10 +817,10 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           id="store-authorized-clicks"
                           type="number"
                           min={1}
-                          {...form.register('preferred_digital_asset_authorized_clicks')}
+                          {...form.register('digital_asset_authorized_clicks')}
                         />
                         <FieldError
-                          errors={[form.formState.errors.preferred_digital_asset_authorized_clicks]}
+                          errors={[form.formState.errors.digital_asset_authorized_clicks]}
                         />
                       </Field>
                     )}
@@ -844,7 +838,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           </span>
                         </div>
                         <Controller
-                          name="preferred_limit_digital_download_days"
+                          name="limit_digital_download_days"
                           control={form.control}
                           render={({ field }) => (
                             <Switch
@@ -856,7 +850,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         />
                       </div>
                     </Field>
-                    {form.watch('preferred_limit_digital_download_days') && (
+                    {form.watch('limit_digital_download_days') && (
                       <Field>
                         <FieldLabel htmlFor="store-authorized-days">
                           {t('admin.fields.store.digital_asset_authorized_days.label')}
@@ -865,10 +859,10 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           id="store-authorized-days"
                           type="number"
                           min={1}
-                          {...form.register('preferred_digital_asset_authorized_days')}
+                          {...form.register('digital_asset_authorized_days')}
                         />
                         <FieldError
-                          errors={[form.formState.errors.preferred_digital_asset_authorized_days]}
+                          errors={[form.formState.errors.digital_asset_authorized_days]}
                         />
                       </Field>
                     )}

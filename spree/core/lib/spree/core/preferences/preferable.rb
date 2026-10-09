@@ -153,6 +153,31 @@ module Spree::Preferences::Preferable
     clear_attribute_change(:preferences) if persisted? && !already_changed
   end
 
+  # Writes a `preferences` payload an API client sent. The whole payload is
+  # checked against the type's schema first, so nothing is written when any
+  # value is wrong. Then each value goes through its typed writer. A secret
+  # sent back masked, as it was read, keeps the stored one; `null` clears it.
+  #
+  # @param values [Hash, ActionController::Parameters]
+  # @raise [Spree::Preferences::InvalidPreferences] naming every value that does not match
+  # @return [void]
+  def assign_preferences(values)
+    values = values.respond_to?(:to_unsafe_h) ? values.to_unsafe_h : values.to_h
+    values = values.deep_stringify_keys
+    failures = self.class.preference_failures(values)
+    raise Spree::Preferences::InvalidPreferences, failures if failures.any?
+
+    values.each do |key, value|
+      next if secret_preference?(key) && Spree::Preferences::Masking.masked?(value)
+
+      begin
+        set_preference(key, value)
+      rescue ActiveRecord::RecordNotFound => e
+        raise Spree::Preferences::InvalidPreferences, [{ pointer: "/#{key}", message: e.message }]
+      end
+    end
+  end
+
   # Names of the preferences the last save changed, secrets included.
   #
   # @return [Array<Symbol>]

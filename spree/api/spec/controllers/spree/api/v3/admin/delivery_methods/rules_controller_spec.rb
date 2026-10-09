@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
   describe 'GET #index' do
     let!(:rule) do
       Spree::DeliveryMethodRules::ItemTotalRule.create!(
-        delivery_method: delivery_method, preferences: { minimum_amount: 25 }
+        delivery_method: delivery_method, preferred_minimum_amount: 25
       )
     end
 
@@ -23,8 +23,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
       row = json_response['data'].first
       expect(row['type']).to eq('item_total_rule')
       expect(row['active']).to be(true)
-      expect(row['preferences']['minimum_amount']).to eq('25')
-      expect(row['preference_schema'].map { |field| field['key'] }).to contain_exactly('minimum_amount', 'maximum_amount')
+      expect(row['preferences']).to eq('minimum_amount' => '25', 'maximum_amount' => nil)
+      expect(row).not_to have_key('preference_schema')
     end
   end
 
@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
       post :create, params: {
         delivery_method_id: delivery_method.prefixed_id,
         type: 'weight_rule',
-        preferences: { maximum_weight: 30 }
+        preferences: { maximum_weight: '30' }
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -94,7 +94,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
         delivery_method_id: delivery_method.prefixed_id,
         id: rule.prefixed_id,
         active: false,
-        preferences: { minimum_amount: 50 }
+        preferences: { minimum_amount: '50' }
       }, as: :json
 
       expect(response).to have_http_status(:ok)

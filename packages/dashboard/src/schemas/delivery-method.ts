@@ -47,8 +47,10 @@ export const deliveryMethodFormSchema = z.object({
   estimated_transit_business_days_min: z.string().optional(),
   estimated_transit_business_days_max: z.string().optional(),
   tax_category_id: z.string().optional(),
-  calculator_type: z.string().optional(),
-  calculator_preferences: z.record(z.string(), z.unknown()).optional(),
+  calculator: z.object({
+    type: z.string().optional(),
+    preferences: z.record(z.string(), z.unknown()).optional(),
+  }),
   // Empty string means no destination restriction — the method serves
   // everywhere its profile reaches.
   delivery_zone_id: z.string(),
@@ -75,8 +77,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   estimated_transit_business_days_min: '',
   estimated_transit_business_days_max: '',
   tax_category_id: '',
-  calculator_type: '',
-  calculator_preferences: {},
+  calculator: { type: '', preferences: {} },
   delivery_zone_id: '',
   stock_location_ids: [],
   rules: [],
@@ -102,9 +103,17 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
       ? Number(values.estimated_transit_business_days_max)
       : null,
     tax_category_id: values.tax_category_id || null,
-    ...(values.calculator_type ? { calculator_type: values.calculator_type } : {}),
-    ...(values.calculator_preferences && Object.keys(values.calculator_preferences).length > 0
-      ? { calculator_preferences: values.calculator_preferences }
+    ...(values.calculator.type ||
+    (values.calculator.preferences && Object.keys(values.calculator.preferences).length > 0)
+      ? {
+          calculator: {
+            ...(values.calculator.type ? { type: values.calculator.type } : {}),
+            ...(values.calculator.preferences &&
+            Object.keys(values.calculator.preferences).length > 0
+              ? { preferences: values.calculator.preferences }
+              : {}),
+          },
+        }
       : {}),
     delivery_zone_id: values.delivery_zone_id || null,
     stock_location_ids: values.stock_location_ids,

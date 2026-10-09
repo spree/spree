@@ -19,6 +19,7 @@ module Spree
         # false, while an explicit value remains a channel override.
         preference :storefront_access, :string, default: nil, nullable: true, choices: STOREFRONT_ACCESS
         preference :guest_checkout, :boolean, default: nil, nullable: true
+        exposes_preferences :storefront_access, :guest_checkout
 
         validate :storefront_access_must_be_valid
       end

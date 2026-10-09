@@ -12,7 +12,6 @@ const sampleRule = {
   label: 'Preferred location',
   description: 'Fulfill from the location pinned on the order, when one is set',
   preferences: {},
-  preference_schema: [],
   created_at: '2026-07-01T00:00:00Z',
   updated_at: '2026-07-01T00:00:00Z',
 }
@@ -94,7 +93,7 @@ describe('orderRoutingRules', () => {
                 type: 'preferred_location',
                 label: 'Preferred location',
                 description: null,
-                preference_schema: [],
+                schema: { type: 'object', properties: {}, additionalProperties: false },
               },
             ],
           }),

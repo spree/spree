@@ -140,7 +140,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
         'mail_from_address' => store.mail_from_address,
         'customer_support_email' => store.customer_support_email,
         'new_order_notifications_email' => store.new_order_notifications_email,
-        'preferred_send_consumer_transactional_emails' => store.preferred_send_consumer_transactional_emails
+        'send_consumer_transactional_emails' => store.preferred_send_consumer_transactional_emails
       )
       expect(json_response).to have_key('mailer_logo_url')
     end
@@ -148,8 +148,8 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     it 'exposes the storefront-access gating defaults' do
       subject
       expect(json_response).to include(
-        'preferred_storefront_access' => store.preferred_storefront_access,
-        'preferred_guest_checkout' => store.preferred_guest_checkout
+        'storefront_access' => store.preferred_storefront_access,
+        'guest_checkout' => store.preferred_guest_checkout
       )
     end
 
@@ -188,17 +188,17 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     end
 
     context 'with the low stock threshold' do
-      let(:params) { { preferred_low_stock_threshold: 12 } }
+      let(:params) { { low_stock_threshold: 12 } }
 
       it 'saves it and returns it' do
         subject
         expect(response).to have_http_status(:ok)
-        expect(json_response['preferred_low_stock_threshold']).to eq(12)
+        expect(json_response['low_stock_threshold']).to eq(12)
         expect(store.reload.preferred_low_stock_threshold).to eq(12)
       end
 
       it 'refuses a negative threshold' do
-        patch :update, params: { preferred_low_stock_threshold: -1 }, as: :json
+        patch :update, params: { low_stock_threshold: -1 }, as: :json
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -216,10 +216,10 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     context 'with order-numbering params' do
       let(:params) do
         {
-          preferred_document_number_format: 'random',
-          preferred_order_number_prefix: 'INV',
-          preferred_order_number_suffix: '-EU',
-          preferred_order_number_sequence_start: 5001
+          document_number_format: 'random',
+          order_number_prefix: 'INV',
+          order_number_suffix: '-EU',
+          order_number_sequence_start: 5001
         }
       end
 
@@ -235,7 +235,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
 
       it 'exposes them in the response' do
         subject
-        expect(json_response['preferred_order_number_prefix']).to eq('INV')
+        expect(json_response['order_number_prefix']).to eq('INV')
       end
 
       it 'reports that numbering has not started yet' do
@@ -248,7 +248,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
 
         it 'reports the started flag' do
           # Prefix stays editable after numbering starts — only the start locks.
-          patch :update, params: { preferred_order_number_prefix: 'INV' }, as: :json
+          patch :update, params: { order_number_prefix: 'INV' }, as: :json
           expect(response).to have_http_status(:ok)
           expect(json_response['order_number_sequence_started']).to be(true)
         end
@@ -256,13 +256,13 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
         it 'rejects a changed starting value' do
           subject
           expect(response).to have_http_status(:unprocessable_content)
-          expect(json_response['error']['details']).to have_key('preferred_order_number_sequence_start')
+          expect(json_response['error']['details']).to have_key('order_number_sequence_start')
         end
       end
     end
 
     context 'with an unsupported numbering format' do
-      let(:params) { { preferred_document_number_format: 'roman_numerals' } }
+      let(:params) { { document_number_format: 'roman_numerals' } }
 
       it 'returns a validation error' do
         subject
@@ -271,7 +271,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     end
 
     context 'with a prefix containing unsupported characters' do
-      let(:params) { { preferred_order_number_prefix: 'inv/2026' } }
+      let(:params) { { order_number_prefix: 'inv/2026' } }
 
       it 'returns a validation error' do
         subject
@@ -285,7 +285,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
           mail_from_address: 'mailer@example.com',
           customer_support_email: 'support@example.com',
           new_order_notifications_email: 'ops@example.com',
-          preferred_send_consumer_transactional_emails: false
+          send_consumer_transactional_emails: false
         }
       end
 
@@ -301,21 +301,21 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     end
 
     context 'with email branding params' do
-      let(:params) { { preferred_email_accent_color: '#FF5500', preferred_email_font: 'georgia' } }
+      let(:params) { { email_accent_color: '#FF5500', email_font: 'georgia' } }
 
       it 'saves the colors and font customer emails use' do
         subject
         expect(response).to have_http_status(:ok)
-        expect(json_response).to include('preferred_email_accent_color' => '#FF5500', 'preferred_email_font' => 'georgia')
+        expect(json_response).to include('email_accent_color' => '#FF5500', 'email_font' => 'georgia')
       end
 
       context 'with a value that is not a color' do
-        let(:params) { { preferred_email_accent_color: 'red' } }
+        let(:params) { { email_accent_color: 'red' } }
 
         it 'refuses it' do
           subject
           expect(response).to have_http_status(:unprocessable_content)
-          expect(json_response['error']['details']).to have_key('preferred_email_accent_color')
+          expect(json_response['error']['details']).to have_key('email_accent_color')
         end
       end
     end
@@ -331,7 +331,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     end
 
     context 'with storefront-access gating params' do
-      let(:params) { { preferred_storefront_access: 'login_required', preferred_guest_checkout: false } }
+      let(:params) { { storefront_access: 'login_required', guest_checkout: false } }
 
       it 'updates the store-wide gating defaults' do
         subject
@@ -343,7 +343,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     end
 
     context 'with address params' do
-      let(:params) { { preferred_company_field_enabled: true, preferred_address_requires_phone: true } }
+      let(:params) { { company_field_enabled: true, address_requires_phone: true } }
 
       it 'updates the address settings' do
         subject
@@ -357,9 +357,9 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     context 'with commerce behavior params' do
       let(:params) do
         {
-          preferred_capture_method: 'on_dispatch',
-          preferred_track_inventory_levels: false,
-          preferred_show_products_without_price: true
+          capture_method: 'on_dispatch',
+          track_inventory_levels: false,
+          show_products_without_price: true
         }
       end
 
@@ -376,10 +376,10 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     context 'with marketplace params' do
       let(:params) do
         {
-          preferred_auto_approve_sellers: true,
-          preferred_auto_approve_seller_products: true,
-          preferred_send_seller_transactional_emails: false,
-          preferred_default_commission_tax_rate: '0.23'
+          auto_approve_sellers: true,
+          auto_approve_seller_products: true,
+          send_seller_transactional_emails: false,
+          default_commission_tax_rate: '0.23'
         }
       end
 
@@ -397,7 +397,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     # The rate is a fraction, so a percentage typed straight in would bill
     # more tax than fee.
     context 'with a commission tax rate above 1' do
-      let(:params) { { preferred_default_commission_tax_rate: '23' } }
+      let(:params) { { default_commission_tax_rate: '23' } }
 
       it 'returns a validation error' do
         subject
@@ -406,20 +406,8 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
-    # Existing API clients keep working for one release; the model maps the
-    # old names onto capture_method.
-    context 'with the deprecated capture params' do
-      let(:params) { { preferred_auto_capture_on_dispatch: true } }
-
-      it 'maps them onto the capture method' do
-        subject
-        expect(response).to have_http_status(:ok)
-        expect(store.reload.preferred_capture_method).to eq('on_dispatch')
-      end
-    end
-
     context 'with an invalid storefront_access value' do
-      let(:params) { { preferred_storefront_access: 'nonsense' } }
+      let(:params) { { storefront_access: 'nonsense' } }
 
       it 'returns a validation error' do
         subject
@@ -512,28 +500,28 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
   describe 'PATCH #update' do
     it 'saves the chosen providers and policies' do
       patch :update, params: {
-        preferred_pricing_provider: 'internal',
-        preferred_inventory_provider: 'internal',
-        preferred_pricing_provider_failure_policy: 'fallback',
-        preferred_inventory_provider_failure_policy: 'strict'
+        pricing_provider: 'internal',
+        inventory_provider: 'internal',
+        pricing_provider_failure_policy: 'fallback',
+        inventory_provider_failure_policy: 'strict'
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['preferred_pricing_provider_failure_policy']).to eq('fallback')
+      expect(json_response['pricing_provider_failure_policy']).to eq('fallback')
       expect(store.reload.preferred_inventory_provider_failure_policy).to eq('strict')
     end
 
     it 'reads and writes the routing strategy and payout provider by their shorthand' do
-      patch :update, params: { preferred_order_routing_strategy: 'rules', preferred_payout_provider: 'system' }, as: :json
+      patch :update, params: { order_routing_strategy: 'rules', payout_provider: 'system' }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['preferred_order_routing_strategy']).to eq('rules')
-      expect(json_response['preferred_payout_provider']).to eq('system')
+      expect(json_response['order_routing_strategy']).to eq('rules')
+      expect(json_response['payout_provider']).to eq('system')
       expect(store.reload.preferred_payout_provider).to eq('Spree::PayoutProvider::System')
     end
 
     it 'refuses a policy that is neither falling back nor strict' do
-      patch :update, params: { preferred_pricing_provider_failure_policy: 'ignore' }, as: :json
+      patch :update, params: { pricing_provider_failure_policy: 'ignore' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end

@@ -85,7 +85,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
             description: 'ActiveStorage signed blob id from POST /api/v3/admin/direct_uploads.',
             example: 'eyJfcmFpbHMiOnsiZGF0YSI6MX0=--signed'
           },
-          preferred_delimiter: {
+          delimiter: {
             type: :string,
             enum: [',', ';', '|', "\t"],
             description: 'CSV column separator. Defaults to a comma.',

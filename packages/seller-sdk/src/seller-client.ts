@@ -1,4 +1,10 @@
-import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
+import type {
+  ListParams,
+  PaginatedResponse,
+  PreferenceSchema,
+  RequestFn,
+  RequestOptions,
+} from '@spree/sdk-core'
 import { transformListParams } from '@spree/sdk-core'
 import type {
   Account,
@@ -1387,7 +1393,7 @@ export interface ImportCreateParams {
    */
   attachment: string
   /** CSV column separator. Defaults to a comma on the server. */
-  preferred_delimiter?: ',' | ';' | '|' | '\t'
+  delimiter?: ',' | ';' | '|' | '\t'
   /**
    * Absolute URL of the panel's imports view; the import-done email links back
    * to it with `?import=<id>` appended. Honored only when it matches one of
@@ -1435,8 +1441,12 @@ export interface DeliveryMethodParams {
   tracking_url?: string | null
   estimated_transit_business_days_min?: number | null
   estimated_transit_business_days_max?: number | null
-  calculator_type?: string
-  calculator_preferences?: Record<string, unknown>
+  /**
+   * How the method prices a shipment: the calculator's `type` (see
+   * `deliveryMethods.calculators()`) and its preferences, which must match the
+   * `schema` that list carries.
+   */
+  calculator?: { type?: string; preferences?: Record<string, unknown> }
   /** Replaces the whole set; an empty array clears every condition. */
   rules?: DeliveryMethodRuleParams[]
 }
@@ -1447,22 +1457,12 @@ export interface DeliveryZoneListParams extends ListParams {
   [key: string]: unknown
 }
 
-/**
- * One field on a calculator's or rule's configuration form, as the server
- * describes it. The same shape the generated `DeliveryMethodRule` type
- * carries, so a schema from either endpoint renders through one form.
- */
-export interface DeliveryPreferenceField {
-  key: string
-  type: string
-  default: unknown
-}
-
 /** One way a delivery method can be priced. */
 export interface DeliveryCalculatorType {
   type: string
   name: string
-  preference_schema: DeliveryPreferenceField[]
+  /** JSON Schema of the calculator's `preferences`. */
+  schema: PreferenceSchema
 }
 
 /** One condition a seller may put on their own method. */
@@ -1470,7 +1470,8 @@ export interface DeliveryMethodRuleType {
   type: string
   name: string
   description: string
-  preference_schema: DeliveryPreferenceField[]
+  /** JSON Schema of the rule's `preferences`. */
+  schema: PreferenceSchema
 }
 
 /**

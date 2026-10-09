@@ -169,6 +169,22 @@ module Spree
     preference :order_number_suffix, :string, default: ''
     preference :order_number_sequence_start, :integer, default: 1001
 
+    # The settings the API reads and writes under their plain names.
+    exposes_preferences :admin_locale, :timezone, :storefront_url, :weight_unit, :unit_system, :storefront_access, :guest_checkout,
+                        :always_include_confirm_step, :company_field_enabled, :address_requires_company,
+                        :address_requires_phone, :capture_method, :track_inventory_levels, :stock_reservations_enabled,
+                        :low_stock_threshold, :tax_using_ship_address, :track_price_history,
+                        :show_products_without_price, :disable_sku_validation, :order_routing_strategy,
+                        :pricing_provider, :inventory_provider, :pricing_provider_failure_policy,
+                        :inventory_provider_failure_policy, :payout_provider, :default_payouts_schedule_interval,
+                        :default_minimum_payout_amount, :auto_approve_sellers, :auto_approve_seller_products,
+                        :send_seller_transactional_emails, :default_commission_tax_rate, :document_number_format,
+                        :order_number_prefix, :order_number_suffix, :order_number_sequence_start,
+                        :limit_digital_download_count, :digital_asset_authorized_clicks,
+                        :limit_digital_download_days, :digital_asset_authorized_days,
+                        :send_consumer_transactional_emails, :email_accent_color, :email_background_color,
+                        :email_card_color, :email_text_color, :email_heading_color, :email_font
+
     #
     # Associations
     #
@@ -529,6 +545,7 @@ module Spree
     end
 
     # Returns the storefront origin URL for use in customer-facing emails and links.
+    # Replaces the plain `storefront_url` reader `exposes_preferences` defines.
     # Uses the `storefront_url` preference when set, then the oldest non-loopback
     # allowed origin (the `http://localhost` origin seeded on install must never
     # leak into customer emails), otherwise falls back to formatted_url.

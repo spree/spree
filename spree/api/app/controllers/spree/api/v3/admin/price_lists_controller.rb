@@ -28,7 +28,7 @@ module Spree
 
           # GET /api/v3/admin/price_lists/price_rule_types
           #
-          # Returns `[{ type, label, description, preference_schema }]`
+          # Returns `[{ type, label, description, schema }]`
           # for every registered subclass in `Spree.pricing.rules`. The
           # SPA uses this to build the "Add rule" picker + render a
           # generic preferences form per subclass. Rules themselves are

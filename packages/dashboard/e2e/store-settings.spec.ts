@@ -92,7 +92,7 @@ test.describe('store settings — general', () => {
 
     // Pick Polish (endonym shown in the picker) and save. The page is currently
     // in German (the precondition above), so the Save button reads "Speichern".
-    // Saving persists preferred_admin_locale AND switches the dashboard into
+    // Saving persists admin_locale AND switches the dashboard into
     // Polish, reloading so every module-load `i18n.t(...)` label re-resolves.
     await page.locator('#store-admin-locale').click()
     await page.getByRole('option', { name: /polski/i }).click()

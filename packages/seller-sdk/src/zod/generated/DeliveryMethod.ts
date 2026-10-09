@@ -20,8 +20,7 @@ export const DeliveryMethodSchema = z.object({
   editable: z.boolean(),
   delivery_profile_id: z.string().nullable(),
   delivery_zone_id: z.string().nullable(),
-  calculator_type: z.string().nullable(),
-  calculator_preferences: z.record(z.string(), z.unknown()).nullable(),
+  calculator: z.object({ type: z.string(), preferences: z.record(z.string(), z.unknown()) }).nullable(),
 });
 
 export type DeliveryMethod = z.infer<typeof DeliveryMethodSchema>;

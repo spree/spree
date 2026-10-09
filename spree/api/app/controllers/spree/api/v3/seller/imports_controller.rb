@@ -248,7 +248,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :preferred_delimiter, :results_url)
+            params.permit(*model_additional_permitted_attributes, :type, :attachment, :delimiter, :results_url)
           end
 
           # The registered Import subclass matching `name`, or nil.

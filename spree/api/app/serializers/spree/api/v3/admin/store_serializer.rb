@@ -4,7 +4,6 @@ module Spree
       module Admin
         class StoreSerializer < V3::BaseSerializer
           typelize name: :string, url: :string, code: :string, api_url: :string,
-                   preferred_storefront_url: [:string, nullable: true],
                    default_currency: :string, default_locale: :string,
                    default_country_code: [:string, nullable: true],
                    supported_currencies: [:string, multi: true],
@@ -15,108 +14,41 @@ module Spree
                    mail_from_address: [:string, nullable: true],
                    customer_support_email: [:string, nullable: true],
                    new_order_notifications_email: [:string, nullable: true],
-                   preferred_send_consumer_transactional_emails: :boolean,
-                   preferred_email_accent_color: [:string, nullable: true],
-                   preferred_email_background_color: [:string, nullable: true],
-                   preferred_email_card_color: [:string, nullable: true],
-                   preferred_email_text_color: [:string, nullable: true],
-                   preferred_email_heading_color: [:string, nullable: true],
-                   preferred_email_font: [:string, nullable: true, enum: Spree::Emails::Branding::FONTS.keys],
-                   preferred_admin_locale: [:string, nullable: true],
-                   preferred_timezone: :string,
-                   preferred_weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS],
-                   preferred_unit_system: :string,
-                   preferred_storefront_access: :string,
-                   preferred_guest_checkout: :boolean,
-                   preferred_always_include_confirm_step: :boolean,
-                   preferred_company_field_enabled: :boolean,
-                   preferred_address_requires_company: :boolean,
-                   preferred_address_requires_phone: :boolean,
-                   preferred_capture_method: :string,
-                   preferred_track_inventory_levels: :boolean,
-                   preferred_stock_reservations_enabled: :boolean,
-                   preferred_low_stock_threshold: :number,
-                   preferred_tax_using_ship_address: :boolean,
-                   preferred_track_price_history: :boolean,
-                   preferred_show_products_without_price: :boolean,
-                   preferred_disable_sku_validation: :boolean,
-                   preferred_order_routing_strategy: [:string, comment: 'Order routing strategy. Built-in: rules. Extensions may register more.'],
-                   preferred_pricing_provider: :string,
-                   preferred_inventory_provider: :string,
-                   preferred_pricing_provider_failure_policy: :string,
-                   preferred_inventory_provider_failure_policy: :string,
-                   preferred_payout_provider: [:string, nullable: true, comment: 'Payout provider; null uses the installation default. Built-in: system. Provider gems register more (e.g. stripe).'],
-                   preferred_default_payouts_schedule_interval: :string,
-                   preferred_default_minimum_payout_amount: [:string, nullable: true],
-                   preferred_auto_approve_sellers: :boolean,
-                   preferred_auto_approve_seller_products: :boolean,
-                   preferred_send_seller_transactional_emails: :boolean,
-                   preferred_default_commission_tax_rate: [:string, nullable: true],
-                   preferred_document_number_format: :string,
-                   preferred_order_number_prefix: :string,
-                   preferred_order_number_suffix: :string,
-                   preferred_order_number_sequence_start: :number,
+                   order_routing_strategy: [:string, comment: 'Order routing strategy. Built-in: rules. Extensions may register more.'],
+                   payout_provider: [:string, nullable: true, comment: 'Payout provider; null uses the installation default. Built-in: system. Provider gems register more (e.g. stripe).'],
                    order_number_sequence_started: :boolean,
-                   preferred_limit_digital_download_count: :boolean,
-                   preferred_digital_asset_authorized_clicks: :number,
-                   preferred_limit_digital_download_days: :boolean,
-                   preferred_digital_asset_authorized_days: :number,
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata,
                      :name,
                      :code,
-                     :preferred_storefront_url,
                      :default_currency,
                      :default_locale,
                      :default_country_code,
                      :mail_from_address,
                      :customer_support_email,
                      :new_order_notifications_email,
-                     :preferred_send_consumer_transactional_emails,
-                     :preferred_email_accent_color,
-                     :preferred_email_background_color,
-                     :preferred_email_card_color,
-                     :preferred_email_text_color,
-                     :preferred_email_heading_color,
-                     :preferred_email_font,
-                     :preferred_admin_locale,
-                     :preferred_timezone,
-                     :preferred_weight_unit,
-                     :preferred_unit_system,
-                     :preferred_storefront_access,
-                     :preferred_guest_checkout,
-                     :preferred_always_include_confirm_step,
-                     :preferred_company_field_enabled,
-                     :preferred_address_requires_company,
-                     :preferred_address_requires_phone,
-                     :preferred_capture_method,
-                     :preferred_track_inventory_levels,
-                     :preferred_stock_reservations_enabled,
-                     :preferred_low_stock_threshold,
-                     :preferred_tax_using_ship_address,
-                     :preferred_track_price_history,
-                     :preferred_show_products_without_price,
-                     :preferred_disable_sku_validation,
-                     :preferred_pricing_provider,
-                     :preferred_inventory_provider,
-                     :preferred_pricing_provider_failure_policy,
-                     :preferred_inventory_provider_failure_policy,
-                     :preferred_default_payouts_schedule_interval,
-                     :preferred_auto_approve_sellers,
-                     :preferred_auto_approve_seller_products,
-                     :preferred_send_seller_transactional_emails,
-                     :preferred_document_number_format,
-                     :preferred_order_number_prefix,
-                     :preferred_order_number_suffix,
-                     :preferred_order_number_sequence_start,
-                     :preferred_limit_digital_download_count,
-                     :preferred_digital_asset_authorized_clicks,
-                     :preferred_limit_digital_download_days,
-                     :preferred_digital_asset_authorized_days,
                      created_at: :iso8601, updated_at: :iso8601
 
-          api_type_attributes :preferred_order_routing_strategy, :preferred_payout_provider
+          api_type_attributes :order_routing_strategy, :payout_provider
+
+          preference_attributes Spree::Store,
+                                :storefront_url, :send_consumer_transactional_emails, :email_accent_color,
+                                :email_background_color, :email_card_color, :email_text_color, :email_heading_color,
+                                :email_font, :admin_locale, :timezone, :weight_unit, :unit_system, :storefront_access,
+                                :guest_checkout, :always_include_confirm_step, :company_field_enabled,
+                                :address_requires_company, :address_requires_phone, :capture_method,
+                                :track_inventory_levels, :stock_reservations_enabled, :low_stock_threshold,
+                                :tax_using_ship_address, :track_price_history, :show_products_without_price,
+                                :disable_sku_validation, :pricing_provider, :inventory_provider,
+                                :pricing_provider_failure_policy, :inventory_provider_failure_policy,
+                                :default_payouts_schedule_interval,
+                                :auto_approve_sellers, :auto_approve_seller_products,
+                                :send_seller_transactional_emails,
+                                :document_number_format, :order_number_prefix, :order_number_suffix,
+                                :order_number_sequence_start, :limit_digital_download_count,
+                                :digital_asset_authorized_clicks, :limit_digital_download_days,
+                                :digital_asset_authorized_days
 
           # Once the counter has issued a number the starting value no longer
           # applies, so the settings page can say that instead of accepting a
@@ -125,11 +57,13 @@ module Spree
             Spree::NumberSequence.started?(store: store)
           end
 
-          attribute :preferred_default_minimum_payout_amount do |store|
+          typelize default_minimum_payout_amount: [:string, nullable: true]
+
+          attribute :default_minimum_payout_amount do |store|
             Spree::Money::Rounding.format(store.preferred_default_minimum_payout_amount, store.default_currency, unit_price: true)
           end
 
-          rate_attributes :preferred_default_commission_tax_rate
+          rate_attributes :default_commission_tax_rate
 
           attribute :url, &:storefront_url
 

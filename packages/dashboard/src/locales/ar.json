@@ -2040,22 +2040,22 @@
           "invalid": "استخدم الأحرف الكبيرة والأرقام والشرطات و# فقط.",
           "label": "اللاحقة"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "لغة لوحة الإدارة",
           "placeholder": "استخدام اللغة الافتراضية"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "عند الإيقاف، لا تُرسل رسائل تأكيد الطلب أو الشحن أو الاسترداد.",
           "label": "إرسال رسائل المعاملات للعملاء"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Timezone",
           "placeholder": "اختر منطقة زمنية"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "نظام الوحدات"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "وحدة الوزن"
         },
         "show_products_without_price": {
@@ -2133,14 +2133,14 @@
         "digital_asset_authorized_days": {
           "label": "الأيام المتاحة"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "الارتفاع",
           "help": "الصندوق المعتاد للشحن، تستخدمه شركات النقل لتسعير الوزن الحجمي — بوصات للنظام الإمبراطوري وسنتيمترات للمتري. تلزم القيم الثلاث ليصبح ساريًا.",
           "label": "أبعاد الطرد الافتراضية",
           "length": "الطول",
           "width": "العرض"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "وزن التغليف (الصندوق والحشو) الذي يُضاف إلى محتويات كل طرد عند حساب أسعار التوصيل. اضبطه على 0 للتعطيل.",
           "label": "الوزن الافتراضي للطرد"
         },
@@ -2161,22 +2161,22 @@
           "help": "تُحتسب على عمولتك عندما لا تحدد نسبة العمولة ولا مزود الضرائب نسبة خاصة. اتركها 0 إذا كانت عمولتك غير خاضعة للضريبة.",
           "suffix": "٪"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "لون التمييز"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "لون الخلفية"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "لون البطاقة"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "لون النص"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "لون العناوين"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "الخط",
           "help": "تستخدم تطبيقات البريد التي لا يمكنها تحميله خطًا مشابهًا."
         }

@@ -29,7 +29,7 @@ module Spree
               {
                 type: calculator_class.api_type,
                 name: calculator_class.description,
-                preference_schema: calculator_class.respond_to?(:serialized_preference_schema) ? calculator_class.serialized_preference_schema : []
+                schema: calculator_class.preference_json_schema
               }
             end
 
@@ -48,7 +48,7 @@ module Spree
                 type: klass.api_type,
                 name: klass.human_name,
                 description: klass.human_description,
-                preference_schema: klass.serialized_preference_schema
+                schema: klass.preference_json_schema
               }
             end
 
@@ -125,9 +125,8 @@ module Spree
               *model_additional_permitted_attributes,
               :name, :admin_name, :code, :storefront_visible, :tracking_url,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :calculator_type,
               :delivery_profile_id, :delivery_zone_id,
-              calculator_preferences: {},
+              calculator: [:type, { preferences: {} }],
               rules: [:id, :type, :active, { preferences: {} }, *subclassed_rule_attributes]
             )
           end
@@ -175,7 +174,7 @@ module Spree
           # resolves its own pickers.
           def assignable_params
             attributes = permitted_params.except(
-              :delivery_profile_id, :delivery_zone_id, :calculator_type, :calculator_preferences, :rules
+              :delivery_profile_id, :delivery_zone_id, :calculator, :rules
             )
 
             if params.key?(:delivery_profile_id)
@@ -220,15 +219,15 @@ module Spree
           end
 
           def assign_calculator(delivery_method)
-            calculator_type = permitted_params[:calculator_type]
-            preferences = permitted_params[:calculator_preferences]
+            calculator_type = permitted_params.dig(:calculator, :type)
+            preferences = permitted_params.dig(:calculator, :preferences)
 
             if calculator_type.present? && delivery_method.calculator&.class&.api_type != calculator_type
               registered = Spree::DeliveryMethod.calculators.find do |klass|
                 klass.api_type == calculator_type
               end
               unless registered
-                delivery_method.errors.add(:calculator_type, :invalid)
+                delivery_method.errors.add(:calculator, :invalid)
                 return
               end
 
@@ -252,11 +251,7 @@ module Spree
             delivery_method.ensure_calculator
             return if delivery_method.calculator.nil?
 
-            preferences.each do |key, value|
-              next unless delivery_method.calculator.has_preference?(key)
-
-              delivery_method.calculator.set_preference(key, value)
-            end
+            delivery_method.calculator.assign_preferences(preferences)
           end
         end
       end

@@ -160,4 +160,11 @@ describe('applyCurrencyAmount', () => {
       amounts: {},
     })
   })
+
+  it('sends the amount as the exact string typed, and a cleared default amount as zero', () => {
+    expect(applyCurrencyAmount({ amount: '5.0' }, 'USD', '9.99', 'USD')).toMatchObject({
+      amount: '9.99',
+    })
+    expect(applyCurrencyAmount({ amount: '5.0' }, 'USD', '', 'USD')).toMatchObject({ amount: '0' })
+  })
 })

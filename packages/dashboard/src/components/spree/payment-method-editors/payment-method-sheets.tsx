@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { PaymentMethodType, PreferenceField } from '@spree/admin-sdk'
+import type { PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
 import { defaultPreferences, mapSpreeErrorsToForm, useStore } from '@spree/dashboard-core'
 import {
   Button,
@@ -55,7 +55,10 @@ export function CreatePaymentMethodSheet({
   const { t } = useTranslation()
   const createMutation = useCreatePaymentMethod()
   const { data: typesResponse, isLoading: loadingTypes } = usePaymentMethodTypes()
-  const providerTypes = useMemo(() => typesResponse?.data ?? [], [typesResponse])
+  const providerTypes = useMemo(
+    () => (typesResponse?.data ?? []).filter((type) => !type.installed),
+    [typesResponse],
+  )
   // Seed `currency`-typed preferences with the store default so the merchant
   // sees and submits a real value — `CurrencySelect` only displays the
   // fallback now (it no longer commits via onChange).
@@ -65,9 +68,7 @@ export function CreatePaymentMethodSheet({
     ? { ...PAYMENT_METHOD_CREATE_DEFAULTS, type: initialType.type, name: initialType.label }
     : PAYMENT_METHOD_CREATE_DEFAULTS
   const initialPreferences = () =>
-    initialType
-      ? defaultPreferences(initialType.preference_schema, { currency: defaultCurrency })
-      : {}
+    initialType ? defaultPreferences(initialType.schema, { currency: defaultCurrency }) : {}
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,13 +78,13 @@ export function CreatePaymentMethodSheet({
 
   const [preferences, setPreferences] = useState<Record<string, unknown>>(initialPreferences)
   const providerType = form.watch('type') ?? ''
-  const preferenceSchema: PreferenceField[] = useMemo(
-    () => providerTypes.find((t) => t.type === providerType)?.preference_schema ?? [],
+  const preferenceSchema: PreferenceSchema | undefined = useMemo(
+    () => providerTypes.find((t) => t.type === providerType)?.schema,
     [providerTypes, providerType],
   )
 
   function handleProviderTypeChange(next: string) {
-    const nextSchema = providerTypes.find((t) => t.type === next)?.preference_schema ?? []
+    const nextSchema = providerTypes.find((t) => t.type === next)?.schema
     setPreferences(defaultPreferences(nextSchema, { currency: defaultCurrency }))
   }
 
@@ -175,6 +176,12 @@ export function EditPaymentMethodSheet({
   const { t } = useTranslation()
   const { data: paymentMethod, isLoading } = usePaymentMethod(id)
   const updateMutation = useUpdatePaymentMethod(id)
+  // The provider's preference schema comes from its `/types` entry, matched
+  // by the record's `type`.
+  const { data: typesData } = usePaymentMethodTypes({ enabled: open })
+  const preferenceSchema = typesData?.data.find(
+    (entry) => entry.type === paymentMethod?.type,
+  )?.schema
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -255,7 +262,7 @@ export function EditPaymentMethodSheet({
               <PaymentMethodForm
                 mode="edit"
                 form={form}
-                preferenceSchema={paymentMethod?.preference_schema ?? []}
+                preferenceSchema={preferenceSchema}
                 providerType={providerType}
                 paymentMethod={paymentMethod ?? null}
                 preferences={preferences}

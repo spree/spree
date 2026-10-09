@@ -29,7 +29,7 @@ module Spree
                 type: klass.api_type,
                 name: klass.human_name,
                 description: klass.human_description,
-                preference_schema: klass.serialized_preference_schema,
+                schema: klass.preference_json_schema,
                 # Config a rule takes beyond its preferences — a catalog-scale
                 # reference list lives in its own table, not the blob, and an
                 # editor has to know to render a picker for it.

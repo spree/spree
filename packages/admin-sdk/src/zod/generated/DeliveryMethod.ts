@@ -33,8 +33,7 @@ export const DeliveryMethodSchema = z.object({
   fulfillment_provider: z.string(),
   pickup_point_provider: z.string().nullable(),
   rate_provider: z.string().nullable(),
-  calculator_type: z.string().nullable(),
-  calculator_preferences: z.record(z.string(), z.unknown()).nullable(),
+  calculator: z.object({ type: z.string(), preferences: z.record(z.string(), z.unknown()) }).nullable(),
 });
 
 export type DeliveryMethod = z.infer<typeof DeliveryMethodSchema>;

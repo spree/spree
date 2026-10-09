@@ -14,11 +14,8 @@ import type { PriceRuleEditorContext } from './types'
  */
 export function CustomerRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
   const { t } = useTranslation()
-  // Seed from `draft.customers` (the embed) — `preferences.user_ids` holds raw
-  // integer IDs server-side while the embed carries the prefixed customer IDs
-  // the picker round-trips.
-  const [customerIds, setCustomerIds] = useState<string[]>(() =>
-    (draft.customers ?? []).map((c) => c.id),
+  const [customerIds, setCustomerIds] = useState<string[]>(
+    () => (draft.preferences?.user_ids ?? []) as string[],
   )
   // RuleEmbedRecord, not Customer — the draft's embed fields are opaque to
   // keep the SDK object graph out of the form type (see RuleEmbedRecord).

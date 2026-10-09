@@ -650,6 +650,7 @@ require 'spree/core/controller_helpers/store'
 
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/masking'
+require 'spree/core/preferences/invalid_preferences'
 require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'

@@ -171,14 +171,13 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       end
 
       # Spree writes these itself — a secret the provider issued, an id it
-      # gave back. They are absent from the schema so no form offers them,
-      # and ignored here so a client cannot write one anyway and break the
-      # signature check that depends on it.
+      # gave back. They are absent from the schema, so a client writing one
+      # is refused and cannot break the signature check that depends on it.
       # A gateway of its own, declaring a real internal preference. Stubbing
       # `preference_internal` on the shared Bogus class would be read by the
       # class-level schema memo as well, caching a schema without its password
       # key for every later example in the process.
-      it 'ignores a preference the system owns' do
+      it 'refuses a preference the system owns' do
         gateway_class = Class.new(Spree::Gateway) do
           def self.name = 'InternalPreferenceGateway'
 
@@ -197,7 +196,8 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
               },
               as: :json
 
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_preferences')
         expect(gateway.reload.preferred_issued_secret).to eq('whsec_real')
       end
 
@@ -297,25 +297,26 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(types).to include('bogus', 'store_credit', 'custom_payment_source_method')
     end
 
-    it 'filters out providers already installed in the current store' do
+    it 'marks providers already installed in the current store, keeping their schema' do
       get :types, as: :json
 
-      types = json_response['data'].map { |entry| entry['type'] }
-      # The seeded `check_payment_method` is scoped to `store`, so `check`
-      # must not be offered again — that's how the admin avoids
-      # double-installing a provider.
-      expect(types).not_to include('check')
+      # The seeded `check_payment_method` belongs to `store`: the create picker
+      # leaves `check` out, while its edit form still reads its schema here.
+      check = json_response['data'].find { |entry| entry['type'] == 'check' }
+      expect(check).to include('installed' => true, 'schema' => include('type' => 'object'))
+      expect(json_response['data'].find { |entry| entry['type'] == 'bogus' }['installed']).to be(false)
     end
 
     # Bogus declares `preference :dummy_secret_key, :password, default: 'SECRETKEY123'`.
     # The discovery endpoint must not leak the default — that's a secret
     # the gateway author shipped, just like a saved value would be.
-    it 'redacts password defaults in each provider\'s preference_schema' do
+    it 'redacts password defaults in each provider\'s schema' do
       get :types, as: :json
 
       bogus = json_response['data'].find { |entry| entry['type'] == 'bogus' }
-      secret_field = bogus['preference_schema'].find { |f| f['key'] == 'dummy_secret_key' }
-      expect(secret_field['default']).to be_nil
+      secret_field = bogus['schema']['properties']['dummy_secret_key']
+      expect(secret_field).to include('x-spree-secret' => true)
+      expect(secret_field).not_to have_key('default')
       expect(response.body).not_to include('SECRETKEY123')
     end
 
@@ -358,7 +359,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       it 'exposes a unique `type` for every provider' do
         get :types, as: :json
 
-        types = json_response['data'].map { |entry| entry['type'] }
+        types = json_response['data'].reject { |entry| entry['installed'] }.map { |entry| entry['type'] }
         expect(types).to contain_exactly('stripe', 'adyen')
         expect(types).to eq(types.uniq)
       end

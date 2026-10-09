@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'spree/api/preference_families'
+
 module Spree
   module Api
     module OpenAPI
@@ -162,26 +164,31 @@ module Spree
               },
               required: %w[id name code]
             },
-            PreferenceField: {
+            PreferenceSchema: {
               type: :object,
-              description: 'A single configurable preference on a payment method, promotion rule/action, or calculator. The frontend uses `type` + `default` to render a sensible input.',
-              properties: {
-                key: { type: :string, example: 'amount_min' },
-                type: { type: :string, example: 'decimal', description: 'string | text | password | integer | decimal | boolean | array | hash' },
-                default: { description: 'Default value (any JSON type), null when there is no default', nullable: true }
-              },
-              required: %w[key type]
+              description: 'The JSON Schema (draft 2020-12) of a type\'s `preferences`: one property per setting, ' \
+                           'with `format` (`money`, `currency`, `iso-country`, `prefixed-id`, …), `enum`, `default`, ' \
+                           '`x-spree-secret` for a secret and `x-spree-prefix` for an id list. Unknown keys are refused.',
+              additionalProperties: true,
+              example: { type: 'object', properties: { amount: { type: 'string', format: 'money', default: '0.0' } }, additionalProperties: false }
             },
             PromotionActionCalculator: {
               type: :object,
               description: "The action's nested calculator (when the action carries one — null for actions like `free_shipping`)",
               properties: {
                 type: { type: :string, example: 'flat_rate', description: 'Wire shorthand for the calculator subclass' },
-                label: { type: :string, example: 'Flat Rate' },
-                preferences: { type: :object, additionalProperties: true },
-                preference_schema: { type: :array, items: { '$ref' => '#/components/schemas/PreferenceField' } }
+                preferences: { '$ref' => '#/components/schemas/PromotionCalculatorPreferences' }
               },
-              required: %w[type label preferences preference_schema]
+              required: %w[type preferences]
+            },
+            DeliveryMethodCalculator: {
+              type: :object,
+              description: 'How the delivery method prices a shipment',
+              properties: {
+                type: { type: :string, example: 'flat_rate', description: 'Wire shorthand for the calculator subclass' },
+                preferences: { '$ref' => '#/components/schemas/DeliveryCalculatorPreferences' }
+              },
+              required: %w[type preferences]
             },
             PromotionActionLineItem: {
               type: :object,
@@ -243,7 +250,7 @@ module Spree
             Rails.logger.warn "Failed to load Typelizer admin schemas: #{e.message}"
           end
 
-          schemas
+          add_preference_schemas(schemas, Spree::Api::PreferenceFamilies::REGISTRIES.keys)
         end
 
         # Get all seller schemas (Typelizer + common).
@@ -280,7 +287,7 @@ module Spree
             Rails.logger.warn "Failed to load Typelizer seller schemas: #{e.message}"
           end
 
-          schemas
+          add_preference_schemas(schemas, Spree::Api::PreferenceFamilies::SELLER)
         end
 
         # Hand-written shapes the seller branch answers with that no serializer
@@ -420,7 +427,6 @@ module Spree
             patch_admin_user_schema(schemas)
             patch_promotion_rule_schema(schemas)
             patch_promotion_action_schema(schemas)
-            patch_price_rule_schema(schemas)
             patch_import_schema(schemas)
             schemas
           end
@@ -504,21 +510,11 @@ module Spree
           return unless rule
 
           patch_id_arrays(rule, %w[product_ids category_ids customer_ids option_value_ids])
-          patch_preference_schema(rule)
-        end
-
-        def patch_price_rule_schema(schemas)
-          rule = schemas['PriceRule'] || schemas[:PriceRule]
-          return unless rule
-
-          patch_preference_schema(rule)
         end
 
         def patch_promotion_action_schema(schemas)
           action = schemas['PromotionAction'] || schemas[:PromotionAction]
           return unless action
-
-          patch_preference_schema(action)
 
           props = action[:properties]
           return unless props
@@ -557,17 +553,69 @@ module Spree
           end
         end
 
-        def patch_preference_schema(schema)
-          props = schema[:properties]
+        # One component per subtype Spree ships (`PromotionRuleItemTotalPreferences`)
+        # and one per family (`PromotionRulePreferences`) that the family's
+        # resource points its `preferences` at. A type an extension registers
+        # matches the final plain object; its shape is the `schema` in the
+        # family's `/types` response.
+        #
+        # @param schemas [Hash] components, changed in place
+        # @param families [Array<String>]
+        # @return [Hash] the components
+        def add_preference_schemas(schemas, families)
+          Spree::Api::PreferenceFamilies.schemas(families).each do |family, members|
+            refs = members.to_h do |type, schema|
+              name = Spree::Api::PreferenceFamilies.member_name(family, type)
+              schemas[name] = openapi_schema(schema)
+              [type, "#/components/schemas/#{name}"]
+            end
+
+            schemas["#{family}Preferences"] = {
+              description: "Settings of a #{family.titleize.downcase}, shaped by its `type` (see `x-spree-preferences-by-type`). " \
+                           'A type an extension registers is a plain object, described by the `schema` its `/types` entry carries.',
+              anyOf: refs.values.map { |ref| { '$ref' => ref } } + [{ type: :object, additionalProperties: true }],
+              'x-spree-preferences-by-type' => refs
+            }
+
+            resource = schemas[family] || schemas[family.to_sym]
+            props = resource&.dig(:properties)
+            key = props&.key?('preferences') ? 'preferences' : :preferences
+            props[key] = { '$ref' => "#/components/schemas/#{family}Preferences" } if props&.key?(key)
+          end
+
+          patch_delivery_method_calculator(schemas)
+          schemas
+        end
+
+        # The generated JSON Schema is draft 2020-12; OpenAPI 3.0 spells a
+        # nullable type as `nullable: true` and has no `propertyNames`.
+        def openapi_schema(schema)
+          case schema
+          when Hash
+            converted = schema.each_with_object({}) do |(key, value), result|
+              next if key == 'propertyNames'
+
+              result[key] = %w[enum default required].include?(key) ? value : openapi_schema(value)
+            end
+            if schema['type'].is_a?(Array)
+              converted['type'] = (schema['type'] - ['null']).first
+              converted['nullable'] = true if schema['type'].include?('null')
+            end
+            converted['enum'] = converted['enum'].compact if converted['enum']
+            converted['x-spree-property-names'] = openapi_schema(schema['propertyNames']) if schema['propertyNames']
+            converted
+          when Array then schema.map { |item| openapi_schema(item) }
+          else schema
+          end
+        end
+
+        def patch_delivery_method_calculator(schemas)
+          method = schemas['DeliveryMethod'] || schemas[:DeliveryMethod]
+          props = method&.dig(:properties)
           return unless props
 
-          key = props.key?('preference_schema') ? 'preference_schema' : :preference_schema
-          return unless props[key]
-
-          props[key] = {
-            type: :array,
-            items: { '$ref' => '#/components/schemas/PreferenceField' }
-          }
+          key = props.key?('calculator') ? 'calculator' : :calculator
+          props[key] = { allOf: [{ '$ref' => '#/components/schemas/DeliveryMethodCalculator' }], nullable: true } if props[key]
         end
 
         # Typelizer cannot represent Array<{...}> inline object types in OpenAPI,

@@ -98,7 +98,7 @@ module Spree
           group: klass.integration_group,
           description: klass.human_description,
           **klass.provider_listing,
-          preference_schema: klass.serialized_preference_schema
+          schema: klass.preference_json_schema
         }
       end.sort_by { |entry| entry[:name] }
     end

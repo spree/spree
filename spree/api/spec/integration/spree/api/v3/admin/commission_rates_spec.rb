@@ -145,7 +145,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
                 type: { type: :string, example: 'seller_rule',
                         description: 'A kind from /commission_rates/rule_types.' },
                 preferences: { type: :object, example: { seller_ids: ['sel_a1b2c3'] },
-                               description: "Configuration for the kind, per its preference_schema." },
+                               description: "Configuration for the kind, per its type's `schema`." },
                 product_ids: { type: :array, items: { type: :string },
                                description: 'For kinds that name products, which are kept outside preferences.' }
               }
@@ -209,7 +209,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
                        type: { type: :string, example: 'seller_rule' },
                        name: { type: :string, example: 'Seller' },
                        description: { type: :string, nullable: true },
-                       preference_schema: { type: :array, items: { type: :object } },
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' },
                        association_fields: { type: :array, items: { type: :string } }
                      }
                    }

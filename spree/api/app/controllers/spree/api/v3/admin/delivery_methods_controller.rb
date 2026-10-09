@@ -15,7 +15,7 @@ module Spree
               {
                 type: calculator_class.api_type,
                 name: calculator_class.description,
-                preference_schema: calculator_class.respond_to?(:serialized_preference_schema) ? calculator_class.serialized_preference_schema : []
+                schema: calculator_class.preference_json_schema
               }
             end
 
@@ -129,9 +129,9 @@ module Spree
               :pickup_point_provider, :rate_provider, :storefront_visible, :tracking_url,
               :available_to_sellers,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :tax_category_id, :calculator_type, :markup_flat, :markup_percent,
+              :tax_category_id, :markup_flat, :markup_percent,
               :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id,
-              stock_location_ids: [], calculator_preferences: {},
+              stock_location_ids: [], calculator: [:type, { preferences: {} }],
               rules: rule_attributes,
               services: [:id, :carrier, :service, :label, :markup_flat, :markup_percent, :position]
             )
@@ -158,7 +158,7 @@ module Spree
 
           # Resolves prefixed-ID params to records; calculator handled separately.
           def assignable_params
-            attributes = permitted_params.except(:tax_category_id, :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id, :stock_location_ids, :calculator_type, :calculator_preferences)
+            attributes = permitted_params.except(:tax_category_id, :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id, :stock_location_ids, :calculator)
             if params.key?(:tax_category_id)
               attributes[:tax_category] = params[:tax_category_id].present? ? Spree::TaxCategory.accessible_by(current_ability, :show).find_by_prefix_id!(params[:tax_category_id]) : nil
             end
@@ -202,15 +202,15 @@ module Spree
           end
 
           def assign_calculator(delivery_method)
-            calculator_type = permitted_params[:calculator_type]
-            preferences = permitted_params[:calculator_preferences]
+            calculator_type = permitted_params.dig(:calculator, :type)
+            preferences = permitted_params.dig(:calculator, :preferences)
 
             if calculator_type.present? && delivery_method.calculator&.class&.api_type != calculator_type
               selected_calculator_class = Spree::DeliveryMethod.calculators.find do |klass|
                 klass.api_type == calculator_type
               end
               unless selected_calculator_class
-                delivery_method.errors.add(:calculator_type, :invalid)
+                delivery_method.errors.add(:calculator, :invalid)
                 return
               end
 
@@ -228,11 +228,7 @@ module Spree
             delivery_method.ensure_calculator
             return if delivery_method.calculator.nil?
 
-            preferences.each do |key, value|
-              next unless delivery_method.calculator.has_preference?(key)
-
-              delivery_method.calculator.set_preference(key, value)
-            end
+            delivery_method.calculator.assign_preferences(preferences)
           end
         end
       end

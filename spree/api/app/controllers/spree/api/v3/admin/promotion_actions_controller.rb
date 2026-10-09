@@ -38,7 +38,7 @@ module Spree
               {
                 type: calc.api_type,
                 label: calc.respond_to?(:description) ? calc.description : calc.to_s.demodulize.titleize,
-                preference_schema: calc.respond_to?(:serialized_preference_schema) ? calc.serialized_preference_schema : []
+                schema: calc.preference_json_schema
               }
             end.sort_by { |entry| entry[:label].to_s }
 

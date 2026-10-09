@@ -259,7 +259,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :preferred_delimiter, :results_url, :price_list_id)
+            params.permit(*model_additional_permitted_attributes, :type, :attachment, :delimiter, :results_url, :price_list_id)
           end
 
           # A price-list import writes into one list, named by its prefixed id.

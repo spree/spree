@@ -132,8 +132,10 @@ export function DeliveryMethodSheet({
       estimated_transit_business_days_max:
         method.estimated_transit_business_days_max?.toString() ?? '',
       tax_category_id: method.tax_category_id ?? '',
-      calculator_type: method.calculator_type ?? '',
-      calculator_preferences: (method.calculator_preferences as Record<string, unknown>) ?? {},
+      calculator: {
+        type: method.calculator?.type ?? '',
+        preferences: method.calculator?.preferences ?? {},
+      },
       delivery_zone_id: method.delivery_zone_id ?? '',
       stock_location_ids: method.stock_location_ids ?? [],
       markup_flat: decimalToForm(method.markup_flat),

@@ -1,4 +1,4 @@
-import type { PreferenceField, SellerRequirement, SellerRequirementType } from '@spree/admin-sdk'
+import type { SellerRequirement, SellerRequirementType } from '@spree/admin-sdk'
 import type { ResourceFilterConfig } from '@spree/dashboard-core'
 import {
   adminClient,
@@ -193,9 +193,7 @@ function CreateRequirementSheet({
   function handleTypeChange(value: string) {
     setType(value)
     const entry = types.find((candidate) => candidate.type === value)
-    setPreferences(
-      entry ? defaultPreferences(entry.preference_schema as unknown as PreferenceField[]) : {},
-    )
+    setPreferences(entry ? defaultPreferences(entry.schema) : {})
   }
 
   async function handleSave() {
@@ -527,9 +525,9 @@ function RequirementFields({
         />
       </Field>
 
-      {kindEntry.preference_schema.length > 0 && (
+      {Object.keys(kindEntry.schema.properties).length > 0 && (
         <PreferencesForm
-          schema={kindEntry.preference_schema as unknown as PreferenceField[]}
+          schema={kindEntry.schema}
           values={values.preferences}
           onChange={onChange.setPreferences}
           inlineDatePickers

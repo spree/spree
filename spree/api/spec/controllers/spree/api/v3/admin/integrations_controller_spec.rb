@@ -41,7 +41,7 @@ RSpec.describe Spree::Api::V3::Admin::IntegrationsController, type: :controller 
       entry = json_response['data'].find { |row| row['type'] == 'carrier' }
       expect(entry['name']).to eq('Carrier')
       expect(entry['group']).to eq('shipping')
-      expect(entry['preference_schema'].map { |f| f['key'] }).to match_array(%w[api_key account_number])
+      expect(entry['schema']['properties'].keys).to match_array(%w[api_key account_number])
     end
 
     describe 'gallery metadata' do

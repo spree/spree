@@ -321,7 +321,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
       rate = create(:commission_rate, store: store)
       create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
-      rate.update!(rules: [{ type: 'category_rule', preferences: { category_ids: [category.id] } }])
+      rate.update!(rules: [{ type: 'category_rule', preferences: { category_ids: [category.prefixed_id] } }])
 
       expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::CategoryRule])
       expect(rate.commission_rules.first.preferred_category_ids.map(&:to_s)).to eq([category.id.to_s])
@@ -334,9 +334,9 @@ RSpec.describe Spree::CommissionRate, type: :model do
       rate = create(:commission_rate, store: store)
       first_seller = create(:seller, store: store)
       second_seller = create(:seller, store: store)
-      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [first_seller.id] } }])
+      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [first_seller.prefixed_id] } }])
 
-      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [second_seller.id] } }])
+      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [second_seller.prefixed_id] } }])
 
       expect(rate.reload.commission_rules.count).to eq(1)
       expect(rate.commission_rules.first.preferred_seller_ids.map(&:to_s)).to eq([second_seller.id.to_s])
@@ -359,13 +359,13 @@ RSpec.describe Spree::CommissionRate, type: :model do
       foreign_seller = create(:seller, store: create(:store))
 
       expect {
-        rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [foreign_seller.id] } }])
-      }.to raise_error(ActiveRecord::RecordNotFound)
+        rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [foreign_seller.prefixed_id] } }])
+      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/seller_ids})
     end
 
     it 'builds rules on a rate that does not exist yet' do
       rate = create(:commission_rate, store: store,
-                                      rules: [{ type: 'seller_rule', preferences: { seller_ids: [seller.id] } }])
+                                      rules: [{ type: 'seller_rule', preferences: { seller_ids: [seller.prefixed_id] } }])
 
       expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::SellerRule])
     end

@@ -15,11 +15,8 @@ export function CustomerGroupRuleEditor({ draft, onSave, onClose }: PriceRuleEdi
   // Preload the full customer-group list so the picker surfaces options on
   // open without the merchant having to type — the list is small and cached.
   const { data: customerGroupsData } = useCustomerGroups()
-  // Seed from `draft.customer_groups` (the embed) — `preferences.customer_group_ids`
-  // holds raw integer IDs server-side while the embed carries the prefixed `cg_…`
-  // IDs the picker round-trips.
-  const [groupIds, setGroupIds] = useState<string[]>(() =>
-    (draft.customer_groups ?? []).map((g) => g.id),
+  const [groupIds, setGroupIds] = useState<string[]>(
+    () => (draft.preferences?.customer_group_ids ?? []) as string[],
   )
   const [customerGroups, setCustomerGroups] = useState<RuleEmbedRecord[]>(
     draft.customer_groups ?? [],

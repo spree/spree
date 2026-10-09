@@ -13,8 +13,7 @@ module Spree
                    delivery_origin_group_id: [:string, nullable: true],
                    delivery_zone_id: [:string, nullable: true],
                    stock_location_ids: [:string, multi: true],
-                   calculator_type: [:string, nullable: true],
-                   calculator_preferences: ['Record<string, unknown>', nullable: true],
+                   calculator: '{ type: string; preferences: Record<string, unknown> } | null',
                    markup_flat: [:string, nullable: true],
                    markup_percent: [:string, nullable: true],
                    available_to_sellers: :boolean,
@@ -56,12 +55,9 @@ module Spree
 
           api_type_attributes :fulfillment_provider, :pickup_point_provider, :rate_provider
 
-          attribute :calculator_type do |record|
-            record.calculator&.class&.api_type
-          end
-
-          attribute :calculator_preferences do |record|
-            record.calculator.respond_to?(:serialized_preferences) ? record.calculator.serialized_preferences : record.calculator&.preferences
+          attribute :calculator do |record|
+            calculator = record.calculator
+            { type: calculator.class.api_type, preferences: calculator.serialized_preferences } if calculator
           end
         end
       end

@@ -23,7 +23,6 @@ export type {
   DeliveryMethodParams,
   DeliveryMethodRuleParams,
   DeliveryMethodRuleType,
-  DeliveryPreferenceField,
   DeliveryZoneListParams,
   MeResource,
   MeResponse,

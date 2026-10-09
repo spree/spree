@@ -101,7 +101,10 @@ function IntegrationsPage() {
   // The server already leaves out providers installed on this store, so
   // these are only the ones still to set up.
   const availablePaymentTypes = useMemo(
-    () => (paymentTypesResponse?.data ?? []).filter((type) => type.third_party && !type.superseded),
+    () =>
+      (paymentTypesResponse?.data ?? []).filter(
+        (type) => type.third_party && !type.superseded && !type.installed,
+      ),
     [paymentTypesResponse],
   )
 

@@ -22,5 +22,5 @@ export function useStoreTimezone(): string {
     enabled: Boolean(sellerId),
   })
 
-  return profile?.preferred_timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
+  return profile?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
 }

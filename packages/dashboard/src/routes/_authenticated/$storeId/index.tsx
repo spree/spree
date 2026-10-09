@@ -392,7 +392,7 @@ function CounterRow({
   // stays a translation.
   const description = t(`admin.pages.home.operations.counters.${counter.key}.description`, {
     defaultValue: '',
-    count: store?.preferred_low_stock_threshold ?? 0,
+    count: store?.low_stock_threshold ?? 0,
   })
   const content = (
     <>

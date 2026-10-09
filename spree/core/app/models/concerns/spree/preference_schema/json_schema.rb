@@ -19,34 +19,48 @@ module Spree
       }.freeze
 
       # @param klass [Class] a class including {Spree::PreferenceSchema}
-      # @return [Hash] a JSON Schema object (string keys), or nil when the
-      #   declarations could not be read yet (no database connection)
+      # @return [Hash] a JSON Schema object (string keys)
       def self.for(klass)
         fields = klass.preference_schema
-        return nil if fields.empty? && !klass.preference_schema_computed?
-
         definitions = klass.preference_definitions
-        properties = fields.to_h { |field| [field[:key].to_s, property(field, definitions.fetch(field[:key]))] }
+        properties = fields.to_h do |field|
+          [field[:key].to_s, property_schema(definitions.fetch(field[:key]), default: field[:default])]
+        end
 
         { 'type' => 'object', 'properties' => properties, 'additionalProperties' => false }
       end
 
-      def self.property(field, definition)
+      # The schema of one declared preference.
+      #
+      # @param definition [Hash] an entry of `preference_definitions`
+      # @param default [Object] the declared default, already evaluated
+      # @return [Hash]
+      def self.property_schema(definition, default: declared_default(definition))
         schema = value_schema(definition)
-        choices = field[:choices]
+        choices = definition[:choices]
+        choices = choices.call if choices.respond_to?(:call)
         schema['enum'] = choices.map { |choice| choice.is_a?(Symbol) ? choice.to_s : choice } if choices.present?
-        default = wire_default(field[:default], definition)
+        default = definition[:dynamic_default] ? nil : wire_default(default, definition)
+        unset_reads_null = default.nil? && !definition[:dynamic_default]
 
         # A value nothing has set reads back as null, so a preference without
         # a default is nullable on the wire whatever its declared type — and so
         # is a secret, whose default is never sent.
-        if (definition[:nullable] || default.nil? || definition[:type] == :password) && schema['type']
+        if (definition[:nullable] || unset_reads_null || definition[:type] == :password) && schema['type']
           schema['type'] = [schema['type'], 'null']
           schema['enum'] += [nil] if schema['enum']
         end
         # A secret's default would leak alongside the masked value.
         schema['default'] = default unless default.nil? || definition[:type] == :password
         schema
+      end
+
+      # A default can be a block that reads the database (the default store's
+      # currency); one that cannot be read here is left out.
+      def self.declared_default(definition)
+        definition[:default].call
+      rescue StandardError
+        nil
       end
 
       def self.value_schema(definition)
@@ -105,7 +119,7 @@ module Spree
         default.as_json
       end
 
-      private_class_method :property, :value_schema, :item_schema, :string_schema, :wire_default
+      private_class_method :declared_default, :value_schema, :item_schema, :string_schema, :wire_default
     end
   end
 end

@@ -499,14 +499,14 @@ The gate is enforced by the Store API, not by the storefront, so a storefront ap
 ```typescript Admin SDK
 // Gate the wholesale channel, and give its shoppers a default agreement
 await adminClient.channels.update('ch_xxx', {
-  preferred_storefront_access: 'login_required',
-  preferred_guest_checkout: false,
+  storefront_access: 'login_required',
+  guest_checkout: false,
   default_catalog_id: 'cat_xxx',
 })
 
 // Or set the fallback for every channel that does not set its own
 await adminClient.store.update({
-  preferred_storefront_access: 'prices_hidden',
+  storefront_access: 'prices_hidden',
 })
 ```
 
@@ -515,8 +515,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/channels/ch_xxx' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
-        "preferred_storefront_access": "login_required",
-        "preferred_guest_checkout": false,
+        "storefront_access": "login_required",
+        "guest_checkout": false,
         "default_catalog_id": "cat_xxx"
       }'
 ```

@@ -75,10 +75,10 @@ RSpec.describe 'Admin Store API', type: :request, swagger_doc: 'api-reference/ad
         type: :object,
         properties: {
           name: { type: :string, example: 'My Store' },
-          preferred_admin_locale: { type: :string, example: 'en' },
-          preferred_timezone: { type: :string, example: 'UTC' },
-          preferred_weight_unit: { type: :string, example: 'kg' },
-          preferred_unit_system: { type: :string, example: 'metric' }
+          admin_locale: { type: :string, example: 'en' },
+          timezone: { type: :string, example: 'UTC' },
+          weight_unit: { type: :string, example: 'kg' },
+          unit_system: { type: :string, example: 'metric' }
         }
       }
 

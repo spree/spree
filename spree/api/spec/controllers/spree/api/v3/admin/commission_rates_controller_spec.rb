@@ -148,7 +148,9 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
         rules: [{ type: 'seller_rule', preferences: { seller_ids: [foreign_seller.prefixed_id] } }]
       }, as: :json
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_preferences')
+      expect(json_response['error']['details']).to have_key('/preferences/seller_ids')
       expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::SellerRule])
     end
 
@@ -167,7 +169,8 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
         rules: [{ type: 'seller_rule', preferences: { seller_ids: ['sel_gone'] } }]
       }, as: :json
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_preferences')
     end
 
     it 'still accepts an empty list as clearing the targeting' do
@@ -254,7 +257,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
       band = types.find { |row| row['type'] == 'item_total_rule' }
       expect(band['name']).to eq('Sale value')
-      expect(band['preference_schema'].map { |field| field['key'] }).to include('min_amount', 'max_amount')
+      expect(band['schema']['properties'].keys).to include('min_amount', 'max_amount')
 
       products = types.find { |row| row['type'] == 'product_rule' }
       expect(products['association_fields']).to include('product_ids')

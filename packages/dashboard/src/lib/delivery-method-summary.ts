@@ -90,6 +90,10 @@ export function amountForCurrency(
  * that pair still names a different currency (a pre-6.0 EUR price), the
  * existing figure is copied into the `amounts` hash first so typing in the
  * dollar row cannot overwrite the euro price.
+ *
+ * Amounts are written as the exact decimal string typed, which is what the
+ * API accepts; a cleared default-currency amount is zero, as the server
+ * stores it.
  */
 export function applyCurrencyAmount(
   preferences: Record<string, unknown>,
@@ -106,7 +110,7 @@ export function applyCurrencyAmount(
   if (namedCurrency !== code && namedCurrency !== defaultCode) {
     const existing = amountForCurrency(preferences, namedCurrency, defaultCurrency)
     if (existing !== null && hashEntry(nextAmounts, namedCurrency) === undefined) {
-      nextAmounts[namedCurrency] = existing
+      nextAmounts[namedCurrency] = String(existing)
     }
   }
 
@@ -116,7 +120,7 @@ export function applyCurrencyAmount(
     }
     return {
       ...preferences,
-      amount: parsed,
+      amount: parsed ?? '0',
       currency: defaultCurrency,
       amounts: nextAmounts,
     }
@@ -125,7 +129,7 @@ export function applyCurrencyAmount(
   writeHashAmount(nextAmounts, code, parsed)
 
   if (namedCurrency === code) {
-    return { ...preferences, amount: parsed, amounts: nextAmounts }
+    return { ...preferences, amount: parsed ?? '0', amounts: nextAmounts }
   }
 
   return { ...preferences, amounts: nextAmounts }

@@ -78,11 +78,7 @@ module Spree
       deferred_ids, scalar_attrs = attrs.partition { |k, _| record.new_record? && k.to_s.end_with?('_ids') }
       record.assign_attributes(scalar_attrs.to_h) if scalar_attrs.any?
 
-      preferences&.each do |key, value|
-        next unless record.has_preference?(key.to_sym)
-
-        record.set_preference(key.to_sym, value)
-      end
+      record.assign_preferences(preferences) if preferences
       record.assign_calculator_attributes(calculator) if calculator.present? && record.respond_to?(:assign_calculator_attributes)
 
       # Always save — `record.changed?` doesn't reflect preferences
