@@ -8,18 +8,18 @@ module Spree
     # Standalone from Spree::Carts::Create (storefront). Admin-created orders
     # are first-class Spree::Order records (status: 'draft') in 5.x and remain
     # so in 6.0 — Spree::Cart in 6.0 is storefront-only.
-    class Create
-      prepend Spree::ServiceModule::Base
-
+    class Create < Spree::Workflow
       attr_reader :discount_application_errors
 
-      # @param store [Spree::Store]
-      # @param customer [Object, nil] resolved customer (Spree.customer_class instance)
-      # @param created_by [Object, nil] the staff member creating the draft
-      #   (Spree.admin_user_class instance); nil for machine callers (secret keys)
-      # @param params [Hash] order params (see admin API docs)
+      # @param store [Spree::Store] the store the order belongs to
+      # @param customer [Object, nil] who is ordering, when they are an
+      #   existing customer; the order keeps `email` either way
+      # @param created_by [Object, nil] who is placing it — a staff member, or
+      #   the credential acting for one
+      # @param params [Hash] the order's own attributes, plus `items`,
+      #   addresses and a coupon code
       # @return [Spree::ServiceModule::Result]
-      def call(store:, customer: nil, created_by: nil, params: {})
+      def perform(store:, customer: nil, created_by: nil, params: {})
         @store = store
         @customer = customer
         @created_by = created_by
