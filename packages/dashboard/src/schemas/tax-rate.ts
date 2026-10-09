@@ -1,6 +1,6 @@
 import { compareMoney, isDecimalString, type TaxRateParams } from '@spree/admin-sdk'
 import { blankToNull } from '@spree/dashboard-core'
-import { requiredMessage } from '@spree/dashboard-ui'
+import { decimalPlacesMessage, requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
 export const taxRateFormSchema = z.object({
@@ -9,6 +9,10 @@ export const taxRateFormSchema = z.object({
   rate_percent: z
     .string()
     .regex(/^\d+(\.\d+)?$/, { error: requiredMessage('tax_rate.amount') })
+    // Stored as a fraction to five decimals, so a percentage keeps three.
+    .refine((value) => (value.split('.')[1] ?? '').length <= 3, {
+      error: decimalPlacesMessage('tax_rate.amount', 3),
+    })
     .refine((value) => !isDecimalString(value) || compareMoney(value, '100') <= 0, {
       error: requiredMessage('tax_rate.amount'),
     }),

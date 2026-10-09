@@ -440,7 +440,7 @@ function AmountCurrencyRow<T extends GiftCardCreateFormValues | GiftCardEditForm
           <InputGroupInput
             id="amount"
             type="number"
-            step="0.01"
+            step="any"
             min={0}
             disabled={readOnly}
             aria-invalid={!!errors.amount || undefined}

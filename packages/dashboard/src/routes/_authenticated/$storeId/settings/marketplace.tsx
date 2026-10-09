@@ -311,7 +311,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           id="payout-minimum"
                           type="number"
                           min={0}
-                          step="0.01"
+                          step="any"
                           inputMode="decimal"
                           aria-invalid={
                             !!errors.preferred_default_minimum_payout_amount || undefined
@@ -390,7 +390,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           type="number"
                           min={0}
                           max={100}
-                          step="0.01"
+                          step="any"
                           aria-invalid={!!errors.commission_tax_rate_percentage || undefined}
                           {...form.register('commission_tax_rate_percentage')}
                         />

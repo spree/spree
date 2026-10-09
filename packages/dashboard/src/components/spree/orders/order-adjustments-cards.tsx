@@ -488,7 +488,7 @@ function AddDiscountDialog({
                       id="discount-value"
                       name="value"
                       type="number"
-                      step="0.01"
+                      step="any"
                       min="0.01"
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
@@ -643,7 +643,7 @@ function AddFeeDialog({
                       id="fee-amount"
                       name="amount"
                       type="number"
-                      step="0.01"
+                      step="any"
                       min="0"
                       required
                     />

@@ -324,7 +324,7 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
           <InputGroupInput
             id="rate_percent"
             type="number"
-            step="0.01"
+            step="any"
             min="0"
             max="100"
             inputMode="decimal"

@@ -213,7 +213,7 @@ function OrderMinimums({
                   <Input
                     type="number"
                     min="0"
-                    step="0.01"
+                    step="any"
                     disabled={!canEdit}
                     aria-invalid={!amountValid || duplicate}
                     aria-label={t('admin.catalogs.terms.minimum_amount_label')}

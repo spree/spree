@@ -413,7 +413,7 @@ function AddPaymentDialog({
                   <InputGroupInput
                     id="pay-amount"
                     type="number"
-                    step="0.01"
+                    step="any"
                     placeholder={order.amount_due ?? '0.00'}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}

@@ -200,7 +200,7 @@ export function CreateClaimDialog({
                         <InputGroupInput
                           id={`claim-amount-${line.id}`}
                           type="number"
-                          step="0.01"
+                          step="any"
                           min="0"
                           value={amounts[line.id] ?? ''}
                           onChange={(event) => {

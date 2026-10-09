@@ -141,7 +141,7 @@ export function ClaimResolveDialog({
                   <InputGroupInput
                     id="claim-resolve-amount"
                     type="number"
-                    step="0.01"
+                    step="any"
                     min="0"
                     value={amount}
                     onChange={(event) => setAmount(event.target.value)}
