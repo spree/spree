@@ -82,6 +82,11 @@ export type ListParams<
 > = PageParams & {
   /** Sort order. Prefix with - for descending, e.g. '-created_at', 'name'. Comma-separated for multiple fields. */
   sort?: S
+  /**
+   * Filters the typed params do not list, such as ones your app adds, sent as
+   * given and not checked: `{ q: { erp_id_eq: 'ERP-1' } }`.
+   */
+  q?: Record<string, unknown>
 } & F
 
 // Address params
