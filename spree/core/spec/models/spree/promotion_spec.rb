@@ -953,7 +953,7 @@ describe Spree::Promotion, type: :model do
     let(:category) { create(:category) }
 
     it 'builds a rule from a {type, preferences} hash' do
-      promotion.rules = [{ type: 'item_total', preferences: { amount_min: 50 } }]
+      promotion.rules = [{ type: 'item_total', preferences: { amount_min: '50' } }]
       promotion.reload
 
       expect(promotion.rules.size).to eq(1)
@@ -964,7 +964,7 @@ describe Spree::Promotion, type: :model do
     it 'updates an existing rule when matched by id' do
       existing = promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal', preferences: { amount_min: 10 })
 
-      promotion.rules = [{ id: existing.id, type: 'item_total', preferences: { amount_min: 99 } }]
+      promotion.rules = [{ id: existing.id, type: 'item_total', preferences: { amount_min: '99' } }]
       promotion.reload
 
       expect(promotion.rules.size).to eq(1)
@@ -1059,7 +1059,7 @@ describe Spree::Promotion, type: :model do
 
     it 'defers application until after_save on a new promotion record' do
       promotion = build(:promotion)
-      promotion.rules = [{ type: 'item_total', preferences: { amount_min: 25 } }]
+      promotion.rules = [{ type: 'item_total', preferences: { amount_min: '25' } }]
 
       expect(promotion).to be_pending_rules_or_actions
       expect(promotion.rules).to be_empty
@@ -1094,7 +1094,7 @@ describe Spree::Promotion, type: :model do
         type: 'create_adjustment',
         calculator: {
           type: 'flat_rate',
-          preferences: { amount: 7.5, currency: 'USD' }
+          preferences: { amount: '7.5', currency: 'USD' }
         }
       }]
       promotion.reload
@@ -1115,7 +1115,7 @@ describe Spree::Promotion, type: :model do
       promotion.actions = [{
         id: action.id,
         type: 'create_adjustment',
-        calculator: { type: 'flat_percent_item_total', preferences: { flat_percent: 15 } }
+        calculator: { type: 'flat_percent_item_total', preferences: { flat_percent: '15' } }
       }]
       promotion.reload
 

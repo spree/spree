@@ -18,6 +18,7 @@
   "dependencies": {
     "@spree/admin-sdk": "workspace:^",
     "@spree/seller-dashboard": "workspace:^",
+    "@spree/admin-sdk": "workspace:^",
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
     "@spree/seller-sdk": "workspace:^",

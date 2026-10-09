@@ -67,7 +67,7 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
 
       expect(entry[:label]).to eq('Default location')
       expect(entry[:description]).to be_present
-      expect(entry[:preference_schema]).to eq([])
+      expect(entry[:schema]).to include('type' => 'object', 'properties' => {})
     end
   end
 
