@@ -76,6 +76,31 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
   path '/api/v3/admin/delivery_profiles/{delivery_profile_id}/origin_groups' do
     parameter name: :delivery_profile_id, in: :path, type: :string
 
+    get 'List origin groups' do
+      tags 'Delivery'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description "Returns the profile's origin groups: the sets of warehouses that each quote their own delivery rates."
+      admin_scope :read, :settings
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'origin groups found' do
+        let(:delivery_profile) { create(:delivery_profile, store: store, name: "Grouped #{Time.current.to_f}") }
+        let(:delivery_profile_id) { delivery_profile.prefixed_id }
+        let!(:origin_group) { create(:delivery_origin_group, delivery_profile: delivery_profile, name: 'EU warehouse') }
+
+        schema SwaggerSchemaHelpers.paginated('DeliveryOriginGroup')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(origin_group.prefixed_id)
+        end
+      end
+    end
+
     post 'Create an origin group' do
       tags 'Delivery'
       consumes 'application/json'

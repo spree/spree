@@ -16,11 +16,15 @@ import type {
   CategoryListParams,
   Channel,
   Claim,
+  ClaimFilters,
+  ClaimSort,
   Collection,
   CollectionListParams,
   Company,
   CompanyAddressParams,
   CompanyInvitation,
+  CompanyInvitationFilters,
+  CompanyInvitationSort,
   CompanyMembership,
   CompletePaymentSessionParams,
   CompletePaymentSetupSessionParams,
@@ -34,6 +38,8 @@ import type {
   Customer,
   DeliveryMethod,
   DigitalLink,
+  DigitalLinkFilters,
+  DigitalLinkSort,
   GiftCard,
   Locale,
   LoginCredentials,
@@ -54,6 +60,8 @@ import type {
   RequestPasswordResetParams,
   ResetPasswordParams,
   Return,
+  ReturnFilters,
+  ReturnSort,
   Seller,
   StockLocation,
   StoreCredit,
@@ -779,7 +787,7 @@ export class StoreClient {
     returns: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ReturnFilters, ReturnSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Return>> =>
         this.request<PaginatedResponse<Return>>('GET', `/orders/${orderId}/returns`, {
@@ -836,7 +844,7 @@ export class StoreClient {
     claims: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ClaimFilters, ClaimSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Claim>> =>
         this.request<PaginatedResponse<Claim>>('GET', `/orders/${orderId}/claims`, {
@@ -1116,7 +1124,7 @@ export class StoreClient {
        * List the customer's downloads, newest first.
        */
       list: (
-        params?: ListParams,
+        params?: ListParams<DigitalLinkFilters, DigitalLinkSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<DigitalLink>> =>
         this.request<PaginatedResponse<DigitalLink>>('GET', '/customers/me/digital_links', {
@@ -1333,7 +1341,7 @@ export class StoreClient {
     invitations: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<CompanyInvitationFilters, CompanyInvitationSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CompanyInvitation>> =>
         this.request<PaginatedResponse<CompanyInvitation>>(

@@ -46,7 +46,7 @@ export interface AuthTokens {
 // that extends them (see `spree filters types`).
 export type {
   BooleanFilters,
-  CustomFieldFilters,
+  CustomFieldValueFilters,
   EnumFilters,
   IdFilters,
   OrFilters,

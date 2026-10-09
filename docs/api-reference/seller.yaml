@@ -94,7 +94,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 1
+                  name: Seller 2
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -161,7 +161,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 3
+                  name: Seller 4
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -306,7 +306,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 44
+                  name: Seller 50
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -423,7 +423,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 81
+                  name: Seller 87
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -493,8 +493,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 54
-                  slug: seller-54
+                  name: Seller 60
+                  slug: seller-60
                   status: approved
                 permissions:
                 - allow: true
@@ -748,8 +748,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 56
-                  slug: seller-56
+                  name: Seller 62
+                  slug: seller-62
                   status: approved
                 permissions: []
                 permission_keys: []
@@ -12469,7 +12469,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND_73
+                  code: UPS_GROUND_85
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12492,7 +12492,7 @@ paths:
                       currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND_74
+                  code: UPS_GROUND_86
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12681,7 +12681,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND_79
+                code: UPS_GROUND_91
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12721,7 +12721,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND_81
+                code: UPS_GROUND_93
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -14097,8 +14097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2053250
-                  slug: product-2053250
+                  name: Product 2233250
+                  slug: product-2233250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14333,8 +14333,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2086710
-                slug: product-2086710
+                name: Product 2266710
+                slug: product-2266710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14409,7 +14409,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2118212
+                slug: product-2298212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14518,8 +14518,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 101
-                slug: seller-101
+                name: Seller 107
+                slug: seller-107
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14592,7 +14592,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-103
+                slug: seller-109
                 about: ''
                 about_html: ''
                 logo_url:
@@ -16404,7 +16404,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 81
+                  delivery_method_name: UPS Ground 93
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16412,13 +16412,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1869315
-                    sku: SKU-252
+                    name: Product 2029315
+                    sku: SKU-273
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 81
+                    name: UPS Ground 93
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -16510,7 +16510,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 82
+                delivery_method_name: UPS Ground 94
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -16518,13 +16518,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 187961
-                  sku: SKU-253
+                  name: Product 203961
+                  sku: SKU-274
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 82
+                  name: UPS Ground 94
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -16623,7 +16623,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 83
+                delivery_method_name: UPS Ground 95
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -16631,13 +16631,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1883170
-                  sku: SKU-254
+                  name: Product 2043170
+                  sku: SKU-275
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 83
+                  name: UPS Ground 95
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -16716,7 +16716,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 84
+                delivery_method_name: UPS Ground 96
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -16724,13 +16724,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1897276
-                  sku: SKU-255
+                  name: Product 2057276
+                  sku: SKU-276
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 84
+                  name: UPS Ground 96
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -16754,6 +16754,248 @@ paths:
                 labels: []
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
+  "/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: fulfillment_id
+      in: path
+      description: Prefixed fulfillment ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List deliveries
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: The consignments of one of this seller's parcels, one per tracking
+        number, with each carrier status.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[carrier_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `carrier` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `pre_transit`, `in_transit`, `out_for_delivery`, `available_for_pickup`, `delivered`, `return_to_sender`, `failure`, `unknown` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `tracking_number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `carrier`, `created_at`, `id`, `status`, `tracking_number`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Delivery
+        sortable:
+        - carrier
+        - created_at
+        - id
+        - status
+        - tracking_number
+        - updated_at
+      responses:
+        '200':
+          description: deliveries listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Delivery"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: fulfillment_id
+      in: path
+      description: Prefixed fulfillment ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List shipping labels
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: Every label bought or uploaded for one of this seller's parcels,
+        refunded ones included.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[carrier_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `carrier` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `source` | One of `purchased`, `uploaded` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `purchased`, `refund_requested`, `refunded` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `tracking_number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `carrier`, `created_at`, `id`, `source`, `status`, `tracking_number`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ShippingLabel
+        sortable:
+        - carrier
+        - created_at
+        - id
+        - source
+        - status
+        - tracking_number
+        - updated_at
+      responses:
+        '200':
+          description: labels listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: lbl_UkLWZg9DAJ
+                  source: purchased
+                  status: purchased
+                  carrier: ups
+                  carrier_name: UPS
+                  service: Ground
+                  tracking_number: 1Z879E930346830007
+                  currency: USD
+                  format: pdf
+                  external_id: shp_4
+                  metadata: {}
+                  refunded_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  owner_id: ful_UkLWZg9DAJ
+                  owner_type: fulfillment
+                  cost: '7.25'
+                  integration_id:
+                  file_pending: false
+                  download_url:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ShippingLabel"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/seller/tracking_carriers":
     get:
       summary: List tracking carriers
@@ -16826,6 +17068,372 @@ paths:
                       - name
                 required:
                 - data
+  "/api/v3/seller/imports":
+    get:
+      summary: List imports
+      tags:
+      - Imports
+      security:
+      - bearer_auth: []
+      description: This seller's product CSV imports, queued or finished. Another
+        seller's imports are never listed.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `mapping`, `completed_mapping`, `processing`, `completed`, `failed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `seller_id`, `status`, `type`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Import
+        sortable:
+        - created_at
+        - id
+        - number
+        - seller_id
+        - status
+        - type
+        - updated_at
+      responses:
+        '200':
+          description: imports listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: imp_UkLWZg9DAJ
+                  number: IM1001
+                  rows_count: 0
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  type: products
+                  status: pending
+                  store_id: store_UkLWZg9DAJ
+                  seller_id: sel_UkLWZg9DAJ
+                  owner_type: seller
+                  owner_id: sel_UkLWZg9DAJ
+                  user_id: adm_UkLWZg9DAJ
+                  processing_errors:
+                  delimiter: ","
+                  original_filename: products_import.csv
+                  original_byte_size: 3627
+                  original_file_url: "/api/v3/seller/imports/imp_UkLWZg9DAJ/download"
+                  completed_rows_count: 0
+                  failed_rows_count: 0
+                  schema_fields:
+                  - name: slug
+                    label: Slug
+                    required: true
+                  - name: sku
+                    label: SKU
+                    required: true
+                  - name: name
+                    label: Name
+                    required: true
+                  - name: price
+                    label: Price
+                    required: true
+                  - name: status
+                    label: Status
+                    required: false
+                  - name: description
+                    label: Description
+                    required: false
+                  - name: meta_title
+                    label: Meta Title
+                    required: false
+                  - name: meta_description
+                    label: Meta Description
+                    required: false
+                  - name: meta_keywords
+                    label: Meta Keywords
+                    required: false
+                  - name: tags
+                    label: Tags
+                    required: false
+                  - name: compare_at_price
+                    label: Compare at Price
+                    required: false
+                  - name: currency
+                    label: Currency
+                    required: false
+                  - name: width
+                    label: Width
+                    required: false
+                  - name: height
+                    label: Height
+                    required: false
+                  - name: depth
+                    label: Depth
+                    required: false
+                  - name: dimensions_unit
+                    label: Dimensions Unit
+                    required: false
+                  - name: weight
+                    label: Weight
+                    required: false
+                  - name: weight_unit
+                    label: Weight Unit
+                    required: false
+                  - name: available_on
+                    label: Available On
+                    required: false
+                  - name: discontinue_on
+                    label: Discontinue On
+                    required: false
+                  - name: track_inventory
+                    label: Track Inventory
+                    required: false
+                  - name: inventory_count
+                    label: Inventory Count
+                    required: false
+                  - name: inventory_backorderable
+                    label: Inventory Backorderable
+                    required: false
+                  - name: stock_location
+                    label: Stock Location
+                    required: false
+                  - name: tax_category
+                    label: Tax Category
+                    required: false
+                  - name: product_type
+                    label: Product Type
+                    required: false
+                  - name: hs_code
+                    label: HS Code
+                    required: false
+                  - name: country_of_origin
+                    label: Country of Origin
+                    required: false
+                  - name: customs_description
+                    label: Customs Description
+                    required: false
+                  - name: carton
+                    label: Carton
+                    required: false
+                  - name: units_per_carton
+                    label: Units per Carton
+                    required: false
+                  - name: carton_weight
+                    label: Carton Weight
+                    required: false
+                  - name: cartons_per_pallet
+                    label: Cartons per Pallet
+                    required: false
+                  - name: image1_src
+                    label: Image 1 URL
+                    required: false
+                  - name: image2_src
+                    label: Image 2 URL
+                    required: false
+                  - name: image3_src
+                    label: Image 3 URL
+                    required: false
+                  - name: option1_name
+                    label: Option 1 Name
+                    required: false
+                  - name: option1_value
+                    label: Option 1 Value
+                    required: false
+                  - name: option2_name
+                    label: Option 2 Name
+                    required: false
+                  - name: option2_value
+                    label: Option 2 Value
+                    required: false
+                  - name: option3_name
+                    label: Option 3 Name
+                    required: false
+                  - name: option3_value
+                    label: Option 3 Value
+                    required: false
+                  - name: category1
+                    label: Category 1
+                    required: false
+                  - name: category2
+                    label: Category 2
+                    required: false
+                  - name: category3
+                    label: Category 3
+                    required: false
+                  csv_headers: []
+                  sample_row: {}
+                  mappings: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Import"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/imports/{import_id}/rows":
+    parameters:
+    - name: import_id
+      in: path
+      required: true
+      description: Import prefixed ID
+      schema:
+        type: string
+    get:
+      summary: List import rows
+      tags:
+      - Imports
+      security:
+      - bearer_auth: []
+      description: The rows of one of this seller's imports, each with its status
+        and any validation errors.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `row_number` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `status` | One of `pending`, `processing`, `completed`, `failed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `row_number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ImportRow
+        sortable:
+        - created_at
+        - id
+        - row_number
+        - status
+        - updated_at
+      responses:
+        '200':
+          description: rows listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: imrow_UkLWZg9DAJ
+                  row_number: 1
+                  status: pending
+                  validation_errors:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  import_id: imp_UkLWZg9DAJ
+                  item_type:
+                  item_id:
+                  data:
+                    slug: test-product
+                    name: Test Product
+                    price: '10.00'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ImportRow"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/seller/orders":
     get:
       summary: List orders
@@ -16990,7 +17598,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 19195
+                    name: Product 20995
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -16999,7 +17607,7 @@ paths:
                     additional_tax_total: '0.00'
                     total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-257
+                    sku: SKU-280
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -17012,7 +17620,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 86
+                    delivery_method_name: UPS Ground 100
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -17020,13 +17628,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 19195
-                      sku: SKU-257
+                      name: Product 20995
+                      sku: SKU-280
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 86
+                      name: UPS Ground 100
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -17054,7 +17662,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 168 Lovely Street
+                    address1: 196 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -17076,7 +17684,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 167 Lovely Street
+                    address1: 195 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -17177,7 +17785,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1929755
+                  name: Product 2109755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17186,7 +17794,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-258
+                  sku: SKU-281
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17199,7 +17807,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 87
+                  delivery_method_name: UPS Ground 101
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17207,13 +17815,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1929755
-                    sku: SKU-258
+                    name: Product 2109755
+                    sku: SKU-281
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 87
+                    name: UPS Ground 101
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17241,7 +17849,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 170 Lovely Street
+                  address1: 198 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17263,7 +17871,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 169 Lovely Street
+                  address1: 197 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17360,7 +17968,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1956554
+                  name: Product 2136554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17369,7 +17977,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-261
+                  sku: SKU-284
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17382,7 +17990,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 90
+                  delivery_method_name: UPS Ground 104
                   stock_location_name: Ricky Kutch
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17390,13 +17998,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1956554
-                    sku: SKU-261
+                    name: Product 2136554
+                    sku: SKU-284
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 90
+                    name: UPS Ground 104
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17424,7 +18032,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 176 Lovely Street
+                  address1: 204 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17446,7 +18054,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 175 Lovely Street
+                  address1: 203 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17550,7 +18158,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1965038
+                  name: Product 2145038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17559,7 +18167,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-262
+                  sku: SKU-285
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17572,7 +18180,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 91
+                  delivery_method_name: UPS Ground 105
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17580,13 +18188,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1965038
-                    sku: SKU-262
+                    name: Product 2145038
+                    sku: SKU-285
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 91
+                    name: UPS Ground 105
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17636,7 +18244,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 177 Lovely Street
+                  address1: 205 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17803,7 +18411,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1983962
+                  name: Product 2163962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17812,7 +18420,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-264
+                  sku: SKU-287
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17825,7 +18433,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 93
+                  delivery_method_name: UPS Ground 107
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17833,13 +18441,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1983962
-                    sku: SKU-264
+                    name: Product 2163962
+                    sku: SKU-287
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 93
+                    name: UPS Ground 107
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17867,7 +18475,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 182 Lovely Street
+                  address1: 210 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17889,7 +18497,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 181 Lovely Street
+                  address1: 209 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17962,7 +18570,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1995749
+                  name: Product 2175749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17971,7 +18579,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-265
+                  sku: SKU-288
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17984,7 +18592,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 94
+                  delivery_method_name: UPS Ground 108
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17992,13 +18600,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1995749
-                    sku: SKU-265
+                    name: Product 2175749
+                    sku: SKU-288
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 94
+                    name: UPS Ground 108
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -18026,7 +18634,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 184 Lovely Street
+                  address1: 212 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -18048,7 +18656,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 183 Lovely Street
+                  address1: 211 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -18912,7 +19520,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 2157120 can be returned
+                  message: Only 1 of Product 2337120 can be returned
       requestBody:
         content:
           application/json:
@@ -20365,8 +20973,7 @@ components:
           - json
         key:
           type: string
-        value:
-          type: object
+        value: {}
       required:
       - id
       - label
@@ -22200,8 +22807,7 @@ components:
           - number
           - boolean
           - json
-        value:
-          type: object
+        value: {}
       required:
       - id
       - key
@@ -23278,6 +23884,26 @@ components:
         updated_at: datetime
       associations: {}
       scopes: {}
+    Delivery:
+      attributes:
+        carrier: text
+        created_at: datetime
+        id: id
+        status:
+          enum:
+          - pending
+          - pre_transit
+          - in_transit
+          - out_for_delivery
+          - available_for_pickup
+          - delivered
+          - return_to_sender
+          - failure
+          - unknown
+        tracking_number: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     DeliveryMethod:
       attributes:
         available_to_sellers: boolean
@@ -23330,6 +23956,39 @@ components:
         created_at: datetime
         id: id
         number: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Import:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        seller_id: id
+        status:
+          enum:
+          - pending
+          - mapping
+          - completed_mapping
+          - processing
+          - completed
+          - failed
+        type: type
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    ImportRow:
+      attributes:
+        created_at: datetime
+        id: id
+        row_number: integer
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
         updated_at: datetime
       associations: {}
       scopes: {}
@@ -23571,6 +24230,24 @@ components:
       associations: {}
       scopes:
         search: text
+    ShippingLabel:
+      attributes:
+        carrier: text
+        created_at: datetime
+        id: id
+        source:
+          enum:
+          - purchased
+          - uploaded
+        status:
+          enum:
+          - purchased
+          - refund_requested
+          - refunded
+        tracking_number: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     StockLocation:
       attributes:
         active: boolean

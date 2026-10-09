@@ -427,6 +427,7 @@ module Spree
               s[:'x-typelizer'] = true
               strip_null_from_enums(s)
             end
+            patch_typescript_only_types(schemas, writer_name)
             patch_cart_schema(schemas)
             patch_fulfillment_schema(schemas)
             patch_admin_user_schema(schemas)
@@ -434,6 +435,34 @@ module Spree
             patch_promotion_action_schema(schemas)
             patch_import_schema(schemas)
             schemas
+          end
+        end
+
+        # Typelizer publishes a type only TypeScript can express (`Array<{ … }>`,
+        # `any`) as a plain object. Give each such property the shape the API
+        # sends — an array, or any value — so responses validate against it;
+        # the patches below then point some arrays at a named item component.
+        def patch_typescript_only_types(schemas, writer_name)
+          Typelizer.interfaces(writer_name: writer_name).each do |interface|
+            properties = (schemas[interface.name] || schemas[interface.name.to_sym])&.dig(:properties)
+            next unless properties
+
+            interface.properties.each do |property|
+              key = [property.name.to_s, property.name.to_sym].find { |name| properties.key?(name) }
+              schema = key && !property.type.is_a?(Array) && typescript_only_type_schema(property.type.to_s)
+              next unless schema
+
+              schema[:nullable] = true if property.nullable || property.type.to_s.end_with?('| null')
+              properties[key] = schema.merge(properties[key].slice(:description))
+            end
+          end
+        end
+
+        def typescript_only_type_schema(type)
+          case type.delete_suffix(' | null')
+          when /\AArray<(string|number|boolean)>\z/ then { type: :array, items: { type: Regexp.last_match(1).to_sym } }
+          when /\AArray</ then { type: :array, items: { type: :object } }
+          when 'any', 'unknown' then {}
           end
         end
 

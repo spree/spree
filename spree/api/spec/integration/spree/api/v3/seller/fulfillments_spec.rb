@@ -182,6 +182,70 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
     end
   end
 
+  path '/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+    parameter name: :fulfillment_id, in: :path, type: :string, description: 'Prefixed fulfillment ID'
+
+    get 'List deliveries' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "The consignments of one of this seller's parcels, one per tracking number, with each carrier status."
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
+
+      response '200', 'deliveries listed' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+
+        schema SwaggerSchemaHelpers.paginated('Delivery')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |item| item['id'] }).to match_array(fulfillment.deliveries.map(&:prefixed_id))
+          expect(data).not_to be_empty
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+    parameter name: :fulfillment_id, in: :path, type: :string, description: 'Prefixed fulfillment ID'
+
+    get 'List shipping labels' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "Every label bought or uploaded for one of this seller's parcels, refunded ones included."
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
+
+      response '200', 'labels listed' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let!(:shipping_label) { create(:shipping_label, owner: fulfillment, store: store) }
+
+        schema SwaggerSchemaHelpers.paginated('ShippingLabel')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |item| item['id'] }).to eq([shipping_label.prefixed_id])
+        end
+      end
+    end
+  end
+
   path '/api/v3/seller/tracking_carriers' do
     get 'List tracking carriers' do
       tags 'Fulfillments'

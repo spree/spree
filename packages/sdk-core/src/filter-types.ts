@@ -201,7 +201,7 @@ export function renderFilterTypes(spec: FilterSpec, api: string): string {
     const typeName =
       search && groups.some((g) => g.table === name && !g.search) ? `${name}Search` : name
     const parts = [...rootType(tables, name), 'Filter.OrFilters']
-    if (search) parts.push('Filter.CustomFieldFilters')
+    if (search) parts.push('Filter.CustomFieldValueFilters')
 
     const fields = [
       ...(sortable.size ? [union([...sortable].sort())] : []),

@@ -578,6 +578,101 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/admin/sellers/{seller_id}/requirement_submissions' do
+    parameter name: :seller_id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
+
+    get "List a seller's requirement submissions" do
+      tags 'Sellers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'What this seller submitted against the marketplace requirements, with the review decision on each.'
+      admin_scope :read, :sellers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
+
+      response '200', 'submissions listed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:seller_id) { seller.prefixed_id }
+        let!(:submission) { create(:seller_requirement_submission, seller: seller) }
+
+        schema SwaggerSchemaHelpers.paginated('SellerRequirementSubmission')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |item| item['id'] }).to eq([submission.prefixed_id])
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/seller_transfers' do
+    get 'List seller transfers' do
+      tags 'Sellers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        The fund ledger: what each seller earned from an order, and any
+        reversals. Read-only, since fulfilment and refunds write it.
+      DESC
+      admin_scope :read, :payouts
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
+
+      response '200', 'transfers listed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:order) { create(:completed_order_with_totals, store: store, seller: seller) }
+        let!(:transfer) { create(:seller_transfer, :completed, seller: seller, amount: 40, order: order) }
+
+        schema SwaggerSchemaHelpers.paginated('SellerTransfer')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |item| item['id'] }).to include(transfer.prefixed_id)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/seller_payouts' do
+    get 'List seller payouts' do
+      tags 'Sellers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Settlements to sellers, each batching the transfers that had
+        accumulated since the last. `pending` and `processing` payouts are
+        still owed; `completed` ones reached the seller.
+      DESC
+      admin_scope :read, :payouts
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
+
+      response '200', 'payouts listed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:seller_payout) { create(:seller_payout, seller: seller, store: store, amount: 40, currency: 'USD') }
+
+        schema SwaggerSchemaHelpers.paginated('SellerPayout')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |item| item['id'] }).to include(seller_payout.prefixed_id)
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/seller_payouts/{id}/complete' do
     parameter name: :id, in: :path, type: :string, required: true, description: 'Seller payout prefixed ID'
 
