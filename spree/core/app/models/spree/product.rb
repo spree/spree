@@ -361,7 +361,21 @@ module Spree
       super(manual_ids | collections.automatic.ids)
     end
 
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id price]
+
+    # The default variant's base price in the current currency — what the
+    # product lists show — so a list can filter on it like a column.
+    ransacker :price, type: :decimal do |parent|
+      prices = Spree::Price.arel_table
+      Arel::Nodes::Grouping.new(
+        prices.project(prices[:amount]).
+          where(prices[:variant_id].eq(parent.table[:default_variant_id])).
+          where(prices[:currency].eq(Spree::Current.currency)).
+          where(prices[:price_list_id].eq(nil)).
+          where(prices[:deleted_at].eq(nil)).
+          take(1)
+      )
+    end
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
                                                    product_type product_categories option_types seller]
     # The storefront filters by tag, category and collection; every other hop

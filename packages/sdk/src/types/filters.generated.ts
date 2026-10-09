@@ -61,6 +61,7 @@ export type PolicyFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type ProductFields = Filter.RangeFilters<'available_on' | 'created_at' | 'discontinue_on' | 'updated_at'>
   & Filter.TextFilters<'description' | 'name' | 'slug'>
   & Filter.IdFilters<'id' | 'seller_id'>
+  & Filter.RangeFilters<'price', string | number>
   & Filter.EnumFilters<'status', 'draft' | 'active' | 'archived' | 'proposed' | 'rejected'>
 
 export type SellerFields = Filter.RangeFilters<'created_at' | 'updated_at'>

@@ -64,6 +64,7 @@ export type PolicyFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type ProductFields = Filter.RangeFilters<'available_on' | 'created_at' | 'discontinue_on' | 'updated_at'>
   & Filter.TextFilters<'description' | 'name' | 'slug'>
   & Filter.IdFilters<'id' | 'seller_id'>
+  & Filter.RangeFilters<'price', string | number>
   & Filter.EnumFilters<'status', 'draft' | 'active' | 'archived' | 'proposed' | 'rejected'>
 
 export type ProductTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -236,7 +237,7 @@ export type ProductFilters = ProductFields
   }
   & ProductFilterExtensions
 
-export type ProductSort = Filter.SortKey<'available_on' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'name' | 'seller_id' | 'slug' | 'status' | 'updated_at'>
+export type ProductSort = Filter.SortKey<'available_on' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at'>
 
 export interface ProductTypeFilterExtensions {}
 

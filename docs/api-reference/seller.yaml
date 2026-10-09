@@ -13959,12 +13959,13 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -13974,6 +13975,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - price
         - seller_id
         - slug
         - status
@@ -23457,6 +23459,7 @@ components:
         discontinue_on: datetime
         id: id
         name: text
+        price: decimal
         seller_id: id
         slug: text
         status:

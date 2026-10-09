@@ -3719,6 +3719,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -3755,7 +3756,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -3765,6 +3766,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - price
         - seller_id
         - slug
         - status
@@ -15273,7 +15275,7 @@ paths:
           | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
-          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `variant_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
 
@@ -19513,7 +19515,7 @@ paths:
           | `price_list_` | `catalog_id`, `created_at`, `ends_at`, `id`, `match_policy`, `name`, `position`, `starts_at`, `status`, `updated_at` |
           | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
-          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `variant_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
 
@@ -20730,6 +20732,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -30206,7 +30209,7 @@ paths:
           | `option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `prices_price_list_` | `catalog_id`, `created_at`, `ends_at`, `id`, `match_policy`, `name`, `position`, `starts_at`, `status`, `updated_at` |
-          | `product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `product_categories_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
           | `product_channels_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `product_collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
@@ -34168,6 +34171,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -34204,7 +34208,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -34214,6 +34218,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - price
         - seller_id
         - slug
         - status
@@ -35396,6 +35401,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -35432,7 +35438,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -35442,6 +35448,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - price
         - seller_id
         - slug
         - status
@@ -41195,6 +41202,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -41231,7 +41239,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -41241,6 +41249,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - price
         - seller_id
         - slug
         - status
@@ -45096,7 +45105,7 @@ paths:
           | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
-          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `variant_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
 
@@ -57483,6 +57492,7 @@ components:
         discontinue_on: datetime
         id: id
         name: text
+        price: decimal
         seller_id: id
         slug: text
         status:

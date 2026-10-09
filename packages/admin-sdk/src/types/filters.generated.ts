@@ -254,6 +254,7 @@ export type PriceListFields = Filter.IdFilters<'catalog_id' | 'id'>
 export type ProductFields = Filter.RangeFilters<'available_on' | 'created_at' | 'discontinue_on' | 'updated_at'>
   & Filter.TextFilters<'description' | 'name' | 'slug'>
   & Filter.IdFilters<'id' | 'seller_id'>
+  & Filter.RangeFilters<'price', string | number>
   & Filter.EnumFilters<'status', 'draft' | 'active' | 'archived' | 'proposed' | 'rejected'>
 
 export type ProductCategoryFields = Filter.IdFilters<'category_id' | 'id' | 'product_id'>
@@ -941,7 +942,7 @@ export type ProductFilters = ProductFields
   }
   & ProductFilterExtensions
 
-export type ProductSort = Filter.SortKey<'available_on' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'name' | 'seller_id' | 'slug' | 'status' | 'updated_at'>
+export type ProductSort = Filter.SortKey<'available_on' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at'>
 
 export type ProductSearchFilters = ProductFields
   & Filter.Prefixed<'categories_', CategoryFields & Filter.Prefixed<'parent_', CategoryFields>>
