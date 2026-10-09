@@ -785,13 +785,19 @@ export class StoreClient {
     /**
      * Get a completed order by prefixed ID.
      * Accessible via JWT (authenticated users) or spreeToken (guests).
+     *
+     * Also accepts the id of the cart the checkout was placed from — the
+     * handle a storefront still holds on its confirmation page. A checkout
+     * that reached several sellers resolves there to the group of orders it
+     * produced rather than to any one of them, exactly as `carts.complete`
+     * answered it; narrow the result with `isOrderGroup`.
      */
     get: (
       id: string,
       params?: { expand?: string[]; fields?: string[] },
       options?: RequestOptions,
-    ): Promise<Order> =>
-      this.request<Order>('GET', `/orders/${id}`, {
+    ): Promise<Order | OrderGroup> =>
+      this.request<Order | OrderGroup>('GET', `/orders/${id}`, {
         ...options,
         params: getParams(params),
       }),

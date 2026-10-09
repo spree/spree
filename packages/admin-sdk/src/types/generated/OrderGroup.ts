@@ -10,11 +10,22 @@ interface OrderGroup {
   currency: CurrencyCode;
   total: string | null;
   item_total: string | null;
+  delivery_total: string | null;
+  discount_total: string | null;
+  tax_total: string | null;
+  included_tax_total: string | null;
+  additional_tax_total: string | null;
+  fee_total: string | null;
+  gift_card_total: string | null;
+  amount_due: string | null;
+  store_credit_total: string | null;
+  covered_by_store_credit: boolean;
   fulfillment_status: 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped' | null;
   payment_status: 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | null;
   completed_at: string | null;
   billing_address: Address | null;
   shipping_address: Address | null;
+  payments: Array<Payment>;
   orders: Array<Order>;
   customer_id: string | null;
   cart_id: string | null;
@@ -24,7 +35,6 @@ interface OrderGroup {
   store_owner_notification_delivered: boolean;
   created_at: string;
   updated_at: string;
-  payments: Array<Payment>;
 }
 
 export default OrderGroup;

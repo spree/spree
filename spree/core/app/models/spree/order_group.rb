@@ -100,9 +100,14 @@ module Spree
     # the children loaded already (a serializer renders them, a gateway call
     # reads four of these in a row), and an aggregate per figure would issue a
     # query each time even against rows sitting in memory.
+    #
+    # +tax_total+ is each child's own derivation rather than a column, summed
+    # like the rest: asking the children keeps the group's answer the one they
+    # gave, where re-deriving it here from the two halves above would be a
+    # second way to reach the same figure.
     ROLLED_UP_TOTALS = %i[
       total item_total delivery_total additional_tax_total included_tax_total
-      discount_total fee_total
+      tax_total discount_total fee_total
     ].freeze
 
     ROLLED_UP_TOTALS.each do |figure|
@@ -112,9 +117,21 @@ module Spree
     end
 
     money_methods(*ROLLED_UP_TOTALS)
-    money_methods :gift_card_total
+    money_methods :gift_card_total, :amount_due
 
     alias ship_total delivery_total
+
+    # Still to collect once applied store credit is taken off, never negative —
+    # {Spree::Purchase::Totals#amount_due} asked of a whole checkout.
+    #
+    # The credit comes off this record's payments, which is where a grouped
+    # checkout's live; a child asked the same question answers the full amount,
+    # because the rows it would read hang off the group instead.
+    #
+    # @return [BigDecimal]
+    def amount_due
+      [outstanding_balance - total_applied_store_credit, 0].max
+    end
 
     # Where the checkout was made from, carried on the children because they
     # are what the checkout produced.

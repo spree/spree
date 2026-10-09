@@ -40,6 +40,8 @@ module Spree
         group.display_gift_card_total.to_s
       end
 
+      many :payments, resource: Spree::Emails::PaymentSerializer
+
       # Every child order in full is what the webhook payload carries; the
       # email reads the purchase-wide fields above instead.
       many :orders, resource: proc { Spree.api.order_serializer }, if: proc { false }

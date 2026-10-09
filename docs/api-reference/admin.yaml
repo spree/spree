@@ -58874,6 +58874,35 @@ components:
         item_total:
           type: string
           nullable: true
+        delivery_total:
+          type: string
+          nullable: true
+        discount_total:
+          type: string
+          nullable: true
+        tax_total:
+          type: string
+          nullable: true
+        included_tax_total:
+          type: string
+          nullable: true
+        additional_tax_total:
+          type: string
+          nullable: true
+        fee_total:
+          type: string
+          nullable: true
+        gift_card_total:
+          type: string
+          nullable: true
+        amount_due:
+          type: string
+          nullable: true
+        store_credit_total:
+          type: string
+          nullable: true
+        covered_by_store_credit:
+          type: boolean
         fulfillment_status:
           type: string
           nullable: true
@@ -58910,6 +58939,10 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Address"
           nullable: true
+        payments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Payment"
         orders:
           type: array
           items:
@@ -58932,10 +58965,6 @@ components:
           type: string
         updated_at:
           type: string
-        payments:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Payment"
       required:
       - id
       - number
@@ -58943,11 +58972,22 @@ components:
       - currency
       - total
       - item_total
+      - delivery_total
+      - discount_total
+      - tax_total
+      - included_tax_total
+      - additional_tax_total
+      - fee_total
+      - gift_card_total
+      - amount_due
+      - store_credit_total
+      - covered_by_store_credit
       - fulfillment_status
       - payment_status
       - completed_at
       - billing_address
       - shipping_address
+      - payments
       - orders
       - customer_id
       - cart_id
@@ -58957,7 +58997,6 @@ components:
       - store_owner_notification_delivered
       - created_at
       - updated_at
-      - payments
       x-typelizer: true
     OrderRoutingRule:
       type: object
