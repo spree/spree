@@ -101,8 +101,6 @@ describe Spree::Promotion::Rules::Category, type: :model do
   end
 
   describe '#add_taxons' do
-    let(:promotion) { create(:promotion) }
-    let(:rule) { create(:promotion_rule_taxon, promotion: promotion) }
     let(:taxons) { create_list(:category, 3) }
 
     it 'adds the taxons to the rule' do

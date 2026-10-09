@@ -26,11 +26,6 @@ module Spree
       expect(positions).to eq((1..category.classifications.count).to_a)
     end
 
-    it 'has a valid fixtures' do
-      expect positions_to_be_valid(taxon_with_5_products)
-      expect(Spree::ProductCategory.count).to eq 5
-    end
-
     context 'removing product from category' do
       before do
         p = taxon_with_5_products.products[1]
@@ -112,12 +107,6 @@ module Spree
             classification.destroy
           }.to change { category.reload.products_count }.from(1).to(0)
         end
-
-        it 'correctly counts multiple classifications' do
-          products = create_list(:product, 3)
-          products.each { |p| create(:product_category, category: category, product: p) }
-          expect(category.reload.products_count).to eq(3)
-        end
       end
 
       describe 'categories_count on product' do
@@ -132,12 +121,6 @@ module Spree
           expect {
             classification.destroy
           }.to change { product.reload.categories_count }.from(1).to(0)
-        end
-
-        it 'correctly counts multiple classifications' do
-          taxons = create_list(:category, 3)
-          taxons.each { |t| create(:product_category, category: t, product: product) }
-          expect(product.reload.categories_count).to eq(3)
         end
       end
     end

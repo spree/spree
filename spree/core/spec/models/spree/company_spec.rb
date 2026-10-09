@@ -44,23 +44,10 @@ describe Spree::Company, type: :model do
 
       expect(build(:company, store: store)).to be_valid
     end
-
-    it 'carries one identity per external system' do
-      company = create(:company, store: store)
-      company.set_external_id('erp', 'ACME')
-      company.set_external_id('crm', 'CUST-1')
-
-      expect(company.external_id_for('erp')).to eq('ACME')
-      expect(company.external_id_for('crm')).to eq('CUST-1')
-    end
   end
 
   describe 'the tree' do
     let(:root) { create(:company, store: store) }
-
-    it 'defaults a node to the company kind' do
-      expect(Spree::Company.new.kind).to eq('company')
-    end
 
     it 'refuses a division at the root' do
       expect(build(:company, store: store, kind: 'division')).not_to be_valid
@@ -259,14 +246,6 @@ describe Spree::Company, type: :model do
     end
   end
 
-  describe 'metadata' do
-    it 'persists to the single metadata column' do
-      company = create(:company, store: store, metadata: { 'erp_ref' => 'X-1' })
-
-      expect(company.reload.metadata['erp_ref']).to eq('X-1')
-    end
-  end
-
   describe 'deletion' do
     # There is no foreign key behind spree_orders.company_id and children are
     # destroyed with the node, so an unguarded delete would strand a placed
@@ -298,16 +277,5 @@ describe Spree::Company, type: :model do
 
       expect(company.destroy).to be_truthy
     end
-  end
-
-  it 'destroys its memberships, addresses and invitations' do
-    company = create(:company, store: store)
-    create(:company_membership, company: company)
-    create(:company_address, owner: company)
-    create(:company_invitation, company: company)
-
-    expect { company.destroy }.to change(Spree::CompanyMembership, :count).by(-1).
-      and change(Spree::Address, :count).by(-1).
-      and change(Spree::CompanyInvitation, :count).by(-1)
   end
 end

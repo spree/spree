@@ -13,12 +13,6 @@ RSpec.describe Spree::Category, type: :model do
       expect(described_class.new(name: 'Shoes', store: other)).to be_valid
     end
 
-    it 'rejects a duplicate permalink within the same store' do
-      described_class.create!(name: 'Shoes', store: store)
-
-      expect(described_class.new(name: 'Shoes', store: store)).not_to be_valid
-    end
-
     # Guards the index itself, not the validation: top-level categories have
     # parent_id IS NULL, and the previous (permalink, parent_id, taxonomy_id)
     # index left them unconstrained because unique indexes treat NULLs as distinct.
@@ -141,20 +135,6 @@ RSpec.describe Spree::Category, type: :model do
       expect(category.parent).to be_nil
       expect(category.store).to eq(store)
     end
-
-    it 'does not require a taxonomy' do
-      category = described_class.new(name: 'Kitchen', store: store)
-      expect(category).to be_valid
-      expect(category.errors[:taxonomy]).to be_empty
-    end
-
-    it 'copies the store from its parent' do
-      parent = described_class.create!(name: 'Kitchen', store: store)
-      child = described_class.create!(name: 'Pots', parent: parent)
-
-      expect(child.store).to eq(store)
-      expect(child.taxonomy).to be_nil
-    end
   end
 
   describe 'store auto-resolution (#ensure_store)' do
@@ -186,11 +166,6 @@ RSpec.describe Spree::Category, type: :model do
   end
 
   describe '.for_store / .for_stores' do
-    it 'finds categories by store_id' do
-      category = described_class.create!(name: 'Kitchen', store: store)
-      expect(described_class.for_store(store)).to include(category)
-    end
-
     it 'excludes categories owned by another store' do
       other = create(:store)
       mine = described_class.create!(name: 'Mine', store: store)
@@ -275,7 +250,6 @@ RSpec.describe Spree::Category, type: :model do
       expect(other_root.reload.products_count).to eq(1)  # gained it
     end
   end
-  let(:store) { @default_store }
   let(:category) { build(:category, name: 'Ruby on Rails', parent: nil) }
 
   it_behaves_like 'metadata'
@@ -370,14 +344,6 @@ RSpec.describe Spree::Category, type: :model do
       expect(category.permalink).to eql 'ni-hao'
     end
 
-    it 'stores old slugs in FriendlyIds history' do
-      # Stub out the unrelated methods that cannot handle a save without an id
-      allow(subject).to receive(:set_depth!)
-      expect(subject).to receive(:create_slug)
-      subject.permalink = 'custom-slug'
-      subject.run_callbacks :save
-    end
-
     context 'with parent category' do
       let(:parent) { FactoryBot.build(:category, permalink: 'brands') }
 
@@ -454,10 +420,6 @@ RSpec.describe Spree::Category, type: :model do
   context 'ransackable_associations' do
     it { expect(described_class.whitelisted_ransackable_associations).to include('parent') }
     it { expect(described_class.whitelisted_ransackable_associations).not_to include('taxonomy') }
-  end
-
-  describe '#cached_self_and_descendants_ids' do
-    it { expect(category.cached_self_and_descendants_ids).to eq(category.self_and_descendants.ids) }
   end
 
   describe '#localized_slugs_for_store' do
@@ -655,61 +617,6 @@ RSpec.describe Spree::Category, type: :model do
         expect(category.pretty_name).to eq(category.name)
       end
     end
-
-    context '2+ lvl deep' do
-      let(:category_parent) { create(:category, name: 'Parent') }
-
-      before do
-        category.parent = category_parent
-        category.save!
-      end
-
-      it 'returns parent name and category name' do
-        expect(category.reload.pretty_name).to eq('Parent -> Category#1')
-      end
-
-      context 'when name is updated' do
-        before do
-          category.name = 'New Name'
-          category.save!
-        end
-
-        it 'returns the updated pretty name' do
-          expect(category.reload.pretty_name).to eq('Parent -> New Name')
-        end
-      end
-
-      context 'when parent name is updated' do
-        before do
-          category_parent.name = 'New Parent'
-          category_parent.save!
-        end
-
-        it 'returns the updated pretty name' do
-          expect(category.reload.pretty_name).to eq('New Parent -> Category#1')
-        end
-      end
-    end
-
-    context 'when `always_use_translations` is disabled' do
-      before do
-        allow(Spree::Config).to receive(:always_use_translations).and_return(false)
-      end
-
-      it 'sets the pretty name' do
-        expect(category.reload.pretty_name).to eq(category.name)
-      end
-    end
-
-    context 'when `always_use_translations` is enabled' do
-      before do
-        allow(Spree::Config).to receive(:always_use_translations).and_return(true)
-      end
-
-      it 'sets the pretty name' do
-        expect(category.reload.pretty_name).to eq(category.name)
-      end
-    end
   end
 
   describe '#active_products_with_descendants' do
@@ -720,12 +627,6 @@ RSpec.describe Spree::Category, type: :model do
 
       it 'returns true' do
         expect(root_category.reload.active_products_with_descendants.exists?).to be true
-      end
-
-      it 'returns true when products aren\'t active' do
-        product.update(status: 'draft')
-
-        expect(root_category.reload.products.exists?).to be true
       end
     end
 

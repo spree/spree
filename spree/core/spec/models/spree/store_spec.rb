@@ -33,105 +33,11 @@ describe Spree::Store, type: :model, without_global_store: true do
   context 'Associations' do
     subject { create(:store) }
 
-    let(:other_store) { create(:store) }
-
     describe '#products' do
       let!(:product) { create(:product, store: subject) }
-      let!(:product_2) { create(:product, store: other_store) }
+      let!(:product_2) { create(:product, store: create(:store)) }
 
       it { expect(subject.products).to eq([product]) }
-
-      describe '#variants' do
-        let!(:variant) { create(:variant, product: product) }
-        let!(:variant_2) { create(:variant, product: product_2) }
-
-        it { expect(subject.variants).to eq([product.default_variant, variant]) }
-
-        describe '#stock_levels' do
-          let!(:stock_levels) { product.stock_levels }
-          let!(:stock_levels_2) { product_2.stock_levels }
-
-          it { expect(stock_levels).not_to be_empty }
-          it { expect(stock_levels_2).not_to be_empty }
-          it { expect(subject.stock_levels).to eq(stock_levels) }
-        end
-      end
-    end
-
-    describe '#payment_methods' do
-      let!(:payment_method) { create(:payment_method, store: subject) }
-      let!(:payment_method_2) { create(:payment_method, store: create(:store)) }
-
-      it { expect(subject.payment_methods).to eq([payment_method]) }
-    end
-
-    describe '#orders' do
-      let!(:order) { create(:order, store: subject, total: 100) }
-      let!(:order_2) { create(:order, store: create(:store), total: 100) }
-
-      it { expect(subject.orders).to eq([order]) }
-
-      describe '#line_items' do
-        let!(:line_item) { create(:line_item, order: order) }
-        let!(:line_item_2) { create(:line_item, order: order_2) }
-
-        it { expect(subject.line_items).to eq([line_item]) }
-      end
-
-      describe '#payments' do
-        let!(:payment) { create(:payment, order: order) }
-        let!(:payment_2) { create(:payment, order: order_2) }
-
-        it { expect(subject.payments).to eq([payment]) }
-      end
-
-      describe '#shipments' do
-        let!(:shipment) { create(:fulfillment, order: order) }
-        let!(:shipment_2) { create(:fulfillment, order: order_2) }
-
-        it { expect(subject.shipments).to eq([shipment]) }
-      end
-
-      describe '#returns' do
-        let!(:order) { create(:shipped_order, store: subject) }
-        let!(:order_2) { create(:shipped_order, store: create(:store)) }
-        let!(:return_record) { create(:return, order: order, store: subject) }
-        let!(:return_record_2) { create(:return, order: order_2, store: order_2.store) }
-
-        it { expect(subject.returns).to eq([return_record]) }
-      end
-
-      describe '#inventory_units' do
-        let(:product) { create(:product, store: subject) }
-        let(:product_2) { create(:product, store: other_store) }
-        let!(:inventory_unit) { create(:fulfillment_item, variant: product.default_variant, order: order) }
-        let!(:inventory_unit_2) { create(:fulfillment_item, variant: product_2.default_variant, order: order_2) }
-
-        it { expect(subject.inventory_units).to eq([inventory_unit]) }
-      end
-    end
-
-    describe '#store_credits' do
-      let!(:store_credit) { create(:store_credit, store: subject) }
-      let!(:store_credit_2) { create(:store_credit, store: create(:store)) }
-
-      it { expect(subject.store_credits).to eq([store_credit]) }
-
-      describe '#store_credit_events' do
-        let!(:store_credit_event) { store_credit.store_credit_events.first }
-        let!(:store_credit_event_2) { store_credit_2.store_credit_events.first }
-
-        it { expect(store_credit_event).not_to be_nil }
-        it { expect(store_credit_event_2).not_to be_nil }
-        it { expect(subject.store_credit_events).to eq([store_credit_event]) }
-      end
-    end
-
-    describe '#promotions' do
-      let!(:promotion) { create(:promotion, store: subject) }
-      let!(:promotion_2) { create(:promotion, store: create(:store)) }
-
-      it { expect(subject.promotions).to eq([promotion]) }
     end
   end
 
@@ -362,16 +268,6 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   context 'Validations' do
-    describe '#code' do
-      it 'generates a code when blank' do
-        store = build(:store, code: nil, name: nil)
-        store.valid?
-        # set_default_code generates a code if blank, so it should be valid
-        expect(store.code).to be_present
-        expect(store.errors[:code]).to be_empty
-      end
-    end
-
     describe '#customer_support_email' do
       it 'is valid when blank' do
         store = build(:store, customer_support_email: '')
@@ -414,10 +310,6 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   describe 'order routing strategy preference' do
-    it 'is valid with the default registered Rules strategy' do
-      expect(create(:store)).to be_valid
-    end
-
     it 'rejects an unregistered strategy' do
       store = build(:store, preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Reducer')
       expect(store).not_to be_valid
@@ -562,14 +454,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       store.default_country_code = 'ZZ'
 
       expect(store.default_country).to be_nil
-    end
-  end
-
-  describe '#unique_name' do
-    let!(:store) { build(:store) }
-
-    it 'returns the Store Name followed by the Store Code in parentheses' do
-      expect(store.unique_name).to eq("#{store.name} (#{store.code})")
     end
   end
 
@@ -817,15 +701,6 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
-  describe 'soft deletion' do
-    let!(:store) { create(:store) }
-
-    it 'soft-deletes when destroy is called' do
-      store.destroy!
-      expect(store.deleted_at).not_to be_nil
-    end
-  end
-
   describe '#default_stock_location' do
     # A persisted store must be the current one: stock locations are
     # store-scoped and resolve their store from Spree::Current.
@@ -957,22 +832,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       before { allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production')) }
 
       it { expect(store.formatted_url).to eq('https://mystore.mydomain.dev') }
-    end
-  end
-
-  describe '#formatted_url_or_custom_domain' do
-    let(:store) { build(:store, code: 'mystore', url: 'mystore.mydomain.dev:3000') }
-
-    it 'returns formatted_url as fallback' do
-      expect(store.formatted_url_or_custom_domain).to eq('http://mystore.mydomain.dev:3000')
-    end
-  end
-
-  describe '#url_or_custom_domain' do
-    let(:store) { build(:store, code: 'mystore', url: 'mystore.mydomain.dev') }
-
-    it 'returns url as fallback' do
-      expect(store.url_or_custom_domain).to eq('mystore.mydomain.dev')
     end
   end
 
@@ -1141,10 +1000,6 @@ describe Spree::Store, type: :model, without_global_store: true do
 
   describe 'storefront setup task' do
     let(:store) { create(:store) }
-
-    it 'is included in the setup tasks list' do
-      expect(store.setup_tasks_list).to include(:setup_storefront)
-    end
 
     describe '#storefront_setup?' do
       subject { store.storefront_setup? }

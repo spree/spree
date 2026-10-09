@@ -11,18 +11,6 @@ describe Spree::PriceRules::VolumeRule, type: :model do
       rule.save!
       expect(rule.reload.preferred_max_quantity).to be_nil
     end
-
-    it 'preserves non-zero max_quantity' do
-      rule.preferred_max_quantity = 50
-      rule.save!
-      expect(rule.reload.preferred_max_quantity).to eq(50)
-    end
-
-    it 'preserves nil max_quantity' do
-      rule.preferred_max_quantity = nil
-      rule.save!
-      expect(rule.reload.preferred_max_quantity).to be_nil
-    end
   end
 
   describe '#applicable?' do

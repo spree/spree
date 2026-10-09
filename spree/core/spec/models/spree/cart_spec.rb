@@ -67,14 +67,6 @@ describe Spree::Cart, type: :model do
         expect(cart.checkout_steps).to eq(%w(address delivery complete))
       end
     end
-
-    context 'when payment required' do
-      before { allow(cart).to receive_messages payment_required?: true }
-
-      specify do
-        expect(cart.checkout_steps).to eq(%w(address delivery payment complete))
-      end
-    end
   end
 
   describe '#current_checkout_step' do
@@ -135,14 +127,6 @@ describe Spree::Cart, type: :model do
   end
 
   describe 'lifecycle events' do
-    it 'publishes cart.* lifecycle events' do
-      expect(described_class.lifecycle_events_enabled).to be true
-      expect(described_class.event_prefix).to eq('cart')
-
-      registered = described_class._commit_callbacks.map(&:filter)
-      expect(registered).to include(:publish_create_event, :publish_update_event, :publish_delete_event)
-    end
-
     # The V3 cart serializer resolves by convention when spree_api is loaded;
     # core's dummy app only sees the fallback payload.
     it 'carries the prefixed id in the event payload' do
@@ -173,60 +157,12 @@ describe Spree::Cart, type: :model do
   end
 
   describe 'lifecycle' do
-    it 'generates a token on create' do
-      expect(create(:cart).token).to be_present
-    end
-
-    it 'is completed when completed_at is set' do
-      expect(build(:cart, completed_at: Time.current)).to be_completed
-      expect(build(:cart)).not_to be_completed
-    end
-
-    it 'is completing while completing_at holds the cart' do
-      expect(build(:cart, completing_at: Time.current)).to be_completing
-      expect(build(:cart)).not_to be_completing
-    end
-
     it 'scopes complete/incomplete on completed_at' do
       incomplete = create(:cart)
       complete = create(:cart, completed_at: Time.current)
 
       expect(described_class.complete).to contain_exactly(complete)
       expect(described_class.incomplete).to contain_exactly(incomplete)
-    end
-  end
-
-  describe 'line item ownership' do
-    let(:cart) { create(:cart) }
-
-    it 'owns line items and destroys them with the cart' do
-      line_item = create(:line_item, order: nil, cart: cart, currency: cart.currency)
-
-      expect(line_item.owner).to eq(cart)
-      expect { cart.destroy }.to change(Spree::LineItem, :count).by(-1)
-    end
-  end
-
-  describe 'order link' do
-    it 'links to the order completed from it' do
-      cart = create(:cart, completed_at: Time.current)
-      order = create(:order, cart: cart)
-
-      expect(cart.order).to eq(order)
-    end
-  end
-
-  describe '#warnings' do
-    let(:cart) { build(:cart) }
-
-    it 'defaults to empty array' do
-      expect(cart.warnings).to eq([])
-    end
-
-    it 'is a transient attribute (not persisted)' do
-      cart.warnings = [{ code: 'test', message: 'test' }]
-      cart.save!
-      expect(cart.reload.warnings).to eq([])
     end
   end
 

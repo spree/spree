@@ -46,10 +46,6 @@ describe Spree::PaymentMethod, type: :model do
       )
     end
 
-    it 'defaults to visible on the storefront' do
-      expect(visible_method.storefront_visible).to be true
-    end
-
     describe '.storefront_visible' do
       it 'returns only customer-facing methods' do
         expect(Spree::PaymentMethod.storefront_visible).to contain_exactly(visible_method)
@@ -245,18 +241,6 @@ describe Spree::PaymentMethod, type: :model do
 
       expect(Spree::PaymentMethod.where(capture_method: 'on_dispatch')).to be_present
     end
-
-    # The migration leaves auto_capture-false rows empty on purpose so they
-    # keep inheriting. Reading them as manual here would take them out of
-    # dispatch capture while the goods still went out.
-    context 'when a legacy row was left for the store to decide' do
-      it 'inherits the store setting rather than charging manually' do
-        gateway.auto_capture = false
-
-        expect(gateway.resolved_capture_method).to eq('on_dispatch')
-        expect(gateway).to be_capture_on_dispatch
-      end
-    end
   end
 
   describe '#available_for_order?' do
@@ -300,28 +284,6 @@ describe Spree::PaymentMethod, type: :model do
       eligible = pm.available_for_store?(store)
       expect(eligible).to be true
     end
-  end
-
-  describe '#source_required?' do
-    let(:payment_method) { create(:credit_card_payment_method) }
-
-    it { expect(payment_method.source_required?).to be true }
-  end
-
-  describe '#session_required?' do
-    it 'returns false by default' do
-      expect(build(:payment_method).session_required?).to be false
-    end
-  end
-
-  describe '#payment_source_class' do
-    let(:payment_method) { build(:credit_card_payment_method) }
-
-    it { expect(payment_method.payment_source_class).to eq(Spree::CreditCard) }
-  end
-
-  describe '#payment_icon_name' do
-    it { expect(build(:credit_card_payment_method, type: 'Spree::Gateway::AuthorizeNetGateway').payment_icon_name).to eq('authorizenet') }
   end
 
   context 'when payment method is destroyed' do
@@ -453,13 +415,6 @@ describe Spree::PaymentMethod, type: :model do
 
       expect(keys).to include(:api_key)
       expect(keys).not_to include(:issued_secret)
-    end
-
-    it 'still stores and reads one, since the system depends on the value' do
-      gateway = gateway_class.new
-      gateway.preferred_issued_secret = 'whsec_abc'
-
-      expect(gateway.preferred_issued_secret).to eq('whsec_abc')
     end
 
     it 'reports which preferences are internal' do

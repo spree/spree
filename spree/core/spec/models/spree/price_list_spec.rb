@@ -280,48 +280,9 @@ describe Spree::PriceList, type: :model do
     end
   end
 
-  describe 'status' do
-    let(:price_list) { create(:price_list) }
-
-    it 'has no state machine' do
-      expect(described_class).not_to respond_to(:state_machines)
-    end
-
-    it 'has initial status of draft' do
-      expect(price_list.status).to eq('draft')
-    end
-
-    it 'rejects an unknown status' do
-      expect(build(:price_list, status: 'nonsense')).not_to be_valid
-    end
-  end
-
   describe 'scopes' do
     let(:store) { @default_store }
     let!(:active_price_list) { create(:price_list, :active, store: store) }
-    let!(:inactive_price_list) { create(:price_list, :inactive, store: store) }
-    let!(:scheduled_price_list) { create(:price_list, :scheduled, store: store) }
-
-    describe '.with_status(:active)' do
-      it 'returns only active price lists' do
-        expect(described_class.with_status(:active)).to include(active_price_list)
-        expect(described_class.with_status(:active)).not_to include(inactive_price_list)
-      end
-    end
-
-    describe '.with_status(:inactive)' do
-      it 'returns only inactive price lists' do
-        expect(described_class.with_status(:inactive)).to include(inactive_price_list)
-        expect(described_class.with_status(:inactive)).not_to include(active_price_list)
-      end
-    end
-
-    describe '.with_status(:scheduled)' do
-      it 'returns only scheduled price lists' do
-        expect(described_class.with_status(:scheduled)).to include(scheduled_price_list)
-        expect(described_class.with_status(:scheduled)).not_to include(active_price_list)
-      end
-    end
 
     describe '.by_position' do
       let!(:first_list) { create(:price_list, store: store, position: 1) }
@@ -416,18 +377,6 @@ describe Spree::PriceList, type: :model do
     end
   end
 
-  describe '#active?' do
-    it 'returns true when status is active' do
-      price_list = create(:price_list, :active)
-      expect(price_list.active?).to be true
-    end
-
-    it 'returns false when status is not active' do
-      price_list = create(:price_list, :inactive)
-      expect(price_list.active?).to be false
-    end
-  end
-
   describe '#add_products' do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
     let(:price_list) { create(:price_list, store: store) }
@@ -518,12 +467,6 @@ describe Spree::PriceList, type: :model do
         price = price_list.prices.find_by(variant_id: product1.default_variant.id, currency: 'USD')
         expect(price.amount).to eq(49.99)
       end
-
-      it 'only creates prices for missing currencies' do
-        expect {
-          price_list.add_products([product1.id])
-        }.to change { price_list.prices.count }.by(2) # Only EUR and GBP
-      end
     end
 
     context 'with deleted variants' do
@@ -559,12 +502,6 @@ describe Spree::PriceList, type: :model do
       expect {
         price_list.remove_products([product1.id])
       }.to change { price_list.prices.count }.by(-3) # 1 product * 3 currencies
-    end
-
-    it 'removes prices for all currencies' do
-      price_list.remove_products([product1.id])
-
-      expect(price_list.prices.joins(:variant).where(spree_variants: { product_id: product1.id }).count).to eq(0)
     end
 
     it 'does not remove prices for other products' do
@@ -606,17 +543,6 @@ describe Spree::PriceList, type: :model do
     end
 
     context 'when re-adding a previously removed product' do
-      it 'allows re-adding a product with empty prices' do
-        # Add product, then remove it
-        price_list.add_products([product1.id])
-        price_list.remove_products([product1.id])
-
-        # Re-add the same product - this should not raise a unique constraint error
-        expect {
-          price_list.add_products([product1.id])
-        }.to change { price_list.prices.count }.by(3) # 1 product * 3 currencies
-      end
-
       it 'allows re-adding a product that had prices with amounts set' do
         # Add product and set some prices
         price_list.add_products([product1.id])

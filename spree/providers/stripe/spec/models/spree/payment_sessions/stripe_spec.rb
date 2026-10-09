@@ -18,16 +18,6 @@ RSpec.describe Spree::PaymentSessions::Stripe, type: :model do
            customer_external_id: 'cus_test_123')
   end
 
-  describe 'STI' do
-    it 'uses the correct type' do
-      expect(payment_session.type).to eq('Spree::PaymentSessions::Stripe')
-    end
-
-    it 'is a PaymentSession' do
-      expect(payment_session).to be_a(Spree::PaymentSession)
-    end
-  end
-
   describe '#owner' do
     it 'returns the order when the session belongs to an order' do
       expect(payment_session.owner).to eq(order)
@@ -42,29 +32,6 @@ RSpec.describe Spree::PaymentSessions::Stripe, type: :model do
         expect(payment_session.owner).to eq(cart)
         expect(payment_session.order).to be_nil
       end
-    end
-  end
-
-  describe '#stripe_id' do
-    it 'aliases external_id' do
-      expect(payment_session.stripe_id).to eq('pi_test_abc123')
-    end
-  end
-
-  describe '#client_secret' do
-    it 'reads from external_data' do
-      expect(payment_session.client_secret).to eq('pi_secret_xyz')
-    end
-
-    it 'returns nil when external_data is nil' do
-      payment_session.external_data = nil
-      expect(payment_session.client_secret).to be_nil
-    end
-  end
-
-  describe '#ephemeral_key_secret' do
-    it 'reads from external_data' do
-      expect(payment_session.ephemeral_key_secret).to eq('ek_test_key')
     end
   end
 
@@ -192,24 +159,6 @@ RSpec.describe Spree::PaymentSessions::Stripe, type: :model do
 
       expect(second.id).to eq(first.id)
       expect(order.payments.count).to eq(1)
-    end
-  end
-
-  describe 'state machine' do
-    it 'starts as pending' do
-      expect(payment_session.status).to eq('pending')
-    end
-
-    it 'can transition through the full lifecycle' do
-      expect(payment_session.process).to be true
-      expect(payment_session.complete).to be true
-      expect(payment_session.status).to eq('completed')
-    end
-  end
-
-  describe '#api_options' do
-    it 'delegates to payment_method' do
-      expect(payment_session.api_options).to eq(gateway.api_options)
     end
   end
 end

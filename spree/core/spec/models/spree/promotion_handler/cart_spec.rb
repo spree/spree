@@ -11,17 +11,17 @@ module Spree
       let(:promotion) { create(:promotion, name: 'At line items', store: order.store, kind: :automatic) }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
+      shared_context 'creates the adjustment' do
+        it 'creates the adjustment' do
+          expect do
+            subject.activate
+          end.to change { adjustable.discounts.count }.by(1)
+        end
+      end
+
       context 'activates in LineItem level' do
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
         let(:adjustable) { line_item }
-
-        shared_context 'creates the adjustment' do
-          it 'creates the adjustment' do
-            expect do
-              subject.activate
-            end.to change { adjustable.discounts.count }.by(1)
-          end
-        end
 
         context 'promotion with no rules' do
           include_context 'creates the adjustment'
@@ -34,7 +34,6 @@ module Spree
         end
 
         context 'promotion has item total rule' do
-          let(:shirt) { create(:product, store: order.store) }
           let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
 
           before do
@@ -51,14 +50,6 @@ module Spree
         let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
         let(:adjustable) { order }
 
-        shared_context 'creates the adjustment' do
-          it 'creates the adjustment' do
-            expect do
-              subject.activate
-            end.to change { adjustable.discounts.count }.by(1)
-          end
-        end
-
         context 'promotion with no rules' do
           before do
             # Gives the calculator something to discount
@@ -70,7 +61,6 @@ module Spree
         end
 
         context 'promotion has item total rule' do
-          let(:shirt) { create(:product, store: order.store) }
           let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
 
           before do

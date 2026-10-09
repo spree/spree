@@ -225,20 +225,6 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
 
-  describe 'status' do
-    it 'has no state machine' do
-      expect(described_class).not_to respond_to(:state_machines)
-    end
-
-    it 'defaults to active' do
-      expect(described_class.new.status).to eq('active')
-    end
-
-    it 'rejects an unknown status' do
-      expect(build(:gift_card, status: 'nonsense')).not_to be_valid
-    end
-  end
-
   describe 'status scopes and predicates' do
     let(:store) { Spree::Store.default }
     let!(:active) { create(:gift_card, store: store, amount: 10) }

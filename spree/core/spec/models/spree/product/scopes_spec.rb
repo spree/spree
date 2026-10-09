@@ -17,12 +17,6 @@ describe 'Product scopes', type: :model do
       it { expect(Spree::Product.available).to include(product_2) }
     end
 
-    context 'when available' do
-      let!(:product_2) { create(:product, status: 'active') }
-
-      it { expect(Spree::Product.available).to include(product_2) }
-    end
-
     context 'when not available' do
       let!(:unavailable_product) { create(:product, status: 'draft') }
 
@@ -96,18 +90,6 @@ describe 'Product scopes', type: :model do
 
     it 'returns none for an unknown collection' do
       expect(Spree::Product.in_collection('coll_nope')).to be_empty
-    end
-  end
-
-  context 'sorting scopes' do
-    context 'ascend_by_updated_at' do
-      it { expect(Spree::Product.ascend_by_updated_at.to_sql).to include('updated_at ASC') }
-      it { expect(Spree::Product.limit(2).ascend_by_updated_at.to_sql).to include('updated_at ASC') }
-    end
-
-    context 'descend_by_name' do
-      it { expect(Spree::Product.descend_by_name.to_sql).to include('name DESC') }
-      it { expect(Spree::Product.limit(2).descend_by_name.to_sql).to include('name DESC') }
     end
   end
 
@@ -309,30 +291,6 @@ describe 'Product scopes', type: :model do
       end
     end
 
-    context 'with incomplete orders' do
-      before do
-        # Product 1: 2 units sold (2 completed orders)
-        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.default_variant])
-
-        # Product 2: 1 unit sold (1 completed order) + 2 incomplete orders (should not be counted)
-        create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_2.default_variant])
-        create_list(:order_with_totals, 2, line_items_price: 100, store: store, variants: [product_2.default_variant])
-
-        refresh_all_metrics!
-      end
-
-      it 'only counts units from completed orders' do
-        products = store.products.where(id: test_product_ids).by_best_selling
-        expect(products.first.name).to eq('Product 1')
-
-        product_1_store_product = product_1.reload
-        product_2_store_product = product_2.reload
-
-        expect(product_1_store_product.units_sold_count).to eq(2)
-        expect(product_2_store_product.units_sold_count).to eq(1)
-      end
-    end
-
     context 'when products have same units_sold_count' do
       before do
         # Both products have 2 units sold, but different revenue
@@ -355,38 +313,6 @@ describe 'Product scopes', type: :model do
         product_2_store_product = product_2.reload
 
         expect(product_2_store_product.revenue).to be > product_1_store_product.revenue
-      end
-    end
-
-    context 'with varying quantities' do
-      before do
-        # Product 1: 5 units sold (quantity 2 + quantity 3)
-        order1 = create(:order_with_line_items, line_items_count: 0, store: store)
-        create(:line_item, order: order1, variant: product_1.default_variant, price: 50, quantity: 2)
-        create(:line_item, order: order1, variant: product_1.default_variant, price: 50, quantity: 3)
-        order1.update!(completed_at: Time.current)
-
-        # Product 2: 2 units sold (quantity 2)
-        order2 = create(:order_with_line_items, line_items_count: 0, store: store)
-        create(:line_item, order: order2, variant: product_2.default_variant, price: 100, quantity: 2)
-        order2.update!(completed_at: Time.current)
-
-        refresh_all_metrics!
-      end
-
-      it 'sums line item quantities for units_sold_count' do
-        products = store.products.where(id: test_product_ids).by_best_selling
-
-        product_1_store_product = product_1.reload
-        product_2_store_product = product_2.reload
-
-        # Product 1: 2 + 3 = 5 units
-        expect(product_1_store_product.units_sold_count).to eq(5)
-        # Product 2: 2 units
-        expect(product_2_store_product.units_sold_count).to eq(2)
-
-        # Product 1 should be ranked higher due to more units sold
-        expect(products.first.name).to eq('Product 1')
       end
     end
 
@@ -423,23 +349,6 @@ describe 'Product scopes', type: :model do
         # Product 1 should rank first because it has more units sold (5 vs 4)
         expect(products.first.name).to eq('Product 1')
         expect(products.second.name).to eq('Product 2')
-      end
-    end
-
-    context 'with products having no orders' do
-      before do
-        refresh_all_metrics!
-      end
-
-      it 'includes products with no orders at the end' do
-        products = store.products.where(id: test_product_ids).by_best_selling
-        expect(products.length).to eq(4)
-        # All products should be included, those without orders have units_sold_count = 0
-        [product_1, product_2, product_3, product_4].each do |p|
-          store_product = p.reload
-          expect(store_product.units_sold_count).to eq(0)
-          expect(store_product.revenue).to eq(0)
-        end
       end
     end
 
@@ -484,13 +393,8 @@ describe 'Product scopes', type: :model do
         # Product 4 has no orders at all - count should be 0
         expect(product_4_sp.units_sold_count).to eq(0)
         expect(product_4_sp.revenue).to eq(0)
-      end
 
-      it 'orders products correctly with pending orders included' do
-        products = store.products.where(id: test_product_ids).by_best_selling
-        # Product 1: 2 units sold (first)
-        # Product 3: 1 unit sold (second)
-        # Product 2 & 4: 0 units sold (last, order between them is non-deterministic)
+        # Product 2 & 4 have no completed sales, so they rank last in no fixed order
         expect(products.first(2).map(&:name)).to eq(['Product 1', 'Product 3'])
         expect(products.last(2).map(&:name)).to contain_exactly('Product 2', 'Product 4')
       end

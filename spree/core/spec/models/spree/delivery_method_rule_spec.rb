@@ -190,13 +190,6 @@ describe Spree::DeliveryMethodRule, type: :model do
       expect(rule.eligible?(package)).to be(false)
     end
 
-    it 'hides a freight method from a retail cart' do
-      rule = described_class.new(delivery_method: delivery_method, preferred_company_orders_only: true)
-
-      expect(rule.eligible?(company_package)).to be(true)
-      expect(rule.eligible?(package)).to be(false)
-    end
-
     it 'hides a parcel method from a company cart when turned off' do
       rule = described_class.new(delivery_method: delivery_method, preferred_company_orders_only: false)
 

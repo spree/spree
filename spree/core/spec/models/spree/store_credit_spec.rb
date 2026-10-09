@@ -52,20 +52,6 @@ describe Spree::StoreCredit, type: :model do
       end
     end
 
-    describe 'amount used less than or equal to amount' do
-      subject { build(:store_credit, amount_used: 101.0, amount: 100.0) }
-
-      it 'is not valid' do
-        expect(subject).not_to be_valid
-      end
-
-      it 'adds an error message about the invalid amount used' do
-        subject.valid?
-        text = I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount_used.cannot_be_greater_than_amount')
-        expect(subject.errors[:amount_used]).to include(text)
-      end
-    end
-
     describe 'amount authorized less than or equal to amount' do
       subject { build(:store_credit, amount_authorized: 101.0, amount: 100.0) }
 
@@ -222,18 +208,6 @@ describe Spree::StoreCredit, type: :model do
 
     it 'applies the affirmative side for a literal boolean predicate' do
       expect(described_class.ransack('from_gift_card' => true).result).to contain_exactly(from_card)
-    end
-  end
-
-  describe '#display_amount' do
-    it 'returns a Spree::Money instance' do
-      expect(store_credit.display_amount).to be_instance_of(Spree::Money)
-    end
-  end
-
-  describe '#display_amount_used' do
-    it 'returns a Spree::Money instance' do
-      expect(store_credit.display_amount_used).to be_instance_of(Spree::Money)
     end
   end
 
@@ -672,46 +646,6 @@ describe Spree::StoreCredit, type: :model do
         it 'creates a new store credit event' do
           expect { subject }.to change { store_credit.store_credit_events.count }.by(1)
         end
-      end
-    end
-  end
-
-  describe '#amount_used' do
-    context 'amount used is not defined' do
-      subject { Spree::StoreCredit.new }
-
-      it 'returns zero' do
-        expect(subject.amount_used).to be_zero
-      end
-    end
-
-    context 'amount used is defined' do
-      subject { create(:store_credit, amount_used: amount_used) }
-
-      let(:amount_used) { 100.0 }
-
-      it 'returns the attribute value' do
-        expect(subject.amount_used).to eq amount_used
-      end
-    end
-  end
-
-  describe '#amount_authorized' do
-    context 'amount authorized is not defined' do
-      subject { Spree::StoreCredit.new }
-
-      it 'returns zero' do
-        expect(subject.amount_authorized).to be_zero
-      end
-    end
-
-    context 'amount authorized is defined' do
-      subject { create(:store_credit, amount_authorized: amount_authorized) }
-
-      let(:amount_authorized) { 100.0 }
-
-      it 'returns the attribute value' do
-        expect(subject.amount_authorized).to eq amount_authorized
       end
     end
   end

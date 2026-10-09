@@ -171,10 +171,6 @@ module Spree
           it_behaves_like 'shipping rate matches'
         end
 
-        context "when the current matches the order's currency" do
-          it_behaves_like 'shipping rate matches'
-        end
-
         context "if the currency is different than the order's currency" do
           let(:currency) { 'GBP' }
 

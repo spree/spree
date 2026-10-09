@@ -258,10 +258,6 @@ RSpec.describe Spree::Publishable, events: true do
       stub_const('Spree::TestProduct', lifecycle_class)
     end
 
-    it 'enables lifecycle events' do
-      expect(lifecycle_class.lifecycle_events_enabled).to be true
-    end
-
     # Note: These specs use ApplicationRecord directly to test Publishable in isolation
     # since Spree::Base now has lifecycle events enabled by default
     context 'with only option' do

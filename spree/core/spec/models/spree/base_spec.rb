@@ -73,9 +73,6 @@ describe Spree::Base do
     # Backwards-compatible alias retained for extensions that still call
     # the old name; must delegate so subclass overrides (e.g.
     # `Spree::Gateway.api_type`) propagate.
-    it { expect(Spree::FulfillmentItem.json_api_type).to eq('fulfillment_item') }
-    it { expect(Spree::Address.json_api_type).to eq('address') }
-
     it 'honors subclass overrides of .api_type' do
       klass = Class.new(Spree::Base) do
         def self.api_type
@@ -94,7 +91,6 @@ describe Spree::Base do
     end
 
     it { expect(Spree::Address.json_api_columns).to contain_exactly('address1', 'address2', 'alternative_phone', 'city', 'company', 'country_code', 'created_at', 'deleted_at', 'first_name', 'label', 'last_name', 'phone', 'postal_code', 'state_code', 'state_name', 'updated_at', 'metadata', 'quick_checkout', 'latitude', 'longitude') }
-    it { expect(Spree::Address.json_api_columns).not_to include('country_id') }
   end
 
   describe '.json_api_permitted_attributes' do

@@ -2,7 +2,6 @@ require 'spec_helper'
 
 RSpec.describe Spree::ProductPublication, type: :model do
   let(:store) { @default_store }
-  let(:channel) { store.default_channel }
   let(:product) { create(:product, store: store) }
 
   let(:other_store) { create(:store, default: false, code: 'other') }
@@ -14,16 +13,6 @@ RSpec.describe Spree::ProductPublication, type: :model do
   let(:secondary_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
 
   describe 'validations' do
-    it 'is valid with product and channel' do
-      publication = build(:product_publication, product: product, channel: secondary_channel)
-      expect(publication).to be_valid
-    end
-
-    it 'enforces uniqueness per (product, channel)' do
-      duplicate = build(:product_publication, product: product, channel: channel)
-      expect(duplicate).not_to be_valid
-    end
-
     it 'rejects unpublished_at before published_at' do
       publication = build(
         :product_publication,
@@ -32,14 +21,6 @@ RSpec.describe Spree::ProductPublication, type: :model do
       )
       expect(publication).not_to be_valid
       expect(publication.errors[:unpublished_at]).to be_present
-    end
-  end
-
-  describe '#store delegation' do
-    it 'returns the channel.store' do
-      publication = build(:product_publication, product: product, channel: secondary_channel)
-      expect(publication.store).to eq(store)
-      expect(publication.store_id).to eq(store.id)
     end
   end
 

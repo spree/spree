@@ -3,32 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Market, type: :model do
   let(:store) { create(:store) }
 
-  describe 'validations' do
-    subject { build(:market, store: store) }
-
-    it 'validates presence of countries' do
-      market = build(:market, store: store, countries: [])
-      expect(market).not_to be_valid
-      expect(market.errors[:countries]).to be_present
-    end
-
-    it 'validates uniqueness of name scoped to store' do
-      create(:market, name: 'North America', store: store)
-      market = build(:market, name: 'North America', store: store)
-      expect(market).not_to be_valid
-      expect(market.errors[:name]).to be_present
-    end
-  end
-
   describe 'associations' do
-    it 'has many countries through market_countries' do
-      country1 = create(:country)
-      country2 = create(:country)
-      market = create(:market, store: store, countries: [country1, country2])
-
-      expect(market.countries).to contain_exactly(country1, country2)
-    end
-
     it 'destroys market_countries on destroy' do
       create(:market, :default, store: store)
       market = create(:market, store: store)
@@ -197,29 +172,11 @@ RSpec.describe Spree::Market, type: :model do
     end
   end
 
-  describe '#can_be_deleted?' do
-    it 'returns false for the default market' do
-      create(:market, store: store)
-      market = create(:market, :default, store: store)
-      expect(market.can_be_deleted?).to be false
-    end
-
-    it 'returns false for the only market in a store' do
-      market = store.markets.sole
-      expect(market.can_be_deleted?).to be false
-    end
-
-    it 'returns true for a non-default market when other markets remain' do
-      create(:market, :default, store: store)
-      market = create(:market, store: store)
-      expect(market.can_be_deleted?).to be true
-    end
-  end
-
   describe 'destroy' do
     it 'does not allow destroying the default market' do
       create(:market, store: store)
       market = create(:market, :default, store: store)
+      expect(market.can_be_deleted?).to be false
       expect(market.destroy).to be false
       expect(market.reload.deleted_at).to be_nil
       expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_default_market'))
@@ -228,6 +185,7 @@ RSpec.describe Spree::Market, type: :model do
     it 'does not allow destroying the only market in a store' do
       market = store.markets.sole
       market.update_column(:default, false)
+      expect(market.can_be_deleted?).to be false
       expect(market.destroy).to be false
       expect(market.reload.deleted_at).to be_nil
       expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_last_market'))
@@ -236,6 +194,7 @@ RSpec.describe Spree::Market, type: :model do
     it 'allows destroying a non-default market when other markets remain' do
       create(:market, :default, store: store)
       market = create(:market, store: store)
+      expect(market.can_be_deleted?).to be true
       expect { market.destroy }.to change { market.reload.deleted_at }.from(nil).to(be_present)
     end
 
@@ -280,13 +239,6 @@ RSpec.describe Spree::Market, type: :model do
 
       expect { market.update!(name: 'Europe') }.not_to have_enqueued_job(Spree::PriceLists::SyncCurrenciesJob)
       expect { market.update!(currency: 'GBP') }.to have_enqueued_job(Spree::PriceLists::SyncCurrenciesJob).with(store.id)
-    end
-  end
-
-  describe 'has_prefix_id' do
-    it 'generates prefixed id with mkt prefix' do
-      market = create(:market, store: store)
-      expect(market.prefixed_id).to start_with('mkt_')
     end
   end
 

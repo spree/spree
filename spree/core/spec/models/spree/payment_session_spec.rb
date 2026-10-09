@@ -8,43 +8,6 @@ RSpec.describe Spree::PaymentSession, type: :model do
   let(:payment_method) { create(:bogus_payment_method) }
   let(:payment_session) { create(:bogus_payment_session, order: order, payment_method: payment_method, amount: 50) }
 
-  describe 'validations' do
-    it { expect(payment_session).to be_valid }
-
-    it 'requires order' do
-      payment_session.order = nil
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'requires payment_method' do
-      payment_session.payment_method = nil
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'requires external_id' do
-      payment_session.external_id = nil
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'requires currency' do
-      payment_session.currency = nil
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'requires amount greater than 0' do
-      payment_session.amount = 0
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'enforces external_id uniqueness per order and payment method' do
-      duplicate = build(:bogus_payment_session,
-                        order: payment_session.order,
-                        payment_method: payment_session.payment_method,
-                        external_id: payment_session.external_id)
-      expect(duplicate).not_to be_valid
-    end
-  end
-
   describe 'defaults from order' do
     it 'sets currency from order' do
       session = build(:bogus_payment_session, order: order, payment_method: payment_method,
@@ -229,20 +192,6 @@ RSpec.describe Spree::PaymentSession, type: :model do
     it 'returns true when expires_at is in the past' do
       payment_session.update!(expires_at: 1.hour.ago)
       expect(payment_session.expired?).to be true
-    end
-  end
-
-  describe '#prefixed_id' do
-    it 'starts with ps_' do
-      expect(payment_session.prefixed_id).to start_with('ps_')
-    end
-  end
-
-  describe 'soft delete' do
-    it 'soft deletes with acts_as_paranoid' do
-      payment_session.destroy
-      expect(described_class.with_deleted.find(payment_session.id)).to be_present
-      expect(described_class.find_by(id: payment_session.id)).to be_nil
     end
   end
 

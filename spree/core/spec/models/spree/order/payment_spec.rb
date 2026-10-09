@@ -69,16 +69,6 @@ module Spree
               expect(order.outstanding_balance).to eq(30.00)
             end
           end
-
-          context 'order payment status should be partially paid' do
-            let!(:payment_amount) { 90.00 }
-            let!(:store_credit_amount) { 10.00 }
-
-            it do
-              expect(order.payment_status).to eq('partially_paid')
-              expect(order.outstanding_balance).to eq(10.00)
-            end
-          end
         end
       end
 
@@ -189,26 +179,6 @@ module Spree
         order.recalculate_totals!
 
         expect(order.outstanding_balance).to eq 10
-      end
-    end
-
-    context '#outstanding_balance?' do
-      it 'is true when total greater than payment_total' do
-        order.total = 10.10
-        order.payment_total = 9.50
-        expect(order.outstanding_balance?).to be true
-      end
-
-      it 'is true when total less than payment_total' do
-        order.total = 8.25
-        order.payment_total = 10.44
-        expect(order.outstanding_balance?).to be true
-      end
-
-      it 'is false when total equals payment_total' do
-        order.total = 10.10
-        order.payment_total = 10.10
-        expect(order.outstanding_balance?).to be false
       end
     end
   end

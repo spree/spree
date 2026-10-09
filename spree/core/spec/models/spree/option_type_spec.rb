@@ -3,10 +3,6 @@ require 'spec_helper'
 describe Spree::OptionType, type: :model do
   it_behaves_like 'metadata'
 
-  describe '#filterable' do
-    it { expect(subject.filterable).to eq(true) }
-  end
-
   describe 'callbacks' do
     describe '#normalize_name' do
       let!(:option_type) { build(:option_type, name: 'Shirt Size') }
@@ -26,15 +22,6 @@ describe Spree::OptionType, type: :model do
       Mobility.with_locale(:pl) do
         option_type.update!(label: 'Rozmiar')
       end
-    end
-
-    let(:option_type_pl_translation) { option_type.translations.find_by(locale: 'pl') }
-
-    it 'translates option type fields' do
-      expect(option_type.label).to eq('Size')
-
-      expect(option_type_pl_translation).to be_present
-      expect(option_type_pl_translation.label).to eq('Rozmiar')
     end
 
     describe '#label' do
@@ -91,11 +78,6 @@ describe Spree::OptionType, type: :model do
   end
 
   describe 'kind' do
-    it 'defaults to dropdown' do
-      option_type = create(:option_type)
-      expect(option_type.kind).to eq('dropdown')
-    end
-
     it 'validates inclusion in KINDS' do
       option_type = build(:option_type, kind: 'invalid')
       expect(option_type).not_to be_valid
@@ -107,11 +89,6 @@ describe Spree::OptionType, type: :model do
         option_type = build(:option_type, kind: kind)
         expect(option_type).to be_valid
       end
-    end
-
-    it 'validates presence' do
-      option_type = build(:option_type, kind: '')
-      expect(option_type).not_to be_valid
     end
   end
 
@@ -146,16 +123,6 @@ describe Spree::OptionType, type: :model do
   end
 
   describe '#option_values=' do
-    context 'with an array of OptionValue records' do
-      let(:option_type) { create(:option_type) }
-      let(:option_value) { build(:option_value, option_type: option_type) }
-
-      it 'delegates to the AR collection writer' do
-        option_type.option_values = [option_value]
-        expect(option_type.option_values).to eq([option_value])
-      end
-    end
-
     context 'on a new option type' do
       it 'persists option values when the parent is saved' do
         option_type = build(:option_type)

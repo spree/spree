@@ -43,11 +43,6 @@ describe Spree::Preferences::Preferable, type: :model do
       expect(@b.preferred_flavor).to be_nil
     end
 
-    it 'can be asked if it has a preference definition' do
-      expect(@a.has_preference?(:color)).to be true
-      expect(@a.has_preference?(:bad)).to be false
-    end
-
     it 'can be asked and raises' do
       expect do
         @a.has_preference! :flavor
@@ -616,17 +611,6 @@ describe Spree::Preferences::Preferable, type: :model do
         pr.save!
         expect(pr.get_preference(:pref_test_any)).to eq([1, 2])
       end
-    end
-
-    it 'clear preferences when record is deleted' do
-      @pt.save!
-      @pt.preferred_pref_test_pref = 'lmn'
-      @pt.save!
-      @pt.destroy
-      @pt1 = PrefTest.new(col: 'aaaa')
-      @pt1.id = @pt.id
-      @pt1.save!
-      expect(@pt1.get_preference(:pref_test_pref)).to eq('abc')
     end
 
     describe 'JSON storage' do

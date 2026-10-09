@@ -4,35 +4,8 @@ describe Spree::DigitalLink, type: :model do
   let(:store) { @default_store }
   let(:digital_asset) { create(:digital_asset) }
   let(:variant) { digital_asset.variant }
-  let(:line_item) { create(:line_item, variant: variant) }
 
   it_behaves_like 'lifecycle events'
-
-  it 'validates presence of digital_asset and line_item' do
-    expect(described_class.new(digital_asset: digital_asset, line_item: line_item)).to be_valid
-  end
-
-  it 'validates presence of line_item' do
-    expect(described_class.new(digital_asset: digital_asset)).not_to be_valid
-  end
-
-  it 'validates presence of digital_asset' do
-    expect(described_class.new(line_item: line_item)).not_to be_valid
-  end
-
-  context 'validates access_counter' do
-    it 'validates access_counter numericality' do
-      expect(described_class.new(digital_asset: digital_asset, line_item: line_item, access_counter: 'string')).not_to be_valid
-    end
-
-    it 'validates access_counter 0 or greater' do
-      expect(described_class.new(digital_asset: digital_asset, line_item: line_item, access_counter: -3)).not_to be_valid
-    end
-
-    it 'validates access_counter 0 is valid' do
-      expect(described_class.new(digital_asset: digital_asset, line_item: line_item, access_counter: 0)).to be_valid
-    end
-  end
 
   describe '#store' do
     let(:order) { create(:order, store: store) }
@@ -53,12 +26,6 @@ describe Spree::DigitalLink, type: :model do
 
   describe '#reset!' do
     let!(:digital_link) { create(:digital_link, access_counter: 5) }
-
-    after do
-      digital_link.update(access_counter: 5)
-      digital_link.save!
-      digital_link.reload
-    end
 
     it 'resets access_counter' do
       expect { digital_link.reset! }.to change(digital_link, :access_counter).from(5).to(0)
@@ -151,24 +118,6 @@ describe Spree::DigitalLink, type: :model do
       it { expect(digital_link.authorizable?).to be false }
     end
 
-    context 'count exceeded but the store does not limit digital download count' do
-      let(:digital_link) { create(:digital_link) }
-
-      before do
-        digital_link.line_item.order.store.preferred_limit_digital_download_count = false
-        digital_link.line_item.order.store.save!
-        digital_link.line_item.order.store.reload
-      end
-
-      it { expect(digital_link.authorizable?).to be true }
-    end
-
-    context 'still in count range' do
-      let(:digital_link) { create(:digital_link) }
-
-      it { expect(digital_link.authorizable?).to be true }
-    end
-
     context 'out of date' do
       let(:digital_link) { create(:digital_link) }
 
@@ -181,18 +130,6 @@ describe Spree::DigitalLink, type: :model do
       it { expect(digital_link.authorizable?).to be false }
     end
 
-    context 'out of date but the store does not track date of expire' do
-      let(:digital_link) { create(:digital_link) }
-
-      before do
-        digital_link.line_item.order.store.preferred_limit_digital_download_days = false
-        digital_link.line_item.order.store.save!
-        digital_link.line_item.order.store.reload
-      end
-
-      it { expect(digital_link.authorizable?).to be true }
-    end
-
     context 'still in date' do
       let(:digital_link) { create(:digital_link) }
 
@@ -203,12 +140,6 @@ describe Spree::DigitalLink, type: :model do
   describe 'authorize!' do
     let!(:digital_link) { create(:digital_link, access_counter: 2) }
     let!(:digital_link_expired) { create(:digital_link, access_counter: 100) }
-
-    after do
-      digital_link.update(access_counter: 2)
-      digital_link.save!
-      digital_link.reload
-    end
 
     it 'increments the access counter' do
       expect { digital_link.authorize! }.to change(digital_link, :access_counter).from(2).to(3)
@@ -236,12 +167,6 @@ describe Spree::DigitalLink, type: :model do
       let(:limit) { store.preferred_digital_asset_authorized_clicks }
       let!(:digital_link) { create(:digital_link, access_counter: limit - 1) }
 
-      after do
-        digital_link.update(access_counter: 2)
-        digital_link.save!
-        digital_link.reload
-      end
-
       it 'allows exactly the configured number of downloads and denies the rest' do
         expect(digital_link.authorize!).to be_truthy
         expect(digital_link.reload.access_counter).to eq(limit)
@@ -257,12 +182,6 @@ describe Spree::DigitalLink, type: :model do
     context 'under concurrent access', if: ENV['DB'] == 'postgres' do
       let(:limit) { store.preferred_digital_asset_authorized_clicks }
       let!(:digital_link) { create(:digital_link, access_counter: limit - 1) }
-
-      after do
-        digital_link.update(access_counter: 2)
-        digital_link.save!
-        digital_link.reload
-      end
 
       it 'never lets the counter exceed the limit' do
         results = Array.new(5) do

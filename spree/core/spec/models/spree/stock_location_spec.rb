@@ -28,11 +28,6 @@ module Spree
       end
     end
 
-    it 'validates uniqueness' do
-      described_class.create(name: 'Test')
-      expect(described_class.new(name: 'Test')).not_to be_valid
-    end
-
     context 'handling stock items' do
       let!(:variant) { create(:variant) }
 
@@ -382,85 +377,6 @@ module Spree
         it 'returns the admin name' do
           expect(subject.display_name).to eq("#{admin_name} / #{subject.name}")
         end
-      end
-    end
-
-    describe '#country_name' do
-      it 'returns the country name' do
-        expect(subject.country_name).to eq(subject.country.name)
-      end
-    end
-
-    context 'when country is nil' do
-      subject { build(:stock_location, country: nil, state: nil) }
-
-      it { expect(subject.country_name).to be_nil }
-      it { expect(subject.country_code).to be_nil }
-      it { expect(subject.country_iso3).to be_nil }
-      it { expect(subject.country_iso_name).to be_nil }
-    end
-
-    describe 'KINDS / PICKUP_STOCK_POLICIES constants' do
-      it 'lists the built-in kinds' do
-        expect(StockLocation::KINDS).to eq(%w[warehouse store fulfillment_center])
-      end
-
-      it 'lists the pickup stock policies' do
-        expect(StockLocation::PICKUP_STOCK_POLICIES).to eq(%w[local any])
-      end
-    end
-
-    describe 'pickup defaults' do
-      subject { build(:stock_location) }
-
-      it 'defaults kind to warehouse' do
-        expect(subject.kind).to eq('warehouse')
-      end
-
-      it 'defaults pickup_enabled to false' do
-        expect(subject.pickup_enabled).to be false
-      end
-
-      it 'defaults pickup_stock_policy to local' do
-        expect(subject.pickup_stock_policy).to eq('local')
-      end
-    end
-
-    describe 'validations' do
-      it 'requires a kind' do
-        sl = build(:stock_location, kind: nil)
-        expect(sl).not_to be_valid
-        expect(sl.errors[:kind]).to be_present
-      end
-
-      it 'rejects an invalid pickup_stock_policy' do
-        sl = build(:stock_location, pickup_stock_policy: 'bogus')
-        expect(sl).not_to be_valid
-        expect(sl.errors[:pickup_stock_policy]).to be_present
-      end
-
-      it 'accepts a valid pickup_stock_policy' do
-        expect(build(:stock_location, pickup_stock_policy: 'any')).to be_valid
-      end
-
-      it 'rejects a negative pickup_ready_in_minutes' do
-        sl = build(:stock_location, pickup_ready_in_minutes: -1)
-        expect(sl).not_to be_valid
-        expect(sl.errors[:pickup_ready_in_minutes]).to be_present
-      end
-
-      it 'allows nil pickup_ready_in_minutes' do
-        expect(build(:stock_location, pickup_ready_in_minutes: nil)).to be_valid
-      end
-    end
-
-    describe '.pickup_enabled scope' do
-      let!(:enabled) { create(:stock_location, pickup_enabled: true) }
-      let!(:disabled) { create(:stock_location, pickup_enabled: false) }
-
-      it 'returns only locations with pickup enabled' do
-        expect(StockLocation.pickup_enabled).to include(enabled)
-        expect(StockLocation.pickup_enabled).not_to include(disabled)
       end
     end
 

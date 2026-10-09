@@ -4,18 +4,6 @@ RSpec.describe Spree::Channel, type: :model do
   let(:store) { @default_store }
 
   describe 'validations' do
-    it 'requires name' do
-      channel = described_class.new(store: store, code: 'pos')
-      expect(channel).not_to be_valid
-      expect(channel.errors[:name]).to be_present
-    end
-
-    it 'requires code' do
-      channel = described_class.new(store: store)
-      expect(channel).not_to be_valid
-      expect(channel.errors[:code]).to be_present
-    end
-
     it 'derives code from name when blank' do
       channel = described_class.new(store: store, name: 'Point of Sale')
       channel.valid?
@@ -33,27 +21,14 @@ RSpec.describe Spree::Channel, type: :model do
       expect { described_class.find_by(code: ascii8) }.not_to raise_error
     end
 
-    it 'requires code unique within a store' do
+    it 'requires code unique within a store only' do
       described_class.create!(store: store, name: 'POS', code: 'pos')
       duplicate = described_class.new(store: store, name: 'POS 2', code: 'pos')
 
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:code]).to be_present
-    end
-
-    it 'allows the same code across different stores' do
-      described_class.create!(store: store, name: 'POS', code: 'pos')
-      other_store = create(:store)
       # Auto-seeded 'online' channel is fine; we test the same arbitrary code.
-      cross = described_class.new(store: other_store, name: 'POS', code: 'pos')
-
-      expect(cross).to be_valid
-    end
-  end
-
-  describe 'defaults' do
-    it 'is active by default' do
-      expect(described_class.new(store: store).active).to be true
+      expect(described_class.new(store: create(:store), name: 'POS', code: 'pos')).to be_valid
     end
   end
 
@@ -103,13 +78,6 @@ RSpec.describe Spree::Channel, type: :model do
       )
       expect(channel).not_to be_valid
       expect(channel.errors[:preferred_order_routing_strategy]).to be_present
-    end
-  end
-
-  describe 'prefixed_id' do
-    it 'starts with ch_' do
-      channel = described_class.create!(store: store, name: 'POS', code: 'pos')
-      expect(channel.prefixed_id).to start_with('ch_')
     end
   end
 

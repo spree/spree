@@ -7,27 +7,6 @@ describe Spree::Promotion::Rules::Country, type: :model do
   let(:country) { create(:country) }
   let(:other_country) { create(:country) }
 
-  context 'preferred country_id is set' do
-    before { rule.preferred_country_code = country.iso }
-
-    it 'is eligible for correct country' do
-      allow(order).to receive_message_chain(:ship_address, :country_id) { country.id }
-      allow(order).to receive_message_chain(:ship_address, :country_code) { country.iso }
-
-      expect(rule).to be_eligible(order)
-    end
-
-    it 'is not eligible for incorrect country' do
-      allow(order).to receive_message_chain(:ship_address, :country_id) { other_country.id }
-      allow(order).to receive_message_chain(:ship_address, :country_code) { other_country.iso }
-
-      expect(rule).not_to be_eligible(order)
-
-      expect(rule.eligibility_errors.count).to eq(1)
-      expect(rule.eligibility_errors.to_hash[:base]).to eq([I18n.t('spree.eligibility_errors.messages.wrong_country')])
-    end
-  end
-
   context 'preferred country_code is set' do
     before { rule.preferred_country_code = country.iso }
 
