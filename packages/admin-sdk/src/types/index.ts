@@ -1,13 +1,24 @@
 // Re-export shared types from sdk-core
+// The building blocks of the generated filter types, for a declaration file
+// that extends them (see `spree filters types`).
 export type {
+  BooleanFilters,
+  CustomFieldFilters,
+  EnumFilters,
   ErrorResponse,
+  IdFilters,
   ListParams,
   ListResponse,
   LocaleDefaults,
+  OrFilters,
   PaginatedResponse,
   PaginationMeta,
   PreferencePropertySchema,
   PreferenceSchema,
+  Prefixed,
+  RangeFilters,
+  SortKey,
+  TextFilters,
 } from '@spree/sdk-core'
 export * from './filters.generated'
 // Hand-written discovery-endpoint types (controller-shaped, not generated):

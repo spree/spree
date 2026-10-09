@@ -1,5 +1,7 @@
 // Request infrastructure
 
+export type { FilterSpec } from './filter-types'
+export { renderAppFilterTypes, renderFilterTypes } from './filter-types'
 export type {
   BooleanFilters,
   CustomFieldFilters,

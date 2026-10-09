@@ -10,6 +10,8 @@ The published predicate set also gains `i_cont` for text and `not_eq`/`in`/`not_
 
 Every searchable list gets a `q[search]` filter declared with `search_by`, which the dashboard's search boxes use; the API reference documents filters as a generated table per endpoint rather than as thousands of expanded parameters.
 
+An app's own filters, which the published SDK types cannot know, are sent unchecked in `q`, generated into declarations with `spree filters types`, or declared by hand on `…FilterExtensions`.
+
 **Plan:** `6.0-typed-filters.md`.
 
 ## 2026-10-09: Spree stops parsing numbers by locale

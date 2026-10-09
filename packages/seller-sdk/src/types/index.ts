@@ -42,6 +42,19 @@ export interface AuthTokens {
   sellers: SellerSummary[]
 }
 
+// The building blocks of the generated filter types, for a declaration file
+// that extends them (see `spree filters types`).
+export type {
+  BooleanFilters,
+  CustomFieldFilters,
+  EnumFilters,
+  IdFilters,
+  OrFilters,
+  Prefixed,
+  RangeFilters,
+  SortKey,
+  TextFilters,
+} from '@spree/sdk-core'
 export * from './filters.generated'
 export type { default as Delivery } from './generated/Delivery'
 // Named enums — open string unions for lists an extension may extend (statuses, fee kinds)

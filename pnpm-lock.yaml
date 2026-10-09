@@ -105,6 +105,9 @@ importers:
       '@spree/admin-sdk':
         specifier: workspace:^
         version: link:../admin-sdk
+      '@spree/sdk-core':
+        specifier: workspace:*
+        version: link:../sdk-core
       '@types/node':
         specifier: ^25.6.0
         version: 25.9.9

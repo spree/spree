@@ -52,6 +52,50 @@ module Spree
             @cache = {}
           end
 
+          # Every list endpoint the routes serve, as `[api, path, Endpoint]`
+          # with the path in OpenAPI form (`/api/v3/admin/orders/{order_id}/items`).
+          #
+          # @return [Array<Array(String, String, Endpoint)>]
+          def endpoints
+            Spree::Core::Engine.routes.routes.filter_map do |route|
+              defaults = route.defaults
+              next unless defaults[:action] == 'index' && defaults[:controller].to_s.start_with?('spree/api/v3/')
+
+              controller = "#{defaults[:controller]}_controller".camelize.safe_constantize
+              next unless controller && controller < Spree::Api::V3::ResourceController
+
+              api = defaults[:controller].to_s.split('/')[3]
+              path = route.path.spec.to_s.delete_suffix('(.:format)').gsub(/:(\w+)/, '{\\1}')
+              [api, path, self.for(controller)]
+            end.uniq { |api, path, _| [api, path] }
+          end
+
+          # One API's filters in the shape its OpenAPI spec carries them —
+          # `paths.<path>.get.x-spree-filters` and the components' tables and
+          # predicates — read from the allowlists this app has right now, so an
+          # app's own filters are included.
+          #
+          # @param api [String] `store`, `admin` or `seller`
+          # @return [Hash]
+          def spec_for(api)
+            paths = {}
+            tables = {}
+            endpoints.each do |endpoint_api, path, endpoint|
+              next unless endpoint_api == api && endpoint.filterable?
+
+              paths[path] = { 'get' => { 'x-spree-filters' => endpoint.to_h } }
+              endpoint.tables.each { |name, table| tables[name] ||= table.to_h }
+            end
+
+            {
+              'paths' => paths.sort.to_h,
+              'components' => {
+                'x-spree-filter-tables' => tables.sort.to_h,
+                'x-spree-filter-predicates' => FilterPredicates::BY_KIND
+              }
+            }
+          end
+
           # The name a table goes by in the contract: the model's API short
           # name, camelized — `Order`, `LineItem`, `Customer`.
           #

@@ -321,5 +321,18 @@ export type CompanyAddressParams = AddressParams & {
   default_shipping?: boolean
 }
 
+// The building blocks of the generated filter types, for a declaration file
+// that extends them (see `spree filters types`).
+export type {
+  BooleanFilters,
+  CustomFieldFilters,
+  EnumFilters,
+  IdFilters,
+  OrFilters,
+  Prefixed,
+  RangeFilters,
+  SortKey,
+  TextFilters,
+} from '@spree/sdk-core'
 // Named enums — open string unions for lists an extension may extend (statuses, fee kinds)
 export type * from './generated/Enums'

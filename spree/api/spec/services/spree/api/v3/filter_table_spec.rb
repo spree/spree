@@ -8,21 +8,11 @@ RSpec.describe Spree::Api::V3::FilterTable do
   after { described_class.reset! }
 
   describe 'every list endpoint' do
-    let(:list_controllers) do
-      Rails.application.eager_load!
-      Spree::Core::Engine.routes.routes.filter_map do |route|
-        next unless route.defaults[:action] == 'index' && route.defaults[:controller].to_s.start_with?('spree/api/v3')
-
-        controller = "#{route.defaults[:controller]}_controller".camelize.safe_constantize
-        controller if controller && controller < Spree::Api::V3::ResourceController
-      end.uniq
-    end
-
     it 'builds a table whose attributes all have a value kind' do
       unclassified = {}
 
-      list_controllers.each do |controller|
-        endpoint = described_class.for(controller)
+      Rails.application.eager_load!
+      described_class.endpoints.each do |_api, _path, endpoint|
         next unless endpoint.filterable?
 
         endpoint.to_h
@@ -103,6 +93,27 @@ RSpec.describe Spree::Api::V3::FilterTable do
 
       expect(order.reachable.keys).to include('Order', 'LineItem', *depth_two)
       expect(order.reachable.keys).not_to include(*depth_three_only)
+    end
+  end
+
+  describe '.spec_for' do
+    it "describes one API's list endpoints the way its OpenAPI spec does" do
+      Rails.application.eager_load!
+      spec = described_class.spec_for('admin')
+
+      expect(spec['paths']['/api/v3/admin/orders']['get']['x-spree-filters']).to include('table' => 'Order')
+      expect(spec['paths']).to include('/api/v3/admin/orders/{order_id}/items')
+      expect(spec['components']['x-spree-filter-tables']).to include('Order', 'LineItem')
+      expect(spec['components']['x-spree-filter-predicates']).to eq(Spree::Api::V3::FilterPredicates::BY_KIND)
+    end
+
+    it "includes the filters an app adds" do
+      Spree.ransack.add_attribute(Spree::Order, :customer_note)
+
+      tables = described_class.spec_for('admin')['components']['x-spree-filter-tables']
+      expect(tables['Order']['attributes']).to include('customer_note' => 'text')
+    ensure
+      Spree.ransack.reset!
     end
   end
 

@@ -286,28 +286,53 @@ Every entry is a filter any caller of that API can run. Keep back-office fields 
 
 ### Using your own filters from TypeScript
 
-The SDKs type each `list()` call with the filters Spree itself declares. A filter your app adds works in the API at once, but TypeScript rejects it until you declare it, because the published types cannot know about it. Declare it once and every `list()` call for that resource accepts and autocompletes it:
+The SDKs type each `list()` call with the filters Spree itself declares. A filter your app adds works in the API at once, but TypeScript rejects it until it is declared, because the published types cannot know about it. There are three ways to use it.
+
+**Generate the declarations (recommended).** This reads your app's filters, the ones Spree declares and the ones you added, and writes a declaration file for the SDK you use. Run it again after you add or change a filter:
+
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree filters types --api store --out src/types/spree-filters.d.ts
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    ```bash
+    bin/rails spree:api:filter_tables > filter-tables.json
+    npx @spree/cli filters types --from filter-tables.json --api store --out src/types/spree-filters.d.ts
+    ```
+  </Tab>
+</Tabs>
+
+Use `--api store` for storefront code (`@spree/sdk`), `--api admin` for the dashboard and Admin API integrations (`@spree/admin-sdk`), and `--api seller` for the seller panel (`@spree/seller-sdk`). After that, every `list()` call accepts and autocompletes your filters and sort fields, and a misspelled one is still a compile error.
+
+**Send it unchecked.** Filters inside `q` are sent as given, without type checking or autocomplete:
+
+```typescript
+await client.products.list({
+  name_cont: 'shirt',
+  q: { erp_id_eq: 'ERP-1' },
+})
+```
+
+**Declare it by hand.** Each resource has an empty interface in the SDK (`ProductFilterExtensions`, `OrderFilterExtensions`, …) that is part of its filter type, and TypeScript [merges your declaration](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation) into it. The file must contain an `import` or `export`; without one, it replaces the SDK's types instead of adding to them:
 
 ```typescript src/types/spree.d.ts
-// Required: without an import or export, this file would replace the SDK's
-// types instead of adding to them.
 export {}
 
 declare module '@spree/sdk' {
   interface ProductFilterExtensions {
     erp_id_eq?: string
     featured?: boolean
-    by_brand?: string
+  }
+  // Sort fields, as keys
+  interface ProductSortExtensions {
+    erp_id: true
   }
 }
 ```
 
-How it fits together:
-
-- **One interface per resource**, named after the record the list returns: `ProductFilterExtensions`, `OrderFilterExtensions`, `CustomerFilterExtensions`. It sits next to the resource's `ProductFilters` type in the SDK, starts empty, and is part of that type, so whatever you add to it is accepted.
-- **TypeScript merges your declaration into it** ([declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation)). Nothing is registered at runtime; the file only has to be part of your TypeScript project, as any `.ts` or `.d.ts` file under `src/` usually is.
-- **Each SDK is declared separately.** Use `'@spree/sdk'` for storefront code, `'@spree/admin-sdk'` for the dashboard and Admin API integrations, and `'@spree/seller-sdk'` for the seller panel.
-- **Name each key the way the API receives it**, with its predicate: `erp_id_eq`, `erp_id_in` (an array), a scope by its name. Type amounts as decimal strings, counts as numbers, and flags as booleans.
+Name each filter the way the API receives it, with its predicate (`erp_id_eq`, `erp_id_in` for a list) or a scope by its name. Type amounts as decimal strings, counts as numbers and flags as booleans.
 
 ## Pagination
 
