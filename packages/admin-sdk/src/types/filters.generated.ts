@@ -50,18 +50,16 @@ export type CollectionFields = Filter.BooleanFilters<'automatic'>
   & Filter.RangeFilters<'position' | 'products_count', number>
   & Filter.EnumFilters<'sort_order', 'manual' | 'best_selling' | 'price asc' | 'price desc' | 'available_on desc' | 'available_on asc' | 'name asc' | 'name desc'>
 
-export type CommissionLineFields = Filter.RangeFilters<'amount' | 'rate' | 'tax_amount' | 'total', string | number>
-  & Filter.RangeFilters<'created_at' | 'updated_at'>
+export type CommissionLineFields = Filter.RangeFilters<'amount' | 'created_at' | 'rate' | 'tax_amount' | 'total' | 'updated_at'>
   & Filter.TextFilters<'currency'>
   & Filter.IdFilters<'id' | 'order_id'>
   & Filter.EnumFilters<'kind', 'percentage' | 'fixed'>
 
 export type CommissionRateFields = Filter.TextFilters<'code' | 'name'>
-  & Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.RangeFilters<'created_at' | 'updated_at' | 'value'>
   & Filter.BooleanFilters<'enabled' | 'include_shipping' | 'tax_inclusive'>
   & Filter.IdFilters<'id'>
   & Filter.RangeFilters<'position', number>
-  & Filter.RangeFilters<'value', string | number>
   & Filter.EnumFilters<'kind', 'percentage' | 'fixed'>
 
 export type CommissionRuleFields = Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -162,8 +160,7 @@ export type IntegrationFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type InvitationFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
 
-export type LineItemFields = Filter.RangeFilters<'additional_tax_total' | 'adjustment_total' | 'cost_price' | 'discount_total' | 'included_tax_total' | 'non_taxable_adjustment_total' | 'pre_tax_amount' | 'price' | 'taxable_adjustment_total', string | number>
-  & Filter.RangeFilters<'created_at' | 'updated_at'>
+export type LineItemFields = Filter.RangeFilters<'additional_tax_total' | 'adjustment_total' | 'cost_price' | 'created_at' | 'discount_total' | 'included_tax_total' | 'non_taxable_adjustment_total' | 'pre_tax_amount' | 'price' | 'taxable_adjustment_total' | 'updated_at'>
   & Filter.IdFilters<'id' | 'order_id' | 'tax_category_id' | 'variant_id'>
   & Filter.RangeFilters<'quantity', number>
 
@@ -190,10 +187,9 @@ export type OptionValueFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.RangeFilters<'position', number>
 
 export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'order_group_id' | 'seller_id'>
-  & Filter.RangeFilters<'completed_at' | 'created_at' | 'updated_at'>
+  & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
   & Filter.BooleanFilters<'considered_risky'>
   & Filter.TextFilters<'coupon_code' | 'currency' | 'email' | 'number' | 'po_number'>
-  & Filter.RangeFilters<'delivery_total' | 'item_total' | 'total', string | number>
   & Filter.RangeFilters<'total_quantity', number>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
   & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
@@ -221,9 +217,8 @@ export type PackageTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.TextFilters<'name'>
   & Filter.EnumFilters<'kind', 'box' | 'envelope' | 'carton' | 'pallet' | 'container'>
 
-export type PaymentFields = Filter.RangeFilters<'amount', string | number>
+export type PaymentFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
   & Filter.TextFilters<'avs_response' | 'cvv_response_code' | 'cvv_response_message' | 'response_code'>
-  & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.EnumFilters<'state', 'checkout' | 'processing' | 'pending' | 'completed' | 'failed' | 'void' | 'invalid'>
   & Filter.EnumFilters<'status', 'checkout' | 'processing' | 'pending' | 'completed' | 'failed' | 'void' | 'invalid'>
@@ -238,8 +233,7 @@ export type PolicyFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'owner_id' | 'owner_type'>
   & Filter.TextFilters<'name'>
 
-export type PriceFields = Filter.RangeFilters<'amount' | 'compare_at_amount', string | number>
-  & Filter.RangeFilters<'created_at' | 'updated_at'>
+export type PriceFields = Filter.RangeFilters<'amount' | 'compare_at_amount' | 'created_at' | 'updated_at'>
   & Filter.TextFilters<'currency'>
   & Filter.IdFilters<'id' | 'price_list_id' | 'variant_id'>
   & Filter.RangeFilters<'min_quantity', number>
@@ -251,10 +245,9 @@ export type PriceListFields = Filter.IdFilters<'catalog_id' | 'id'>
   & Filter.EnumFilters<'match_policy', 'all' | 'any'>
   & Filter.EnumFilters<'status', 'draft' | 'active' | 'inactive' | 'scheduled'>
 
-export type ProductFields = Filter.RangeFilters<'available_on' | 'created_at' | 'discontinue_on' | 'updated_at'>
+export type ProductFields = Filter.RangeFilters<'available_on' | 'created_at' | 'discontinue_on' | 'price' | 'updated_at'>
   & Filter.TextFilters<'description' | 'name' | 'slug'>
   & Filter.IdFilters<'id' | 'seller_id'>
-  & Filter.RangeFilters<'price', string | number>
   & Filter.EnumFilters<'status', 'draft' | 'active' | 'archived' | 'proposed' | 'rejected'>
 
 export type ProductCategoryFields = Filter.IdFilters<'category_id' | 'id' | 'product_id'>
@@ -282,10 +275,9 @@ export type PurchaseOrderFields = Filter.RangeFilters<'cancel_by' | 'closed_shor
   & Filter.IdFilters<'destination_location_id' | 'id' | 'supplier_id'>
   & Filter.EnumFilters<'status', 'draft' | 'ordered' | 'partially_received' | 'received' | 'over_received' | 'canceled'>
 
-export type PurchaseOrderItemFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+export type PurchaseOrderItemFields = Filter.RangeFilters<'created_at' | 'unit_cost' | 'updated_at'>
   & Filter.IdFilters<'id' | 'variant_id'>
   & Filter.RangeFilters<'quantity_ordered' | 'quantity_received' | 'quantity_rejected', number>
-  & Filter.RangeFilters<'unit_cost', string | number>
 
 export type RefundFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -329,11 +321,10 @@ export type StockLocationFields = Filter.BooleanFilters<'active' | 'default' | '
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'seller_id'>
 
-export type StockMovementFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+export type StockMovementFields = Filter.RangeFilters<'created_at' | 'unit_cost' | 'updated_at'>
   & Filter.IdFilters<'exchange_id' | 'fulfillment_id' | 'id' | 'order_id' | 'purchase_order_id' | 'return_id' | 'stock_item_id' | 'stock_level_id' | 'stock_receipt_id' | 'stock_transfer_id'>
   & Filter.RangeFilters<'quantity', number>
   & Filter.TextFilters<'reason'>
-  & Filter.RangeFilters<'unit_cost', string | number>
   & Filter.EnumFilters<'kind', 'received' | 'allocated' | 'shipped' | 'released' | 'adjusted'>
 
 export type StockReceiptFields = Filter.RangeFilters<'created_at' | 'received_at' | 'updated_at'>
@@ -353,8 +344,7 @@ export type StoreFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
 
-export type StoreCreditFields = Filter.RangeFilters<'amount', string | number>
-  & Filter.RangeFilters<'created_at' | 'updated_at'>
+export type StoreCreditFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
   & Filter.IdFilters<'created_by_id' | 'customer_id' | 'id'>
   & Filter.TextFilters<'currency' | 'memo'>
 
@@ -387,17 +377,15 @@ export type TaxLineFields = Filter.TextFilters<'country_code' | 'provider_id' | 
   & Filter.IdFilters<'id'>
   & Filter.BooleanFilters<'included'>
 
-export type TaxRateFields = Filter.RangeFilters<'amount', string | number>
+export type TaxRateFields = Filter.RangeFilters<'amount' | 'created_at' | 'rate' | 'updated_at'>
   & Filter.TextFilters<'country_code' | 'name' | 'state_code'>
-  & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'tax_category_id'>
   & Filter.BooleanFilters<'included_in_price'>
 
 export type VariantFields = Filter.IdFilters<'carton_package_type_id' | 'id' | 'product_id'>
-  & Filter.RangeFilters<'carton_weight' | 'cost_price' | 'depth' | 'height' | 'weight' | 'width', string | number>
+  & Filter.RangeFilters<'carton_weight' | 'cost_price' | 'created_at' | 'deleted_at' | 'depth' | 'discontinue_on' | 'height' | 'updated_at' | 'weight' | 'width'>
   & Filter.RangeFilters<'cartons_per_pallet' | 'minimum_order_quantity' | 'order_multiple' | 'position' | 'units_per_carton', number>
   & Filter.TextFilters<'cost_currency' | 'country_of_origin' | 'hs_code' | 'sku'>
-  & Filter.RangeFilters<'created_at' | 'deleted_at' | 'discontinue_on' | 'updated_at'>
   & Filter.BooleanFilters<'track_inventory'>
   & Filter.EnumFilters<'purchase_unit', 'unit' | 'carton'>
 
@@ -585,7 +573,7 @@ export type CustomerFilters = CustomerFields
   & {
     anonymized?: boolean
     search?: string
-    with_min_total_spent?: string | number
+    with_min_total_spent?: string
     with_standing_for_company?: string | string[]
   }
   & CustomerFilterExtensions
@@ -933,9 +921,9 @@ export type ProductFilters = ProductFields
     in_taxon?: string
     not_discontinued?: boolean
     out_of_stock?: boolean
-    price_between?: [string | number, string | number]
-    price_gte?: string | number
-    price_lte?: string | number
+    price_between?: [string, string]
+    price_gte?: string
+    price_lte?: string
     search?: string
     search_by_name?: string
     with_option_value_ids?: string | string[]
@@ -968,9 +956,9 @@ export type ProductSearchFilters = ProductFields
     in_taxon?: string
     not_discontinued?: boolean
     out_of_stock?: boolean
-    price_between?: [string | number, string | number]
-    price_gte?: string | number
-    price_lte?: string | number
+    price_between?: [string, string]
+    price_gte?: string
+    price_lte?: string
     search?: string
     search_by_name?: string
     with_option_value_ids?: string | string[]
@@ -1226,7 +1214,7 @@ export type TaxRateFilters = TaxRateFields
   }
   & TaxRateFilterExtensions
 
-export type TaxRateSort = Filter.SortKey<'amount' | 'country_code' | 'created_at' | 'id' | 'included_in_price' | 'name' | 'state_code' | 'tax_category_id' | 'updated_at'>
+export type TaxRateSort = Filter.SortKey<'amount' | 'country_code' | 'created_at' | 'id' | 'included_in_price' | 'name' | 'rate' | 'state_code' | 'tax_category_id' | 'updated_at'>
 
 export interface VariantFilterExtensions {}
 

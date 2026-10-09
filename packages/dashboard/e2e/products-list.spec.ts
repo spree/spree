@@ -30,7 +30,7 @@ async function seedProducts(page: Page, session: E2ELoginSession) {
     'get',
     `/categories?q[name_eq]=${encodeURIComponent(FIXTURE_PROMO_TAXON)}`,
   )
-  const create = (name: string, status: string, amount: number, extra: object = {}) =>
+  const create = (name: string, status: string, amount: string, extra: object = {}) =>
     seedRecord<{ id: string; default_variant_id: string }>(page, session, '/products', {
       name,
       status,
@@ -42,7 +42,9 @@ async function seedProducts(page: Page, session: E2ELoginSession) {
   const pricey = { name: `E2E List Pricey ${stamp}` }
   const draft = { name: `E2E List Draft ${stamp}` }
 
-  const created = await create(cheap.name, 'active', 5, { category_ids: [categories.data[0].id] })
+  const created = await create(cheap.name, 'active', '5.00', {
+    category_ids: [categories.data[0].id],
+  })
   await adminRequest(
     page,
     session,
@@ -50,8 +52,8 @@ async function seedProducts(page: Page, session: E2ELoginSession) {
     `/products/${created.id}/variants/${created.default_variant_id}`,
     { sku: cheap.sku },
   )
-  await create(pricey.name, 'active', 500)
-  await create(draft.name, 'draft', 50)
+  await create(pricey.name, 'active', '500.00')
+  await create(draft.name, 'draft', '50.00')
 
   return { stamp, cheap, pricey, draft }
 }

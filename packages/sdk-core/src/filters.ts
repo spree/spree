@@ -44,7 +44,7 @@ type KindFilters<K extends string, Of extends Kind, V> = Keyed<
 /** Text attributes. */
 export type TextFilters<K extends string> = KindFilters<K, 'text', string>
 
-/** Ordered values: amounts, counts, dates and timestamps. */
+/** Ordered values: amounts (decimal strings, never floats), counts, dates and timestamps. */
 export type RangeFilters<K extends string, V = string> = KindFilters<K, 'range', V>
 
 /** One of a known set of values. Extensions may add values, so others are accepted too. */

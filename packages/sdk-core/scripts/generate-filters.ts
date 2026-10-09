@@ -81,7 +81,7 @@ const HEADER =
 // predicates. Enum attributes carry their values and use `EnumFilters`.
 const KIND_TYPES: Record<Exclude<Kind, 'enum'>, { value: string; block: string }> = {
   text: { value: 'string', block: 'TextFilters<$names>' },
-  decimal: { value: 'string | number', block: 'RangeFilters<$names, string | number>' },
+  decimal: { value: 'string', block: 'RangeFilters<$names>' },
   integer: { value: 'number', block: 'RangeFilters<$names, number>' },
   date: { value: 'string', block: 'RangeFilters<$names>' },
   datetime: { value: 'string', block: 'RangeFilters<$names>' },

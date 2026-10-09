@@ -36,9 +36,8 @@ export type FulfillmentFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.TextFilters<'number'>
 
 export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'order_group_id' | 'seller_id'>
-  & Filter.RangeFilters<'completed_at' | 'created_at' | 'updated_at'>
+  & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
   & Filter.TextFilters<'currency' | 'number' | 'po_number'>
-  & Filter.RangeFilters<'delivery_total' | 'item_total' | 'total', string | number>
   & Filter.RangeFilters<'total_quantity', number>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
   & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
@@ -61,10 +60,9 @@ export type PolicyFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'owner_id' | 'owner_type'>
   & Filter.TextFilters<'name'>
 
-export type ProductFields = Filter.RangeFilters<'available_on' | 'created_at' | 'discontinue_on' | 'updated_at'>
+export type ProductFields = Filter.RangeFilters<'available_on' | 'created_at' | 'discontinue_on' | 'price' | 'updated_at'>
   & Filter.TextFilters<'description' | 'name' | 'slug'>
   & Filter.IdFilters<'id' | 'seller_id'>
-  & Filter.RangeFilters<'price', string | number>
   & Filter.EnumFilters<'status', 'draft' | 'active' | 'archived' | 'proposed' | 'rejected'>
 
 export type ProductTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -81,14 +79,12 @@ export type ReturnReasonFields = Filter.BooleanFilters<'active'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
 
-export type SellerPayoutFields = Filter.RangeFilters<'amount', string | number>
-  & Filter.RangeFilters<'created_at' | 'period_end' | 'period_start' | 'updated_at'>
+export type SellerPayoutFields = Filter.RangeFilters<'amount' | 'created_at' | 'period_end' | 'period_start' | 'updated_at'>
   & Filter.TextFilters<'currency' | 'provider' | 'reference'>
   & Filter.IdFilters<'id' | 'seller_id'>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
 
-export type SellerTransferFields = Filter.RangeFilters<'amount', string | number>
-  & Filter.RangeFilters<'created_at' | 'updated_at'>
+export type SellerTransferFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
   & Filter.TextFilters<'currency' | 'provider' | 'reference'>
   & Filter.IdFilters<'id' | 'order_id' | 'payout_id' | 'seller_id'>
   & Filter.EnumFilters<'kind', 'earning' | 'refund_reversal'>
@@ -228,9 +224,9 @@ export type ProductFilters = ProductFields
     in_taxon?: string
     not_discontinued?: boolean
     out_of_stock?: boolean
-    price_between?: [string | number, string | number]
-    price_gte?: string | number
-    price_lte?: string | number
+    price_between?: [string, string]
+    price_gte?: string
+    price_lte?: string
     search?: string
     search_by_name?: string
     with_option_value_ids?: string | string[]

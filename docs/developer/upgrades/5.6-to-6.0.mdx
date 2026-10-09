@@ -1042,6 +1042,8 @@ Each `list()` method now takes the filters and sort fields its endpoint accepts.
   }
   ```
 
+- **Amount filters take decimal strings.** `price_gte`, `price_lte` and the other money filters are typed as strings, like every money value in 6.0. Send `'20.00'`, not `20`.
+
 - **Prefer `search`.** Products, categories and collections take `q[search]` (the SDK's `search` key), which matches more than `name_cont`. See [which filters an endpoint accepts](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
 
 ### Completing a cart can return an order group

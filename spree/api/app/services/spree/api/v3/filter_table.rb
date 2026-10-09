@@ -94,12 +94,13 @@ module Spree
           kinds.select { |_, kind| kind == :unclassified }.keys
         end
 
-        # Deprecated names that resolve to another attribute (`payment_state`),
-        # published until they are removed but left out of the reference.
+        # Renamed columns kept under their old name (`payment_state`, through
+        # `alias_attribute`), published until they are removed but left out of
+        # the reference. A `ransack_alias` is a deliberate public name and stays.
         #
         # @return [Array<String>]
         def aliased_attributes
-          attributes.keys.select { |attribute| model._ransack_aliases.key?(attribute) || model.attribute_aliases.key?(attribute) }
+          attributes.keys.select { |attribute| model.attribute_aliases.key?(attribute) }
         end
 
         # @return [Hash{String => FilterTable}]
