@@ -35,7 +35,7 @@ Use `/project:create-plan` and `/project:update-plan` for plan management, and `
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, provisioned per worktree by `scripts/worktree/setup.sh`) |
-| `storefront/` | Next.js storefront cloned from `spree/storefront` branch `6-0-dev` (.gitignored, provisioned per worktree; keeps its `.git` — commit and push from inside it) |
+| `storefront/` | Next.js storefront cloned from `spree/storefront` `main` (.gitignored, provisioned per worktree; keeps its `.git` — commit and push from inside it) |
 | `docs/` | Mintlify powered documentation website, which is deployed to https://spreecommerce.org/docs |
 ## Development Server (worktrees)
 
@@ -55,7 +55,7 @@ wt remove                    # abandon instead of shipping
 
 Admin login: `spree@example.com` / `spree123`. The dev scripts run in the foreground and stream logs; `server/log/development.log` has the Rails log if the server runs detached. Start servers only in worktrees you're actively looking at — rspec/vitest/tsc need no servers.
 
-**Storefront (`pnpm wt:storefront`).** The Next.js storefront is a separate repo (`spree/storefront`) cloned per worktree into a gitignored `storefront/`, on its **`6-0-dev`** branch — `main` stays on the released Store API for people forking or deploying it. Unlike `server/`, the clone keeps its `.git`: commit and push storefront work from inside it, and push before `wt remove`, which deletes the clone with the worktree.
+**Storefront (`pnpm wt:storefront`).** The Next.js storefront is a separate repo (`spree/storefront`) cloned per worktree into a gitignored `storefront/`, on its `main` branch. Unlike `server/`, the clone keeps its `.git`: commit and push storefront work from inside it, and push before `wt remove`, which deletes the clone with the worktree.
 
 It is deliberately **not** a member of this pnpm workspace — one lockfile and one set of global overrides cannot serve both Next 16 and the dashboard's Vite tree. It instead points `@spree/sdk` at this worktree's `packages/sdk` through its own `.pnpmfile.cjs`, which rewrites the dependency only when `SPREE_SDK_PATH` is set (the JavaScript twin of `SPREE_PATH`), so a standalone clone still installs the published SDK. The rewrite uses `file:` and not `link:`, because the storefront pins module resolution to its own directory (`turbopack.root`, `output: "standalone"`) and lists the SDK in `transpilePackages` — a symlink pointing outside the project fails to resolve, and every `@spree/sdk` import breaks. Two consequences: the storefront's `pnpm-lock.yaml` will show a local path — never commit it — and because the SDK is **copied**, picking up a change to it means rebuilding and reinstalling, which is exactly what re-running `pnpm wt:storefront` does.
 
