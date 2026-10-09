@@ -92,7 +92,7 @@ const KIND_TYPES: Record<Exclude<Kind, 'enum'>, { value: string; block: string }
 
 const valueType = (kind: Kind) => (kind === 'enum' ? 'string' : KIND_TYPES[kind].value)
 
-const literal = (value: string) => `'${value.replace(/'/g, "\\'")}'`
+const literal = (value: string) => `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
 const union = (values: string[]) => values.map(literal).join(' | ')
 
 function fieldsType(table: FilterTable): string {
