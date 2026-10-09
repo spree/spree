@@ -305,14 +305,14 @@ describe Spree::Product, type: :model do
     end
 
     context 'history' do
-      before do
-        @product = create(:product)
-      end
-
       it 'keeps translations when product is destroyed' do
-        @product.destroy
+        product = create(:product)
+        Mobility.with_locale(:pl) { product.update!(name: 'PL name') }
 
-        expect(@product.name).not_to be_empty
+        product.destroy
+
+        destroyed_product = Spree::Product.with_deleted.find(product.id)
+        expect(Mobility.with_locale(:pl) { destroyed_product.name }).to eq('PL name')
       end
     end
 
@@ -323,10 +323,6 @@ describe Spree::Product, type: :model do
       before do
         product.stock_levels.first.set_count_on_hand corrent_total_on_hand
         product.instance_variable_set(:@total_on_hand, incorrent_total_on_hand)
-      end
-
-      it 'without action keeps data' do
-        expect(product.total_on_hand).to eq incorrent_total_on_hand
       end
 
       it 'resets memoized data after save' do

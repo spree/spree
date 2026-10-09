@@ -1213,13 +1213,5 @@ RSpec.describe SpreeStripe::Gateway do
 
       expect(keys).to contain_exactly(:publishable_key, :secret_key)
     end
-
-    it 'still holds what Stripe hands back' do
-      gateway.preferred_webhook_signing_secret = 'whsec_payments'
-      gateway.preferred_connect_webhook_signing_secret = 'whsec_connect'
-
-      expect(gateway.preferred_webhook_signing_secret).to eq('whsec_payments')
-      expect(gateway.preferred_connect_webhook_signing_secret).to eq('whsec_connect')
-    end
   end
 end

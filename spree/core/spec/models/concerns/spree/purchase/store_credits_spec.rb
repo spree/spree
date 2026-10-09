@@ -134,14 +134,15 @@ RSpec.shared_examples 'a store credits host' do
 
     context 'when the record is complete' do
       let(:record) { completed_record_with_store_credit_payment }
-      let(:store_credit_payments) { record.payments.checkout.store_credits }
 
-      before do
+      it 'leaves the store credit payments untouched' do
+        store_credit_payments = record.payments.store_credits.map { |payment| [payment.id, payment.state] }
+        expect(store_credit_payments).not_to be_empty
+
         subject
-        record.reload
-      end
 
-      it { expect(record.payments.checkout.store_credits).to eq store_credit_payments }
+        expect(record.reload.payments.store_credits.map { |payment| [payment.id, payment.state] }).to eq(store_credit_payments)
+      end
     end
   end
 

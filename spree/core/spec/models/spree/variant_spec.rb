@@ -453,31 +453,19 @@ describe Spree::Variant, type: :model do
     end
 
     describe '.active' do
-      let!(:variants) { [variant] }
-      let!(:currency) { 'EUR' }
-
-      before do
-        allow(Spree::Variant).to receive(:not_discontinued).and_return(variants)
-        allow(variants).to receive(:not_deleted).and_return(variants)
-        allow(variants).to receive(:for_currency_and_available_price_amount).with(currency).and_return(variants)
+      def variant_priced_in_eur(attributes = {})
+        create(:variant, attributes).tap { |record| create(:price, variant: record, currency: 'EUR', amount: 10) }
       end
 
-      it 'finds not_discontinued variants' do
-        expect(Spree::Variant).to receive(:not_discontinued).and_return(variants)
-        Spree::Variant.active(currency)
-      end
+      it 'returns variants that are not discontinued, not deleted and priced in the currency' do
+        active = variant_priced_in_eur
+        discontinued = variant_priced_in_eur(discontinue_on: 1.day.ago)
+        deleted = variant_priced_in_eur.tap(&:destroy)
+        unpriced = create(:variant)
 
-      it 'finds not_deleted variants' do
-        expect(variants).to receive(:not_deleted).and_return(variants)
-        Spree::Variant.active(currency)
+        expect(Spree::Variant.active('EUR')).to include(active)
+        expect(Spree::Variant.active('EUR')).not_to include(discontinued, deleted, unpriced)
       end
-
-      it 'finds variants for_currency_and_available_price_amount' do
-        expect(variants).to receive(:for_currency_and_available_price_amount).with(currency).and_return(variants)
-        Spree::Variant.active(currency)
-      end
-
-      it { expect(Spree::Variant.active(currency)).to eq(variants) }
     end
   end
 

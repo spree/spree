@@ -22,7 +22,7 @@ describe Spree::Wishlist, type: :model do
       end
 
       it 'preserves is_default: true for new wishlist' do
-        expect(new_wl.is_default).to be true
+        expect(new_wl.reload.is_default).to be true
       end
 
       it 'sets is_default: false on the wishlist that was the previous default' do

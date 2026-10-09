@@ -38,7 +38,7 @@ describe Spree::Order, type: :model do
       expect(order.reload.status).to eq('canceled')
       expect(order.canceled_at).to be_present
       expect(order.fulfillments.reload).to all(be_canceled)
-      expect(order.payments.reload.map(&:state)).to all(be_in(%w[void invalid checkout]))
+      expect(order.payments.reload.map(&:state)).to eq(%w[void])
     end
 
     it 'refuses to cancel when not allowed' do

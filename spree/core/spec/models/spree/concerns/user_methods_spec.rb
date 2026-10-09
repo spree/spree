@@ -48,7 +48,7 @@ describe Spree::CustomerMethods do
     end
 
     context 'with incomplete canceled order' do
-      let(:canceled_order) { create(:order, customer: test_user, created_at: 1.day.ago, store: current_store, state: 'canceled') }
+      let!(:canceled_order) { create(:order, customer: test_user, created_at: 1.day.ago, store: current_store, state: 'canceled') }
 
       it { is_expected.to be_nil }
     end

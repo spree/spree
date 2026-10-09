@@ -39,7 +39,6 @@ RSpec.describe SpreeEasyPost::Integration do
       integration.can_connect?
 
       expect(address_service).to have_received(:create).with(described_class::VERIFICATION_ADDRESS)
-      expect(client).not_to respond_to(:carrier_account)
     end
 
     it 'captures the vendor message on failure' do

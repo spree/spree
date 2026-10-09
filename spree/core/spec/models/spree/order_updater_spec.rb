@@ -296,10 +296,6 @@ module Spree
 
         it 'updates each shipment' do
           allow(order).to receive_messages fulfillments: shipments
-          allow(shipments).to receive_messages states: []
-          allow(shipments).to receive_messages ready: []
-          allow(shipments).to receive_messages pending: []
-          allow(shipments).to receive_messages shipped: []
 
           expect(shipment).to receive(:update!).with(order)
           updater.update_shipments
@@ -331,28 +327,8 @@ module Spree
     end
 
     context 'incomplete order' do
-      let(:shipment) { create(:fulfillment) }
-      let(:shipments) { [shipment] }
-
-      it 'doesnt update payment state' do
-        expect(updater).not_to receive(:update_payment_state)
-        updater.update
-      end
-
-      it 'doesnt update shipment state' do
-        expect(updater).not_to receive(:update_shipment_state)
-        updater.update
-      end
-
-      it 'doesnt update each shipment' do
-        allow(order).to receive_messages shipments: shipments
-        allow(shipments).to receive_messages states: []
-        allow(shipments).to receive_messages ready: []
-        allow(shipments).to receive_messages pending: []
-        allow(shipments).to receive_messages shipped: []
-
-        allow(updater).to receive(:update_totals) # Otherwise this gets called and causes a scene
-        expect(updater).not_to receive(:update_shipments).with(order)
+      it 'doesnt update statuses' do
+        expect(updater).not_to receive(:update_statuses)
         updater.update
       end
 

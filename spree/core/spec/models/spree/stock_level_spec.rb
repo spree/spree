@@ -232,8 +232,10 @@ describe Spree::StockLevel, type: :model do
 
       before { subject.set_count_on_hand(-2, force: true) }
 
-      it "doesn't process backorders" do
+      it "doesn't process backorders when stock drops further" do
         expect(subject).not_to receive(:backordered_inventory_units)
+
+        subject.set_count_on_hand(-3, force: true)
       end
 
       context 'adds new items' do

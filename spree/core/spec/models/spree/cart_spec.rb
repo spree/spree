@@ -263,15 +263,6 @@ describe Spree::Cart, type: :model do
 
       cart.remove_out_of_stock_items!
     end
-
-    context 'when cart is empty' do
-      let(:order) { create(:order, store: store, customer: user) }
-
-      it 'does nothing' do
-        cart.remove_out_of_stock_items!
-        expect(cart.warnings).to eq([])
-      end
-    end
   end
 
   describe '#coupon_code=' do

@@ -158,7 +158,7 @@ describe Spree::FulfillmentChanger do
           end
 
           it 'does not unstock the desired location' do
-            expect { subject }.not_to change(stock_level, :count_on_hand)
+            expect { subject }.not_to change { stock_level.reload.count_on_hand }
           end
         end
       end

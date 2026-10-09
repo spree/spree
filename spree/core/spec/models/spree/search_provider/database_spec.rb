@@ -5,9 +5,9 @@ module Spree
     let(:store) { @default_store }
     let(:provider) { described_class.new(store) }
 
-    let!(:product_1) { create(:product, name: 'Blue Shirt') }
-    let!(:product_2) { create(:product, name: 'Red Pants') }
-    let!(:product_3) { create(:product, name: 'Blue Jacket') }
+    let!(:product_1) { create(:product, name: 'Blue Shirt', price: 30) }
+    let!(:product_2) { create(:product, name: 'Red Pants', price: 10) }
+    let!(:product_3) { create(:product, name: 'Blue Jacket', price: 20) }
 
     describe '#search_and_filter' do
       let(:scope) { store.products }
@@ -94,8 +94,8 @@ module Spree
       context 'with custom price sort' do
         subject(:result) { provider.search_and_filter(scope: scope, sort: 'price') }
 
-        it 'returns all products' do
-          expect(result.total_count).to eq(3)
+        it 'sorts by price ascending' do
+          expect(result.products.to_a).to eq([product_2, product_3, product_1])
         end
       end
 

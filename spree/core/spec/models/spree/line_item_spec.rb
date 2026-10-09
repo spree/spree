@@ -356,9 +356,12 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  describe '.currency' do
-    it 'returns the globally configured currency' do
-      line_item.currency == 'USD'
+  describe '#currency' do
+    it "defaults to the order's currency" do
+      line_item = build(:line_item, order: build(:order, currency: 'EUR'), currency: nil)
+      line_item.valid?
+
+      expect(line_item.currency).to eq('EUR')
     end
   end
 
@@ -475,10 +478,6 @@ describe Spree::LineItem, type: :model do
   end
 
   describe '#options=' do
-    it 'can handle updating a blank line item with no order' do
-      line_item.options = { price: 123 }
-    end
-
     it 'updates the data provided in the options' do
       line_item.options = { price: 123 }
       expect(line_item.price).to eq 123

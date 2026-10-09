@@ -61,16 +61,17 @@ describe Spree::Adjusters::Promotion, type: :model do
 
   it 'clamps so a line never goes below zero' do
     promo = create(:promotion, kind: :automatic, code: nil, store: store)
-    action = Spree::Promotion::Actions::CreateItemAdjustments.create!(
+    Spree::Promotion::Actions::CreateItemAdjustments.create!(
       promotion: promo,
       calculator: Spree::Calculator::FlatRate.new(preferred_amount: 999)
     )
     promo.activate(order: order)
 
-    order.discounts.reload.each do |row|
+    rows = order.discounts.reload
+    expect(rows.size).to eq(2)
+    rows.each do |row|
       expect(row.amount).to eq(-row.line_item.amount)
     end
-    expect(action.reload).to be_present
   end
 
   describe 'order-level distribution' do

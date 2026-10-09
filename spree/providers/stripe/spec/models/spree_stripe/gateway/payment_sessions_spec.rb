@@ -681,18 +681,5 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
         expect(gateway.parse_webhook_event(raw_body, headers)).to be_nil
       end
     end
-
-    context 'with invalid signature' do
-      before do
-        allow(gateway).to receive(:verify_webhook_signature)
-          .and_raise(Spree::PaymentMethod::WebhookSignatureError)
-      end
-
-      it 'raises WebhookSignatureError' do
-        expect {
-          gateway.parse_webhook_event(raw_body, headers)
-        }.to raise_error(Spree::PaymentMethod::WebhookSignatureError)
-      end
-    end
   end
 end

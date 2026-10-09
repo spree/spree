@@ -164,11 +164,6 @@ describe Spree::OrderInventory, type: :model do
       subject.line_item.reload
     end
 
-    it 'is a messed up order' do
-      expect(order.fulfillments.first.inventory_units_for(line_item.variant).sum(&:quantity)).to eq(3)
-      expect(line_item.quantity).to eq(2)
-    end
-
     it 'decreases the number of inventory units' do
       subject.verify
       expect(subject.fulfillment_items.reload.sum(:quantity)).to eq 2

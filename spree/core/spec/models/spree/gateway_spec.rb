@@ -152,15 +152,5 @@ describe Spree::Gateway, type: :model do
     it 'returns nil' do
       expect(payment_method.gateway_dashboard_payment_url(payment)).to be_nil
     end
-
-    context 'when implemented' do
-      before do
-        expect(payment_method).to receive(:gateway_dashboard_payment_url).with(payment).and_return("https://dashboard.stripe.com/payments/#{payment.transaction_id}")
-      end
-
-      it 'returns the url' do
-        expect(payment_method.gateway_dashboard_payment_url(payment)).to eq('https://dashboard.stripe.com/payments/123')
-      end
-    end
   end
 end

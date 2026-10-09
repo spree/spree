@@ -378,6 +378,8 @@ describe Spree::CreditCard, type: :model do
 
   context 'Scopes' do
     describe '#not_expired' do
+      around { |example| Timecop.freeze(Time.current.change(month: 6, day: 15)) { example.run } }
+
       let(:previous_year) { DateTime.now.year - 1 }
       let(:current_year) { DateTime.now.year }
       let(:next_year) { DateTime.now.year + 1 }

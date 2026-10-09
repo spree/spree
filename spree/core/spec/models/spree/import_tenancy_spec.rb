@@ -107,24 +107,13 @@ RSpec.describe 'import and export tenancy' do
       expect(Spree::Export.for_store(store)).to include(theirs)
     end
 
-    # `Export#scope` has narrowed exported rows by seller since 5.6, but with
-    # no column behind the association `seller` was always nil, so the line
-    # never fired. The column is what lets it.
-    #
-    # It applies to models that answer `for_seller` — `Spree::Variant` does,
-    # `Spree::Product` does not, so a product export is still store-wide. That
-    # gap predates this change and is a separate decision.
     it 'narrows an export to the seller where the model supports it' do
-      mine = create(:product, store: store, seller: seller).default_variant
-      theirs = create(:product, store: store).default_variant
-      export = create(:export, store: store, seller: seller, user: user,
-                               type: 'Spree::Exports::Products')
+      mine = create(:product, store: store, seller: seller)
+      theirs = create(:product, store: store)
+      export = build(:product_export, store: store, seller: seller, user: nil)
 
-      scoped = Spree::Variant.for_seller(seller)
-
-      expect(export.seller).to eq(seller)
-      expect(scoped).to include(mine)
-      expect(scoped).not_to include(theirs)
+      expect(export.records_to_export).to include(mine)
+      expect(export.records_to_export).not_to include(theirs)
     end
   end
 end

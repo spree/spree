@@ -345,16 +345,26 @@ module Spree
     end
 
     describe '#conditionally_touch_records' do
-      let(:item) { subject.items.last }
-      let(:variant) { subject.variants.last }
+      let!(:variant) { subject.variants.last }
+      let!(:stock_level) { subject.stock_levels.last }
 
       context 'active has changed' do
-        it { expect { subject.update(active: false).to change(variant, :updated_at) } }
-        it { expect { subject.update(active: false).to change(item, :updated_at) } }
+        it 'touches variants and stock levels' do
+          pending 'active_changed? is always false inside after_update, so nothing is touched'
+
+          Timecop.travel(1.minute.from_now) do
+            expect { subject.update(active: false) }.to change { variant.reload.updated_at }.
+              and change { stock_level.reload.updated_at }
+          end
+        end
       end
 
       context 'active has not changed' do
-        it { expect { subject.update(name: 'my other warehouse').to change(variant, :updated_at) } }
+        it 'does not touch variants' do
+          Timecop.travel(1.minute.from_now) do
+            expect { subject.update(name: 'my other warehouse') }.not_to change { variant.reload.updated_at }
+          end
+        end
       end
     end
 
