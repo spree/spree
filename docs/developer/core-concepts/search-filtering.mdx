@@ -282,18 +282,32 @@ base.search_by :name, :code
 
 Declare the `type` of a scope's argument: `'boolean'` for a scope taking none (`q[featured]=true`), or `'text'`, `'id'`, `'decimal'`, `'integer'`, `'date'` or `'datetime'` for one value. A list of kinds (`%w[decimal decimal]`) means several arguments in order, and `{ list: 'id' }` means any number of them. A scope declared without a type is published as taking one text value.
 
-The published SDK types cannot know about filters your own app adds. Declare them once in your storefront or dashboard code, and every `list()` call accepts them:
+Every entry is a filter any caller of that API can run. Keep back-office fields out of the Store API with `private_ransackable_attributes`, and add associations the storefront may filter through to `storefront_ransackable_associations`.
+
+### Using your own filters from TypeScript
+
+The SDKs type each `list()` call with the filters Spree itself declares. A filter your app adds works in the API at once, but TypeScript rejects it until you declare it, because the published types cannot know about it. Declare it once and every `list()` call for that resource accepts and autocompletes it:
 
 ```typescript src/types/spree.d.ts
+// Required: without an import or export, this file would replace the SDK's
+// types instead of adding to them.
+export {}
+
 declare module '@spree/sdk' {
   interface ProductFilterExtensions {
+    erp_id_eq?: string
     featured?: boolean
     by_brand?: string
   }
 }
 ```
 
-Every entry is a filter any caller of that API can run. Keep back-office fields out of the Store API with `private_ransackable_attributes`, and add associations the storefront may filter through to `storefront_ransackable_associations`.
+How it fits together:
+
+- **One interface per resource**, named after the record the list returns: `ProductFilterExtensions`, `OrderFilterExtensions`, `CustomerFilterExtensions`. It sits next to the resource's `ProductFilters` type in the SDK, starts empty, and is part of that type, so whatever you add to it is accepted.
+- **TypeScript merges your declaration into it** ([declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation)). Nothing is registered at runtime; the file only has to be part of your TypeScript project, as any `.ts` or `.d.ts` file under `src/` usually is.
+- **Each SDK is declared separately.** Use `'@spree/sdk'` for storefront code, `'@spree/admin-sdk'` for the dashboard and Admin API integrations, and `'@spree/seller-sdk'` for the seller panel.
+- **Name each key the way the API receives it**, with its predicate: `erp_id_eq`, `erp_id_in` (an array), a scope by its name. Type amounts as decimal strings, counts as numbers, and flags as booleans.
 
 ## Pagination
 

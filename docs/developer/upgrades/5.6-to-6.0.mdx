@@ -1032,15 +1032,20 @@ Each `list()` method now takes the filters and sort fields its endpoint accepts.
   params.sort = filters.sortBy as ProductSort
   ```
 
-- **Filters your backend adds** through its own extensions are not in the published types. Declare them once:
+- **Filters your backend adds are compile errors until you declare them.** The published types list only the filters Spree itself declares. Any filter or scope your backend adds (through `Spree.ransack.add_attribute`, `add_scope` or a model decorator) still works in the API, but TypeScript rejects the key. Declare each one once, in a file that also has an `export`. Without it, the file replaces the SDK's types instead of adding to them:
 
   ```ts src/types/spree.d.ts
+  export {}
+
   declare module '@spree/sdk' {
     interface ProductFilterExtensions {
+      erp_id_eq?: string
       featured?: boolean
     }
   }
   ```
+
+  Each resource has its own interface (`OrderFilterExtensions`, `CategoryFilterExtensions`, and so on). See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript).
 
 - **Amount filters take decimal strings.** `price_gte`, `price_lte` and the other money filters are typed as strings, like every money value in 6.0. Send `'20.00'`, not `20`.
 

@@ -74,6 +74,11 @@ function checkPredicates(published: Record<Kind, string[]> | undefined) {
 }
 
 const MAX_DEPTH = 2
+const PACKAGES: Record<string, string> = {
+  store: '@spree/sdk',
+  admin: '@spree/admin-sdk',
+  seller: '@spree/seller-sdk',
+}
 const HEADER =
   '// This file is auto-generated from the filter tables in docs/api-reference by `pnpm generate:filters`. Do not edit directly.\n'
 
@@ -143,7 +148,7 @@ function associationsType(
   })
 }
 
-function render(spec: Spec): string {
+function render(spec: Spec, api: string): string {
   checkPredicates(spec.components?.['x-spree-filter-predicates'])
   const tables = spec.components?.['x-spree-filter-tables'] ?? {}
   // Endpoints listing the same records share one type, keyed by what they
@@ -185,7 +190,21 @@ function render(spec: Spec): string {
 
     // Filters an app adds through its own extensions, which the published
     // types cannot know about: `declare module` the SDK and add them here.
-    if (typeName === name) out.push(`export interface ${name}FilterExtensions {}`, '')
+    if (typeName === name) {
+      out.push(
+        '/**',
+        ` * Filters your app adds to ${name} lists. Declare them in a file that has an`,
+        ` * \`export\`, or it replaces this package's types instead of adding to them:`,
+        ' *',
+        ' *     export {}',
+        ` *     declare module '${PACKAGES[api]}' {`,
+        ` *       interface ${name}FilterExtensions { erp_id_eq?: string }`,
+        ' *     }',
+        ' */',
+        `export interface ${name}FilterExtensions {}`,
+        '',
+      )
+    }
     parts.push(`${name}FilterExtensions`)
     out.push(`export type ${typeName}Filters = ${parts.join('\n  & ')}`, '')
     out.push(`export type ${typeName}Sort = ${sort}`, '')
@@ -202,5 +221,5 @@ const specPath = path.resolve(process.cwd(), `../../docs/api-reference/${api}.ya
 const outputPath = path.resolve(process.cwd(), 'src/types/filters.generated.ts')
 const spec = parse(fs.readFileSync(specPath, 'utf8')) as Spec
 
-fs.writeFileSync(outputPath, render(spec))
+fs.writeFileSync(outputPath, render(spec, api))
 console.log(`Wrote ${path.relative(process.cwd(), outputPath)}`)

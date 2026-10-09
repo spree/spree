@@ -400,6 +400,15 @@ export type WebhookEndpointFields = Filter.BooleanFilters<'active'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name' | 'url'>
 
+/**
+ * Filters your app adds to Address lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface AddressFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface AddressFilterExtensions {}
 
 export type AddressFilters = AddressFields
@@ -408,6 +417,15 @@ export type AddressFilters = AddressFields
 
 export type AddressSort = Filter.SortKey<'address1' | 'address2' | 'city' | 'company' | 'country_code' | 'created_at' | 'first_name' | 'id' | 'last_name' | 'phone' | 'postal_code' | 'state_code' | 'updated_at'>
 
+/**
+ * Filters your app adds to AdminUser lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface AdminUserFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface AdminUserFilterExtensions {}
 
 export type AdminUserFilters = AdminUserFields
@@ -417,6 +435,15 @@ export type AdminUserFilters = AdminUserFields
 
 export type AdminUserSort = Filter.SortKey<'created_at' | 'email' | 'first_name' | 'id' | 'last_name' | 'updated_at'>
 
+/**
+ * Filters your app adds to AllowedOrigin lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface AllowedOriginFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface AllowedOriginFilterExtensions {}
 
 export type AllowedOriginFilters = AllowedOriginFields
@@ -428,6 +455,15 @@ export type AllowedOriginFilters = AllowedOriginFields
 
 export type AllowedOriginSort = Filter.SortKey<'created_at' | 'id' | 'origin' | 'updated_at'>
 
+/**
+ * Filters your app adds to ApiKey lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ApiKeyFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ApiKeyFilterExtensions {}
 
 export type ApiKeyFilters = ApiKeyFields
@@ -436,6 +472,15 @@ export type ApiKeyFilters = ApiKeyFields
 
 export type ApiKeySort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to Catalog lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CatalogFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CatalogFilterExtensions {}
 
 export type CatalogFilters = CatalogFields
@@ -447,6 +492,15 @@ export type CatalogFilters = CatalogFields
 
 export type CatalogSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'position' | 'updated_at'>
 
+/**
+ * Filters your app adds to CatalogOrderMinimum lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CatalogOrderMinimumFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CatalogOrderMinimumFilterExtensions {}
 
 export type CatalogOrderMinimumFilters = CatalogOrderMinimumFields
@@ -455,6 +509,15 @@ export type CatalogOrderMinimumFilters = CatalogOrderMinimumFields
 
 export type CatalogOrderMinimumSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to Category lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CategoryFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CategoryFilterExtensions {}
 
 export type CategoryFilters = CategoryFields
@@ -467,6 +530,15 @@ export type CategoryFilters = CategoryFields
 
 export type CategorySort = Filter.SortKey<'automatic' | 'children_count' | 'created_at' | 'depth' | 'id' | 'name' | 'parent_id' | 'permalink' | 'position' | 'pretty_name' | 'products_count' | 'updated_at'>
 
+/**
+ * Filters your app adds to Channel lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ChannelFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ChannelFilterExtensions {}
 
 export type ChannelFilters = ChannelFields
@@ -478,6 +550,15 @@ export type ChannelFilters = ChannelFields
 
 export type ChannelSort = Filter.SortKey<'active' | 'code' | 'created_at' | 'default' | 'id' | 'name' | 'store_id' | 'updated_at'>
 
+/**
+ * Filters your app adds to ClaimReason lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ClaimReasonFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ClaimReasonFilterExtensions {}
 
 export type ClaimReasonFilters = ClaimReasonFields
@@ -486,6 +567,15 @@ export type ClaimReasonFilters = ClaimReasonFields
 
 export type ClaimReasonSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to Collection lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CollectionFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CollectionFilterExtensions {}
 
 export type CollectionFilters = CollectionFields
@@ -497,6 +587,15 @@ export type CollectionFilters = CollectionFields
 
 export type CollectionSort = Filter.SortKey<'automatic' | 'created_at' | 'id' | 'name' | 'permalink' | 'position' | 'products_count' | 'sort_order' | 'updated_at'>
 
+/**
+ * Filters your app adds to CommissionLine lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CommissionLineFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CommissionLineFilterExtensions {}
 
 export type CommissionLineFilters = CommissionLineFields
@@ -507,6 +606,15 @@ export type CommissionLineFilters = CommissionLineFields
 
 export type CommissionLineSort = Filter.SortKey<'amount' | 'created_at' | 'currency' | 'id' | 'kind' | 'order_id' | 'rate' | 'tax_amount' | 'total' | 'updated_at'>
 
+/**
+ * Filters your app adds to CommissionRate lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CommissionRateFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CommissionRateFilterExtensions {}
 
 export type CommissionRateFilters = CommissionRateFields
@@ -519,6 +627,15 @@ export type CommissionRateFilters = CommissionRateFields
 
 export type CommissionRateSort = Filter.SortKey<'code' | 'created_at' | 'enabled' | 'id' | 'include_shipping' | 'kind' | 'name' | 'position' | 'tax_inclusive' | 'updated_at' | 'value'>
 
+/**
+ * Filters your app adds to Company lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CompanyFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CompanyFilterExtensions {}
 
 export type CompanyFilters = CompanyFields
@@ -534,6 +651,15 @@ export type CompanyFilters = CompanyFields
 
 export type CompanySort = Filter.SortKey<'created_at' | 'id' | 'kind' | 'name' | 'parent_id' | 'po_number_required' | 'updated_at'>
 
+/**
+ * Filters your app adds to CompanyMembership lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CompanyMembershipFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CompanyMembershipFilterExtensions {}
 
 export type CompanyMembershipFilters = CompanyMembershipFields
@@ -542,6 +668,15 @@ export type CompanyMembershipFilters = CompanyMembershipFields
 
 export type CompanyMembershipSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to CouponCode lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CouponCodeFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CouponCodeFilterExtensions {}
 
 export type CouponCodeFilters = CouponCodeFields
@@ -551,6 +686,15 @@ export type CouponCodeFilters = CouponCodeFields
 
 export type CouponCodeSort = Filter.SortKey<'code' | 'created_at' | 'id' | 'promotion_id' | 'state' | 'updated_at'>
 
+/**
+ * Filters your app adds to CreditCard lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CreditCardFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CreditCardFilterExtensions {}
 
 export type CreditCardFilters = CreditCardFields
@@ -559,6 +703,15 @@ export type CreditCardFilters = CreditCardFields
 
 export type CreditCardSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to Customer lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CustomerFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CustomerFilterExtensions {}
 
 export type CustomerFilters = CustomerFields
@@ -580,6 +733,15 @@ export type CustomerFilters = CustomerFields
 
 export type CustomerSort = Filter.SortKey<'accepts_email_marketing' | 'created_at' | 'email' | 'first_name' | 'id' | 'last_name' | 'phone' | 'updated_at'>
 
+/**
+ * Filters your app adds to CustomerGroup lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CustomerGroupFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CustomerGroupFilterExtensions {}
 
 export type CustomerGroupFilters = CustomerGroupFields
@@ -591,6 +753,15 @@ export type CustomerGroupFilters = CustomerGroupFields
 
 export type CustomerGroupSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to CustomField lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CustomFieldFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CustomFieldFilterExtensions {}
 
 export type CustomFieldFilters = CustomFieldFields
@@ -599,6 +770,15 @@ export type CustomFieldFilters = CustomFieldFields
 
 export type CustomFieldSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to CustomFieldDefinition lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface CustomFieldDefinitionFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface CustomFieldDefinitionFilterExtensions {}
 
 export type CustomFieldDefinitionFilters = CustomFieldDefinitionFields
@@ -610,6 +790,15 @@ export type CustomFieldDefinitionFilters = CustomFieldDefinitionFields
 
 export type CustomFieldDefinitionSort = Filter.SortKey<'created_at' | 'field_type' | 'id' | 'key' | 'label' | 'namespace' | 'resource_type' | 'searchable' | 'sortable' | 'storefront_visible' | 'updated_at'>
 
+/**
+ * Filters your app adds to Delivery lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DeliveryFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface DeliveryFilterExtensions {}
 
 export type DeliveryFilters = DeliveryFields
@@ -618,6 +807,15 @@ export type DeliveryFilters = DeliveryFields
 
 export type DeliverySort = Filter.SortKey<'carrier' | 'created_at' | 'id' | 'status' | 'tracking_number' | 'updated_at'>
 
+/**
+ * Filters your app adds to DeliveryMethod lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DeliveryMethodFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface DeliveryMethodFilterExtensions {}
 
 export type DeliveryMethodFilters = DeliveryMethodFields
@@ -630,6 +828,15 @@ export type DeliveryMethodFilters = DeliveryMethodFields
 
 export type DeliveryMethodSort = Filter.SortKey<'available_to_sellers' | 'created_at' | 'id' | 'name' | 'seller_id' | 'storefront_visible' | 'updated_at'>
 
+/**
+ * Filters your app adds to DeliveryProfile lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DeliveryProfileFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface DeliveryProfileFilterExtensions {}
 
 export type DeliveryProfileFilters = DeliveryProfileFields
@@ -641,6 +848,15 @@ export type DeliveryProfileFilters = DeliveryProfileFields
 
 export type DeliveryProfileSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'position' | 'updated_at'>
 
+/**
+ * Filters your app adds to Discount lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface DiscountFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface DiscountFilterExtensions {}
 
 export type DiscountFilters = DiscountFields
@@ -649,6 +865,15 @@ export type DiscountFilters = DiscountFields
 
 export type DiscountSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to EmailTemplateRevision lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface EmailTemplateRevisionFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface EmailTemplateRevisionFilterExtensions {}
 
 export type EmailTemplateRevisionFilters = EmailTemplateRevisionFields
@@ -657,6 +882,15 @@ export type EmailTemplateRevisionFilters = EmailTemplateRevisionFields
 
 export type EmailTemplateRevisionSort = Filter.SortKey<'created_at' | 'id'>
 
+/**
+ * Filters your app adds to Export lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ExportFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ExportFilterExtensions {}
 
 export type ExportFilters = ExportFields
@@ -666,6 +900,15 @@ export type ExportFilters = ExportFields
 
 export type ExportSort = Filter.SortKey<'created_at' | 'format' | 'id' | 'number' | 'seller_id' | 'type' | 'updated_at'>
 
+/**
+ * Filters your app adds to Fulfillment lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface FulfillmentFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface FulfillmentFilterExtensions {}
 
 export type FulfillmentFilters = FulfillmentFields
@@ -674,6 +917,15 @@ export type FulfillmentFilters = FulfillmentFields
 
 export type FulfillmentSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'updated_at'>
 
+/**
+ * Filters your app adds to GiftCard lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface GiftCardFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface GiftCardFilterExtensions {}
 
 export type GiftCardFilters = GiftCardFields
@@ -693,6 +945,15 @@ export type GiftCardFilters = GiftCardFields
 
 export type GiftCardSort = Filter.SortKey<'code' | 'created_at' | 'created_by_id' | 'currency' | 'customer_id' | 'expires_at' | 'gift_card_batch_id' | 'id' | 'state' | 'status' | 'updated_at'>
 
+/**
+ * Filters your app adds to GiftCardBatch lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface GiftCardBatchFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface GiftCardBatchFilterExtensions {}
 
 export type GiftCardBatchFilters = GiftCardBatchFields
@@ -701,6 +962,15 @@ export type GiftCardBatchFilters = GiftCardBatchFields
 
 export type GiftCardBatchSort = Filter.SortKey<'created_at' | 'id' | 'prefix' | 'updated_at'>
 
+/**
+ * Filters your app adds to Import lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ImportFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ImportFilterExtensions {}
 
 export type ImportFilters = ImportFields
@@ -713,6 +983,15 @@ export type ImportFilters = ImportFields
 
 export type ImportSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'seller_id' | 'status' | 'type' | 'updated_at'>
 
+/**
+ * Filters your app adds to ImportRow lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ImportRowFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ImportRowFilterExtensions {}
 
 export type ImportRowFilters = ImportRowFields
@@ -721,6 +1000,15 @@ export type ImportRowFilters = ImportRowFields
 
 export type ImportRowSort = Filter.SortKey<'created_at' | 'id' | 'row_number' | 'status' | 'updated_at'>
 
+/**
+ * Filters your app adds to Integration lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface IntegrationFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface IntegrationFilterExtensions {}
 
 export type IntegrationFilters = IntegrationFields
@@ -729,6 +1017,15 @@ export type IntegrationFilters = IntegrationFields
 
 export type IntegrationSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to Invitation lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface InvitationFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface InvitationFilterExtensions {}
 
 export type InvitationFilters = InvitationFields
@@ -737,6 +1034,15 @@ export type InvitationFilters = InvitationFields
 
 export type InvitationSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to LineItem lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface LineItemFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface LineItemFilterExtensions {}
 
 export type LineItemFilters = LineItemFields
@@ -748,6 +1054,15 @@ export type LineItemFilters = LineItemFields
 
 export type LineItemSort = Filter.SortKey<'additional_tax_total' | 'adjustment_total' | 'cost_price' | 'created_at' | 'discount_total' | 'id' | 'included_tax_total' | 'non_taxable_adjustment_total' | 'order_id' | 'pre_tax_amount' | 'price' | 'quantity' | 'tax_category_id' | 'taxable_adjustment_total' | 'updated_at' | 'variant_id'>
 
+/**
+ * Filters your app adds to Market lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface MarketFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface MarketFilterExtensions {}
 
 export type MarketFilters = MarketFields
@@ -759,6 +1074,15 @@ export type MarketFilters = MarketFields
 
 export type MarketSort = Filter.SortKey<'created_at' | 'currency' | 'default_locale' | 'id' | 'name' | 'position' | 'updated_at'>
 
+/**
+ * Filters your app adds to Media lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface MediaFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface MediaFilterExtensions {}
 
 export type MediaFilters = MediaFields
@@ -772,6 +1096,15 @@ export type MediaFilters = MediaFields
 
 export type MediaSort = Filter.SortKey<'alt' | 'created_at' | 'id' | 'media_type' | 'position' | 'updated_at'>
 
+/**
+ * Filters your app adds to OptionType lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface OptionTypeFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface OptionTypeFilterExtensions {}
 
 export type OptionTypeFilters = OptionTypeFields
@@ -784,6 +1117,15 @@ export type OptionTypeFilters = OptionTypeFields
 
 export type OptionTypeSort = Filter.SortKey<'created_at' | 'id' | 'kind' | 'label' | 'name' | 'position' | 'updated_at'>
 
+/**
+ * Filters your app adds to Order lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface OrderFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface OrderFilterExtensions {}
 
 export type OrderFilters = OrderFields
@@ -811,6 +1153,15 @@ export type OrderFilters = OrderFields
 
 export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'considered_risky' | 'coupon_code' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'email' | 'fulfillment_status' | 'id' | 'item_total' | 'number' | 'order_group_id' | 'payment_state' | 'payment_status' | 'po_number' | 'seller_id' | 'shipment_state' | 'status' | 'total' | 'total_quantity' | 'updated_at'>
 
+/**
+ * Filters your app adds to OrderCancellationReason lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface OrderCancellationReasonFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface OrderCancellationReasonFilterExtensions {}
 
 export type OrderCancellationReasonFilters = OrderCancellationReasonFields
@@ -819,6 +1170,15 @@ export type OrderCancellationReasonFilters = OrderCancellationReasonFields
 
 export type OrderCancellationReasonSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to OrderRoutingRule lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface OrderRoutingRuleFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface OrderRoutingRuleFilterExtensions {}
 
 export type OrderRoutingRuleFilters = OrderRoutingRuleFields
@@ -827,6 +1187,15 @@ export type OrderRoutingRuleFilters = OrderRoutingRuleFields
 
 export type OrderRoutingRuleSort = Filter.SortKey<'active' | 'channel_id' | 'created_at' | 'id' | 'position' | 'store_id' | 'type' | 'updated_at'>
 
+/**
+ * Filters your app adds to PackageType lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PackageTypeFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PackageTypeFilterExtensions {}
 
 export type PackageTypeFilters = PackageTypeFields
@@ -839,6 +1208,15 @@ export type PackageTypeFilters = PackageTypeFields
 
 export type PackageTypeSort = Filter.SortKey<'created_at' | 'default' | 'id' | 'kind' | 'name' | 'seller_id' | 'updated_at'>
 
+/**
+ * Filters your app adds to Payment lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PaymentFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PaymentFilterExtensions {}
 
 export type PaymentFilters = PaymentFields
@@ -849,6 +1227,15 @@ export type PaymentFilters = PaymentFields
 
 export type PaymentSort = Filter.SortKey<'amount' | 'avs_response' | 'created_at' | 'cvv_response_code' | 'cvv_response_message' | 'id' | 'response_code' | 'state' | 'status' | 'updated_at'>
 
+/**
+ * Filters your app adds to PaymentMethod lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PaymentMethodFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PaymentMethodFilterExtensions {}
 
 export type PaymentMethodFilters = PaymentMethodFields
@@ -860,6 +1247,15 @@ export type PaymentMethodFilters = PaymentMethodFields
 
 export type PaymentMethodSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'position' | 'storefront_visible' | 'type' | 'updated_at'>
 
+/**
+ * Filters your app adds to Policy lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PolicyFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PolicyFilterExtensions {}
 
 export type PolicyFilters = PolicyFields
@@ -871,6 +1267,15 @@ export type PolicyFilters = PolicyFields
 
 export type PolicySort = Filter.SortKey<'created_at' | 'id' | 'name' | 'owner_id' | 'owner_type' | 'updated_at'>
 
+/**
+ * Filters your app adds to Price lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PriceFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PriceFilterExtensions {}
 
 export type PriceFilters = PriceFields
@@ -884,6 +1289,15 @@ export type PriceFilters = PriceFields
 
 export type PriceSort = Filter.SortKey<'amount' | 'compare_at_amount' | 'created_at' | 'currency' | 'id' | 'min_quantity' | 'price_list_id' | 'updated_at' | 'variant_id'>
 
+/**
+ * Filters your app adds to PriceList lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PriceListFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PriceListFilterExtensions {}
 
 export type PriceListFilters = PriceListFields
@@ -895,6 +1309,15 @@ export type PriceListFilters = PriceListFields
 
 export type PriceListSort = Filter.SortKey<'catalog_id' | 'created_at' | 'ends_at' | 'id' | 'match_policy' | 'name' | 'position' | 'starts_at' | 'status' | 'updated_at'>
 
+/**
+ * Filters your app adds to Product lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ProductFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ProductFilterExtensions {}
 
 export type ProductFilters = ProductFields
@@ -968,6 +1391,15 @@ export type ProductSearchFilters = ProductFields
 
 export type ProductSearchSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | `cf_${string}`>
 
+/**
+ * Filters your app adds to ProductType lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ProductTypeFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ProductTypeFilterExtensions {}
 
 export type ProductTypeFilters = ProductTypeFields
@@ -980,6 +1412,15 @@ export type ProductTypeFilters = ProductTypeFields
 
 export type ProductTypeSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to Promotion lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PromotionFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PromotionFilterExtensions {}
 
 export type PromotionFilters = PromotionFields
@@ -992,6 +1433,15 @@ export type PromotionFilters = PromotionFields
 
 export type PromotionSort = Filter.SortKey<'code' | 'created_at' | 'expires_at' | 'id' | 'kind' | 'name' | 'path' | 'promotion_category_id' | 'starts_at' | 'updated_at'>
 
+/**
+ * Filters your app adds to PromotionAction lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PromotionActionFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PromotionActionFilterExtensions {}
 
 export type PromotionActionFilters = PromotionActionFields
@@ -1000,6 +1450,15 @@ export type PromotionActionFilters = PromotionActionFields
 
 export type PromotionActionSort = Filter.SortKey<'created_at' | 'id' | 'position' | 'updated_at'>
 
+/**
+ * Filters your app adds to PromotionRule lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PromotionRuleFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PromotionRuleFilterExtensions {}
 
 export type PromotionRuleFilters = PromotionRuleFields
@@ -1008,6 +1467,15 @@ export type PromotionRuleFilters = PromotionRuleFields
 
 export type PromotionRuleSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to PurchaseOrder lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PurchaseOrderFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface PurchaseOrderFilterExtensions {}
 
 export type PurchaseOrderFilters = PurchaseOrderFields
@@ -1026,6 +1494,15 @@ export type PurchaseOrderFilters = PurchaseOrderFields
 
 export type PurchaseOrderSort = Filter.SortKey<'cancel_by' | 'closed_short_at' | 'created_at' | 'currency' | 'destination_location_id' | 'expected_at' | 'id' | 'number' | 'ordered_at' | 'received_at' | 'reference' | 'status' | 'supplier_id' | 'updated_at'>
 
+/**
+ * Filters your app adds to Refund lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface RefundFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface RefundFilterExtensions {}
 
 export type RefundFilters = RefundFields
@@ -1034,6 +1511,15 @@ export type RefundFilters = RefundFields
 
 export type RefundSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to RefundReason lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface RefundReasonFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface RefundReasonFilterExtensions {}
 
 export type RefundReasonFilters = RefundReasonFields
@@ -1042,6 +1528,15 @@ export type RefundReasonFilters = RefundReasonFields
 
 export type RefundReasonSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to ReturnReason lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ReturnReasonFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ReturnReasonFilterExtensions {}
 
 export type ReturnReasonFilters = ReturnReasonFields
@@ -1050,6 +1545,15 @@ export type ReturnReasonFilters = ReturnReasonFields
 
 export type ReturnReasonSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to Role lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface RoleFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface RoleFilterExtensions {}
 
 export type RoleFilters = RoleFields
@@ -1058,6 +1562,15 @@ export type RoleFilters = RoleFields
 
 export type RoleSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
 
+/**
+ * Filters your app adds to Seller lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface SellerFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface SellerFilterExtensions {}
 
 export type SellerFilters = SellerFields
@@ -1069,6 +1582,15 @@ export type SellerFilters = SellerFields
 
 export type SellerSort = Filter.SortKey<'contact_email' | 'created_at' | 'id' | 'name' | 'status' | 'updated_at'>
 
+/**
+ * Filters your app adds to SellerRequirement lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface SellerRequirementFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface SellerRequirementFilterExtensions {}
 
 export type SellerRequirementFilters = SellerRequirementFields
@@ -1080,6 +1602,15 @@ export type SellerRequirementFilters = SellerRequirementFields
 
 export type SellerRequirementSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'position' | 'updated_at'>
 
+/**
+ * Filters your app adds to ShippingLabel lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface ShippingLabelFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface ShippingLabelFilterExtensions {}
 
 export type ShippingLabelFilters = ShippingLabelFields
@@ -1088,6 +1619,15 @@ export type ShippingLabelFilters = ShippingLabelFields
 
 export type ShippingLabelSort = Filter.SortKey<'carrier' | 'created_at' | 'id' | 'source' | 'status' | 'tracking_number' | 'updated_at'>
 
+/**
+ * Filters your app adds to StockLevel lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface StockLevelFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface StockLevelFilterExtensions {}
 
 export type StockLevelFilters = StockLevelFields
@@ -1102,6 +1642,15 @@ export type StockLevelFilters = StockLevelFields
 
 export type StockLevelSort = Filter.SortKey<'allocated_count' | 'count_on_hand' | 'created_at' | 'id' | 'incoming_count' | 'reserved_count' | 'stock_location_id' | 'updated_at' | 'variant_id'>
 
+/**
+ * Filters your app adds to StockLocation lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface StockLocationFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface StockLocationFilterExtensions {}
 
 export type StockLocationFilters = StockLocationFields
@@ -1114,6 +1663,15 @@ export type StockLocationFilters = StockLocationFields
 
 export type StockLocationSort = Filter.SortKey<'active' | 'country_code' | 'created_at' | 'default' | 'id' | 'kind' | 'name' | 'pickup_enabled' | 'returns_enabled' | 'seller_id' | 'state_code' | 'updated_at'>
 
+/**
+ * Filters your app adds to StockMovement lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface StockMovementFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface StockMovementFilterExtensions {}
 
 export type StockMovementFilters = StockMovementFields
@@ -1123,6 +1681,15 @@ export type StockMovementFilters = StockMovementFields
 
 export type StockMovementSort = Filter.SortKey<'created_at' | 'exchange_id' | 'fulfillment_id' | 'id' | 'kind' | 'order_id' | 'purchase_order_id' | 'quantity' | 'reason' | 'return_id' | 'stock_item_id' | 'stock_level_id' | 'stock_receipt_id' | 'stock_transfer_id' | 'unit_cost' | 'updated_at'>
 
+/**
+ * Filters your app adds to StockReceipt lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface StockReceiptFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface StockReceiptFilterExtensions {}
 
 export type StockReceiptFilters = StockReceiptFields
@@ -1131,6 +1698,15 @@ export type StockReceiptFilters = StockReceiptFields
 
 export type StockReceiptSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'receivable_id' | 'receivable_type' | 'received_at' | 'received_by_id' | 'received_by_type' | 'reference' | 'updated_at'>
 
+/**
+ * Filters your app adds to StockTransfer lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface StockTransferFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface StockTransferFilterExtensions {}
 
 export type StockTransferFilters = StockTransferFields
@@ -1147,6 +1723,15 @@ export type StockTransferFilters = StockTransferFields
 
 export type StockTransferSort = Filter.SortKey<'closed_short_at' | 'created_at' | 'destination_location_id' | 'id' | 'number' | 'received_at' | 'reference' | 'shipped_at' | 'source_location_id' | 'status' | 'updated_at'>
 
+/**
+ * Filters your app adds to StoreCredit lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface StoreCreditFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface StoreCreditFilterExtensions {}
 
 export type StoreCreditFilters = StoreCreditFields
@@ -1162,6 +1747,15 @@ export type StoreCreditFilters = StoreCreditFields
 
 export type StoreCreditSort = Filter.SortKey<'amount' | 'created_at' | 'created_by_id' | 'currency' | 'customer_id' | 'id' | 'memo' | 'updated_at'>
 
+/**
+ * Filters your app adds to StoreCreditEvent lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface StoreCreditEventFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface StoreCreditEventFilterExtensions {}
 
 export type StoreCreditEventFilters = StoreCreditEventFields
@@ -1170,6 +1764,15 @@ export type StoreCreditEventFilters = StoreCreditEventFields
 
 export type StoreCreditEventSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to Supplier lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface SupplierFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface SupplierFilterExtensions {}
 
 export type SupplierFilters = SupplierFields
@@ -1181,6 +1784,15 @@ export type SupplierFilters = SupplierFields
 
 export type SupplierSort = Filter.SortKey<'city' | 'contact_name' | 'country_code' | 'created_at' | 'email' | 'id' | 'name' | 'phone' | 'updated_at'>
 
+/**
+ * Filters your app adds to TaxExemptionCertificate lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface TaxExemptionCertificateFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface TaxExemptionCertificateFilterExtensions {}
 
 export type TaxExemptionCertificateFilters = TaxExemptionCertificateFields
@@ -1189,6 +1801,15 @@ export type TaxExemptionCertificateFilters = TaxExemptionCertificateFields
 
 export type TaxExemptionCertificateSort = Filter.SortKey<'certificate_number' | 'created_at' | 'expires_at' | 'id' | 'reason_code' | 'status' | 'updated_at'>
 
+/**
+ * Filters your app adds to TaxIdentifier lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface TaxIdentifierFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface TaxIdentifierFilterExtensions {}
 
 export type TaxIdentifierFilters = TaxIdentifierFields
@@ -1197,6 +1818,15 @@ export type TaxIdentifierFilters = TaxIdentifierFields
 
 export type TaxIdentifierSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+/**
+ * Filters your app adds to TaxLine lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface TaxLineFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface TaxLineFilterExtensions {}
 
 export type TaxLineFilters = TaxLineFields
@@ -1205,6 +1835,15 @@ export type TaxLineFilters = TaxLineFields
 
 export type TaxLineSort = Filter.SortKey<'country_code' | 'created_at' | 'id' | 'included' | 'provider_id' | 'state_code' | 'taxability_reason' | 'updated_at'>
 
+/**
+ * Filters your app adds to TaxRate lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface TaxRateFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface TaxRateFilterExtensions {}
 
 export type TaxRateFilters = TaxRateFields
@@ -1216,6 +1855,15 @@ export type TaxRateFilters = TaxRateFields
 
 export type TaxRateSort = Filter.SortKey<'amount' | 'country_code' | 'created_at' | 'id' | 'included_in_price' | 'name' | 'rate' | 'state_code' | 'tax_category_id' | 'updated_at'>
 
+/**
+ * Filters your app adds to Variant lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface VariantFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface VariantFilterExtensions {}
 
 export type VariantFilters = VariantFields
@@ -1235,6 +1883,15 @@ export type VariantFilters = VariantFields
 
 export type VariantSort = Filter.SortKey<'carton_package_type_id' | 'carton_weight' | 'cartons_per_pallet' | 'cost_currency' | 'cost_price' | 'country_of_origin' | 'created_at' | 'deleted_at' | 'depth' | 'discontinue_on' | 'height' | 'hs_code' | 'id' | 'minimum_order_quantity' | 'order_multiple' | 'position' | 'product_id' | 'purchase_unit' | 'sku' | 'track_inventory' | 'units_per_carton' | 'updated_at' | 'weight' | 'width'>
 
+/**
+ * Filters your app adds to WebhookDelivery lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface WebhookDeliveryFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface WebhookDeliveryFilterExtensions {}
 
 export type WebhookDeliveryFilters = WebhookDeliveryFields
@@ -1246,6 +1903,15 @@ export type WebhookDeliveryFilters = WebhookDeliveryFields
 
 export type WebhookDeliverySort = Filter.SortKey<'created_at' | 'delivered_at' | 'event_name' | 'execution_time' | 'id' | 'response_code' | 'success' | 'updated_at'>
 
+/**
+ * Filters your app adds to WebhookEndpoint lists. Declare them in a file that has an
+ * `export`, or it replaces this package's types instead of adding to them:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface WebhookEndpointFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
 export interface WebhookEndpointFilterExtensions {}
 
 export type WebhookEndpointFilters = WebhookEndpointFields
