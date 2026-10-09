@@ -181,7 +181,7 @@ export function collectionAutocompleteProps(queryKey: string) {
     queryKey,
     search: (q: string) =>
       adminClient.collections.list({
-        name_cont: q,
+        search: q,
         automatic_eq: false,
         limit: 100,
         sort: 'name',

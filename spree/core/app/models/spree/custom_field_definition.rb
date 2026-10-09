@@ -25,16 +25,6 @@ module Spree
     scope :for_resource_type, ->(resource_type) { where(resource_type: resource_type) }
     scope :storefront_visible, -> { where(storefront_visible: true) }
     scope :admin_only, -> { where(storefront_visible: false) }
-    scope :search, ->(query) do
-      return all if query.blank?
-
-      search_term = "%#{query.downcase}%"
-      namespace_condition = arel_table[:namespace].lower.matches(search_term)
-      key_condition = arel_table[:key].lower.matches(search_term)
-      label_condition = arel_table[:label].lower.matches(search_term)
-
-      where(namespace_condition.or(key_condition).or(label_condition))
-    end
 
     #
     # Callbacks
@@ -62,7 +52,7 @@ module Spree
       else super
       end
     end
-    self.whitelisted_ransackable_scopes = %w[search]
+    search_by :namespace, :key, :label
 
     # API-facing token for the STI subclass name stored in the `field_type`
     # column. Reader returns the registered token (`short_text`); writer

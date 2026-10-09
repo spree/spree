@@ -8,7 +8,7 @@ defineTable<PaymentMethod>('payment-methods', {
   docsPath: 'settings/payments',
   description: i18n.t('admin.table_descriptions.payment_methods'),
   title: i18n.t('admin.payment_methods.title'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.payment_methods.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <CreditCardIcon className="size-8 text-muted-foreground" />,

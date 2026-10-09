@@ -66,6 +66,7 @@ module Spree
     #
     ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
     self.whitelisted_ransackable_attributes = %w[code customer_id status state gift_card_batch_id created_by_id currency expires_at]
+    search_by :code
     # `users` is the pre-6.0 name for `customers` — removed in 6.1.
     self.whitelisted_ransackable_associations = %w[customers users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]

@@ -27,7 +27,7 @@ defineTable<StoreCredit>('store-credits', {
   docsPath: 'loyalty/store-credits-list',
   description: i18n.t('admin.table_descriptions.store_credits'),
   title: i18n.t('admin.nav.store_credits'),
-  searchParam: 'memo_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.store_credits.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <BanknoteIcon className="size-8 text-muted-foreground" />,

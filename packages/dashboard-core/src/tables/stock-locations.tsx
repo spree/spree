@@ -8,7 +8,7 @@ defineTable<PanelStockLocation>('stock-locations', {
   docsPath: 'settings/locations',
   description: i18n.t('admin.stock_locations.description'),
   title: i18n.t('admin.settings_nav.items.stock_locations'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.stock_locations.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <WarehouseIcon className="size-8 text-muted-foreground" />,

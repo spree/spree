@@ -44,7 +44,7 @@ export function optionTypeAutocompleteProps(queryKey: string) {
     queryKey,
     search: (q: string) =>
       adminClient.optionTypes.list({
-        name_cont: q,
+        search: q,
         limit: 100,
         sort: 'name',
         fields: ['name', 'label'],

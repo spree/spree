@@ -27,7 +27,7 @@ export function productAutocompleteProps(queryKey: string) {
   return {
     queryKey,
     search: (q: string) =>
-      adminClient.products.list({ name_cont: q, limit: 100, sort: 'name', fields: ['name'] }),
+      adminClient.products.list({ search: q, limit: 100, sort: 'name', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.products.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (product: Product) => product.name ?? product.id,
     placeholder: i18n.t('admin.products.autocomplete.placeholder'),
@@ -48,7 +48,7 @@ export function useProducts({
       const params: Record<string, unknown> = { page, limit, sort }
 
       if (search) {
-        params.name_cont = search
+        params.search = search
       }
 
       // Convert FilterRule[] to Ransack params

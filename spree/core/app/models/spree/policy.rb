@@ -62,6 +62,7 @@ module Spree
     #  Ransack
     #
     self.whitelisted_ransackable_attributes = %w[name owner_type owner_id]
+    search_by :name
 
     before_destroy :really_destroy_slugs!
 

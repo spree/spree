@@ -62,6 +62,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[amount rate country_code state_code tax_category_id included_in_price name]
     ransack_alias :rate, :amount
+    search_by :name
 
     # The rate as a fraction (0.23); the column is +amount+.
     alias_attribute :rate, :amount

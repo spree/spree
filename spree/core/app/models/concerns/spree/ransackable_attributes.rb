@@ -27,6 +27,9 @@ module Spree::RansackableAttributes
     class_attribute :private_ransackable_attributes, default: {}
     class_attribute :private_ransackable_scopes, default: {}
 
+    # Attributes the `search` filter matches, set with {.search_by}.
+    class_attribute :search_attributes, default: [], instance_accessor: false
+
     class_attribute :default_ransackable_attributes
     # `position` is included so any `acts_as_list` model is sortable by it
     # without each subclass having to opt in. Ransack ignores attributes
@@ -54,9 +57,46 @@ module Spree::RansackableAttributes
     def self.ransackable_scopes(auth_object = nil)
       base = (whitelisted_ransackable_scopes || []).map(&:to_s)
       base |= Spree.ransack.custom_scopes_for(self).map(&:to_s)
+      base |= %w[search] if search_attributes.any? && search_attributes.all? { |path| ransackable_path?(path, auth_object) }
       return base unless Spree::RansackableAttributes.restricted_audience?(auth_object)
 
       base - Array(private_ransackable_scopes[auth_object.to_sym])
+    end
+
+    # Declares the `search` filter (`q[search]=term`): a case-insensitive
+    # partial match on any of the given attributes, which may reach through
+    # associations (`variant_sku`). It runs as Ransack's `_cont` on those
+    # attributes, so translated names match in the current locale. An
+    # audience that may not filter on every one of them does not get it.
+    #
+    #   search_by :name, :code
+    #
+    # @param attributes [Array<Symbol, String>]
+    def self.search_by(*attributes)
+      self.search_attributes = attributes.map(&:to_s).freeze
+      scope :search, ->(query) {
+        query.blank? ? all : ransack("#{search_attributes.join('_or_')}_cont" => query.to_s.strip).result
+      }
+    end
+
+    # Whether an attribute, or one reached through associations
+    # (`variant_product_name`), is filterable by this audience.
+    #
+    # @param path [String]
+    # @param auth_object [Symbol, nil]
+    # @return [Boolean]
+    def self.ransackable_path?(path, auth_object = nil, depth = 0)
+      return true if ransackable_attributes(auth_object).include?(path)
+      return false if depth >= 2
+
+      ransackable_associations(auth_object).any? do |name|
+        next false unless path.start_with?("#{name}_")
+
+        reflection = reflect_on_association(name.to_sym)
+        next false if reflection.nil? || reflection.polymorphic? || !reflection.klass.respond_to?(:ransackable_path?)
+
+        reflection.klass.ransackable_path?(path.delete_prefix("#{name}_"), auth_object, depth + 1)
+      end
     end
   end
 

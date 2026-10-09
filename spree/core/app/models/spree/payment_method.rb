@@ -57,6 +57,7 @@ module Spree
 
     # Real columns, so admin clients filter them directly — no ransacker needed.
     self.whitelisted_ransackable_attributes = %w[storefront_visible active type]
+    search_by :name
 
     after_initialize :set_name, if: :new_record?
 

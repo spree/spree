@@ -9,6 +9,7 @@ module Spree
     acts_as_list scope: :store_id
 
     self.whitelisted_ransackable_attributes = %w[currency default_locale]
+    search_by :name
 
     #
     # Associations

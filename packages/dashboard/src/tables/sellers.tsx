@@ -10,7 +10,7 @@ defineTable<Seller>('sellers', {
   docsPath: 'sellers/managing-sellers',
   description: i18n.t('admin.table_descriptions.sellers'),
   title: i18n.t('admin.nav.sellers'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.sellers.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <StoreIcon className="size-8 text-muted-foreground" />,

@@ -58,6 +58,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[number status currency reference expected_at
                                                  cancel_by ordered_at received_at closed_short_at
                                                  supplier_id destination_location_id created_at]
+    search_by :number, :reference
     self.whitelisted_ransackable_scopes = %w[open closed overdue past_cancel_by]
     self.ransackable_scope_types = %w[open closed overdue past_cancel_by].index_with('boolean')
     self.whitelisted_ransackable_associations = %w[supplier destination_location items]

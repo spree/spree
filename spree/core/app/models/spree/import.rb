@@ -55,6 +55,7 @@ module Spree
     # Ransack configuration
     #
     self.whitelisted_ransackable_attributes = %w[number type status seller_id]
+    search_by :number
     # Lets an operator filter their list by who ran the job — the seller's
     # name, not an id they would have to look up first.
     self.whitelisted_ransackable_associations = %w[seller]

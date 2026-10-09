@@ -8,7 +8,7 @@ defineTable<CustomerGroup>('customer-groups', {
   title: i18n.t('admin.customers.groups.table.title'),
   description: i18n.t('admin.table_descriptions.customer_groups'),
   docsPath: 'customers/customer-groups',
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.customers.groups.table.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <UsersRoundIcon className="size-8 text-muted-foreground" />,

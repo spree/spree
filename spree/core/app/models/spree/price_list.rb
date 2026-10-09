@@ -97,6 +97,7 @@ module Spree
     # `catalog_id` is queryable so a picker can offer the lists that are
     # actually available — unowned, plus the one the catalog already holds.
     self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at catalog_id]
+    search_by :name
 
     scope :by_position, -> { ordered }
     scope :for_store, ->(store) { where(store: store) }

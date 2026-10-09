@@ -101,6 +101,7 @@ module Spree
     # Ransack
     #
     self.whitelisted_ransackable_attributes = %w[permalink automatic sort_order products_count]
+    search_by :name
 
     #
     # Automatic (rule-based) membership

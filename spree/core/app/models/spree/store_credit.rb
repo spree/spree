@@ -109,6 +109,7 @@ module Spree
     money_methods :amount, :amount_used, :amount_remaining, :amount_authorized
 
     self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo]
+    search_by :memo
     self.whitelisted_ransackable_associations = %w[customer created_by]
     self.whitelisted_ransackable_scopes = %w[outstanding from_gift_card]
     self.ransackable_scope_types = %w[outstanding from_gift_card].index_with('boolean')

@@ -10,7 +10,7 @@ defineTable<TaxRate>('tax-rates', {
   docsPath: 'settings/tax',
   description: i18n.t('admin.table_descriptions.tax_rates'),
   title: i18n.t('admin.settings_nav.items.tax_rates'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.tax_rates.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <ReceiptTextIcon className="size-8 text-muted-foreground" />,

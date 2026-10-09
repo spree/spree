@@ -25,6 +25,7 @@ module Spree
     # `label` is what admin surfaces display, so it has to be filterable —
     # matching Spree::OptionValue, which already allows it.
     self.whitelisted_ransackable_attributes = %w[label name kind]
+    search_by :name, :label
 
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 

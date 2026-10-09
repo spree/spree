@@ -11,6 +11,7 @@ module Spree
     include Spree::SingleStoreResource
 
     self.whitelisted_ransackable_attributes = %w[origin]
+    search_by :origin
 
 
     validates :origin, presence: true
