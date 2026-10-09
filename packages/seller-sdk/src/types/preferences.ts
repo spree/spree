@@ -10,7 +10,7 @@ type Narrowed<Resource, Map> = {
 }[keyof Map]
 
 /** Settings of the `digital_delivery` delivery calculator. */
-export interface DeliveryCalculatorDigitalDeliveryPreferences {
+export type DeliveryCalculatorDigitalDeliveryPreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
   amount: string
@@ -19,12 +19,12 @@ export interface DeliveryCalculatorDigitalDeliveryPreferences {
 }
 
 /** Settings of the `flat_percent_item_total` delivery calculator. */
-export interface DeliveryCalculatorFlatPercentItemTotalPreferences {
+export type DeliveryCalculatorFlatPercentItemTotalPreferences = {
   flat_percent: string
 }
 
 /** Settings of the `flat_rate` delivery calculator. */
-export interface DeliveryCalculatorFlatRatePreferences {
+export type DeliveryCalculatorFlatRatePreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
   amount: string
@@ -33,7 +33,7 @@ export interface DeliveryCalculatorFlatRatePreferences {
 }
 
 /** Settings of the `flexi_rate` delivery calculator. */
-export interface DeliveryCalculatorFlexiRatePreferences {
+export type DeliveryCalculatorFlexiRatePreferences = {
   /** An amount, as an exact decimal string. */
   first_item: string
   /** An amount, as an exact decimal string. */
@@ -44,7 +44,7 @@ export interface DeliveryCalculatorFlexiRatePreferences {
 }
 
 /** Settings of the `per_item` delivery calculator. */
-export interface DeliveryCalculatorPerItemPreferences {
+export type DeliveryCalculatorPerItemPreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
   amount: string
@@ -53,7 +53,7 @@ export interface DeliveryCalculatorPerItemPreferences {
 }
 
 /** Settings of the `price_sack` delivery calculator. */
-export interface DeliveryCalculatorPriceSackPreferences {
+export type DeliveryCalculatorPriceSackPreferences = {
   /** An amount, as an exact decimal string. */
   minimal_amount: string
   /** An amount, as an exact decimal string. */
@@ -77,14 +77,22 @@ export interface DeliveryCalculatorPreferencesMap {
   price_sack: DeliveryCalculatorPriceSackPreferences
 }
 
+/** A delivery calculator, its `preferences` typed by its `type`. */
+export type TypedDeliveryCalculator = {
+  [Type in keyof DeliveryCalculatorPreferencesMap]: {
+    type: Type
+    preferences: DeliveryCalculatorPreferencesMap[Type]
+  }
+}[keyof DeliveryCalculatorPreferencesMap]
+
 /** Settings of the `channel_rule` delivery method rule. */
-export interface DeliveryMethodRuleChannelRulePreferences {
+export type DeliveryMethodRuleChannelRulePreferences = {
   /** Prefixed `ch_` ids. */
   channel_ids: Array<string>
 }
 
 /** Settings of the `company_rule` delivery method rule. */
-export interface DeliveryMethodRuleCompanyRulePreferences {
+export type DeliveryMethodRuleCompanyRulePreferences = {
   company_orders_only: boolean
 }
 
@@ -92,7 +100,7 @@ export interface DeliveryMethodRuleCompanyRulePreferences {
 export type DeliveryMethodRuleExcludedProductsRulePreferences = Record<string, never>
 
 /** Settings of the `item_total_rule` delivery method rule. */
-export interface DeliveryMethodRuleItemTotalRulePreferences {
+export type DeliveryMethodRuleItemTotalRulePreferences = {
   /** An amount, as an exact decimal string. */
   minimum_amount: string | null
   /** An amount, as an exact decimal string. */
@@ -100,13 +108,13 @@ export interface DeliveryMethodRuleItemTotalRulePreferences {
 }
 
 /** Settings of the `volume_rule` delivery method rule. */
-export interface DeliveryMethodRuleVolumeRulePreferences {
+export type DeliveryMethodRuleVolumeRulePreferences = {
   minimum_volume: string | null
   maximum_volume: string | null
 }
 
 /** Settings of the `weight_rule` delivery method rule. */
-export interface DeliveryMethodRuleWeightRulePreferences {
+export type DeliveryMethodRuleWeightRulePreferences = {
   minimum_weight: string | null
   maximum_weight: string | null
 }

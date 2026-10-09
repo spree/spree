@@ -13,7 +13,7 @@ module Spree
           typelize type: [:string, comment: 'Action type. Built-in: create_adjustment, create_item_adjustments, create_line_items, free_shipping. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   calculator: '{ type: string; preferences: Record<string, unknown> } | null',
+                   calculator: 'TypedPromotionCalculator | null',
                    line_items: 'Array<{ variant_id: string; quantity: number }> | null'
 
           attributes created_at: :iso8601, updated_at: :iso8601

@@ -23,7 +23,7 @@ module Spree
       }.freeze
 
       # Families serialized as rows of their own; calculators are nested in
-      # their owner and get only the map.
+      # their owner, whose serializer types `calculator` with `Typed<Family>`.
       RESOURCES = (PreferenceFamilies::REGISTRIES.keys - %w[DeliveryCalculator PromotionCalculator]).freeze
 
       # @return [Hash{String => String}] file contents keyed by path under the monorepo root
@@ -31,10 +31,19 @@ module Spree
         FILES.transform_values { |families| source(PreferenceFamilies.schemas(families)) }
       end
 
+      # Typelizer imports a type a serializer names (`TypedDeliveryCalculator`)
+      # from its generated index, so that index re-exports these types too.
+      INDEX_EXPORT = "export type * from '../preferences'\n".freeze
+
       # @param root [Pathname] the monorepo root
       # @return [void]
       def write!(root)
-        render.each { |path, content| File.write(root.join(path), content) }
+        render.each do |path, content|
+          File.write(root.join(path), content)
+
+          index = root.join(path).dirname.join('generated/index.ts')
+          File.write(index, index.read + INDEX_EXPORT) if index.exist? && !index.read.include?(INDEX_EXPORT)
+        end
       end
 
       private
@@ -67,7 +76,9 @@ module Spree
           next "/** Settings of the `#{type}` #{label}: none. */\nexport type #{name} = Record<string, never>\n" if properties.empty?
 
           fields = properties.map { |key, property| "#{field_comment(property)}  #{key}: #{ts_type(property)}\n" }.join
-          "/** Settings of the `#{type}` #{label}. */\nexport interface #{name} {\n#{fields}}\n"
+          # A type, not an interface, so it stays assignable to
+          # `Record<string, unknown>`, which generic preference forms take.
+          "/** Settings of the `#{type}` #{label}. */\nexport type #{name} = {\n#{fields}}\n"
         end
 
         map = "#{family}PreferencesMap"
@@ -76,7 +87,15 @@ module Spree
         parts << "/**\n * The settings of each #{label} type Spree ships, by `type`. An interface,\n" \
                  " * so an extension types its own by declaration merging.\n */\n" \
                  "#{ignore}export interface #{map} {#{"\n#{entries}" if entries.present?}}\n"
-        parts << "/** #{label.match?(/\A[aeiou]/) ? 'An' : 'A'} #{label} whose `preferences` are typed by its `type`. */\nexport type Typed#{family} = Narrowed<#{family}, #{map}>\n" if resource
+        article = label.match?(/\A[aeiou]/) ? 'An' : 'A'
+        parts << if resource
+                   "/** #{article} #{label} whose `preferences` are typed by its `type`. */\nexport type Typed#{family} = Narrowed<#{family}, #{map}>\n"
+                 else
+                   # A calculator is nested in its owner, which types its
+                   # `calculator` field with this union.
+                   "/** #{article} #{label}, its `preferences` typed by its `type`. */\n" \
+                     "export type Typed#{family} = {\n  [Type in keyof #{map}]: {\n    type: Type\n    preferences: #{map}[Type]\n  }\n}[keyof #{map}]\n"
+                 end
         parts
       end
 

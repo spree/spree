@@ -8,7 +8,7 @@ export const PromotionActionSchema = z.object({
   type: z.string(),
   promotion_id: z.string(),
   preferences: z.record(z.string(), z.unknown()),
-  calculator: z.object({ type: z.string(), preferences: z.record(z.string(), z.unknown()) }).nullable(),
+  calculator: z.any().nullable(),
   line_items: z.array(z.object({ variant_id: z.string(), quantity: z.number() })).nullable(),
 });
 

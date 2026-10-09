@@ -16,11 +16,19 @@ RSpec.describe Spree::Api::PreferenceTypes do
     source = generator.render.fetch('packages/admin-sdk/src/types/preferences.ts')
 
     expect(source).to include(
-      "export interface PromotionRuleItemTotalPreferences {\n  /** An amount, as an exact decimal string. */\n  amount_min: string\n"
+      "export type PromotionRuleItemTotalPreferences = {\n  /** An amount, as an exact decimal string. */\n  amount_min: string\n"
     )
     expect(source).to include("  item_total: PromotionRuleItemTotalPreferences\n")
     expect(source).to include("  match_policy: 'any' | 'all' | 'none'\n")
     expect(source).to include("export type TypedPromotionRule = Narrowed<PromotionRule, PromotionRulePreferencesMap>\n")
+  end
+
+  it 'lets a generated type name a preference type through the generated index' do
+    described_class::FILES.each_key do |path|
+      index = monorepo_root.join(path).dirname.join('generated/index.ts')
+
+      expect(index.read).to include(described_class::INDEX_EXPORT), "#{index} does not re-export the preference types"
+    end
   end
 
   it 'gives the seller panel only the families a seller writes' do

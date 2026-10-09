@@ -17,13 +17,13 @@ type Narrowed<Resource, Map> = {
 }[keyof Map]
 
 /** Settings of the `category_rule` commission rule. */
-export interface CommissionRuleCategoryRulePreferences {
+export type CommissionRuleCategoryRulePreferences = {
   /** Prefixed `ctg_` ids. */
   category_ids: Array<string>
 }
 
 /** Settings of the `item_total_rule` commission rule. */
-export interface CommissionRuleItemTotalRulePreferences {
+export type CommissionRuleItemTotalRulePreferences = {
   /** An amount, as an exact decimal string. */
   min_amount: string | null
   /** An amount, as an exact decimal string. */
@@ -34,7 +34,7 @@ export interface CommissionRuleItemTotalRulePreferences {
 export type CommissionRuleProductRulePreferences = Record<string, never>
 
 /** Settings of the `seller_rule` commission rule. */
-export interface CommissionRuleSellerRulePreferences {
+export type CommissionRuleSellerRulePreferences = {
   /** Prefixed `sel_` ids. */
   seller_ids: Array<string>
 }
@@ -54,7 +54,7 @@ export interface CommissionRulePreferencesMap {
 export type TypedCommissionRule = Narrowed<CommissionRule, CommissionRulePreferencesMap>
 
 /** Settings of the `digital_delivery` delivery calculator. */
-export interface DeliveryCalculatorDigitalDeliveryPreferences {
+export type DeliveryCalculatorDigitalDeliveryPreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
   amount: string
@@ -63,12 +63,12 @@ export interface DeliveryCalculatorDigitalDeliveryPreferences {
 }
 
 /** Settings of the `flat_percent_item_total` delivery calculator. */
-export interface DeliveryCalculatorFlatPercentItemTotalPreferences {
+export type DeliveryCalculatorFlatPercentItemTotalPreferences = {
   flat_percent: string
 }
 
 /** Settings of the `flat_rate` delivery calculator. */
-export interface DeliveryCalculatorFlatRatePreferences {
+export type DeliveryCalculatorFlatRatePreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
   amount: string
@@ -77,7 +77,7 @@ export interface DeliveryCalculatorFlatRatePreferences {
 }
 
 /** Settings of the `flexi_rate` delivery calculator. */
-export interface DeliveryCalculatorFlexiRatePreferences {
+export type DeliveryCalculatorFlexiRatePreferences = {
   /** An amount, as an exact decimal string. */
   first_item: string
   /** An amount, as an exact decimal string. */
@@ -88,7 +88,7 @@ export interface DeliveryCalculatorFlexiRatePreferences {
 }
 
 /** Settings of the `per_item` delivery calculator. */
-export interface DeliveryCalculatorPerItemPreferences {
+export type DeliveryCalculatorPerItemPreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
   amount: string
@@ -97,7 +97,7 @@ export interface DeliveryCalculatorPerItemPreferences {
 }
 
 /** Settings of the `price_sack` delivery calculator. */
-export interface DeliveryCalculatorPriceSackPreferences {
+export type DeliveryCalculatorPriceSackPreferences = {
   /** An amount, as an exact decimal string. */
   minimal_amount: string
   /** An amount, as an exact decimal string. */
@@ -121,14 +121,22 @@ export interface DeliveryCalculatorPreferencesMap {
   price_sack: DeliveryCalculatorPriceSackPreferences
 }
 
+/** A delivery calculator, its `preferences` typed by its `type`. */
+export type TypedDeliveryCalculator = {
+  [Type in keyof DeliveryCalculatorPreferencesMap]: {
+    type: Type
+    preferences: DeliveryCalculatorPreferencesMap[Type]
+  }
+}[keyof DeliveryCalculatorPreferencesMap]
+
 /** Settings of the `channel_rule` delivery method rule. */
-export interface DeliveryMethodRuleChannelRulePreferences {
+export type DeliveryMethodRuleChannelRulePreferences = {
   /** Prefixed `ch_` ids. */
   channel_ids: Array<string>
 }
 
 /** Settings of the `company_rule` delivery method rule. */
-export interface DeliveryMethodRuleCompanyRulePreferences {
+export type DeliveryMethodRuleCompanyRulePreferences = {
   company_orders_only: boolean
 }
 
@@ -136,7 +144,7 @@ export interface DeliveryMethodRuleCompanyRulePreferences {
 export type DeliveryMethodRuleExcludedProductsRulePreferences = Record<string, never>
 
 /** Settings of the `item_total_rule` delivery method rule. */
-export interface DeliveryMethodRuleItemTotalRulePreferences {
+export type DeliveryMethodRuleItemTotalRulePreferences = {
   /** An amount, as an exact decimal string. */
   minimum_amount: string | null
   /** An amount, as an exact decimal string. */
@@ -144,13 +152,13 @@ export interface DeliveryMethodRuleItemTotalRulePreferences {
 }
 
 /** Settings of the `volume_rule` delivery method rule. */
-export interface DeliveryMethodRuleVolumeRulePreferences {
+export type DeliveryMethodRuleVolumeRulePreferences = {
   minimum_volume: string | null
   maximum_volume: string | null
 }
 
 /** Settings of the `weight_rule` delivery method rule. */
-export interface DeliveryMethodRuleWeightRulePreferences {
+export type DeliveryMethodRuleWeightRulePreferences = {
   minimum_weight: string | null
   maximum_weight: string | null
 }
@@ -204,7 +212,7 @@ export interface OrderRoutingRulePreferencesMap {
 export type TypedOrderRoutingRule = Narrowed<OrderRoutingRule, OrderRoutingRulePreferencesMap>
 
 /** Settings of the `bogus` payment method. */
-export interface PaymentMethodBogusPreferences {
+export type PaymentMethodBogusPreferences = {
   dummy_key: string
   /** Masked when read (`••••1234`); send it back unchanged to keep it, `null` to clear it. */
   dummy_secret_key: string | null
@@ -234,31 +242,31 @@ export interface PaymentMethodPreferencesMap {
 export type TypedPaymentMethod = Narrowed<PaymentMethod, PaymentMethodPreferencesMap>
 
 /** Settings of the `channel_rule` price rule. */
-export interface PriceRuleChannelRulePreferences {
+export type PriceRuleChannelRulePreferences = {
   /** Prefixed `ch_` ids. */
   channel_ids: Array<string>
 }
 
 /** Settings of the `customer_group_rule` price rule. */
-export interface PriceRuleCustomerGroupRulePreferences {
+export type PriceRuleCustomerGroupRulePreferences = {
   /** Prefixed `cg_` ids. */
   customer_group_ids: Array<string>
 }
 
 /** Settings of the `market_rule` price rule. */
-export interface PriceRuleMarketRulePreferences {
+export type PriceRuleMarketRulePreferences = {
   /** Prefixed `mkt_` ids. */
   market_ids: Array<string>
 }
 
 /** Settings of the `user_rule` price rule. */
-export interface PriceRuleUserRulePreferences {
+export type PriceRuleUserRulePreferences = {
   /** Prefixed `cust_` ids. */
   user_ids: Array<string>
 }
 
 /** Settings of the `volume_rule` price rule. */
-export interface PriceRuleVolumeRulePreferences {
+export type PriceRuleVolumeRulePreferences = {
   min_quantity: number
   max_quantity: number | null
 }
@@ -279,12 +287,12 @@ export interface PriceRulePreferencesMap {
 export type TypedPriceRule = Narrowed<PriceRule, PriceRulePreferencesMap>
 
 /** Settings of the `flat_percent_item_total` promotion calculator. */
-export interface PromotionCalculatorFlatPercentItemTotalPreferences {
+export type PromotionCalculatorFlatPercentItemTotalPreferences = {
   flat_percent: string
 }
 
 /** Settings of the `flat_rate` promotion calculator. */
-export interface PromotionCalculatorFlatRatePreferences {
+export type PromotionCalculatorFlatRatePreferences = {
   /** An amount, as an exact decimal string. */
   amount: string
   /** Format: `currency`. */
@@ -293,7 +301,7 @@ export interface PromotionCalculatorFlatRatePreferences {
 }
 
 /** Settings of the `flexi_rate` promotion calculator. */
-export interface PromotionCalculatorFlexiRatePreferences {
+export type PromotionCalculatorFlexiRatePreferences = {
   /** An amount, as an exact decimal string. */
   first_item: string
   /** An amount, as an exact decimal string. */
@@ -305,13 +313,13 @@ export interface PromotionCalculatorFlexiRatePreferences {
 }
 
 /** Settings of the `percent_on_line_item` promotion calculator. */
-export interface PromotionCalculatorPercentOnLineItemPreferences {
+export type PromotionCalculatorPercentOnLineItemPreferences = {
   percent: string
   apply_only_on_full_priced_items: boolean
 }
 
 /** Settings of the `tiered_flat_rate` promotion calculator. */
-export interface PromotionCalculatorTieredFlatRatePreferences {
+export type PromotionCalculatorTieredFlatRatePreferences = {
   tiers: Array<{ threshold: string; value: string }>
   /** An amount, as an exact decimal string. */
   base_amount: string
@@ -320,7 +328,7 @@ export interface PromotionCalculatorTieredFlatRatePreferences {
 }
 
 /** Settings of the `tiered_percent` promotion calculator. */
-export interface PromotionCalculatorTieredPercentPreferences {
+export type PromotionCalculatorTieredPercentPreferences = {
   tiers: Array<{ threshold: string; value: string }>
   base_percent: string
 }
@@ -338,19 +346,27 @@ export interface PromotionCalculatorPreferencesMap {
   tiered_percent: PromotionCalculatorTieredPercentPreferences
 }
 
+/** A promotion calculator, its `preferences` typed by its `type`. */
+export type TypedPromotionCalculator = {
+  [Type in keyof PromotionCalculatorPreferencesMap]: {
+    type: Type
+    preferences: PromotionCalculatorPreferencesMap[Type]
+  }
+}[keyof PromotionCalculatorPreferencesMap]
+
 /** Settings of the `category` promotion rule. */
-export interface PromotionRuleCategoryPreferences {
+export type PromotionRuleCategoryPreferences = {
   match_policy: 'any' | 'all'
 }
 
 /** Settings of the `channel` promotion rule. */
-export interface PromotionRuleChannelPreferences {
+export type PromotionRuleChannelPreferences = {
   /** Prefixed `ch_` ids. */
   channel_ids: Array<string>
 }
 
 /** Settings of the `country` promotion rule. */
-export interface PromotionRuleCountryPreferences {
+export type PromotionRuleCountryPreferences = {
   country_codes: Array<string>
   country_id: number | null
   /** Format: `iso-country`. */
@@ -358,7 +374,7 @@ export interface PromotionRuleCountryPreferences {
 }
 
 /** Settings of the `currency` promotion rule. */
-export interface PromotionRuleCurrencyPreferences {
+export type PromotionRuleCurrencyPreferences = {
   /** Format: `currency`. */
   currency: string | null
 }
@@ -367,7 +383,7 @@ export interface PromotionRuleCurrencyPreferences {
 export type PromotionRuleCustomerPreferences = Record<string, never>
 
 /** Settings of the `customer_group` promotion rule. */
-export interface PromotionRuleCustomerGroupPreferences {
+export type PromotionRuleCustomerGroupPreferences = {
   /** Prefixed `cg_` ids. */
   customer_group_ids: Array<string>
 }
@@ -379,7 +395,7 @@ export type PromotionRuleCustomerLoggedInPreferences = Record<string, never>
 export type PromotionRuleFirstOrderPreferences = Record<string, never>
 
 /** Settings of the `item_total` promotion rule. */
-export interface PromotionRuleItemTotalPreferences {
+export type PromotionRuleItemTotalPreferences = {
   /** An amount, as an exact decimal string. */
   amount_min: string
   operator_min: string
@@ -389,7 +405,7 @@ export interface PromotionRuleItemTotalPreferences {
 }
 
 /** Settings of the `market` promotion rule. */
-export interface PromotionRuleMarketPreferences {
+export type PromotionRuleMarketPreferences = {
   /** Prefixed `mkt_` ids. */
   market_ids: Array<string>
 }
@@ -398,14 +414,14 @@ export interface PromotionRuleMarketPreferences {
 export type PromotionRuleOneUsePerUserPreferences = Record<string, never>
 
 /** Settings of the `option_value` promotion rule. */
-export interface PromotionRuleOptionValuePreferences {
+export type PromotionRuleOptionValuePreferences = {
   match_policy: 'any'
   /** Prefixed `optval_` ids. */
   eligible_values: Array<string>
 }
 
 /** Settings of the `product` promotion rule. */
-export interface PromotionRuleProductPreferences {
+export type PromotionRuleProductPreferences = {
   match_policy: 'any' | 'all' | 'none'
 }
 
@@ -433,7 +449,7 @@ export interface PromotionRulePreferencesMap {
 export type TypedPromotionRule = Narrowed<PromotionRule, PromotionRulePreferencesMap>
 
 /** Settings of the `accept_terms` seller requirement. */
-export interface SellerRequirementAcceptTermsPreferences {
+export type SellerRequirementAcceptTermsPreferences = {
   terms_body: string | null
   /** Format: `date`. */
   terms_effective_from: string | null
@@ -447,7 +463,7 @@ export type SellerRequirementAttestationPreferences = Record<string, never>
 export type SellerRequirementBillingAddressPreferences = Record<string, never>
 
 /** Settings of the `complete_profile` seller requirement. */
-export interface SellerRequirementCompleteProfilePreferences {
+export type SellerRequirementCompleteProfilePreferences = {
   require_about: boolean
   require_logo: boolean
   require_cover_photo: boolean
@@ -461,7 +477,7 @@ export type SellerRequirementDeliveryMethodPreferences = Record<string, never>
 export type SellerRequirementDocumentPreferences = Record<string, never>
 
 /** Settings of the `minimum_products` seller requirement. */
-export interface SellerRequirementMinimumProductsPreferences {
+export type SellerRequirementMinimumProductsPreferences = {
   minimum_count: number
 }
 

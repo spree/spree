@@ -13,7 +13,7 @@ module Spree
                    delivery_origin_group_id: [:string, nullable: true],
                    delivery_zone_id: [:string, nullable: true],
                    stock_location_ids: [:string, multi: true],
-                   calculator: '{ type: string; preferences: Record<string, unknown> } | null',
+                   calculator: 'TypedDeliveryCalculator | null',
                    markup_flat: [:string, nullable: true],
                    markup_percent: [:string, nullable: true],
                    available_to_sellers: :boolean,

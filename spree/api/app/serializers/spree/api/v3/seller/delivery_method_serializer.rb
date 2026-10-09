@@ -22,7 +22,7 @@ module Spree
                    editable: :boolean,
                    delivery_profile_id: [:string, nullable: true],
                    delivery_zone_id: [:string, nullable: true],
-                   calculator: '{ type: string; preferences: Record<string, unknown> } | null'
+                   calculator: 'TypedDeliveryCalculator | null'
 
           attributes :admin_name, :storefront_visible, :tracking_url,
                      created_at: :iso8601, updated_at: :iso8601
