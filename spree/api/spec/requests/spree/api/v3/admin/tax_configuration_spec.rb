@@ -25,7 +25,7 @@ RSpec.describe 'Admin tax configuration', type: :request do
 
   it 'configures a rate and produces the tax it describes' do
     post '/api/v3/admin/tax_rates',
-         params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
+         params: { name: 'German VAT', rate_percent: '19', included_in_price: true,
                    tax_category_id: tax_category.prefixed_id, country_code: 'DE' },
          headers: headers, as: :json
 
@@ -42,14 +42,14 @@ RSpec.describe 'Admin tax configuration', type: :request do
 
   it 'still records a treatment when the rate is zero' do
     post '/api/v3/admin/tax_rates',
-         params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
+         params: { name: 'German VAT', rate_percent: '19', included_in_price: true,
                    tax_category_id: tax_category.prefixed_id, country_code: 'DE' },
          headers: headers, as: :json
     rate_id = JSON.parse(response.body)['id']
 
     Spree::Carts::RecalculateTotals.call(cart: cart)
 
-    patch "/api/v3/admin/tax_rates/#{rate_id}", params: { amount: 0 }, headers: headers, as: :json
+    patch "/api/v3/admin/tax_rates/#{rate_id}", params: { rate: '0' }, headers: headers, as: :json
     expect(response).to have_http_status(:ok)
 
     Spree::Carts::RecalculateTotals.call(cart: cart.reload)
@@ -61,7 +61,7 @@ RSpec.describe 'Admin tax configuration', type: :request do
 
   it 'shows the storefront the tax on a line, without the admin treatment fields' do
     post '/api/v3/admin/tax_rates',
-         params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
+         params: { name: 'German VAT', rate_percent: '19', included_in_price: true,
                    tax_category_id: tax_category.prefixed_id, country_code: 'DE' },
          headers: headers, as: :json
 

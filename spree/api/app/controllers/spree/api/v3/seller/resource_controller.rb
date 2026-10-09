@@ -11,6 +11,7 @@ module Spree
           include Spree::Api::V3::Seller::SellerContext
           include Spree::Api::V3::SellerAuthentication
           include Spree::Api::V3::ScopedAuthorization
+          include Spree::Api::V3::StrictMoneyParams
 
           protected
 

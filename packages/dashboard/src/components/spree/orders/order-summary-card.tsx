@@ -1,5 +1,6 @@
 import type { Order } from '@spree/admin-sdk'
-import { LocaleLabel, useStore } from '@spree/dashboard-core'
+import { isZeroMoney } from '@spree/admin-sdk'
+import { isPositiveMoney, LocaleLabel, useStore } from '@spree/dashboard-core'
 import { Card, CardHeader, CardTitle, cn, Separator } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
@@ -46,11 +47,11 @@ function SummaryRow({
 export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
-  const outstandingBalance = Number.parseFloat(order.amount_due)
+  const outstanding = isPositiveMoney(order.amount_due)
   // Read off the order rather than summed from its commission lines: the
   // figures are persisted columns, so the fee VAT the platform files and the
   // seller reclaims is the same number everywhere it is shown.
-  const commissionTax = Number.parseFloat(order.commission_tax_total)
+  const commissionTaxed = isPositiveMoney(order.commission_tax_total)
   // Keyed on the seller, not on the amount: a zero-rated or exempt rate still
   // writes commission lines, and the card below lists them, so hiding the
   // summary at zero would have the two panels disagree about the same order.
@@ -167,36 +168,36 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         <SummaryRow label={t('admin.fields.subtotal.label')} value={order.display_item_total} />
 
-        {Number.parseFloat(order.delivery_total) > 0 && (
+        {isPositiveMoney(order.delivery_total) && (
           <SummaryRow
             label={t('admin.fields.shipping.label')}
             value={order.display_delivery_total}
           />
         )}
 
-        {Number.parseFloat(order.discount_total) !== 0 && (
+        {!isZeroMoney(order.discount_total) && (
           <SummaryRow
             label={t('admin.orders.detail.summary.promotions')}
             value={order.display_discount_total}
           />
         )}
 
-        {Number.parseFloat(order.adjustment_total) !== 0 && (
+        {!isZeroMoney(order.adjustment_total) && (
           <SummaryRow
             label={t('admin.orders.detail.summary.adjustments')}
             value={order.display_adjustment_total}
           />
         )}
 
-        {Number.parseFloat(order.included_tax_total) > 0 && (
+        {isPositiveMoney(order.included_tax_total) && (
           <SummaryRow
             label={t('admin.orders.detail.summary.tax_included')}
             value={order.display_included_tax_total}
           />
         )}
 
-        {(Number.parseFloat(order.additional_tax_total) > 0 ||
-          (Boolean(order.completed_at) && Number.parseFloat(order.included_tax_total) === 0)) && (
+        {(isPositiveMoney(order.additional_tax_total) ||
+          (Boolean(order.completed_at) && isZeroMoney(order.included_tax_total))) && (
           <SummaryRow
             label={t('admin.orders.detail.summary.tax_additional')}
             value={order.display_additional_tax_total}
@@ -218,7 +219,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
               label={t('admin.orders.detail.summary.commission_fee')}
               value={order.display_commission_amount_total}
             />
-            {commissionTax > 0 && (
+            {commissionTaxed && (
               <SummaryRow
                 label={t('admin.orders.detail.summary.commission_tax')}
                 value={order.display_commission_tax_total}
@@ -243,7 +244,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
           label={t('admin.orders.detail.summary.outstanding_balance')}
           value={order.display_amount_due}
           highlight
-          danger={outstandingBalance > 0}
+          danger={outstanding}
         />
       </div>
     </Card>

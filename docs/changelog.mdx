@@ -15,6 +15,18 @@ Keep up with the latest features and improvements in Spree Commerce!
 
 </div>
 
+<Update label="Exact money everywhere" description="October 9, 2026" tags={["API", "Payments"]}>
+  Money is now exact from the database to the payment provider, in every currency.
+
+  - Amounts in the API are written with exactly the decimals of their currency, such as `10.00` in dollars, `1000` in yen and `1.500` in Kuwaiti dinar. Unit prices can go below a cent (`0.0125`) for wholesale pricing.
+  - Payment providers now receive the amount with its currency, so captures and refunds in yen or dinar are charged and recorded exactly.
+  - Very large amounts, such as orders in Vietnamese dong above 100 million, are stored without overflow.
+
+  Integrations must now send amounts as text such as `"19.99"`. Numbers and localized formats are refused with a clear error.
+
+  **Learn more:** [Monetary amounts](/api-reference/admin-api/monetary-amounts) · [Upgrade guide](/developer/upgrades/5.6-to-6.0#money)
+</Update>
+
 <Update label="Prices save correctly in every language" description="October 9, 2026" tags={["Pricing", "Dashboard"]}>
   Stores whose language writes a comma as the decimal separator, such as Dutch, German or French, could save the wrong price. A price entered as €49,50 was stored as €4950,00, and saving an unchanged €99 again turned it into €990 and then €9900. Prices, costs, weights and dimensions are now saved exactly as entered, whatever the store's language.
 

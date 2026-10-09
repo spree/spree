@@ -1,5 +1,5 @@
 import type { Seller } from '@spree/admin-sdk'
-import { Subject, usePermissions } from '@spree/dashboard-core'
+import { isPositiveMoney, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -36,7 +36,7 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
   const balances = data?.data ?? []
   if (balances.length === 0) return null
 
-  const owed = balances.some((balance) => Number.parseFloat(balance.balance) > 0)
+  const owed = balances.some((balance) => isPositiveMoney(balance.balance))
   const canSettle = permissions.can('update', Subject.SellerPayout) && owed
 
   // Settling moves money, so it is asked for rather than fired from a click.

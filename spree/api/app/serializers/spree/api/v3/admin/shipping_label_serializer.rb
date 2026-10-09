@@ -14,7 +14,6 @@ module Spree
                    carrier_name: [:string, nullable: true],
                    service: [:string, nullable: true],
                    tracking_number: [:string, nullable: true],
-                   cost: :string,
                    currency: [:string, nullable: true],
                    display_cost: :string,
                    format: [:string, nullable: true],
@@ -34,7 +33,9 @@ module Spree
             Spree::Base.polymorphic_api_type(shipping_label.owner_type)
           end
 
-          attributes cost: :string, display_cost: :string
+          money_attributes :cost, :display_cost, currency: ->(label) { label.currency.presence || label.store.default_currency }
+          typelize cost: [:string, nullable: false]
+
           prefixed_id_attributes :integration
 
           # Whether the file is still being fetched from the carrier; the

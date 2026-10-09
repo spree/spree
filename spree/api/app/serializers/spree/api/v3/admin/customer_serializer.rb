@@ -53,7 +53,8 @@ module Spree
           end
 
           attribute :total_spent do |user|
-            (user.attributes['total_spent'] || user.orders.complete.sum(:total)).to_s
+            amount = user.attributes['total_spent'] || user.orders.complete.sum(:total)
+            Spree::Money::Rounding.format(amount, (current_store || Spree::Current.store)&.default_currency)
           end
 
           attribute :display_total_spent do |user|

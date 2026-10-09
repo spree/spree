@@ -30,7 +30,8 @@ module Spree
 
         # Nulled for gated (prices_hidden) guests so the cart's line items can't
         # leak the prices that product/variant serializers already withhold.
-        money_attributes :price, :display_price, :total, :display_total,
+        money_attributes :price, :display_price, unit_price: true
+        money_attributes :total, :display_total,
                          :adjustment_total, :display_adjustment_total,
                          :additional_tax_total, :display_additional_tax_total,
                          :included_tax_total, :display_included_tax_total,
@@ -44,7 +45,7 @@ module Spree
           next nil if params[:hide_prices]
 
           amount = line_item.compare_at_amount
-          amount.present? && amount.positive? ? amount.to_s : nil
+          amount.present? && amount.positive? ? Spree::Money::Rounding.format(amount, line_item.currency, unit_price: true) : nil
         end
 
         # Thumbnail URL for line item (variant thumbnail or product thumbnail)

@@ -379,7 +379,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
           preferred_auto_approve_sellers: true,
           preferred_auto_approve_seller_products: true,
           preferred_send_seller_transactional_emails: false,
-          preferred_default_commission_tax_rate: 0.23
+          preferred_default_commission_tax_rate: '0.23'
         }
       end
 
@@ -397,7 +397,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     # The rate is a fraction, so a percentage typed straight in would bill
     # more tax than fee.
     context 'with a commission tax rate above 1' do
-      let(:params) { { preferred_default_commission_tax_rate: 23 } }
+      let(:params) { { preferred_default_commission_tax_rate: '23' } }
 
       it 'returns a validation error' do
         subject

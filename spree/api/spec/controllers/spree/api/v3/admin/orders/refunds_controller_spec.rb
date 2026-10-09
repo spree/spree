@@ -32,12 +32,12 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
           order_id: order.prefixed_id,
           payment_id: payment.prefixed_id,
           refund_reason_id: refund_reason.prefixed_id,
-          amount: 5.00
+          amount: '5.00'
         }, as: :json
       }.to change(Spree::Refund, :count).by(1)
 
       expect(response).to have_http_status(:created)
-      expect(json_response['amount']).to eq('5.0')
+      expect(json_response['amount']).to eq('5.00')
     end
   end
 end

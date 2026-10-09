@@ -14,9 +14,11 @@ namespace :spree do
     DESC
     task audit_capture_events: :environment do
       listed = 0
-      # The wrong records were written with the Money gem's exponent, which
-      # differs from ISO 4217 for a few currencies (forint, ariary).
-      codes = ::Money::Currency.all.reject { |currency| currency.exponent == 2 }.map(&:iso_code)
+      # The wrong records were written with the Money gem's exponents as they
+      # were before 6.0, which differ from ISO 4217 for a few currencies.
+      legacy_exponents = { 'HUF' => 0, 'MGA' => 1, 'MRO' => 1, 'MRU' => 1 }
+      exponent_for = ->(code) { legacy_exponents.fetch(code) { Spree::Money::Rounding.precision(code) } }
+      codes = (Spree::Money::Rounding::EXPONENTS.keys | legacy_exponents.keys).reject { |code| exponent_for.(code) == 2 }
       in_codes = [Spree::Order, Spree::Cart, Spree::OrderGroup].map { |owner| owner.arel_table[:currency].in(codes) }.reduce(:or)
 
       Spree::PaymentCaptureEvent.left_joins(payment: [:order, :cart, :order_group]).where(in_codes)
@@ -24,7 +26,7 @@ namespace :spree do
         payment = event.payment
         next if payment.nil?
 
-        exponent = ::Money::Currency.find(payment.currency).exponent
+        exponent = exponent_for.(payment.currency.to_s.upcase)
 
         corrected = event.amount * (10**exponent) / 100
         puts [

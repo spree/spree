@@ -152,7 +152,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
           expect(data['number']).to eq(cart.number)
           expect(data['warnings']).to eq([])
           expect(data['fees'].map { |fee| fee['kind'] }).to contain_exactly('gift_wrap', 'duty')
-          expect(data['fee_total']).to eq('17.0')
+          expect(data['fee_total']).to eq('17.00')
         end
       end
 

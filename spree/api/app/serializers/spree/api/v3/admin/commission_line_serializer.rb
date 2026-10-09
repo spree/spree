@@ -20,14 +20,9 @@ module Spree
                    fulfillment_id: 'string | null',
                    commission_rate_id: 'string | null',
                    kind: [:string, enum: Spree::CommissionRate::KINDS],
-                   rate: :string,
-                   tax_rate: :string,
                    taxability_reason: 'string | null',
                    country_code: 'string | null',
                    state_code: 'string | null',
-                   amount: :string,
-                   tax_amount: :string,
-                   total: :string,
                    currency: :string,
                    display_amount: :string,
                    display_tax_amount: :string,
@@ -39,10 +34,11 @@ module Spree
           attributes :kind, :currency, :taxability_reason, :country_code, :state_code,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # Strings, so the figures a seller is invoiced round-trip exactly.
-          %i[rate tax_rate amount tax_amount total].each do |decimal|
-            attribute(decimal) { |line| line.public_send(decimal)&.to_s }
-          end
+          rate_attributes :rate, :tax_rate
+          money_attributes :amount, :tax_amount, :total
+          typelize rate: [:string, nullable: false], tax_rate: [:string, nullable: false],
+                   amount: [:string, nullable: false], tax_amount: [:string, nullable: false],
+                   total: [:string, nullable: false]
 
           %i[display_amount display_tax_amount display_total].each do |formatted|
             attribute(formatted) { |line| line.public_send(formatted).to_s }

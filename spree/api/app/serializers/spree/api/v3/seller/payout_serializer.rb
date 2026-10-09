@@ -18,7 +18,7 @@ module Spree
                      period_start: :iso8601, period_end: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute(:amount) { |payout| payout.amount&.to_s }
+          attribute(:amount) { |payout| Spree::Money::Rounding.format(payout.amount, payout.currency) }
           attribute(:display_amount) { |payout| payout.display_amount.to_s }
 
           # How many earnings this settlement covers. Read from a count the

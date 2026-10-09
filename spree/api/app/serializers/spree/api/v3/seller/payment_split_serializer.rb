@@ -24,7 +24,7 @@ module Spree
           attributes :currency, created_at: :iso8601
 
           AMOUNTS.each do |amount|
-            attribute(amount) { |split| split.public_send(amount).to_s }
+            attribute(amount) { |split| Spree::Money::Rounding.format(split.public_send(amount), split.currency) }
             attribute(:"display_#{amount}") { |split| split.public_send(:"display_#{amount}").to_s }
           end
         end

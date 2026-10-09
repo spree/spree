@@ -4,7 +4,7 @@ sidebarTitle: "Monetary Amounts"
 description: "How monetary values are represented in API responses"
 ---
 
-All monetary values in the Store API are returned as **strings** (e.g., `"29.99"`, `"0.0"`), not numbers. This preserves decimal precision and avoids floating-point rounding issues common with JSON numbers.
+All monetary values in the Store API are returned as **decimal strings**, never JSON numbers, written with exactly the decimal places of their currency: `"29.99"` in USD, `"1.500"` in Kuwaiti dinar, `"1000"` in yen. Unit prices may carry up to four decimals (`"0.0125"`). This preserves decimal precision and avoids the rounding errors of JSON numbers. A currency's decimal places are its `decimal_places` (see [below](#currency-decimal-places)).
 
 ## Response Format
 
@@ -35,7 +35,13 @@ This convention applies to all monetary fields across all resources:
 | **Payment** | `amount` |
 | **Gift Card** | `amount`, `amount_used`, `amount_authorized`, `amount_remaining` |
 | **Store Credit** | `amount`, `amount_used`, `amount_remaining` |
-| **Price** | `amount`, `compare_at_amount` |
+| **Price** | `amount`, `compare_at_amount` (unit prices, up to four decimals) |
+
+Rates, such as a tax line's `rate`, are decimal strings too, without trailing zeros (`"0.23"`).
+
+## Currency decimal places
+
+Each currency the store sells in (`GET /api/v3/store/currencies`) carries `decimal_places`, from ISO 4217: `2` for USD and EUR, `0` for JPY, `3` for KWD. Every amount in that currency is written with that many decimals.
 
 ## Working with Amounts
 
@@ -44,12 +50,15 @@ This convention applies to all monetary fields across all resources:
 ```typescript SDK
 const order = await client.orders.get('or_abc123', {}, { token });
 
+import { compareMoney, sumMoney } from '@spree/sdk'
+
 // Raw string values
 order.total;         // "129.99"
 order.display_total; // "$129.99"
 
-// Convert to number for calculations
-const total = parseFloat(order.total);
+// Calculate on the strings, exactly
+const subtotal = sumMoney(order.items.map((item) => item.total), order.currency); // "129.99"
+const isFree = compareMoney(order.total, '0') === 0;
 ```
 
 ```javascript JavaScript
@@ -58,12 +67,12 @@ const data = await response.json();
 // Use display fields for rendering
 element.textContent = data.display_total; // "$129.99"
 
-// Use raw fields for calculations
-const total = parseFloat(data.total);
+// Calculate on the raw strings with a decimal library, never parseFloat:
+// 0.1 + 0.2 is 0.30000000000000004 as a JSON number.
 ```
 
 </CodeGroup>
 
 <Tip>
-Use `display_*` fields for rendering prices in the UI — they are pre-formatted with the correct currency symbol and decimal places based on the order's currency. Use the raw string fields when you need to perform calculations.
+Use `display_*` fields for rendering prices in the UI — they are pre-formatted with the correct currency symbol and decimal places based on the order's currency. Calculate on the raw strings with the SDK's `sumMoney`, `subtractMoney`, `multiplyMoney` and `compareMoney`, which work on decimal strings exactly.
 </Tip>

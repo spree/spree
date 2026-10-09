@@ -1,3 +1,4 @@
+import { compareMoney, isDecimalString, multiplyMoney } from '@spree/admin-sdk'
 import {
   Badge,
   Button,
@@ -91,9 +92,13 @@ function OrderEditItemRow({
   const negotiated = row.price_source === 'manual'
 
   const projectedTotal = projectedLineTotal(row)
-  const savedTotal = Number(row.saved_price) * row.saved_quantity
+  const savedTotal = isDecimalString(row.saved_price)
+    ? multiplyMoney(row.saved_price, row.saved_quantity)
+    : null
   const totalChanged =
-    !row.added && projectedTotal !== null && Math.abs(projectedTotal - savedTotal) > 0.004
+    !row.added &&
+    projectedTotal !== null &&
+    (savedTotal === null || compareMoney(projectedTotal, savedTotal) !== 0)
   const revertPreview = row.revert_price ? projectedPrice(row) : null
 
   function toggleRemoved() {
@@ -252,7 +257,7 @@ function OrderEditItemRow({
         ) : totalChanged ? (
           <span className="flex items-center justify-end gap-2">
             <span className="text-muted-foreground line-through">{row.display_total}</span>
-            <span className="font-medium">{formatAmount(projectedTotal as number, currency)}</span>
+            <span className="font-medium">{formatAmount(projectedTotal as string, currency)}</span>
           </span>
         ) : (
           row.display_total

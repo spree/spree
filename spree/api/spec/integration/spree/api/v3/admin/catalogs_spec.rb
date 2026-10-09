@@ -165,7 +165,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         run_test! do |response|
           price = JSON.parse(response.body)['data'].first['catalog_variants'].first
           expect(price['source']).to eq('automatic')
-          expect(price['amount']).to eq('80.0')
+          expect(price['amount']).to eq('80.00')
         end
       end
     end
@@ -320,7 +320,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         let(:body) { { amount: '750.00' } }
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['amount']).to eq('750.0')
+          expect(JSON.parse(response.body)['amount']).to eq('750.00')
         end
       end
     end

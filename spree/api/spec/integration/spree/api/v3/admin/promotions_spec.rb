@@ -127,7 +127,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
               { type: 'currency', preferences: { currency: 'USD' } },
               {
                 type: 'item_total',
-                preferences: { amount_min: 100, operator_min: 'gte' }
+                preferences: { amount_min: '100', operator_min: 'gte' }
               },
               {
                 type: 'product',
@@ -140,7 +140,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
                 type: 'create_item_adjustments',
                 calculator: {
                   type: 'percent_on_line_item',
-                  preferences: { percent: 25 }
+                  preferences: { percent: '25' }
                 }
               },
               { type: 'free_shipping' }
@@ -305,7 +305,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
               # Add a new rule
               {
                 type: 'item_total',
-                preferences: { amount_min: 50, operator_min: 'gte' }
+                preferences: { amount_min: '50', operator_min: 'gte' }
               }
               # `dropped_rule` (FirstOrder) omitted — should be destroyed
             ],
@@ -316,7 +316,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
                 type: 'create_item_adjustments',
                 calculator: {
                   type: 'percent_on_line_item',
-                  preferences: { percent: 15 }
+                  preferences: { percent: '15' }
                 }
               }
             ]

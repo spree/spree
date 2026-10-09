@@ -15,14 +15,6 @@ module Spree
 
     validates :min_quantity, numericality: { greater_than: 1 }
 
-    # The amount as the wire carries it — a string, like every other
-    # money-shaped value, since a float would round the merchant's figure.
-    #
-    # @return [String]
-    def display_value
-      amount.to_s
-    end
-
     # @return [Spree::Money]
     def money
       Spree::Money.new(amount, currency: currency)

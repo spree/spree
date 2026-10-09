@@ -166,8 +166,8 @@ describe('projections', () => {
   it('projects a typed price against the current quantity', () => {
     const item = row({ price: '7.20', saved_price: '10.0', quantity: 25 })
 
-    expect(projectedPrice(item)).toBe(7.2)
-    expect(projectedLineTotal(item)).toBe(180)
+    expect(projectedPrice(item)).toBe('7.20')
+    expect(projectedLineTotal(item)).toBe('180.00')
   })
 
   it('projects a staged revert at the catalog price, not the negotiated one', () => {
@@ -180,8 +180,8 @@ describe('projections', () => {
       quantity: 4,
     })
 
-    expect(projectedPrice(item)).toBe(25)
-    expect(projectedLineTotal(item)).toBe(100)
+    expect(projectedPrice(item)).toBe('25.0')
+    expect(projectedLineTotal(item)).toBe('100.0')
   })
 
   it('gives up rather than guessing when a revert has no catalog price', () => {
@@ -192,7 +192,7 @@ describe('projections', () => {
   })
 
   it('counts a removed row as nothing', () => {
-    expect(projectedLineTotal(row({ removed: true, quantity: 3 }))).toBe(0)
+    expect(projectedLineTotal(row({ removed: true, quantity: 3 }))).toBe('0')
   })
 
   it('sums the rows into a subtotal', () => {
@@ -202,7 +202,7 @@ describe('projections', () => {
       row({ removed: true, price: '99.0', quantity: 1 }),
     ]
 
-    expect(projectedSubtotal(items)).toBe(200)
+    expect(projectedSubtotal(items)).toBe('200')
   })
 
   // A partial sum rendered as a total is a wrong number stated confidently.

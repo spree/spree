@@ -1,5 +1,5 @@
-import type { CommissionLine, Order } from '@spree/admin-sdk'
-import { formatPrice } from '@spree/dashboard-core'
+import { type CommissionLine, isDecimalString, type Order } from '@spree/admin-sdk'
+import { formatPrice, prorateMoney } from '@spree/dashboard-core'
 import type { TFunction } from 'i18next'
 
 function snapshottedFixedAmount(line: CommissionLine, order: Order, t: TFunction) {
@@ -8,11 +8,10 @@ function snapshottedFixedAmount(line: CommissionLine, order: Order, t: TFunction
     const quantity = item?.quantity ?? 1
     if (quantity <= 0) return line.display_amount || t('admin.common.empty_value')
 
-    const perUnit = Number.parseFloat(line.amount) / quantity
-    if (!Number.isFinite(perUnit)) return t('admin.common.empty_value')
+    if (!isDecimalString(line.amount)) return t('admin.common.empty_value')
 
     return formatPrice({
-      amount: perUnit.toFixed(2),
+      amount: prorateMoney(line.amount, 1, quantity, line.currency),
       currency: line.currency,
       display_amount: null,
     })

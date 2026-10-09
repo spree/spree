@@ -66,8 +66,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        Creates a tax rate for the current store. Give either `amount` as a
-        decimal (`0.19`) or `amount_percentage` as a percentage (`19`).
+        Creates a tax rate for the current store. Give either `rate` as a
+        decimal string (`"0.19"`) or `rate_percent` as a percentage string (`"19"`).
 
         Name the jurisdiction with `country_code` (and `state_code` for a
         state-level rate). Omitting the country makes the rate apply everywhere.
@@ -84,8 +84,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
         type: :object,
         properties: {
           name: { type: :string, description: 'Customer-facing rate name, e.g. "VAT"' },
-          amount: { type: :string, description: 'Rate as a decimal, e.g. "0.19"' },
-          amount_percentage: { type: :number, description: 'Rate as a percentage, e.g. 19' },
+          rate: { type: :string, description: 'Rate as a decimal string, e.g. "0.19"' },
+          rate_percent: { type: :string, description: 'Rate as a percentage string, e.g. "19"' },
           included_in_price: { type: :boolean },
           show_rate_in_label: { type: :boolean },
           tax_category_id: { type: :string },
@@ -98,7 +98,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       response '201', 'tax rate created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
-          { name: 'VAT', amount_percentage: 19, included_in_price: true,
+          { name: 'VAT', rate_percent: '19', included_in_price: true,
             tax_category_id: tax_category.prefixed_id, country_code: 'DE' }
         end
 
@@ -106,14 +106,14 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['amount']).to eq('0.19')
-          expect(data['amount_percentage']).to eq(19.0)
+          expect(data['rate']).to eq('0.19')
+          expect(data['rate_percent']).to eq('19')
         end
       end
 
       response '422', 'validation failed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { amount_percentage: 19 } }
+        let(:body) { { rate_percent: '19' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -160,8 +160,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
         type: :object,
         properties: {
           name: { type: :string },
-          amount: { type: :string },
-          amount_percentage: { type: :number },
+          rate: { type: :string },
+          rate_percent: { type: :string },
           included_in_price: { type: :boolean },
           show_rate_in_label: { type: :boolean },
           tax_category_id: { type: :string },
@@ -172,12 +172,12 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
 
       response '200', 'tax rate updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { amount_percentage: 7 } }
+        let(:body) { { rate_percent: '7' } }
 
         schema '$ref' => '#/components/schemas/TaxRate'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['amount']).to eq('0.07')
+          expect(JSON.parse(response.body)['rate']).to eq('0.07')
         end
       end
     end

@@ -5,11 +5,12 @@ module Spree
         # The least a whole order must come to under a catalog's agreement,
         # in one currency.
         class CatalogOrderMinimumSerializer < V3::BaseSerializer
-          typelize currency: :string, amount: :string, display_amount: :string
+          typelize currency: :string
 
           attributes :currency, created_at: :iso8601, updated_at: :iso8601
 
-          attributes amount: :string, display_amount: :string
+          money_attributes :amount, :display_amount
+          typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false]
         end
       end
     end

@@ -24,7 +24,7 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::BalancesController, type: :contro
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
       expect(row).to include('seller_id' => seller.prefixed_id, 'currency' => 'USD',
-                             'balance' => '25.0', 'display_balance' => '$25.00')
+                             'balance' => '25.00', 'display_balance' => '$25.00')
     end
 
     it "404s on another marketplace's seller" do

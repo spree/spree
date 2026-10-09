@@ -56,17 +56,35 @@ module Spree
           ->(category) { where(tax_category_id: category.try(:id)) }
     scope :included_in_price, -> { where(included_in_price: true) }
 
-    self.whitelisted_ransackable_attributes = %w[amount country_code state_code tax_category_id included_in_price name]
+    self.whitelisted_ransackable_attributes = %w[amount rate country_code state_code tax_category_id included_in_price name]
+    ransack_alias :rate, :amount
 
-    # Virtual attribute for percentage display in admin forms
-    def amount_percentage
-      return nil if amount.nil?
+    # The rate as a fraction (0.23); the column is +amount+.
+    alias_attribute :rate, :amount
 
-      (amount * 100).round(2)
+    # The rate as a percentage (23), what a merchant types.
+    #
+    # @return [BigDecimal, nil]
+    def rate_percent
+      amount && amount * 100
     end
 
+    # @param value [String, Numeric, nil]
+    def rate_percent=(value)
+      parsed = Spree::Money::Rounding.parse_decimal(value)
+      self.amount = parsed && parsed / 100
+    end
+
+    # @deprecated Use {#rate_percent}; removed in 6.1.
+    def amount_percentage
+      Spree::Deprecation.warn('Spree::TaxRate#amount_percentage is deprecated and will be removed in Spree 6.1. Use #rate_percent instead.')
+      rate_percent
+    end
+
+    # @deprecated Use {#rate_percent=}; removed in 6.1.
     def amount_percentage=(value)
-      self.amount = value.present? ? BigDecimal(value.to_s) / 100 : nil
+      Spree::Deprecation.warn('Spree::TaxRate#amount_percentage= is deprecated and will be removed in Spree 6.1. Use #rate_percent= instead.')
+      self.rate_percent = value
     end
 
     # The included-in-price rate to back out of a gross price.

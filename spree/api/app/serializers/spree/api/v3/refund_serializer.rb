@@ -4,15 +4,13 @@ module Spree
   module Api
     module V3
       class RefundSerializer < BaseSerializer
-        typelize amount: [:string, nullable: true], transaction_id: [:string, nullable: true],
+        typelize transaction_id: [:string, nullable: true],
                  payment_id: [:string, nullable: true], refund_reason_id: [:string, nullable: true],
                  originator_id: [:string, nullable: true], originator_type: [:string, nullable: true]
 
         attributes :transaction_id
 
-        attribute :amount do |refund|
-          refund.amount&.to_s
-        end
+        money_attributes :amount
 
         prefixed_id_attributes :payment, refund_reason_id: :reason
 

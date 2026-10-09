@@ -83,7 +83,8 @@ module Spree
       # precision as a float, and never more decimals than the field holds.
       #
       # @param value [String, nil]
-      # @param currency [String, ::Money::Currency, nil]
+      # @param currency [String, ::Money::Currency, nil] nil when unknown,
+      #   which allows up to {UNIT_PRICE_DECIMALS} decimals
       # @param unit_price [Boolean] allows up to {UNIT_PRICE_DECIMALS} decimals
       # @return [BigDecimal, nil]
       # @raise [Spree::Money::InvalidFormat]
@@ -91,7 +92,11 @@ module Spree
         amount = parse_canonical_decimal(value)
         return if amount.nil?
 
-        allowed = unit_price ? [precision(currency), UNIT_PRICE_DECIMALS].max : precision(currency)
+        allowed = if currency.nil? || unit_price
+                    [precision(currency), UNIT_PRICE_DECIMALS].max
+                  else
+                    precision(currency)
+                  end
         raise InvalidFormat, "has more than #{allowed} decimal places" if decimal_places(value) > allowed
 
         amount

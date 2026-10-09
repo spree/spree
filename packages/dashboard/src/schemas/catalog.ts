@@ -1,5 +1,11 @@
 import type { CatalogParams, PriceList } from '@spree/admin-sdk'
-import { blankToNull, normalizeQuantityRule } from '@spree/dashboard-core'
+import { compareMoney, negateMoney } from '@spree/admin-sdk'
+import {
+  blankToNull,
+  isPositiveMoney,
+  normalizeQuantityRule,
+  shiftDecimalPoint,
+} from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -149,7 +155,7 @@ export const catalogFormSchema = z
     (v) => {
       if (v.pricing_mode !== 'automatic' || v.adjustment_direction !== 'decrease') return true
       const magnitude = parsePercentage(v.adjustment_magnitude)
-      return magnitude === null || magnitude < 100
+      return magnitude === null || compareMoney(magnitude, '100') < 0
     },
     {
       path: ['adjustment_magnitude'],
@@ -319,9 +325,8 @@ function priceListPayload(values: CatalogFormValues, loaded?: CatalogPricingValu
           adjust_compare_at: values.adjust_compare_at,
         }
       : {
-          price_adjustment_percentage: String(
-            values.adjustment_direction === 'decrease' ? -magnitude : magnitude,
-          ),
+          price_adjustment_percentage:
+            values.adjustment_direction === 'decrease' ? negateMoney(magnitude) : magnitude,
           adjust_compare_at: values.adjust_compare_at,
         }
 
@@ -384,7 +389,7 @@ function adjustmentTiersPayload(
     return [
       {
         min_quantity: quantity,
-        percentage: String(direction === 'decrease' ? -magnitude : magnitude),
+        percentage: direction === 'decrease' ? negateMoney(magnitude) : magnitude,
       },
     ]
   })
@@ -407,7 +412,7 @@ function tierPercentageIsUsable(
   const magnitude = parsePercentage(tier.percentage)
   if (magnitude === null) return false
 
-  return direction === 'increase' || magnitude < 100
+  return direction === 'increase' || compareMoney(magnitude, '100') < 0
 }
 
 function volumeRulePayload(minimumQuantity: string | undefined) {
@@ -470,7 +475,7 @@ export function catalogPricingValues(
   // The shallowest band decides the whole ladder's direction: the form offers
   // one increase/decrease control, and the magnitudes below are read through
   // it.
-  const bandDirection = Number(bands[0]?.percentage) > 0 ? 'increase' : 'decrease'
+  const bandDirection = isPositiveMoney(bands[0]?.percentage) ? 'increase' : 'decrease'
 
   return {
     pricing_mode: bandsOnly ? 'automatic' : pricing_mode,
@@ -484,7 +489,7 @@ export function catalogPricingValues(
     // above them carries the sign for the whole ladder.
     adjustment_tiers: bands.map((tier) => ({
       min_quantity: String(tier.min_quantity),
-      percentage: String(Math.abs(Number(tier.percentage))),
+      percentage: shiftDecimalPoint(String(tier.percentage).replace(/^-/, ''), 0),
     })),
   }
 }

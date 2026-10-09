@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreCredits::EventsController, type: :con
       subject
 
       entry = json_response['data'].first
-      expect(entry['amount']).to eq('50.0')
+      expect(entry['amount']).to eq('50.00')
       expect(entry['display_amount']).to match(/\$50\.00/)
       expect(entry['store_credit_id']).to eq(store_credit.prefixed_id)
       expect(entry['created_at']).to match(/\A\d{4}-\d{2}-\d{2}T/)

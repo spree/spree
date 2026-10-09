@@ -21,9 +21,16 @@ module Spree
                    seller_id: [:string, nullable: true],
                    seller_name: [:string, nullable: true]
 
-          attributes :admin_name, :storefront_visible, :tracking_url,
-                     :markup_flat, :markup_percent, :available_to_sellers,
+          attributes :admin_name, :storefront_visible, :tracking_url, :available_to_sellers,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
+
+          # The flat markup is charged in whatever currency the rate is quoted
+          # in, so it is written to the store's default currency.
+          attribute :markup_flat do |record|
+            Spree::Money::Rounding.format(record.markup_flat, (current_store || Spree::Current.store)&.default_currency)
+          end
+
+          rate_attributes :markup_percent
 
           # Which seller runs this method, so the operator's list can say
           # whose it is. Null is the marketplace's own

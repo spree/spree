@@ -366,7 +366,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     it 'creates a minimal product' do
       expect {
-        post :create, params: { name: 'Simple Product', price: 19.99 }, as: :json
+        post :create, params: { name: 'Simple Product', price: '19.99' }, as: :json
       }.to change(Spree::Product, :count).by(1)
 
       expect(response).to have_http_status(:created)
@@ -389,7 +389,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             {
               sku: 'PREM-TEE-S',
               options: [{ name: 'size', value: 'Small' }],
-              cost_price: 8.50,
+              cost_price: '8.50',
               weight: 0.2,
               width: 30,
               height: 40,
@@ -398,9 +398,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               dimensions_unit: 'cm',
               track_inventory: true,
               prices: [
-                { currency: 'USD', amount: 29.99, compare_at_amount: 39.99 },
-                { currency: 'EUR', amount: 27.99 },
-                { currency: 'GBP', amount: 24.99 }
+                { currency: 'USD', amount: '29.99', compare_at_amount: '39.99' },
+                { currency: 'EUR', amount: '27.99' },
+                { currency: 'GBP', amount: '24.99' }
               ]
             },
             {
@@ -409,9 +409,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               weight: 0.22,
               track_inventory: true,
               prices: [
-                { currency: 'USD', amount: 29.99 },
-                { currency: 'EUR', amount: 27.99 },
-                { currency: 'GBP', amount: 24.99 }
+                { currency: 'USD', amount: '29.99' },
+                { currency: 'EUR', amount: '27.99' },
+                { currency: 'GBP', amount: '24.99' }
               ]
             },
             {
@@ -420,9 +420,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               weight: 0.25,
               track_inventory: true,
               prices: [
-                { currency: 'USD', amount: 31.99 },
-                { currency: 'EUR', amount: 29.99 },
-                { currency: 'GBP', amount: 26.99 }
+                { currency: 'USD', amount: '31.99' },
+                { currency: 'EUR', amount: '29.99' },
+                { currency: 'GBP', amount: '26.99' }
               ]
             }
           ]
@@ -713,8 +713,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         post :create, params: {
           name: 'Simple Product',
           prices: [
-            { currency: 'USD', amount: 12.50 },
-            { currency: 'EUR', amount: 11.00, compare_at_amount: 13.99 }
+            { currency: 'USD', amount: '12.50' },
+            { currency: 'EUR', amount: '11.00', compare_at_amount: '13.99' }
           ]
         }, as: :json
 
@@ -917,9 +917,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               country_of_origin: 'bd',
               customs_description: 'Cotton t-shirt',
               prices: [
-                { currency: 'USD', amount: 34.99, compare_at_amount: 49.99 },
-                { currency: 'EUR', amount: 31.99 },
-                { currency: 'GBP', amount: 28.99 }
+                { currency: 'USD', amount: '34.99', compare_at_amount: '49.99' },
+                { currency: 'EUR', amount: '31.99' },
+                { currency: 'GBP', amount: '28.99' }
               ]
             },
             {
@@ -928,9 +928,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               weight: 0.4,
               track_inventory: true,
               prices: [
-                { currency: 'USD', amount: 36.99 },
-                { currency: 'EUR', amount: 33.99 },
-                { currency: 'GBP', amount: 30.99 }
+                { currency: 'USD', amount: '36.99' },
+                { currency: 'EUR', amount: '33.99' },
+                { currency: 'GBP', amount: '30.99' }
               ]
             }
           ]

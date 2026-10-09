@@ -6,8 +6,8 @@ export const StoreCreditEventSchema = z.object({
   action: z.string(),
   authorization_code: z.string().nullable(),
   display_action: z.string().nullable(),
-  amount: z.string(),
-  display_amount: z.string(),
+  amount: z.string().nullable(),
+  display_amount: z.string().nullable(),
   created_at: z.string(),
 });
 

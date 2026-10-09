@@ -27,7 +27,7 @@ module Spree
           attribute(:seller_id) { |balance| balance.seller&.prefixed_id }
 
           %i[earned payable paid balance pending].each do |figure|
-            attribute(figure) { |balance| balance.public_send(figure).to_s }
+            attribute(figure) { |balance| Spree::Money::Rounding.format(balance.public_send(figure), balance.settlement_currency) }
             attribute(:"display_#{figure}") { |balance| balance.public_send(:"display_#{figure}").to_s }
           end
         end

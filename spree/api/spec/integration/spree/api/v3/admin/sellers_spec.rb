@@ -506,7 +506,7 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
-          expect(data.first).to include('seller_id' => seller.prefixed_id, 'currency' => 'USD', 'balance' => '40.0')
+          expect(data.first).to include('seller_id' => seller.prefixed_id, 'currency' => 'USD', 'balance' => '40.00')
         end
       end
 

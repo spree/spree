@@ -96,7 +96,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'creates service rows with markup and label from a flat payload' do
       patch :update, params: {
         id: delivery_method.prefixed_id,
-        markup_percent: 5,
+        markup_percent: '5',
         services: [
           { carrier: 'UPS', service: 'Ground', label: 'UPS standard' },
           { carrier: 'USPS', service: 'Priority', markup_flat: '2.5' }
@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['markup_percent']).to eq('5.0')
+      expect(json_response['markup_percent']).to eq('5')
       services = json_response['services']
       expect(services.size).to eq(2)
       ups = services.find { |row| row['carrier'] == 'UPS' }
@@ -157,7 +157,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
         name: 'Express',
         storefront_visible: true,
         calculator_type: 'flat_rate',
-        calculator_preferences: { amount: 12.5 },
+        calculator_preferences: { amount: '12.5' },
         delivery_zone_id: zone.prefixed_id
       }, as: :json
 
@@ -177,7 +177,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'keeps the amount when no calculator is named' do
       post :create, params: {
         name: 'Priced by default',
-        calculator_preferences: { amount: 7.25 }
+        calculator_preferences: { amount: '7.25' }
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -227,7 +227,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       patch :update, params: {
         id: delivery_method.prefixed_id,
         name: 'UPS Ground v2',
-        calculator_preferences: { amount: 99 }
+        calculator_preferences: { amount: '99' }
       }, as: :json
 
       expect(response).to have_http_status(:ok)
@@ -239,7 +239,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       patch :update, params: {
         id: delivery_method.prefixed_id,
         calculator_type: 'flat_rate',
-        calculator_preferences: { amount: 20, currency: 'USD', amounts: { 'EUR' => '15.0' } }
+        calculator_preferences: { amount: '20', currency: 'USD', amounts: { 'EUR' => '15.0' } }
       }, as: :json
 
       expect(response).to have_http_status(:ok)

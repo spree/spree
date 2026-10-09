@@ -294,56 +294,61 @@ describe Spree::TaxRate, type: :model do
   end
 
   describe 'percentage conversion' do
-    describe '#amount_percentage' do
+    it 'still answers the deprecated #amount_percentage, with a warning' do
+      expect(Spree::Deprecation).to receive(:warn).with(/amount_percentage is deprecated/)
+      expect(build(:tax_rate, amount: 0.0825).amount_percentage).to eq(BigDecimal('8.25'))
+    end
+
+    describe '#rate_percent' do
       it 'converts decimal amount to percentage' do
         tax_rate = build(:tax_rate, amount: 0.0825)
-        expect(tax_rate.amount_percentage).to eq(8.25)
+        expect(tax_rate.rate_percent).to eq(8.25)
       end
 
       it 'returns nil when amount is nil' do
         tax_rate = build(:tax_rate, amount: nil)
-        expect(tax_rate.amount_percentage).to be_nil
+        expect(tax_rate.rate_percent).to be_nil
       end
 
       it 'handles zero amount' do
         tax_rate = build(:tax_rate, amount: 0.0)
-        expect(tax_rate.amount_percentage).to eq(0.0)
+        expect(tax_rate.rate_percent).to eq(0.0)
       end
 
-      it 'rounds to 2 decimal places' do
+      it 'keeps every decimal the rate has' do
         tax_rate = build(:tax_rate, amount: 0.12345)
-        expect(tax_rate.amount_percentage).to eq(12.35)
+        expect(tax_rate.rate_percent).to eq(BigDecimal('12.345'))
       end
     end
 
-    describe '#amount_percentage=' do
+    describe '#rate_percent=' do
       it 'converts percentage to decimal amount' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = 8.25
+        tax_rate.rate_percent = 8.25
         expect(tax_rate.amount).to eq(0.0825)
       end
 
       it 'sets amount to nil when percentage is nil' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = nil
+        tax_rate.rate_percent = nil
         expect(tax_rate.amount).to be_nil
       end
 
       it 'sets amount to nil when percentage is empty string' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = ''
+        tax_rate.rate_percent = ''
         expect(tax_rate.amount).to be_nil
       end
 
       it 'handles zero percentage' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = 0
+        tax_rate.rate_percent = 0
         expect(tax_rate.amount).to eq(0.0)
       end
 
       it 'handles string percentage values' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = '5.5'
+        tax_rate.rate_percent = '5.5'
         expect(tax_rate.amount).to eq(0.055)
       end
     end

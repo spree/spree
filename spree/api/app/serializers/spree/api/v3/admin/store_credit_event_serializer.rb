@@ -5,6 +5,9 @@ module Spree
         # One line of a store credit's ledger: how the balance moved and what
         # moved it. Read-only — events are written by the credit itself.
         class StoreCreditEventSerializer < V3::StoreCreditEventSerializer
+          # No guest price gating here, so the inherited money fields are always present.
+          typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false]
+
           typelize originator_type: [:string, nullable: true],
                    originator_id: [:string, nullable: true],
                    store_credit_id: :string

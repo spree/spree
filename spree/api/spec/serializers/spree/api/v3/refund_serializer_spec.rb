@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::RefundSerializer do
   end
 
   it 'returns amount as string' do
-    expect(subject['amount']).to eq('10.0')
+    expect(subject['amount']).to eq('10.00')
   end
 
   it 'returns prefixed payment_id' do

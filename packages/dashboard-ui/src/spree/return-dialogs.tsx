@@ -139,49 +139,6 @@ export function ReturnReceiveDialog({
   )
 }
 
-/** True when a received return is owed nothing, so completing it moves no money. */
-export function returnOwesNothing(refundableTotal: string): boolean {
-  return Number(refundableTotal) === 0
-}
-
-export type ReturnRefundFigures = {
-  status: string
-  refund_total: string
-  display_refund_total: string
-  refunded_total: string
-  display_refunded_total: string
-}
-
-/**
- * What a return's card reports: what it is owed until money goes back, then
- * what actually went back — which a merchant keeping a restocking fee makes
- * less than it was owed, so that case also names the full amount. Money that
- * went back counts even before the return is marked refunded: a refund that
- * succeeded on one payment and was declined on the next leaves it received.
- */
-export function returnRefundSummary(
-  returnRecord: ReturnRefundFigures,
-):
-  | { kind: 'owed'; amount: string }
-  | { kind: 'refunded'; amount: string }
-  | { kind: 'refunded_short'; amount: string; total: string } {
-  const refunded = Number(returnRecord.refunded_total)
-
-  if (returnRecord.status !== 'refunded' && refunded === 0) {
-    return { kind: 'owed', amount: returnRecord.display_refund_total }
-  }
-
-  if (refunded < Number(returnRecord.refund_total)) {
-    return {
-      kind: 'refunded_short',
-      amount: returnRecord.display_refunded_total,
-      total: returnRecord.display_refund_total,
-    }
-  }
-
-  return { kind: 'refunded', amount: returnRecord.display_refunded_total }
-}
-
 /**
  * Gives the money back: how much, and by what means. A return owed nothing
  * (a free gift sent back) is completed instead, with nothing to choose.
@@ -193,6 +150,7 @@ export function returnRefundSummary(
  */
 export function ReturnRefundDialog({
   refundableTotal,
+  owesNothing,
   refundTaxTotal,
   currencySymbol,
   onClose,
@@ -200,6 +158,8 @@ export function ReturnRefundDialog({
   pending = false,
 }: {
   refundableTotal: string
+  /** True when the return is owed nothing, so it is completed rather than refunded. */
+  owesNothing: boolean
   refundTaxTotal?: string
   currencySymbol: string
   onClose: () => void
@@ -209,7 +169,6 @@ export function ReturnRefundDialog({
   const { t } = useTranslation()
   const [refundMethod, setRefundMethod] = useState<RefundMethod>('original_payment')
   const [amount, setAmount] = useState(refundableTotal)
-  const owesNothing = returnOwesNothing(refundableTotal)
 
   const methodOptions = [
     {

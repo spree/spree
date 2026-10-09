@@ -21,8 +21,6 @@ module Spree
                    quantity_rejected_total: :number,
                    quantity_ordered_total: :number,
                    quantity_received_total: :number,
-                   subtotal: :string,
-                   display_subtotal: :string,
                    editable: :boolean,
                    ordered_at: 'string | null',
                    received_at: 'string | null',
@@ -56,7 +54,9 @@ module Spree
 
           attribute :editable, &:editable?
 
-          attributes subtotal: :string, display_subtotal: :string
+          money_attributes :subtotal, :display_subtotal
+          typelize subtotal: [:string, nullable: false], display_subtotal: [:string, nullable: false]
+
           prefixed_id_attributes :supplier, :destination_location
 
           many :items,

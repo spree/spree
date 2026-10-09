@@ -100,18 +100,11 @@ export function CreateReturnDialog({
 
 /** A line the claim can name, with what the customer paid for it. */
 export type ClaimableLine = PostSaleUnit & {
-  /** The whole line after discounts, used to default the refund to what was actually paid. */
-  discountedAmount?: string | null
-  /** Tax charged on top of the line's price, which a claim refunds with it. */
-  additionalTaxTotal?: string | null
-}
-
-/** What the customer paid for `quantity` units of the line, or blank when that is unknown. */
-function paidForUnits(line: ClaimableLine, quantity: number): string {
-  const paid = Number(line.discountedAmount) + Number(line.additionalTaxTotal ?? 0)
-  if (quantity <= 0 || line.discountedAmount == null || !Number.isFinite(paid)) return ''
-
-  return ((paid * quantity) / line.quantity).toFixed(2)
+  /**
+   * What the customer paid, tax included, for that many units of the line, as
+   * a decimal string — the default refund. Blank when it is unknown.
+   */
+  paidFor?: (quantity: number) => string
 }
 
 /**
@@ -189,7 +182,7 @@ export function CreateClaimDialog({
                         if (!typedAmounts[line.id]) {
                           setAmounts((current) => ({
                             ...current,
-                            [line.id]: paidForUnits(line, quantity),
+                            [line.id]: quantity > 0 ? (line.paidFor?.(quantity) ?? '') : '',
                           }))
                         }
                       }}

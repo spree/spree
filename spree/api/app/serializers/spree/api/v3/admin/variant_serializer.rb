@@ -32,13 +32,15 @@ module Spree
           # The last three override the store serializer's buyer-resolved
           # values with the variant's OWN: a merchant edits what is stored on
           # the row, not what some catalog resolves to for a buyer they are not.
-          attributes :metadata, :position, :cost_price, :cost_currency,
+          attributes :metadata, :position, :cost_currency,
                      :barcode, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      :minimum_order_quantity, :order_multiple, :purchase_unit,
                      :carton_weight, :cartons_per_pallet,
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          money_attributes :cost_price, currency: :cost_currency, unit_price: true
 
           attribute :preorderable, &:preorderable?
 

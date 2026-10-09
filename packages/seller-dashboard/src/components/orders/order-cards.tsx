@@ -1,4 +1,4 @@
-import { AddressFormDialog, formatStoreDateTime } from '@spree/dashboard-core'
+import { AddressFormDialog, formatStoreDateTime, isPositiveMoney } from '@spree/dashboard-core'
 import {
   AddressBlock,
   Button,
@@ -15,6 +15,7 @@ import {
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PencilIcon } from '@spree/dashboard-ui/icons'
 import type { Order, OrderAddressParams } from '@spree/seller-sdk'
+import { isZeroMoney } from '@spree/seller-sdk'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../../api-client'
@@ -71,8 +72,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const timezone = useStoreTimezone()
 
-  const amount = (value: string | null | undefined) => Number.parseFloat(value ?? '0')
-  const outstanding = amount(order.amount_due)
+  const outstanding = isPositiveMoney(order.amount_due)
   const placed = Boolean(order.completed_at)
 
   return (
@@ -120,22 +120,22 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         <SummaryRow label={t('orders.summary.subtotal')} value={order.display_item_total} />
 
-        {amount(order.delivery_total) > 0 && (
+        {isPositiveMoney(order.delivery_total) && (
           <SummaryRow label={t('orders.summary.shipping')} value={order.display_delivery_total} />
         )}
 
-        {amount(order.discount_total) !== 0 && (
+        {!isZeroMoney(order.discount_total) && (
           <SummaryRow label={t('orders.summary.promotions')} value={order.display_discount_total} />
         )}
 
-        {amount(order.adjustment_total) !== 0 && (
+        {!isZeroMoney(order.adjustment_total) && (
           <SummaryRow
             label={t('orders.summary.adjustments')}
             value={order.display_adjustment_total}
           />
         )}
 
-        {amount(order.included_tax_total) > 0 && (
+        {isPositiveMoney(order.included_tax_total) && (
           <SummaryRow
             label={t('orders.summary.tax_included')}
             value={order.display_included_tax_total}
@@ -144,8 +144,8 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         {/* Shown on a placed order even at zero, so "no tax was charged" reads
             as an answer rather than a missing row. */}
-        {(amount(order.additional_tax_total) > 0 ||
-          (placed && amount(order.included_tax_total) === 0)) && (
+        {(isPositiveMoney(order.additional_tax_total) ||
+          (placed && isZeroMoney(order.included_tax_total))) && (
           <SummaryRow
             label={t('orders.summary.tax_additional')}
             value={order.display_additional_tax_total}
@@ -181,7 +181,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
               value={order.display_commission_amount_total}
             />
 
-            {amount(order.commission_tax_total) > 0 && (
+            {isPositiveMoney(order.commission_tax_total) && (
               <SummaryRow
                 label={t('orders.summary.commission_tax')}
                 value={order.display_commission_tax_total}
@@ -207,7 +207,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
           label={t('orders.summary.outstanding_balance')}
           value={order.display_amount_due}
           highlight
-          danger={outstanding > 0}
+          danger={outstanding}
         />
       </div>
     </Card>

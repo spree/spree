@@ -70,30 +70,47 @@ class ChangeMoneyColumnsToDecimal194 < ActiveRecord::Migration[8.1]
   }.freeze
 
   def up
-    each_column { |table, column| widen(table, column, 19, 4) }
+    deliberately_rewriting { COLUMNS.each_key { |table| retype(table) { [19, 4] } } }
   end
 
   def down
-    each_column do |table, column|
-      precision, scale = ORIGINAL.fetch("#{table}.#{column}", [10, 2])
-      widen(table, column, precision, scale)
+    deliberately_rewriting do
+      COLUMNS.each_key { |table| retype(table) { |column| ORIGINAL.fetch("#{table}.#{column}", [10, 2]) } }
     end
   end
 
   private
 
-  def each_column
-    COLUMNS.each do |table, columns|
-      next unless table_exists?(table)
-
-      columns.each { |column| yield(table, column) if column_exists?(table, column) }
-    end
+  # The rewrite is the point of this migration and the upgrade guide documents
+  # it, so an app running strong_migrations is not stopped by it.
+  def deliberately_rewriting(&block)
+    respond_to?(:safety_assured) ? safety_assured(&block) : yield
   end
 
-  def widen(table, name, precision, scale)
-    column = connection.columns(table).find { |candidate| candidate.name == name.to_s }
-    return if column.precision == precision && column.scale == scale
+  # One ALTER TABLE per table, so each is rewritten once rather than once per
+  # column. PostgreSQL keeps NOT NULL and the default through a type change,
+  # and Rails' MySQL adapter carries them over itself; passing them would add a
+  # SET NOT NULL that scans every row. SQLite rebuilds the table from the new
+  # definition, so it is told both.
+  def retype(table)
+    return unless table_exists?(table)
 
-    change_column table, name, :decimal, precision: precision, scale: scale, null: column.null, default: column.default
+    existing = connection.columns(table).index_by(&:name)
+    changes = COLUMNS[table].filter_map do |name|
+      column = existing[name.to_s]
+      next if column.nil?
+
+      precision, scale = yield(name)
+      [column, precision, scale] unless column.precision == precision && column.scale == scale
+    end
+    return if changes.empty?
+
+    change_table(table, bulk: true) do |definition|
+      changes.each do |column, precision, scale|
+        options = { precision: precision, scale: scale }
+        options.merge!(null: column.null, default: column.default) if connection.adapter_name.match?(/sqlite/i)
+        definition.change column.name, :decimal, **options
+      end
+    end
   end
 end

@@ -37,7 +37,7 @@ RSpec.describe Spree::Api::V3::Seller::TransfersController, type: :controller do
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
       expect(json_response['data'].map { |transfer| transfer['id'] }).to contain_exactly(mine.prefixed_id)
-      expect(row['amount']).to eq('42.0')
+      expect(row['amount']).to eq('42.00')
       expect(row['display_amount']).to eq('$42.00')
       expect(row['order_number']).to eq(order.number)
       expect(row['order_id']).to eq(order.prefixed_id)

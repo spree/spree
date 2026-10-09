@@ -20,6 +20,6 @@ RSpec.describe Spree::Api::V3::GiftCardBatchSerializer do
   end
 
   it 'returns amount as string' do
-    expect(subject['amount']).to eq('25.0')
+    expect(subject['amount']).to eq('25.00')
   end
 end

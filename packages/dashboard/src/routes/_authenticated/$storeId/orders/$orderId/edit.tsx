@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type Order, SpreeError, type Variant } from '@spree/admin-sdk'
+import { compareMoney, isZeroMoney, type Order, SpreeError, type Variant } from '@spree/admin-sdk'
 import {
   adminClient,
   formatPrice,
   GONE_STATUSES,
+  isPositiveMoney,
   mapSpreeErrorsToForm,
   PageHeader,
 } from '@spree/dashboard-core'
@@ -64,12 +65,10 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
   const { t } = useTranslation()
 
   const projected = projectedSubtotal(items)
-  const savedSubtotal = Number(order.item_total)
-  const subtotalChanged = projected !== null && Math.abs(projected - savedSubtotal) > 0.004
+  const subtotalChanged = projected !== null && compareMoney(projected, order.item_total) !== 0
 
   // Derived from the order's own totals, so charges not itemised here count.
-  const serverAddedCharges = Number(order.total) - savedSubtotal
-  const totalProjectable = subtotalChanged && Math.abs(serverAddedCharges) <= 0.004
+  const totalProjectable = subtotalChanged && compareMoney(order.total, order.item_total) === 0
 
   return (
     <Card className="gap-0 py-0">
@@ -87,7 +86,7 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
                   {order.display_item_total}
                 </span>
                 <span className="font-medium">
-                  {formatAmount(projected as number, order.currency)}
+                  {formatAmount(projected as string, order.currency)}
                 </span>
               </span>
             ) : (
@@ -96,26 +95,26 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
           }
         />
 
-        {Number.parseFloat(order.delivery_total) > 0 && (
+        {isPositiveMoney(order.delivery_total) && (
           <TotalRow label={t('admin.fields.shipping.label')} value={order.display_delivery_total} />
         )}
 
-        {Number.parseFloat(order.discount_total) !== 0 && (
+        {!isZeroMoney(order.discount_total) && (
           <TotalRow
             label={t('admin.orders.detail.summary.promotions')}
             value={order.display_discount_total}
           />
         )}
 
-        {Number.parseFloat(order.included_tax_total) > 0 && (
+        {isPositiveMoney(order.included_tax_total) && (
           <TotalRow
             label={t('admin.orders.detail.summary.tax_included')}
             value={order.display_included_tax_total}
           />
         )}
 
-        {(Number.parseFloat(order.additional_tax_total) > 0 ||
-          (Boolean(order.completed_at) && Number.parseFloat(order.included_tax_total) === 0)) && (
+        {(isPositiveMoney(order.additional_tax_total) ||
+          (Boolean(order.completed_at) && isZeroMoney(order.included_tax_total))) && (
           <TotalRow
             label={t('admin.orders.detail.summary.tax_additional')}
             value={order.display_additional_tax_total}
@@ -132,7 +131,7 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
                 <span className="font-normal text-muted-foreground line-through">
                   {order.display_total}
                 </span>
-                <span>{formatAmount(projected as number, order.currency)}</span>
+                <span>{formatAmount(projected as string, order.currency)}</span>
               </span>
             ) : (
               order.display_total

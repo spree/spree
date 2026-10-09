@@ -38,7 +38,7 @@ module Spree
           _attributes.delete(:policies)
 
           attribute :minimum_payout_amount do |seller|
-            seller.minimum_payout_amount&.to_s
+            Spree::Money::Rounding.format(seller.minimum_payout_amount, (current_store || Spree::Current.store)&.default_currency)
           end
 
           # Approved but away still cannot sell, and the list has to say so

@@ -303,7 +303,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
         schema '$ref' => '#/components/schemas/CommissionRate'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['value']).to eq('15.0')
+          expect(JSON.parse(response.body)['value']).to eq('15')
         end
       end
     end

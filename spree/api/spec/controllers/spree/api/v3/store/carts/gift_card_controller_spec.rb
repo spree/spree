@@ -100,7 +100,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
           post :create, params: { cart_id: order.prefixed_id, code: 'giftcard123' }
 
           expect(response).to have_http_status(:created)
-          expect(json_response['amount_due']).to eq('0.0')
+          expect(json_response['amount_due']).to eq('0.00')
           expect(json_response['current_step']).to eq('payment')
           expect(json_response['requirements']).to be_empty
         end

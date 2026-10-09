@@ -57,7 +57,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           estimated_transit_business_days_max: { type: :integer, nullable: true },
           tax_category_id: { type: :string, nullable: true },
           calculator_type: { type: :string, example: 'flat_rate' },
-          calculator_preferences: { type: :object, example: { amount: 12.5 } },
+          calculator_preferences: { type: :object, example: { amount: '12.50' } },
           delivery_zone_id: { type: :string, nullable: true }
         },
         required: %w[name]
@@ -69,7 +69,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
             name: 'Express',
             storefront_visible: true,
             calculator_type: 'flat_rate',
-            calculator_preferences: { amount: 12.5 }
+            calculator_preferences: { amount: '12.50' }
           }
         end
 

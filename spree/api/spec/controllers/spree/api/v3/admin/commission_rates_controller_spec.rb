@@ -114,8 +114,8 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
       expect(response).to have_http_status(:created)
       expect(json_response['bounds']).to eq(
-        'USD' => { 'min_amount' => '2.0', 'max_amount' => '20.0' },
-        'PLN' => { 'min_amount' => nil, 'max_amount' => '80.0' }
+        'USD' => { 'min_amount' => '2.00', 'max_amount' => '20.00' },
+        'PLN' => { 'min_amount' => nil, 'max_amount' => '80.00' }
       )
     end
   end

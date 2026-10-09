@@ -64,7 +64,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxLinesController, type: :control
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(tax_line.prefixed_id)
-      expect(json_response['amount']).to eq('1.5')
+      expect(json_response['amount']).to eq('1.50')
     end
   end
 

@@ -3,6 +3,7 @@ import type { StoreCredit } from '@spree/admin-sdk'
 import {
   CurrencySelect,
   currencyParts,
+  isPositiveMoney,
   mapSpreeErrorsToForm,
   normalizeMoneyInput,
   useMoneyLocale,
@@ -50,7 +51,7 @@ export function EditStoreCreditDialog({
   // Server rejects amount changes once any of it has been used. Lock the
   // field so the merchant doesn't submit a value that will only come back
   // as a 422 store_credit_in_use.
-  const amountLocked = Number(credit.amount_used ?? 0) > 0
+  const amountLocked = isPositiveMoney(credit.amount_used)
 
   // The amount hydrates from the canonical API value ("50.00") and is shown in
   // the person's own number format ("50,00" in German); submit normalizes it

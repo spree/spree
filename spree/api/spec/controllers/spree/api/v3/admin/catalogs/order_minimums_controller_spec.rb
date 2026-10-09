@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Admin::Catalogs::OrderMinimumsController, type: :
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
       expect(row['currency']).to eq('USD')
-      expect(row['amount']).to eq('500.0')
+      expect(row['amount']).to eq('500.00')
       expect(row['display_amount']).to include('500')
     end
   end

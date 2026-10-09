@@ -1,4 +1,8 @@
-import type { PreferenceField as PreferenceFieldDef } from '@spree/admin-sdk'
+import {
+  compareMoney,
+  isDecimalString,
+  type PreferenceField as PreferenceFieldDef,
+} from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -40,7 +44,12 @@ export function defaultPreferences(
   for (const field of schema) {
     if (field.type === 'password') continue
     if (field.default !== null && field.default !== undefined) {
-      out[field.key] = field.default
+      // A decimal default declared as a Ruby integer arrives as a JSON number,
+      // and the API refuses money sent back that way.
+      out[field.key] =
+        field.type === 'decimal' && typeof field.default === 'number'
+          ? String(field.default)
+          : field.default
       continue
     }
     const ctx = contextDefaults[field.key]
@@ -241,7 +250,10 @@ export function PreferenceField({
             onChange={(e) => {
               const raw = e.target.value
               if (raw === '') return onChange(null)
-              const parsed = field.type === 'integer' ? parseInt(raw, 10) : parseFloat(raw)
+              // A decimal (an amount, a percentage) stays the canonical string
+              // the number input yields; the API refuses money sent as a JSON number.
+              if (field.type === 'decimal') return onChange(isDecimalString(raw) ? raw : null)
+              const parsed = parseInt(raw, 10)
               onChange(Number.isNaN(parsed) ? null : parsed)
             }}
           />
@@ -516,5 +528,9 @@ function parseTiers(value: unknown, idPrefix: string): TierRowState[] {
       threshold: threshold === null || threshold === undefined ? '' : String(threshold),
       value: v === null || v === undefined ? '' : String(v),
     }))
-    .sort((a, b) => Number(a.threshold) - Number(b.threshold))
+    .sort((a, b) =>
+      isDecimalString(a.threshold) && isDecimalString(b.threshold)
+        ? compareMoney(a.threshold, b.threshold)
+        : 0,
+    )
 }

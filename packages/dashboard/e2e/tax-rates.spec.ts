@@ -12,7 +12,7 @@ async function createTaxRate(
   await expect(page.getByRole('heading', { name: /new tax rate/i })).toBeVisible()
 
   await page.locator('#name').fill(attrs.name)
-  await page.locator('#amount_percentage').fill(attrs.amount)
+  await page.locator('#rate_percent').fill(attrs.amount)
   // The seeded store always carries a `Default` tax category.
   await page.locator('#tax_category_id').click()
   await page.getByRole('option', { name: /^default$/i }).click()
@@ -60,8 +60,8 @@ test.describe('tax rates', () => {
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
 
     await rowButton(page, name).click()
-    await expect(page.locator('#amount_percentage')).toHaveValue('10', { timeout: 15_000 })
-    await page.locator('#amount_percentage').fill('12.5')
+    await expect(page.locator('#rate_percent')).toHaveValue('10', { timeout: 15_000 })
+    await page.locator('#rate_percent').fill('12.5')
     await page.getByRole('button', { name: /^save$/i }).click()
 
     const row = page.getByRole('row').filter({ has: rowButton(page, name) })

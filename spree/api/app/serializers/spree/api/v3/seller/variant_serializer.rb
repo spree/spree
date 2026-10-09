@@ -26,11 +26,13 @@ module Spree
                    purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS],
                    metadata: 'Record<string, unknown>'
 
-          attributes :metadata, :position, :cost_price, :cost_currency,
+          attributes :metadata, :position, :cost_currency,
                      :barcode, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      preorder_ships_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          money_attributes :cost_price, currency: :cost_currency, unit_price: true
 
           # The variant's own stored rules, not a buyer's resolved ones — a
           # seller edits the row.

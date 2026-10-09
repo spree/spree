@@ -40,7 +40,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
 
       expect(response).to have_http_status(:created)
       expect(json_response['data'].length).to eq(1)
-      expect(json_response['data'].first['amount']).to eq('-3.0')
+      expect(json_response['data'].first['amount']).to eq('-3.00')
       expect(order.reload.total).to eq(original_total - 3)
     end
 

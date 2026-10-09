@@ -1,5 +1,10 @@
 import type { CatalogProductTerm } from '@spree/admin-sdk'
-import { CurrencySelect, normalizeQuantityRule, useStore } from '@spree/dashboard-core'
+import {
+  CurrencySelect,
+  isPositiveMoney,
+  normalizeQuantityRule,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -192,7 +197,7 @@ function OrderMinimums({
         <div className="flex flex-col gap-2">
           {rows.map((row, index) => {
             const duplicate = usedCurrencies.indexOf(row.currency) !== index
-            const amountValid = !row.amount.trim() || Number(row.amount) > 0
+            const amountValid = !row.amount.trim() || isPositiveMoney(row.amount.trim())
 
             return (
               <div key={row.currency} className="flex flex-col gap-1">

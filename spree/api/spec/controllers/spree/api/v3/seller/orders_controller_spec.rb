@@ -237,8 +237,8 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
 
       row = json_response['payment_splits'].first
       expect(row['id']).to eq(split.prefixed_id)
-      expect(row).to include('captured_amount' => '100.0', 'refunded_amount' => '20.0',
-                             'net_captured_amount' => '80.0', 'display_captured_amount' => '$100.00')
+      expect(row).to include('captured_amount' => '100.00', 'refunded_amount' => '20.00',
+                             'net_captured_amount' => '80.00', 'display_captured_amount' => '$100.00')
       expect(row.keys).not_to include('payment_id', 'payment_number', 'payment_method')
     end
 
@@ -251,7 +251,7 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       get :show, params: { id: mine.prefixed_id }, as: :json
 
       item = json_response['items'].find { |row| row['id'] == line_item.prefixed_id }
-      expect(item).to include('discounted_amount' => '8.0', 'display_discounted_amount' => '$8.00')
+      expect(item).to include('discounted_amount' => '8.00', 'display_discounted_amount' => '$8.00')
     end
 
     it 'leaves the shares out unless asked' do

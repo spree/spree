@@ -13687,11 +13687,9 @@ paths:
                   tags: []
                   price:
                     id: price_UkLWZg9DAJ
-                    amount: '19.99'
-                    amount_in_cents: 1999
-                    compare_at_amount:
-                    compare_at_amount_in_cents:
                     currency: USD
+                    amount: '19.99'
+                    compare_at_amount:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -13774,11 +13772,9 @@ paths:
                 tags: []
                 price:
                   id: price_gbHJdmfrXB
-                  amount: '24.0'
-                  amount_in_cents: 2400
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '24.00'
+                  compare_at_amount:
                   display_amount: "$24.00"
                   display_compare_at_amount:
                   price_list_id:
@@ -13926,11 +13922,9 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -14001,11 +13995,9 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -14941,10 +14933,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--484d46dd60be3523918976c0cc622ec8eb33a9be
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ec7df9540f9e5a58f349aa7f06f79714cb0b3186
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -15008,15 +15000,15 @@ paths:
                 - currency: USD
                   settlement_currency: USD
                   converted: false
-                  earned: '40.0'
+                  earned: '40.00'
                   display_earned: "$40.00"
-                  payable: '40.0'
+                  payable: '40.00'
                   display_payable: "$40.00"
-                  paid: '15.0'
+                  paid: '15.00'
                   display_paid: "$15.00"
-                  balance: '25.0'
+                  balance: '25.00'
                   display_balance: "$25.00"
-                  pending: '0.0'
+                  pending: '0.00'
                   display_pending: "$0.00"
               schema:
                 type: object
@@ -15061,7 +15053,7 @@ paths:
                   resolution:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
-                  refund_total: '0.0'
+                  refund_total: '0.00'
                   display_refund_total: "$0.00"
                   approved_at:
                   resolved_at:
@@ -15117,7 +15109,7 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.0'
+                refund_total: '0.00'
                 display_refund_total: "$0.00"
                 approved_at:
                 resolved_at:
@@ -15200,7 +15192,7 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.0'
+                refund_total: '0.00'
                 display_refund_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 resolved_at:
@@ -15250,7 +15242,7 @@ paths:
                 resolution: refund
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.0'
+                refund_total: '0.00'
                 display_refund_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 resolved_at: '2026-01-15T12:00:00Z'
@@ -15322,7 +15314,7 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.0'
+                refund_total: '0.00'
                 display_refund_total: "$0.00"
                 approved_at:
                 resolved_at:
@@ -15808,8 +15800,8 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 81
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -15915,8 +15907,8 @@ paths:
                 - id: dr_gbHJdmfrXB
                   name: UPS Ground 82
                   selected: true
-                  cost: '10.0'
-                  total: '10.0'
+                  cost: '10.00'
+                  total: '10.00'
                   carrier:
                   service_level:
                   estimated_delivery_date:
@@ -16029,8 +16021,8 @@ paths:
                 - id: dr_gbHJdmfrXB
                   name: UPS Ground 83
                   selected: true
-                  cost: '10.0'
-                  total: '10.0'
+                  cost: '10.00'
+                  total: '10.00'
                   carrier:
                   service_level:
                   estimated_delivery_date:
@@ -16123,8 +16115,8 @@ paths:
                 - id: dr_gbHJdmfrXB
                   name: UPS Ground 84
                   selected: true
-                  cost: '10.0'
-                  total: '10.0'
+                  cost: '10.00'
+                  total: '10.00'
                   carrier:
                   service_level:
                   estimated_delivery_date:
@@ -16279,31 +16271,31 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   internal_note:
                   internal_note_html:
-                  item_total: '10.0'
+                  item_total: '10.00'
                   display_item_total: "$10.00"
-                  delivery_total: '100.0'
+                  delivery_total: '100.00'
                   display_delivery_total: "$100.00"
-                  discount_total: '0.0'
+                  discount_total: '0.00'
                   display_discount_total: "$0.00"
-                  adjustment_total: '0.0'
+                  adjustment_total: '0.00'
                   display_adjustment_total: "$0.00"
-                  included_tax_total: '0.0'
+                  included_tax_total: '0.00'
                   display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.0'
+                  additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  tax_total: '0.0'
+                  tax_total: '0.00'
                   display_tax_total: "$0.00"
-                  total: '110.0'
+                  total: '110.00'
                   display_total: "$110.00"
-                  payment_total: '0.0'
+                  payment_total: '0.00'
                   display_payment_total: "$0.00"
-                  amount_due: '110.0'
+                  amount_due: '110.00'
                   display_amount_due: "$110.00"
-                  commission_amount_total: '0.0'
+                  commission_amount_total: '0.00'
                   display_commission_amount_total: "$0.00"
-                  commission_tax_total: '0.0'
+                  commission_tax_total: '0.00'
                   display_commission_tax_total: "$0.00"
-                  commission_total: '0.0'
+                  commission_total: '0.00'
                   display_commission_total: "$0.00"
                   canceled_at:
                   cancel_reason_name:
@@ -16314,12 +16306,12 @@ paths:
                     options_text: ''
                     quantity: 1
                     currency: USD
-                    price: '10.0'
+                    price: '10.00'
                     display_price: "$10.00"
-                    discounted_amount: '10.0'
+                    discounted_amount: '10.00'
                     display_discounted_amount: "$10.00"
-                    additional_tax_total: '0.0'
-                    total: '10.0'
+                    additional_tax_total: '0.00'
+                    total: '10.00'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
                     sku: SKU-257
@@ -16351,8 +16343,8 @@ paths:
                     - id: dr_gbHJdmfrXB
                       name: UPS Ground 86
                       selected: true
-                      cost: '10.0'
-                      total: '10.0'
+                      cost: '10.00'
+                      total: '10.00'
                       carrier:
                       service_level:
                       estimated_delivery_date:
@@ -16378,7 +16370,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 167 Lovely Street
+                    address1: 168 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16400,7 +16392,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 166 Lovely Street
+                    address1: 167 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16483,31 +16475,31 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                payment_total: '0.0'
+                payment_total: '0.00'
                 display_payment_total: "$0.00"
-                amount_due: '110.0'
+                amount_due: '110.00'
                 display_amount_due: "$110.00"
-                commission_amount_total: '0.0'
+                commission_amount_total: '0.00'
                 display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
+                commission_tax_total: '0.00'
                 display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
+                commission_total: '0.00'
                 display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
@@ -16518,12 +16510,12 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
+                  price: '10.00'
                   display_price: "$10.00"
-                  discounted_amount: '10.0'
+                  discounted_amount: '10.00'
                   display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-258
@@ -16555,8 +16547,8 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 87
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -16582,7 +16574,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 169 Lovely Street
+                  address1: 170 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16604,7 +16596,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 168 Lovely Street
+                  address1: 169 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16683,31 +16675,31 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                payment_total: '0.0'
+                payment_total: '0.00'
                 display_payment_total: "$0.00"
-                amount_due: "-0.0"
+                amount_due: '0.00'
                 display_amount_due: "$0.00"
-                commission_amount_total: '0.0'
+                commission_amount_total: '0.00'
                 display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
+                commission_tax_total: '0.00'
                 display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
+                commission_total: '0.00'
                 display_commission_total: "$0.00"
                 canceled_at: '2026-01-15T12:00:00Z'
                 cancel_reason_name:
@@ -16718,12 +16710,12 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
+                  price: '10.00'
                   display_price: "$10.00"
-                  discounted_amount: '10.0'
+                  discounted_amount: '10.00'
                   display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-261
@@ -16755,8 +16747,8 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 90
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -16782,7 +16774,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 175 Lovely Street
+                  address1: 176 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16804,7 +16796,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 174 Lovely Street
+                  address1: 175 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16890,31 +16882,31 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                payment_total: '0.0'
+                payment_total: '0.00'
                 display_payment_total: "$0.00"
-                amount_due: '110.0'
+                amount_due: '110.00'
                 display_amount_due: "$110.00"
-                commission_amount_total: '0.0'
+                commission_amount_total: '0.00'
                 display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
+                commission_tax_total: '0.00'
                 display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
+                commission_total: '0.00'
                 display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
@@ -16925,12 +16917,12 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
+                  price: '10.00'
                   display_price: "$10.00"
-                  discounted_amount: '10.0'
+                  discounted_amount: '10.00'
                   display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-262
@@ -16962,8 +16954,8 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 91
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -17011,7 +17003,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 176 Lovely Street
+                  address1: 177 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17160,31 +17152,31 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                payment_total: '0.0'
+                payment_total: '0.00'
                 display_payment_total: "$0.00"
-                amount_due: '110.0'
+                amount_due: '110.00'
                 display_amount_due: "$110.00"
-                commission_amount_total: '0.0'
+                commission_amount_total: '0.00'
                 display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
+                commission_tax_total: '0.00'
                 display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
+                commission_total: '0.00'
                 display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
@@ -17195,12 +17187,12 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
+                  price: '10.00'
                   display_price: "$10.00"
-                  discounted_amount: '10.0'
+                  discounted_amount: '10.00'
                   display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-264
@@ -17232,8 +17224,8 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 93
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -17259,7 +17251,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 181 Lovely Street
+                  address1: 182 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17281,7 +17273,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 180 Lovely Street
+                  address1: 181 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17336,31 +17328,31 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note: Packed with the fragile insert.
                 internal_note_html: "<p>Packed with the fragile insert.</p>"
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                payment_total: '0.0'
+                payment_total: '0.00'
                 display_payment_total: "$0.00"
-                amount_due: '110.0'
+                amount_due: '110.00'
                 display_amount_due: "$110.00"
-                commission_amount_total: '0.0'
+                commission_amount_total: '0.00'
                 display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
+                commission_tax_total: '0.00'
                 display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
+                commission_total: '0.00'
                 display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
@@ -17371,12 +17363,12 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
+                  price: '10.00'
                   display_price: "$10.00"
-                  discounted_amount: '10.0'
+                  discounted_amount: '10.00'
                   display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-265
@@ -17408,8 +17400,8 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 94
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -17435,7 +17427,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 183 Lovely Street
+                  address1: 184 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17457,7 +17449,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 182 Lovely Street
+                  address1: 183 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17974,7 +17966,7 @@ paths:
                   period_end:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '120.0'
+                  amount: '120.00'
                   display_amount: "$120.00"
                   transfers_count: 1
                   provider: system
@@ -18036,7 +18028,7 @@ paths:
                 period_end:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '120.0'
+                amount: '120.00'
                 display_amount: "$120.00"
                 transfers_count: 1
                 provider: system
@@ -18090,9 +18082,9 @@ paths:
                   status: requested
                   order_id: or_UkLWZg9DAJ
                   reason_id:
-                  refund_total: '10.0'
+                  refund_total: '10.00'
                   display_refund_total: "$10.00"
-                  refund_tax_total: '0.0'
+                  refund_tax_total: '0.00'
                   display_refund_tax_total: "$0.00"
                   approved_at:
                   received_at:
@@ -18100,8 +18092,8 @@ paths:
                   canceled_at:
                   memo:
                   stock_location_id: sloc_UkLWZg9DAJ
-                  refunded_total: '0.0'
-                  refundable_total: '10.0'
+                  refunded_total: '0.00'
+                  refundable_total: '10.00'
                   display_refunded_total: "$0.00"
                 meta:
                   page: 1
@@ -18152,9 +18144,9 @@ paths:
                 status: requested
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
+                refund_total: '10.00'
                 display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
+                refund_tax_total: '0.00'
                 display_refund_tax_total: "$0.00"
                 approved_at:
                 received_at:
@@ -18162,8 +18154,8 @@ paths:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
+                refunded_total: '0.00'
+                refundable_total: '10.00'
                 display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
@@ -18240,9 +18232,9 @@ paths:
                 status: approved
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
+                refund_total: '10.00'
                 display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
+                refund_tax_total: '0.00'
                 display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at:
@@ -18250,8 +18242,8 @@ paths:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
+                refunded_total: '0.00'
+                refundable_total: '10.00'
                 display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
@@ -18294,9 +18286,9 @@ paths:
                 status: received
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
+                refund_total: '10.00'
                 display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
+                refund_tax_total: '0.00'
                 display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
@@ -18304,8 +18296,8 @@ paths:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
+                refunded_total: '0.00'
+                refundable_total: '10.00'
                 display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
@@ -18371,9 +18363,9 @@ paths:
                 status: refunded
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
+                refund_total: '10.00'
                 display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
+                refund_tax_total: '0.00'
                 display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
@@ -18381,8 +18373,8 @@ paths:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '10.0'
-                refundable_total: '0.0'
+                refunded_total: '10.00'
+                refundable_total: '0.00'
                 display_refunded_total: "$10.00"
               schema:
                 "$ref": "#/components/schemas/Return"
@@ -18444,9 +18436,9 @@ paths:
                 status: canceled
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
+                refund_total: '10.00'
                 display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
+                refund_tax_total: '0.00'
                 display_refund_tax_total: "$0.00"
                 approved_at:
                 received_at:
@@ -18454,8 +18446,8 @@ paths:
                 canceled_at: '2026-01-15T12:00:00Z'
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
+                refunded_total: '0.00'
+                refundable_total: '10.00'
                 display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
@@ -18779,9 +18771,9 @@ paths:
                   reference:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '42.0'
+                  amount: '42.00'
                   display_amount: "$42.00"
-                  settled_amount: '42.0'
+                  settled_amount: '42.00'
                   settled_currency: USD
                   converted: false
                   order_id: or_UkLWZg9DAJ
@@ -18846,9 +18838,9 @@ paths:
                 reference:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '42.0'
+                amount: '42.00'
                 display_amount: "$42.00"
-                settled_amount: '42.0'
+                settled_amount: '42.00'
                 settled_currency: USD
                 converted: false
                 order_id: or_UkLWZg9DAJ
@@ -19658,21 +19650,19 @@ components:
       properties:
         id:
           type: string
-        amount:
-          type: string
-        amount_in_cents:
-          type: number
         currency:
           type: string
+        amount:
+          type: string
+          nullable: true
         display_amount:
           type: string
         recorded_at:
           type: string
       required:
       - id
-      - amount
-      - amount_in_cents
       - currency
+      - amount
       - display_amount
       - recorded_at
       x-typelizer: true
@@ -19681,19 +19671,13 @@ components:
       properties:
         id:
           type: string
+        currency:
+          type: string
+          nullable: true
         amount:
           type: string
           nullable: true
-        amount_in_cents:
-          type: number
-          nullable: true
         compare_at_amount:
-          type: string
-          nullable: true
-        compare_at_amount_in_cents:
-          type: number
-          nullable: true
-        currency:
           type: string
           nullable: true
         display_amount:
@@ -19707,11 +19691,9 @@ components:
           nullable: true
       required:
       - id
-      - amount
-      - amount_in_cents
-      - compare_at_amount
-      - compare_at_amount_in_cents
       - currency
+      - amount
+      - compare_at_amount
       - display_amount
       - display_compare_at_amount
       - price_list_id
@@ -21894,6 +21876,7 @@ components:
           type: string
         display_cost:
           type: string
+          nullable: true
         integration_id:
           type: string
           nullable: true
@@ -22279,9 +22262,6 @@ components:
           type: object
         position:
           type: number
-        cost_price:
-          type: string
-          nullable: true
         cost_currency:
           type: string
           nullable: true
@@ -22304,6 +22284,9 @@ components:
           type: string
         updated_at:
           type: string
+        cost_price:
+          type: string
+          nullable: true
         preorderable:
           type: boolean
         available_stock:
@@ -22349,7 +22332,6 @@ components:
       - option_values
       - metadata
       - position
-      - cost_price
       - cost_currency
       - barcode
       - backorder_limit
@@ -22358,6 +22340,7 @@ components:
       - customs_description
       - created_at
       - updated_at
+      - cost_price
       - preorderable
       - available_stock
       - total_on_hand

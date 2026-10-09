@@ -28,7 +28,7 @@ module Spree
                      created_at: :iso8601
 
           attribute :minimum_payout_amount do |seller|
-            seller.minimum_payout_amount&.to_s
+            Spree::Money::Rounding.format(seller.minimum_payout_amount, seller.store&.default_currency)
           end
 
           # Rebound from the inherited store declaration to this branch's own

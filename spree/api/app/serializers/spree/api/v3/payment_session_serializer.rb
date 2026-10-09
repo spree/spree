@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class PaymentSessionSerializer < BaseSerializer
-        typelize status: [:string, enum: Spree::PaymentSession.statuses, enum_type_name: 'PaymentSessionStatus'], amount: :string, currency: :string,
+        typelize status: [:string, enum: Spree::PaymentSession.statuses, enum_type_name: 'PaymentSessionStatus'], currency: :string,
                  external_id: :string, external_data: 'Record<string, unknown>',
                  expires_at: [:string, nullable: true], customer_external_id: [:string, nullable: true],
                  payment_method_id: :string, order_id: [:string, nullable: true],
@@ -12,9 +12,7 @@ module Spree
                    :customer_external_id,
                    expires_at: :iso8601
 
-        attribute :amount do |session|
-          session.amount&.to_s
-        end
+        money_attributes :amount
 
         prefixed_id_attributes :payment_method
 

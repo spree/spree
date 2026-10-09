@@ -1,5 +1,5 @@
 import { FulfillmentEditDialog as SharedFulfillmentEditDialog } from '@spree/dashboard-ui'
-import { type Fulfillment, SpreeError } from '@spree/seller-sdk'
+import { type Fulfillment, isZeroMoney, SpreeError } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'
@@ -38,7 +38,7 @@ export function FulfillmentEditDialog({
   const rateOptions = (fulfillment.delivery_rates ?? []).map((rate) => ({
     value: rate.id,
     label: `${rate.name} — ${
-      Number.parseFloat(rate.cost) === 0 ? t('orders.fulfillments.free') : rate.display_cost
+      isZeroMoney(rate.cost) ? t('orders.fulfillments.free') : rate.display_cost
     }`,
   }))
 

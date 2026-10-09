@@ -4,7 +4,7 @@ sidebarTitle: "Monetary Amounts"
 description: "How the Admin API represents money as decimal strings, why JSON numbers are avoided, and how to send prices, costs, and amounts safely in requests."
 ---
 
-All monetary values in the Admin API are **canonical decimal strings** (e.g., `"29.99"`, `"0.0"` — period decimal, no thousands grouping), both in responses and in request bodies. Strings preserve decimal precision and avoid the floating-point rounding issues common with JSON numbers — critical when an admin is setting prices and costs. The format is the same regardless of locale; localized formatting is a presentation concern handled by the client (see [Canonical format](#canonical-format-not-localized)).
+All monetary values in the Admin API are **canonical decimal strings** (period decimal, no thousands grouping), both in responses and in request bodies. Responses write each amount with exactly its currency's decimal places — `"29.99"` in USD, `"1.500"` in Kuwaiti dinar, `"1000"` in yen — and unit prices (`price`, `amount` on a price, `compare_at_amount`, `cost_price`, `unit_cost`) with up to four (`"0.0125"`). A currency's decimal places are its `decimal_places`, from ISO 4217. Strings preserve decimal precision and avoid the floating-point rounding issues common with JSON numbers — critical when an admin is setting prices and costs. The format is the same regardless of locale; localized formatting is a presentation concern handled by the client (see [Canonical format](#canonical-format-not-localized)).
 
 ## Reading
 
@@ -19,7 +19,7 @@ Every monetary field is returned as a string, alongside a `display_` companion t
 }
 ```
 
-Use `display_*` for rendering and the raw string fields for calculations (`parseFloat(price.amount)`).
+Use `display_*` for rendering and the raw string fields for calculations, with a decimal library rather than `parseFloat`. The SDK exports `sumMoney`, `subtractMoney`, `multiplyMoney`, `compareMoney` and `isZeroMoney`, which work on the strings exactly.
 
 ## Writing
 
@@ -40,7 +40,19 @@ spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","
 
 </CodeGroup>
 
-JSON numbers are also accepted (`"amount": 29.99`), but strings are recommended: they round-trip with what the API returns and sidestep float precision. A `null` clears the value.
+Only strings are accepted. A JSON number (`"amount": 29.99`), a localized or grouped string (`"1.234,56"`, `"1,234.56"`), or more decimals than the field holds (`"19.999"` in USD, `"100.5"` in yen; unit prices allow four) is refused with `422` and the error code `invalid_money_format`, naming the field:
+
+```json
+{
+  "error": {
+    "code": "invalid_money_format",
+    "message": "amount must be a decimal string like \"19.99\"",
+    "details": { "amount": ["must be a decimal string like \"19.99\""] }
+  }
+}
+```
+
+A `null` clears the value.
 
 ### Canonical format — not localized
 
@@ -77,4 +89,8 @@ Calculators and some promotion rules carry their amounts inside an untyped `pref
 | **Calculator** `flat_rate` (shipping) | `amount`, `minimum_item_total`, `maximum_item_total` |
 | **Promotion Rule** `item_total` | `amount_min`, `amount_max` |
 
-Percentage keys (`percent`, `flat_percent`, `base_percent`), weights (`minimum_weight`, `maximum_weight`), and quantities (`max_items`, `min_quantity`) are **not** money — those stay numbers. Promotion actions (`create_adjustment`, `create_item_adjustments`) hold their money inside a nested `calculator.preferences`, per the calculator rows above.
+Percentage keys (`percent`, `flat_percent`, `base_percent`) are rates: decimal strings too (`"10"`), with no fixed number of decimals. Weights (`minimum_weight`, `maximum_weight`) and quantities (`max_items`, `min_quantity`) are not money and stay numbers. Promotion actions (`create_adjustment`, `create_item_adjustments`) hold their money inside a nested `calculator.preferences`, per the calculator rows above.
+
+## Rates and percentages
+
+Rates and percentages are decimal strings without trailing zeros, on read and write. A field ending in `_percent` or `_percentage` holds 0–100 (`"23"`); a field named `rate` or ending in `_rate` holds a fraction (`"0.23"`). A tax rate has both: `rate` and `rate_percent`, and accepts either on write.
