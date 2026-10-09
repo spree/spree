@@ -52,6 +52,23 @@ export interface PreferenceFieldDef {
 }
 
 const DECIMAL_PATTERN = '^-?\\d+(\\.\\d+)?$'
+const DECIMAL_REGEX = new RegExp(DECIMAL_PATTERN)
+
+/**
+ * The schema with only the settings `keep` accepts — for a form that edits
+ * the others with a control of its own.
+ */
+export function filterPreferenceSchema(
+  schema: PreferenceSchema,
+  keep: (key: string, property: PreferencePropertySchema) => boolean,
+): PreferenceSchema {
+  return {
+    ...schema,
+    properties: Object.fromEntries(
+      Object.entries(schema.properties).filter(([key, property]) => keep(key, property)),
+    ),
+  }
+}
 
 function fieldType(property: PreferencePropertySchema): string {
   if (property['x-spree-secret']) return 'password'
@@ -501,7 +518,7 @@ function NumberPreferenceInput({
       if (Number.isInteger(number)) onChange(number)
       return
     }
-    onChange(new RegExp(DECIMAL_PATTERN).test(trimmed) ? trimmed : String(number))
+    onChange(DECIMAL_REGEX.test(trimmed) ? trimmed : String(number))
   }
 
   return (

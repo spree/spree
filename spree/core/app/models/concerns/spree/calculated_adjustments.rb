@@ -32,21 +32,34 @@ module Spree
       end
 
       # API v3 writer for the `calculator: { type:, preferences: {} }`
-      # payload. Preferences are checked against the calculator's schema and
-      # written through its typed writers.
-      def assign_calculator_attributes(attrs)
+      # payload. A type the registry does not list is an error on
+      # `calculator`; preferences are checked against the calculator's schema
+      # and written through its typed writers.
+      #
+      # @param attrs [Hash, ActionController::Parameters, nil]
+      # @param pointer [String] where the calculator sits in the request
+      # @return [void]
+      def assign_calculator_attributes(attrs, pointer: '/calculator')
         return if attrs.nil?
 
         attrs = attrs.to_h.with_indifferent_access
-        self.calculator_type = attrs[:type] if attrs[:type].present?
+        type = attrs[:type].to_s
+        if type.present? && calculator&.class&.api_type != type
+          registry = self.class.respond_to?(:calculators) ? self.class.calculators : []
+          registered = registry.find { |klass| klass.api_type == type }
+          return errors.add(:calculator, :invalid) unless registered
 
-        return if calculator.nil? || attrs[:preferences].blank?
-
-        begin
-          calculator.assign_preferences(attrs[:preferences])
-        rescue Spree::Preferences::InvalidPreferences => e
-          raise e.within('/calculator')
+          # Resolved from the registry entry's own name, never the request's:
+          # in development the registry can hold a class from an earlier
+          # reload, whose instances fail the association's type check.
+          self.calculator = registered.to_s.constantize.new
         end
+        return if attrs[:preferences].blank?
+
+        # Preferences sent without a type land on the default calculator
+        # rather than on nothing, where the model builds one.
+        ensure_calculator if respond_to?(:ensure_calculator, true)
+        calculator&.assign_preferences(attrs[:preferences], pointer: "#{pointer}/preferences")
       end
 
       private

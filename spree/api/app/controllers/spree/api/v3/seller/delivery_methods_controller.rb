@@ -64,7 +64,7 @@ module Spree
             @resource.assign_attributes(assignable_params)
             authorize_resource!(@resource, :create)
             rederive_origin_group(@resource)
-            assign_calculator(@resource)
+            @resource.assign_calculator_attributes(permitted_params[:calculator])
 
             if @resource.errors.empty? && @resource.save
               render json: serialize_resource(@resource), status: :created
@@ -76,7 +76,7 @@ module Spree
           def update
             @resource.assign_attributes(assignable_params)
             rederive_origin_group(@resource)
-            assign_calculator(@resource)
+            @resource.assign_calculator_attributes(permitted_params[:calculator])
 
             if @resource.errors.empty? && @resource.save
               render json: serialize_resource(@resource)
@@ -215,46 +215,6 @@ module Spree
               raise ActiveRecord::RecordNotFound unless allowed.include?(row['type'].to_s)
 
               row
-            end
-          end
-
-          def assign_calculator(delivery_method)
-            calculator_type = permitted_params.dig(:calculator, :type)
-            preferences = permitted_params.dig(:calculator, :preferences)
-
-            if calculator_type.present? && delivery_method.calculator&.class&.api_type != calculator_type
-              registered = Spree::DeliveryMethod.calculators.find do |klass|
-                klass.api_type == calculator_type
-              end
-              unless registered
-                delivery_method.errors.add(:calculator, :invalid)
-                return
-              end
-
-              # Resolved from the registry entry's OWN name, never the
-              # request's: nothing user-supplied reaches `constantize`. Going
-              # back through the name rather than instantiating `registered`
-              # directly is what survives a reload — in development the
-              # registry holds a class from an earlier one, and an instance of
-              # it fails the association's type check.
-              delivery_method.calculator = registered.to_s.constantize.new
-            end
-
-            return if preferences.blank?
-
-            # A payload may carry preferences without naming a calculator —
-            # editing the amount on a method that already has one, or creating
-            # with the default. The model only builds the default calculator
-            # at validation, so without this the preferences land on nothing
-            # and the amount the merchant typed is silently replaced by a free
-            # rate.
-            delivery_method.ensure_calculator
-            return if delivery_method.calculator.nil?
-
-            begin
-              delivery_method.calculator.assign_preferences(preferences)
-            rescue Spree::Preferences::InvalidPreferences => e
-              raise e.within('/calculator')
             end
           end
         end

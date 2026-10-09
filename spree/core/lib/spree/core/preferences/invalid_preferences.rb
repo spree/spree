@@ -13,15 +13,6 @@ module Spree
         @failures = failures.map { |failure| failure.merge(pointer: "#{prefix}#{failure[:pointer]}") }
         super(@failures.map { |failure| "#{failure[:pointer]}: #{failure[:message]}" }.join('; '))
       end
-
-      # The same failures, for preferences nested deeper in the request — a
-      # rule in a list (`/rules/1`) or a calculator (`/calculator`).
-      #
-      # @param prefix [String]
-      # @return [InvalidPreferences]
-      def within(prefix)
-        self.class.new(failures, prefix: prefix)
-      end
     end
   end
 end

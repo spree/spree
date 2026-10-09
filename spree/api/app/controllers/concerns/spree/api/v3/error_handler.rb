@@ -290,11 +290,8 @@ module Spree
         # A setting the API reads and writes under its plain name reports its
         # errors under that name too, never the `preferred_` one the model uses.
         def wire_error_attribute(errors, attribute)
-          name = attribute.to_s.delete_prefix('preferred_')
-          return attribute if name == attribute.to_s
-
           record_class = errors.objects.first&.base&.class
-          record_class.respond_to?(:exposed_preference?) && record_class.exposed_preference?(name) ? name.to_sym : attribute
+          (record_class.exposed_preference_name(attribute) if record_class.respond_to?(:exposed_preference_name)) || attribute
         end
 
         # Infer error code from context

@@ -1,5 +1,6 @@
 import {
   defaultPreferences,
+  filterPreferenceSchema,
   PageHeader,
   PreferencesForm,
   type ResourceSearch,
@@ -642,8 +643,8 @@ function DeliveryMethodSheet({
 function renderableSchema(schema: PreferenceSchema | undefined): PreferenceSchema | undefined {
   if (!schema) return undefined
 
-  const properties = Object.entries(schema.properties).filter(
-    ([, property]) => typeof property.additionalProperties !== 'object',
+  return filterPreferenceSchema(
+    schema,
+    (_key, property) => typeof property.additionalProperties !== 'object',
   )
-  return { ...schema, properties: Object.fromEntries(properties) }
 }

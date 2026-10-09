@@ -10,7 +10,7 @@ module Spree
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
-          preference_attributes Spree::Channel, :storefront_access, :guest_checkout
+          preference_attributes Spree::Channel, except: %i[order_routing_strategy]
 
           api_type_attributes :order_routing_strategy
 

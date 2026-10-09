@@ -490,28 +490,28 @@ describe Spree::Preferences::Preferable, type: :model do
 
     describe '#assign_preferences' do
       it 'writes a payload that matches the schema' do
-        record.assign_preferences('quantities' => [1, 2], 'channel_ids' => [channel.prefixed_id])
+        record.assign_preferences({ 'quantities' => [1, 2], 'channel_ids' => [channel.prefixed_id] })
 
         expect(record.preferred_quantities).to eq([1, 2])
         expect(record.preferences[:channel_ids]).to eq([channel.id.to_s])
       end
 
       it 'refuses the whole payload, naming each failing value, when any value does not match' do
-        expect { record.assign_preferences('flavor' => 'mint', 'quantities' => ['many'], 'colour' => 'red') }.to raise_error(
+        expect { record.assign_preferences({ 'flavor' => 'mint', 'quantities' => ['many'], 'colour' => 'red' }) }.to raise_error(
           Spree::Preferences::InvalidPreferences
         ) { |error| expect(error.failures.pluck(:pointer)).to contain_exactly('/preferences/quantities/0', '/preferences/colour') }
         expect(record.preferred_flavor).to eq('vanilla')
       end
 
       it 'refuses an id of another model by its prefix' do
-        expect { record.assign_preferences('channel_ids' => ["mkt_#{Spree::PrefixedId::SQIDS.encode([channel.id])}"]) }
+        expect { record.assign_preferences({ 'channel_ids' => ["mkt_#{Spree::PrefixedId::SQIDS.encode([channel.id])}"] }) }
           .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/channel_ids/0})
       end
 
       it 'refuses an id outside the declared scope' do
         other_channel = create(:channel, store: create(:store))
 
-        expect { record.assign_preferences('channel_ids' => [other_channel.prefixed_id]) }
+        expect { record.assign_preferences({ 'channel_ids' => [other_channel.prefixed_id] }) }
           .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/channel_ids})
       end
     end

@@ -19,8 +19,8 @@ module Spree
 
         def translate_legacy_preference_params(model)
           params.keys.each do |key|
-            name = key.to_s.delete_prefix('preferred_')
-            next if name == key.to_s || params.key?(name) || !model.exposed_preference?(name)
+            name = model.exposed_preference_name(key)&.to_s
+            next if name.nil? || params.key?(name)
 
             Spree::Deprecation.warn("The `#{key}` parameter is deprecated and will be removed in Spree 6.1. Send `#{name}` instead.")
             params[name] = params.delete(key)

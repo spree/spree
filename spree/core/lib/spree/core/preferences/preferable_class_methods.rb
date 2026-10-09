@@ -38,10 +38,9 @@ module Spree::Preferences
     end
 
     # The value types a list item, a hash value or an object property may
-    # declare, and the formats a string may carry. They are what
-    # {Spree::PreferenceSchema::JsonSchema} compiles to JSON Schema.
+    # declare — what {Spree::PreferenceSchema::JsonSchema} compiles to JSON
+    # Schema, along with its `FORMATS`.
     ITEM_TYPES = %i[string integer decimal money boolean id object].freeze
-    FORMATS = %i[currency iso_country timezone locale url color].freeze
 
     # Declares a typed preference with a `preferred_<name>` reader and writer
     # and a `prefers_<name>?` query. On a model, the value lives in the
@@ -68,7 +67,7 @@ module Spree::Preferences
     # @option options [Symbol] :values the type of a `:hash`'s values
     # @option options [Hash{Symbol => Symbol}] :properties the fields of each `of: :object` item
     # @option options [Boolean] :money a `:decimal` that is an amount of money
-    # @option options [Symbol] :format a string's domain format (see {FORMATS})
+    # @option options [Symbol] :format a string's domain format (see {Spree::PreferenceSchema::JsonSchema::FORMATS})
     # @option options [String, Proc] :model the record class an `of: :id` list points at
     # @option options [Proc] :scope `->(owner) { relation }` the ids must be found in
     # @option options [Array, Proc] :choices the fixed set a value must come from
@@ -150,18 +149,18 @@ module Spree::Preferences
 
         define_method(name) { public_send(:"preferred_#{name}") }
         define_method(:"#{name}=") { |value| public_send(:"preferred_#{name}=", value) }
-        own_exposed_preference_names << name
       end
+      self.exposed_preference_names = (exposed_preference_names | names.map(&:to_sym)).freeze
     end
 
-    # Whether the preference is read and written under its plain name, so an
-    # error on `preferred_<name>` can be reported as `<name>`.
+    # The plain name an exposed preference goes by, for a key still using the
+    # DSL's `preferred_` prefix — an error key or a 5.x request parameter.
     #
-    # @param name [Symbol, String]
-    # @return [Boolean]
-    def exposed_preference?(name)
-      own_exposed_preference_names.include?(name.to_sym) ||
-        (superclass.respond_to?(:exposed_preference?) && superclass.exposed_preference?(name))
+    # @param key [Symbol, String] e.g. `preferred_guest_checkout`
+    # @return [Symbol, nil] e.g. `:guest_checkout`, or nil when the key names no exposed preference
+    def exposed_preference_name(key)
+      name = key.to_s.delete_prefix('preferred_')
+      name.to_sym if name != key.to_s && exposed_preference_names.include?(name.to_sym)
     end
 
     private
@@ -182,7 +181,9 @@ module Spree::Preferences
       [options[:of], options[:values], *options[:properties]&.values].compact.each do |item_type|
         raise ArgumentError, "Unknown item type `#{item_type}` on preference `#{name}`" unless ITEM_TYPES.include?(item_type)
       end
-      raise ArgumentError, "Unknown format `#{options[:format]}` on preference `#{name}`" if options[:format] && FORMATS.exclude?(options[:format])
+      if options[:format] && !Spree::PreferenceSchema::JsonSchema::FORMATS.key?(options[:format])
+        raise ArgumentError, "Unknown format `#{options[:format]}` on preference `#{name}`"
+      end
       raise ArgumentError, "`of: :id` needs `model:` on preference `#{name}`" if options[:of] == :id && options[:model].blank?
       raise ArgumentError, "`of: :object` needs `properties:` on preference `#{name}`" if options[:of] == :object && options[:properties].blank?
 
@@ -197,10 +198,6 @@ module Spree::Preferences
         "#{self.name} preference `#{name}` (#{type}) needs #{missing}; until it has one, its schema accepts any value. " \
         'Spree 6.1 will raise for an incomplete declaration.'
       )
-    end
-
-    def own_exposed_preference_names
-      @own_exposed_preference_names ||= Set.new
     end
 
     def own_preference_definitions

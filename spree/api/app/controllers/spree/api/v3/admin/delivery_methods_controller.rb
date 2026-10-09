@@ -80,7 +80,7 @@ module Spree
           def create
             @resource = model_class.new(assignable_params)
             authorize_resource!(@resource, :create)
-            assign_calculator(@resource)
+            @resource.assign_calculator_attributes(permitted_params[:calculator])
 
             if @resource.errors.empty? && @resource.save
               render json: serialize_resource(@resource), status: :created
@@ -91,7 +91,7 @@ module Spree
 
           def update
             @resource.assign_attributes(assignable_params)
-            assign_calculator(@resource)
+            @resource.assign_calculator_attributes(permitted_params[:calculator])
 
             if @resource.errors.empty? && @resource.save
               render json: serialize_resource(@resource)
@@ -199,40 +199,6 @@ module Spree
               accessible_by(current_ability, :show).
               where(id: decode_prefixed_ids(ids)).
               pluck(:id)
-          end
-
-          def assign_calculator(delivery_method)
-            calculator_type = permitted_params.dig(:calculator, :type)
-            preferences = permitted_params.dig(:calculator, :preferences)
-
-            if calculator_type.present? && delivery_method.calculator&.class&.api_type != calculator_type
-              selected_calculator_class = Spree::DeliveryMethod.calculators.find do |klass|
-                klass.api_type == calculator_type
-              end
-              unless selected_calculator_class
-                delivery_method.errors.add(:calculator, :invalid)
-                return
-              end
-
-              delivery_method.calculator = selected_calculator_class.new
-            end
-
-            return if preferences.blank?
-
-            # A payload may carry preferences without naming a calculator —
-            # editing the amount on a method that already has one, or creating
-            # with the default. The model only builds the default calculator
-            # at validation, so without this the preferences land on nothing
-            # and the amount the merchant typed is silently replaced by a free
-            # rate.
-            delivery_method.ensure_calculator
-            return if delivery_method.calculator.nil?
-
-            begin
-              delivery_method.calculator.assign_preferences(preferences)
-            rescue Spree::Preferences::InvalidPreferences => e
-              raise e.within('/calculator')
-            end
           end
         end
       end

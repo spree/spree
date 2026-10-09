@@ -18,9 +18,14 @@ require 'spree/core/preferences/preferable_class_methods'
 module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
+  BOOLEAN_TYPE = ActiveModel::Type::Boolean.new
+
   included do
     serialize :preferences, coder: Spree::Metadata::HashSerializer
     extend Spree::Preferences::PreferableClassMethods
+
+    # The preferences read and written under their plain names (see `exposes_preferences`).
+    class_attribute :exposed_preference_names, instance_accessor: false, default: Set.new.freeze
   end
 
   # JSON keeps decimals and times as strings; the declared type turns them
@@ -159,13 +164,15 @@ module Spree::Preferences::Preferable
   # sent back masked, as it was read, keeps the stored one; `null` clears it.
   #
   # @param values [Hash, ActionController::Parameters]
+  # @param pointer [String] where the preferences object sits in the request,
+  #   e.g. `/rules/1/preferences`, so a failure names its place
   # @raise [Spree::Preferences::InvalidPreferences] naming every value that does not match
   # @return [void]
-  def assign_preferences(values)
+  def assign_preferences(values, pointer: '/preferences')
     values = values.respond_to?(:to_unsafe_h) ? values.to_unsafe_h : values.to_h
     values = values.deep_stringify_keys
     failures = self.class.preference_failures(values)
-    raise Spree::Preferences::InvalidPreferences, failures if failures.any?
+    raise Spree::Preferences::InvalidPreferences.new(failures, prefix: pointer) if failures.any?
 
     values.each do |key, value|
       next if secret_preference?(key) && Spree::Preferences::Masking.masked?(value)
@@ -173,7 +180,7 @@ module Spree::Preferences::Preferable
       begin
         set_preference(key, value)
       rescue ActiveRecord::RecordNotFound => e
-        raise Spree::Preferences::InvalidPreferences, [{ pointer: "/#{key}", message: e.message }]
+        raise Spree::Preferences::InvalidPreferences.new([{ pointer: "/#{key}", message: e.message }], prefix: pointer)
       end
     end
   end
@@ -188,8 +195,7 @@ module Spree::Preferences::Preferable
   # @return [Object]
   def wire_preference_value(value, definition)
     return BigDecimal(value.to_s).as_json if definition[:type] == :decimal && value.is_a?(Numeric)
-    return value if value.nil? || definition[:of] == :id
-    return value if definition[:type] == :array && !value.is_a?(Array)
+    return value if value.nil? || (definition[:type] == :array && !value.is_a?(Array))
 
     cast_preference_contents(value, definition)
   end
@@ -281,7 +287,7 @@ module Spree::Preferences::Preferable
     when :string then value.to_s
     when :integer then Integer(value.to_s, 10, exception: false) || value
     when :decimal, :money then BigDecimal(value.to_s, exception: false)&.as_json || value
-    when :boolean then ActiveModel::Type::Boolean.new.cast(value)
+    when :boolean then BOOLEAN_TYPE.cast(value)
     else value
     end
   end
@@ -302,11 +308,8 @@ module Spree::Preferences::Preferable
   # @raise [ActiveRecord::RecordNotFound] naming the ids that were not found
   def decode_preference_ids(values, definition)
     model = Spree::Preferences::Preferable.preference_model(definition)
-    prefix = "#{model._prefix_id_prefix}_"
     ids = split_preference_list(values).map(&:to_s).map do |id|
-      next id unless Spree::PrefixedId.prefixed_id?(id)
-
-      id.start_with?(prefix) ? Spree::PrefixedId.decode_prefixed_id(id).to_s : id
+      Spree::PrefixedId.prefixed_id?(id) ? (model.decode_prefixed_id(id)&.to_s || id) : id
     end
     return ids if ids.empty?
 

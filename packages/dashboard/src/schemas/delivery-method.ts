@@ -86,6 +86,14 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   services: [],
 }
 
+/** The `calculator` part of a write, or nothing when the form names neither a type nor a setting. */
+function calculatorParams({ type, preferences }: DeliveryMethodFormValues['calculator']) {
+  const hasPreferences = !!preferences && Object.keys(preferences).length > 0
+  if (!type && !hasPreferences) return {}
+  return {
+    calculator: { type: type || undefined, preferences: hasPreferences ? preferences : undefined },
+  }
+}
 export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
   return {
     name: values.name,
@@ -103,18 +111,7 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
       ? Number(values.estimated_transit_business_days_max)
       : null,
     tax_category_id: values.tax_category_id || null,
-    ...(values.calculator.type ||
-    (values.calculator.preferences && Object.keys(values.calculator.preferences).length > 0)
-      ? {
-          calculator: {
-            ...(values.calculator.type ? { type: values.calculator.type } : {}),
-            ...(values.calculator.preferences &&
-            Object.keys(values.calculator.preferences).length > 0
-              ? { preferences: values.calculator.preferences }
-              : {}),
-          },
-        }
-      : {}),
+    ...calculatorParams(values.calculator),
     delivery_zone_id: values.delivery_zone_id || null,
     stock_location_ids: values.stock_location_ids,
     // Rules ride along with the method so one request saves the whole page.

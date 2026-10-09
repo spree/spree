@@ -79,11 +79,9 @@ module Spree
       deferred_ids, scalar_attrs = attrs.partition { |k, _| record.new_record? && k.to_s.end_with?('_ids') }
       record.assign_attributes(scalar_attrs.to_h) if scalar_attrs.any?
 
-      begin
-        record.assign_preferences(preferences) if preferences
-        record.assign_calculator_attributes(calculator) if calculator.present? && record.respond_to?(:assign_calculator_attributes)
-      rescue Spree::Preferences::InvalidPreferences => e
-        raise e.within(pointer)
+      record.assign_preferences(preferences, pointer: "#{pointer}/preferences") if preferences
+      if calculator.present? && record.respond_to?(:assign_calculator_attributes)
+        record.assign_calculator_attributes(calculator, pointer: "#{pointer}/calculator")
       end
 
       # Always save — `record.changed?` doesn't reflect preferences

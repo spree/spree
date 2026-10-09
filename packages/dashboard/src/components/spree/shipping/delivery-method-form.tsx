@@ -12,6 +12,7 @@ import {
   Can,
   currencyParts,
   defaultPreferences,
+  filterPreferenceSchema,
   PreferencesForm,
   ResourceMultiAutocomplete,
   Subject,
@@ -1039,17 +1040,13 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
   // rendered by the editor below rather than one-by-one from the schema. The
   // rest of its preferences (weight and total bounds) still render generically.
   const amountBased = AMOUNT_BASED_CALCULATORS.includes(calculatorType ?? '')
-  const genericSchema =
-    amountBased && preferenceSchema
-      ? {
-          ...preferenceSchema,
-          properties: Object.fromEntries(
-            Object.entries(preferenceSchema.properties).filter(
-              ([key]) => !CURRENCY_AMOUNT_KEYS.includes(key),
-            ),
-          ),
-        }
-      : preferenceSchema
+  const genericSchema = useMemo(
+    () =>
+      amountBased && preferenceSchema
+        ? filterPreferenceSchema(preferenceSchema, (key) => !CURRENCY_AMOUNT_KEYS.includes(key))
+        : preferenceSchema,
+    [amountBased, preferenceSchema],
+  )
 
   const taxCategoryOptions = [
     { value: '', label: t('admin.common.none') },
