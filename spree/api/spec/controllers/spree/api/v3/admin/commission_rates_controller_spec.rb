@@ -81,7 +81,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     it 'refuses a fixed rate that states no amount anywhere' do
       post :create, params: { name: 'Flat', kind: 'fixed', value: '2' }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'names the unknown rule type in the code and its value, not just the sentence' do
@@ -102,7 +102,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     it 'refuses a percentage above one hundred' do
       post :create, params: { name: 'Too high', kind: 'percentage', value: '150' }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('validation_error')
     end
 
@@ -160,7 +160,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
         rules: [{ type: 'nonsense_rule', preferences: {} }]
       }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'refuses a rule naming a record that no longer exists' do

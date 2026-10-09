@@ -106,7 +106,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       it 'refuses with the invalid_price code' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('invalid_price')
       end
     end
@@ -121,7 +121,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       it 'refuses with the price_override_not_allowed code' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('price_override_not_allowed')
       end
 
@@ -133,7 +133,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
         it 'still refuses with price_override_not_allowed' do
           subject
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(json_response['error']['code']).to eq('price_override_not_allowed')
         end
       end
@@ -199,7 +199,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       it 'refuses with 422 and an actionable message' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('price_override_not_allowed')
         expect(response.body).to include('placed order')
         expect(line_item.reload.price_source).to be_nil
@@ -211,7 +211,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
         it 'still refuses with price_override_not_allowed' do
           subject
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(json_response['error']['code']).to eq('price_override_not_allowed')
         end
       end
@@ -223,7 +223,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       it 'refuses with 422 and an actionable message' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('invalid_money_format')
         expect(json_response['error']['details']).to eq('price' => ['must be a decimal string like "19.99"'])
         expect(line_item.reload.price_source).to be_nil
@@ -236,7 +236,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       it 'refuses with the invalid_price code' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('invalid_price')
       end
     end

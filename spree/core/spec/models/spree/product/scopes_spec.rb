@@ -12,7 +12,7 @@ describe 'Product scopes', type: :model do
     end
 
     context 'when not discontinued' do
-      let!(:product_2) { create(:product, discontinue_on: Time.current + 1.day) }
+      let!(:product_2) { create(:product, unpublished_at: Time.current + 1.day) }
 
       it { expect(Spree::Product.available).to include(product_2) }
     end

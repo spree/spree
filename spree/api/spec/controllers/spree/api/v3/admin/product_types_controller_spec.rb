@@ -112,7 +112,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductTypesController, type: :controller 
 
       delete :destroy, params: { id: product_type.prefixed_id }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(Spree::ProductType.find_by(id: product_type.id)).to be_present
     end
   end
