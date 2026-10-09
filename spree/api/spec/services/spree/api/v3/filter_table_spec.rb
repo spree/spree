@@ -2,6 +2,9 @@ require 'spec_helper'
 require 'spree/api/openapi/filter_documentation'
 
 RSpec.describe Spree::Api::V3::FilterTable do
+  # Tables are cached per process; another spec in the same worker may have
+  # built one already.
+  before { described_class.reset! }
   after { described_class.reset! }
 
   describe 'every list endpoint' do
