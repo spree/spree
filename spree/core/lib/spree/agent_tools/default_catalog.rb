@@ -22,6 +22,8 @@ module Spree
         Spree::AgentTools::CurateProducts
         Spree::AgentTools::UploadFile
         Spree::AgentTools::CreateOrder
+        Spree::AgentTools::CreateMedia
+        Spree::AgentTools::CreateImport
         Spree::AgentTools::QueryReport
         Spree::AgentTools::DescribeReporting
         Spree::AgentTools::CreateExport
