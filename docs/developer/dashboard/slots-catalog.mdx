@@ -287,6 +287,8 @@ The product page is a host form with the form key `seller.product`: fields a wid
 | Use | Extra content for people who can't sign in yet — a link to a sign-up page, a support contact, terms of service |
 | Context | none |
 
+Nobody is signed in when this renders, so only call endpoints that need no session. Links to a [public page](/developer/dashboard/customization/routes#pages-outside-a-store) fit here.
+
 ## Replaceable slots
 
 These slots render built-in content when nothing is registered. Registering a component **replaces** that content rather than adding to it.
@@ -298,7 +300,7 @@ These slots render built-in content when nothing is registered. Registering a co
 | Use | Replace the whole page — for example, with a list of stores to choose from and a link to an onboarding page that creates one |
 | Context | `{ user, signOut }` — `user` is the signed-in admin, with the stores they can open in `user.stores`; `signOut()` ends the session |
 
-Import the name as `STORE_SELECTION_SLOT` from `@spree/dashboard-core` rather than typing it. The page renders on a blank canvas; wrap it in `AuthShell` from `@spree/dashboard/components/spree/auth-shell` to match the login page.
+Import the name as `STORE_SELECTION_SLOT` from `@spree/dashboard-core` rather than typing it. Every sign-in, password reset and accepted invitation lands here, so the replacement owns both cases the default handles: a user with stores (link to `/$storeId`, or open one straight away with `<Navigate>`) and a user with none. The page renders on a blank canvas; wrap it in `AuthShell` from `@spree/dashboard/components/spree/auth-shell` to match the login page.
 
 ### `no_store_access`
 

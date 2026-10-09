@@ -101,6 +101,12 @@ Most pages live inside a store, under `/$storeId`. Some don't belong to one: an 
 
 These pages render on a blank canvas. To match the login page's look, wrap them in `AuthShell` from `@spree/dashboard/components/spree/auth-shell`.
 
+**What these pages can use.** There is no current store here, so anything that reads one is unavailable: `useStore()`, store permissions (`usePermissions()`, `<Can>`), the sidebar and top bar, and the store pages' slots. Everything else works — `useAuth()` (the signed-in user on `authenticated` pages, with the stores they can open in `user.stores`), `adminClient` for calls that don't need a store, i18n, and the `@spree/dashboard-ui` components. On `public` pages nobody may be signed in, so only call endpoints that need no session.
+
+**Reserved paths.** The dashboard owns `/`, `/login`, `/setup`, `/forgot-password`, `/reset-password`, `/accept-invitation/$invitationId` and `/$storeId`. A static path such as `/sign-up` takes priority over `/$storeId`, which means no store can be reached at that path. If a future dashboard release adds a page at a path you use, the build (or, for registry routes, the router) fails with an error naming both, instead of one page silently replacing the other. Prefer specific paths (`/sign-up`, `/account`) over generic ones.
+
+**Keep them out of the main bundle.** A sign-up page is opened by people who never see the rest of the dashboard. Load the page component on demand: `lazyRouteComponent(() => import('../pages/sign-up'), 'SignUpPage')` from `@tanstack/react-router` in a file route, or `lazy(() => import('./pages/sign-up'))` from React as a registry route's `component`.
+
 ### File routes
 
 Declare a separate directory per scope in your plugin's marker, next to `routes`:
