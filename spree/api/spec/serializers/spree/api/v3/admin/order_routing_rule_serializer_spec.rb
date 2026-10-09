@@ -20,7 +20,7 @@ RSpec.describe Spree::Api::V3::Admin::OrderRoutingRuleSerializer do
     expect(payload).not_to have_key('label')
     expect(payload).not_to have_key('description')
     expect(payload['preferences']).to eq({})
-    expect(payload['preference_schema']).to eq([])
+    expect(payload).not_to have_key('preference_schema')
     expect(payload['created_at']).to be_present
     expect(payload['updated_at']).to be_present
   end
@@ -35,6 +35,7 @@ RSpec.describe Spree::Api::V3::Admin::OrderRoutingRuleSerializer do
 
         stubbed_schema = [{ key: :api_secret, type: :password, default: nil }]
         allow(r.class).to receive(:preference_schema).and_return(stubbed_schema)
+        allow(r.class).to receive(:preference_definitions).and_return(r.class.preference_definitions.merge(api_secret: { type: :password }))
       end
     end
 

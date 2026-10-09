@@ -87,6 +87,7 @@ module Spree
     # Preferences
     #
     preference :delimiter, :string, default: ','
+    exposes_preferences :delimiter
     # Run the pipeline in-process instead of enqueuing it. For rake tasks, seeds
     # and the console, where the caller needs the data to exist when the call
     # returns and there may be no worker attached. Never set it from a request:

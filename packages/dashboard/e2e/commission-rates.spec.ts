@@ -1,5 +1,13 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton, waitForToastsToClear } from './helpers'
+import {
+  FIXTURE_LEDGER_SELLER,
+  FIXTURE_PROMO_TAXON,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+  waitForToastsToClear,
+} from './helpers'
 
 const COMMISSION_RATES_PATH = (storeId: string) => `/${storeId}/sellers/commission-rates`
 const CTA = /add commission rate/i
@@ -75,6 +83,41 @@ test.describe('commission rates', () => {
     await expect(reopened.getByLabel('USD Minimum', { exact: true })).toHaveValue('0.50')
     await expect(reopened.getByLabel('USD Maximum', { exact: true })).toHaveValue('25.00')
     await expect(page.locator('#commission_tax_rate')).toHaveValue('7.125')
+  })
+
+  // Seller and category conditions keep prefixed ids in their preferences,
+  // so reopening must name the same records that were picked.
+  test('saves seller and category conditions and reopens with them', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, COMMISSION_RATES_PATH(creds.store_id), CTA)
+
+    const name = `E2E Commission Conditions ${Date.now()}`
+    await page.getByRole('button', { name: CTA }).click()
+    const sheet = page.getByRole('dialog')
+    await page.locator('#name').fill(name)
+    await page.locator('#value').fill('8')
+
+    await sheet.getByRole('button', { name: /^add condition$/i }).click()
+    await page.getByRole('menuitem', { name: /^seller$/i }).click()
+    await sheet.getByPlaceholder(/search sellers/i).fill(FIXTURE_LEDGER_SELLER)
+    await page.getByRole('option', { name: FIXTURE_LEDGER_SELLER }).click()
+
+    await sheet.getByRole('button', { name: /^add condition$/i }).click()
+    await page.getByRole('menuitem', { name: /^category$/i }).click()
+    await sheet.getByPlaceholder(/search categories/i).fill(FIXTURE_PROMO_TAXON)
+    await page
+      .getByRole('option', { name: new RegExp(FIXTURE_PROMO_TAXON) })
+      .first()
+      .click()
+
+    await page.getByRole('button', { name: /create commission rate/i }).click()
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await rowButton(page, name).click()
+    await expect(page.locator('#value')).toHaveValue(/^8(\.0+)?$/, { timeout: 15_000 })
+    await expect(sheet.getByText(FIXTURE_LEDGER_SELLER)).toBeVisible()
+    await expect(sheet.getByText(FIXTURE_PROMO_TAXON).first()).toBeVisible()
   })
 
   test('deletes a rate after confirming', async ({ page }) => {

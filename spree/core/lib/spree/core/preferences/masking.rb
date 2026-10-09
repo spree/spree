@@ -78,13 +78,44 @@ module Spree
       def self.serialize(preferable)
         return {} if preferable.nil?
 
+        definitions = preferable.class.preference_definitions
         preferable.preference_schema.each_with_object({}) do |field, hash|
           # The stored value only, never the default — an unset secret must not
           # reveal what it would fall back to — read through the record,
           # because a secret lives in its own column.
           value = preferable.stored_preference(field[:key]) { nil }
-          hash[field[:key_string] || field[:key].to_s] = wire_value(preferable, field[:type], value)
+          definition = definitions.fetch(field[:key])
+          hash[field[:key_string] || field[:key].to_s] =
+            if definition[:of] == :id
+              prefixed_ids(value, definition)
+            elsif %i[password money].include?(field[:type])
+              wire_value(preferable, field[:type], value)
+            elsif definition[:keys] == :currency && definition[:values] == :money
+              money_by_currency(preferable.wire_preference_value(value, definition))
+            else
+              preferable.wire_preference_value(value, definition)
+            end
         end
+      end
+
+      # Amounts keyed by currency (`{ "EUR" => "12.5" }`), each written with
+      # the decimals of its own currency, as every money value is.
+      def self.money_by_currency(value)
+        return value unless value.is_a?(Hash)
+
+        value.to_h do |currency, amount|
+          decimal = BigDecimal(amount.to_s, exception: false)
+          [currency, decimal ? Spree::Money::Rounding.format(decimal, currency, unit_price: true) : amount]
+        end
+      end
+
+      # Ids are stored as raw primary keys and leave as prefixed ids, the form
+      # every write accepts.
+      def self.prefixed_ids(value, definition)
+        return value unless value.is_a?(Array)
+
+        model = Spree::Preferences::Preferable.preference_model(definition)
+        value.map { |id| Spree::PrefixedId.prefixed_id?(id.to_s) ? id : model.prefixed_id_for(id) }
       end
     end
   end

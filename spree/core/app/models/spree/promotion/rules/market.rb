@@ -8,11 +8,8 @@ module Spree
         # against the order's raw `market_id` directly. Scope confines the
         # existence check to the promotion's store so cross-store market
         # IDs can't sneak in.
-        preference :market_ids, :array, default: [],
-                   parse_on_set: normalize_id_preference(
-                     klass: Spree::Market,
-                     scope: ->(rule) { rule.promotion.store.markets }
-                   )
+        preference :market_ids, :array, of: :id, model: 'Spree::Market', default: [],
+                   scope: ->(rule) { rule.promotion.store.markets }
 
         def markets
           return Spree::Market.none if preferred_market_ids.blank?

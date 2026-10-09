@@ -472,8 +472,9 @@ describe Spree::PaymentMethod, type: :model do
 
   # Describing a class needs a connection, so the schema can be asked for
   # before there is one — at boot, or in a rake task on an empty database.
-  # Settling on the empty answer would leave that class describing no
-  # preferences for the life of the process.
+  # The preferences are still described, from the declarations alone, but
+  # settling on that answer would leave out every default the database holds
+  # for the life of the process.
   describe 'a schema asked for before the database was up' do
     let(:gateway_class) do
       Class.new(Spree::Gateway) do
@@ -485,11 +486,13 @@ describe Spree::PaymentMethod, type: :model do
 
     it 'is retried rather than settled on' do
       allow(gateway_class).to receive(:new).and_raise(ActiveRecord::ConnectionNotEstablished)
-      expect(gateway_class.preference_schema).to be_empty
+      expect(gateway_class.preference_schema.map { |field| field[:key] }).to eq([:api_key])
+      expect(gateway_class.instance_variable_get(:@preference_schema)).to be_nil
 
       allow(gateway_class).to receive(:new).and_call_original
 
       expect(gateway_class.preference_schema.map { |field| field[:key] }).to eq([:api_key])
+      expect(gateway_class.instance_variable_get(:@preference_schema)).to be_present
     end
 
     # These memoize off the schema, so caching what they derived from its

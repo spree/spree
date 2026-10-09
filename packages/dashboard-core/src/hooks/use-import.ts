@@ -90,7 +90,7 @@ function imports() {
 /** Create-time parameters beyond the ones every import shares. */
 export type ImportCreateExtras = Omit<
   PanelImportCreateParams,
-  'type' | 'attachment' | 'preferred_delimiter' | 'results_url'
+  'type' | 'attachment' | 'delimiter' | 'results_url'
 >
 
 export interface CreateImportInput {
@@ -129,7 +129,7 @@ export function useCreateImport() {
         ...params,
         type,
         attachment: signedId,
-        preferred_delimiter: preferredDelimiter,
+        delimiter: preferredDelimiter,
         // The import-done email deep-links back to the wizard (`?import=<id>`
         // appended server-side). Only honored when this origin is on the
         // store's allowed-origins list.

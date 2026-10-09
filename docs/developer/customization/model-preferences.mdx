@@ -39,6 +39,141 @@ end
 
 Any model inheriting from `Spree.base_class` can declare preferences — the reader and writer methods come with it, so there is nothing to include. The values live in that model's `preferences` column.
 
+### Declaring the full type
+
+A declaration is also the preference's contract in the API: Spree turns it into a JSON Schema that the API publishes, the SDKs type and every write is checked against. So a declaration states everything a client needs to know about the value:
+
+```ruby server/app/models/my_app/promotion/rules/loyalty_tier.rb
+module MyApp
+  module Promotion
+    module Rules
+      class LoyaltyTier < Spree::PromotionRule
+        preference :minimum_spend, :money, default: 0
+        preference :tier,          :string, choices: %w[silver gold platinum], default: 'silver'
+        preference :channel_ids,   :array, of: :id, model: 'Spree::Channel', default: [],
+                                   scope: ->(rule) { rule.promotion.store.channels }
+        preference :country_codes, :array, of: :string, format: :iso_country, default: []
+        preference :bonus_amounts, :hash, keys: :currency, values: :money, default: {}
+      end
+    end
+  end
+end
+```
+
+| Option | Applies to | What it says |
+|---|---|---|
+| `of:` | `:array` | The type of each item: `:string`, `:integer`, `:decimal`, `:money`, `:boolean`, `:id` or `:object` |
+| `properties:` | `of: :object` | The fields of each item, e.g. `{ threshold: :money, value: :decimal }` |
+| `keys:` / `values:` | `:hash` | The type of the keys (`:string` or `:currency`) and of the values |
+| `model:` / `scope:` | `of: :id` | The records the ids point at, and the records they must be found in. The API accepts and returns their prefixed ids (`ch_…`); an id of another model, or one outside the scope, is refused |
+| `format:` | `:string`, list items | `:currency`, `:iso_country`, `:timezone`, `:locale`, `:url` or `:color` |
+| `choices:` | any | The fixed set the value must come from; admin forms show a picker |
+
+Decimals and amounts travel as exact strings (`"9.99"`), never as numbers. An `:array` without `of:`, a `:hash` without `keys:` and `values:`, or the `:any` type still works in Spree 6.0, with a deprecation warning and a schema that accepts any value. Spree 6.1 refuses them.
+
+### Preferences in the API
+
+Configurable types — promotion rules and actions, calculators, payment methods, integrations, and price, delivery, commission and order routing rules — send their settings as a `preferences` object next to their `type`. Each family's `/types` endpoint returns the JSON Schema of every registered type's preferences, extensions included, so a client can render a form for a type it has never seen:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data } = await adminClient.promotionRules.types()
+const itemTotal = data.find((entry) => entry.type === 'item_total')
+itemTotal.schema.properties.amount_min // { type: 'string', format: 'money', default: '100', … }
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/promotion_rules/types' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
+The SDKs also type the settings of every type Spree ships. `TypedPromotionRule` narrows `preferences` by `type`, and an extension adds its own types to `PromotionRulePreferencesMap` by declaration merging.
+
+A write is checked against the schema before anything is saved. An unknown key, a value of the wrong type, a value outside `choices`, or an id of the wrong model or another store is refused with a `422` whose `code` is `invalid_preferences`; `details` names each failing value by its JSON pointer, such as `/preferences/channel_ids/1`. A secret reads back masked; sending the masked value back keeps the stored secret, and `null` clears it.
+
+### Exposing a setting in the API
+
+Use this when a record has a fixed set of settings that clients edit field by field, as the store, a channel or an import do. A family of types with different settings per type (rules, calculators, payment methods) sends a `preferences` object instead, as described above.
+
+The API names such a setting by its plain name (`featured`), never by the `preferred_` method. It takes three declarations, one per layer, and each layer stays in charge of its own job.
+
+**1. Expose it on the model.** `exposes_preferences` gives each preference a plain reader, writer and predicate:
+
+```ruby server/app/models/spree/brand.rb
+module Spree
+  class Brand < Spree.base_class
+    preference :featured, :boolean, default: false
+    preference :display_name, :string
+
+    exposes_preferences :featured, :display_name
+  end
+end
+```
+
+```ruby
+brand.featured           # same as brand.preferred_featured
+brand.featured = true    # same as brand.preferred_featured = true
+brand.featured?          # true
+```
+
+It refuses a name the model already uses for something else. Errors on `preferred_featured` are reported to API clients as `featured`.
+
+**2. Return it from the serializer.** `preference_attributes` adds every exposed preference, typed from its declaration, so the generated SDK types follow the model. Name some to add only those, or pass `except:` to leave some out:
+
+```ruby server/app/serializers/spree/api/v3/admin/brand_serializer.rb
+module Spree
+  module Api
+    module V3
+      module Admin
+        class BrandSerializer < Spree::Api::V3::BaseSerializer
+          attributes :name, created_at: :iso8601, updated_at: :iso8601
+
+          preference_attributes Spree::Brand
+        end
+      end
+    end
+  end
+end
+```
+
+**3. Accept it in the controller.** Exposing a setting does not make it writable: the controller decides, as for any attribute (see [permitted attributes](/developer/customization/api#permitted-attributes)):
+
+```ruby server/app/controllers/spree/api/v3/admin/brands_controller.rb
+def resource_permitted_attributes
+  [:name, :featured, :display_name]
+end
+```
+
+The setting is then read and written like a column:
+
+<Tabs>
+  <Tab title="Admin SDK">
+    ```typescript
+    const brand = await adminClient.request('PATCH', `/brands/${brandId}`, {
+      body: { featured: true, display_name: 'Wilson' },
+    })
+    brand.featured // true
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -X PATCH 'https://api.mystore.com/api/v3/admin/brands/brand_xxx' \
+      -H 'X-Spree-API-Key: sk_xxx' \
+      -H 'Content-Type: application/json' \
+      -d '{ "featured": true, "display_name": "Wilson" }'
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  The Seller API keeps its own list of what sellers may write, so exposing a setting to operators never makes it writable by sellers.
+</Note>
+
+Strings, integers and booleans are cast the way Rails casts attributes (`"1"`, `"true"` and `"on"` are true; `"42"` is 42). A blank value is `nil` for a `nullable: true` preference, and the type's empty value otherwise.
+
 ## Accessing Model Preferences
 
 Once preferences have been defined for a model, they can be accessed either using the shortcut methods that are generated for each preference or the generic methods that are not specific to a particular preference.
@@ -148,4 +283,3 @@ Around fifty models use preferences, and the pattern is always the same: a famil
 | `Spree::Store`, `Spree::Channel` and `Spree::Market` | Merchant settings — timezone, units, currency behaviour |
 
 This is why preferences exist rather than columns: `Spree::Calculator::FlatRate` and `Spree::Calculator::TieredPercent` are rows in one table with entirely different settings, and neither wants a column the other leaves null.
-* `Spree::Theme`

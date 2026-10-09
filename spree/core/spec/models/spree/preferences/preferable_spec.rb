@@ -410,6 +410,158 @@ describe Spree::Preferences::Preferable, type: :model do
     end
   end
 
+  describe 'typed declarations' do
+    let(:preferable_class) do
+      Class.new(Spree::Base) do
+        self.table_name = 'preferable_spec_records'
+
+        def self.name
+          'TypedPreferable'
+        end
+
+        preference :channel_ids, :array, of: :id, model: 'Spree::Channel', default: [],
+                                         scope: ->(_record) { Spree::Store.default.channels }
+        preference :quantities, :array, of: :integer, default: []
+        preference :amounts, :hash, keys: :currency, values: :money, default: {}
+        preference :tiers, :array, of: :object, properties: { threshold: :money, value: :decimal }, default: []
+        preference :flavor, :string, default: 'vanilla'
+        exposes_preferences :flavor
+      end
+    end
+    let(:record) { preferable_class.new }
+    let(:channel) { create(:channel) }
+
+    it 'decodes prefixed ids to the raw primary keys it stores' do
+      record.set_preference(:channel_ids, [channel.prefixed_id])
+      expect(record.preferences[:channel_ids]).to eq([channel.id.to_s])
+    end
+
+    it 'accepts a comma-separated list' do
+      record.set_preference(:channel_ids, "#{channel.prefixed_id}, #{channel.id}")
+      expect(record.preferences[:channel_ids]).to eq([channel.id.to_s, channel.id.to_s])
+    end
+
+    it 'refuses an id carrying another model\'s prefix, even when it decodes to an existing row' do
+      market_id = "mkt_#{Spree::PrefixedId::SQIDS.encode([channel.id])}"
+      expect { record.set_preference(:channel_ids, [market_id]) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'refuses an id outside the declared scope' do
+      other_channel = create(:channel, store: create(:store))
+      expect { record.set_preference(:channel_ids, [other_channel.prefixed_id]) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'casts list items to their declared type' do
+      record.set_preference(:quantities, ['1', 2])
+      expect(record.preferences[:quantities]).to eq([1, 2])
+    end
+
+    it 'keeps an item that does not cast, for validation to name' do
+      record.set_preference(:quantities, ['many'])
+      expect(record.preferences[:quantities]).to eq(['many'])
+    end
+
+    it 'stores hash values in their declared type, with currency keys upcased' do
+      record.set_preference(:amounts, 'eur' => 15, 'USD' => '9.99')
+      expect(record.preferences[:amounts]).to eq('EUR' => '15.0', 'USD' => '9.99')
+    end
+
+    it 'keeps only the declared properties of each object, typed' do
+      record.set_preference(:tiers, [{ threshold: 100, value: '10', note: 'dropped' }])
+      expect(record.preferences[:tiers]).to eq([{ 'threshold' => '100.0', 'value' => '10.0' }])
+    end
+
+    it 'exposes a preference under its plain name' do
+      expect(record.flavor).to eq('vanilla')
+      expect(record.flavor?).to be(true)
+      record.flavor = 'mint'
+      expect(record.preferred_flavor).to eq('mint')
+    end
+
+    it 'casts strings, integers and booleans the way Rails casts attributes' do
+      preferable_class.preference :enabled, :boolean, default: true
+      preferable_class.preference :limit, :integer, default: 1
+
+      record.set_preference(:enabled, 'off')
+      record.set_preference(:limit, '42')
+
+      expect(record.preferred_enabled).to be(false)
+      expect(record.preferred_limit).to eq(42)
+    end
+
+    it 'treats whitespace alone as unset for a nullable number' do
+      preferable_class.preference :cap, :integer, default: 5, nullable: true
+
+      record.set_preference(:cap, '   ')
+
+      expect(record.preferences[:cap]).to be_nil
+    end
+
+    it 'refuses to expose a name that is not a preference or is already a method' do
+      expect { preferable_class.exposes_preferences :not_declared }.to raise_error(ArgumentError, /no preference/)
+      expect { preferable_class.exposes_preferences :flavor }.to raise_error(ArgumentError, /a method of that name exists/)
+    end
+
+    it 'raises for an option that does not fit the type' do
+      expect { preferable_class.preference :wrong_of, :string, of: :integer }.to raise_error(ArgumentError, /`of:` applies to an :array/)
+      expect { preferable_class.preference :id_without_model, :array, of: :id }.to raise_error(ArgumentError, /needs `model:`/)
+      expect { preferable_class.preference :unknown_item, :array, of: :thing }.to raise_error(ArgumentError, /Unknown item type/)
+    end
+
+    describe '#assign_preferences' do
+      it 'writes a payload that matches the schema' do
+        record.assign_preferences({ 'quantities' => [1, 2], 'channel_ids' => [channel.prefixed_id] })
+
+        expect(record.preferred_quantities).to eq([1, 2])
+        expect(record.preferences[:channel_ids]).to eq([channel.id.to_s])
+      end
+
+      it 'refuses the whole payload, naming each failing value, when any value does not match' do
+        expect { record.assign_preferences({ 'flavor' => 'mint', 'quantities' => ['many'], 'colour' => 'red' }) }.to raise_error(
+          Spree::Preferences::InvalidPreferences
+        ) { |error| expect(error.failures.pluck(:pointer)).to contain_exactly('/preferences/quantities/0', '/preferences/colour') }
+        expect(record.preferred_flavor).to eq('vanilla')
+      end
+
+      it 'refuses an id of another model by its prefix' do
+        expect { record.assign_preferences({ 'channel_ids' => ["mkt_#{Spree::PrefixedId::SQIDS.encode([channel.id])}"] }) }
+          .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/channel_ids/0})
+      end
+
+      it 'refuses an id outside the declared scope' do
+        other_channel = create(:channel, store: create(:store))
+
+        expect { record.assign_preferences({ 'channel_ids' => [other_channel.prefixed_id] }) }
+          .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/channel_ids})
+      end
+    end
+
+    it 'still decodes prefixed ids in an id list declared without `of:`, for one release' do
+      Spree::Deprecation.silence { preferable_class.preference :warehouse_ids, :array, default: [] }
+
+      record.set_preference(:warehouse_ids, [channel.prefixed_id])
+
+      expect(record.preferences[:warehouse_ids]).to eq([channel.id])
+    end
+
+    it 'reads back an integer or boolean stored as a string by older code as its type' do
+      expect(record.wire_preference_value('5', type: :integer)).to eq(5)
+      expect(record.wire_preference_value('true', type: :boolean)).to be(true)
+      expect(record.wire_preference_value('', type: :integer, nullable: true)).to be_nil
+    end
+
+    it 'warns about a declaration that does not state its full type' do
+      expect(Spree::Deprecation).to receive(:warn).with(/needs `of:`/)
+      preferable_class.preference :untyped_list, :array, default: []
+    end
+
+    it 'accepts the legacy `in:` option with a warning' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Use `choices:` instead/)
+      preferable_class.preference :legacy_choice, :string, in: %w[a b]
+      expect(preferable_class.preference_definitions[:legacy_choice][:choices]).to eq(%w[a b])
+    end
+  end
+
   describe 'persisted preferables' do
     before(:all) do
       class CreatePrefTest < ActiveRecord::Migration[4.2]

@@ -30,6 +30,11 @@ module Spree
         def resolve_prefixed_ids(hash)
           hash.each_with_object({}.with_indifferent_access) do |(key, value), result|
             result[key] = case
+                          # Preferences declare which of their values are ids
+                          # and decode only those, after checking them against
+                          # their schema.
+                          when key.to_s == 'preferences'
+                            value
                           when key.to_s.end_with?('_id') && prefixed_id?(value)
                             decode_prefixed_id(value)
                           when key.to_s.end_with?('_ids') && value.is_a?(Array)

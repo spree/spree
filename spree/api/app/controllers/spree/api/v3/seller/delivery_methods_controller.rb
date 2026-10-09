@@ -17,6 +17,10 @@ module Spree
         # `Spree::DeliveryMethod` validates and why neither provider is
         # writable here.
         class DeliveryMethodsController < Seller::ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_calculator_params
+
           scoped_resource :delivery_methods
 
           # GET /api/v3/seller/delivery_methods/calculators
@@ -29,7 +33,7 @@ module Spree
               {
                 type: calculator_class.api_type,
                 name: calculator_class.description,
-                preference_schema: calculator_class.respond_to?(:serialized_preference_schema) ? calculator_class.serialized_preference_schema : []
+                schema: calculator_class.preference_json_schema
               }
             end
 
@@ -48,7 +52,7 @@ module Spree
                 type: klass.api_type,
                 name: klass.human_name,
                 description: klass.human_description,
-                preference_schema: klass.serialized_preference_schema
+                schema: klass.preference_json_schema
               }
             end
 
@@ -64,9 +68,9 @@ module Spree
             @resource.assign_attributes(assignable_params)
             authorize_resource!(@resource, :create)
             rederive_origin_group(@resource)
-            assign_calculator(@resource)
+            @resource.assign_calculator_attributes(permitted_params[:calculator])
 
-            if @resource.errors.empty? && @resource.save
+            if @resource.save
               render json: serialize_resource(@resource), status: :created
             else
               render_validation_error(@resource.errors)
@@ -74,11 +78,13 @@ module Spree
           end
 
           def update
-            @resource.assign_attributes(assignable_params)
-            rederive_origin_group(@resource)
-            assign_calculator(@resource)
+            saved = save_atomically do
+              @resource.assign_attributes(assignable_params)
+              rederive_origin_group(@resource)
+              @resource.assign_calculator_attributes(permitted_params[:calculator])
+            end
 
-            if @resource.errors.empty? && @resource.save
+            if saved
               render json: serialize_resource(@resource)
             else
               render_validation_error(@resource.errors)
@@ -125,9 +131,8 @@ module Spree
               *model_additional_permitted_attributes,
               :name, :admin_name, :code, :storefront_visible, :tracking_url,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :calculator_type,
               :delivery_profile_id, :delivery_zone_id,
-              calculator_preferences: {},
+              calculator: [:type, { preferences: {} }],
               rules: [:id, :type, :active, { preferences: {} }, *subclassed_rule_attributes]
             )
           end
@@ -175,7 +180,7 @@ module Spree
           # resolves its own pickers.
           def assignable_params
             attributes = permitted_params.except(
-              :delivery_profile_id, :delivery_zone_id, :calculator_type, :calculator_preferences, :rules
+              :delivery_profile_id, :delivery_zone_id, :calculator, :rules
             )
 
             if params.key?(:delivery_profile_id)
@@ -216,46 +221,6 @@ module Spree
               raise ActiveRecord::RecordNotFound unless allowed.include?(row['type'].to_s)
 
               row
-            end
-          end
-
-          def assign_calculator(delivery_method)
-            calculator_type = permitted_params[:calculator_type]
-            preferences = permitted_params[:calculator_preferences]
-
-            if calculator_type.present? && delivery_method.calculator&.class&.api_type != calculator_type
-              registered = Spree::DeliveryMethod.calculators.find do |klass|
-                klass.api_type == calculator_type
-              end
-              unless registered
-                delivery_method.errors.add(:calculator_type, :invalid)
-                return
-              end
-
-              # Resolved from the registry entry's OWN name, never the
-              # request's: nothing user-supplied reaches `constantize`. Going
-              # back through the name rather than instantiating `registered`
-              # directly is what survives a reload — in development the
-              # registry holds a class from an earlier one, and an instance of
-              # it fails the association's type check.
-              delivery_method.calculator = registered.to_s.constantize.new
-            end
-
-            return if preferences.blank?
-
-            # A payload may carry preferences without naming a calculator —
-            # editing the amount on a method that already has one, or creating
-            # with the default. The model only builds the default calculator
-            # at validation, so without this the preferences land on nothing
-            # and the amount the merchant typed is silently replaced by a free
-            # rate.
-            delivery_method.ensure_calculator
-            return if delivery_method.calculator.nil?
-
-            preferences.each do |key, value|
-              next unless delivery_method.calculator.has_preference?(key)
-
-              delivery_method.calculator.set_preference(key, value)
             end
           end
         end

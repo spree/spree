@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_PROMO_COUNTRY,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -239,6 +240,38 @@ test.describe('promotions', () => {
     await expect(page.getByText(FIXTURE_PROMO_COUNTRY).first()).toBeVisible({ timeout: 5_000 })
 
     await submitCreate(page, name)
+  })
+
+  // Both rules keep prefixed ids in their preferences; reloading proves they
+  // were saved and read back as the records they name.
+  test('creates a promotion with Channel and Market rules', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Channel Market Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^channel\(s\)/i)
+    await expect(page.getByRole('heading', { name: /^channel\(s\)$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await pickAutocompleteOption(page, /search sales channels/i, FIXTURE_BULK_CHANNEL_NAME)
+    await saveEditor(page)
+
+    await pickRule(page, /^market\(s\)/i)
+    await expect(page.getByRole('heading', { name: /^market\(s\)$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await pickAutocompleteOption(page, /search markets/i, 'Europe')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+
+    await page.reload()
+    await expect(page.getByText(FIXTURE_BULK_CHANNEL_NAME).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('Europe', { exact: true }).first()).toBeVisible()
   })
 
   test('creates a promotion with a Product rule', async ({ page }) => {

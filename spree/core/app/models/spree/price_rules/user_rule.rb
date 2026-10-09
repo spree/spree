@@ -10,9 +10,7 @@ module Spree
       # e.g. `usr_…`) from API callers and decodes them on write. Resolves
       # `Spree.customer_class` lazily — the user class is configured at boot,
       # and class-body evaluation runs before that on cold loads.
-      preference :user_ids, :array, default: [], parse_on_set: ->(values) {
-        normalize_id_preference(klass: Spree.customer_class).call(values)
-      }
+      preference :user_ids, :array, of: :id, model: -> { Spree.customer_class }, default: []
 
       def users
         return [] if preferred_user_ids.blank?

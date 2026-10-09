@@ -15,14 +15,16 @@ module Spree
           amount compare_at_amount cost cost_price price unit_cost refund_amount settled_amount
           minimum_payout_amount min_amount max_amount markup_flat
           amount_min amount_max first_item additional_item minimal_amount normal_amount discount_amount
-          base_amount minimum_item_total maximum_item_total preferred_default_minimum_payout_amount
+          base_amount minimum_item_total maximum_item_total default_minimum_payout_amount
+          preferred_default_minimum_payout_amount
         ].freeze
 
         UNIT_PRICE_KEYS = %w[price compare_at_amount cost_price unit_cost].freeze
 
         RATE_KEYS = %w[
           rate rate_percent percent flat_percent base_percent markup_percent percentage
-          price_adjustment_percentage commission_tax_rate preferred_default_commission_tax_rate
+          price_adjustment_percentage commission_tax_rate default_commission_tax_rate
+          preferred_default_commission_tax_rate
         ].freeze
 
         # Values the merchant or a provider owns, stored as sent.

@@ -37,12 +37,39 @@ module Spree::Preferences
       preference_declarations_cache[:secrets] ||= declared_preference_types.filter_map { |name, type| name if type == :password }.freeze
     end
 
+    # The value types a list item, a hash value or an object property may
+    # declare — what {Spree::PreferenceSchema::JsonSchema} compiles to JSON
+    # Schema, along with its `FORMATS`.
+    ITEM_TYPES = %i[string integer decimal money boolean id object].freeze
+
     # Declares a typed preference with a `preferred_<name>` reader and writer
     # and a `prefers_<name>?` query. On a model, the value lives in the
     # `preferences` column (`secret_preferences` for a `:password` one) as a
     # Rails store accessor, which brings the change methods with it:
     # `preferred_<name>_changed?`, `_change`, `_was`,
     # `saved_change_to_preferred_<name>?` and `preferred_<name>_before_last_save`.
+    #
+    # The declaration is the preference's contract on the wire, so it states
+    # the full type:
+    #
+    #   preference :amount_min,    :money
+    #   preference :channel_ids,   :array, of: :id, model: 'Spree::Channel', scope: ->(rule) { rule.store.channels }
+    #   preference :country_codes, :array, of: :string, format: :iso_country
+    #   preference :match_policy,  :string, choices: %w[any all none]
+    #   preference :amounts,       :hash, keys: :currency, values: :money
+    #   preference :tiers,         :array, of: :object, properties: { threshold: :money, value: :decimal }
+    #
+    # @param name [Symbol]
+    # @param type [Symbol] `:string`, `:text`, `:boolean`, `:integer`, `:decimal`, `:money`,
+    #   `:array`, `:hash`, `:password`, `:date` or `:datetime`
+    # @option options [Symbol] :of the type of each item of an `:array`
+    # @option options [Symbol] :keys the type of a `:hash`'s keys (`:string` or `:currency`)
+    # @option options [Symbol] :values the type of a `:hash`'s values
+    # @option options [Hash{Symbol => Symbol}] :properties the fields of each `of: :object` item
+    # @option options [Symbol] :format a string's domain format (see {Spree::PreferenceSchema::JsonSchema::FORMATS})
+    # @option options [String, Proc] :model the record class an `of: :id` list points at
+    # @option options [Proc] :scope `->(owner) { relation }` the ids must be found in
+    # @option options [Array, Proc] :choices the fixed set a value must come from
     def preference(name, type, *args)
       name = name.to_sym
       secret = type == :password
@@ -52,20 +79,38 @@ module Spree::Preferences
       end
 
       options = args.extract_options!
-      options.assert_valid_keys(:default, :deprecated, :in, :internal, :nullable, :parse_on_set)
+      options.assert_valid_keys(:default, :deprecated, :in, :choices, :internal, :nullable, :parse_on_set,
+                                :of, :keys, :values, :properties, :format, :model, :scope)
+      if options.key?(:in)
+        Spree::Deprecation.warn("`preference :#{name}, in:` is deprecated. Use `choices:` instead.")
+        options[:choices] ||= options.delete(:in)
+      end
+      check_preference_declaration(name, type, options)
+
       default = options[:default]
-      default = -> { options[:default] } unless default.is_a?(Proc)
+      dynamic_default = default.is_a?(Proc)
+      default = -> { options[:default] } unless dynamic_default
       own_preference_definitions[name] = {
         type: type,
         default: default,
+        # Computed when read (the default store's currency, say), so it
+        # differs between stores and is not part of the preference's schema.
+        dynamic_default: dynamic_default,
         deprecated: options[:deprecated],
         # Whether the system writes the value rather than the operator — a
         # value a provider hands back, kept out of every admin form.
         internal: options[:internal],
         # The fixed set a value must come from; turns a text box into a picker.
-        choices: options[:in],
+        choices: options[:choices],
         nullable: options[:nullable],
-        parse_on_set: options[:parse_on_set]
+        parse_on_set: options[:parse_on_set],
+        of: options[:of],
+        keys: options[:keys],
+        values: options[:values],
+        properties: options[:properties],
+        format: options[:format],
+        model: options[:model],
+        scope: options[:scope]
       }
       PreferableClassMethods.declarations += 1
 
@@ -86,7 +131,74 @@ module Spree::Preferences
       end
     end
 
+    # Gives each named preference a plain reader, writer and predicate, so the
+    # API reads and writes `guest_checkout` rather than the DSL's
+    # `preferred_guest_checkout` — the methods Rails' `has_delegated_json`
+    # defines, so callers would not change if the storage ever moved to it.
+    # Grants no write access: each API controller still lists what it permits.
+    #
+    #   exposes_preferences :guest_checkout, :timezone
+    #
+    # @param names [Array<Symbol>]
+    # @return [void]
+    def exposes_preferences(*names)
+      names.each do |name|
+        name = name.to_sym
+        raise ArgumentError, "#{self.name} has no preference `#{name}` to expose" unless preference_definitions.key?(name)
+        raise ArgumentError, "#{self.name} cannot expose the preference `#{name}`: a method of that name exists" if method_defined?(name)
+
+        define_method(name) { public_send(:"preferred_#{name}") }
+        define_method(:"#{name}=") { |value| public_send(:"preferred_#{name}=", value) }
+        # As `has_json` defines one; a predicate the model already has (one
+        # that falls back to another setting, say) is kept.
+        define_method(:"#{name}?") { public_send(:"preferred_#{name}").present? } unless method_defined?(:"#{name}?")
+      end
+      self.exposed_preference_names = (exposed_preference_names | names.map(&:to_sym)).freeze
+    end
+
+    # The plain name an exposed preference goes by, for a key still using the
+    # DSL's `preferred_` prefix — an error key or a 5.x request parameter.
+    #
+    # @param key [Symbol, String] e.g. `preferred_guest_checkout`
+    # @return [Symbol, nil] e.g. `:guest_checkout`, or nil when the key names no exposed preference
+    def exposed_preference_name(key)
+      name = key.to_s.delete_prefix('preferred_')
+      name.to_sym if name != key.to_s && exposed_preference_names.include?(name.to_sym)
+    end
+
     private
+
+    # A declaration is the preference's contract on the wire. One Spree ships
+    # is always complete (a spec enforces it); an incomplete one from an
+    # extension still works in 6.0, with a schema that accepts any value.
+    def check_preference_declaration(name, type, options)
+      if options[:of] && type != :array
+        raise ArgumentError, "`of:` applies to an :array preference, not `#{name}` (#{type})"
+      end
+      if (options[:keys] || options[:values]) && type != :hash
+        raise ArgumentError, "`keys:` and `values:` apply to a :hash preference, not `#{name}` (#{type})"
+      end
+      [options[:of], options[:values], *options[:properties]&.values].compact.each do |item_type|
+        raise ArgumentError, "Unknown item type `#{item_type}` on preference `#{name}`" unless ITEM_TYPES.include?(item_type)
+      end
+      if options[:format] && !Spree::PreferenceSchema::JsonSchema::FORMATS.key?(options[:format])
+        raise ArgumentError, "Unknown format `#{options[:format]}` on preference `#{name}`"
+      end
+      raise ArgumentError, "`of: :id` needs `model:` on preference `#{name}`" if options[:of] == :id && options[:model].blank?
+      raise ArgumentError, "`of: :object` needs `properties:` on preference `#{name}`" if options[:of] == :object && options[:properties].blank?
+
+      missing = case type
+                when :any then 'a type other than :any'
+                when :array then '`of:`' unless options[:of]
+                when :hash then '`keys:` and `values:`' unless options[:keys] && options[:values]
+                end
+      return unless missing
+
+      Spree::Deprecation.warn(
+        "#{self.name} preference `#{name}` (#{type}) needs #{missing}; until it has one, its schema accepts any value. " \
+        'Spree 6.1 will raise for an incomplete declaration.'
+      )
+    end
 
     def own_preference_definitions
       @own_preference_definitions ||= {}

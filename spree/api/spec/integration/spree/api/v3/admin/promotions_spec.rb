@@ -395,7 +395,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)
-          expect(data).to all(include('type', 'label', 'preference_schema'))
+          expect(data).to all(include('type', 'label', 'schema'))
         end
       end
     end
@@ -420,7 +420,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)
-          expect(data).to all(include('type', 'label', 'preference_schema'))
+          expect(data).to all(include('type', 'label', 'schema'))
         end
       end
     end

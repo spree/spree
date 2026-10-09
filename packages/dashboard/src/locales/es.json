@@ -2062,22 +2062,22 @@
           "invalid": "Usá solo letras mayúsculas, dígitos, guiones y #.",
           "label": "Sufijo"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Idioma del admin",
           "placeholder": "Usar el idioma predeterminado"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "Desactivado, no se envían emails de confirmación de pedido, envío ni reembolso.",
           "label": "Enviar emails transaccionales a los clientes"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Zona horaria",
           "placeholder": "Seleccionar una zona horaria"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "Sistema de unidades"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Unidad de peso"
         },
         "show_products_without_price": {
@@ -2155,14 +2155,14 @@
         "digital_asset_authorized_days": {
           "label": "Días disponibles"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Alto",
           "help": "La caja en la que sueles enviar, usada por los proveedores de tarifas de transporte para el precio por peso dimensional: pulgadas en imperial, centímetros en métrico. Se necesitan los tres para que surta efecto.",
           "label": "Dimensiones del paquete predeterminado",
           "length": "Largo",
           "width": "Ancho"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Peso del empaque (caja y relleno) sumado al contenido de cada paquete al calcular las tarifas de entrega. Poniendo 0 lo deshabilitás.",
           "label": "Peso del paquete predeterminado"
         },
@@ -2183,22 +2183,22 @@
           "help": "Se aplica a tu comisión cuando ni la tarifa de comisión ni tu proveedor de impuestos indican una propia. Déjalo en 0 si tu comisión no lleva impuesto.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Color de acento"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Color de fondo"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Color de la tarjeta"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Color del texto"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Color de los títulos"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Fuente",
           "help": "Las aplicaciones de correo que no puedan cargarla usarán una fuente similar."
         }

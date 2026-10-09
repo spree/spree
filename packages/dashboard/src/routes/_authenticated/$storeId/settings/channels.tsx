@@ -242,9 +242,9 @@ function EditChannelSheet({
   // The rules editor only makes sense under the Rules strategy. Resolve the
   // effective strategy live from the (unsaved) select value, falling back to
   // the store-level preference for the "inherit" option.
-  const strategyOverride = form.watch('preferred_order_routing_strategy')
+  const strategyOverride = form.watch('order_routing_strategy')
   const effectiveStrategy =
-    strategyOverride || store?.preferred_order_routing_strategy || RULES_ORDER_ROUTING_STRATEGY
+    strategyOverride || store?.order_routing_strategy || RULES_ORDER_ROUTING_STRATEGY
 
   useEffect(() => {
     if (channel) {
@@ -253,10 +253,9 @@ function EditChannelSheet({
         code: channel.code,
         active: channel.active,
         default: channel.default,
-        preferred_order_routing_strategy: channel.preferred_order_routing_strategy ?? '',
-        preferred_storefront_access: channel.preferred_storefront_access ?? '',
-        preferred_guest_checkout:
-          channel.preferred_guest_checkout == null ? '' : String(channel.preferred_guest_checkout),
+        order_routing_strategy: channel.order_routing_strategy ?? '',
+        storefront_access: channel.storefront_access ?? '',
+        guest_checkout: channel.guest_checkout == null ? '' : String(channel.guest_checkout),
         default_catalog_id: channel.default_catalog_id ?? '',
         stock_location_ids: channel.stock_location_ids ?? [],
       })
@@ -313,10 +312,7 @@ function EditChannelSheet({
   )
 }
 
-type ChannelSelectFieldName =
-  | 'preferred_order_routing_strategy'
-  | 'preferred_storefront_access'
-  | 'preferred_guest_checkout'
+type ChannelSelectFieldName = 'order_routing_strategy' | 'storefront_access' | 'guest_checkout'
 
 // One channel-preference <Select> that shares the "inherit from store" blank
 // option. Builds its own option list from `values` + the i18n `scope`
@@ -445,21 +441,21 @@ function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> })
 
       <InheritableSelectField
         form={form}
-        name="preferred_order_routing_strategy"
+        name="order_routing_strategy"
         scope="admin.fields.channel.order_routing_strategy"
         values={ORDER_ROUTING_STRATEGY_VALUES}
       />
 
       <InheritableSelectField
         form={form}
-        name="preferred_storefront_access"
+        name="storefront_access"
         scope="admin.fields.channel.storefront_access"
         values={STOREFRONT_ACCESS_VALUES}
       />
 
       <InheritableSelectField
         form={form}
-        name="preferred_guest_checkout"
+        name="guest_checkout"
         scope="admin.fields.channel.guest_checkout"
         values={GUEST_CHECKOUT_VALUES}
       />

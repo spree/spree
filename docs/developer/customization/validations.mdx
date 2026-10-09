@@ -74,7 +74,7 @@ dashboard under **Settings → Store**, or through the Admin API:
 
 ```typescript Admin SDK
 await adminClient.store.update({
-  preferred_address_requires_phone: false,
+  address_requires_phone: false,
 })
 ```
 
@@ -82,7 +82,7 @@ await adminClient.store.update({
 curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "preferred_address_requires_phone": false }'
+  -d '{ "address_requires_phone": false }'
 ```
 
 </CodeGroup>

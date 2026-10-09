@@ -53,7 +53,7 @@ export function ConfigureIntegrationSheet({
   const [preferences, setPreferences] = useState<Record<string, unknown>>(() =>
     integration
       ? ((integration.preferences as Record<string, unknown>) ?? {})
-      : defaultPreferences(type.preference_schema),
+      : defaultPreferences(type.schema),
   )
   const [active, setActive] = useState(integration?.active ?? defaultActive)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -109,11 +109,7 @@ export function ConfigureIntegrationSheet({
               </p>
             )}
 
-            <PreferencesForm
-              schema={type.preference_schema}
-              values={preferences}
-              onChange={setPreferences}
-            />
+            <PreferencesForm schema={type.schema} values={preferences} onChange={setPreferences} />
 
             <div className="flex items-center justify-between gap-3">
               <div className="flex flex-col">

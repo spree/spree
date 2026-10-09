@@ -56,8 +56,14 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           estimated_transit_business_days_min: { type: :integer, nullable: true },
           estimated_transit_business_days_max: { type: :integer, nullable: true },
           tax_category_id: { type: :string, nullable: true },
-          calculator_type: { type: :string, example: 'flat_rate' },
-          calculator_preferences: { type: :object, example: { amount: '12.50' } },
+          calculator: {
+            type: :object,
+            description: 'How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type\'s `schema`.',
+            properties: {
+              type: { type: :string, example: 'flat_rate' },
+              preferences: { type: :object, example: { amount: '12.5' } }
+            }
+          },
           delivery_zone_id: { type: :string, nullable: true }
         },
         required: %w[name]
@@ -68,15 +74,14 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           {
             name: 'Express',
             storefront_visible: true,
-            calculator_type: 'flat_rate',
-            calculator_preferences: { amount: '12.50' }
+            calculator: { type: 'flat_rate', preferences: { amount: '12.5' } }
           }
         end
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['name']).to eq('Express')
-          expect(data['calculator_type']).to eq('flat_rate')
+          expect(data['calculator']['type']).to eq('flat_rate')
         end
       end
     end

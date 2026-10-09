@@ -197,8 +197,8 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
     it 'persists the storefront gating preferences' do
       post :create, params: {
         name: 'B2B Portal', code: 'b2b',
-        preferred_storefront_access: 'login_required',
-        preferred_guest_checkout: false
+        storefront_access: 'login_required',
+        guest_checkout: false
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -221,14 +221,14 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(previous_default.reload.default).to be false
     end
 
-    it 'persists preferred_order_routing_strategy' do
+    it 'persists order_routing_strategy' do
       patch :update, params: {
         id: channel.prefixed_id,
-        preferred_order_routing_strategy: 'rules'
+        order_routing_strategy: 'rules'
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['preferred_order_routing_strategy']).to eq('rules')
+      expect(json_response['order_routing_strategy']).to eq('rules')
       expect(channel.reload.preferred_order_routing_strategy).to eq('Spree::OrderRouting::Strategy::Rules')
     end
 
@@ -237,7 +237,7 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
       patch :update, params: {
         id: channel.prefixed_id,
-        preferred_order_routing_strategy: nil
+        order_routing_strategy: nil
       }, as: :json
 
       expect(response).to have_http_status(:ok)
@@ -247,13 +247,13 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
     it 'persists the storefront gating preferences' do
       patch :update, params: {
         id: channel.prefixed_id,
-        preferred_storefront_access: 'prices_hidden',
-        preferred_guest_checkout: false
+        storefront_access: 'prices_hidden',
+        guest_checkout: false
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['preferred_storefront_access']).to eq('prices_hidden')
-      expect(json_response['preferred_guest_checkout']).to be(false)
+      expect(json_response['storefront_access']).to eq('prices_hidden')
+      expect(json_response['guest_checkout']).to be(false)
 
       channel.reload
       expect(channel.preferred_storefront_access).to eq('prices_hidden')
@@ -265,8 +265,8 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
       patch :update, params: {
         id: channel.prefixed_id,
-        preferred_storefront_access: nil,
-        preferred_guest_checkout: nil
+        storefront_access: nil,
+        guest_checkout: nil
       }, as: :json
 
       expect(response).to have_http_status(:ok)
@@ -281,7 +281,7 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
       patch :update, params: {
         id: channel.prefixed_id,
-        preferred_storefront_access: 'members_only'
+        storefront_access: 'members_only'
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)

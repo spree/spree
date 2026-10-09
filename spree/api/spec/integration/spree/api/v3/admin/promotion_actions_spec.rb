@@ -34,7 +34,7 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
           data = JSON.parse(response.body)['data']
           expect(data.size).to eq(1)
           expect(data.first['type']).to eq('free_shipping')
-          expect(data.first).to have_key('preference_schema')
+          expect(data.first).not_to have_key('preference_schema')
         end
       end
     end

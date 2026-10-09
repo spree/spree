@@ -3,7 +3,7 @@ module Spree
     preference :minimal_amount, :money, default: 0
     preference :normal_amount, :money, default: 0
     preference :discount_amount, :money, default: 0
-    preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+    preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
     def self.description
       I18n.t('spree.price_sack')

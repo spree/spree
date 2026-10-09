@@ -42,9 +42,9 @@ module Spree
     # Preferences
     #
     # general preferences
-    preference :admin_locale, :string
-    preference :timezone, :string, default: Time.zone.name
-    preference :weight_unit, :string, default: 'lb'
+    preference :admin_locale, :string, format: :locale
+    preference :timezone, :string, format: :timezone, default: Time.zone.name
+    preference :weight_unit, :string, default: 'lb', choices: -> { Spree::Variant::WEIGHT_UNITS }
     preference :unit_system, :string, default: 'imperial'
     # Anonymous identifier of this installation, kept on the default store
     # (see Spree.install_id). Written by Spree, never by the operator.
@@ -83,7 +83,7 @@ module Spree
     # How often sellers are settled, unless one carries its own schedule.
     # Monthly by default because it is the interval that needs least of an
     # operator paying by hand, which is what the built-in provider expects.
-    preference :default_payouts_schedule_interval, :string, default: 'monthly'
+    preference :default_payouts_schedule_interval, :string, default: 'monthly', choices: -> { Spree::Seller::PAYOUT_INTERVALS }
     validates :preferred_default_payouts_schedule_interval,
               inclusion: { in: Spree::Seller::PAYOUT_INTERVALS }, allow_blank: true
     # What a seller's balance must reach before a settlement is worth sending;
@@ -95,10 +95,10 @@ module Spree
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.
     preference :guest_checkout, :boolean, default: true
     # Store-level fallback for the channel-owned `storefront_access` posture.
-    preference :storefront_access, :string, default: 'public'
+    preference :storefront_access, :string, default: 'public', choices: -> { Spree::Channel::Gating::STOREFRONT_ACCESS }
     # Canonical storefront origin used in customer-facing emails and links,
     # e.g. "https://myshop.com" — see #storefront_url for the fallback chain.
-    preference :storefront_url, :string
+    preference :storefront_url, :string, format: :url
     preference :special_instructions_enabled, :boolean, default: false
     # Advertises a confirm/review step for every checkout, even when no
     # payment method asks for one. Payment methods that require confirmation
@@ -108,7 +108,8 @@ module Spree
     # Store-wide default for when a customer is charged rather than only
     # authorized. A payment method's own capture_method wins when set.
     # See Spree::CaptureMethod.
-    preference :capture_method, :string, default: Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
+    preference :capture_method, :string, default: Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD,
+                                       choices: -> { Spree::CaptureMethod::CAPTURE_METHODS }
     preference :stock_reservations_enabled, :boolean, default: true
     # Which address a sale's tax is computed against. Stores selling where tax
     # follows the destination keep this on; billing-address jurisdictions turn
@@ -120,9 +121,9 @@ module Spree
     preference :inventory_provider, :string, default: 'internal'
     # What happens when an external source cannot be reached.
     preference :pricing_provider_failure_policy, :string,
-               default: Spree::ProviderFailurePolicy::DEFAULT_PRICING_POLICY
+               default: Spree::ProviderFailurePolicy::DEFAULT_PRICING_POLICY, choices: -> { Spree::ProviderFailurePolicy::VALUES }
     preference :inventory_provider_failure_policy, :string,
-               default: Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY
+               default: Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY, choices: -> { Spree::ProviderFailurePolicy::VALUES }
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
     # On-hand quantity at or below which a tracked variant counts as running
@@ -163,10 +164,26 @@ module Spree
     # applies to every numbered document; prefix, suffix and starting value
     # are order-only — other document types keep their code-level prefixes.
     # Changes affect future numbers only; existing numbers are permanent.
-    preference :document_number_format, :string, default: 'sequential'
+    preference :document_number_format, :string, default: 'sequential', choices: -> { Spree::NumberGenerators::Registry::FORMATS.keys }
     preference :order_number_prefix, :string, default: 'R'
     preference :order_number_suffix, :string, default: ''
     preference :order_number_sequence_start, :integer, default: 1001
+
+    # The settings the API reads and writes under their plain names.
+    exposes_preferences :admin_locale, :timezone, :storefront_url, :weight_unit, :unit_system, :storefront_access, :guest_checkout,
+                        :always_include_confirm_step, :company_field_enabled, :address_requires_company,
+                        :address_requires_phone, :capture_method, :track_inventory_levels, :stock_reservations_enabled,
+                        :low_stock_threshold, :tax_using_ship_address, :track_price_history,
+                        :show_products_without_price, :disable_sku_validation, :order_routing_strategy,
+                        :pricing_provider, :inventory_provider, :pricing_provider_failure_policy,
+                        :inventory_provider_failure_policy, :payout_provider, :default_payouts_schedule_interval,
+                        :default_minimum_payout_amount, :auto_approve_sellers, :auto_approve_seller_products,
+                        :send_seller_transactional_emails, :default_commission_tax_rate, :document_number_format,
+                        :order_number_prefix, :order_number_suffix, :order_number_sequence_start,
+                        :limit_digital_download_count, :digital_asset_authorized_clicks,
+                        :limit_digital_download_days, :digital_asset_authorized_days,
+                        :send_consumer_transactional_emails, :email_accent_color, :email_background_color,
+                        :email_card_color, :email_text_color, :email_heading_color, :email_font
 
     #
     # Associations
@@ -528,6 +545,7 @@ module Spree
     end
 
     # Returns the storefront origin URL for use in customer-facing emails and links.
+    # Replaces the plain `storefront_url` reader `exposes_preferences` defines.
     # Uses the `storefront_url` preference when set, then the oldest non-loopback
     # allowed origin (the `http://localhost` origin seeded on install must never
     # leak into customer emails), otherwise falls back to formatted_url.

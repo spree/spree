@@ -121,3 +121,37 @@ export interface ProviderLogin {
 }
 
 export type LoginCredentials = EmailPasswordLogin | ProviderLogin
+
+/**
+ * One setting in a {@link PreferenceSchema}: a JSON Schema (draft 2020-12)
+ * property. `format` names the domain (`money`, `currency`, `iso-country`,
+ * `prefixed-id`, `date`, …); a type that includes `'null'` may be unset.
+ */
+export interface PreferencePropertySchema {
+  type?: string | string[]
+  format?: string
+  pattern?: string
+  enum?: Array<string | number | boolean | null>
+  default?: unknown
+  items?: PreferencePropertySchema
+  properties?: Record<string, PreferencePropertySchema>
+  required?: string[]
+  additionalProperties?: boolean | PreferencePropertySchema
+  propertyNames?: PreferencePropertySchema
+  /** A secret: read back masked (`••••1234`). Sending the mask back keeps it; `null` clears it. */
+  'x-spree-secret'?: boolean
+  /** The prefix every id in an id list carries (`ch` for `ch_…`). */
+  'x-spree-prefix'?: string
+  /** A longer text, best edited in a multi-line field. */
+  'x-spree-widget'?: 'textarea'
+}
+
+/**
+ * The JSON Schema of a type's `preferences`, as every `/…/types` endpoint
+ * returns it. A key it does not list is refused on write.
+ */
+export interface PreferenceSchema {
+  type: 'object'
+  properties: Record<string, PreferencePropertySchema>
+  additionalProperties: false
+}

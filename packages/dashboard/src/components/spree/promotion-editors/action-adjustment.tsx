@@ -1,5 +1,5 @@
 import type { PromotionActionCalculator } from '@spree/admin-sdk'
-import { adminClient, PreferencesForm, typeLabel } from '@spree/dashboard-core'
+import { defaultPreferences, PreferencesForm, typeLabel } from '@spree/dashboard-core'
 import {
   Field,
   FieldGroup,
@@ -10,10 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@spree/dashboard-ui'
-import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { usePromotionActionCalculators } from '../../../hooks/use-promotions'
 import { resolveCalculatorType } from '../../../lib/promotion-calculator-type'
 
 import { EditorShell } from './editor-shell'
@@ -26,10 +26,9 @@ import type { PromotionActionEditorContext } from './types'
  */
 export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActionEditorContext) {
   const { t } = useTranslation()
-  const { data: calculatorsData, isLoading: calculatorsLoading } = useQuery({
-    queryKey: ['promotion-action-calculators', draft.type],
-    queryFn: () => adminClient.promotionActions.calculators(draft.type),
-  })
+  const { data: calculatorsData, isLoading: calculatorsLoading } = usePromotionActionCalculators(
+    draft.type,
+  )
 
   const calculators = calculatorsData?.data ?? []
 
@@ -61,11 +60,7 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
     if (nextType === calculatorType) return
     const next = calculators.find((c) => c.type === nextType)
     setCalculatorType(nextType)
-    setPreferences(
-      Object.fromEntries(
-        (next?.preference_schema ?? []).map((field) => [field.key, field.default ?? '']),
-      ),
-    )
+    setPreferences(defaultPreferences(next?.schema))
   }
 
   function handleSave() {
@@ -75,13 +70,11 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
       calculator: {
         type: calculatorType,
         preferences,
-        // Display-only — lets `<ActionSummary>` render the row preview
-        // without fetching `/calculators` again. Stripped at payload time.
-        // The summary resolves the name from `type`; the catalog's English
-        // name rides along as the fallback for a calculator shipped by an
-        // extension that carries no dashboard translation.
+        // Display-only, stripped at payload time. The summary resolves the
+        // name from `type`; the catalog's English name rides along as the
+        // fallback for a calculator shipped by an extension that carries no
+        // dashboard translation.
         label: selectedCalculator?.label,
-        preference_schema: selectedCalculator?.preference_schema,
       },
     })
     onClose()
@@ -151,7 +144,7 @@ function CalculatorPreferences({
 }) {
   const { t } = useTranslation()
 
-  if (!calculator.preference_schema?.length) {
+  if (!Object.keys(calculator.schema?.properties ?? {}).length) {
     return (
       <p className="text-sm text-muted-foreground">
         {t('admin.components.adjustment_action_editor.no_extra_settings')}
@@ -162,7 +155,7 @@ function CalculatorPreferences({
   return (
     <FieldGroup>
       <FieldLabel>{t('admin.components.adjustment_action_editor.settings_label')}</FieldLabel>
-      <PreferencesForm schema={calculator.preference_schema} values={values} onChange={onChange} />
+      <PreferencesForm schema={calculator.schema} values={values} onChange={onChange} />
     </FieldGroup>
   )
 }

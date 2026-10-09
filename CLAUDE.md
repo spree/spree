@@ -336,7 +336,7 @@ attribute :variant_id
 
 - Serialize with `Model.api_type_for(record.type)` (or `record.class.api_type`); resolve writes with `subclassed_via` / `find_by_api_type` / `Model.class_name_for_api_type`, which match the registry only, so a class name is rejected as an unknown type
 - Override `def self.api_type` to keep the wire value stable across a class rename — the default is derived, so renaming otherwise changes a public identifier
-- Build pickers from the family's `…/types` endpoint (`{ type, label, preference_schema }`), never a hardcoded list — extension kinds then appear for free
+- Build pickers from the family's `…/types` endpoint (`{ type, label, schema }`, where `schema` is the JSON Schema of the type's preferences), never a hardcoded list — extension kinds then appear for free
 - Adding a built-in kind means updating the serializer's `comment:` list in the same change (see the value-list tiers below)
 
 **Registry-selected strategy classes** (fulfillment, delivery-rate, pickup-point, payout, tax and digital-asset providers, order routing strategies — plain Ruby, stored as a class-name string on a column or preference):

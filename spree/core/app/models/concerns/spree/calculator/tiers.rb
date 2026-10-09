@@ -9,22 +9,9 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        preference :tiers, :array, default: [], parse_on_set: ->(value) { Tiers.normalize(value) }
+        preference :tiers, :array, of: :object, properties: { threshold: :money, value: :decimal }, default: []
 
         validate :preferred_tiers_content
-      end
-
-      # @param value [Object] tiers as an operator or API client sent them
-      # @return [Object] an array of string-keyed hashes with numbers as exact
-      #   decimal strings — the form JSON stores, so a fresh value compares
-      #   equal to one read back — or the value unchanged when it is not a list
-      #   of hashes, so validation can name the problem
-      def self.normalize(value)
-        return value unless value.is_a?(Array) && value.all? { |tier| tier.respond_to?(:to_h) && !tier.is_a?(Array) }
-
-        value.map do |tier|
-          tier.to_h.stringify_keys.to_h { |key, number| [key, decimal(number)&.as_json || number] }
-        end
       end
 
       # @return [BigDecimal, nil] nil when the value is not a number

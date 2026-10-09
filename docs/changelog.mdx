@@ -39,6 +39,17 @@ Keep up with the latest features and improvements in Spree Commerce!
   **Learn more:** [Upgrade guide](/developer/upgrades/5.6-to-6.0#money)
 </Update>
 
+<Update label="Typed settings in the Admin API" description="October 9, 2026" tags={["Developers", "API"]}>
+  Every configurable part of Spree — promotion rules and actions, calculators, payment methods, integrations, and price, delivery, commission and order routing rules — now publishes exactly what its settings look like, and the API checks every change against it.
+
+  - Each type's `/types` entry carries a JSON Schema of its settings, so a dashboard, an integration or an AI agent can build a form or a payload for any type, including ones your extensions add.
+  - The TypeScript SDKs type the settings of every type Spree ships, narrowed by `type`.
+  - A setting with an unknown name, a wrong type or another store's record is refused with a message naming the exact value, instead of being silently dropped.
+  - Store, channel and import settings are read and written under plain names (`guest_checkout` instead of `preferred_guest_checkout`).
+
+  This is a breaking change for Admin and Seller API clients. **Learn more:** [Upgrade guide](/developer/upgrades/5.6-to-6.0#preferences-are-typed-in-the-api) · [Model preferences](/developer/customization/model-preferences#preferences-in-the-api)
+</Update>
+
 <Update label="Email template editor" description="October 6, 2026" tags={["Emails", "Dashboard"]}>
   Merchants can now change what their customer emails say and how they look, right in the dashboard, without asking a developer. Order confirmations, shipping notifications, refunds, password resets, the layout around every email and the shared blocks such as item rows are all editable under **Settings → Emails → Templates**.
 

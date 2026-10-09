@@ -283,7 +283,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
         expect(rule.customer_groups).to contain_exactly(customer_group, other_group)
       end
 
-      it 'returns 404 for an unknown customer-group ID' do
+      it 'refuses an unknown customer-group ID' do
         post :create,
              params: base_params.merge(
                rules: [{
@@ -293,7 +293,8 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
              ),
              as: :json
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_preferences')
       end
     end
 
@@ -321,14 +322,15 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
         expect(rule.users).to contain_exactly(user, other_user)
       end
 
-      it 'returns 404 for an unknown user ID' do
+      it 'refuses an unknown user ID' do
         post :create,
              params: base_params.merge(
                rules: [{ type: 'user_rule', preferences: { user_ids: ['cus_doesnotexist'] } }]
              ),
              as: :json
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_preferences')
       end
     end
 

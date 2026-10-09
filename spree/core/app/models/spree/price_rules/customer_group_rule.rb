@@ -10,11 +10,8 @@ module Spree
       # callers and decodes them on write so eligibility checks compare
       # against raw `customer_group_id` rows directly. Scope confines
       # the existence check to the price-list's store.
-      preference :customer_group_ids, :array, default: [],
-                 parse_on_set: normalize_id_preference(
-                   klass: Spree::CustomerGroup,
-                   scope: ->(rule) { rule.store.customer_groups }
-                 )
+      preference :customer_group_ids, :array, of: :id, model: 'Spree::CustomerGroup', default: [],
+                 scope: ->(rule) { rule.store.customer_groups }
 
       def customer_groups
         return [] if preferred_customer_group_ids.blank?

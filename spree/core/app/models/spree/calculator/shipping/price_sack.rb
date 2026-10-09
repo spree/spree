@@ -4,7 +4,7 @@ module Spree
       preference :minimal_amount, :money, default: 0
       preference :normal_amount, :money, default: 0
       preference :discount_amount, :money, default: 0
-      preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+      preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
       # Single-currency amounts: quoting another currency would mislabel
       # the configured numbers, so the method stays hidden there.

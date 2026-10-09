@@ -1,7 +1,7 @@
 // Request parameter types for Admin API endpoints
 // Based on the Admin API OpenAPI specification
 
-import type { PaginationMeta } from '@spree/sdk-core'
+import type { PaginationMeta, PreferenceSchema } from '@spree/sdk-core'
 import type { ReportingQuery } from './admin-client'
 import type { SellerRequirementStatus, StoreCredit } from './types'
 
@@ -23,7 +23,7 @@ export interface StoreDataSourceProvider {
  * sellers to hold an account with it.
  */
 export interface StorePayoutProvider {
-  /** The provider's shorthand (`system`, `stripe`) — what `preferred_payout_provider` takes. */
+  /** The provider's shorthand (`system`, `stripe`) — what `payout_provider` takes. */
   id: string
   name: string
   /** False when the store has not connected what this provider needs. */
@@ -42,61 +42,57 @@ export interface StoreDataSources {
 
 export interface StoreUpdateParams {
   name?: string
-  preferred_admin_locale?: string
-  preferred_timezone?: string
-  preferred_weight_unit?: string
-  preferred_unit_system?: string
+  admin_locale?: string
+  timezone?: string
+  weight_unit?: string
+  unit_system?: string
   /**
    * Store-wide default storefront posture: `public`, `prices_hidden`, or
    * `login_required`. Channels fall back to this when they don't set their own.
    */
-  preferred_storefront_access?: string
+  storefront_access?: string
   /** The storefront's public URL — base for customer-email links; saving it also completes the storefront setup task. */
-  preferred_storefront_url?: string | null
+  storefront_url?: string | null
   /** Store-wide default for guest checkout. Channels fall back to this. */
-  preferred_guest_checkout?: boolean
+  guest_checkout?: boolean
   /** Always advertise a confirmation step in checkout, even when no payment method requires one. */
-  preferred_always_include_confirm_step?: boolean
+  always_include_confirm_step?: boolean
   /** Shows a company field on address forms. */
-  preferred_company_field_enabled?: boolean
+  company_field_enabled?: boolean
   /** Makes a phone number mandatory on customer addresses. */
-  preferred_address_requires_phone?: boolean
+  address_requires_phone?: boolean
   /** Store-wide default for when a customer is charged rather than only authorized. A payment method's own setting wins when set. */
-  preferred_capture_method?: 'checkout' | 'on_dispatch' | 'manual'
-  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
-  preferred_auto_capture?: boolean
-  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
-  preferred_auto_capture_on_dispatch?: boolean
+  capture_method?: 'checkout' | 'on_dispatch' | 'manual'
   /** Calculates tax from the shipping address. When false, calculates tax from the billing address. */
-  preferred_tax_using_ship_address?: boolean
+  tax_using_ship_address?: boolean
   /** Counts on-hand quantities. Off means everything is treated as always available. */
-  preferred_track_inventory_levels?: boolean
+  track_inventory_levels?: boolean
   /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */
-  preferred_stock_reservations_enabled?: boolean
+  stock_reservations_enabled?: boolean
   /** On-hand units at or below which a tracked variant counts as low stock on the home screen; 0 turns the warning off. */
-  preferred_low_stock_threshold?: number
+  low_stock_threshold?: number
   /** Records price changes for the EU Omnibus lowest-price-in-30-days display. */
-  preferred_track_price_history?: boolean
+  track_price_history?: boolean
   /** Whether products with no price in the shopper's currency still appear in listings. */
-  preferred_show_products_without_price?: boolean
+  show_products_without_price?: boolean
   /** Lets more than one variant share the same SKU. */
-  preferred_disable_sku_validation?: boolean
+  disable_sku_validation?: boolean
   /** How document numbers are produced: `sequential` or `random`. Applies to every numbered document. */
-  preferred_document_number_format?: string
+  document_number_format?: string
   /** Leads every order number, e.g. `R`. Uppercase letters, digits, dashes and # only. */
-  preferred_order_number_prefix?: string
+  order_number_prefix?: string
   /** Ends every order number. Uppercase letters, digits, dashes and # only. */
-  preferred_order_number_suffix?: string
+  order_number_suffix?: string
   /** First sequential order number. Only applies before the store's first order. */
-  preferred_order_number_sequence_start?: number
+  order_number_sequence_start?: number
   /** When false, buyers can download their files as often as they like. */
-  preferred_limit_digital_download_count?: boolean
+  limit_digital_download_count?: boolean
   /** Downloads allowed per purchased file, unless the file overrides it. */
-  preferred_digital_asset_authorized_clicks?: number
+  digital_asset_authorized_clicks?: number
   /** When false, download links never expire. */
-  preferred_limit_digital_download_days?: boolean
+  limit_digital_download_days?: boolean
   /** Days a download link stays valid, unless the file overrides it. */
-  preferred_digital_asset_authorized_days?: number
+  digital_asset_authorized_days?: number
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */
@@ -104,42 +100,42 @@ export interface StoreUpdateParams {
   /** Recipient of "new order placed" admin notifications. */
   new_order_notifications_email?: string | null
   /** When false, transactional consumer emails (order confirmation, etc.) are suppressed. */
-  preferred_send_consumer_transactional_emails?: boolean
+  send_consumer_transactional_emails?: boolean
   /** Customer email buttons and links, as `#RRGGBB`. Blank keeps the outlined buttons emails ship with. */
-  preferred_email_accent_color?: string | null
+  email_accent_color?: string | null
   /** Customer email page background, as `#RRGGBB`. */
-  preferred_email_background_color?: string | null
+  email_background_color?: string | null
   /** Customer email card behind the content, as `#RRGGBB`. */
-  preferred_email_card_color?: string | null
+  email_card_color?: string | null
   /** Customer email body text, as `#RRGGBB`. */
-  preferred_email_text_color?: string | null
+  email_text_color?: string | null
   /** Customer email headings and emphasized text, as `#RRGGBB`. */
-  preferred_email_heading_color?: string | null
+  email_heading_color?: string | null
   /** Customer email font: `inter`, `system`, `helvetica`, `georgia`, `roboto`, `lato` or `merriweather`. */
-  preferred_email_font?: string | null
+  email_font?: string | null
   /** Active Storage signed_id from a direct upload — the logo embedded in transactional emails. */
   mailer_logo?: string | null
   /** Where prices come from: a registered provider key, or `internal`. */
-  preferred_pricing_provider?: string
+  pricing_provider?: string
   /** Where stock levels come from: a registered provider key, or `internal`. */
-  preferred_inventory_provider?: string
+  inventory_provider?: string
   /** `strict` refuses to price when the provider cannot answer; `fallback` uses the catalog. */
-  preferred_pricing_provider_failure_policy?: 'strict' | 'fallback'
+  pricing_provider_failure_policy?: 'strict' | 'fallback'
   /** `fallback` sells on the local snapshot when the provider cannot answer; `strict` refuses. */
-  preferred_inventory_provider_failure_policy?: 'strict' | 'fallback'
+  inventory_provider_failure_policy?: 'strict' | 'fallback'
   /** Blank means the built-in provider: the marketplace settles by hand. */
-  preferred_payout_provider?: string
-  preferred_default_payouts_schedule_interval?: string
+  payout_provider?: string
+  default_payouts_schedule_interval?: string
   /** A decimal string in the store's currency, e.g. `"50.00"`. */
-  preferred_default_minimum_payout_amount?: string
+  default_minimum_payout_amount?: string
   /** Admits a seller as soon as they finish onboarding, with no operator review. */
-  preferred_auto_approve_sellers?: boolean
+  auto_approve_sellers?: boolean
   /** Puts a seller's product on sale the moment they submit it, with no review. */
-  preferred_auto_approve_seller_products?: boolean
+  auto_approve_seller_products?: boolean
   /** When false, transactional seller emails (approval, payouts, etc.) are suppressed. */
-  preferred_send_seller_transactional_emails?: boolean
+  send_seller_transactional_emails?: boolean
   /** Tax charged on commission as a fraction (`"0.23"` is 23%), when neither the rate nor the tax provider names one. */
-  preferred_default_commission_tax_rate?: string
+  default_commission_tax_rate?: string
 }
 
 export interface OptionValueParams {
@@ -1854,17 +1850,17 @@ export interface ChannelCreateParams {
    * Order routing strategy shorthand (built-in: `rules`), or `null` to
    * inherit the store-level preference.
    */
-  preferred_order_routing_strategy?: string | null
+  order_routing_strategy?: string | null
   /**
    * Storefront access posture: `public`, `prices_hidden`, or `login_required`.
    * `null` (or an empty string) inherits the store-level preference.
    */
-  preferred_storefront_access?: string | null
+  storefront_access?: string | null
   /**
    * Whether guest checkout is allowed on this channel. `null` inherits the
    * store-level preference.
    */
-  preferred_guest_checkout?: boolean | null
+  guest_checkout?: boolean | null
   /**
    * Catalog (cat_...) shown to shoppers not covered by a company or customer
    * group catalog. `null` means every product published on the channel.
@@ -1879,17 +1875,17 @@ export interface ChannelUpdateParams {
   code?: string
   active?: boolean
   default?: boolean
-  preferred_order_routing_strategy?: string | null
+  order_routing_strategy?: string | null
   /**
    * Storefront access posture: `public`, `prices_hidden`, or `login_required`.
    * `null` (or an empty string) inherits the store-level preference.
    */
-  preferred_storefront_access?: string | null
+  storefront_access?: string | null
   /**
    * Whether guest checkout is allowed on this channel. `null` inherits the
    * store-level preference.
    */
-  preferred_guest_checkout?: boolean | null
+  guest_checkout?: boolean | null
   /**
    * Catalog (cat_...) shown to shoppers not covered by a company or customer
    * group catalog. `null` means every product published on the channel.
@@ -2040,7 +2036,8 @@ export interface SellerRequirementType {
   accepted_content_types: string[]
   /** Association-backed config this kind takes beyond its preferences. */
   association_fields: string[]
-  preference_schema: Array<Record<string, unknown>>
+  /** JSON Schema of the kind's `preferences`. */
+  schema: PreferenceSchema
 }
 
 /** Excusing one seller from one requirement. */
@@ -2144,28 +2141,6 @@ export interface CommissionRateCreateParams {
 export type CommissionRateUpdateParams = Partial<CommissionRateCreateParams>
 
 /**
- * One entry in `preference_schema`, describing a single tunable knob on
- * a STI subclass (payment provider, promotion action, promotion rule).
- *
- * The `type` mirrors Spree's preference type system — `string`, `text`,
- * `integer`, `decimal`, `money`, `boolean`, `array`, `password` — so admin UIs
- * can switch on it to render the right input widget. A `money` value is a
- * decimal string in the currency of the record's `currency` preference, when
- * it has one; a `decimal` is a rate or measure, such as a percentage or a weight.
- */
-export interface PreferenceField {
-  key: string
-  type: string
-  default: unknown
-  /**
-   * The fixed set this value must come from, when the preference declares
-   * one. Present only for constrained preferences; an admin form renders a
-   * picker for these rather than a free-text box.
-   */
-  choices?: string[]
-}
-
-/**
  * Mask token the server applies to `:password`-typed preferences before
  * returning them. The value `••••` followed by the original secret's
  * last four characters — Stripe's "stored, last 4 shown" pattern.
@@ -2187,12 +2162,12 @@ export function isMaskedSecret(value: unknown): value is string {
 
 /**
  * The shape returned by `/<resource>/types` endpoints — one entry per
- * registered subclass with its preference schema. Used to build "Add
+ * registered subclass with the JSON Schema of its preferences. Used to build "Add
  * provider / action / rule" pickers and render generic preferences forms.
  */
 /**
  * One rule kind a commission rate can be narrowed by, as the marketplace
- * reports it. `preference_schema` describes the configuration the kind takes,
+ * reports it. `schema` describes the configuration the kind takes,
  * and `association_fields` names any catalog-scale reference it keeps outside
  * that — so a client can render the right editor without knowing the kind.
  */
@@ -2200,7 +2175,8 @@ export interface CommissionRuleType {
   type: string
   name: string
   description: string | null
-  preference_schema: PreferenceField[]
+  /** JSON Schema of the type's `preferences`. */
+  schema: PreferenceSchema
   association_fields: string[]
 }
 
@@ -2208,7 +2184,8 @@ export interface ResourceTypeDefinition {
   type: string
   label: string
   description: string | null
-  preference_schema: PreferenceField[]
+  /** JSON Schema of the type's `preferences`. */
+  schema: PreferenceSchema
   /**
    * Present (true) only on kinds a better mechanism has replaced: existing
    * records keep working and rendering, but pickers must stop offering the
@@ -2426,6 +2403,8 @@ export interface PaymentMethodType extends ResourceTypeDefinition {
   docs_url: string | null
   /** Backed by an external payment provider rather than handled by the store itself. */
   third_party: boolean
+  /** The store already has a payment method of this type; leave it out of a create picker. */
+  installed: boolean
 }
 
 /**
@@ -2449,7 +2428,8 @@ export interface IntegrationTypeDefinition {
   logo_url: string | null
   /** Absolute URL of the integration's setup guide. */
   docs_url: string | null
-  preference_schema: { key: string; type: string; default: unknown }[]
+  /** JSON Schema of the type's `preferences`. */
+  schema: PreferenceSchema
 }
 
 export interface IntegrationCreateParams {
@@ -2530,7 +2510,7 @@ export interface ImportCreateParams {
    */
   attachment: string
   /** CSV column separator. Defaults to a comma on the server. */
-  preferred_delimiter?: ',' | ';' | '|' | '\t'
+  delimiter?: ',' | ';' | '|' | '\t'
   /**
    * For `price_list_prices` imports: the price list the rows are merged
    * into. Must belong to the current store (404 otherwise); ignored by
@@ -2695,7 +2675,8 @@ export interface PromotionActionLineItemParams {
 export interface PromotionActionCalculator {
   type: string
   label: string
-  preference_schema: PreferenceField[]
+  /** JSON Schema of the type's `preferences`. */
+  schema: PreferenceSchema
 }
 
 export interface PromotionActionCreateParams {
@@ -2806,9 +2787,12 @@ export interface DeliveryMethodParams {
   estimated_transit_business_days_max?: number | null
   /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
   tax_category_id?: string | null
-  /** Wire shorthand for the calculator, e.g. `'flat_rate'` (see `deliveryMethods.calculators()`). */
-  calculator_type?: string
-  calculator_preferences?: Record<string, unknown>
+  /**
+   * How the method prices a shipment: the calculator's wire shorthand, e.g.
+   * `'flat_rate'` (see `deliveryMethods.calculators()`), and its preferences,
+   * which must match the `schema` that list carries.
+   */
+  calculator?: { type?: string; preferences?: Record<string, unknown> }
   /** Prefixed delivery zone ID (`dz_...`) narrowing destinations, or null for no restriction. Must belong to the method's profile. */
   delivery_zone_id?: string | null
   /**
@@ -3174,7 +3158,7 @@ export interface EmailTemplatePreviewParams extends EmailTemplateLanguageParams 
   record_id?: string
   /** For the layout or a partial, the email to show it in. */
   email_key?: string
-  /** Unsaved colors and font to preview, named like the store's `preferred_email_*` settings without the prefix. */
+  /** Unsaved colors and font to preview, named like the store's `email_*` settings. */
   branding?: {
     accent_color?: string | null
     background_color?: string | null

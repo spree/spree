@@ -50,12 +50,41 @@ module Spree
       # runtime. Each entry also caches `key_string` (frozen) so hot-path
       # serializers don't allocate `pref.to_s` per request.
       def preference_schema
-        @preference_schema ||= compute_preference_schema
+        return @preference_schema if @preference_schema
 
-        # An empty list to callers either way; only the memo tells the two
-        # apart, so a schema that could not be computed is retried rather than
-        # settled on.
-        @preference_schema || []
+        fields, complete = compute_preference_schema
+        # Settled on only when every default could be read; one computed
+        # before the database was up is retried next time.
+        @preference_schema = fields if complete
+        fields
+      end
+
+      # The JSON Schema of this class's `preferences` object (see
+      # {Spree::PreferenceSchema::JsonSchema}). Memoized like
+      # {#preference_schema}.
+      #
+      # @return [Hash]
+      def preference_json_schema
+        return @preference_json_schema if @preference_json_schema
+
+        schema = Spree::PreferenceSchema::JsonSchema.for(self)
+        @preference_json_schema = schema if @preference_schema
+        schema
+      end
+
+      # Checks a `preferences` payload against {#preference_json_schema}, which
+      # also accepts deprecated preferences until their removal.
+      #
+      # @param values [Hash{String => Object}]
+      # @return [Array<Hash{Symbol => String}>] `{ pointer:, message: }` per failure, empty when it matches
+      def preference_failures(values)
+        # The published schema plus deprecated preferences, which a write
+        # still accepts until their removal. Memoized like the published one.
+        schemer = @preference_schemer || JSONSchemer.schema(Spree::PreferenceSchema::JsonSchema.writable(self))
+        @preference_schemer ||= schemer if @preference_schema
+        schemer.validate(values).map do |error|
+          { pointer: error['data_pointer'], message: error['error'] }
+        end
       end
 
       # Wire-safe variant of `preference_schema` with `:password`
@@ -97,24 +126,26 @@ module Spree
                                       .freeze
       end
 
+      # @return [Array(Array<Hash>, Boolean)] the fields, and whether their
+      #   defaults could all be read
       def compute_preference_schema
         # Only instantiation is guarded. `new` touches the database to read
         # the column list, so it fails whenever the schema is asked for before
-        # a connection exists — at boot, or in a rake task on an empty
-        # database. Describing the preferences themselves is pure Ruby, so an
-        # error there is a real bug: left inside the rescue it would return an
-        # empty schema and quietly strip every field from the admin form.
-        # Nil rather than an empty list, so `preference_schema`'s `||=` asks
-        # again next time. Memoizing the failure would leave a class describing
-        # no preferences for the life of the process because it was first asked
-        # before the database was up.
+        # a connection exists — at boot, in a rake task on an empty database,
+        # or while generating the SDK types. An uninitialized instance still
+        # describes every preference, since the declarations are pure Ruby;
+        # only a default read from the database is missing, so that result is
+        # not memoized. An error describing the preferences themselves is a
+        # real bug and is left to raise.
+        complete = true
         instance = begin
           new
         rescue StandardError
-          return nil
+          complete = false
+          allocate
         end
 
-        instance.defined_preferences.filter_map do |pref|
+        fields = instance.defined_preferences.filter_map do |pref|
           next if instance.preference_deprecated(pref)
           # Written by Spree, not supplied by the operator — a value a
           # provider hands back after we register something with it. Offering
@@ -130,6 +161,7 @@ module Spree
             choices: instance.preference_choices(pref)
           }.compact.freeze
         end
+        [fields, complete]
       end
 
       # Builds a `parse_on_set:` lambda for `preference :foo_ids, :array`
@@ -154,6 +186,9 @@ module Spree
       #   relation builder; defaults to the unscoped `klass`.
       # @return [Proc] suitable for the `parse_on_set:` preference option.
       def normalize_id_preference(klass: nil, scope: nil)
+        Spree::Deprecation.warn(
+          '`normalize_id_preference` is deprecated. Declare the list as `preference :name, :array, of: :id, model:, scope:`.'
+        )
         lambda do |values, owner = nil|
           raw = Array(values).flat_map { |v| v.to_s.split(',') }.compact_blank.map(&:strip)
           next raw unless klass
@@ -182,11 +217,10 @@ module Spree
         registered_subclasses.find { |klass| klass.api_type == shorthand.to_s }
       end
 
-      # Returns a `[{ type:, label:, description:, preference_schema: }]`
-      # array for every concrete subclass in `subclasses`. Sorted by label
-      # for stable output. Uses `serialized_preference_schema` so
-      # `:password` defaults are redacted — `/types` is an unauthenticated
-      # discovery surface and must never leak gateway-shipped defaults.
+      # Returns a `[{ type:, label:, description:, schema: }]` array for every
+      # registered subclass, sorted by label for stable output. `schema` is
+      # the JSON Schema of the subclass's `preferences`, which never carries a
+      # secret's default.
       #
       # `label` and `description` are a fallback, not the admin UI's copy:
       # they resolve in the request's locale, which is the store's rather
@@ -203,7 +237,7 @@ module Spree
             # Asking for only one left promotion types with a null description
             # and no fallback for a client without its own translation.
             description: subclass_description(klass),
-            preference_schema: klass.respond_to?(:serialized_preference_schema) ? klass.serialized_preference_schema : []
+            schema: klass.preference_json_schema
           }
           # Only present when true, so families without the concept keep
           # their wire shape byte-identical. Pickers stop offering a

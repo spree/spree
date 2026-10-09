@@ -36,6 +36,8 @@ export type {
   LoginCredentials,
   PaginatedResponse,
   PaginationMeta,
+  PreferencePropertySchema,
+  PreferenceSchema,
   ProviderLogin,
   ValidationErrorDetail,
 } from './types'

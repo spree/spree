@@ -104,7 +104,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
         run_test! do |response|
           data = JSON.parse(response.body)
           entry = data['data'].find { |row| row['type'] == 'carrier' }
-          expect(entry['preference_schema']).to be_an(Array)
+          expect(entry['schema']).to include('type' => 'object')
         end
       end
     end

@@ -1,7 +1,7 @@
 module Spree
   class Calculator::FlatRate < Calculator
     preference :amount, :money, default: 0
-    preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+    preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
     preference :apply_only_on_full_priced_items, :boolean, default: false
 
     def self.description

@@ -137,5 +137,24 @@ RSpec.describe Spree::Preferences::Masking do
       # Sanity check: the unmasked default would have leaked here.
       expect(result.fetch('api_secret')).not_to eq('SECRET456')
     end
+
+    it 'returns amounts stored as numbers before preferences were typed as exact strings' do
+      calculator = Spree::Calculator::Shipping::FlatRate.new
+      calculator.preferences = calculator.preferences.merge('amounts' => { 'EUR' => 12.5 }, 'amount' => 3)
+
+      result = described_class.serialize(calculator)
+
+      expect(result['amounts']).to eq('EUR' => '12.50')
+      expect(result['amount']).to eq('3.00')
+    end
+
+    it 'returns an id list as prefixed ids, the form a write accepts' do
+      channel = create(:channel)
+      rule = Spree::PriceRules::ChannelRule.new(price_list: create(:price_list))
+      rule.preferred_channel_ids = [channel.prefixed_id]
+
+      expect(rule.preferences[:channel_ids]).to eq([channel.id.to_s])
+      expect(described_class.serialize(rule)['channel_ids']).to eq([channel.prefixed_id])
+    end
   end
 end

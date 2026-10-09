@@ -22,6 +22,10 @@ module Spree
         # says; a seller reaches `active` only through review
         # (docs/plans/6.0-seller-product-submission.md).
         class ImportsController < Seller::ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_preference_params Spree::Import
+
           include ActiveStorage::SetCurrent
 
           # The import types a seller may run. An operator's `customers` or
@@ -248,7 +252,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :preferred_delimiter, :results_url)
+            params.permit(*model_additional_permitted_attributes, :type, :attachment, :delimiter, :results_url)
           end
 
           # The registered Import subclass matching `name`, or nil.

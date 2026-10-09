@@ -247,7 +247,7 @@ module Spree
     # shape a price list's rules use.
     #
     # Ids inside a rule's preferences are scope-checked against this rate's own
-    # store as they are written (see normalize_id_preference), so a rule can
+    # store as they are written (see `of: :id, scope:`), so a rule can
     # never be pointed at another marketplace's records.
     #
     # @param rows [Array<Hash>, nil]

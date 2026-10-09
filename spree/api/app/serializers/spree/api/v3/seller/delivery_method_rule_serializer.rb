@@ -12,8 +12,7 @@ module Spree
         class DeliveryMethodRuleSerializer < BaseSerializer
           typelize type: [:string, comment: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule, channel_rule, volume_rule, company_rule. Extensions may register more.'],
                    active: :boolean,
-                   preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
+                   preferences: 'Record<string, unknown>'
 
           attributes :active
 
@@ -24,7 +23,6 @@ module Spree
           end
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
         end
       end
     end

@@ -18,9 +18,16 @@ require 'spree/core/preferences/preferable_class_methods'
 module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
+  BOOLEAN_TYPE = ActiveModel::Type::Boolean.new
+  INTEGER_TYPE = ActiveModel::Type::Integer.new
+  STRING_TYPE = ActiveModel::Type::String.new
+
   included do
     serialize :preferences, coder: Spree::Metadata::HashSerializer
     extend Spree::Preferences::PreferableClassMethods
+
+    # The preferences read and written under their plain names (see `exposes_preferences`).
+    class_attribute :exposed_preference_names, instance_accessor: false, default: Set.new.freeze
   end
 
   # JSON keeps decimals and times as strings; the declared type turns them
@@ -40,6 +47,17 @@ module Spree::Preferences::Preferable
     end
   rescue ArgumentError
     value
+  end
+
+  # The record class an `of: :id` preference points at. Declared as a class
+  # name or a block, so a declaration never loads another model, nor fixes a
+  # configurable class like `Spree.customer_class`, at class load.
+  #
+  # @param definition [Hash] a preference definition
+  # @return [Class]
+  def self.preference_model(definition)
+    model = definition[:model]
+    model.respond_to?(:call) ? model.call : model.to_s.constantize
   end
 
   def get_preference(name)
@@ -142,6 +160,52 @@ module Spree::Preferences::Preferable
     clear_attribute_change(:preferences) if persisted? && !already_changed
   end
 
+  # Writes a `preferences` payload an API client sent. The whole payload is
+  # checked against the type's schema first, so nothing is written when any
+  # value is wrong. Then each value goes through its typed writer. A secret
+  # sent back masked, as it was read, keeps the stored one; `null` clears it.
+  #
+  # @param values [Hash, ActionController::Parameters]
+  # @param pointer [String] where the preferences object sits in the request,
+  #   e.g. `/rules/1/preferences`, so a failure names its place
+  # @raise [Spree::Preferences::InvalidPreferences] naming every value that does not match
+  # @return [void]
+  def assign_preferences(values, pointer: '/preferences')
+    values = values.respond_to?(:to_unsafe_h) ? values.to_unsafe_h : values.to_h
+    values = values.deep_stringify_keys
+    failures = self.class.preference_failures(values)
+    raise Spree::Preferences::InvalidPreferences.new(failures, prefix: pointer) if failures.any?
+
+    values.each do |key, value|
+      next if secret_preference?(key) && Spree::Preferences::Masking.masked?(value)
+
+      begin
+        set_preference(key, value)
+      rescue ActiveRecord::RecordNotFound => e
+        raise Spree::Preferences::InvalidPreferences.new([{ pointer: "/#{key}", message: e.message }], prefix: pointer)
+      end
+    end
+  end
+
+  # A stored value in the form the schema describes. Rows written before the
+  # declarations were typed can hold a number where an exact decimal string
+  # is declared (an `amounts` hash, a decimal default from YAML), or a string
+  # where a number or boolean is; read back as they are, a client sending
+  # them unchanged would be refused.
+  #
+  # @param value [Object] the stored value
+  # @param definition [Hash] its preference definition
+  # @return [Object]
+  def wire_preference_value(value, definition)
+    return BigDecimal(value.to_s).as_json if %i[decimal money].include?(definition[:type]) && value.is_a?(Numeric)
+    return nil if value == '' && definition[:nullable] && %i[integer boolean].include?(definition[:type])
+    return cast_preference_item(value, :integer) if definition[:type] == :integer && value.is_a?(String)
+    return convert_preference_value(value, :boolean, nullable: definition[:nullable]) if definition[:type] == :boolean && value.is_a?(String)
+    return value if value.nil? || (definition[:type] == :array && !value.is_a?(Array))
+
+    cast_preference_contents(value, definition)
+  end
+
   # Names of the preferences the last save changed, secrets included.
   #
   # @return [Array<Symbol>]
@@ -182,7 +246,14 @@ module Spree::Preferences::Preferable
       # `(value, owner = nil)` shapes.
       value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
     end
+    # Spree 6.0 bridge, removed with incomplete declarations in 6.1: an id list
+    # an extension declared without `of: :id` still has its prefixed ids
+    # decoded, as the API did for every `*_ids` key before.
+    if definition[:type] == :array && definition[:of].nil? && name.to_s.end_with?('_ids') && value.is_a?(Array)
+      value = value.map { |id| (Spree::PrefixedId.decode_prefixed_id(id) if Spree::PrefixedId.prefixed_id?(id)) || id }
+    end
     value = convert_preference_value(value, definition[:type], nullable: definition[:nullable])
+    value = cast_preference_contents(value, definition)
     # Decimals and times are kept in the string form JSON stores, so a record
     # read back from the database and one just written compare equal and
     # setting the same value is not a change. The reader restores them.
@@ -190,6 +261,78 @@ module Spree::Preferences::Preferable
 
     Spree::Deprecation.warn("`#{name}` is deprecated. #{definition[:deprecated]}") if definition[:deprecated]
     value
+  end
+
+  # Casts what a typed `:array` or `:hash` holds to its declared item type, in
+  # the form JSON stores. A value that does not cast is left as it came, so
+  # validation can name it rather than a silent zero hiding it.
+  def cast_preference_contents(value, definition)
+    case definition[:type]
+    when :array
+      case definition[:of]
+      when nil then value
+      when :id then decode_preference_ids(value, definition)
+      when :object then value.map { |item| cast_preference_object(item, definition[:properties]) }
+      else split_preference_list(value).map { |item| cast_preference_item(item, definition[:of]) }
+      end
+    when :hash
+      return value unless definition[:values] && value.is_a?(Hash)
+
+      value.to_h do |key, item|
+        key = definition[:keys] == :currency ? key.to_s.upcase : key.to_s
+        [key, cast_preference_item(item, definition[:values])]
+      end
+    else
+      value
+    end
+  end
+
+  # A comma-separated string is a list too: what a plain text field sends.
+  def split_preference_list(values)
+    values.flat_map { |item| item.is_a?(String) ? item.split(',') : [item] }
+          .map { |item| item.is_a?(String) ? item.strip : item }
+          .reject { |item| item.respond_to?(:empty?) && item.empty? }
+  end
+
+  def cast_preference_item(value, item_type)
+    case item_type
+    when :string then value.to_s
+    when :integer then Integer(value.to_s, 10, exception: false) || value
+    when :decimal, :money then BigDecimal(value.to_s, exception: false)&.as_json || value
+    when :boolean then BOOLEAN_TYPE.cast(value)
+    else value
+    end
+  end
+
+  def cast_preference_object(item, properties)
+    return item unless item.respond_to?(:to_h) && !item.is_a?(Array)
+
+    item.to_h.stringify_keys.slice(*properties.keys.map(&:to_s)).to_h do |key, value|
+      [key, cast_preference_item(value, properties[key.to_sym])]
+    end
+  end
+
+  # Turns a list of record ids into the raw primary keys the preference
+  # stores. A prefixed id must carry the declared model's prefix — a
+  # channel's id never decodes into a market id — and every id must belong to
+  # the record's scope, so a rule cannot point at another store's records.
+  #
+  # @raise [ActiveRecord::RecordNotFound] naming the ids that were not found
+  def decode_preference_ids(values, definition)
+    model = Spree::Preferences::Preferable.preference_model(definition)
+    ids = split_preference_list(values).map(&:to_s).map do |id|
+      Spree::PrefixedId.prefixed_id?(id) ? (model.decode_prefixed_id(id)&.to_s || id) : id
+    end
+    return ids if ids.empty?
+
+    relation = definition[:scope] ? definition[:scope].call(self) : model
+    found = relation.where(id: ids.reject { |id| Spree::PrefixedId.prefixed_id?(id) }).pluck(:id).map(&:to_s).to_set
+    missing = ids.reject { |id| found.include?(id) }
+    if missing.any?
+      raise ActiveRecord::RecordNotFound.new("Couldn't find #{model.name} with id=#{missing.join(',')}", model.name)
+    end
+
+    ids
   end
 
   # Assigns a new hash rather than calling the store accessor's writer, which
@@ -206,15 +349,25 @@ module Spree::Preferences::Preferable
     end
   end
 
+  # Whitespace alone is no number or boolean, so for those it is blank too; a
+  # string keeps it.
+  def blank_preference_value?(value, type = nil)
+    return true if value.nil? || (value.respond_to?(:empty?) && value.empty?)
+
+    %i[integer boolean].include?(type) && value.is_a?(String) && value.strip.empty?
+  end
+
   def convert_preference_value(value, type, nullable: false)
     case type
+    # Strings, integers and booleans cast the way Rails casts attributes (and
+    # `has_json` its keys). Our own rule on top: a blank value stays nil for a
+    # nullable preference, so it can fall back to another, and becomes the
+    # type's empty value otherwise.
     when :string, :text
-      # A nullable string keeps "unset" (nil / empty string) as nil so it can
-      # fall back to another value, instead of collapsing it to "".
-      if nullable && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
-        nil
+      if blank_preference_value?(value)
+        nullable ? nil : ''
       else
-        value.to_s
+        STRING_TYPE.cast(value)
       end
     when :password
       value.to_s
@@ -225,23 +378,17 @@ module Spree::Preferences::Preferable
       decimal_value ||= 0 unless nullable
       decimal_value.nil? ? nil : Spree::Money::Rounding.parse_decimal(decimal_value)
     when :integer
-      int_value = value.presence
-      int_value ||= 0 unless nullable
-      int_value.present? ? int_value.to_i : int_value
-    when :boolean
-      # A nullable boolean keeps "unset" (nil / empty string) as nil so it can
-      # fall back to another value, instead of collapsing it to false. An
-      # explicit false is preserved (it is neither nil nor empty).
-      if nullable && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
-        nil
-      elsif value.is_a?(FalseClass) ||
-          value.nil? ||
-          value == 0 ||
-          value&.to_s =~ /^(f|false|0)$/i ||
-          (value.respond_to?(:empty?) && value.empty?)
-        false
+      if blank_preference_value?(value, :integer)
+        nullable ? nil : 0
       else
-        true
+        INTEGER_TYPE.cast(value) || 0
+      end
+    when :boolean
+      # An explicit false is kept: it is neither nil nor empty.
+      if blank_preference_value?(value, :boolean)
+        nullable ? nil : false
+      else
+        BOOLEAN_TYPE.cast(value)
       end
     when :array
       value.is_a?(Array) ? value : Array.wrap(value)

@@ -61,14 +61,13 @@ function storeToFormValues(store: Store): StoreEmailsFormValues {
     mail_from_address: store.mail_from_address ?? '',
     customer_support_email: store.customer_support_email ?? '',
     new_order_notifications_email: store.new_order_notifications_email ?? '',
-    preferred_send_consumer_transactional_emails:
-      store.preferred_send_consumer_transactional_emails,
-    preferred_email_accent_color: store.preferred_email_accent_color ?? '',
-    preferred_email_background_color: store.preferred_email_background_color ?? '',
-    preferred_email_card_color: store.preferred_email_card_color ?? '',
-    preferred_email_text_color: store.preferred_email_text_color ?? '',
-    preferred_email_heading_color: store.preferred_email_heading_color ?? '',
-    preferred_email_font: store.preferred_email_font ?? 'inter',
+    send_consumer_transactional_emails: store.send_consumer_transactional_emails,
+    email_accent_color: store.email_accent_color ?? '',
+    email_background_color: store.email_background_color ?? '',
+    email_card_color: store.email_card_color ?? '',
+    email_text_color: store.email_text_color ?? '',
+    email_heading_color: store.email_heading_color ?? '',
+    email_font: store.email_font ?? 'inter',
     mailer_logo_signed_id: null,
     mailer_logo_preview_url: null,
     mailer_logo_cleared: false,
@@ -80,14 +79,13 @@ function formValuesToApiParams(values: StoreEmailsFormValues): StoreUpdateParams
     mail_from_address: values.mail_from_address,
     customer_support_email: values.customer_support_email?.trim() || null,
     new_order_notifications_email: values.new_order_notifications_email?.trim() || null,
-    preferred_send_consumer_transactional_emails:
-      values.preferred_send_consumer_transactional_emails,
-    preferred_email_accent_color: values.preferred_email_accent_color || null,
-    preferred_email_background_color: values.preferred_email_background_color || null,
-    preferred_email_card_color: values.preferred_email_card_color || null,
-    preferred_email_text_color: values.preferred_email_text_color || null,
-    preferred_email_heading_color: values.preferred_email_heading_color || null,
-    preferred_email_font: values.preferred_email_font,
+    send_consumer_transactional_emails: values.send_consumer_transactional_emails,
+    email_accent_color: values.email_accent_color || null,
+    email_background_color: values.email_background_color || null,
+    email_card_color: values.email_card_color || null,
+    email_text_color: values.email_text_color || null,
+    email_heading_color: values.email_heading_color || null,
+    email_font: values.email_font,
   }
   // Three states for the logo: untouched (omit), uploaded (send signed_id),
   // explicitly cleared (send null). Sending an empty value would be ambiguous.
@@ -166,7 +164,7 @@ function EmailSettingsForm({ store }: { store: Store }) {
   // Mirror legacy behaviour: when consumer emails are off, hide the address +
   // logo cards. Their values stay in form state so toggling back doesn't
   // require re-entering anything.
-  const sendConsumerEmails = form.watch('preferred_send_consumer_transactional_emails')
+  const sendConsumerEmails = form.watch('send_consumer_transactional_emails')
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -198,14 +196,14 @@ function EmailSettingsForm({ store }: { store: Store }) {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex flex-col">
                       <FieldLabel htmlFor="store-send-consumer-emails" className="cursor-pointer">
-                        {t('admin.fields.store.preferred_send_consumer_transactional_emails.label')}
+                        {t('admin.fields.store.send_consumer_transactional_emails.label')}
                       </FieldLabel>
                       <FieldDescription>
-                        {t('admin.fields.store.preferred_send_consumer_transactional_emails.help')}
+                        {t('admin.fields.store.send_consumer_transactional_emails.help')}
                       </FieldDescription>
                     </div>
                     <Controller
-                      name="preferred_send_consumer_transactional_emails"
+                      name="send_consumer_transactional_emails"
                       control={form.control}
                       render={({ field }) => (
                         <Switch
@@ -353,7 +351,7 @@ function BrandingCard({ form }: { form: ReturnType<typeof useForm<StoreEmailsFor
       <CardContent className="grid gap-6 lg:grid-cols-2">
         <FieldGroup>
           {EMAIL_BRANDING_COLORS.map((color) => {
-            const name = `preferred_email_${color}` as const
+            const name = `email_${color}` as const
             return (
               <Field key={color}>
                 <FieldLabel htmlFor={`store-email-${color}`}>
@@ -378,10 +376,10 @@ function BrandingCard({ form }: { form: ReturnType<typeof useForm<StoreEmailsFor
           })}
           <Field>
             <FieldLabel htmlFor="store-email-font">
-              {t('admin.fields.store.preferred_email_font.label')}
+              {t('admin.fields.store.email_font.label')}
             </FieldLabel>
             <Controller
-              name="preferred_email_font"
+              name="email_font"
               control={form.control}
               render={({ field }) => (
                 <Select
@@ -402,7 +400,7 @@ function BrandingCard({ form }: { form: ReturnType<typeof useForm<StoreEmailsFor
                 </Select>
               )}
             />
-            <FieldDescription>{t('admin.fields.store.preferred_email_font.help')}</FieldDescription>
+            <FieldDescription>{t('admin.fields.store.email_font.help')}</FieldDescription>
           </Field>
         </FieldGroup>
         {permissions.can('update', Subject.EmailTemplate) && <BrandingPreview form={form} />}
@@ -417,12 +415,12 @@ function BrandingPreview({ form }: { form: ReturnType<typeof useForm<StoreEmails
   const [accent, background, card, text, heading, font] = useWatch({
     control: form.control,
     name: [
-      'preferred_email_accent_color',
-      'preferred_email_background_color',
-      'preferred_email_card_color',
-      'preferred_email_text_color',
-      'preferred_email_heading_color',
-      'preferred_email_font',
+      'email_accent_color',
+      'email_background_color',
+      'email_card_color',
+      'email_text_color',
+      'email_heading_color',
+      'email_font',
     ],
   })
   const branding = useDebouncedValue(

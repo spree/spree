@@ -76,8 +76,14 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
           tracking_url: { type: :string, nullable: true },
           estimated_transit_business_days_min: { type: :integer, nullable: true },
           estimated_transit_business_days_max: { type: :integer, nullable: true },
-          calculator_type: { type: :string },
-          calculator_preferences: { type: :object },
+calculator: {
+            type: :object,
+            description: 'How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type\'s `schema`.',
+            properties: {
+              type: { type: :string, example: 'flat_rate' },
+              preferences: { type: :object, example: { amount: '12.5' } }
+            }
+          },
           rules: {
             type: :array,
             description: 'Conditions on the method, from `/delivery_methods/rule_types`',
@@ -100,8 +106,7 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
           {
             name: 'Next day',
             delivery_profile_id: delivery_profile.prefixed_id,
-            calculator_type: 'flat_rate',
-            calculator_preferences: { amount: '9.99', currency: 'USD' }
+            calculator: { type: 'flat_rate', preferences: { amount: '9.99', currency: 'USD' } }
           }
         end
 
@@ -163,8 +168,14 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
           tracking_url: { type: :string, nullable: true },
           estimated_transit_business_days_min: { type: :integer, nullable: true },
           estimated_transit_business_days_max: { type: :integer, nullable: true },
-          calculator_type: { type: :string },
-          calculator_preferences: { type: :object },
+calculator: {
+            type: :object,
+            description: 'How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type\'s `schema`.',
+            properties: {
+              type: { type: :string, example: 'flat_rate' },
+              preferences: { type: :object, example: { amount: '12.5' } }
+            }
+          },
           rules: {
             type: :array,
             description: 'Replaces the whole set — a rule dropped here is deleted, so re-send surviving rules with their `id`.',
@@ -231,7 +242,7 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
                        type: { type: :string },
                        name: { type: :string },
                        description: { type: :string },
-                       preference_schema: { type: :array, items: { type: :object } }
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' }
                      }
                    }
                  }
@@ -264,7 +275,7 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
                      properties: {
                        type: { type: :string },
                        name: { type: :string },
-                       preference_schema: { type: :array, items: { type: :object } }
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' }
                      }
                    }
                  }

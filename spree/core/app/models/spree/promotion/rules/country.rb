@@ -9,11 +9,10 @@ module Spree
   class Promotion
     module Rules
       class Country < Spree::PromotionRule
-        preference :country_codes, :array, default: [], parse_on_set: lambda { |values|
-          normalize_id_preference.call(values).map(&:upcase)
-        }
+        preference :country_codes, :array, of: :string, format: :iso_country, default: [],
+                   parse_on_set: ->(values) { Array(values).flat_map { |value| value.to_s.split(',') }.map { |code| code.strip.upcase }.compact_blank }
         preference :country_id, :integer # legacy single-country shortcut
-        preference :country_code, :string # legacy ISO-based shortcut
+        preference :country_code, :string, format: :iso_country # legacy ISO-based shortcut
 
         def countries
           isos = configured_country_codes.presence || [configured_country_code].compact_blank

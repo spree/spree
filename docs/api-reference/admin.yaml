@@ -3710,13 +3710,11 @@ paths:
                   code: online
                   active: true
                   default: true
-                  storefront_access: public
-                  guest_checkout: true
-                  preferred_storefront_access:
-                  preferred_guest_checkout:
+                  storefront_access:
+                  guest_checkout:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  preferred_order_routing_strategy:
+                  order_routing_strategy:
                   stock_location_ids: []
                   default_catalog_id:
                 - id: ch_gbHJdmfrXB
@@ -3724,13 +3722,11 @@ paths:
                   code: wholesale
                   active: true
                   default: false
-                  storefront_access: public
-                  guest_checkout: true
-                  preferred_storefront_access:
-                  preferred_guest_checkout:
+                  storefront_access:
+                  guest_checkout:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  preferred_order_routing_strategy:
+                  order_routing_strategy:
                   stock_location_ids: []
                   default_catalog_id:
                 meta:
@@ -3812,13 +3808,11 @@ paths:
                 code: marketplace
                 active: true
                 default: false
-                storefront_access: public
-                guest_checkout: true
-                preferred_storefront_access:
-                preferred_guest_checkout:
+                storefront_access:
+                guest_checkout:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                preferred_order_routing_strategy:
+                order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
       requestBody:
@@ -3842,12 +3836,12 @@ paths:
                 default:
                   type: boolean
                   default: false
-                preferred_order_routing_strategy:
+                order_routing_strategy:
                   type: string
                   nullable: true
                   description: 'Routing strategy shorthand (built-in: `rules`). `null`
                     inherits the store setting.'
-                preferred_storefront_access:
+                storefront_access:
                   type: string
                   nullable: true
                   enum:
@@ -3856,7 +3850,7 @@ paths:
                   - login_required
                   description: Anonymous-visitor access posture. `null` inherits the
                     store setting.
-                preferred_guest_checkout:
+                guest_checkout:
                   type: boolean
                   nullable: true
                   description: Whether guests can check out without an account. `null`
@@ -3913,13 +3907,11 @@ paths:
                 code: wholesale
                 active: true
                 default: false
-                storefront_access: public
-                guest_checkout: true
-                preferred_storefront_access:
-                preferred_guest_checkout:
+                storefront_access:
+                guest_checkout:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                preferred_order_routing_strategy:
+                order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
     patch:
@@ -3972,11 +3964,9 @@ paths:
                 default: false
                 storefront_access: login_required
                 guest_checkout: false
-                preferred_storefront_access: login_required
-                preferred_guest_checkout: false
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                preferred_order_routing_strategy:
+                order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
       requestBody:
@@ -3993,12 +3983,12 @@ paths:
                   type: boolean
                 default:
                   type: boolean
-                preferred_order_routing_strategy:
+                order_routing_strategy:
                   type: string
                   nullable: true
                   description: 'Routing strategy shorthand (built-in: `rules`). `null`
                     inherits the store setting.'
-                preferred_storefront_access:
+                storefront_access:
                   type: string
                   nullable: true
                   enum:
@@ -4007,7 +3997,7 @@ paths:
                   - login_required
                   description: Anonymous-visitor access posture. `null` inherits the
                     store setting.
-                preferred_guest_checkout:
+                guest_checkout:
                   type: boolean
                   nullable: true
                   description: Whether guests can check out without an account. `null`
@@ -4265,7 +4255,6 @@ paths:
                   type: preferred_location
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
-                  preference_schema: []
                 - id: orule_gbHJdmfrXB
                   position: 2
                   active: true
@@ -4274,7 +4263,6 @@ paths:
                   type: minimize_splits
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
-                  preference_schema: []
                 - id: orule_EfhxLZ9ck8
                   position: 3
                   active: true
@@ -4283,7 +4271,6 @@ paths:
                   type: default_location
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
-                  preference_schema: []
                 meta:
                   page: 1
                   limit: 25
@@ -4347,7 +4334,6 @@ paths:
                 type: default_location
                 channel_id: ch_UkLWZg9DAJ
                 preferences: {}
-                preference_schema: []
         '422':
           description: unknown rule type
           content:
@@ -4441,7 +4427,6 @@ paths:
                 type: preferred_location
                 channel_id: ch_UkLWZg9DAJ
                 preferences: {}
-                preference_schema: []
       requestBody:
         content:
           application/json:
@@ -4540,17 +4525,26 @@ paths:
                 - type: default_location
                   label: Default location
                   description: Prefer the stock location marked as default
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: minimize_splits
                   label: Minimize splits
                   description: Prefer the location that can fulfill the most items
                     on its own, avoiding split shipments
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: preferred_location
                   label: Preferred location
                   description: Fulfill from the location pinned on the order, when
                     one is set
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
   "/api/v3/admin/custom_field_definitions":
     get:
       summary: List custom field definitions
@@ -8268,7 +8262,7 @@ paths:
                 branding:
                   type: object
                   description: Unsaved colors and font to preview, named like the
-                    store's `preferred_email_*` settings without the prefix
+                    store's `email_*` settings
                   properties:
                     accent_color:
                       type: string
@@ -10794,7 +10788,7 @@ paths:
                   owner_id: store_UkLWZg9DAJ
                   user_id: adm_UkLWZg9DAJ
                   processing_errors:
-                  preferred_delimiter: ","
+                  delimiter: ","
                   price_list_id:
                   seller_name:
                   original_filename: products_import.csv
@@ -11001,7 +10995,7 @@ paths:
                 owner_id: store_UkLWZg9DAJ
                 user_id: adm_UkLWZg9DAJ
                 processing_errors:
-                preferred_delimiter: ","
+                delimiter: ","
                 price_list_id:
                 seller_name:
                 original_filename: import.csv
@@ -11376,7 +11370,7 @@ paths:
                   type: string
                   description: ActiveStorage signed blob id from POST /api/v3/admin/direct_uploads.
                   example: eyJfcmFpbHMiOnsiZGF0YSI6MX0=--signed
-                preferred_delimiter:
+                delimiter:
                   type: string
                   enum:
                   - ","
@@ -11508,7 +11502,7 @@ paths:
                 owner_id: store_UkLWZg9DAJ
                 user_id: adm_UkLWZg9DAJ
                 processing_errors:
-                preferred_delimiter: ","
+                delimiter: ","
                 price_list_id:
                 seller_name:
                 original_filename: products_import.csv
@@ -11773,7 +11767,7 @@ paths:
                 owner_id: store_UkLWZg9DAJ
                 user_id: adm_UkLWZg9DAJ
                 processing_errors:
-                preferred_delimiter: ","
+                delimiter: ","
                 price_list_id:
                 seller_name:
                 original_filename: products_import.csv
@@ -12169,7 +12163,7 @@ paths:
                 owner_id: store_UkLWZg9DAJ
                 user_id: adm_UkLWZg9DAJ
                 processing_errors:
-                preferred_delimiter: ","
+                delimiter: ","
                 price_list_id:
                 seller_name:
                 original_filename: products_import.csv
@@ -16256,7 +16250,6 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   preferences: {}
-                  preference_schema: []
                   logo_url:
                   docs_url:
                   third_party: false
@@ -16279,7 +16272,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Returns the registered Spree::PaymentMethod subclasses that can be used to create new payment methods. Useful for populating a "Provider" dropdown in admin UIs.
+        Returns every registered payment provider with the JSON Schema of its `preferences`. `installed` marks a provider the store already has, which a "Provider" picker leaves out.
 
         **Required scope:** `read_settings` (for API-key authentication).
       x-codeSamples:
@@ -16318,23 +16311,55 @@ paths:
                 - type: bogus
                   label: Bogus
                   description:
-                  preference_schema:
-                  - key: dummy_key
-                    type: string
-                    default: PUBLICKEY123
-                  - key: dummy_secret_key
-                    type: password
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      dummy_key:
+                        type: string
+                        default: PUBLICKEY123
+                      dummy_secret_key:
+                        type:
+                        - string
+                        - 'null'
+                        x-spree-secret: true
+                    additionalProperties: false
                   logo_url:
                   docs_url:
                   third_party: true
-                - type: custom_payment_source_method
-                  label: Custom Payment Source Method
+                  installed: false
+                - type: check
+                  label: Check
                   description:
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                   logo_url:
                   docs_url:
                   third_party: false
+                  installed: true
+                - type: custom_payment_source_method
+                  label: Custom Payment Source Method
+                  description:
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
+                  logo_url:
+                  docs_url:
+                  third_party: false
+                  installed: false
+                - type: store_credit
+                  label: Store Credit
+                  description:
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
+                  logo_url:
+                  docs_url:
+                  third_party: false
+                  installed: true
   "/api/v3/admin/payment_methods/{id}":
     get:
       summary: Show a payment method
@@ -16414,7 +16439,6 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferences: {}
-                preference_schema: []
                 logo_url:
                 docs_url:
                 third_party: false
@@ -22302,7 +22326,6 @@ paths:
                   type: free_shipping
                   promotion_id: promo_UkLWZg9DAJ
                   preferences: {}
-                  preference_schema: []
                   calculator:
                   line_items:
                 meta:
@@ -22366,7 +22389,6 @@ paths:
                 type: free_shipping
                 promotion_id: promo_UkLWZg9DAJ
                 preferences: {}
-                preference_schema: []
                 calculator:
                 line_items:
         '422':
@@ -22495,10 +22517,6 @@ paths:
                   promotion_id: promo_UkLWZg9DAJ
                   preferences:
                     currency: USD
-                  preference_schema:
-                  - key: currency
-                    type: string
-                    default:
                   product_ids:
                   category_ids:
                   customer_ids:
@@ -22566,10 +22584,6 @@ paths:
                 promotion_id: promo_UkLWZg9DAJ
                 preferences:
                   currency: EUR
-                preference_schema:
-                - key: currency
-                  type: string
-                  default:
                 product_ids:
                 category_ids:
                 customer_ids:
@@ -22658,10 +22672,6 @@ paths:
                 promotion_id: promo_UkLWZg9DAJ
                 preferences:
                   currency: GBP
-                preference_schema:
-                - key: currency
-                  type: string
-                  default:
                 product_ids:
                 category_ids:
                 customer_ids:
@@ -23370,19 +23380,31 @@ paths:
                   label: Create line items
                   description: Adds the specified quantity of a variant to the cart
                     free of charge
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: create_item_adjustments
                   label: Create per-line-item adjustment
                   description: Creates a promotion credit adjustment on a line item
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: create_adjustment
                   label: Create whole-order adjustment
                   description: Creates a promotion credit adjustment on the order
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: free_shipping
                   label: Free shipping
                   description: Makes all shipments for the order free
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
   "/api/v3/admin/promotion_rules/types":
     get:
       summary: List available promotion rule types
@@ -23431,101 +23453,185 @@ paths:
                 - type: category
                   label: Categories
                   description: Order includes products in specified categories
-                  preference_schema:
-                  - key: match_policy
-                    type: string
-                    default: any
+                  schema:
+                    type: object
+                    properties:
+                      match_policy:
+                        type: string
+                        enum:
+                        - any
+                        - all
+                        default: any
+                    additionalProperties: false
                 - type: channel
                   label: Channel(s)
                   description: Limit to orders placed through specified channel(s)
-                  preference_schema:
-                  - key: channel_ids
-                    type: array
-                    default: []
+                  schema:
+                    type: object
+                    properties:
+                      channel_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^ch_[A-Za-z0-9]+$"
+                          x-spree-prefix: ch
+                        default: []
+                    additionalProperties: false
                 - type: country
                   label: Country
                   description: Limit to orders with shipping address in a specific
                     country
-                  preference_schema:
-                  - key: country_codes
-                    type: array
-                    default: []
-                  - key: country_id
-                    type: integer
-                    default:
-                  - key: country_code
-                    type: string
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      country_codes:
+                        type: array
+                        items:
+                          type: string
+                          format: iso-country
+                          pattern: "^[A-Z]{2}$"
+                        default: []
+                      country_id:
+                        type:
+                        - integer
+                        - 'null'
+                      country_code:
+                        type:
+                        - string
+                        - 'null'
+                        format: iso-country
+                        pattern: "^[A-Z]{2}$"
+                    additionalProperties: false
                 - type: currency
                   label: Currency
                   description: Limit to orders in a specific currency
-                  preference_schema:
-                  - key: currency
-                    type: string
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      currency:
+                        type:
+                        - string
+                        - 'null'
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: customer_group
                   label: Customer Group(s)
                   description: Available only to customers in specified customer group(s)
-                  preference_schema:
-                  - key: customer_group_ids
-                    type: array
-                    default: []
+                  schema:
+                    type: object
+                    properties:
+                      customer_group_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^cg_[A-Za-z0-9]+$"
+                          x-spree-prefix: cg
+                        default: []
+                    additionalProperties: false
                 - type: customer
                   label: Customers
                   description: Available only to the specified customers
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: first_order
                   label: First order
                   description: Must be the customer's first order
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: item_total
                   label: Item total
                   description: Order total meets these criteria
-                  preference_schema:
-                  - key: amount_min
-                    type: money
-                    default: '100'
-                  - key: operator_min
-                    type: string
-                    default: ">"
-                  - key: amount_max
-                    type: money
-                    default:
-                  - key: operator_max
-                    type: string
-                    default: "<"
+                  schema:
+                    type: object
+                    properties:
+                      amount_min:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '100'
+                      operator_min:
+                        type: string
+                        default: ">"
+                      amount_max:
+                        type:
+                        - string
+                        - 'null'
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                      operator_max:
+                        type: string
+                        default: "<"
+                    additionalProperties: false
                 - type: market
                   label: Market(s)
                   description: Limit to orders placed in specified market(s)
-                  preference_schema:
-                  - key: market_ids
-                    type: array
-                    default: []
+                  schema:
+                    type: object
+                    properties:
+                      market_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^mkt_[A-Za-z0-9]+$"
+                          x-spree-prefix: mkt
+                        default: []
+                    additionalProperties: false
                 - type: one_use_per_user
                   label: One Use Per User
                   description: Only One Use Per User
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: customer_logged_in
                   label: Only logged in customers
                   description: Available only to logged in customers
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: option_value
                   label: Option Value(s)
                   description: Order includes products with matching option value(s)
-                  preference_schema:
-                  - key: match_policy
-                    type: string
-                    default: any
-                  - key: eligible_values
-                    type: array
-                    default: []
+                  schema:
+                    type: object
+                    properties:
+                      match_policy:
+                        type: string
+                        enum:
+                        - any
+                        default: any
+                      eligible_values:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^optval_[A-Za-z0-9]+$"
+                          x-spree-prefix: optval
+                        default: []
+                    additionalProperties: false
                 - type: product
                   label: Product(s)
                   description: Order includes specified product(s)
-                  preference_schema:
-                  - key: match_policy
-                    type: string
-                    default: any
+                  schema:
+                    type: object
+                    properties:
+                      match_policy:
+                        type: string
+                        enum:
+                        - any
+                        - all
+                        - none
+                        default: any
+                    additionalProperties: false
   "/api/v3/admin/orders/{order_id}/refunds":
     get:
       summary: List refunds
@@ -23778,61 +23884,61 @@ paths:
                 metadata: {}
                 name: Spree Test Store
                 code: spree_1
-                preferred_storefront_url:
                 default_currency: USD
                 default_locale: en
                 default_country_code: US
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
-                preferred_send_consumer_transactional_emails: true
-                preferred_email_accent_color:
-                preferred_email_background_color:
-                preferred_email_card_color:
-                preferred_email_text_color:
-                preferred_email_heading_color:
-                preferred_email_font:
-                preferred_admin_locale:
-                preferred_timezone: UTC
-                preferred_weight_unit: lb
-                preferred_unit_system: imperial
-                preferred_storefront_access: public
-                preferred_guest_checkout: true
-                preferred_always_include_confirm_step: false
-                preferred_company_field_enabled: false
-                preferred_address_requires_company: false
-                preferred_address_requires_phone: false
-                preferred_capture_method: checkout
-                preferred_track_inventory_levels: true
-                preferred_stock_reservations_enabled: true
-                preferred_low_stock_threshold: 5
-                preferred_tax_using_ship_address: true
-                preferred_track_price_history: true
-                preferred_show_products_without_price: false
-                preferred_disable_sku_validation: false
-                preferred_pricing_provider: internal
-                preferred_inventory_provider: internal
-                preferred_pricing_provider_failure_policy: strict
-                preferred_inventory_provider_failure_policy: fallback
-                preferred_default_payouts_schedule_interval: monthly
-                preferred_auto_approve_sellers: false
-                preferred_auto_approve_seller_products: false
-                preferred_send_seller_transactional_emails: true
-                preferred_document_number_format: sequential
-                preferred_order_number_prefix: R
-                preferred_order_number_suffix: ''
-                preferred_order_number_sequence_start: 1001
-                preferred_limit_digital_download_count: true
-                preferred_digital_asset_authorized_clicks: 5
-                preferred_limit_digital_download_days: true
-                preferred_digital_asset_authorized_days: 7
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                preferred_order_routing_strategy: rules
-                preferred_payout_provider:
+                order_routing_strategy: rules
+                payout_provider:
+                admin_locale:
+                timezone: UTC
+                storefront_url:
+                weight_unit: lb
+                unit_system: imperial
+                storefront_access: public
+                guest_checkout: true
+                always_include_confirm_step: false
+                company_field_enabled: false
+                address_requires_company: false
+                address_requires_phone: false
+                capture_method: checkout
+                track_inventory_levels: true
+                stock_reservations_enabled: true
+                low_stock_threshold: 5
+                tax_using_ship_address: true
+                track_price_history: true
+                show_products_without_price: false
+                disable_sku_validation: false
+                pricing_provider: internal
+                inventory_provider: internal
+                pricing_provider_failure_policy: strict
+                inventory_provider_failure_policy: fallback
+                default_payouts_schedule_interval: monthly
+                auto_approve_sellers: false
+                auto_approve_seller_products: false
+                send_seller_transactional_emails: true
+                document_number_format: sequential
+                order_number_prefix: R
+                order_number_suffix: ''
+                order_number_sequence_start: 1001
+                limit_digital_download_count: true
+                digital_asset_authorized_clicks: 5
+                limit_digital_download_days: true
+                digital_asset_authorized_days: 7
+                send_consumer_transactional_emails: true
+                email_accent_color:
+                email_background_color:
+                email_card_color:
+                email_text_color:
+                email_heading_color:
+                email_font:
                 order_number_sequence_started: false
-                preferred_default_minimum_payout_amount: '0.00'
-                preferred_default_commission_tax_rate: '0'
+                default_minimum_payout_amount: '0.00'
+                default_commission_tax_rate: '0'
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
@@ -24117,61 +24223,61 @@ paths:
                 metadata: {}
                 name: Renamed Store
                 code: spree_1
-                preferred_storefront_url:
                 default_currency: USD
                 default_locale: en
                 default_country_code: US
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
-                preferred_send_consumer_transactional_emails: true
-                preferred_email_accent_color:
-                preferred_email_background_color:
-                preferred_email_card_color:
-                preferred_email_text_color:
-                preferred_email_heading_color:
-                preferred_email_font:
-                preferred_admin_locale:
-                preferred_timezone: UTC
-                preferred_weight_unit: lb
-                preferred_unit_system: imperial
-                preferred_storefront_access: public
-                preferred_guest_checkout: true
-                preferred_always_include_confirm_step: false
-                preferred_company_field_enabled: false
-                preferred_address_requires_company: false
-                preferred_address_requires_phone: false
-                preferred_capture_method: checkout
-                preferred_track_inventory_levels: true
-                preferred_stock_reservations_enabled: true
-                preferred_low_stock_threshold: 5
-                preferred_tax_using_ship_address: true
-                preferred_track_price_history: true
-                preferred_show_products_without_price: false
-                preferred_disable_sku_validation: false
-                preferred_pricing_provider: internal
-                preferred_inventory_provider: internal
-                preferred_pricing_provider_failure_policy: strict
-                preferred_inventory_provider_failure_policy: fallback
-                preferred_default_payouts_schedule_interval: monthly
-                preferred_auto_approve_sellers: false
-                preferred_auto_approve_seller_products: false
-                preferred_send_seller_transactional_emails: true
-                preferred_document_number_format: sequential
-                preferred_order_number_prefix: R
-                preferred_order_number_suffix: ''
-                preferred_order_number_sequence_start: 1001
-                preferred_limit_digital_download_count: true
-                preferred_digital_asset_authorized_clicks: 5
-                preferred_limit_digital_download_days: true
-                preferred_digital_asset_authorized_days: 7
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                preferred_order_routing_strategy: rules
-                preferred_payout_provider:
+                order_routing_strategy: rules
+                payout_provider:
+                admin_locale:
+                timezone: UTC
+                storefront_url:
+                weight_unit: lb
+                unit_system: imperial
+                storefront_access: public
+                guest_checkout: true
+                always_include_confirm_step: false
+                company_field_enabled: false
+                address_requires_company: false
+                address_requires_phone: false
+                capture_method: checkout
+                track_inventory_levels: true
+                stock_reservations_enabled: true
+                low_stock_threshold: 5
+                tax_using_ship_address: true
+                track_price_history: true
+                show_products_without_price: false
+                disable_sku_validation: false
+                pricing_provider: internal
+                inventory_provider: internal
+                pricing_provider_failure_policy: strict
+                inventory_provider_failure_policy: fallback
+                default_payouts_schedule_interval: monthly
+                auto_approve_sellers: false
+                auto_approve_seller_products: false
+                send_seller_transactional_emails: true
+                document_number_format: sequential
+                order_number_prefix: R
+                order_number_suffix: ''
+                order_number_sequence_start: 1001
+                limit_digital_download_count: true
+                digital_asset_authorized_clicks: 5
+                limit_digital_download_days: true
+                digital_asset_authorized_days: 7
+                send_consumer_transactional_emails: true
+                email_accent_color:
+                email_background_color:
+                email_card_color:
+                email_text_color:
+                email_heading_color:
+                email_font:
                 order_number_sequence_started: false
-                preferred_default_minimum_payout_amount: '0.00'
-                preferred_default_commission_tax_rate: '0'
+                default_minimum_payout_amount: '0.00'
+                default_commission_tax_rate: '0'
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
@@ -24420,16 +24526,16 @@ paths:
                 name:
                   type: string
                   example: My Store
-                preferred_admin_locale:
+                admin_locale:
                   type: string
                   example: en
-                preferred_timezone:
+                timezone:
                   type: string
                   example: UTC
-                preferred_weight_unit:
+                weight_unit:
                   type: string
                   example: kg
-                preferred_unit_system:
+                unit_system:
                   type: string
                   example: metric
   "/api/v3/admin/tags":
@@ -32384,15 +32490,24 @@ paths:
                   label: On sale
                   description: Products currently discounted below their compare-at
                     price
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: available_on
                   label: Recently published
                   description: Products published within the last N days
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: tag
                   label: Tag
                   description: Products carrying a matching tag
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
   "/api/v3/admin/commission_lines":
     get:
       summary: List commission lines
@@ -32944,7 +33059,7 @@ paths:
                         example:
                           seller_ids:
                           - sel_a1b2c3
-                        description: Configuration for the kind, per its preference_schema.
+                        description: Configuration for the kind, per its type's `schema`.
                       product_ids:
                         type: array
                         items:
@@ -32991,38 +33106,66 @@ paths:
                   name: Seller
                   description: Charges this rate only when the seller is one of the
                     selected
-                  preference_schema:
-                  - key: seller_ids
-                    type: array
-                    default: []
+                  schema:
+                    type: object
+                    properties:
+                      seller_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^sel_[A-Za-z0-9]+$"
+                          x-spree-prefix: sel
+                        default: []
+                    additionalProperties: false
                   association_fields:
                   - seller_ids
                 - type: category_rule
                   name: Category
                   description: Charges this rate only for products in the selected
                     categories, and anything filed beneath them
-                  preference_schema:
-                  - key: category_ids
-                    type: array
-                    default: []
+                  schema:
+                    type: object
+                    properties:
+                      category_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^ctg_[A-Za-z0-9]+$"
+                          x-spree-prefix: ctg
+                        default: []
+                    additionalProperties: false
                   association_fields:
                   - category_ids
                 - type: product_rule
                   name: Product
                   description: Charges this rate only for the selected products
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                   association_fields:
                   - product_ids
                 - type: item_total_rule
                   name: Sale value
                   description: Charges this rate only on sales within a value range
-                  preference_schema:
-                  - key: min_amount
-                    type: money
-                    default:
-                  - key: max_amount
-                    type: money
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      min_amount:
+                        type:
+                        - string
+                        - 'null'
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                      max_amount:
+                        type:
+                        - string
+                        - 'null'
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                    additionalProperties: false
                   association_fields: []
               schema:
                 type: object
@@ -33041,10 +33184,9 @@ paths:
                         description:
                           type: string
                           nullable: true
-                        preference_schema:
-                          type: array
-                          items:
-                            type: object
+                        schema:
+                          type: object
+                          description: JSON Schema of the type's `preferences`
                         association_fields:
                           type: array
                           items:
@@ -34822,11 +34964,12 @@ paths:
                   fulfillment_provider: manual
                   pickup_point_provider:
                   rate_provider:
-                  calculator_type: flat_rate
-                  calculator_preferences:
-                    amounts: {}
-                    amount: '10.00'
-                    currency: USD
+                  calculator:
+                    type: flat_rate
+                    preferences:
+                      amounts: {}
+                      amount: '10.00'
+                      currency: USD
                 meta:
                   page: 1
                   limit: 25
@@ -34862,12 +35005,11 @@ paths:
           const deliveryMethod = await client.deliveryMethods.create({
             name: 'Express',
             storefront_visible: true,
-            calculator_type: 'flat_rate',
-            calculator_preferences: { amount: '12.50' },
+            calculator: { type: 'flat_rate', preferences: { amount: '12.50' } },
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /delivery_methods -d '{"name":"Express","storefront_visible":true,"calculator_type":"flat_rate","calculator_preferences":{"amount":"12.50"}}'
+        source: spree api post /delivery_methods -d '{"name":"Express","storefront_visible":true,"calculator":{"type":"flat_rate","preferences":{"amount":"12.50"}}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -34914,11 +35056,12 @@ paths:
                 fulfillment_provider: manual
                 pickup_point_provider:
                 rate_provider:
-                calculator_type: flat_rate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '12.50'
-                  currency: USD
+                calculator:
+                  type: flat_rate
+                  preferences:
+                    amounts: {}
+                    amount: '12.50'
+                    currency: USD
       requestBody:
         content:
           application/json:
@@ -34957,13 +35100,18 @@ paths:
                 tax_category_id:
                   type: string
                   nullable: true
-                calculator_type:
-                  type: string
-                  example: flat_rate
-                calculator_preferences:
+                calculator:
                   type: object
-                  example:
-                    amount: '12.50'
+                  description: 'How the method is priced: a type from `/delivery_methods/calculators`
+                    and its preferences, per that type''s `schema`.'
+                  properties:
+                    type:
+                      type: string
+                      example: flat_rate
+                    preferences:
+                      type: object
+                      example:
+                        amount: '12.5'
                 delivery_zone_id:
                   type: string
                   nullable: true
@@ -35016,76 +35164,140 @@ paths:
                 data:
                 - type: flat_percent_item_total
                   name: Flat Percent
-                  preference_schema:
-                  - key: flat_percent
-                    type: decimal
-                    default: '0'
+                  schema:
+                    type: object
+                    properties:
+                      flat_percent:
+                        type: string
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                    additionalProperties: false
                 - type: flat_rate
                   name: Flat rate
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: money
-                    default: '0'
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: flexi_rate
                   name: Flexible Rate per package item
-                  preference_schema:
-                  - key: first_item
-                    type: money
-                    default: '0'
-                  - key: additional_item
-                    type: money
-                    default: '0'
-                  - key: max_items
-                    type: integer
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      first_item:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      additional_item:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      max_items:
+                        type: integer
+                        default: 0
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: per_item
                   name: Flat rate per package item
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: money
-                    default: '0'
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: price_sack
                   name: Price sack
-                  preference_schema:
-                  - key: minimal_amount
-                    type: money
-                    default: '0'
-                  - key: normal_amount
-                    type: money
-                    default: '0'
-                  - key: discount_amount
-                    type: money
-                    default: '0'
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      minimal_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      normal_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      discount_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: digital_delivery
                   name: Digital Delivery
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: money
-                    default: '0'
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -35271,13 +35483,6 @@ paths:
                   preferences:
                     api_key: "•••••cret"
                     account_number: '42'
-                  preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
-                  - key: account_number
-                    type: string
-                    default:
                 meta:
                   page: 1
                   limit: 25
@@ -35344,13 +35549,6 @@ paths:
                 preferences:
                   api_key: "•••••cret"
                   account_number:
-                preference_schema:
-                - key: api_key
-                  type: password
-                  default:
-                - key: account_number
-                  type: string
-                  default:
       requestBody:
         content:
           application/json:
@@ -35422,13 +35620,19 @@ paths:
                   description:
                   logo_url:
                   docs_url:
-                  preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
-                  - key: account_number
-                    type: string
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      api_key:
+                        type:
+                        - string
+                        - 'null'
+                        x-spree-secret: true
+                      account_number:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
   "/api/v3/admin/integrations/{id}/test":
     post:
       summary: Test integration connection
@@ -35540,13 +35744,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d3a46db98d461edbc92f4d1d14f99f639cb15087/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--63ef6aa9ca6a6e3b5704dc687ed6f080fabf692f/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e7847a62f1405e24752088eb14d831cf14ae3b1/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4ff8dae08e622f6f0994f915853fb55ea5dd6096/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a564119223492e47a2b9ea3bccabab85e29b91bb/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--1c91b3d2baa279b11c9ef793097134edaacbb97f/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--516ea0323ff537653bd433418751a702a8d1aed1/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3e3edb1b0f78f07e686bf3eb9463bea500bebd7d/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--80dd7ad4999c21f6c3da0649a1b5aa05ace5783b/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--002b09f6d16889aa908d6211568576440a886a3d/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--130171024782974459ecf7db6c098a271155306b/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04cb1493768a2ae3ac9921802466bbb46902dcae/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -35554,10 +35758,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b97c0026639f4fcf9a36eba47fe3cfe943cf96d7/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6175d911d2a54f53944f129a6fed99f36974fc12/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -35628,13 +35832,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d3a46db98d461edbc92f4d1d14f99f639cb15087/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--63ef6aa9ca6a6e3b5704dc687ed6f080fabf692f/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e7847a62f1405e24752088eb14d831cf14ae3b1/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4ff8dae08e622f6f0994f915853fb55ea5dd6096/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a564119223492e47a2b9ea3bccabab85e29b91bb/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--1c91b3d2baa279b11c9ef793097134edaacbb97f/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--516ea0323ff537653bd433418751a702a8d1aed1/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3e3edb1b0f78f07e686bf3eb9463bea500bebd7d/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--80dd7ad4999c21f6c3da0649a1b5aa05ace5783b/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--002b09f6d16889aa908d6211568576440a886a3d/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--130171024782974459ecf7db6c098a271155306b/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04cb1493768a2ae3ac9921802466bbb46902dcae/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -35642,10 +35846,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b97c0026639f4fcf9a36eba47fe3cfe943cf96d7/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6175d911d2a54f53944f129a6fed99f36974fc12/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d423ce18f86c3483ce9b77bd576ed438c9334c07/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -35802,13 +36006,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d3a46db98d461edbc92f4d1d14f99f639cb15087/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--63ef6aa9ca6a6e3b5704dc687ed6f080fabf692f/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e7847a62f1405e24752088eb14d831cf14ae3b1/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4ff8dae08e622f6f0994f915853fb55ea5dd6096/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a564119223492e47a2b9ea3bccabab85e29b91bb/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--1c91b3d2baa279b11c9ef793097134edaacbb97f/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--516ea0323ff537653bd433418751a702a8d1aed1/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3e3edb1b0f78f07e686bf3eb9463bea500bebd7d/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--80dd7ad4999c21f6c3da0649a1b5aa05ace5783b/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--002b09f6d16889aa908d6211568576440a886a3d/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--130171024782974459ecf7db6c098a271155306b/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04cb1493768a2ae3ac9921802466bbb46902dcae/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -35816,10 +36020,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b97c0026639f4fcf9a36eba47fe3cfe943cf96d7/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6175d911d2a54f53944f129a6fed99f36974fc12/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -38957,7 +39161,7 @@ paths:
                   example:
                     accepted_content_types:
                     - application/pdf
-                  description: Configuration for this kind, per its `preference_schema`.
+                  description: Configuration for this kind, per its type's `schema`.
   "/api/v3/admin/seller_requirements/types":
     get:
       summary: List seller requirement kinds
@@ -39024,16 +39228,24 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema:
-                  - key: terms_body
-                    type: text
-                    default:
-                  - key: terms_effective_from
-                    type: date
-                    default:
-                  - key: terms_url
-                    type: string
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      terms_body:
+                        type:
+                        - string
+                        - 'null'
+                        x-spree-widget: textarea
+                      terms_effective_from:
+                        type:
+                        - string
+                        - 'null'
+                        format: date
+                      terms_url:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
                 - type: complete_profile
                   name: Complete profile
                   description: Fill in the public profile shoppers see
@@ -39044,19 +39256,22 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema:
-                  - key: require_about
-                    type: boolean
-                    default: true
-                  - key: require_logo
-                    type: boolean
-                    default: true
-                  - key: require_cover_photo
-                    type: boolean
-                    default: false
-                  - key: require_contact_email
-                    type: boolean
-                    default: true
+                  schema:
+                    type: object
+                    properties:
+                      require_about:
+                        type: boolean
+                        default: true
+                      require_logo:
+                        type: boolean
+                        default: true
+                      require_cover_photo:
+                        type: boolean
+                        default: false
+                      require_contact_email:
+                        type: boolean
+                        default: true
+                    additionalProperties: false
                 - type: billing_address
                   name: Billing address
                   description: The address your payouts are billed from
@@ -39067,7 +39282,10 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: returns_address
                   name: Returns address
                   description: The address customer returns are sent to
@@ -39078,7 +39296,10 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: delivery_method
                   name: Delivery method
                   description: Offer at least one way to ship your orders
@@ -39089,7 +39310,10 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: package_type
                   name: Shipping box
                   description: Tell us the size and weight of the box you ship orders
@@ -39101,7 +39325,10 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: minimum_products
                   name: Minimum products
                   description: List at least this many products
@@ -39112,10 +39339,13 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema:
-                  - key: minimum_count
-                    type: integer
-                    default: 1
+                  schema:
+                    type: object
+                    properties:
+                      minimum_count:
+                        type: integer
+                        default: 1
+                    additionalProperties: false
                 - type: payout_account
                   name: Payout Account
                   description: ''
@@ -39126,7 +39356,10 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: required_custom_fields
                   name: Required custom fields
                   description: Fill in the details the marketplace asks for
@@ -39138,7 +39371,10 @@ paths:
                   accepted_content_types: []
                   association_fields:
                   - custom_field_definition_ids
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: policy
                   name: Seller policy
                   description: Publish a policy with this name
@@ -39149,7 +39385,10 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: attestation
                   name: Seller confirmation
                   description: Confirm this yourself before you are approved
@@ -39160,7 +39399,10 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: operator_review
                   name: Manual check
                   description: The marketplace checks this by hand before approving
@@ -39172,7 +39414,10 @@ paths:
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
                 - type: document
                   name: Document
                   description: Upload this document for the marketplace to review
@@ -39190,7 +39435,10 @@ paths:
                   - application/msword
                   - application/vnd.openxmlformats-officedocument.wordprocessingml.document
                   association_fields: []
-                  preference_schema: []
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
               schema:
                 type: object
                 properties:
@@ -39226,10 +39474,9 @@ paths:
                           description: Whether the operator may add one now. The uniqueness
                             rule is the server's, so clients filter on this rather
                             than deriving it.
-                        preference_schema:
-                          type: array
-                          items:
-                            type: object
+                        schema:
+                          type: object
+                          description: JSON Schema of the type's `preferences`
   "/api/v3/admin/seller_requirements/{id}":
     parameters:
     - name: id
@@ -43086,50 +43333,21 @@ components:
       - id
       - name
       - code
-    PreferenceField:
+    PreferenceSchema:
       type: object
-      description: A single configurable preference on a payment method, promotion
-        rule/action, or calculator. The frontend uses `type` + `default` to render
-        a sensible input.
-      properties:
-        key:
-          type: string
-          example: amount_min
-        type:
-          type: string
-          example: decimal
-          description: string | text | password | integer | decimal | boolean | array
-            | hash
-        default:
-          description: Default value (any JSON type), null when there is no default
-          nullable: true
-      required:
-      - key
-      - type
-    PromotionActionCalculator:
-      type: object
-      description: The action's nested calculator (when the action carries one — null
-        for actions like `free_shipping`)
-      properties:
-        type:
-          type: string
-          example: flat_rate
-          description: Wire shorthand for the calculator subclass
-        label:
-          type: string
-          example: Flat Rate
-        preferences:
-          type: object
-          additionalProperties: true
-        preference_schema:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PreferenceField"
-      required:
-      - type
-      - label
-      - preferences
-      - preference_schema
+      description: 'The JSON Schema (draft 2020-12) of a type''s `preferences`: one
+        property per setting, with `format` (`money`, `currency`, `iso-country`, `prefixed-id`,
+        …), `enum`, `default`, `x-spree-secret` for a secret and `x-spree-prefix`
+        for an id list. Unknown keys are refused.'
+      additionalProperties: true
+      example:
+        type: object
+        properties:
+          amount:
+            type: string
+            format: money
+            default: '0.0'
+        additionalProperties: false
     PromotionActionLineItem:
       type: object
       description: One row in a `create_line_items` action — the variant added to
@@ -43999,19 +44217,19 @@ components:
           type: boolean
         storefront_access:
           type: string
-        guest_checkout:
-          type: boolean
-        preferred_storefront_access:
-          type: string
           nullable: true
-        preferred_guest_checkout:
+          enum:
+          - public
+          - prices_hidden
+          - login_required
+        guest_checkout:
           type: boolean
           nullable: true
         created_at:
           type: string
         updated_at:
           type: string
-        preferred_order_routing_strategy:
+        order_routing_strategy:
           type: string
           nullable: true
           description: 'Order routing strategy; null inherits the store setting. Built-in:
@@ -44031,11 +44249,9 @@ components:
       - default
       - storefront_access
       - guest_checkout
-      - preferred_storefront_access
-      - preferred_guest_checkout
       - created_at
       - updated_at
-      - preferred_order_routing_strategy
+      - order_routing_strategy
       - stock_location_ids
       - default_catalog_id
       x-typelizer: true
@@ -44477,9 +44693,7 @@ components:
         commission_rate_id:
           type: string
         preferences:
-          type: object
-        preference_schema:
-          type: object
+          "$ref": "#/components/schemas/CommissionRulePreferences"
         product_ids:
           type: object
           nullable: true
@@ -44504,7 +44718,6 @@ components:
       - type
       - commission_rate_id
       - preferences
-      - preference_schema
       - product_ids
       - seller_ids
       - category_ids
@@ -45130,9 +45343,7 @@ components:
           description: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule,
             channel_rule, volume_rule, company_rule. Extensions may register more.'
         preferences:
-          type: object
-        preference_schema:
-          type: object
+          "$ref": "#/components/schemas/DeliveryMethodRulePreferences"
         product_ids:
           type: array
           items:
@@ -45144,7 +45355,6 @@ components:
       - updated_at
       - type
       - preferences
-      - preference_schema
       - product_ids
       x-typelizer: true
     DeliveryMethod:
@@ -45234,11 +45444,9 @@ components:
           nullable: true
           description: 'Rate provider; null prices through the calculator. Built-in:
             internal, freight. Provider gems register more (e.g. easy_post).'
-        calculator_type:
-          type: string
-          nullable: true
-        calculator_preferences:
-          type: object
+        calculator:
+          allOf:
+          - "$ref": "#/components/schemas/DeliveryMethodCalculator"
           nullable: true
       required:
       - id
@@ -45270,8 +45478,7 @@ components:
       - fulfillment_provider
       - pickup_point_provider
       - rate_provider
-      - calculator_type
-      - calculator_preferences
+      - calculator
       x-typelizer: true
     DeliveryMethodService:
       type: object
@@ -46686,7 +46893,7 @@ components:
         processing_errors:
           type: string
           nullable: true
-        preferred_delimiter:
+        delimiter:
           type: string
         price_list_id:
           type: string
@@ -46735,7 +46942,7 @@ components:
       - owner_id
       - user_id
       - processing_errors
-      - preferred_delimiter
+      - delimiter
       - price_list_id
       - seller_name
       - original_filename
@@ -46769,9 +46976,7 @@ components:
           type: string
           nullable: true
         preferences:
-          type: object
-        preference_schema:
-          type: object
+          "$ref": "#/components/schemas/IntegrationPreferences"
       required:
       - id
       - name
@@ -46781,7 +46986,6 @@ components:
       - type
       - group
       - preferences
-      - preference_schema
       x-typelizer: true
     InvitationAcceptanceLink:
       type: object
@@ -47433,9 +47637,7 @@ components:
         channel_id:
           type: string
         preferences:
-          type: object
-        preference_schema:
-          type: object
+          "$ref": "#/components/schemas/OrderRoutingRulePreferences"
       required:
       - id
       - position
@@ -47445,7 +47647,6 @@ components:
       - type
       - channel_id
       - preferences
-      - preference_schema
       x-typelizer: true
     Order:
       type: object
@@ -47936,9 +48137,7 @@ components:
         updated_at:
           type: string
         preferences:
-          type: object
-        preference_schema:
-          type: object
+          "$ref": "#/components/schemas/PaymentMethodPreferences"
         logo_url:
           type: string
           nullable: true
@@ -47964,7 +48163,6 @@ components:
       - created_at
       - updated_at
       - preferences
-      - preference_schema
       - logo_url
       - docs_url
       - third_party
@@ -48353,11 +48551,7 @@ components:
         price_list_id:
           type: string
         preferences:
-          type: object
-        preference_schema:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PreferenceField"
+          "$ref": "#/components/schemas/PriceRulePreferences"
         markets:
           type: array
           items:
@@ -48381,7 +48575,6 @@ components:
       - type
       - price_list_id
       - preferences
-      - preference_schema
       x-typelizer: true
     Price:
       type: object
@@ -48790,10 +48983,6 @@ components:
           type: string
         preferences:
           type: object
-        preference_schema:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PreferenceField"
         calculator:
           allOf:
           - "$ref": "#/components/schemas/PromotionActionCalculator"
@@ -48810,7 +48999,6 @@ components:
       - type
       - promotion_id
       - preferences
-      - preference_schema
       - calculator
       - line_items
       x-typelizer: true
@@ -48831,11 +49019,7 @@ components:
         promotion_id:
           type: string
         preferences:
-          type: object
-        preference_schema:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PreferenceField"
+          "$ref": "#/components/schemas/PromotionRulePreferences"
         product_ids:
           type: array
           items:
@@ -48895,7 +49079,6 @@ components:
       - type
       - promotion_id
       - preferences
-      - preference_schema
       - product_ids
       - category_ids
       - customer_ids
@@ -49628,7 +49811,7 @@ components:
           type: string
           nullable: true
         preferences:
-          type: object
+          "$ref": "#/components/schemas/SellerRequirementPreferences"
         custom_field_definition_ids:
           type: array
           items:
@@ -50851,9 +51034,6 @@ components:
           type: string
         code:
           type: string
-        preferred_storefront_url:
-          type: string
-          nullable: true
         default_currency:
           type: string
         default_locale:
@@ -50870,24 +51050,137 @@ components:
         new_order_notifications_email:
           type: string
           nullable: true
-        preferred_send_consumer_transactional_emails:
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        order_routing_strategy:
+          type: string
+          description: 'Order routing strategy. Built-in: rules. Extensions may register
+            more.'
+        payout_provider:
+          type: string
+          nullable: true
+          description: 'Payout provider; null uses the installation default. Built-in:
+            system. Provider gems register more (e.g. stripe).'
+        admin_locale:
+          type: string
+          nullable: true
+        timezone:
+          type: string
+        storefront_url:
+          type: string
+          nullable: true
+        weight_unit:
+          type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
+        unit_system:
+          type: string
+        storefront_access:
+          type: string
+          enum:
+          - public
+          - prices_hidden
+          - login_required
+        guest_checkout:
           type: boolean
-        preferred_email_accent_color:
+        always_include_confirm_step:
+          type: boolean
+        company_field_enabled:
+          type: boolean
+        address_requires_company:
+          type: boolean
+        address_requires_phone:
+          type: boolean
+        capture_method:
+          type: string
+          enum:
+          - checkout
+          - on_dispatch
+          - manual
+        track_inventory_levels:
+          type: boolean
+        stock_reservations_enabled:
+          type: boolean
+        low_stock_threshold:
+          type: number
+        tax_using_ship_address:
+          type: boolean
+        track_price_history:
+          type: boolean
+        show_products_without_price:
+          type: boolean
+        disable_sku_validation:
+          type: boolean
+        pricing_provider:
+          type: string
+        inventory_provider:
+          type: string
+        pricing_provider_failure_policy:
+          type: string
+          enum:
+          - fallback
+          - strict
+        inventory_provider_failure_policy:
+          type: string
+          enum:
+          - fallback
+          - strict
+        default_payouts_schedule_interval:
+          type: string
+          enum:
+          - daily
+          - weekly
+          - biweekly
+          - monthly
+          - manual
+        auto_approve_sellers:
+          type: boolean
+        auto_approve_seller_products:
+          type: boolean
+        send_seller_transactional_emails:
+          type: boolean
+        document_number_format:
+          type: string
+          enum:
+          - sequential
+          - random
+        order_number_prefix:
+          type: string
+        order_number_suffix:
+          type: string
+        order_number_sequence_start:
+          type: number
+        limit_digital_download_count:
+          type: boolean
+        digital_asset_authorized_clicks:
+          type: number
+        limit_digital_download_days:
+          type: boolean
+        digital_asset_authorized_days:
+          type: number
+        send_consumer_transactional_emails:
+          type: boolean
+        email_accent_color:
           type: string
           nullable: true
-        preferred_email_background_color:
+        email_background_color:
           type: string
           nullable: true
-        preferred_email_card_color:
+        email_card_color:
           type: string
           nullable: true
-        preferred_email_text_color:
+        email_text_color:
           type: string
           nullable: true
-        preferred_email_heading_color:
+        email_heading_color:
           type: string
           nullable: true
-        preferred_email_font:
+        email_font:
           type: string
           nullable: true
           enum:
@@ -50898,99 +51191,12 @@ components:
           - roboto
           - lato
           - merriweather
-        preferred_admin_locale:
-          type: string
-          nullable: true
-        preferred_timezone:
-          type: string
-        preferred_weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
-        preferred_unit_system:
-          type: string
-        preferred_storefront_access:
-          type: string
-        preferred_guest_checkout:
-          type: boolean
-        preferred_always_include_confirm_step:
-          type: boolean
-        preferred_company_field_enabled:
-          type: boolean
-        preferred_address_requires_company:
-          type: boolean
-        preferred_address_requires_phone:
-          type: boolean
-        preferred_capture_method:
-          type: string
-        preferred_track_inventory_levels:
-          type: boolean
-        preferred_stock_reservations_enabled:
-          type: boolean
-        preferred_low_stock_threshold:
-          type: number
-        preferred_tax_using_ship_address:
-          type: boolean
-        preferred_track_price_history:
-          type: boolean
-        preferred_show_products_without_price:
-          type: boolean
-        preferred_disable_sku_validation:
-          type: boolean
-        preferred_pricing_provider:
-          type: string
-        preferred_inventory_provider:
-          type: string
-        preferred_pricing_provider_failure_policy:
-          type: string
-        preferred_inventory_provider_failure_policy:
-          type: string
-        preferred_default_payouts_schedule_interval:
-          type: string
-        preferred_auto_approve_sellers:
-          type: boolean
-        preferred_auto_approve_seller_products:
-          type: boolean
-        preferred_send_seller_transactional_emails:
-          type: boolean
-        preferred_document_number_format:
-          type: string
-        preferred_order_number_prefix:
-          type: string
-        preferred_order_number_suffix:
-          type: string
-        preferred_order_number_sequence_start:
-          type: number
-        preferred_limit_digital_download_count:
-          type: boolean
-        preferred_digital_asset_authorized_clicks:
-          type: number
-        preferred_limit_digital_download_days:
-          type: boolean
-        preferred_digital_asset_authorized_days:
-          type: number
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        preferred_order_routing_strategy:
-          type: string
-          description: 'Order routing strategy. Built-in: rules. Extensions may register
-            more.'
-        preferred_payout_provider:
-          type: string
-          nullable: true
-          description: 'Payout provider; null uses the installation default. Built-in:
-            system. Provider gems register more (e.g. stripe).'
         order_number_sequence_started:
           type: boolean
-        preferred_default_minimum_payout_amount:
+        default_minimum_payout_amount:
           type: string
           nullable: true
-        preferred_default_commission_tax_rate:
+        default_commission_tax_rate:
           type: string
           nullable: true
         url:
@@ -51024,61 +51230,61 @@ components:
       - metadata
       - name
       - code
-      - preferred_storefront_url
       - default_currency
       - default_locale
       - default_country_code
       - mail_from_address
       - customer_support_email
       - new_order_notifications_email
-      - preferred_send_consumer_transactional_emails
-      - preferred_email_accent_color
-      - preferred_email_background_color
-      - preferred_email_card_color
-      - preferred_email_text_color
-      - preferred_email_heading_color
-      - preferred_email_font
-      - preferred_admin_locale
-      - preferred_timezone
-      - preferred_weight_unit
-      - preferred_unit_system
-      - preferred_storefront_access
-      - preferred_guest_checkout
-      - preferred_always_include_confirm_step
-      - preferred_company_field_enabled
-      - preferred_address_requires_company
-      - preferred_address_requires_phone
-      - preferred_capture_method
-      - preferred_track_inventory_levels
-      - preferred_stock_reservations_enabled
-      - preferred_low_stock_threshold
-      - preferred_tax_using_ship_address
-      - preferred_track_price_history
-      - preferred_show_products_without_price
-      - preferred_disable_sku_validation
-      - preferred_pricing_provider
-      - preferred_inventory_provider
-      - preferred_pricing_provider_failure_policy
-      - preferred_inventory_provider_failure_policy
-      - preferred_default_payouts_schedule_interval
-      - preferred_auto_approve_sellers
-      - preferred_auto_approve_seller_products
-      - preferred_send_seller_transactional_emails
-      - preferred_document_number_format
-      - preferred_order_number_prefix
-      - preferred_order_number_suffix
-      - preferred_order_number_sequence_start
-      - preferred_limit_digital_download_count
-      - preferred_digital_asset_authorized_clicks
-      - preferred_limit_digital_download_days
-      - preferred_digital_asset_authorized_days
       - created_at
       - updated_at
-      - preferred_order_routing_strategy
-      - preferred_payout_provider
+      - order_routing_strategy
+      - payout_provider
+      - admin_locale
+      - timezone
+      - storefront_url
+      - weight_unit
+      - unit_system
+      - storefront_access
+      - guest_checkout
+      - always_include_confirm_step
+      - company_field_enabled
+      - address_requires_company
+      - address_requires_phone
+      - capture_method
+      - track_inventory_levels
+      - stock_reservations_enabled
+      - low_stock_threshold
+      - tax_using_ship_address
+      - track_price_history
+      - show_products_without_price
+      - disable_sku_validation
+      - pricing_provider
+      - inventory_provider
+      - pricing_provider_failure_policy
+      - inventory_provider_failure_policy
+      - default_payouts_schedule_interval
+      - auto_approve_sellers
+      - auto_approve_seller_products
+      - send_seller_transactional_emails
+      - document_number_format
+      - order_number_prefix
+      - order_number_suffix
+      - order_number_sequence_start
+      - limit_digital_download_count
+      - digital_asset_authorized_clicks
+      - limit_digital_download_days
+      - digital_asset_authorized_days
+      - send_consumer_transactional_emails
+      - email_accent_color
+      - email_background_color
+      - email_card_color
+      - email_text_color
+      - email_heading_color
+      - email_font
       - order_number_sequence_started
-      - preferred_default_minimum_payout_amount
-      - preferred_default_commission_tax_rate
+      - default_minimum_payout_amount
+      - default_commission_tax_rate
       - url
       - api_url
       - setup_tasks
@@ -51843,3 +52049,880 @@ components:
       - deprecated
       - replaced_by
       x-typelizer: true
+    CommissionRuleCategoryRulePreferences:
+      type: object
+      properties:
+        category_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^ctg_[A-Za-z0-9]+$"
+            x-spree-prefix: ctg
+          default: []
+      additionalProperties: false
+    CommissionRuleItemTotalRulePreferences:
+      type: object
+      properties:
+        min_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        max_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    CommissionRuleProductRulePreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    CommissionRuleSellerRulePreferences:
+      type: object
+      properties:
+        seller_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^sel_[A-Za-z0-9]+$"
+            x-spree-prefix: sel
+          default: []
+      additionalProperties: false
+    CommissionRulePreferences:
+      description: Settings of a commission rule, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/CommissionRuleCategoryRulePreferences"
+      - "$ref": "#/components/schemas/CommissionRuleItemTotalRulePreferences"
+      - "$ref": "#/components/schemas/CommissionRuleProductRulePreferences"
+      - "$ref": "#/components/schemas/CommissionRuleSellerRulePreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        category_rule: "#/components/schemas/CommissionRuleCategoryRulePreferences"
+        item_total_rule: "#/components/schemas/CommissionRuleItemTotalRulePreferences"
+        product_rule: "#/components/schemas/CommissionRuleProductRulePreferences"
+        seller_rule: "#/components/schemas/CommissionRuleSellerRulePreferences"
+    DeliveryCalculatorDigitalDeliveryPreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorFlatPercentItemTotalPreferences:
+      type: object
+      properties:
+        flat_percent:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+      additionalProperties: false
+    DeliveryCalculatorFlatRatePreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorFlexiRatePreferences:
+      type: object
+      properties:
+        first_item:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        additional_item:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        max_items:
+          type: integer
+          default: 0
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPerItemPreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPriceSackPreferences:
+      type: object
+      properties:
+        minimal_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        normal_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        discount_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPreferences:
+      description: Settings of a delivery calculator, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/DeliveryCalculatorDigitalDeliveryPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlatPercentItemTotalPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlatRatePreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlexiRatePreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorPerItemPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorPriceSackPreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        digital_delivery: "#/components/schemas/DeliveryCalculatorDigitalDeliveryPreferences"
+        flat_percent_item_total: "#/components/schemas/DeliveryCalculatorFlatPercentItemTotalPreferences"
+        flat_rate: "#/components/schemas/DeliveryCalculatorFlatRatePreferences"
+        flexi_rate: "#/components/schemas/DeliveryCalculatorFlexiRatePreferences"
+        per_item: "#/components/schemas/DeliveryCalculatorPerItemPreferences"
+        price_sack: "#/components/schemas/DeliveryCalculatorPriceSackPreferences"
+    DeliveryMethodRuleChannelRulePreferences:
+      type: object
+      properties:
+        channel_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^ch_[A-Za-z0-9]+$"
+            x-spree-prefix: ch
+          default: []
+      additionalProperties: false
+    DeliveryMethodRuleCompanyRulePreferences:
+      type: object
+      properties:
+        company_orders_only:
+          type: boolean
+          default: true
+      additionalProperties: false
+    DeliveryMethodRuleExcludedProductsRulePreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    DeliveryMethodRuleItemTotalRulePreferences:
+      type: object
+      properties:
+        minimum_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRuleVolumeRulePreferences:
+      type: object
+      properties:
+        minimum_volume:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_volume:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRuleWeightRulePreferences:
+      type: object
+      properties:
+        minimum_weight:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_weight:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRulePreferences:
+      description: Settings of a delivery method rule, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/DeliveryMethodRuleChannelRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleCompanyRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleExcludedProductsRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleItemTotalRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleVolumeRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleWeightRulePreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        channel_rule: "#/components/schemas/DeliveryMethodRuleChannelRulePreferences"
+        company_rule: "#/components/schemas/DeliveryMethodRuleCompanyRulePreferences"
+        excluded_products_rule: "#/components/schemas/DeliveryMethodRuleExcludedProductsRulePreferences"
+        item_total_rule: "#/components/schemas/DeliveryMethodRuleItemTotalRulePreferences"
+        volume_rule: "#/components/schemas/DeliveryMethodRuleVolumeRulePreferences"
+        weight_rule: "#/components/schemas/DeliveryMethodRuleWeightRulePreferences"
+    IntegrationPreferences:
+      description: Settings of a integration, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type: {}
+    OrderRoutingRuleDefaultLocationPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    OrderRoutingRuleMinimizeSplitsPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    OrderRoutingRulePreferredLocationPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    OrderRoutingRulePreferences:
+      description: Settings of a order routing rule, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/OrderRoutingRuleDefaultLocationPreferences"
+      - "$ref": "#/components/schemas/OrderRoutingRuleMinimizeSplitsPreferences"
+      - "$ref": "#/components/schemas/OrderRoutingRulePreferredLocationPreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        default_location: "#/components/schemas/OrderRoutingRuleDefaultLocationPreferences"
+        minimize_splits: "#/components/schemas/OrderRoutingRuleMinimizeSplitsPreferences"
+        preferred_location: "#/components/schemas/OrderRoutingRulePreferredLocationPreferences"
+    PaymentMethodBogusPreferences:
+      type: object
+      properties:
+        dummy_key:
+          type: string
+          default: PUBLICKEY123
+        dummy_secret_key:
+          type: string
+          x-spree-secret: true
+          nullable: true
+      additionalProperties: false
+    PaymentMethodCheckPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    PaymentMethodCustomPaymentSourceMethodPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    PaymentMethodStoreCreditPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    PaymentMethodPreferences:
+      description: Settings of a payment method, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/PaymentMethodBogusPreferences"
+      - "$ref": "#/components/schemas/PaymentMethodCheckPreferences"
+      - "$ref": "#/components/schemas/PaymentMethodCustomPaymentSourceMethodPreferences"
+      - "$ref": "#/components/schemas/PaymentMethodStoreCreditPreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        bogus: "#/components/schemas/PaymentMethodBogusPreferences"
+        check: "#/components/schemas/PaymentMethodCheckPreferences"
+        custom_payment_source_method: "#/components/schemas/PaymentMethodCustomPaymentSourceMethodPreferences"
+        store_credit: "#/components/schemas/PaymentMethodStoreCreditPreferences"
+    PriceRuleChannelRulePreferences:
+      type: object
+      properties:
+        channel_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^ch_[A-Za-z0-9]+$"
+            x-spree-prefix: ch
+          default: []
+      additionalProperties: false
+    PriceRuleCustomerGroupRulePreferences:
+      type: object
+      properties:
+        customer_group_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^cg_[A-Za-z0-9]+$"
+            x-spree-prefix: cg
+          default: []
+      additionalProperties: false
+    PriceRuleMarketRulePreferences:
+      type: object
+      properties:
+        market_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^mkt_[A-Za-z0-9]+$"
+            x-spree-prefix: mkt
+          default: []
+      additionalProperties: false
+    PriceRuleUserRulePreferences:
+      type: object
+      properties:
+        user_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^cust_[A-Za-z0-9]+$"
+            x-spree-prefix: cust
+          default: []
+      additionalProperties: false
+    PriceRuleVolumeRulePreferences:
+      type: object
+      properties:
+        min_quantity:
+          type: integer
+          default: 1
+        max_quantity:
+          type: integer
+          nullable: true
+      additionalProperties: false
+    PriceRulePreferences:
+      description: Settings of a price rule, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/PriceRuleChannelRulePreferences"
+      - "$ref": "#/components/schemas/PriceRuleCustomerGroupRulePreferences"
+      - "$ref": "#/components/schemas/PriceRuleMarketRulePreferences"
+      - "$ref": "#/components/schemas/PriceRuleUserRulePreferences"
+      - "$ref": "#/components/schemas/PriceRuleVolumeRulePreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        channel_rule: "#/components/schemas/PriceRuleChannelRulePreferences"
+        customer_group_rule: "#/components/schemas/PriceRuleCustomerGroupRulePreferences"
+        market_rule: "#/components/schemas/PriceRuleMarketRulePreferences"
+        user_rule: "#/components/schemas/PriceRuleUserRulePreferences"
+        volume_rule: "#/components/schemas/PriceRuleVolumeRulePreferences"
+    PromotionCalculatorFlatPercentItemTotalPreferences:
+      type: object
+      properties:
+        flat_percent:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+      additionalProperties: false
+    PromotionCalculatorFlatRatePreferences:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+        apply_only_on_full_priced_items:
+          type: boolean
+          default: false
+      additionalProperties: false
+    PromotionCalculatorFlexiRatePreferences:
+      type: object
+      properties:
+        first_item:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        additional_item:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        max_items:
+          type: integer
+          default: 0
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+        apply_only_on_full_priced_items:
+          type: boolean
+          default: false
+      additionalProperties: false
+    PromotionCalculatorPercentOnLineItemPreferences:
+      type: object
+      properties:
+        percent:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        apply_only_on_full_priced_items:
+          type: boolean
+          default: false
+      additionalProperties: false
+    PromotionCalculatorTieredFlatRatePreferences:
+      type: object
+      properties:
+        tiers:
+          type: array
+          items:
+            type: object
+            properties:
+              threshold:
+                type: string
+                format: money
+                pattern: "^-?\\d+(\\.\\d+)?$"
+              value:
+                type: string
+                pattern: "^-?\\d+(\\.\\d+)?$"
+            required:
+            - threshold
+            - value
+            additionalProperties: false
+          default: []
+        base_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    PromotionCalculatorTieredPercentPreferences:
+      type: object
+      properties:
+        tiers:
+          type: array
+          items:
+            type: object
+            properties:
+              threshold:
+                type: string
+                format: money
+                pattern: "^-?\\d+(\\.\\d+)?$"
+              value:
+                type: string
+                pattern: "^-?\\d+(\\.\\d+)?$"
+            required:
+            - threshold
+            - value
+            additionalProperties: false
+          default: []
+        base_percent:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+      additionalProperties: false
+    PromotionCalculatorPreferences:
+      description: Settings of a promotion calculator, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/PromotionCalculatorFlatPercentItemTotalPreferences"
+      - "$ref": "#/components/schemas/PromotionCalculatorFlatRatePreferences"
+      - "$ref": "#/components/schemas/PromotionCalculatorFlexiRatePreferences"
+      - "$ref": "#/components/schemas/PromotionCalculatorPercentOnLineItemPreferences"
+      - "$ref": "#/components/schemas/PromotionCalculatorTieredFlatRatePreferences"
+      - "$ref": "#/components/schemas/PromotionCalculatorTieredPercentPreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        flat_percent_item_total: "#/components/schemas/PromotionCalculatorFlatPercentItemTotalPreferences"
+        flat_rate: "#/components/schemas/PromotionCalculatorFlatRatePreferences"
+        flexi_rate: "#/components/schemas/PromotionCalculatorFlexiRatePreferences"
+        percent_on_line_item: "#/components/schemas/PromotionCalculatorPercentOnLineItemPreferences"
+        tiered_flat_rate: "#/components/schemas/PromotionCalculatorTieredFlatRatePreferences"
+        tiered_percent: "#/components/schemas/PromotionCalculatorTieredPercentPreferences"
+    PromotionRuleCategoryPreferences:
+      type: object
+      properties:
+        match_policy:
+          type: string
+          enum:
+          - any
+          - all
+          default: any
+      additionalProperties: false
+    PromotionRuleChannelPreferences:
+      type: object
+      properties:
+        channel_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^ch_[A-Za-z0-9]+$"
+            x-spree-prefix: ch
+          default: []
+      additionalProperties: false
+    PromotionRuleCountryPreferences:
+      type: object
+      properties:
+        country_codes:
+          type: array
+          items:
+            type: string
+            format: iso-country
+            pattern: "^[A-Z]{2}$"
+          default: []
+        country_id:
+          type: integer
+          nullable: true
+        country_code:
+          type: string
+          format: iso-country
+          pattern: "^[A-Z]{2}$"
+          nullable: true
+      additionalProperties: false
+    PromotionRuleCurrencyPreferences:
+      type: object
+      properties:
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+          nullable: true
+      additionalProperties: false
+    PromotionRuleCustomerPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    PromotionRuleCustomerGroupPreferences:
+      type: object
+      properties:
+        customer_group_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^cg_[A-Za-z0-9]+$"
+            x-spree-prefix: cg
+          default: []
+      additionalProperties: false
+    PromotionRuleCustomerLoggedInPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    PromotionRuleFirstOrderPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    PromotionRuleItemTotalPreferences:
+      type: object
+      properties:
+        amount_min:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '100'
+        operator_min:
+          type: string
+          default: ">"
+        amount_max:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        operator_max:
+          type: string
+          default: "<"
+      additionalProperties: false
+    PromotionRuleMarketPreferences:
+      type: object
+      properties:
+        market_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^mkt_[A-Za-z0-9]+$"
+            x-spree-prefix: mkt
+          default: []
+      additionalProperties: false
+    PromotionRuleOneUsePerUserPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    PromotionRuleOptionValuePreferences:
+      type: object
+      properties:
+        match_policy:
+          type: string
+          enum:
+          - any
+          default: any
+        eligible_values:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^optval_[A-Za-z0-9]+$"
+            x-spree-prefix: optval
+          default: []
+      additionalProperties: false
+    PromotionRuleProductPreferences:
+      type: object
+      properties:
+        match_policy:
+          type: string
+          enum:
+          - any
+          - all
+          - none
+          default: any
+      additionalProperties: false
+    PromotionRulePreferences:
+      description: Settings of a promotion rule, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/PromotionRuleCategoryPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleChannelPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleCountryPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleCurrencyPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleCustomerPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleCustomerGroupPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleCustomerLoggedInPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleFirstOrderPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleItemTotalPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleMarketPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleOneUsePerUserPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleOptionValuePreferences"
+      - "$ref": "#/components/schemas/PromotionRuleProductPreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        category: "#/components/schemas/PromotionRuleCategoryPreferences"
+        channel: "#/components/schemas/PromotionRuleChannelPreferences"
+        country: "#/components/schemas/PromotionRuleCountryPreferences"
+        currency: "#/components/schemas/PromotionRuleCurrencyPreferences"
+        customer: "#/components/schemas/PromotionRuleCustomerPreferences"
+        customer_group: "#/components/schemas/PromotionRuleCustomerGroupPreferences"
+        customer_logged_in: "#/components/schemas/PromotionRuleCustomerLoggedInPreferences"
+        first_order: "#/components/schemas/PromotionRuleFirstOrderPreferences"
+        item_total: "#/components/schemas/PromotionRuleItemTotalPreferences"
+        market: "#/components/schemas/PromotionRuleMarketPreferences"
+        one_use_per_user: "#/components/schemas/PromotionRuleOneUsePerUserPreferences"
+        option_value: "#/components/schemas/PromotionRuleOptionValuePreferences"
+        product: "#/components/schemas/PromotionRuleProductPreferences"
+    SellerRequirementAcceptTermsPreferences:
+      type: object
+      properties:
+        terms_body:
+          type: string
+          x-spree-widget: textarea
+          nullable: true
+        terms_effective_from:
+          type: string
+          format: date
+          nullable: true
+        terms_url:
+          type: string
+          nullable: true
+      additionalProperties: false
+    SellerRequirementAttestationPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementBillingAddressPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementCompleteProfilePreferences:
+      type: object
+      properties:
+        require_about:
+          type: boolean
+          default: true
+        require_logo:
+          type: boolean
+          default: true
+        require_cover_photo:
+          type: boolean
+          default: false
+        require_contact_email:
+          type: boolean
+          default: true
+      additionalProperties: false
+    SellerRequirementDeliveryMethodPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementDocumentPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementMinimumProductsPreferences:
+      type: object
+      properties:
+        minimum_count:
+          type: integer
+          default: 1
+      additionalProperties: false
+    SellerRequirementOperatorReviewPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementPackageTypePreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementPayoutAccountPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementPolicyPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementRequiredCustomFieldsPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementReturnsAddressPreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    SellerRequirementPreferences:
+      description: Settings of a seller requirement, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/SellerRequirementAcceptTermsPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementAttestationPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementBillingAddressPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementCompleteProfilePreferences"
+      - "$ref": "#/components/schemas/SellerRequirementDeliveryMethodPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementDocumentPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementMinimumProductsPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementOperatorReviewPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementPackageTypePreferences"
+      - "$ref": "#/components/schemas/SellerRequirementPayoutAccountPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementPolicyPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementRequiredCustomFieldsPreferences"
+      - "$ref": "#/components/schemas/SellerRequirementReturnsAddressPreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        accept_terms: "#/components/schemas/SellerRequirementAcceptTermsPreferences"
+        attestation: "#/components/schemas/SellerRequirementAttestationPreferences"
+        billing_address: "#/components/schemas/SellerRequirementBillingAddressPreferences"
+        complete_profile: "#/components/schemas/SellerRequirementCompleteProfilePreferences"
+        delivery_method: "#/components/schemas/SellerRequirementDeliveryMethodPreferences"
+        document: "#/components/schemas/SellerRequirementDocumentPreferences"
+        minimum_products: "#/components/schemas/SellerRequirementMinimumProductsPreferences"
+        operator_review: "#/components/schemas/SellerRequirementOperatorReviewPreferences"
+        package_type: "#/components/schemas/SellerRequirementPackageTypePreferences"
+        payout_account: "#/components/schemas/SellerRequirementPayoutAccountPreferences"
+        policy: "#/components/schemas/SellerRequirementPolicyPreferences"
+        required_custom_fields: "#/components/schemas/SellerRequirementRequiredCustomFieldsPreferences"
+        returns_address: "#/components/schemas/SellerRequirementReturnsAddressPreferences"
+    DeliveryMethodCalculator:
+      type: object
+      description: How the delivery method prices a shipment
+      properties:
+        type:
+          type: string
+          example: flat_rate
+          description: Wire shorthand for the calculator subclass
+        preferences:
+          "$ref": "#/components/schemas/DeliveryCalculatorPreferences"
+      required:
+      - type
+      - preferences
+    PromotionActionCalculator:
+      type: object
+      description: The action's nested calculator (when the action carries one — null
+        for actions like `free_shipping`)
+      properties:
+        type:
+          type: string
+          example: flat_rate
+          description: Wire shorthand for the calculator subclass
+        preferences:
+          "$ref": "#/components/schemas/PromotionCalculatorPreferences"
+      required:
+      - type
+      - preferences

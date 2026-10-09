@@ -87,6 +87,39 @@ module Spree
           end
         end
 
+        # Declares a model's settings under their plain names (see
+        # `exposes_preferences`) — every exposed one unless named — typed from
+        # their declarations so the generated SDK types never drift from the
+        # model. Each reads the stored setting, never a reader the model
+        # overrides with a fallback.
+        #
+        #   preference_attributes Spree::Store, except: %i[payout_provider]
+        def self.preference_attributes(model, *names, except: [])
+          names = model.exposed_preference_names.to_a - except if names.empty?
+          definitions = model.preference_definitions
+          names.each do |name|
+            typelize name => preference_type_hint(Spree::PreferenceSchema::JsonSchema.property_schema(definitions.fetch(name)))
+            reader = :"preferred_#{name}"
+            attribute(name) do |object|
+              value = object.public_send(reader)
+              value.is_a?(BigDecimal) ? value.to_s('F') : value
+            end
+          end
+        end
+
+        TYPELIZER_TYPES = { 'string' => :string, 'integer' => :number, 'number' => :number, 'boolean' => :boolean }.freeze
+        private_constant :TYPELIZER_TYPES
+
+        def self.preference_type_hint(schema)
+          types = Array(schema['type'])
+          hint = TYPELIZER_TYPES.fetch((types - ['null']).first, :unknown)
+          options = {}
+          options[:nullable] = true if types.include?('null')
+          options[:enum] = schema['enum'].compact if schema['enum']
+          options.empty? ? hint : [hint, options]
+        end
+        private_class_method :preference_type_hint
+
         # Declares the wire form of an `acted_by` association: the actor's
         # prefixed id, the kind of actor it is, and the expansion. Both
         # halves read off the columns, so naming an actor costs no query and

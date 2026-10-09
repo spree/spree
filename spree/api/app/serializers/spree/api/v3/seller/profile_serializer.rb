@@ -17,9 +17,9 @@ module Spree
                    products_count: :number,
                    default_currency: :string,
                    supported_currencies: [:string, multi: true],
-                   preferred_timezone: [:string, nullable: true]
+                   timezone: [:string, nullable: true]
 
-          attributes :preferred_timezone,
+          attributes :timezone,
                      :status, :legal_name, :registration_number,
                      :contact_email, :billing_email,
                      :tax_remittance, :payouts_schedule_interval,

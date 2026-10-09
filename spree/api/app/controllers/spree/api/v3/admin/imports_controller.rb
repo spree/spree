@@ -11,6 +11,10 @@ module Spree
         # Spree::Import.required_scope). The index is filtered to the types
         # the key can write.
         class ImportsController < ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_preference_params Spree::Import
+
           include ActiveStorage::SetCurrent
 
           # The index spans many import types — `scope` filters it to the
@@ -259,7 +263,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :preferred_delimiter, :results_url, :price_list_id)
+            params.permit(*model_additional_permitted_attributes, :type, :attachment, :delimiter, :results_url, :price_list_id)
           end
 
           # A price-list import writes into one list, named by its prefixed id.

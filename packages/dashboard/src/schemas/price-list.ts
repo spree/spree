@@ -1,5 +1,5 @@
 import type {
-  PreferenceField,
+  PreferenceSchema,
   PriceListCreateParams,
   PriceListUpdateParams,
   PriceRule,
@@ -44,11 +44,11 @@ export const MAXIMUM_QUANTITY_TIERS = 10
 export type AdjustmentDirection = (typeof ADJUSTMENT_DIRECTIONS)[number]
 
 /**
- * Form-state row for a price rule. Carries `preference_schema` for the
- * editor alongside the payload fields the API consumes (`type`,
- * `preferences`, optional `id`). The rule's name and description are
- * resolved from `type` at render time, so no copy is stored here. Closely
- * mirrors `PromotionRuleFormDraft` so the editor patterns are 1:1.
+ * Form-state row for a price rule: the payload fields the API consumes
+ * (`type`, `preferences`, optional `id`). The rule's name, description and
+ * preference schema are resolved from `type` at render time, so no copy is
+ * stored here. Closely mirrors `PromotionRuleFormDraft` so the editor
+ * patterns are 1:1.
  */
 export interface PriceRuleFormDraft {
   /** Stable client-side id used as a React key while the row has no server id. */
@@ -57,7 +57,6 @@ export interface PriceRuleFormDraft {
   id?: string
   /** Wire shorthand — `volume_rule`, `market_rule`, etc. */
   type: string
-  preference_schema: PreferenceField[]
   preferences: Record<string, unknown>
   /**
    * Display-only embeds the per-rule editors set when the user picks
@@ -94,7 +93,6 @@ const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({
   _localId: z.string(),
   id: z.string().optional(),
   type: z.string().min(1),
-  preference_schema: z.array(z.any()).default([]),
   preferences: z.record(z.string(), z.unknown()).default({}),
   customers: z.array(z.any()).optional(),
   customer_groups: z.array(z.any()).optional(),
@@ -216,7 +214,6 @@ export function ruleDraftFromRule(rule: PriceRule): PriceRuleFormDraft {
     _localId: rule.id,
     id: rule.id,
     type: rule.type,
-    preference_schema: rule.preference_schema,
     preferences: rule.preferences,
     customers: rule.customers ?? undefined,
     customer_groups: rule.customer_groups ?? undefined,
@@ -228,13 +225,12 @@ export function ruleDraftFromRule(rule: PriceRule): PriceRuleFormDraft {
 /** Materializes a fresh draft from a registry type definition. */
 export function ruleDraftFromType(type: {
   type: string
-  preference_schema: PreferenceField[]
+  schema: PreferenceSchema
 }): PriceRuleFormDraft {
   return {
     _localId: newLocalId(),
     type: type.type,
-    preference_schema: type.preference_schema,
-    preferences: defaultPreferences(type.preference_schema),
+    preferences: defaultPreferences(type.schema),
   }
 }
 

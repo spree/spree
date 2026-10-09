@@ -43,7 +43,12 @@ import {
   FIXTURE_TRANSFER_SKU,
   FIXTURE_TRANSFER_SOURCE,
 } from './helpers'
-import { ASYNC_JOBS_INITIALIZER, CREDENTIALS_FILE, RAILS_PID_FILE } from './paths'
+import {
+  ASYNC_JOBS_INITIALIZER,
+  CREDENTIALS_FILE,
+  RAILS_PID_FILE,
+  TEST_INTEGRATION_INITIALIZER,
+} from './paths'
 import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
 
 const PORT = process.env.E2E_RAILS_PORT || '3010'
@@ -192,6 +197,32 @@ export default async function globalSetup() {
     [
       '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
       "ActiveJob::Base.queue_adapter = :async if ENV['DASHBOARD_E2E'] == '1'",
+      '',
+    ].join('\n'),
+  )
+
+  // One setting of each kind the connect form renders, so the integrations
+  // spec can prove each saves and reads back. Registered after Spree's own
+  // integrations list is set up, the way a provider gem registers its own.
+  writeFileSync(
+    TEST_INTEGRATION_INITIALIZER,
+    [
+      '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
+      "if ENV['DASHBOARD_E2E'] == '1'",
+      '  Rails.application.config.after_initialize do',
+      '    unless defined?(::E2eRelay)',
+      '      class ::E2eRelay < Spree::Integration',
+      '        preference :account_id, :string',
+      '        preference :api_secret, :password',
+      '        preference :sync_interval, :integer, default: 15',
+      '        preference :sandbox_mode, :boolean, default: true',
+      '',
+      "        def self.integration_name = 'E2E Relay'",
+      '      end',
+      '    end',
+      "    Spree.integrations << 'E2eRelay' unless Spree.integrations.include?('E2eRelay')",
+      '  end',
+      'end',
       '',
     ].join('\n'),
   )

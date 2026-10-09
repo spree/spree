@@ -92,7 +92,7 @@ test.describe('store settings — general', () => {
 
     // Pick Polish (endonym shown in the picker) and save. The page is currently
     // in German (the precondition above), so the Save button reads "Speichern".
-    // Saving persists preferred_admin_locale AND switches the dashboard into
+    // Saving persists admin_locale AND switches the dashboard into
     // Polish, reloading so every module-load `i18n.t(...)` label re-resolves.
     await page.locator('#store-admin-locale').click()
     await page.getByRole('option', { name: /polski/i }).click()
@@ -134,6 +134,84 @@ test.describe('store settings — general', () => {
     await expect(page.getByText('Standards and formats', { exact: true })).toBeVisible({
       timeout: 15_000,
     })
+  })
+  // These settings are written under their plain names (`timezone`,
+  // `guest_checkout`, …) since preferences became a typed contract; each must
+  // still save and come back after a reload.
+  test('saves standards, storefront access, order numbers and payments, and they survive a reload', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await page.goto(STORE_PATH(creds.store_id))
+    const timezone = page.locator('#store-timezone')
+    const storefrontAccess = page.locator('#store-storefront-access')
+    const guestCheckout = page.getByRole('switch', { name: /^guest checkout/i })
+    const prefix = page.locator('#store-order-number-prefix')
+    const captureRadios = page.getByRole('radio')
+    const onDispatch = page.getByRole('radio', { name: /on dispatch/i })
+    // The form fills from the store once it loads; wait for that before editing.
+    await expect(prefix).not.toHaveValue('', { timeout: 15_000 })
+
+    const original = {
+      timezone: (await timezone.textContent())?.trim() ?? '',
+      storefrontAccess: (await storefrontAccess.textContent())?.trim() ?? '',
+      guestCheckout: (await guestCheckout.getAttribute('aria-checked')) === 'true',
+      prefix: await prefix.inputValue(),
+      capture: await captureRadios.evaluateAll((radios) =>
+        radios.findIndex((radio) => radio.getAttribute('aria-checked') === 'true'),
+      ),
+    }
+
+    await timezone.click()
+    await page.getByRole('option', { name: 'Europe/Warsaw', exact: true }).click()
+    await storefrontAccess.click()
+    await page.getByRole('option', { name: /^prices hidden/i }).click()
+    await guestCheckout.click()
+    await prefix.fill('E2E')
+    await onDispatch.click()
+
+    const save = page.getByRole('button', { name: /^save$/i })
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(prefix).toHaveValue('E2E', { timeout: 15_000 })
+    await expect(timezone).toContainText('Europe/Warsaw')
+    await expect(storefrontAccess).toContainText(/prices hidden/i)
+    await expect(guestCheckout).toHaveAttribute('aria-checked', String(!original.guestCheckout))
+    await expect(onDispatch).toBeChecked()
+
+    // Put the shared store back the way it was for the rest of the suite.
+    await timezone.click()
+    await page.getByRole('option', { name: original.timezone, exact: true }).click()
+    await storefrontAccess.click()
+    await page.getByRole('option', { name: original.storefrontAccess, exact: true }).click()
+    await guestCheckout.click()
+    await prefix.fill(original.prefix)
+    if (original.capture >= 0) await captureRadios.nth(original.capture).click()
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
+  // A store with no storefront of its own reads back no storefront URL: the
+  // dashboard neither offers to "View store" nor prefills the connect form
+  // with an address the merchant never entered.
+  test('shows no storefront address until one is set', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(`/${creds.store_id}/getting-started`)
+    await expect(page.getByRole('heading', { name: /^getting started$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('button', { name: /^user menu$/i }).click()
+    await expect(page.getByRole('menu')).toBeVisible()
+    await expect(page.getByRole('menuitem', { name: /^view store$/i })).toHaveCount(0)
+    await page.keyboard.press('Escape')
+
+    const step = page.getByRole('button', { name: /set up storefront/i })
+    if ((await step.getAttribute('aria-expanded')) !== 'true') await step.click()
+    await page.getByRole('button', { name: /^connect storefront$/i }).click()
+    await expect(page.getByLabel(/^storefront url$/i)).toHaveValue('')
   })
 })
 
@@ -217,5 +295,34 @@ test.describe('store settings — emails', () => {
       const valid = await senderField.evaluate((el) => (el as HTMLInputElement).validity.valid)
       expect(valid).toBe(false)
     }).toPass({ timeout: 5_000 })
+  })
+
+  test('saves the email colors and font, and they survive a reload', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(EMAILS_PATH(creds.store_id))
+    const accent = page.locator('#store-email-accent_color')
+    const font = page.locator('#store-email-font')
+    await expect(page.locator('#store-mail-from-address')).not.toHaveValue('', { timeout: 15_000 })
+
+    await accent.fill('#123ABC')
+    await accent.blur()
+    await font.click()
+    await page.getByRole('option', { name: /^georgia$/i }).click()
+
+    const save = page.getByRole('button', { name: /^save$/i })
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(accent).toHaveValue(/^#123abc$/i, { timeout: 15_000 })
+    await expect(font).toContainText(/georgia/i)
+
+    // Back to the shipped design for the rest of the suite.
+    await accent.fill('')
+    await accent.blur()
+    await font.click()
+    await page.getByRole('option', { name: /^inter/i }).click()
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
   })
 })

@@ -9,11 +9,8 @@ module Spree
     # restate the rule on every new leaf. The walk is done once per order by
     # Spree::Commissions::Context, not per rule.
     class CategoryRule < Spree::CommissionRule
-      preference :category_ids, :array, default: [],
-                 parse_on_set: normalize_id_preference(
-                   klass: Spree::Category,
-                   scope: ->(rule) { rule.store.categories }
-                 )
+      preference :category_ids, :array, of: :id, model: 'Spree::Category', default: [],
+                 scope: ->(rule) { rule.store.categories }
 
       # @return [Array<Spree::Category>]
       def categories

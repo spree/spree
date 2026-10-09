@@ -3,6 +3,10 @@ module Spree
     module V3
       module Admin
         class ChannelsController < ResourceController
+          include Spree::Api::V3::LegacyPreferenceParams
+
+          accepts_legacy_preference_params Spree::Channel
+
           scoped_resource :settings
 
           # POST /api/v3/admin/channels/:id/add_products
@@ -61,8 +65,8 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :code, :active, :default, :preferred_order_routing_strategy,
-                          :preferred_storefront_access, :preferred_guest_checkout,
+            params.permit(*model_additional_permitted_attributes, :name, :code, :active, :default, :order_routing_strategy,
+                          :storefront_access, :guest_checkout,
                           :default_catalog_id,
                           stock_location_ids: [])
           end

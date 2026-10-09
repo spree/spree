@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       data = json_response['data'].find { |row| row['name'] == 'UPS Ground' }
       expect(data).to be_present
       expect(data['delivery_profile_id']).to be_present
-      expect(data['calculator_type']).to be_present
+      expect(data['calculator']['type']).to be_present
     end
   end
 
@@ -29,7 +29,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       types = json_response['data'].map { |row| row['type'] }
       expect(types).to include('flat_rate')
       flat_rate = json_response['data'].find { |row| row['type'] == 'flat_rate' }
-      expect(flat_rate['preference_schema']).to be_an(Array)
+      expect(flat_rate['schema']).to include('type' => 'object', 'additionalProperties' => false)
+      expect(flat_rate['schema']['properties']).to include('amount', 'currency', 'amounts')
     end
   end
 
@@ -156,14 +157,13 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       post :create, params: {
         name: 'Express',
         storefront_visible: true,
-        calculator_type: 'flat_rate',
-        calculator_preferences: { amount: '12.5' },
+        calculator: { type: 'flat_rate', preferences: { amount: '12.5' } },
         delivery_zone_id: zone.prefixed_id
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['name']).to eq('Express')
-      expect(json_response['calculator_type']).to eq('flat_rate')
+      expect(json_response['calculator']['type']).to eq('flat_rate')
       expect(json_response['delivery_zone_id']).to eq(zone.prefixed_id)
       expect(json_response['delivery_profile_id']).to be_present
 
@@ -177,7 +177,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'keeps the amount when no calculator is named' do
       post :create, params: {
         name: 'Priced by default',
-        calculator_preferences: { amount: '7.25' }
+        calculator: { preferences: { amount: '7.25' } }
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -190,7 +190,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       post :create, params: {
         name: 'Store pickup',
         fulfillment_provider: 'pickup',
-        calculator_type: 'flat_rate'
+        calculator: { type: 'flat_rate' }
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -213,7 +213,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'rejects unknown calculator types' do
       post :create, params: {
         name: 'Sneaky',
-        calculator_type: 'Kernel'
+        calculator: { type: 'Kernel' }
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
@@ -227,7 +227,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       patch :update, params: {
         id: delivery_method.prefixed_id,
         name: 'UPS Ground v2',
-        calculator_preferences: { amount: '99' }
+        calculator: { preferences: { amount: '99' } }
       }, as: :json
 
       expect(response).to have_http_status(:ok)
@@ -235,15 +235,49 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.calculator.preferred_amount).to eq(99)
     end
 
+    it 'keeps the current calculator when the new one\'s settings are refused' do
+      calculator = delivery_method.calculator
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        calculator: { type: 'flexi_rate', preferences: { max_items: 'many' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']).to have_key('/calculator/preferences/max_items')
+      expect(delivery_method.reload.calculator).to eq(calculator)
+    end
+
+    it 'keeps the current calculator when the rest of the update is refused' do
+      calculator = delivery_method.calculator
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        name: '',
+        calculator: { type: 'flexi_rate', preferences: { first_item: '5' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(delivery_method.reload.calculator).to eq(calculator)
+    end
+
+    it 'still accepts the pre-6.0 calculator parameters for one release' do
+      expect(Spree::Deprecation).to receive(:warn).with(/`calculator_type` and `calculator_preferences` parameters are deprecated/)
+
+      patch :update, params: { id: delivery_method.prefixed_id, calculator_preferences: { amount: '42' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(delivery_method.reload.calculator.preferred_amount).to eq(42)
+    end
+
     it 'stores per-currency amounts' do
       patch :update, params: {
         id: delivery_method.prefixed_id,
-        calculator_type: 'flat_rate',
-        calculator_preferences: { amount: '20', currency: 'USD', amounts: { 'EUR' => '15.0' } }
+        calculator: { type: 'flat_rate', preferences: { amount: '20', currency: 'USD', amounts: { 'EUR' => '15.0' } } }
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['calculator_preferences']['amounts']).to eq('EUR' => '15.0')
+      expect(json_response['calculator']['preferences']['amounts']).to eq('EUR' => '15.00')
 
       calculator = delivery_method.reload.calculator
       expect(calculator.preferred_amounts).to eq('EUR' => '15.0')
@@ -259,7 +293,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
         id: delivery_method.prefixed_id,
         name: 'Express',
         rules: [
-          { type: 'item_total_rule', preferences: { minimum_amount: 25 } },
+          { type: 'item_total_rule', preferences: { minimum_amount: '25' } },
           { type: 'excluded_products_rule', product_ids: [product.prefixed_id] }
         ]
       }, as: :json

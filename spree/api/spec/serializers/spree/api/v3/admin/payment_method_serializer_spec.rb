@@ -30,23 +30,11 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodSerializer do
     end
 
     # Bogus declares `preference :dummy_secret_key, :password, default: 'SECRETKEY123'`.
-    # A non-empty default on a password preference is itself a secret —
-    # `serialized_preference_schema` must nil it out before it hits the wire.
-    it 'redacts password defaults in preference_schema' do
-      password_field = payload['preference_schema'].find { |f| f[:key] == :dummy_secret_key }
-      expect(password_field).not_to be_nil
-      expect(password_field[:default]).to be_nil
+    # A non-empty default on a password preference is itself a secret. Rows
+    # carry no schema at all — it lives on `/payment_methods/types`.
+    it 'carries no preference schema, so no secret default reaches the wire' do
+      expect(payload).not_to have_key('preference_schema')
       expect(payload.to_json).not_to include('SECRETKEY123')
-    end
-
-    # `:key_string` is an internal cache used by `Masking.serialize` to
-    # avoid `to_s` allocations per request. It must not leak into the
-    # wire payload — the documented shape is `{ key, type, default }`.
-    it 'does not expose the internal :key_string cache in preference_schema entries' do
-      expect(payload['preference_schema']).to all(have_key(:key))
-      expect(payload['preference_schema']).to all(have_key(:type))
-      expect(payload['preference_schema']).to all(have_key(:default))
-      expect(payload['preference_schema']).not_to include(have_key(:key_string))
     end
   end
 

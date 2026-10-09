@@ -805,13 +805,16 @@ function CommissionRuleRow({
   onRemove: () => void
 }) {
   const { t } = useTranslation()
-  const schema = ruleType?.preference_schema ?? []
+  const schema = ruleType?.schema
   // Catalog-scale references arrive as their own field; everything else names
   // records through an id list in preferences. Either way the picker comes
   // from the registry, keyed by rule kind.
   const picker = ruleType ? commissionRuleSubjectPicker(ruleType.type) : undefined
   const associationField = ruleType?.association_fields?.[0]
-  const preferenceIdKey = schema.find((preference) => preference.key.endsWith('_ids'))?.key
+  // The id list the schema marks with a record prefix.
+  const preferenceIdKey = Object.entries(schema?.properties ?? {}).find(
+    ([, property]) => property.items?.['x-spree-prefix'],
+  )?.[0]
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">

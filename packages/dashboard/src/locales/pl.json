@@ -2040,22 +2040,22 @@
           "invalid": "Używaj tylko wielkich liter, cyfr, myślników i #.",
           "label": "Sufiks"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Język panelu administracyjnego",
           "placeholder": "Użyj języka domyślnego"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "Gdy wyłączone, nie są wysyłane żadne wiadomości z potwierdzeniem zamówienia, wysyłki ani zwrotu.",
           "label": "Wysyłaj wiadomości transakcyjne do klientów"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Strefa czasowa",
           "placeholder": "Wybierz strefę czasową"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "System jednostek"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Jednostka wagi"
         },
         "show_products_without_price": {
@@ -2133,14 +2133,14 @@
         "digital_asset_authorized_days": {
           "label": "Dostępne dni"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Wysokość",
           "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech.",
           "label": "Domyślne wymiary paczki",
           "length": "Długość",
           "width": "Szerokość"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza.",
           "label": "Domyślna waga paczki"
         },
@@ -2161,22 +2161,22 @@
           "help": "Naliczany od Twojej prowizji, gdy ani stawka prowizji, ani dostawca podatków nie podaje własnej stawki. Zostaw 0, jeśli Twoja prowizja nie jest opodatkowana.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Kolor akcentu"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Kolor tła"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Kolor karty"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Kolor tekstu"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Kolor nagłówków"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Czcionka",
           "help": "Programy pocztowe, które nie mogą jej wczytać, użyją podobnej czcionki."
         }

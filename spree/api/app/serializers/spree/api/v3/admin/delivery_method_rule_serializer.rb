@@ -6,7 +6,6 @@ module Spree
           typelize type: [:string, comment: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule, channel_rule, volume_rule, company_rule. Extensions may register more.'],
                    active: :boolean,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
                    product_ids: [:string, multi: true]
 
           attributes :active, created_at: :iso8601, updated_at: :iso8601
@@ -18,7 +17,6 @@ module Spree
           end
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
 
           # Association-backed config (ExcludedProductsRule); empty for
           # preference-only rules. Same name read and written.

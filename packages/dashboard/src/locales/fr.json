@@ -2022,22 +2022,22 @@
           "invalid": "Utilisez uniquement des majuscules, des chiffres, des tirets et #.",
           "label": "Suffixe"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Langue de l'administration",
           "placeholder": "Utiliser la langue par défaut"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "Si désactivé, aucun e-mail de confirmation de commande, d'expédition ou de remboursement n'est envoyé.",
           "label": "Envoyer les e-mails transactionnels aux clients"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Fuseau horaire",
           "placeholder": "Sélectionner un fuseau horaire"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "Système d'unités"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Unité de poids"
         },
         "show_products_without_price": {
@@ -2115,14 +2115,14 @@
         "digital_asset_authorized_days": {
           "label": "Jours de disponibilité"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Hauteur",
           "help": "Le carton habituel d'expédition, utilisé par les transporteurs pour le poids volumétrique — pouces en impérial, centimètres en métrique. Les trois valeurs sont requises.",
           "label": "Dimensions de colis par défaut",
           "length": "Longueur",
           "width": "Largeur"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison. 0 pour désactiver.",
           "label": "Poids de colis par défaut"
         },
@@ -2143,22 +2143,22 @@
           "help": "Appliquée à votre commission quand ni le taux de commission ni votre fournisseur de taxes n’indique son propre taux. Laissez 0 si votre commission n’est pas taxée.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Couleur d'accent"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Couleur de fond"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Couleur de la carte"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Couleur du texte"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Couleur des titres"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Police",
           "help": "Les applications de messagerie qui ne peuvent pas la charger utilisent une police similaire."
         }

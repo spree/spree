@@ -896,6 +896,7 @@ en:
         stock_level_immutable: cannot be changed after the hold is taken — release the hold and take it again
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
+        unknown_calculator_type: "%{type} is not a calculator offered here"
         unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
         unknown_scopes: 'contains unknown scopes: %{scopes}'
         unregistered_actor: is not a registered actor class

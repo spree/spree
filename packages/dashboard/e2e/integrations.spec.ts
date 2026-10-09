@@ -46,6 +46,68 @@ test.describe('integrations', () => {
     await expect(page.getByRole('switch', { name: /store credit/i })).toHaveCount(0)
   })
 
+  // `E2E Relay` is registered by global-setup for this test: one setting of
+  // each kind, each of which must save and come back as itself, with the
+  // secret only ever returned as a mask.
+  test('connects an integration and keeps its settings', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(INTEGRATIONS_PATH(creds.store_id))
+
+    const card = page.locator('[data-slot="card"]').filter({ hasText: 'E2E Relay' })
+    const sheet = page.getByRole('dialog')
+    const accountId = sheet.locator('#preference-account_id')
+    const secret = sheet.locator('#preference-api_secret')
+    const interval = sheet.locator('#preference-sync_interval')
+    const sandbox = sheet.getByRole('switch', { name: /^sandbox mode$/i })
+
+    await card.getByRole('button', { name: /^connect$/i }).click()
+    await expect(sheet.getByRole('heading', { name: 'E2E Relay' })).toBeVisible({
+      timeout: 15_000,
+    })
+    // A new connection starts from the declared defaults.
+    await expect(interval).toHaveValue('15')
+    await expect(sandbox).toBeChecked()
+
+    await accountId.fill('acct-e2e')
+    await secret.fill('relay-secret-4321')
+    await interval.fill('30')
+    await sandbox.click()
+    await sheet.getByRole('button', { name: /^connect$/i }).click()
+    await expect(sheet).toHaveCount(0, { timeout: 15_000 })
+
+    async function reopen() {
+      await card.getByRole('button', { name: /^configure$/i }).click()
+      await expect(sheet.getByRole('heading', { name: 'E2E Relay' })).toBeVisible({
+        timeout: 15_000,
+      })
+    }
+
+    await reopen()
+    await expect(accountId).toHaveValue('acct-e2e')
+    await expect(secret).toHaveText(/^•+4321$/)
+    await expect(interval).toHaveValue('30')
+    await expect(sandbox).not.toBeChecked()
+
+    // Saving with the secret untouched keeps it.
+    await accountId.fill('acct-e2e-2')
+    await sheet.getByRole('button', { name: /^save$/i }).click()
+    await expect(sheet).toHaveCount(0, { timeout: 15_000 })
+
+    await page.reload()
+    await reopen()
+    await expect(accountId).toHaveValue('acct-e2e-2')
+    await expect(secret).toHaveText(/^•+4321$/)
+    await expect(interval).toHaveValue('30')
+
+    await sheet.getByRole('button', { name: /^disconnect$/i }).click()
+    await page
+      .getByRole('alertdialog')
+      .or(page.getByRole('dialog', { name: /disconnect integration/i }))
+      .getByRole('button', { name: /^disconnect$/i })
+      .click()
+    await expect(card.getByRole('button', { name: /^connect$/i })).toBeVisible({ timeout: 15_000 })
+  })
+
   // Setting up a provider from its card already says which provider, so the
   // add sheet skips the provider picker.
   test('opens the add sheet for the chosen provider without a provider picker', async ({
