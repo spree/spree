@@ -120,7 +120,7 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryMethodsController, type: :control
       post :create, params: valid_params.merge(calculator: { type: 'NoSuchCalculator' }), as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['details']).to have_key('calculator')
+      expect(json_response['error']).to include('code' => 'invalid_preferences', 'details' => have_key('/calculator/type'))
     end
 
     it 'refuses to share the seller’s own method with the marketplace' do

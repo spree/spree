@@ -80,8 +80,8 @@ module Spree
       def preference_failures(values)
         # The published schema plus deprecated preferences, which a write
         # still accepts until their removal. Memoized like the published one.
-        schemer = @preference_schemer || JSONSchemer.schema(Spree::PreferenceSchema::JsonSchema.for(self, writable: true))
-        @preference_schemer = schemer if @preference_schema
+        schemer = @preference_schemer || JSONSchemer.schema(Spree::PreferenceSchema::JsonSchema.writable(self))
+        @preference_schemer ||= schemer if @preference_schema
         schemer.validate(values).map do |error|
           { pointer: error['data_pointer'], message: error['error'] }
         end

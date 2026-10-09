@@ -78,13 +78,10 @@ module Spree
           end
 
           def update
-            # A new calculator replaces the stored one as soon as it is
-            # assigned, so the whole update rolls back if anything is refused.
-            saved = model_class.transaction do
+            saved = save_atomically do
               @resource.assign_attributes(assignable_params)
               rederive_origin_group(@resource)
               @resource.assign_calculator_attributes(permitted_params[:calculator])
-              @resource.save || raise(ActiveRecord::Rollback)
             end
 
             if saved

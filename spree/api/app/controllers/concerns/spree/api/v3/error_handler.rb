@@ -104,6 +104,7 @@ module Spree
           rescue_from ActionController::ParameterMissing, with: :handle_parameter_missing
           rescue_from ActiveRecord::RecordInvalid, with: :handle_record_invalid
           rescue_from Spree::Preferences::InvalidPreferences, with: :handle_invalid_preferences
+          rescue_from ActiveRecord::RecordNotSaved, with: :handle_record_not_saved
           rescue_from ArgumentError, with: :handle_argument_error
           rescue_from ActionDispatch::Http::Parameters::ParseError, with: :handle_parse_error
         end
@@ -256,6 +257,15 @@ module Spree
             status: :unprocessable_content,
             details: exception.failures.group_by { |failure| failure[:pointer] }.transform_values { |failures| failures.pluck(:message) }
           )
+        end
+
+        # Replacing a has_one on a saved record saves the new one at once, and
+        # raises when that one fails its own validations.
+        def handle_record_not_saved(exception)
+          errors = exception.record&.errors
+          return render_validation_error(errors) if errors.present?
+
+          render_error(code: ERROR_CODES[:validation_error], message: exception.message, status: :unprocessable_content)
         end
 
         def handle_argument_error(exception)

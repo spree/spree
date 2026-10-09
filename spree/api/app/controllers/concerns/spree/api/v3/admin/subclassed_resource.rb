@@ -44,9 +44,9 @@ module Spree
             attrs, preferences, calculator = extract_subclass_params(permitted)
 
             @resource = build_subclassed_resource(klass, attrs)
+            authorize_resource!(@resource, :create)
             apply_preferences(@resource, preferences) if preferences.present?
             apply_calculator(@resource, calculator) if calculator.present?
-            authorize_resource!(@resource, :create)
 
             if @resource.save
               render json: serialize_resource(@resource), status: :created
@@ -62,13 +62,10 @@ module Spree
             permitted = permitted_params_for(@resource.class)
             attrs, preferences, calculator = extract_subclass_params(permitted)
 
-            # A new calculator replaces the stored one as soon as it is
-            # assigned, so the whole update rolls back if anything is refused.
-            saved = model_class.transaction do
+            saved = save_atomically do
               @resource.assign_attributes(attrs)
               apply_preferences(@resource, preferences) if preferences.present?
               apply_calculator(@resource, calculator) if calculator.present?
-              @resource.save || raise(ActiveRecord::Rollback)
             end
 
             if saved

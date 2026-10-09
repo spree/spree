@@ -31,14 +31,14 @@ module Spree
       end
 
       # API v3 writer for the `calculator: { type:, preferences: {} }`
-      # payload. A type the registry does not list raises a validation error
-      # on `calculator`; preferences are checked against the calculator's
-      # schema and written through its typed writers.
+      # payload. A type the registry does not list is refused like a setting
+      # that does not match (`/calculator/type`); preferences are checked
+      # against the calculator's schema and written through its typed writers.
       #
       # @param attrs [Hash, ActionController::Parameters, nil]
       # @param pointer [String] where the calculator sits in the request
-      # @raise [ActiveRecord::RecordInvalid] for a calculator type the registry does not list
-      # @raise [Spree::Preferences::InvalidPreferences] for preferences that do not match its schema
+      # @raise [Spree::Preferences::InvalidPreferences] for a type the registry does not list, or
+      #   preferences that do not match its schema
       # @return [void]
       def assign_calculator_attributes(attrs, pointer: '/calculator')
         return if attrs.nil?
@@ -49,9 +49,9 @@ module Spree
         if type.present? && calculator&.class&.api_type != type
           klass = registered_calculator_class(type)
           unless klass
-            # Raised rather than only recorded: saving would clear the error.
-            errors.add(:calculator, :invalid)
-            raise ActiveRecord::RecordInvalid, self
+            raise Spree::Preferences::InvalidPreferences.new(
+              [{ pointer: '/type', message: I18n.t('spree.errors.messages.unknown_calculator_type', type: type) }], prefix: pointer
+            )
           end
 
           target = klass.new

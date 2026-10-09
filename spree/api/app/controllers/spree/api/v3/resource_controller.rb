@@ -96,6 +96,18 @@ module Spree
 
         protected
 
+        # Runs the block's assignments and saves the resource as one unit:
+        # assigning a has_one (a calculator, say) on a saved record writes it
+        # at once, so anything refused afterwards rolls that back too.
+        #
+        # @return [Boolean] whether the resource was saved
+        def save_atomically
+          model_class.transaction do
+            yield
+            @resource.save || raise(ActiveRecord::Rollback)
+          end || false
+        end
+
         def authenticate_request!
           raise NotImplementedError, "#{self.class} must implement authenticate_request!"
         end

@@ -1128,7 +1128,7 @@ describe Spree::Promotion, type: :model do
     it 'refuses a calculator type the action does not offer' do
       expect {
         promotion.actions = [{ type: 'create_adjustment', calculator: { type: 'not_a_calculator' } }]
-      }.to raise_error(ActiveRecord::RecordInvalid, /Calculator/)
+      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/actions/0/calculator/type})
     end
 
     it 'builds a FreeShipping action without a calculator' do
