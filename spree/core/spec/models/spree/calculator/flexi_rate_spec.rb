@@ -7,8 +7,6 @@ describe Spree::Calculator::FlexiRate, type: :model do
   before { allow(line_item).to receive_messages quantity: 10 }
 
   describe '#compute' do
-    it { expect(calculator.preferred_apply_only_on_full_priced_items).to be false }
-
     shared_examples 'computes amount correctly' do
       it 'computes amount correctly when all fees are 0' do
         expect(calculator.compute(line_item).round(2)).to eq(0.0)

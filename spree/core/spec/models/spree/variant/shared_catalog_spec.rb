@@ -231,27 +231,21 @@ describe Spree::Variant, type: :model do
     let(:product) { create(:product, store: store) }
     let(:owned_product) { create(:product, store: store, seller: seller) }
 
-    it 'finds variants by their own seller' do
+    # Spree::Export probes for this scope by name and hands it a Seller
+    # record, so the record form is a contract rather than a convenience.
+    it 'finds variants by their own seller, given a record or an id' do
       mine = create(:variant, product: product, seller: seller)
       create(:variant, product: product, seller: other_seller)
 
       expect(described_class.for_seller(seller)).to include(mine)
       expect(described_class.for_seller(seller).count).to eq(1)
+      expect(described_class.for_seller(seller.id)).to include(mine)
     end
 
     it 'finds variants whose seller comes from the product' do
       inherited = owned_product.variants.first
 
       expect(described_class.for_seller(seller)).to include(inherited)
-    end
-
-    # Spree::Export probes for this scope by name and hands it a Seller
-    # record, so the record form is a contract rather than a convenience.
-    it 'accepts a seller record as well as an id' do
-      mine = create(:variant, product: product, seller: seller)
-
-      expect(described_class.for_seller(seller)).to include(mine)
-      expect(described_class.for_seller(seller.id)).to include(mine)
     end
 
     # The raw columns must not be filterable: they would match only variants

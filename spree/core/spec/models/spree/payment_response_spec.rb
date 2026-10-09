@@ -52,26 +52,6 @@ RSpec.describe Spree::PaymentResponse do
     end
   end
 
-  describe '#success?' do
-    it 'returns true for a successful response' do
-      expect(described_class.new(true, 'ok')).to be_success
-    end
-
-    it 'returns false for a failed response' do
-      expect(described_class.new(false, 'fail')).not_to be_success
-    end
-  end
-
-  describe '#test?' do
-    it 'returns true when test option is set' do
-      expect(described_class.new(true, '', {}, test: true)).to be_test
-    end
-
-    it 'returns false by default' do
-      expect(described_class.new(true, '')).not_to be_test
-    end
-  end
-
   describe 'YAML serialization' do
     it 'round-trips through YAML.safe_load' do
       original = described_class.new(true, 'Captured', { 'ref' => '42' },

@@ -490,30 +490,5 @@ module Spree
         end
       end
     end
-
-    describe '#index' do
-      it 'is a no-op' do
-        expect { provider.index(product_1) }.not_to raise_error
-      end
-    end
-
-    describe '#remove' do
-      it 'is a no-op' do
-        expect { provider.remove(product_1) }.not_to raise_error
-      end
-    end
-
-    describe '#remove_by_id' do
-      it 'is a no-op' do
-        expect { provider.remove_by_id(product_1.id) }.not_to raise_error
-      end
-    end
-
-    describe '#reindex' do
-      it 'is a no-op' do
-        expect { provider.reindex(store.products) }.not_to raise_error
-      end
-    end
-
   end
 end

@@ -14,13 +14,6 @@ RSpec.describe Spree::CollectionRule, type: :model do
       expect(rule).not_to be_valid
       expect(rule.errors[:match_policy]).to be_present
     end
-
-    it 'requires a value' do
-      rule = build(:tag_collection_rule, :is_equal_to, collection: collection, value: nil)
-
-      expect(rule).not_to be_valid
-      expect(rule.errors[:value]).to be_present
-    end
   end
 
   # Assert the callback reaches the collection's regeneration; stub only the

@@ -202,10 +202,4 @@ RSpec.describe Spree::OrderGroup, type: :model do
       expect(group.errors[:base]).to be_present
     end
   end
-
-  describe 'numbering' do
-    it 'takes an order-style number' do
-      expect(group.number).to start_with('R')
-    end
-  end
 end

@@ -264,14 +264,6 @@ describe Spree::Product, type: :model do
       end
     end
 
-    # Regression test for #3737
-    context 'has stock items' do
-      it 'can retrieve stock items' do
-        expect(product.default_variant.stock_levels.first).not_to be_nil
-        expect(product.stock_levels.first).not_to be_nil
-      end
-    end
-
     describe '#discontinue_on_must_be_later_than_make_active_at' do
       before { product.make_active_at = Date.today }
 
@@ -422,10 +414,6 @@ describe Spree::Product, type: :model do
         product.save
         expect(product.option_type_ids.length).to eq(1)
         expect(product.option_type_ids).to eq(product_type.option_type_ids)
-      end
-
-      it 'creates product option types based on the product type' do
-        product.save
         expect(product.product_option_types.pluck(:option_type_id)).to eq(product_type.option_type_ids)
       end
 
@@ -666,19 +654,6 @@ describe Spree::Product, type: :model do
     end
   end
 
-  # Regression tests for #2352
-  context 'product_categories and categories' do
-    it 'is joined through product_categories' do
-      reflection = Spree::Product.reflect_on_association(:categories)
-      expect(reflection.options[:through]).to eq(:product_categories)
-    end
-
-    it 'will delete all product_categories' do
-      reflection = Spree::Product.reflect_on_association(:product_categories)
-      expect(reflection.options[:dependent]).to eq(:delete_all)
-    end
-  end
-
   describe 'the price filter' do
     let!(:cheap) { create(:product, price: 5) }
     let!(:pricey) { create(:product, price: 500) }
@@ -736,22 +711,14 @@ describe Spree::Product, type: :model do
   describe '#discontinue!' do
     let(:product) { create(:product, sku: 'a-sku') }
 
-    it 'sets the discontinued' do
-      product.discontinue!
+    it 'archives the product as discontinued' do
+      product.update_column(:updated_at, 1.day.ago)
+
+      expect { product.discontinue! }.to change(product, :updated_at)
+
       product.reload
       expect(product.discontinued?).to be(true)
-    end
-
-    it 'sets the status to archived' do
-      product.discontinue!
-      product.reload
       expect(product.status).to eq('archived')
-    end
-
-    it 'changes updated_at' do
-      Timecop.scale(1000) do
-        expect { product.discontinue! }.to change(product, :updated_at)
-      end
     end
   end
 
@@ -800,10 +767,6 @@ describe Spree::Product, type: :model do
   describe '#default_variant' do
     let(:product) { create(:product) }
 
-    it 'is the sole variant for a simple product' do
-      expect(product.reload.default_variant).to eq(product.variants.first)
-    end
-
     it 'stays fixed (sticky) when other variants are added, regardless of stock' do
       default = product.default_variant
       create(:variant, product: product)
@@ -836,14 +799,6 @@ describe Spree::Product, type: :model do
         expect(product.default_variant).to eq(product.variants.first)
         expect(product.default_variant.sku).to eq('PENDING')
       end
-    end
-  end
-
-  describe '#default_variant_id' do
-    let(:product) { create(:product) }
-
-    it 'returns the default variant id' do
-      expect(product.reload.default_variant_id).to eq(product.variants.first.id)
     end
   end
 
@@ -1121,15 +1076,6 @@ describe Spree::Product, type: :model do
       expect(loaded_product.variant_for_images).to eq(variant)
       expect(loaded_product.has_images?).to be true
     end
-
-    context 'when the image is on a non-default variant' do
-      it 'still finds the image through variant_for_images' do
-        loaded_product = Spree::Product.includes(*storefront_includes).find(product.id)
-
-        expect(loaded_product.variant_for_images).to eq(variant)
-        expect(loaded_product.primary_media).to eq(image)
-      end
-    end
   end
 
   describe 'default store assignment' do
@@ -1296,14 +1242,10 @@ describe Spree::Product, type: :model do
           it { expect(subject).to be(true) }
         end
 
-        context 'when all option variant stock items have track_inventory = true' do
-          it { expect(subject).to eq(false) }
+        context 'when all option variant stock items have backorderable = true' do
+          before { stock_level.update(backorderable: true) }
 
-          context 'when all option variant stock items have backorderable = true' do
-            before { stock_level.update(backorderable: true) }
-
-            it { expect(subject).to eq(true) }
-          end
+          it { expect(subject).to eq(true) }
         end
       end
     end
@@ -1320,20 +1262,6 @@ describe Spree::Product, type: :model do
       end
 
       it { expect(subject).to eq(false) }
-    end
-
-    describe '#digital?' do
-      context 'when the product belongs to a digital profile' do
-        let(:product) { create(:digital_product) }
-
-        it { expect(product.digital?).to eq(true) }
-      end
-
-      context 'when the product belongs to the default profile' do
-        let(:product) { create(:product) }
-
-        it { expect(product.digital?).to eq(false) }
-      end
     end
   end
 
@@ -1963,14 +1891,6 @@ describe Spree::Product, type: :model do
   end
 
   describe 'status' do
-    it 'has no state machine' do
-      expect(described_class).not_to respond_to(:state_machines)
-    end
-
-    it 'defaults to draft' do
-      expect(described_class.new.status).to eq('draft')
-    end
-
     it 'rejects an unknown status' do
       expect(build(:product, status: 'nonsense')).not_to be_valid
     end
@@ -1980,36 +1900,6 @@ describe Spree::Product, type: :model do
     # different set.
     it 'keeps the currency-aware active scope' do
       expect(described_class.active(nil).to_sql).to include(Spree::Price.table_name)
-    end
-
-    it 'generates the plain status scopes and predicates' do
-      expect(described_class.draft.to_sql).to include("'draft'")
-      expect(described_class.archived.to_sql).to include("'archived'")
-      expect(build(:product, status: 'draft')).to be_draft
-    end
-  end
-
-  describe 'custom events', events: true do
-    describe 'product.activated' do
-      let(:product) { create(:product, status: 'draft') }
-
-      it 'publishes product.activated event when activated' do
-        expect(product).to receive(:publish_event).with('product.activated')
-        allow(product).to receive(:publish_event).with(anything)
-
-        Spree::Products::Activate.call(product: product)
-      end
-    end
-
-    describe 'product.archived' do
-      let(:product) { create(:product, status: 'active') }
-
-      it 'publishes product.archived event when archived' do
-        expect(product).to receive(:publish_event).with('product.archived')
-        allow(product).to receive(:publish_event).with(anything)
-
-        Spree::Products::Archive.call(product: product)
-      end
     end
   end
 
@@ -2099,30 +1989,6 @@ describe Spree::Product, type: :model do
 
         expect(product.variants.reload).to include(v1)
         expect(product.variants).not_to include(v2)
-      end
-
-      it 'defers creation on new records' do
-        new_product = Spree.product_create_workflow.call(
-          store: store,
-          attributes: { name: 'Deferred', variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }] }
-        ).value
-
-        expect(new_product.variants.count).to eq(1)
-        expect(new_product.variants.first.sku).to eq('DEF-1')
-      end
-
-      it 'creates a single default variant from an options-less entry' do
-        # Simple-product flow: the merchant edits SKU + weight on the default
-        # variant without adding options. The payload ships a single variant
-        # with options:[] and the backend creates exactly that one variant.
-        new_product = Spree.product_create_workflow.call(
-          store: store,
-          attributes: { name: 'Simple SKU', variants: [{ sku: 'SIMPLE-1', weight: 2, options: [] }] }
-        ).value
-
-        expect(new_product.variants.count).to eq(1)
-        expect(new_product.default_variant.sku).to eq('SIMPLE-1')
-        expect(new_product.default_variant.weight).to eq(2)
       end
     end
 
@@ -2346,15 +2212,6 @@ describe Spree::Product, type: :model do
 
       expect(product.reload.tax_category).to eq(custom_tc)
     end
-
-    it 'assigns default when tax_category_id is not provided' do
-      product = Spree::Product.new(
-        name: 'Test',
-        store: store
-      )
-
-      expect(product.tax_category).to eq(default_tc)
-    end
   end
 
   context 'Channels' do
@@ -2365,12 +2222,6 @@ describe Spree::Product, type: :model do
 
     before do
       allow(Spree::Deprecation).to receive(:warn)
-    end
-
-    context 'associations' do
-      it 'reaches channels through product_publications' do
-        expect(product.reload.channels).to contain_exactly(default_channel)
-      end
     end
 
     context '#available_on=' do

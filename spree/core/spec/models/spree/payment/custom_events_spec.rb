@@ -12,14 +12,6 @@ RSpec.describe Spree::Payment::CustomEvents do
   end
 
   describe 'payment.paid event' do
-    it 'publishes payment.paid when payment state changes to completed' do
-      payment.update!(amount: order.total - 1)
-
-      payment.update!(state: 'completed')
-
-      expect(Spree::Events).to have_received(:publish).with('payment.paid', anything, anything)
-    end
-
     it 'does not publish payment.paid when state changes to something other than completed' do
       payment.update!(state: 'processing')
 

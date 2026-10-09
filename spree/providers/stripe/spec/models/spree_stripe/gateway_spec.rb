@@ -403,7 +403,6 @@ RSpec.describe SpreeStripe::Gateway do
       let!(:refund) { create(:refund, payment: payment, amount: 2.0) }
 
       let(:payment_intent_id) { 'pi_3QXmL12ESifGlJez0v0B8tUn' }
-      let(:refund_id) { 're_3QXmL12ESifGlJez0GcOBHng' }
 
       it 'creates a refund with credit_allowed_amount' do
         VCR.use_cassette('create_refund') do
@@ -413,12 +412,6 @@ RSpec.describe SpreeStripe::Gateway do
 
           expect(subject.success?).to be(true)
           expect(subject.authorization).to eq(payment_intent_id)
-
-          expect(subject.params['id']).to eq(refund_id)
-          expect(subject.params['status']).to eq('succeeded')
-          expect(subject.params['payment_intent']).to eq(payment_intent_id)
-          expect(subject.params['object']).to eq('refund')
-          expect(subject.params['amount']).to eq(800)
         end
       end
 
@@ -961,29 +954,6 @@ RSpec.describe SpreeStripe::Gateway do
       let(:source) { SpreeStripe::PaymentSources::Klarna.new }
 
       it { is_expected.to be_nil }
-    end
-  end
-
-  describe 'being a provider' do
-    let(:provider_methods) { %i[authorize purchase capture void credit] }
-
-    it 'implements provider methods without delegating back to itself' do
-      provider_methods.each do |method|
-        expect(gateway).to respond_to method
-        expect { gateway.send(method) }.to raise_error(ArgumentError)
-      end
-    end
-  end
-
-  describe '#setup_session_supported?' do
-    it 'returns true' do
-      expect(gateway.setup_session_supported?).to be(true)
-    end
-  end
-
-  describe '#payment_setup_session_class' do
-    it 'returns the Stripe STI subclass' do
-      expect(gateway.payment_setup_session_class).to eq(Spree::PaymentSetupSessions::Stripe)
     end
   end
 

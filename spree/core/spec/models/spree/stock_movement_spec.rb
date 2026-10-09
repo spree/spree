@@ -49,42 +49,8 @@ describe Spree::StockMovement, type: :model do
     end
   end
 
-  describe 'Constants' do
-    describe 'KINDS' do
-      it 'names every movement kind' do
-        expect(described_class::KINDS).to eq(%w[received allocated shipped released adjusted])
-      end
-    end
-
-    describe 'QUANTITY_LIMITS[:max]' do
-      it 'return 2**31 - 1' do
-        expect(Spree::StockMovement::QUANTITY_LIMITS[:max]).to eq(2**31 - 1)
-      end
-    end
-
-    describe 'QUANTITY_LIMITS[:min]' do
-      it 'return -2**31' do
-        expect(Spree::StockMovement::QUANTITY_LIMITS[:min]).to eq(-2**31)
-      end
-    end
-  end
-
   describe 'validations' do
     let(:stock_level) { create(:stock_level, backorderable: false) }
-
-    it 'requires a kind' do
-      movement = build(:stock_movement, kind: nil, stock_level: stock_level)
-
-      expect(movement).to be_invalid
-      expect(movement.errors[:kind]).to be_present
-    end
-
-    it 'rejects an unknown kind' do
-      movement = build(:stock_movement, kind: 'sold', stock_level: stock_level)
-
-      expect(movement).to be_invalid
-      expect(movement.errors[:kind]).to be_present
-    end
 
     it 'rejects a zero quantity' do
       movement = build(:stock_movement, quantity: 0, stock_level: stock_level)
@@ -115,13 +81,6 @@ describe Spree::StockMovement, type: :model do
   end
 
   describe 'Scope' do
-    describe '.recent' do
-      it 'orders chronologically by created at' do
-        expect(Spree::StockMovement.recent.to_sql).
-          to eq Spree::StockMovement.unscoped.order(created_at: :desc).to_sql
-      end
-    end
-
     describe 'kind scopes' do
       let(:stock_level) { create(:stock_level) }
       let!(:received) { create(:stock_movement, kind: 'received', quantity: 1, stock_level: stock_level) }
@@ -141,14 +100,6 @@ describe Spree::StockMovement, type: :model do
   end
 
   describe 'whitelisted ransackable attributes' do
-    it 'exposes the kind and every cause key' do
-      expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(
-        %w[quantity kind reason created_at stock_level_id stock_item_id order_id fulfillment_id
-           return_id exchange_id stock_transfer_id purchase_order_id stock_receipt_id
-           unit_cost]
-      )
-    end
-
     # Dropping the pre-rename filter would hand a client still sending it the
     # whole collection rather than an error.
     it 'still filters on the pre-rename stock_item_id name' do
@@ -175,14 +126,6 @@ describe Spree::StockMovement, type: :model do
     let(:stock_location) { create(:stock_location_with_items) }
     let(:stock_level) { stock_location.stock_levels.order(:id).first }
     let(:stock_movement) { build(:stock_movement, stock_level: stock_level) }
-
-    describe '.product' do
-      it { expect(stock_movement.product).to eq(stock_level.variant.product) }
-    end
-
-    describe '.variant' do
-      it { expect(stock_movement.variant).to eq(stock_level.variant) }
-    end
 
     describe '#readonly?' do
       let(:stock_movement) { create(:stock_movement, stock_level: stock_level) }

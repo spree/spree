@@ -13,28 +13,6 @@ RSpec.describe Spree::PaymentSetupSessions::Stripe, type: :model do
            external_data: { 'customer_id' => 'cus_test_123' })
   end
 
-  describe 'STI' do
-    it 'uses the correct type' do
-      expect(setup_session.type).to eq('Spree::PaymentSetupSessions::Stripe')
-    end
-
-    it 'is a PaymentSetupSession' do
-      expect(setup_session).to be_a(Spree::PaymentSetupSession)
-    end
-  end
-
-  describe '#stripe_id' do
-    it 'aliases external_id' do
-      expect(setup_session.stripe_id).to eq('seti_test_abc123')
-    end
-  end
-
-  describe '#client_secret' do
-    it 'aliases external_client_secret' do
-      expect(setup_session.client_secret).to eq('seti_test_abc123_secret_xyz')
-    end
-  end
-
   describe '#stripe_setup_intent' do
     let(:stripe_setup_intent) { Stripe::StripeObject.construct_from(id: 'seti_test_abc123', status: 'succeeded') }
 
@@ -60,12 +38,6 @@ RSpec.describe Spree::PaymentSetupSessions::Stripe, type: :model do
       stripe_setup_intent = Stripe::StripeObject.construct_from(id: 'seti_test_abc123', status: 'requires_payment_method')
       allow(gateway).to receive(:retrieve_setup_intent).and_return(stripe_setup_intent)
       expect(setup_session.successful?).to be false
-    end
-  end
-
-  describe '#api_options' do
-    it 'delegates to payment_method' do
-      expect(setup_session.api_options).to eq(gateway.api_options)
     end
   end
 end

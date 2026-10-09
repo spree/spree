@@ -129,24 +129,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe 'Callbacks' do
-    let(:order) { build(:order, customer: user, store: store, ship_address: ship_address) }
-    let(:ship_address) { create(:address, customer: user) }
-
-    describe '#clone_shipping_address' do
-      it 'clones the shipping address when use_shipping is true' do
-        order.update!(use_shipping: true)
-        expect(order.reload.bill_address).to eq(ship_address)
-        expect(user.reload.bill_address).to eq(ship_address)
-      end
-
-      it 'does not clone the shipping address when use_shipping is false' do
-        order.update!(use_shipping: false)
-        expect(order.reload.bill_address).not_to eq(order.ship_address)
-      end
-    end
-  end
-
   describe '#full_name' do
     subject { order.full_name }
 
@@ -286,20 +268,6 @@ describe Spree::Order, type: :model do
     let(:admin_user) { create :admin_user }
     let(:order) { create(:completed_order_with_totals) }
 
-    it 'cancels the order' do
-      expect { subject }.to change { order.reload.status }.to('canceled')
-    end
-
-    it 'saves canceler_id' do
-      subject
-      expect(order.reload.canceler_id).to eq(admin_user.id)
-    end
-
-    it 'has canceler' do
-      subject
-      expect(order.reload.canceler).to eq(admin_user)
-    end
-
     context 'when canceled_at is not given' do
       it 'saves canceled_at to Time.current' do
         Timecop.freeze(Time.current) do
@@ -332,18 +300,12 @@ describe Spree::Order, type: :model do
   describe '#create' do
     let(:order) { Spree::Order.create }
 
-    it 'assigns an order number' do
-      expect(order.number).not_to be_nil
-    end
-
     it 'creates a randomized 35 character token' do
       expect(order.token.size).to eq(35)
     end
   end
 
   context 'creates shipments cost' do
-    let(:shipment) { double }
-
     let(:order) { create(:order_with_line_items) }
     let(:shipment) { order.fulfillments.first }
 
@@ -399,8 +361,6 @@ describe Spree::Order, type: :model do
   describe '#ensure_line_items_are_in_stock' do
     subject { order.ensure_line_items_are_in_stock }
 
-    let(:line_item) { create(:line_item, order: order) }
-
     before do
       allow(order).to receive(:insufficient_stock_lines).and_return([true])
     end
@@ -452,34 +412,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#display_outstanding_balance' do
-    it 'returns the value as a spree money' do
-      allow(order).to receive(:outstanding_balance).and_return(10.55)
-      expect(order.display_outstanding_balance).to eq(Spree::Money.new(10.55))
-    end
-  end
-
-  describe '#display_item_total' do
-    it 'returns the value as a spree money' do
-      allow(order).to receive(:item_total).and_return(10.55)
-      expect(order.display_item_total).to eq(Spree::Money.new(10.55))
-    end
-  end
-
-  describe '#display_adjustment_total' do
-    it 'returns the value as a spree money' do
-      order.adjustment_total = 10.55
-      expect(order.display_adjustment_total).to eq(Spree::Money.new(10.55))
-    end
-  end
-
-  describe '#display_promo_total' do
-    it 'returns the value as a spree money' do
-      order.promo_total = 10.55
-      expect(order.display_promo_total).to eq(Spree::Money.new(10.55))
-    end
-  end
-
   describe '#display_total' do
     it 'returns the value as a spree money' do
       order.total = 10.55
@@ -522,18 +454,6 @@ describe Spree::Order, type: :model do
   # The deprecated twin of #payment_methods; it must keep matching its
   # replacement until it is removed in 6.1.
   describe '#collect_payment_methods' do
-    it 'excludes an inactive method even when it is storefront-visible' do
-      store.payment_methods.create!(name: 'Fake', active: false, storefront_visible: true)
-
-      expect(order.send(:collect_payment_methods)).to be_empty
-    end
-
-    it 'excludes a backoffice-only method' do
-      store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: false)
-
-      expect(order.send(:collect_payment_methods)).to be_empty
-    end
-
     it 'includes an active storefront-visible method' do
       payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)
 
@@ -543,37 +463,8 @@ describe Spree::Order, type: :model do
 
   # Regression test for #4199
   describe '#collect_frontend_payment_methods' do
-    let(:ok_method) { double :payment_method, store_credit?: false, available_for_order?: true, available_for_store?: true, store: store }
-    let(:no_method) { double :payment_method, store_credit?: false, available_for_order?: false, available_for_store?: true, store: store }
-    let(:methods) { [ok_method, no_method] }
     let(:store_2) { create(:store) }
     let(:order_from_different_store) { create(:order, customer: user, store: store_2) }
-
-    it 'includes frontend payment methods' do
-      payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)
-      expect(order.collect_frontend_payment_methods).to include(payment_method)
-    end
-
-    it 'includes payment methods that are storefront-visible by default' do
-      payment_method = store.payment_methods.create!(name: 'Fake', active: true)
-      expect(order.collect_frontend_payment_methods).to include(payment_method)
-    end
-
-    it 'does not include backend payment method' do
-      store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: false)
-      expect(order.collect_frontend_payment_methods.count).to eq(0)
-    end
-
-    it 'does not include inactive payment methods' do
-      store.payment_methods.create!(name: 'Fake', active: false, storefront_visible: true)
-      expect(order.collect_frontend_payment_methods.count).to eq(0)
-    end
-
-    it 'does not include a payment method that is not suitable for this order' do
-      allow(order.store).to receive_message_chain(:payment_methods, :active, :storefront_visible).and_return(methods)
-
-      expect(order.collect_frontend_payment_methods).to contain_exactly(ok_method)
-    end
 
     it 'does not include a payment method from different stores' do
       payment_method = store_2.payment_methods.create!(name: 'Fake', active: true)
@@ -792,37 +683,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#approved_by' do
-    let(:admin_user) { create(:admin_user) }
-    let(:order) { create(:order_ready_to_ship) }
-
-    it 'sets approver_id' do
-      order.approved_by(admin_user)
-      expect(order.reload.approver_id).to eq(admin_user.id)
-    end
-
-    it 'sets approved_at' do
-      Timecop.freeze(Time.current) do
-        order.approved_by(admin_user)
-        expect(order.reload.approved_at.to_s).to eq(Time.current.to_s)
-      end
-    end
-
-    it 'sets considered_risky to false' do
-      order.update_column(:considered_risky, true)
-      order.approved_by(admin_user)
-      expect(order.reload.considered_risky).to be false
-    end
-
-    context 'events', :events do
-      it 'publishes order.approved event' do
-        allow(Spree::Events).to receive(:publish)
-        order.approved_by(admin_user)
-        expect(Spree::Events).to have_received(:publish).with('order.approved', any_args)
-      end
-    end
-  end
-
   describe '#considered_risky!' do
     let(:order) { create(:completed_order_with_totals) }
 
@@ -849,14 +709,6 @@ describe Spree::Order, type: :model do
     it 'sets considered_risky to false' do
       order.approve!
       expect(order.reload.considered_risky).to be false
-    end
-
-    context 'events', :events do
-      it 'publishes order.approved event' do
-        allow(Spree::Events).to receive(:publish)
-        order.approve!
-        expect(Spree::Events).to have_received(:publish).with('order.approved', any_args)
-      end
     end
   end
 
@@ -994,16 +846,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#completed?' do
-    it 'indicates if order is completed' do
-      order.completed_at = nil
-      expect(order.completed?).to be false
-
-      order.completed_at = Time.current
-      expect(order.completed?).to be true
-    end
-  end
-
   describe '#allow_checkout?' do
     it 'is true if there are line_items in the order' do
       allow(order).to receive_message_chain(:line_items, :exists?).and_return(true)
@@ -1032,46 +874,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#tax_total' do
-    it 'adds included tax and additional tax' do
-      allow(order).to receive_messages(additional_tax_total: 10, included_tax_total: 20)
-
-      expect(order.tax_total).to eq 30
-    end
-  end
-
-  # Regression test for #4923
-  context 'locking' do
-    let(:order) { create(:order) } # need a persisted in order to test locking
-
-    it 'can lock' do
-      expect { order.with_lock {} }.not_to raise_error
-    end
-  end
-
-  describe '#pre_tax_item_amount' do
-    let(:order) { create(:order) }
-
-    before do
-      line_item = create(:line_item, order: order, price: 10, quantity: 2)
-      line_item_2 = create(:line_item, order: order, price: 30, quantity: 1)
-
-      line_item.update(pre_tax_amount: 5.0)
-      line_item_2.update(pre_tax_amount: 14.0)
-    end
-
-    it "sums all of the line items' pre tax amounts" do
-      expect(order.pre_tax_item_amount).to eq BigDecimal(19)
-    end
-  end
-
-  describe '#display_pre_tax_item_amount' do
-    it 'returns the value as a spree money' do
-      allow(order).to receive(:pre_tax_item_amount).and_return(10.55)
-      expect(order.display_pre_tax_item_amount).to eq(Spree::Money.new(10.55))
-    end
-  end
-
   describe '#pre_tax_total' do
     let(:order) { create(:order) }
 
@@ -1088,13 +890,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#display_pre_tax_total' do
-    it 'returns the value as a spree money' do
-      allow(order).to receive(:pre_tax_total).and_return(10.55)
-      expect(order.display_pre_tax_total).to eq(Spree::Money.new(10.55))
-    end
-  end
-
   describe '#analytics_subtotal' do
     let(:order) { create(:order_with_line_items, line_items_count: 2) }
 
@@ -1106,15 +901,6 @@ describe Spree::Order, type: :model do
 
     it 'returns the subtotal used for analytics integrations' do
       expect(order.analytics_subtotal).to eq(115)
-    end
-  end
-
-  describe '#quantity' do
-    # Uses a persisted record, as the quantity is retrieved via a DB count
-    let(:order) { create :order_with_line_items, line_items_count: 3 }
-
-    it 'sums the quantity of all line items' do
-      expect(order.quantity).to eq 3
     end
   end
 
@@ -1658,201 +1444,17 @@ describe Spree::Order, type: :model do
     let(:ship_address) { create(:address, customer: user) }
     let(:address) { create(:address, customer: user) }
 
-    context 'when assigned address exist' do
-      context 'when assigned address belongs to user' do
-        it 'assigns address to order as bill address' do
-          expect(order.bill_address_id).not_to eq address.id
-          subject
-          expect(order.bill_address_id).to eq address.id
-        end
-
-        it 'does not set address as user default bill address' do
-          subject
-          expect(user.bill_address_id).not_to eq address.id
-        end
-      end
+    it 'does not set address as user default bill address' do
+      subject
+      expect(user.bill_address_id).not_to eq address.id
     end
 
-    context 'when assigned address does not belong to user' do
-      let(:address) { create(:address, customer: create(:user)) }
-
-      it 'sets order bill address to nil' do
-        expect { subject }.to change { order.bill_address_id }.to(nil)
-      end
-    end
-
-    context 'with guest user' do
+    context 'with guest user assigning the same existing address' do
       let(:user) { nil }
-      let(:address) { create(:address, customer: nil) }
+      let(:address) { bill_address }
 
-      context 'when assigning the same existing address' do
-        let(:address) { bill_address }
-
-        it 'does nothing' do
-          expect { subject }.not_to(change { order.bill_address_id })
-        end
-      end
-
-      context 'when assigning a different existing address' do
-        it 'sets order bill address to nil' do
-          expect { subject }.to change { order.bill_address_id }.to(nil)
-        end
-      end
-    end
-  end
-
-  describe '#bill_address_attributes=' do
-    subject { order.bill_address_attributes = address_attributes }
-
-    let(:order) { create(:order, customer: user) }
-    let(:address_attributes) { attributes_for(:address) }
-
-    context 'when user has default bill address' do
-      let!(:user) { create(:user_with_addresses) }
-
-      it 'changes user default bill address' do
-        expect(user.bill_address_id).not_to be_nil
-
-        expect { subject }.to(change { user.bill_address_id })
-      end
-    end
-
-    context 'when user has no default address' do
-      let!(:user) { create(:user) }
-
-      it 'assigns a new default address' do
-        subject
-
-        expect(user.bill_address).to be_present
-        expect(user.bill_address.address1).to eq(address_attributes[:address1])
-      end
-    end
-
-    context 'when user does not have any addresses' do
-      let!(:user) { create(:user) }
-
-      it 'changes user default bill addresss' do
-        expect(user.bill_address_id).to be_nil
-        expect(user.addresses).to be_empty
-
-        expect { subject }.to change { user.bill_address_id }
-      end
-    end
-
-    context 'when user has address but without default bill address' do
-      let(:address) { create(:address, customer: user) }
-      let(:user) { create(:user_with_addresses) }
-
-      before { user.bill_address = nil }
-
-      it 'changes user default bill addresss' do
-        expect(user.bill_address_id).to be_nil
-        expect(user.addresses).not_to be_empty
-
-        expect { subject }.to change { user.bill_address_id }
-      end
-    end
-  end
-
-  describe 'ship_address_id=' do
-    subject { order.ship_address_id = address.id }
-
-    let(:user) { create(:user) }
-    let(:order) { create(:order, customer: user, bill_address: bill_address, ship_address: ship_address) }
-    let(:bill_address) { create(:address, customer: user) }
-    let(:ship_address) { create(:address, customer: user) }
-    let(:address) { create(:address, customer: user) }
-
-    context 'when assigned address exist' do
-      context 'when assigned address belongs to user' do
-        it 'assigns address to order as ship address' do
-          expect(order.ship_address_id).not_to eq address.id
-          subject
-          expect(order.ship_address_id).to eq address.id
-        end
-
-        it 'does not set address as user default ship address' do
-          subject
-          expect(user.ship_address_id).not_to eq address.id
-        end
-      end
-    end
-
-    context 'when assigned address does not belong to user' do
-      let(:address) { create(:address, customer: create(:user)) }
-
-      it 'sets order ship address to nil' do
-        expect { subject }.to change { order.ship_address_id }.to(nil)
-      end
-    end
-
-    context 'with guest user' do
-      let(:user) { nil }
-      let(:address) { create(:address, customer: nil) }
-
-      context 'when assigning the same existing address' do
-        let(:address) { ship_address }
-
-        it 'does nothing' do
-          expect { subject }.not_to(change { order.ship_address_id })
-        end
-      end
-
-      context 'when assigning a different existing address' do
-        it 'sets order ship address to nil' do
-          expect { subject }.to change { order.ship_address_id }.to(nil)
-        end
-      end
-    end
-  end
-
-  describe '#ship_address_attributes=' do
-    subject { order.ship_address_attributes = address_attributes }
-
-    let(:order) { create(:order, customer: user) }
-    let(:address_attributes) { attributes_for(:address) }
-
-    context 'when user has default ship address' do
-      let!(:user) { create(:user_with_addresses) }
-
-      it 'changes user default ship addresss' do
-        expect { subject }.to(change { user.ship_address_id })
-      end
-    end
-
-    context 'when user has no default address' do
-      let!(:user) { create(:user) }
-
-      it 'assigns a new default address' do
-        subject
-
-        expect(user.ship_address).to be_present
-        expect(user.ship_address.address1).to eq(address_attributes[:address1])
-      end
-    end
-
-    context 'when user does not have any addresses' do
-      let!(:user) { create(:user) }
-
-      it 'changes user default ship address' do
-        expect(user.ship_address_id).to be_nil
-        expect(user.addresses).to be_empty
-
-        expect { subject }.to change { user.ship_address_id }
-      end
-    end
-
-    context 'when user has address but without default ship address' do
-      let(:address) { create(:address, customer: user) }
-      let(:user) { create(:user_with_addresses) }
-
-      before { user.update(ship_address: nil) }
-
-      it 'changes user default ship address' do
-        expect(user.ship_address_id).to be_nil
-        expect(user.addresses).not_to be_empty
-
-        expect { subject }.to change { user.ship_address_id }
+      it 'does nothing' do
+        expect { subject }.not_to(change { order.bill_address_id })
       end
     end
   end

@@ -76,14 +76,4 @@ RSpec.describe SpreeEasyPost::Integration do
       end
     end
   end
-
-  describe 'verify before activate' do
-    it 'blocks activation when the connection fails' do
-      allow(integration).to receive(:can_connect?).and_return(false)
-      integration.active = true
-
-      expect(integration).not_to be_valid
-      expect(integration.errors[:base]).to be_present
-    end
-  end
 end

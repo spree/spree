@@ -176,16 +176,8 @@ RSpec.describe Spree::FreightSummary do
       expect(merged.total_units).to eq(12)
       expect(merged.total_cartons).to eq(1)
       expect(merged.total_pallets).to eq(1)
-    end
-
-    # Adding two part-full cartons' volumes reports space the combined
-    # shipment does not take, which would misprice a volume tier.
-    it 're-derives volume from the recombined carton count' do
-      split = [summary_for([[packed_variant, 3]]), summary_for([[packed_variant, 9]])]
-
-      merged = described_class.merge(split)
-
-      expect(merged.total_cartons).to eq(1)
+      # Adding two part-full cartons' volumes reports space the combined
+      # shipment does not take, which would misprice a volume tier.
       expect(merged.total_volume).to eq(BigDecimal('0.03'))
     end
 

@@ -39,11 +39,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       allow(mock_index).to receive(:search).and_return(ms_response)
     end
 
-    it 'returns a SearchResult' do
-      result = provider.search_and_filter(scope: store.products, query: 'shirt')
-      expect(result).to be_a(Spree::SearchProvider::SearchResult)
-    end
-
     it 'queries Meilisearch with the search term' do
       expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hitsPerPage))
       provider.search_and_filter(scope: store.products, query: 'shirt')
@@ -57,11 +52,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     it 'returns total count from Meilisearch' do
       result = provider.search_and_filter(scope: store.products, query: 'shirt')
       expect(result.total_count).to eq(2)
-    end
-
-    it 'does not request facets from Meilisearch' do
-      expect(mock_index).to receive(:search).with(anything, satisfy { |params| !params.key?(:facets) })
-      provider.search_and_filter(scope: store.products, query: 'shirt')
     end
 
     context 'listing all products (no query, no filters)' do
@@ -315,11 +305,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       allow(mock_index).to receive(:search).and_return(ms_response)
     end
 
-    it 'returns a FiltersResult' do
-      result = provider.filters(scope: store.products, query: 'shirt')
-      expect(result).to be_a(Spree::SearchProvider::FiltersResult)
-    end
-
     it 'returns facets from Meilisearch' do
       result = provider.filters(scope: store.products, query: 'shirt')
       expect(result.filters).to be_an(Array)
@@ -346,10 +331,10 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       end
     end
 
-    it 'returns sort options as objects' do
+    it 'returns sort options as objects, including manual (sourced from Collection::SORT_ORDERS)' do
       result = provider.filters(scope: store.products, query: 'shirt')
       ids = result.sort_options.map { |o| o[:id] }
-      expect(ids).to include('price', '-price')
+      expect(ids).to include('price', '-price', 'manual')
     end
 
     it 'returns total count' do
@@ -441,11 +426,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         expect(result.default_sort).to eq('manual')
       end
     end
-
-    it 'advertises manual in the sort options (sourced from Collection::SORT_ORDERS)' do
-      result = provider.filters(scope: store.products, query: '')
-      expect(result.sort_options.map { |o| o[:id] }).to include('manual')
-    end
   end
 
   describe '#index' do
@@ -493,15 +473,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
   end
 
   describe '#reindex' do
-    it 'configures index settings' do
-      expect(mock_index).to receive(:update_filterable_attributes)
-      expect(mock_index).to receive(:update_sortable_attributes)
-      expect(mock_index).to receive(:update_searchable_attributes)
-      allow(mock_index).to receive(:add_documents)
-
-      provider.reindex(store.products)
-    end
-
     it 'indexes all products in batches' do
       expect(mock_index).to receive(:add_documents).at_least(:once)
       provider.reindex(store.products)

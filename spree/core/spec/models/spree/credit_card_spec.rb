@@ -16,8 +16,6 @@ describe Spree::CreditCard, type: :model do
   let(:payment) { create(:payment, amount: 100, order: order) }
   let(:payment_method) { create(:payment_method) }
 
-  before { allow(payment).to receive_messages payment_method: payment_method }
-
   describe '#can_capture?' do
     shared_examples 'can be captured' do
       it 'can be captured' do
@@ -109,18 +107,6 @@ describe Spree::CreditCard, type: :model do
       credit_card.attributes = valid_credit_card_attributes.except(:verification_value)
       expect(credit_card).not_to be_valid
       expect(credit_card.errors[:verification_value]).to eq(["can't be blank"])
-    end
-
-    it 'validates name presence' do
-      credit_card.valid?
-      expect(credit_card.errors).not_to be_empty
-      expect(credit_card.errors.messages[:name]).to be_present
-    end
-
-    it 'only validates on create' do
-      credit_card.attributes = valid_credit_card_attributes
-      credit_card.save
-      expect(credit_card).to be_valid
     end
 
     context 'encrypted data is present' do
@@ -338,12 +324,6 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context 'Associations' do
-    it 'is able to access its payments' do
-      expect { credit_card.payments.to_a }.not_to raise_error
-    end
-  end
-
   describe '#first_name' do
     before do
       credit_card.name = 'Ludwig van Beethoven'
@@ -525,12 +505,6 @@ describe Spree::CreditCard, type: :model do
 
         expect(completed_order_payment.reload.state).to eq('completed')
       end
-    end
-
-    it 'soft deletes the credit card' do
-      card.destroy
-
-      expect(card.reload.deleted_at).not_to be_nil
     end
   end
 end

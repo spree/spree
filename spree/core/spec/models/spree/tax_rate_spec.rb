@@ -22,16 +22,10 @@ describe Spree::TaxRate, type: :model do
 
     it 'reads a jurisdiction off an address, or takes the pair directly' do
       rate = create(:tax_rate, country_code: germany&.iso, tax_category: tax_category)
-
-      expect(described_class.for_address(german_address)).to eq([rate])
-      expect(described_class.for_jurisdiction(germany.iso)).to eq([rate])
-    end
-
-    it 'matches a rate for the address country' do
-      rate = create(:tax_rate, country_code: germany&.iso, tax_category: tax_category)
       create(:tax_rate, country_code: france&.iso, tax_category: tax_category)
 
       expect(described_class.for_address(german_address)).to eq([rate])
+      expect(described_class.for_jurisdiction(germany.iso)).to eq([rate])
     end
 
     it 'matches every rate configured for that country' do
@@ -279,17 +273,10 @@ describe Spree::TaxRate, type: :model do
       tax_rate = Spree::TaxRate.new(name: 'Sales Tax', amount: 0.1)
       expect(tax_rate.adjustment_label).to eq('Sales Tax 10%')
     end
-  end
 
-  describe '#amount_for_label' do
-    it 'returns an empty string when the amount is 0' do
-      tax_rate = Spree::TaxRate.new(amount: 0)
-      expect(tax_rate.send(:amount_for_label)).to eq('')
-    end
-
-    it 'returns a string with the percentage when the amount is not 0' do
-      tax_rate = Spree::TaxRate.new(amount: 0.1)
-      expect(tax_rate.send(:amount_for_label)).to eq(' 10%')
+    it 'leaves the percentage out when the amount is 0' do
+      tax_rate = Spree::TaxRate.new(name: 'Sales Tax', amount: 0)
+      expect(tax_rate.adjustment_label).to eq('Sales Tax')
     end
   end
 

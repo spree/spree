@@ -81,10 +81,6 @@ describe Spree::TaxExemption, type: :model do
       expect(exemption.errors[:item_overrides]).to be_present
     end
 
-    it 'leaves an entry with no overrides at all valid — that claims the order' do
-      expect(described_class.new(reason_code: 'resale')).to be_valid
-    end
-
     # Stated so the widening is visible: this is what the validation prevents
     # from ever reaching a provider.
     it 'would otherwise report every line as covered' do

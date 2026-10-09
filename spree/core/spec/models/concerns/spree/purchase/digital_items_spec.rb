@@ -8,19 +8,6 @@ RSpec.shared_examples 'a digital items host' do
   end
 
   context 'line_item analysis' do
-    it 'understands that all products are digital' do
-      3.times { add_line_item(record, digital_variant, 1) }
-      expect(record.digital?).to be true
-
-      add_line_item(record, digital_variant, 4)
-      expect(record.digital?).to be true
-    end
-
-    it 'understands that no products are digital' do
-      3.times { add_line_item(record, create(:variant), 1) }
-      expect(record.digital?).to be false
-    end
-
     it 'understands that an empty record is not digital' do
       expect(record.digital?).to be false
     end

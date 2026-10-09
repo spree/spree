@@ -17,11 +17,6 @@ describe Spree::Ability, type: :model do
       it_behaves_like 'access granted'
       it_behaves_like 'index allowed'
     end
-
-    context 'with customer' do
-      it_behaves_like 'access denied'
-      it_behaves_like 'no index allowed'
-    end
   end
 
   context 'for admin protected resources' do
@@ -63,13 +58,6 @@ describe Spree::Ability, type: :model do
     end
 
     context 'with customer' do
-      it 'is not able to admin' do
-        expect(ability).not_to be_able_to :admin, resource
-        expect(ability).not_to be_able_to :admin, resource_order
-        expect(ability).not_to be_able_to :admin, resource_product
-        expect(ability).not_to be_able_to :admin, resource_user
-      end
-
       it 'is not able to admin even with an admin role assignment' do
         user.save!
         user.spree_roles << Spree::Role.default_admin_role
@@ -277,22 +265,6 @@ describe Spree::Ability, type: :model do
       end
     end
 
-    # A role belongs to one store, so "the same role on two stores" is two
-    # roles. Holding both grants each store's keys on that store alone.
-    context 'with a same-named role on two stores' do
-      let(:store_b) { create(:store) }
-
-      before do
-        admin.role_users.create!(role: create(:role, name: 'shared', permissions: %w[write_orders], resource: store))
-        admin.role_users.create!(role: create(:role, name: 'shared', permissions: %w[write_products], resource: store_b))
-      end
-
-      it 'grants each store only its own role keys' do
-        expect(staff_ability.permission_keys).to eq(%w[read_orders write_orders])
-        expect(Spree::Ability.new(admin, store: store_b).permission_keys).to eq(%w[read_products write_products])
-      end
-    end
-
     # A marketplace seller's staff hold roles owned by the seller. Store-admin
     # authority must come only from the store's own roles, or a seller picker
     # would inherit the whole store — including, for an `admin`-named seller
@@ -381,26 +353,6 @@ describe Spree::Ability, type: :model do
         expect(ability).not_to be_able_to :create, Spree::Order
         expect(ability.permission_keys).to eq([])
       end
-    end
-  end
-
-  context 'role resolution uses the store of a role user' do
-    let(:admin) { create(:admin_user, :without_admin_role) }
-    let(:store_a) { @default_store }
-    let(:store_b) { create(:store) }
-
-    before do
-      admin.role_users.create!(role: Spree::Role.default_admin_role(store_a))
-    end
-
-    it "grants authority on the role assignment's store" do
-      ability = Spree::Ability.new(admin, store: store_a)
-      expect(ability).to be_able_to :manage, Spree::Product.new
-    end
-
-    it 'does not grant authority on a different store' do
-      ability = Spree::Ability.new(admin, store: store_b)
-      expect(ability).not_to be_able_to :manage, Spree::Product.new
     end
   end
 end

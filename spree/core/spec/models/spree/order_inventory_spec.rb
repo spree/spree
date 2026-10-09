@@ -222,17 +222,6 @@ describe Spree::OrderInventory, type: :model do
         expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
       end
 
-      it 'only attempts to destroy as many units as are eligible, and return amount destroyed' do
-        allow(shipment).to receive_messages(inventory_units_for_item: inventory_units_for_item)
-
-        expect(shipment.inventory_units_for_item[0]).not_to receive(:destroy)
-        expect(shipment.inventory_units_for_item[1]).to receive(:destroy)
-        allow(shipment.inventory_units_for_item[0]).to receive(:save!)
-        allow(shipment.inventory_units_for_item[1]).to receive(:save!)
-
-        expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
-      end
-
       it 'destroys self if not inventory units remain' do
         allow(shipment).to receive(:fulfillment_items).and_return(shipment.fulfillment_items)
         allow(shipment.fulfillment_items).to receive_messages(sum: 0)

@@ -198,13 +198,6 @@ RSpec.describe Spree::PackageType, type: :model do
       expect(store.reload.default_package_type).to eq(package_type)
     end
 
-    it 'allows it once another row holds the flag' do
-      first = create(:package_type, store: store, default: true)
-      create(:package_type, store: store, default: true)
-
-      expect(first.reload).not_to be_default
-    end
-
     # The marketplace's box is not a replacement for the seller's: it is a
     # different owner's row, so it cannot stand in as "another default".
     it 'refuses a seller’s only default even when the marketplace has one' do

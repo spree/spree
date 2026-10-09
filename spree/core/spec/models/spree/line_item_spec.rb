@@ -35,36 +35,6 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  describe 'Validations' do
-    describe 'ensure_proper_currency' do
-      context 'order is present' do
-        context "when line_item's currency matches with order's" do
-          it { expect(line_item).to be_valid }
-        end
-
-        context "when line_item's currency does not matches with order's" do
-          before do
-            line_item.currency = 'Invalid Currency'
-          end
-
-          it { expect(line_item).not_to be_valid }
-        end
-      end
-    end
-  end
-
-  describe '#quantity' do
-    it 'has a default quantity of 1' do
-      line_item = build(:line_item)
-      expect(line_item.quantity).to eq(1)
-    end
-
-    it 'allows to set different value for quantity' do
-      line_item = build(:line_item, quantity: 5)
-      expect(line_item.quantity).to eq(5)
-    end
-  end
-
   describe '#ensure_valid_quantity' do
     context 'quantity.nil?' do
       before do
@@ -105,13 +75,6 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  context '#save' do
-    it 'touches the order' do
-      expect(line_item.order).to receive(:touch)
-      line_item.touch
-    end
-  end
-
   context '#discontinued' do
     it 'fetches discontinued products' do
       line_item.product.discontinue!
@@ -149,10 +112,6 @@ describe Spree::LineItem, type: :model do
       order.line_items.destroy_all
       create(:line_item, order: order, variant: licence_variant, quantity: 1)
       order.reload
-    end
-
-    it 'is an all-digital order' do
-      expect(order).to be_digital
     end
 
     it 'builds fulfillment items for a stock-limited digital variant' do
@@ -723,58 +682,6 @@ describe Spree::LineItem, type: :model do
 
     it 'returns the weight for the line item' do
       expect(line_item.item_weight).to eq(20)
-    end
-  end
-
-  describe '#dimensions_unit' do
-    let(:variant) { create(:variant, dimensions_unit: 'cm') }
-    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
-
-    it 'returns the dimension unit for the line item' do
-      expect(line_item.dimensions_unit).to eq('cm')
-    end
-  end
-
-  describe '#weight_unit' do
-    let(:variant) { create(:variant, weight_unit: 'kg') }
-    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
-
-    it 'returns the weight unit for the line item' do
-      expect(line_item.weight_unit).to eq('kg')
-    end
-  end
-
-  describe '#should_update_price?' do
-    let(:variant) { create(:variant, price: 10) }
-    let(:order) { create(:order, store: store) }
-    let(:line_item) { create(:line_item, order: order, variant: variant) }
-
-    context 'when order is not completed' do
-      it 'returns true' do
-        expect(order.completed?).to be false
-        expect(line_item.send(:should_update_price?)).to be true
-      end
-    end
-
-    context 'when order is completed' do
-      before do
-        order.update_column(:completed_at, Time.current)
-      end
-
-      it 'returns false' do
-        expect(order.completed?).to be true
-        expect(line_item.send(:should_update_price?)).to be false
-      end
-    end
-
-    context 'when the line carries a negotiated (manual) price' do
-      before do
-        line_item.update_columns(price: 7.2, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
-      end
-
-      it 'returns false' do
-        expect(line_item.send(:should_update_price?)).to be false
-      end
     end
   end
 

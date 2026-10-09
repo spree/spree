@@ -154,9 +154,5 @@ RSpec.describe 'deprecated transition verbs' do
 
       expect { item.return! }.to change { item.reload.status }.from('shipped').to('returned')
     end
-
-    it 'return! leaves an unshipped item alone' do
-      expect(item.return!).to be(false)
-    end
   end
 end

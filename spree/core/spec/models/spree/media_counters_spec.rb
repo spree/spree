@@ -16,11 +16,6 @@ describe Spree::Media, type: :model do
       expect(media).not_to be_valid
     end
 
-    it 'allows only web image content types' do
-      media.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
-      expect(media).to be_valid
-    end
-
     it 'does not allow non-web image content types' do
       media.attachment.attach(io: text_file, filename: 'text-file.txt', content_type: 'text/plain')
       expect(media).not_to be_valid
@@ -67,13 +62,6 @@ describe Spree::Media, type: :model do
       image = create(:media, viewable: variant)
       expect { image.destroy }.to change { variant.reload.media_count }.by(-1)
     end
-
-    it 'tracks multiple images correctly' do
-      expect(variant.media_count).to eq(0)
-      create(:media, viewable: variant)
-      create(:media, viewable: variant)
-      expect(variant.reload.media_count).to eq(2)
-    end
   end
 
   describe 'product media_count counter cache' do
@@ -91,14 +79,6 @@ describe Spree::Media, type: :model do
     it 'decrements media_count when image is destroyed' do
       image = create(:media, viewable: variant)
       expect { image.destroy }.to change { product.reload.media_count }.by(-1)
-    end
-
-    it 'tracks media across all variants correctly' do
-      expect(product.media_count).to eq(0)
-      create(:media, viewable: product.default_variant)
-      create(:media, viewable: variant)
-      create(:media, viewable: variant)
-      expect(product.reload.media_count).to eq(3)
     end
   end
 

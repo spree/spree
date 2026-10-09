@@ -12,13 +12,6 @@ RSpec.describe Spree::Fulfillment::CustomEvents do
   end
 
   describe 'fulfillment.fulfilled event' do
-    it 'publishes fulfillment.fulfilled and dual-emits the legacy shipment.shipped' do
-      Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
-
-      expect(Spree::Events).to have_received(:publish).with('fulfillment.fulfilled', anything, anything)
-      expect(Spree::Events).to have_received(:publish).with('shipment.shipped', anything, anything)
-    end
-
     it 'does not publish when events are disabled' do
       allow(Spree::Events).to receive(:enabled?).and_return(false)
 
@@ -45,6 +38,7 @@ RSpec.describe Spree::Fulfillment::CustomEvents do
       Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
 
       expect(Spree::Events).to have_received(:publish).with('fulfillment.fulfilled', anything, anything)
+      expect(Spree::Events).to have_received(:publish).with('shipment.shipped', anything, anything)
       expect(Spree::Events).to have_received(:publish).with('order.fulfilled', anything, anything)
       expect(Spree::Events).to have_received(:publish).with('order.shipped', anything, anything)
     end

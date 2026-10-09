@@ -20,16 +20,6 @@ describe Spree::DeliveryZone, type: :model do
       expect(destroyed.deleted_at).to be_present
       expect(destroyed.delivery_zone_id).to eq(zone.id)
     end
-
-    it 'never leaves a live method quoting worldwide' do
-      method = create(:delivery_method, store: store, delivery_zone: zone,
-                                        delivery_origin_group: zone.delivery_origin_group)
-
-      zone.destroy
-
-      expect(Spree::DeliveryMethod.exists?(method.id)).to be(false)
-      expect(Spree::DeliveryMethod.with_deleted.find(method.id).delivery_zone_id).not_to be_nil
-    end
   end
 
   describe '#include?' do

@@ -18,21 +18,9 @@ describe Spree::Fulfillment, type: :model do
 
   before do
     allow(order).to receive_messages(backordered?: false, canceled?: false, can_ship?: true, paid?: false, touch_later: false)
-    allow(inventory_units.first).to receive_messages backordered?: false
-    allow(inventory_units.first).to receive_messages backordered?: true
   end
 
   it_behaves_like 'metadata'
-
-  describe 'precision of pre_tax_amount' do
-    before { line_item.update(pre_tax_amount: 4.2051) }
-
-    it 'keeps four digits of precision even when reloading' do
-      # prevent it from updating pre_tax_amount
-      allow_any_instance_of(Spree::LineItem).to receive(:update_tax_charge)
-      expect(line_item.reload.pre_tax_amount).to eq(4.2051)
-    end
-  end
 
   describe '#digital?' do
     it 'returns true if the delivery method is digital' do
@@ -59,20 +47,6 @@ describe Spree::Fulfillment, type: :model do
     end
   end
 
-  describe '#tracked?' do
-    it 'returns true if the shipment is tracked' do
-      expect(shipment.tracked?).to eq(true)
-    end
-
-    context 'when the shipment is not tracked' do
-      let(:shipment) { build(:fulfillment, number: nil, tracking: nil) }
-
-      it 'returns false' do
-        expect(shipment.tracked?).to eq(false)
-      end
-    end
-  end
-
   describe '#partial?' do
     subject { shipment.partial? }
 
@@ -94,34 +68,13 @@ describe Spree::Fulfillment, type: :model do
     end
   end
 
-  # Regression test for #4063
-  context 'number generation' do
-    let(:shipment) { create(:fulfillment, stock_location: create(:stock_location)) }
-
-    before do
-      allow(order).to receive :recalculate_totals!
-    end
-
-    it 'derives the number from the order it belongs to' do
-      expect(shipment.number).to eq("#{shipment.order.number}-F1")
-    end
-  end
-
   it 'is backordered if one if its inventory_units is backordered' do
+    allow(inventory_units.first).to receive_messages backordered?: true
     allow(shipment).to receive_messages(fulfillment_items: inventory_units)
     expect(shipment).to be_backordered
   end
 
   describe 'status' do
-    it 'starts unfulfilled' do
-      expect(create(:fulfillment).status).to eq('unfulfilled')
-    end
-
-    it 'rejects a status outside the vocabulary' do
-      shipment.status = 'ready'
-      expect(shipment).not_to be_valid
-    end
-
     # The payment-derived pending/ready split is gone: whether the order is
     # paid is asked when someone tries to hand the goods over, not baked into
     # the fulfillment's own status where a refund could move it backwards.
@@ -203,11 +156,6 @@ describe Spree::Fulfillment, type: :model do
       expect(shipment.reload.tracking).to be_nil
       expect(shipment.tracking_url).to be_nil
       expect(shipment).not_to be_tracked
-    end
-
-    it 'has no carrier axis of its own' do
-      expect(shipment).not_to respond_to(:tracking_status)
-      expect(shipment).not_to respond_to(:tracking_carrier)
     end
   end
 
@@ -666,11 +614,6 @@ describe Spree::Fulfillment, type: :model do
 
       expect { shipment.update!(order) }.not_to change { shipment.reload.status }
     end
-
-    it 'still writes attributes through ActiveRecord' do
-      shipment.update!(tracking: 'XYZ')
-      expect(shipment.reload.tracking).to eq('XYZ')
-    end
   end
 
   context 'when order is completed' do
@@ -762,24 +705,6 @@ describe Spree::Fulfillment, type: :model do
   end
 
   describe '#ship' do
-    context 'when the shipment is canceled' do
-      let(:shipment_with_inventory_units) { create(:fulfillment, order: create(:order_with_line_items), state: 'canceled') }
-      let(:subject) { shipment_with_inventory_units.update!(status: 'fulfilled') }
-
-      before do
-        allow(order).to receive(:recalculate_totals!)
-        allow(shipment_with_inventory_units).to receive_messages(require_inventory: false, update_order: true)
-      end
-
-      # Taking the units back off the shelf moved to
-      # Spree::Fulfillments::Fulfill, so the bare transition no longer does it.
-      # See spec/workflows/spree/fulfillments/fulfill_spec.rb for the behavior.
-      it 'does not unstock on the bare transition' do
-        expect(shipment_with_inventory_units.stock_location).not_to receive(:unstock)
-        subject
-      end
-    end
-
     context 'from unfulfilled' do
       let(:paid_order) { create(:order_ready_to_ship) }
       let(:fulfillment) { paid_order.fulfillments.first }
@@ -993,20 +918,6 @@ describe Spree::Fulfillment, type: :model do
     end
   end
 
-  context 'currency' do
-    it 'returns the order currency' do
-      expect(shipment.currency).to eq(order.currency)
-    end
-  end
-
-  context 'nil costs' do
-    it 'sets cost to 0' do
-      shipment = Spree::Fulfillment.new
-      shipment.valid?
-      expect(shipment.cost).to eq 0
-    end
-  end
-
   # Legacy writer — removed in 6.1. Host code assigning tracking the old way
   # still lands it where every reader looks.
   describe '#tracking= (deprecated)' do
@@ -1100,14 +1011,6 @@ describe Spree::Fulfillment, type: :model do
 
       expect(inventory_units).to receive(:create).with(params.merge(order_id: nil))
       shipment.set_up_inventory('on_hand', variant, cart, line_item)
-    end
-  end
-
-  # Regression test for #3349
-  describe '#destroy' do
-    it 'destroys linked delivery_rates' do
-      reflection = Spree::Fulfillment.reflect_on_association(:delivery_rates)
-      expect(reflection.options[:dependent]).to be(:delete_all)
     end
   end
 

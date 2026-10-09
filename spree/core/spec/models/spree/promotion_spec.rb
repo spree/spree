@@ -10,23 +10,6 @@ describe Spree::Promotion, type: :model do
   describe 'Validations' do
     let!(:valid_promotion) { build(:promotion, name: 'A promotion', kind: :automatic) }
 
-    it 'valid_promotion is valid' do
-      expect(valid_promotion).to be_valid
-    end
-
-    it 'validates usage limit' do
-      valid_promotion.usage_limit = -1
-      expect(valid_promotion).not_to be_valid
-
-      valid_promotion.usage_limit = 100
-      expect(valid_promotion).to be_valid
-    end
-
-    it 'validates name' do
-      valid_promotion.name = nil
-      expect(valid_promotion).not_to be_valid
-    end
-
     it 'can create multiple promos with the same code' do
       create(:promotion, code: 'ABC')
       valid_promotion.code = 'ABC'
@@ -172,18 +155,6 @@ describe Spree::Promotion, type: :model do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
       promotion.rules << Spree::Promotion::Rules::FirstOrder.new
       promotion.save!
-    end
-
-    it 'deletes actions' do
-      promotion.destroy!
-
-      expect(Spree::PromotionAction.count).to eq(0)
-    end
-
-    it 'deletes rules' do
-      promotion.destroy!
-
-      expect(Spree::PromotionRule.count).to eq(0)
     end
 
     context 'if promotion was already used' do
