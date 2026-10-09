@@ -130,6 +130,10 @@ module Spree
         #
         # @return [Hash{String => FilterTable}]
         def reachable(depth = 0, found = {})
+          if found.key?(name) && found[name].model != model
+            raise Error, "#{found[name].model.name} and #{model.name} are both published as #{name}; give one a distinct api_type"
+          end
+
           found[name] ||= self
           return found if depth >= MAX_DEPTH
 
@@ -156,6 +160,8 @@ module Spree
         #   attribute the model does not have (`position` on a table without
         #   one), `:unclassified` for one the contract cannot describe
         def attribute_kind(attribute)
+          aliased = model._ransack_aliases[attribute] || model.attribute_aliases[attribute]
+          return attribute_kind(aliased) if aliased
           return ransacker_kind(model._ransackers[attribute]) if model._ransackers.key?(attribute)
           return 'id' if id_attribute?(attribute)
           return 'type' if type_attribute?(attribute)
@@ -168,8 +174,9 @@ module Spree
           column = model.columns_hash[attribute]
           return COLUMN_KINDS.fetch(column.type, :unclassified) if column
           return 'text' if translated_attribute?(attribute)
+          return nil if model.default_ransackable_attributes.include?(attribute)
 
-          nil
+          :unclassified
         end
 
         # The fixed list an inclusion validation allows, for a column that

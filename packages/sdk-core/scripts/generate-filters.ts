@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { parse } from 'yaml'
+import { FILTER_PREDICATES } from '../src/filters'
 
 // Runs from the SDK package being generated (its `generate:filters` script),
 // reading that SDK's API reference and writing its list filter types:
@@ -38,7 +39,38 @@ interface EndpointFilters {
 
 interface Spec {
   paths: Record<string, Record<string, { 'x-spree-filters'?: EndpointFilters }>>
-  components?: { 'x-spree-filter-tables'?: Record<string, FilterTable> }
+  components?: {
+    'x-spree-filter-tables'?: Record<string, FilterTable>
+    'x-spree-filter-predicates'?: Record<Kind, string[]>
+  }
+}
+
+const PREDICATE_GROUPS: Record<Kind, keyof typeof FILTER_PREDICATES> = {
+  text: 'text',
+  decimal: 'range',
+  integer: 'range',
+  date: 'range',
+  datetime: 'range',
+  enum: 'equality',
+  id: 'equality',
+  type: 'equality',
+  boolean: 'boolean',
+}
+
+// The building blocks in sdk-core hard-code the predicates per kind; a spec
+// publishing a different set means one side changed without the other.
+function checkPredicates(published: Record<Kind, string[]> | undefined) {
+  if (!published) throw new Error('The API reference publishes no x-spree-filter-predicates')
+
+  for (const [kind, predicates] of Object.entries(published) as [Kind, string[]][]) {
+    const group = FILTER_PREDICATES[PREDICATE_GROUPS[kind]]
+    const known = [...group.value, ...group.list, ...group.flag].sort()
+    if (known.join(' ') !== [...predicates].sort().join(' ')) {
+      throw new Error(
+        `Predicates for ${kind} differ: the API publishes ${predicates.join(', ')}, sdk-core has ${known.join(', ')}`,
+      )
+    }
+  }
 }
 
 const MAX_DEPTH = 2
@@ -117,6 +149,7 @@ function associationsType(
 }
 
 function render(spec: Spec): string {
+  checkPredicates(spec.components?.['x-spree-filter-predicates'])
   const tables = spec.components?.['x-spree-filter-tables'] ?? {}
   const roots = new Map<string, EndpointFilters>()
 
@@ -153,6 +186,11 @@ function render(spec: Spec): string {
       ? `Filter.SortKey<${sortable} | \`cf_\${string}\`>`
       : `Filter.SortKey<${sortable}>`
 
+    // Filters an app adds through its own extensions, which the published
+    // types cannot know about: `declare module` the SDK and add them here.
+    out.push(`// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging`)
+    out.push(`export interface ${name}FilterExtensions {}`, '')
+    parts.push(`${name}FilterExtensions`)
     out.push(`export type ${name}Filters = ${parts.join('\n  & ')}`, '')
     out.push(`export type ${name}Sort = ${sort}`, '')
   }

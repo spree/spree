@@ -1061,9 +1061,10 @@ paths:
         schema:
           type: object
           additionalProperties: true
-        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
-          predicates, associations and scopes this endpoint accepts are listed in
-          `x-spree-filters`.
+        description: |-
+          Filters, as `q[<attribute>_<predicate>]=value`. The attributes, predicates, associations and scopes this endpoint accepts are listed in `x-spree-filters`.
+
+          `in_category` takes a category's prefixed ID and includes its descendants; `in_categories[]` matches any of several. `with_option_value_ids[]` takes option value IDs (`optval_…`), matching any of them. `price_gte` and `price_lte` bound the price in the current currency, and `in_stock` / `out_of_stock` narrow by availability.
       - name: expand
         in: query
         required: false
@@ -1575,9 +1576,11 @@ paths:
         - item_total
         - number
         - order_group_id
+        - payment_state
         - payment_status
         - po_number
         - seller_id
+        - shipment_state
         - status
         - total
         - total_quantity
@@ -6926,9 +6929,11 @@ paths:
         - item_total
         - number
         - order_group_id
+        - payment_state
         - payment_status
         - po_number
         - seller_id
+        - shipment_state
         - status
         - total
         - total_quantity
@@ -8253,6 +8258,7 @@ paths:
         - expires_at
         - gift_card_batch_id
         - id
+        - state
         - status
         - updated_at
       responses:
@@ -11207,9 +11213,11 @@ paths:
         - item_total
         - number
         - order_group_id
+        - payment_state
         - payment_status
         - po_number
         - seller_id
+        - shipment_state
         - status
         - total
         - total_quantity
@@ -16567,6 +16575,12 @@ components:
         expires_at: date
         gift_card_batch_id: id
         id: id
+        state:
+          enum:
+          - active
+          - partially_redeemed
+          - redeemed
+          - canceled
         status:
           enum:
           - active
@@ -16603,6 +16617,20 @@ components:
         item_total: decimal
         number: text
         order_group_id: id
+        payment_state:
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
+          - balance_due
+          - credit_owed
+          - failed
+          - void
         payment_status:
           enum:
           - none
@@ -16619,6 +16647,17 @@ components:
           - void
         po_number: text
         seller_id: id
+        shipment_state:
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         status:
           enum:
           - draft
@@ -16721,3 +16760,91 @@ components:
         updated_at: datetime
       associations: {}
       scopes: {}
+  x-spree-filter-predicates:
+    text:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - cont
+    - i_cont
+    - not_cont
+    - start
+    - end
+    - 'null'
+    - not_null
+    - present
+    - blank
+    decimal:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    integer:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    date:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    datetime:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    enum:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    id:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    type:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    boolean:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'true'
+    - 'false'
+    - 'null'

@@ -40,6 +40,7 @@ export type DeliveryMethodFields = Filter.TextFilters<'name'>
 export type GiftCardFields = Filter.TextFilters<'code' | 'currency'>
   & Filter.RangeFilters<'expires_at' | 'created_at' | 'updated_at'>
   & Filter.IdFilters<'created_by_id' | 'customer_id' | 'gift_card_batch_id' | 'id'>
+  & Filter.EnumFilters<'state', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
   & Filter.EnumFilters<'status', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
 
 export type OrderFields = Filter.TextFilters<'currency' | 'number' | 'po_number'>
@@ -48,7 +49,9 @@ export type OrderFields = Filter.TextFilters<'currency' | 'number' | 'po_number'
   & Filter.RangeFilters<'total_quantity', number>
   & Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'order_group_id' | 'seller_id'>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
+  & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'payment_status', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
+  & Filter.EnumFilters<'shipment_state', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
   & Filter.EnumFilters<'status', 'draft' | 'placed' | 'canceled'>
 
 export type PolicyFields = Filter.TextFilters<'name'>
@@ -77,30 +80,53 @@ export type WishlistFields = Filter.TextFilters<'name'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
 
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface AddressFilterExtensions {}
+
 export type AddressFilters = AddressFields
   & Filter.OrFilters
+  & AddressFilterExtensions
 
 export type AddressSort = Filter.SortKey<'address1' | 'address2' | 'city' | 'company' | 'country_code' | 'created_at' | 'first_name' | 'id' | 'last_name' | 'phone' | 'postal_code' | 'state_code' | 'updated_at'>
 
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface CategoryFilterExtensions {}
+
 export type CategoryFilters = CategoryFields
   & Filter.OrFilters
+  & CategoryFilterExtensions
 
 export type CategorySort = Filter.SortKey<'automatic' | 'children_count' | 'created_at' | 'depth' | 'id' | 'name' | 'parent_id' | 'permalink' | 'position' | 'pretty_name' | 'products_count' | 'updated_at'>
 
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface CollectionFilterExtensions {}
+
 export type CollectionFilters = CollectionFields
   & Filter.OrFilters
+  & CollectionFilterExtensions
 
 export type CollectionSort = Filter.SortKey<'automatic' | 'created_at' | 'id' | 'name' | 'permalink' | 'position' | 'products_count' | 'sort_order' | 'updated_at'>
 
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface CompanyMembershipFilterExtensions {}
+
 export type CompanyMembershipFilters = CompanyMembershipFields
   & Filter.OrFilters
+  & CompanyMembershipFilterExtensions
 
 export type CompanyMembershipSort = Filter.SortKey<'created_at' | 'id' | 'updated_at'>
 
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface CreditCardFilterExtensions {}
+
 export type CreditCardFilters = CreditCardFields
   & Filter.OrFilters
+  & CreditCardFilterExtensions
 
 export type CreditCardSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
+
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface DataRequestFilterExtensions {}
 
 export type DataRequestFilters = DataRequestFields
   & Filter.OrFilters
@@ -109,13 +135,21 @@ export type DataRequestFilters = DataRequestFields
     erasure?: boolean
     in_progress?: boolean
   }
+  & DataRequestFilterExtensions
 
 export type DataRequestSort = Filter.SortKey<'completed_at' | 'created_at' | 'email' | 'id' | 'kind' | 'number' | 'requested_at' | 'status' | 'updated_at'>
 
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface DeliveryMethodFilterExtensions {}
+
 export type DeliveryMethodFilters = DeliveryMethodFields
   & Filter.OrFilters
+  & DeliveryMethodFilterExtensions
 
 export type DeliveryMethodSort = Filter.SortKey<'available_to_sellers' | 'created_at' | 'id' | 'name' | 'seller_id' | 'storefront_visible' | 'updated_at'>
+
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface GiftCardFilterExtensions {}
 
 export type GiftCardFilters = GiftCardFields
   & Filter.OrFilters
@@ -125,8 +159,12 @@ export type GiftCardFilters = GiftCardFields
     partially_redeemed?: boolean
     redeemed?: boolean
   }
+  & GiftCardFilterExtensions
 
-export type GiftCardSort = Filter.SortKey<'code' | 'created_at' | 'created_by_id' | 'currency' | 'customer_id' | 'expires_at' | 'gift_card_batch_id' | 'id' | 'status' | 'updated_at'>
+export type GiftCardSort = Filter.SortKey<'code' | 'created_at' | 'created_by_id' | 'currency' | 'customer_id' | 'expires_at' | 'gift_card_batch_id' | 'id' | 'state' | 'status' | 'updated_at'>
+
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface OrderFilterExtensions {}
 
 export type OrderFilters = OrderFields
   & Filter.OrFilters
@@ -136,13 +174,21 @@ export type OrderFilters = OrderFields
     partially_refunded?: boolean
     refunded?: boolean
   }
+  & OrderFilterExtensions
 
-export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'fulfillment_status' | 'id' | 'item_total' | 'number' | 'order_group_id' | 'payment_status' | 'po_number' | 'seller_id' | 'status' | 'total' | 'total_quantity' | 'updated_at'>
+export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'fulfillment_status' | 'id' | 'item_total' | 'number' | 'order_group_id' | 'payment_state' | 'payment_status' | 'po_number' | 'seller_id' | 'shipment_state' | 'status' | 'total' | 'total_quantity' | 'updated_at'>
+
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface PolicyFilterExtensions {}
 
 export type PolicyFilters = PolicyFields
   & Filter.OrFilters
+  & PolicyFilterExtensions
 
 export type PolicySort = Filter.SortKey<'created_at' | 'id' | 'name' | 'owner_id' | 'owner_type' | 'updated_at'>
+
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface ProductFilterExtensions {}
 
 export type ProductFilters = ProductFields
   & Filter.Prefixed<'categories_', CategoryFields>
@@ -167,13 +213,21 @@ export type ProductFilters = ProductFields
     with_option_value_ids?: string | string[]
   }
   & Filter.CustomFieldFilters
+  & ProductFilterExtensions
 
 export type ProductSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | `cf_${string}`>
 
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface SellerFilterExtensions {}
+
 export type SellerFilters = SellerFields
   & Filter.OrFilters
+  & SellerFilterExtensions
 
 export type SellerSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>
+
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface StoreCreditFilterExtensions {}
 
 export type StoreCreditFilters = StoreCreditFields
   & Filter.OrFilters
@@ -181,10 +235,15 @@ export type StoreCreditFilters = StoreCreditFields
     from_gift_card?: boolean
     outstanding?: boolean
   }
+  & StoreCreditFilterExtensions
 
 export type StoreCreditSort = Filter.SortKey<'amount' | 'created_at' | 'currency' | 'customer_id' | 'id' | 'updated_at'>
 
+// biome-ignore lint/suspicious/noEmptyInterface: filled by declaration merging
+export interface WishlistFilterExtensions {}
+
 export type WishlistFilters = WishlistFields
   & Filter.OrFilters
+  & WishlistFilterExtensions
 
 export type WishlistSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at'>

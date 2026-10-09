@@ -8,45 +8,56 @@
  * predicates per value kind are the ones the API publishes.
  */
 
+/**
+ * The predicates per kind of value, split by what each takes: one value, a
+ * list, or a flag. `generate:filters` refuses to run when these differ from
+ * the predicates the API reference publishes.
+ */
+export const FILTER_PREDICATES = {
+  text: {
+    value: ['eq', 'not_eq', 'cont', 'i_cont', 'not_cont', 'start', 'end'],
+    list: ['in', 'not_in'],
+    flag: ['null', 'not_null', 'present', 'blank'],
+  },
+  range: {
+    value: ['eq', 'not_eq', 'lt', 'lteq', 'gt', 'gteq'],
+    list: ['in', 'not_in'],
+    flag: ['null', 'not_null'],
+  },
+  equality: { value: ['eq', 'not_eq'], list: ['in', 'not_in'], flag: ['null', 'not_null'] },
+  boolean: { value: ['eq', 'not_eq'], list: ['in', 'not_in'], flag: ['true', 'false', 'null'] },
+} as const
+
+type Predicates = typeof FILTER_PREDICATES
+type Kind = keyof Predicates
+
 type Keyed<K extends string, P extends string, V> = { [Key in K as `${Key}_${P}`]?: V }
 
-type Flags<K extends string, P extends string> = Keyed<K, P, boolean>
-
-/** Text attributes. */
-export type TextFilters<K extends string> = Keyed<
+type KindFilters<K extends string, Of extends Kind, V> = Keyed<
   K,
-  'eq' | 'not_eq' | 'cont' | 'i_cont' | 'not_cont' | 'start' | 'end',
-  string
-> &
-  Keyed<K, 'in' | 'not_in', string[]> &
-  Flags<K, 'null' | 'not_null' | 'present' | 'blank'>
-
-/** Ordered values: amounts (decimal strings), counts, dates and timestamps. */
-export type RangeFilters<K extends string, V = string> = Keyed<
-  K,
-  'eq' | 'not_eq' | 'lt' | 'lteq' | 'gt' | 'gteq',
+  Predicates[Of]['value'][number],
   V
 > &
-  Keyed<K, 'in' | 'not_in', V[]> &
-  Flags<K, 'null' | 'not_null'>
+  Keyed<K, Predicates[Of]['list'][number], V[]> &
+  Keyed<K, Predicates[Of]['flag'][number], boolean>
+
+/** Text attributes. */
+export type TextFilters<K extends string> = KindFilters<K, 'text', string>
+
+/** Ordered values: amounts, counts, dates and timestamps. */
+export type RangeFilters<K extends string, V = string> = KindFilters<K, 'range', V>
 
 /** One of a known set of values. Extensions may add values, so others are accepted too. */
-export type EnumFilters<K extends string, V extends string> = Keyed<
+export type EnumFilters<K extends string, V extends string> = KindFilters<
   K,
-  'eq' | 'not_eq',
+  'equality',
   V | (string & {})
-> &
-  Keyed<K, 'in' | 'not_in', (V | (string & {}))[]> &
-  Flags<K, 'null' | 'not_null'>
+>
 
 /** Prefixed IDs (`prod_86Rf07xd4z`) and type short names (`credit_card`). */
-export type IdFilters<K extends string> = Keyed<K, 'eq' | 'not_eq', string> &
-  Keyed<K, 'in' | 'not_in', string[]> &
-  Flags<K, 'null' | 'not_null'>
+export type IdFilters<K extends string> = KindFilters<K, 'equality', string>
 
-export type BooleanFilters<K extends string> = Keyed<K, 'eq' | 'not_eq', boolean> &
-  Keyed<K, 'in' | 'not_in', boolean[]> &
-  Flags<K, 'true' | 'false' | 'null'>
+export type BooleanFilters<K extends string> = KindFilters<K, 'boolean', boolean>
 
 /** An associated record's filters, reached through the association's name. */
 export type Prefixed<P extends string, T> = { [Key in keyof T as `${P}${Key & string}`]: T[Key] }

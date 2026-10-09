@@ -11,16 +11,20 @@
 # what the SDK filter types are generated from.
 module FilterParametersHelper
   FILTER_TABLES_KEY = :'x-spree-filter-tables'
+  FILTER_PREDICATES_KEY = :'x-spree-filter-predicates'
 
   # @param controller_class [Class, nil] the controller serving the list;
   #   resolved from the path when omitted
-  def filter_parameters_for(controller_class = nil)
+  # @param notes [String, nil] what a reader needs beyond the table, such as
+  #   what a scope's argument means
+  def filter_parameters_for(controller_class = nil, notes: nil)
     endpoint = Spree::Api::V3::FilterTable.for(controller_class || filter_controller_for_path)
+    description = 'Filters, as `q[<attribute>_<predicate>]=value`. The attributes, predicates, ' \
+                  'associations and scopes this endpoint accepts are listed in `x-spree-filters`.'
 
     parameter name: :q, in: :query, required: false, style: :deepObject, explode: true,
               schema: { type: :object, additionalProperties: true },
-              description: 'Filters, as `q[<attribute>_<predicate>]=value`. The attributes, predicates, ' \
-                           'associations and scopes this endpoint accepts are listed in `x-spree-filters`.'
+              description: [description, notes].compact.join("\n\n")
 
     metadata[:operation][:'x-spree-filters'] = endpoint.to_h
     register_filter_tables(endpoint.tables)
@@ -50,6 +54,7 @@ module FilterParametersHelper
 
     # Sorted so the written spec does not depend on the order specs ran in.
     components[FILTER_TABLES_KEY] = registered.sort.to_h
+    components[FILTER_PREDICATES_KEY] = Spree::Api::V3::FilterPredicates::BY_KIND
   end
 end
 

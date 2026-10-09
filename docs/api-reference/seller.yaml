@@ -16506,9 +16506,11 @@ paths:
         - item_total
         - number
         - order_group_id
+        - payment_state
         - payment_status
         - po_number
         - seller_id
+        - shipment_state
         - status
         - total
         - total_quantity
@@ -22856,6 +22858,20 @@ components:
         item_total: decimal
         number: text
         order_group_id: id
+        payment_state:
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
+          - balance_due
+          - credit_owed
+          - failed
+          - void
         payment_status:
           enum:
           - none
@@ -22872,6 +22888,17 @@ components:
           - void
         po_number: text
         seller_id: id
+        shipment_state:
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         status:
           enum:
           - draft
@@ -23062,3 +23089,91 @@ components:
         updated_at: datetime
       associations: {}
       scopes: {}
+  x-spree-filter-predicates:
+    text:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - cont
+    - i_cont
+    - not_cont
+    - start
+    - end
+    - 'null'
+    - not_null
+    - present
+    - blank
+    decimal:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    integer:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    date:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    datetime:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    enum:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    id:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    type:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    boolean:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'true'
+    - 'false'
+    - 'null'
