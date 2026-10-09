@@ -97,13 +97,10 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
         (store.default_payouts_schedule_interval as (typeof PAYOUT_SCHEDULE_INTERVALS)[number]) ??
         'monthly',
       // `String` only until the regenerated Store type reads these as the decimal strings the API sends.
-      default_minimum_payout_amount: String(
-        store.default_minimum_payout_amount ?? '0',
-      ),
+      default_minimum_payout_amount: String(store.default_minimum_payout_amount ?? '0'),
       auto_approve_sellers: store.auto_approve_sellers ?? false,
       auto_approve_seller_products: store.auto_approve_seller_products ?? false,
-      send_seller_transactional_emails:
-        store.send_seller_transactional_emails ?? true,
+      send_seller_transactional_emails: store.send_seller_transactional_emails ?? true,
       commission_tax_rate_percentage:
         fractionToPercent(String(store.default_commission_tax_rate ?? '')) || '0',
     },
@@ -154,16 +151,12 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
     try {
       await updateMutation.mutateAsync({
         payout_provider: values.payout_provider,
-        default_payouts_schedule_interval:
-          values.default_payouts_schedule_interval,
+        default_payouts_schedule_interval: values.default_payouts_schedule_interval,
         default_minimum_payout_amount: values.default_minimum_payout_amount,
         auto_approve_sellers: values.auto_approve_sellers,
         auto_approve_seller_products: values.auto_approve_seller_products,
-        send_seller_transactional_emails:
-          values.send_seller_transactional_emails,
-        default_commission_tax_rate: percentToFraction(
-          values.commission_tax_rate_percentage,
-        ),
+        send_seller_transactional_emails: values.send_seller_transactional_emails,
+        default_commission_tax_rate: percentToFraction(values.commission_tax_rate_percentage),
       })
       form.reset(values)
       toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })

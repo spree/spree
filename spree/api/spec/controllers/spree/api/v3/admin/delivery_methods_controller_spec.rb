@@ -240,11 +240,11 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
 
       patch :update, params: {
         id: delivery_method.prefixed_id,
-        calculator: { type: 'flexi_rate', preferences: { first_item: 5 } }
+        calculator: { type: 'flexi_rate', preferences: { max_items: 'many' } }
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['details']).to have_key('/calculator/preferences/first_item')
+      expect(json_response['error']['details']).to have_key('/calculator/preferences/max_items')
       expect(delivery_method.reload.calculator).to eq(calculator)
     end
 

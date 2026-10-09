@@ -11854,50 +11854,21 @@ components:
       - id
       - name
       - code
-    PreferenceField:
+    PreferenceSchema:
       type: object
-      description: A single configurable preference on a payment method, promotion
-        rule/action, or calculator. The frontend uses `type` + `default` to render
-        a sensible input.
-      properties:
-        key:
-          type: string
-          example: amount_min
-        type:
-          type: string
-          example: decimal
-          description: string | text | password | integer | decimal | boolean | array
-            | hash
-        default:
-          description: Default value (any JSON type), null when there is no default
-          nullable: true
-      required:
-      - key
-      - type
-    PromotionActionCalculator:
-      type: object
-      description: The action's nested calculator (when the action carries one — null
-        for actions like `free_shipping`)
-      properties:
-        type:
-          type: string
-          example: flat_rate
-          description: Wire shorthand for the calculator subclass
-        label:
-          type: string
-          example: Flat Rate
-        preferences:
-          type: object
-          additionalProperties: true
-        preference_schema:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PreferenceField"
-      required:
-      - type
-      - label
-      - preferences
-      - preference_schema
+      description: 'The JSON Schema (draft 2020-12) of a type''s `preferences`: one
+        property per setting, with `format` (`money`, `currency`, `iso-country`, `prefixed-id`,
+        …), `enum`, `default`, `x-spree-secret` for a secret and `x-spree-prefix`
+        for an id list. Unknown keys are refused.'
+      additionalProperties: true
+      example:
+        type: object
+        properties:
+          amount:
+            type: string
+            format: money
+            default: '0.0'
+        additionalProperties: false
     PromotionActionLineItem:
       type: object
       description: One row in a `create_line_items` action — the variant added to

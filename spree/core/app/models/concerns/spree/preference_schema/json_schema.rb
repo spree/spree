@@ -124,10 +124,11 @@ module Spree
         { 'type' => 'string' }.merge(FORMATS.fetch(format, {}).transform_keys(&:to_s))
       end
 
-      # The default in the form the API returns it: decimals as exact strings.
+      # The default in the form the API takes it back: a decimal as its exact
+      # string without trailing zeros ("100", "0.23"), as every API decimal is.
       def self.wire_default(default, definition)
         return default if default.nil?
-        return BigDecimal(default.to_s, exception: false)&.as_json if definition[:type] == :decimal
+        return Spree::Money::Rounding.format_decimal(default) if definition[:type] == :decimal
 
         default.as_json
       end

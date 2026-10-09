@@ -23,7 +23,7 @@ describe Spree::PreferenceSchema::JsonSchema do
 
     it 'types money as an exact decimal string, nullable when it has no default' do
       expect(property(Spree::Promotion::Rules::ItemTotal, :amount_min)).to include(
-        'type' => 'string', 'format' => 'money', 'pattern' => described_class::DECIMAL_PATTERN, 'default' => '100.0'
+        'type' => 'string', 'format' => 'money', 'pattern' => described_class::DECIMAL_PATTERN, 'default' => '100'
       )
       expect(property(Spree::Promotion::Rules::ItemTotal, :amount_max)['type']).to eq(%w[string null])
     end
