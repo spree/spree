@@ -11,7 +11,7 @@ import type {
 } from './filters.generated'
 import type { Cart as CartType } from './generated'
 
-export type * from './filters.generated'
+export * from './filters.generated'
 
 // Re-export all generated types (unprefixed: Product, Order, etc.)
 export type {

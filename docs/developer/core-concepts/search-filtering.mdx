@@ -263,7 +263,7 @@ Only attributes explicitly allowed by each resource can be used for filtering. A
 
 ### Making a field filterable
 
-A resource's filters come from its model's allowlists, and nowhere else. The API reference and the SDK types are generated from them, so whatever you add appears in the [Querying](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts) reference and in the typed `list()` parameters without further work.
+A resource's filters come from its model's allowlists, and nowhere else. Spree generates its API reference and SDK types from them, so the [Querying](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts) reference lists what core declares. Filters your app adds take effect in the API immediately; to use them from TypeScript, declare them as shown below, since the published SDK types are generated from core alone.
 
 ```ruby server/config/initializers/spree.rb
 Spree.ransack.add_attribute(Spree::Product, :erp_id)

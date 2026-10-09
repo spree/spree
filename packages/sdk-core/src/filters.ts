@@ -73,5 +73,7 @@ export type CustomFieldFilters = {
   [key: `cf_${string}`]: string | number | boolean | string[] | undefined
 }
 
-/** A sort field, ascending, or descending with a `-` prefix; several are comma-separated. */
-export type SortKey<K extends string> = K | `-${K}` | `${K | `-${K}`},${string}`
+type SortField<K extends string> = K | `-${K}`
+
+/** A sort field, ascending or descending with a `-` prefix, or two of them comma-separated. */
+export type SortKey<K extends string> = SortField<K> | `${SortField<K>},${SortField<K>}`

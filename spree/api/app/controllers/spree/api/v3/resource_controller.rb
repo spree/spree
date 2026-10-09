@@ -414,6 +414,9 @@ module Spree
 
               resolver = api_type_resolver(attribute.delete_prefix("#{reflection.name}_"), reflection.klass, depth + 1)
               return resolver if resolver
+            rescue NameError
+              # A reflection naming a class this installation does not load.
+              next
             end
             nil
           end
