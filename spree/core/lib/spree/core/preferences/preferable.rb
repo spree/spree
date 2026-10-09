@@ -162,7 +162,7 @@ module Spree::Preferences::Preferable
   def stored_default(name)
     default = preference_default(name)
     type = preference_type(name)
-    return default if default.nil? || %i[decimal datetime].exclude?(type)
+    return default if default.nil? || %i[decimal money datetime].exclude?(type)
 
     convert_preference_value(default, type, nullable: true).as_json
   end
@@ -186,7 +186,7 @@ module Spree::Preferences::Preferable
     # Decimals and times are kept in the string form JSON stores, so a record
     # read back from the database and one just written compare equal and
     # setting the same value is not a change. The reader restores them.
-    value = value.as_json if %i[decimal datetime].include?(definition[:type])
+    value = value.as_json if %i[decimal money datetime].include?(definition[:type])
 
     Spree::Deprecation.warn("`#{name}` is deprecated. #{definition[:deprecated]}") if definition[:deprecated]
     value

@@ -84,7 +84,7 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
                   : t('admin.payouts.balance.earned')
               }
             >
-              <Money amount={balance.earned} currency={balance.settlement_currency} />
+              <Money amount={balance.earned} currency={balance.currency} />
             </ReadRow>
             {balance.converted && (
               <ReadRow label={t('admin.payouts.balance.payable')}>
@@ -95,7 +95,7 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
               <Money amount={balance.paid} currency={balance.settlement_currency} />
             </ReadRow>
             <ReadRow label={t('admin.payouts.balance.pending')}>
-              <Money amount={balance.pending} currency={balance.settlement_currency} />
+              <Money amount={balance.pending} currency={balance.currency} />
             </ReadRow>
           </div>
         ))}

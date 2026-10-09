@@ -115,6 +115,8 @@ end
 Both are read back as a `BigDecimal` and take a number or a decimal string (`"4.50"`); text such as `"4,50"` is refused rather than misread. The difference is on the [API](/api-reference/admin-api/monetary-amounts): a `:money` preference is written with the decimals of the record's `currency` preference (`"4.50"`, or `"450"` in yen), and the dashboard shows it with that currency's symbol. A money preference on a record with no currency, such as a rule matching an order total in any currency, keeps its exact decimal.
 
 
+## Secret preferences
+
 Declare API keys, signing secrets and other credentials with the `:password` type:
 
 ```ruby server/app/models/my_app/gateway.rb

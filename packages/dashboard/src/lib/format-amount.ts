@@ -13,7 +13,7 @@ export function formatAmount(
 ): string {
   if (amount === null || amount === undefined || amount === '' || !currency) return fallback
   try {
-    return formatMoney(amount, currency, locale)
+    return formatMoney(amount, currency, locale) || fallback
   } catch {
     return `${amount} ${currency}`
   }

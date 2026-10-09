@@ -178,6 +178,16 @@ describe Spree::Preferences::Preferable, type: :model do
         loaded.preferred_decimal_with_default = 0
         expect(loaded).not_to be_changed
       end
+
+      it 'treats a money preference the same way' do
+        A.preference :money_with_default, :money, default: 0
+        loaded = A.find(A.create!.id)
+
+        expect(loaded.preferred_money_with_default).to be_a(BigDecimal)
+
+        loaded.preferred_money_with_default = '0'
+        expect(loaded).not_to be_changed
+      end
     end
 
     context 'converts nullable decimal preferences' do

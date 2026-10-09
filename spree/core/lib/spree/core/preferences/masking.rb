@@ -47,15 +47,6 @@ module Spree
         value.is_a?(String) && value.start_with?(TOKEN)
       end
 
-      # Serializes a Preferable's `preferences` hash for the wire,
-      # masking `:password` values. Keys are stringified to match the
-      # wire shape expected by JSON clients — schema entries built by
-      # `compute_preference_schema` cache `:key_string` to avoid a
-      # `to_s` allocation per field per request.
-      #
-      # @param preferable [#preferences, #preference_schema, nil] any object
-      #   that includes `Spree::Preferences::Preferable` and `Spree::PreferenceSchema`
-      # @return [Hash{String => Object}]
       # Money is written to at least the decimals of the currency the record
       # names (a calculator's `currency` preference), keeping up to four like
       # a unit price, so a per-item amount below a cent survives a round trip.
@@ -69,12 +60,21 @@ module Spree
           amount = value.is_a?(String) ? BigDecimal(value, exception: false) : value
           return value unless amount.is_a?(Numeric)
 
-          currency = preferable.try(:preferred_currency) if preferable.try(:has_preference?, :currency)
+          currency = preferable.try(:has_preference?, :currency) ? preferable.try(:preferred_currency) : nil
           currency.present? ? Spree::Money::Rounding.format(amount, currency, unit_price: true) : Spree::Money::Rounding.format_decimal(amount)
         else value
         end
       end
 
+      # Serializes a Preferable's `preferences` hash for the wire,
+      # masking `:password` values. Keys are stringified to match the
+      # wire shape expected by JSON clients — schema entries built by
+      # `compute_preference_schema` cache `:key_string` to avoid a
+      # `to_s` allocation per field per request.
+      #
+      # @param preferable [#preferences, #preference_schema, nil] any object
+      #   that includes `Spree::Preferences::Preferable` and `Spree::PreferenceSchema`
+      # @return [Hash{String => Object}]
       def self.serialize(preferable)
         return {} if preferable.nil?
 
