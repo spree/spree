@@ -48,8 +48,7 @@ curl -G 'http://localhost:3000/api/v3/store/products' \
 | `not_null` | Is not null | `completed_at_not_null: true` | `q[completed_at_not_null]=true` |
 | `present` | Is present (not empty) | `description_present: true` | `q[description_present]=true` |
 | `blank` | Is blank (null or empty) | `description_blank: true` | `q[description_blank]=true` |
-| `true` | Is true (boolean) | `automatic_true: true` | `q[automatic_true]=true` |
-| `false` | Is false (boolean) | `automatic_false: true` | `q[automatic_false]=true` |
+| `eq` on a true/false field | Is true, or is false | `automatic_eq: true` | `q[automatic_eq]=true` |
 
 <Note>
 The SDK automatically wraps filter keys in `q[...]` and appends `[]` for array values — just pass flat params.

@@ -44,14 +44,14 @@ export function StoreAddressTask({ task }: SetupTaskSlotContext) {
   //
   // The list endpoint cannot express the preference in one call: it orders by
   // default then name, and its `sort` param collapses to a single key.
-  const firstParty = { seller_id_null: true, active_true: true, limit: 1 }
+  const firstParty = { seller_id_null: true, active_eq: true, limit: 1 }
   const {
     data: takesReturns,
     isFetching: fetchingReturns,
     isError: returnsFailed,
   } = useQuery({
     queryKey: useResourceKey('stock-locations', { firstParty: true, returns: true }),
-    queryFn: () => adminClient.stockLocations.list({ ...firstParty, returns_enabled_true: true }),
+    queryFn: () => adminClient.stockLocations.list({ ...firstParty, returns_enabled_eq: true }),
   })
   const hasReturnsLocation = (takesReturns?.data.length ?? 0) > 0
   const {
