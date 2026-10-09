@@ -19,7 +19,8 @@ module Spree
 
     acts_as_paranoid
 
-    MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
+    # The largest amount decimal(19,4) holds.
+    MAXIMUM_AMOUNT = BigDecimal('999_999_999_999_999.9999')
 
     # How many breaks one variant may carry on one list in one currency. A UI
     # sanity bound rather than a technical one — but enforced here so no
