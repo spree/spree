@@ -23780,13 +23780,13 @@ paths:
                   description: Order total meets these criteria
                   preference_schema:
                   - key: amount_min
-                    type: decimal
+                    type: money
                     default: '100'
                   - key: operator_min
                     type: string
                     default: ">"
                   - key: amount_max
-                    type: decimal
+                    type: money
                     default:
                   - key: operator_max
                     type: string
@@ -33328,10 +33328,10 @@ paths:
                   description: Charges this rate only on sales within a value range
                   preference_schema:
                   - key: min_amount
-                    type: decimal
+                    type: money
                     default:
                   - key: max_amount
-                    type: decimal
+                    type: money
                     default:
                   association_fields: []
               schema:
@@ -35135,7 +35135,7 @@ paths:
                   calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
-                    amount: '10.0'
+                    amount: '10.00'
                     currency: USD
                 meta:
                   page: 1
@@ -35227,7 +35227,7 @@ paths:
                 calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
-                  amount: '12.5'
+                  amount: '12.50'
                   currency: USD
       requestBody:
         content:
@@ -35337,7 +35337,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -35346,10 +35346,10 @@ paths:
                   name: Flexible Rate per package item
                   preference_schema:
                   - key: first_item
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: additional_item
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: max_items
                     type: integer
@@ -35364,7 +35364,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -35373,13 +35373,13 @@ paths:
                   name: Price sack
                   preference_schema:
                   - key: minimal_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: normal_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: discount_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -35391,7 +35391,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string

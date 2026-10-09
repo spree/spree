@@ -1,9 +1,9 @@
 module Spree
   module Calculator::Shipping
     class PriceSack < ShippingCalculator
-      preference :minimal_amount, :decimal, default: 0
-      preference :normal_amount, :decimal, default: 0
-      preference :discount_amount, :decimal, default: 0
+      preference :minimal_amount, :money, default: 0
+      preference :normal_amount, :money, default: 0
+      preference :discount_amount, :money, default: 0
       preference :currency, :string, default: -> { Spree::Store.default.default_currency }
 
       # Single-currency amounts: quoting another currency would mislabel

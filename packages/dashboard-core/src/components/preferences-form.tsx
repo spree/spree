@@ -10,6 +10,10 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   SecretInput,
   Select,
   SelectContent,
@@ -22,6 +26,8 @@ import {
 import { PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { currencyParts } from '../products/currency-parts'
+import { useMoneyLocale } from '../products/use-money-locale'
 import { CurrencySelect } from './currency-select'
 import { StoreDatePicker } from './store-date-picker'
 
@@ -47,7 +53,7 @@ export function defaultPreferences(
       // A decimal default declared as a Ruby integer arrives as a JSON number,
       // and the API refuses money sent back that way.
       out[field.key] =
-        field.type === 'decimal' && typeof field.default === 'number'
+        (field.type === 'decimal' || field.type === 'money') && typeof field.default === 'number'
           ? String(field.default)
           : field.default
       continue
@@ -122,6 +128,7 @@ export function PreferencesForm({
           redactPasswords={redactPasswords}
           currencyOptions={currencyOptions}
           inlineDatePickers={inlineDatePickers}
+          currency={typeof values.currency === 'string' ? values.currency : undefined}
         />
       ))}
     </FieldGroup>
@@ -136,6 +143,8 @@ interface PreferenceFieldProps {
   redactPasswords?: boolean
   currencyOptions?: string[]
   inlineDatePickers?: boolean
+  /** The currency a money preference is in, when the record names one. */
+  currency?: string
 }
 
 export function PreferenceField({
@@ -146,8 +155,10 @@ export function PreferenceField({
   redactPasswords,
   currencyOptions,
   inlineDatePickers,
+  currency,
 }: PreferenceFieldProps) {
   const { t, i18n } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const id = `preference-${field.key}`
   // Localize the field label from the preference key when no explicit
   // override is given, falling back to a humanized key for custom/extension
@@ -228,6 +239,36 @@ export function PreferenceField({
             includeTime={field.type === 'datetime'}
             inline={inlineDatePickers}
           />
+          {description && <FieldDescription>{description}</FieldDescription>}
+        </Field>
+      )
+
+    case 'money':
+      return (
+        <Field>
+          <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
+          <InputGroup>
+            {currency && (
+              <InputGroupAddon>
+                <InputGroupText>{currencyParts(currency, moneyLocale).symbol}</InputGroupText>
+              </InputGroupAddon>
+            )}
+            <InputGroupInput
+              id={id}
+              type="number"
+              step="any"
+              placeholder={
+                isMaxKey(field.key) ? t('admin.components.preferences_form.unlimited') : undefined
+              }
+              value={value === null || value === undefined ? '' : String(value)}
+              onChange={(e) => {
+                const raw = e.target.value
+                if (raw === '') return onChange(null)
+                // The API refuses money sent as a JSON number.
+                onChange(isDecimalString(raw) ? raw : null)
+              }}
+            />
+          </InputGroup>
           {description && <FieldDescription>{description}</FieldDescription>}
         </Field>
       )

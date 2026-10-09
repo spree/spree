@@ -2148,8 +2148,10 @@ export type CommissionRateUpdateParams = Partial<CommissionRateCreateParams>
  * a STI subclass (payment provider, promotion action, promotion rule).
  *
  * The `type` mirrors Spree's preference type system — `string`, `text`,
- * `integer`, `decimal`, `boolean`, `array`, `password` — so admin UIs
- * can switch on it to render the right input widget.
+ * `integer`, `decimal`, `money`, `boolean`, `array`, `password` — so admin UIs
+ * can switch on it to render the right input widget. A `money` value is a
+ * decimal string in the currency of the record's `currency` preference, when
+ * it has one; a `decimal` is a rate or measure, such as a percentage or a weight.
  */
 export interface PreferenceField {
   key: string

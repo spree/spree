@@ -56,6 +56,25 @@ module Spree
       # @param preferable [#preferences, #preference_schema, nil] any object
       #   that includes `Spree::Preferences::Preferable` and `Spree::PreferenceSchema`
       # @return [Hash{String => Object}]
+      # Money is written to at least the decimals of the currency the record
+      # names (a calculator's `currency` preference), keeping up to four like
+      # a unit price, so a per-item amount below a cent survives a round trip.
+      # A money preference with no currency of its own, such as an order-total
+      # rule that applies to any currency, keeps its exact decimal.
+      def self.wire_value(preferable, type, value)
+        case type
+        when :password then mask(value)
+        when :money
+          # Stored as the JSON text of a decimal.
+          amount = value.is_a?(String) ? BigDecimal(value, exception: false) : value
+          return value unless amount.is_a?(Numeric)
+
+          currency = preferable.try(:preferred_currency) if preferable.try(:has_preference?, :currency)
+          currency.present? ? Spree::Money::Rounding.format(amount, currency, unit_price: true) : Spree::Money::Rounding.format_decimal(amount)
+        else value
+        end
+      end
+
       def self.serialize(preferable)
         return {} if preferable.nil?
 
@@ -64,7 +83,7 @@ module Spree
           # reveal what it would fall back to — read through the record,
           # because a secret lives in its own column.
           value = preferable.stored_preference(field[:key]) { nil }
-          hash[field[:key_string] || field[:key].to_s] = field[:type] == :password ? mask(value) : value
+          hash[field[:key_string] || field[:key].to_s] = wire_value(preferable, field[:type], value)
         end
       end
     end

@@ -96,6 +96,38 @@ RSpec.describe Spree::Preferences::Masking do
       expect(described_class.serialize(preferable)['api_secret']).to eq("#{'•' * 16}alue")
     end
 
+    context 'with money preferences' do
+      let(:preferable_class) do
+        Class.new(Spree::Calculator) do
+          preference :amount, :money, default: 0
+          preference :currency, :string, default: 'USD'
+
+          def self.name
+            'TestMoneyCalculator'
+          end
+        end
+      end
+
+      it "writes money to the record's currency's decimals" do
+        preferable.set_preference(:amount, '12.5')
+
+        expect(described_class.serialize(preferable)['amount']).to eq('12.50')
+      end
+
+      it 'keeps an amount below a cent, as a unit price does' do
+        preferable.set_preference(:amount, '0.0125')
+
+        expect(described_class.serialize(preferable)['amount']).to eq('0.0125')
+      end
+
+      it 'writes whole yen' do
+        preferable.set_preference(:currency, 'JPY')
+        preferable.set_preference(:amount, '1500')
+
+        expect(described_class.serialize(preferable)['amount']).to eq('1500')
+      end
+    end
+
     it 'returns nil for unset password preferences (no default leakage)' do
       preferable.preferences.delete(:api_secret)
 

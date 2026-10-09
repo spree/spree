@@ -12444,7 +12444,7 @@ paths:
                   calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
-                    amount: '10.0'
+                    amount: '10.00'
                     currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
@@ -12466,7 +12466,7 @@ paths:
                   calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
-                    amount: '10.0'
+                    amount: '10.00'
                     currency: USD
                 meta:
                   page: 1
@@ -12645,7 +12645,7 @@ paths:
                 calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
-                  amount: '10.0'
+                  amount: '10.00'
                   currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
@@ -12684,7 +12684,7 @@ paths:
                 calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
-                  amount: '10.0'
+                  amount: '10.00'
                   currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
@@ -12774,10 +12774,10 @@ paths:
                     total range
                   preference_schema:
                   - key: minimum_amount
-                    type: decimal
+                    type: money
                     default:
                   - key: maximum_amount
-                    type: decimal
+                    type: money
                     default:
                 - type: weight_rule
                   name: Weight
@@ -12862,7 +12862,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -12871,10 +12871,10 @@ paths:
                   name: Flexible Rate per package item
                   preference_schema:
                   - key: first_item
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: additional_item
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: max_items
                     type: integer
@@ -12889,7 +12889,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -12898,13 +12898,13 @@ paths:
                   name: Price sack
                   preference_schema:
                   - key: minimal_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: normal_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: discount_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -12916,7 +12916,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string

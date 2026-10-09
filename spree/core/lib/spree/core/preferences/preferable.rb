@@ -34,7 +34,7 @@ module Spree::Preferences::Preferable
     return value unless value.is_a?(String)
 
     case type
-    when :decimal then BigDecimal(value, exception: false) || value
+    when :decimal, :money then BigDecimal(value, exception: false) || value
     when :datetime then Time.zone.iso8601(value)
     else value
     end
@@ -218,10 +218,12 @@ module Spree::Preferences::Preferable
       end
     when :password
       value.to_s
-    when :decimal
-      decimal_value = value.presence
+    when :decimal, :money
+      # A number or canonical decimal text only: "1,599.99" raises rather
+      # than being read as 1.
+      decimal_value = value.is_a?(String) ? value.presence : value
       decimal_value ||= 0 unless nullable
-      decimal_value.present? ? decimal_value.to_s.to_d : decimal_value
+      decimal_value.nil? ? nil : Spree::Money::Rounding.parse_decimal(decimal_value)
     when :integer
       int_value = value.presence
       int_value ||= 0 unless nullable

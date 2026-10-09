@@ -2,7 +2,7 @@ module Spree
   class Calculator::TieredFlatRate < Calculator
     include Spree::Calculator::Tiers
 
-    preference :base_amount, :decimal, default: 0
+    preference :base_amount, :money, default: 0
     preference :currency, :string, default: -> { Spree::Store.default.default_currency }
 
     def self.description

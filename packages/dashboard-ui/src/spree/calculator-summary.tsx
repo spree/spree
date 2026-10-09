@@ -96,11 +96,9 @@ function formatField(
   if (value === null || value === undefined || value === '') return null
   if (field.key === 'currency') return null
 
+  if (field.type === 'money') return formatMoney(value, currency)
   if (field.type === 'decimal') {
     if (/(?:^|_)percent$/.test(field.key)) return `${value}%`
-    if (field.key === 'amount' || field.key.endsWith('_amount')) {
-      return formatMoney(value, currency)
-    }
     return `${humanize(field.key)}: ${value}`
   }
   if (field.type === 'boolean') {
