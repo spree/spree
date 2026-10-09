@@ -95,6 +95,52 @@ test.describe('settings / channels', () => {
     await expect(page.locator('#order_routing_strategy')).toContainText(/^rules \(ordered\)$/i)
   })
 
+  // A channel's storefront access and guest checkout override the store's
+  // until cleared back to "inherit", which must store nothing rather than a
+  // blank that reads as an override.
+  test('overrides store settings per channel and clears them back to inherit', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)
+
+    const name = `E2E Channel Overrides ${Date.now()}`
+    await createChannel(page, { name })
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    const access = page.locator('#storefront_access')
+    const guestCheckout = page.locator('#guest_checkout')
+    const save = page.getByRole('button', { name: /^save$/i })
+
+    async function reopen() {
+      await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+      await rowButton(page, name).click()
+      await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+    }
+
+    await rowButton(page, name).click()
+    await expect(access).toContainText(/^inherit from store$/i, { timeout: 15_000 })
+    await expect(guestCheckout).toContainText(/^inherit from store$/i)
+
+    await access.click()
+    await page.getByRole('option', { name: /^login required/i }).click()
+    await guestCheckout.click()
+    await page.getByRole('option', { name: /^not allowed$/i }).click()
+    await save.click()
+
+    await reopen()
+    await expect(access).toContainText(/^login required/i)
+    await expect(guestCheckout).toContainText(/^not allowed$/i)
+
+    await access.click()
+    await page.getByRole('option', { name: /^inherit from store$/i }).click()
+    await guestCheckout.click()
+    await page.getByRole('option', { name: /^inherit from store$/i }).click()
+    await save.click()
+
+    await reopen()
+    await expect(access).toContainText(/^inherit from store$/i)
+    await expect(guestCheckout).toContainText(/^inherit from store$/i)
+  })
+
   test('names the default catalog picker for assistive technology', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)

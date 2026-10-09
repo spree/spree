@@ -316,8 +316,12 @@ function EditRequirementSheet({
   // blank and then save those blanks over the requirement.
   if (!requirement) return null
 
+  // Keyed by version: a sheet opened straight after a save can mount on the
+  // list from before it, and must re-seed once the refetch lands rather than
+  // save those stale values back.
   return (
     <EditRequirementForm
+      key={requirement.updated_at}
       requirement={requirement}
       kindEntry={kindEntry}
       open={open}

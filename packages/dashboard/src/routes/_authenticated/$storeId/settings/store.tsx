@@ -80,7 +80,10 @@ const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/pr
 
 const TIMEZONES: string[] = (() => {
   try {
-    return Intl.supportedValuesOf('timeZone')
+    // Browsers list only canonical zones, which leaves out `UTC` — the store's
+    // default, and a choice a merchant must be able to return to.
+    const zones = Intl.supportedValuesOf('timeZone')
+    return zones.includes('UTC') ? zones : ['UTC', ...zones]
   } catch {
     // Fallback for older browsers — a small representative set.
     return [
