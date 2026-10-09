@@ -12487,7 +12487,7 @@ paths:
                   calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
-                    amount: '10.0'
+                    amount: '10.00'
                     currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
@@ -12509,7 +12509,7 @@ paths:
                   calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
-                    amount: '10.0'
+                    amount: '10.00'
                     currency: USD
                 meta:
                   page: 1
@@ -12688,7 +12688,7 @@ paths:
                 calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
-                  amount: '10.0'
+                  amount: '10.00'
                   currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
@@ -12727,7 +12727,7 @@ paths:
                 calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
-                  amount: '10.0'
+                  amount: '10.00'
                   currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
@@ -12817,10 +12817,10 @@ paths:
                     total range
                   preference_schema:
                   - key: minimum_amount
-                    type: decimal
+                    type: money
                     default:
                   - key: maximum_amount
-                    type: decimal
+                    type: money
                     default:
                 - type: weight_rule
                   name: Weight
@@ -12905,7 +12905,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -12914,10 +12914,10 @@ paths:
                   name: Flexible Rate per package item
                   preference_schema:
                   - key: first_item
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: additional_item
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: max_items
                     type: integer
@@ -12932,7 +12932,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -12941,13 +12941,13 @@ paths:
                   name: Price sack
                   preference_schema:
                   - key: minimal_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: normal_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: discount_amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -12959,7 +12959,7 @@ paths:
                     type: hash
                     default: {}
                   - key: amount
-                    type: decimal
+                    type: money
                     default: '0'
                   - key: currency
                     type: string
@@ -14027,8 +14027,6 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
-                    display_amount: "$19.99"
-                    display_compare_at_amount:
                     price_list_id:
                   original_price:
                   seller_id: sel_UkLWZg9DAJ
@@ -14112,8 +14110,6 @@ paths:
                   currency: USD
                   amount: '24.00'
                   compare_at_amount:
-                  display_amount: "$24.00"
-                  display_compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -14262,8 +14258,6 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -14335,8 +14329,6 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -15391,15 +15383,10 @@ paths:
                   settlement_currency: USD
                   converted: false
                   earned: '40.00'
-                  display_earned: "$40.00"
-                  payable: '40.00'
-                  display_payable: "$40.00"
-                  paid: '15.00'
-                  display_paid: "$15.00"
-                  balance: '25.00'
-                  display_balance: "$25.00"
                   pending: '0.00'
-                  display_pending: "$0.00"
+                  payable: '40.00'
+                  paid: '15.00'
+                  balance: '25.00'
               schema:
                 type: object
                 properties:
@@ -15483,7 +15470,6 @@ paths:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   refund_total: '0.00'
-                  display_refund_total: "$0.00"
                   approved_at:
                   resolved_at:
                   denied_at:
@@ -15539,7 +15525,6 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '0.00'
-                display_refund_total: "$0.00"
                 approved_at:
                 resolved_at:
                 denied_at:
@@ -15622,7 +15607,6 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '0.00'
-                display_refund_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 resolved_at:
                 denied_at:
@@ -15672,7 +15656,6 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '0.00'
-                display_refund_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 resolved_at: '2026-01-15T12:00:00Z'
                 denied_at:
@@ -15744,7 +15727,6 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '0.00'
-                display_refund_total: "$0.00"
                 approved_at:
                 resolved_at:
                 denied_at: '2026-01-15T12:00:00Z'
@@ -15904,7 +15886,6 @@ paths:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   price_difference: '9.99'
-                  display_price_difference: "$9.99"
                   approved_at:
                   received_at:
                   fulfilled_at:
@@ -15960,7 +15941,6 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
-                display_price_difference: "$9.99"
                 approved_at:
                 received_at:
                 fulfilled_at:
@@ -16040,7 +16020,6 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
-                display_price_difference: "$9.99"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 fulfilled_at: '2026-01-15T12:00:00Z'
@@ -16337,8 +16316,7 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -16444,8 +16422,7 @@ paths:
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
+                  unpriced: false
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-1
@@ -16558,8 +16535,7 @@ paths:
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
+                  unpriced: false
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-2
@@ -16652,8 +16628,7 @@ paths:
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
+                  unpriced: false
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: U10000
@@ -16889,31 +16864,18 @@ paths:
                   internal_note:
                   internal_note_html:
                   item_total: '10.00'
-                  display_item_total: "$10.00"
                   delivery_total: '100.00'
-                  display_delivery_total: "$100.00"
                   discount_total: '0.00'
-                  display_discount_total: "$0.00"
                   adjustment_total: '0.00'
-                  display_adjustment_total: "$0.00"
                   included_tax_total: '0.00'
-                  display_included_tax_total: "$0.00"
                   additional_tax_total: '0.00'
-                  display_additional_tax_total: "$0.00"
                   tax_total: '0.00'
-                  display_tax_total: "$0.00"
                   total: '110.00'
-                  display_total: "$110.00"
                   payment_total: '0.00'
-                  display_payment_total: "$0.00"
                   amount_due: '110.00'
-                  display_amount_due: "$110.00"
                   commission_amount_total: '0.00'
-                  display_commission_amount_total: "$0.00"
                   commission_tax_total: '0.00'
-                  display_commission_tax_total: "$0.00"
                   commission_total: '0.00'
-                  display_commission_total: "$0.00"
                   canceled_at:
                   cancel_reason_name:
                   cancel_note:
@@ -16924,12 +16886,9 @@ paths:
                     quantity: 1
                     currency: USD
                     price: '10.00'
-                    display_price: "$10.00"
                     discounted_amount: '10.00'
-                    display_discounted_amount: "$10.00"
                     additional_tax_total: '0.00'
                     total: '10.00'
-                    display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
                     sku: SKU-257
                     thumbnail_url:
@@ -16965,8 +16924,7 @@ paths:
                       carrier:
                       service_level:
                       estimated_delivery_date:
-                      display_cost: "$10.00"
-                      display_total: "$10.00"
+                      unpriced: false
                     deliveries:
                     - id: dlv_UkLWZg9DAJ
                       tracking_number: U10000
@@ -17093,31 +17051,18 @@ paths:
                 internal_note:
                 internal_note_html:
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 amount_due: '110.00'
-                display_amount_due: "$110.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
@@ -17128,12 +17073,9 @@ paths:
                   quantity: 1
                   currency: USD
                   price: '10.00'
-                  display_price: "$10.00"
                   discounted_amount: '10.00'
-                  display_discounted_amount: "$10.00"
                   additional_tax_total: '0.00'
                   total: '10.00'
-                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-258
                   thumbnail_url:
@@ -17169,8 +17111,7 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17293,31 +17234,18 @@ paths:
                 internal_note:
                 internal_note_html:
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 amount_due: '0.00'
-                display_amount_due: "$0.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 canceled_at: '2026-01-15T12:00:00Z'
                 cancel_reason_name:
                 cancel_note:
@@ -17328,12 +17256,9 @@ paths:
                   quantity: 1
                   currency: USD
                   price: '10.00'
-                  display_price: "$10.00"
                   discounted_amount: '10.00'
-                  display_discounted_amount: "$10.00"
                   additional_tax_total: '0.00'
                   total: '10.00'
-                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-261
                   thumbnail_url:
@@ -17369,8 +17294,7 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17500,31 +17424,18 @@ paths:
                 internal_note:
                 internal_note_html:
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 amount_due: '110.00'
-                display_amount_due: "$110.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
@@ -17535,12 +17446,9 @@ paths:
                   quantity: 1
                   currency: USD
                   price: '10.00'
-                  display_price: "$10.00"
                   discounted_amount: '10.00'
-                  display_discounted_amount: "$10.00"
                   additional_tax_total: '0.00'
                   total: '10.00'
-                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-262
                   thumbnail_url:
@@ -17576,8 +17484,7 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17770,31 +17677,18 @@ paths:
                 internal_note:
                 internal_note_html:
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 amount_due: '110.00'
-                display_amount_due: "$110.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
@@ -17805,12 +17699,9 @@ paths:
                   quantity: 1
                   currency: USD
                   price: '10.00'
-                  display_price: "$10.00"
                   discounted_amount: '10.00'
-                  display_discounted_amount: "$10.00"
                   additional_tax_total: '0.00'
                   total: '10.00'
-                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-264
                   thumbnail_url:
@@ -17846,8 +17737,7 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17946,31 +17836,18 @@ paths:
                 internal_note: Packed with the fragile insert.
                 internal_note_html: "<p>Packed with the fragile insert.</p>"
                 item_total: '10.00'
-                display_item_total: "$10.00"
                 delivery_total: '100.00'
-                display_delivery_total: "$100.00"
                 discount_total: '0.00'
-                display_discount_total: "$0.00"
                 adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 included_tax_total: '0.00'
-                display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
-                display_additional_tax_total: "$0.00"
                 tax_total: '0.00'
-                display_tax_total: "$0.00"
                 total: '110.00'
-                display_total: "$110.00"
                 payment_total: '0.00'
-                display_payment_total: "$0.00"
                 amount_due: '110.00'
-                display_amount_due: "$110.00"
                 commission_amount_total: '0.00'
-                display_commission_amount_total: "$0.00"
                 commission_tax_total: '0.00'
-                display_commission_tax_total: "$0.00"
                 commission_total: '0.00'
-                display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
@@ -17981,12 +17858,9 @@ paths:
                   quantity: 1
                   currency: USD
                   price: '10.00'
-                  display_price: "$10.00"
                   discounted_amount: '10.00'
-                  display_discounted_amount: "$10.00"
                   additional_tax_total: '0.00'
                   total: '10.00'
-                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-265
                   thumbnail_url:
@@ -18022,8 +17896,7 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -18700,7 +18573,6 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount: '120.00'
-                  display_amount: "$120.00"
                   transfers_count: 1
                   provider: system
                 meta:
@@ -18762,7 +18634,6 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '120.00'
-                display_amount: "$120.00"
                 transfers_count: 1
                 provider: system
               schema:
@@ -18855,9 +18726,7 @@ paths:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   refund_total: '10.00'
-                  display_refund_total: "$10.00"
                   refund_tax_total: '0.00'
-                  display_refund_tax_total: "$0.00"
                   approved_at:
                   received_at:
                   refunded_at:
@@ -18866,7 +18735,6 @@ paths:
                   stock_location_id: sloc_UkLWZg9DAJ
                   refunded_total: '0.00'
                   refundable_total: '10.00'
-                  display_refunded_total: "$0.00"
                 meta:
                   page: 1
                   limit: 25
@@ -18917,9 +18785,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
-                display_refund_total: "$10.00"
                 refund_tax_total: '0.00'
-                display_refund_tax_total: "$0.00"
                 approved_at:
                 received_at:
                 refunded_at:
@@ -18928,7 +18794,6 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
-                display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
         '422':
@@ -19005,9 +18870,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
-                display_refund_total: "$10.00"
                 refund_tax_total: '0.00'
-                display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at:
                 refunded_at:
@@ -19016,7 +18879,6 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
-                display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
   "/api/v3/seller/orders/{order_id}/returns/{id}/receive":
@@ -19059,9 +18921,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
-                display_refund_total: "$10.00"
                 refund_tax_total: '0.00'
-                display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at:
@@ -19070,7 +18930,6 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
-                display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
       requestBody:
@@ -19136,9 +18995,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
-                display_refund_total: "$10.00"
                 refund_tax_total: '0.00'
-                display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at: '2026-01-15T12:00:00Z'
@@ -19147,7 +19004,6 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '10.00'
                 refundable_total: '0.00'
-                display_refunded_total: "$10.00"
               schema:
                 "$ref": "#/components/schemas/Return"
         '422':
@@ -19209,9 +19065,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
-                display_refund_total: "$10.00"
                 refund_tax_total: '0.00'
-                display_refund_tax_total: "$0.00"
                 approved_at:
                 received_at:
                 refunded_at:
@@ -19220,7 +19074,6 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
-                display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
   "/api/v3/seller/return_reasons":
@@ -19628,7 +19481,6 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount: '42.00'
-                  display_amount: "$42.00"
                   settled_amount: '42.00'
                   settled_currency: USD
                   converted: false
@@ -19695,7 +19547,6 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '42.00'
-                display_amount: "$42.00"
                 settled_amount: '42.00'
                 settled_currency: USD
                 converted: false
@@ -20501,59 +20352,6 @@ components:
       - option_type_label
       - image_url
       x-typelizer: true
-    PriceHistory:
-      type: object
-      properties:
-        id:
-          type: string
-        currency:
-          type: string
-        amount:
-          type: string
-          nullable: true
-        display_amount:
-          type: string
-        recorded_at:
-          type: string
-      required:
-      - id
-      - currency
-      - amount
-      - display_amount
-      - recorded_at
-      x-typelizer: true
-    Price:
-      type: object
-      properties:
-        id:
-          type: string
-        currency:
-          type: string
-          nullable: true
-        amount:
-          type: string
-          nullable: true
-        compare_at_amount:
-          type: string
-          nullable: true
-        display_amount:
-          type: string
-          nullable: true
-        display_compare_at_amount:
-          type: string
-          nullable: true
-        price_list_id:
-          type: string
-          nullable: true
-      required:
-      - id
-      - currency
-      - amount
-      - compare_at_amount
-      - display_amount
-      - display_compare_at_amount
-      - price_list_id
-      x-typelizer: true
     Account:
       type: object
       properties:
@@ -20599,38 +20397,23 @@ components:
           type: boolean
         earned:
           type: string
-        display_earned:
+        pending:
           type: string
         payable:
           type: string
-        display_payable:
-          type: string
         paid:
           type: string
-        display_paid:
-          type: string
         balance:
-          type: string
-        display_balance:
-          type: string
-        pending:
-          type: string
-        display_pending:
           type: string
       required:
       - currency
       - settlement_currency
       - converted
       - earned
-      - display_earned
-      - payable
-      - display_payable
-      - paid
-      - display_paid
-      - balance
-      - display_balance
       - pending
-      - display_pending
+      - payable
+      - paid
+      - balance
       x-typelizer: true
     ClaimLineItem:
       type: object
@@ -20655,8 +20438,6 @@ components:
         additional_tax_total:
           type: string
         tax_total:
-          type: string
-        display_refund_amount:
           type: string
         variant_id:
           type: string
@@ -20683,7 +20464,6 @@ components:
       - included_tax_total
       - additional_tax_total
       - tax_total
-      - display_refund_amount
       - variant_id
       - replacement_variant_id
       - line_item_id
@@ -20719,8 +20499,6 @@ components:
           nullable: true
         refund_total:
           type: string
-        display_refund_total:
-          type: string
         approved_at:
           type: string
           nullable: true
@@ -20750,7 +20528,6 @@ components:
       - order_id
       - reason_id
       - refund_total
-      - display_refund_total
       - approved_at
       - resolved_at
       - denied_at
@@ -20891,10 +20668,8 @@ components:
         estimated_delivery_date:
           type: string
           nullable: true
-        display_cost:
-          type: string
-        display_total:
-          type: string
+        unpriced:
+          type: boolean
       required:
       - id
       - name
@@ -20904,8 +20679,7 @@ components:
       - carrier
       - service_level
       - estimated_delivery_date
-      - display_cost
-      - display_total
+      - unpriced
       x-typelizer: true
     Delivery:
       type: object
@@ -21070,8 +20844,6 @@ components:
           nullable: true
         price_difference:
           type: string
-        display_price_difference:
-          type: string
         approved_at:
           type: string
           nullable: true
@@ -21103,7 +20875,6 @@ components:
       - order_id
       - reason_id
       - price_difference
-      - display_price_difference
       - approved_at
       - received_at
       - fulfilled_at
@@ -21593,22 +21364,13 @@ components:
         price:
           type: string
           nullable: true
-        display_price:
-          type: string
-          nullable: true
         discounted_amount:
-          type: string
-          nullable: true
-        display_discounted_amount:
           type: string
           nullable: true
         additional_tax_total:
           type: string
           nullable: true
         total:
-          type: string
-          nullable: true
-        display_total:
           type: string
           nullable: true
         variant_id:
@@ -21627,12 +21389,9 @@ components:
       - quantity
       - currency
       - price
-      - display_price
       - discounted_amount
-      - display_discounted_amount
       - additional_tax_total
       - total
-      - display_total
       - variant_id
       - sku
       - thumbnail_url
@@ -21697,79 +21456,40 @@ components:
         item_total:
           type: string
           nullable: true
-        display_item_total:
-          type: string
-          nullable: true
         delivery_total:
-          type: string
-          nullable: true
-        display_delivery_total:
           type: string
           nullable: true
         discount_total:
           type: string
           nullable: true
-        display_discount_total:
-          type: string
-          nullable: true
         adjustment_total:
-          type: string
-          nullable: true
-        display_adjustment_total:
           type: string
           nullable: true
         included_tax_total:
           type: string
           nullable: true
-        display_included_tax_total:
-          type: string
-          nullable: true
         additional_tax_total:
-          type: string
-          nullable: true
-        display_additional_tax_total:
           type: string
           nullable: true
         tax_total:
           type: string
           nullable: true
-        display_tax_total:
-          type: string
-          nullable: true
         total:
-          type: string
-          nullable: true
-        display_total:
           type: string
           nullable: true
         payment_total:
           type: string
           nullable: true
-        display_payment_total:
-          type: string
-          nullable: true
         amount_due:
-          type: string
-          nullable: true
-        display_amount_due:
           type: string
           nullable: true
         commission_amount_total:
           type: string
           nullable: true
-        display_commission_amount_total:
-          type: string
-          nullable: true
         commission_tax_total:
           type: string
           nullable: true
-        display_commission_tax_total:
-          type: string
-          nullable: true
         commission_total:
-          type: string
-          nullable: true
-        display_commission_total:
           type: string
           nullable: true
         canceled_at:
@@ -21812,31 +21532,18 @@ components:
       - internal_note
       - internal_note_html
       - item_total
-      - display_item_total
       - delivery_total
-      - display_delivery_total
       - discount_total
-      - display_discount_total
       - adjustment_total
-      - display_adjustment_total
       - included_tax_total
-      - display_included_tax_total
       - additional_tax_total
-      - display_additional_tax_total
       - tax_total
-      - display_tax_total
       - total
-      - display_total
       - payment_total
-      - display_payment_total
       - amount_due
-      - display_amount_due
       - commission_amount_total
-      - display_commission_amount_total
       - commission_tax_total
-      - display_commission_tax_total
       - commission_total
-      - display_commission_total
       - canceled_at
       - cancel_reason_name
       - cancel_note
@@ -21932,44 +21639,26 @@ components:
           type: string
         authorized_amount:
           type: string
-        display_authorized_amount:
-          type: string
         captured_amount:
-          type: string
-        display_captured_amount:
           type: string
         refunded_amount:
           type: string
-        display_refunded_amount:
-          type: string
         claimed_amount:
-          type: string
-        display_claimed_amount:
           type: string
         net_captured_amount:
           type: string
-        display_net_captured_amount:
-          type: string
         refundable_amount:
-          type: string
-        display_refundable_amount:
           type: string
       required:
       - id
       - currency
       - created_at
       - authorized_amount
-      - display_authorized_amount
       - captured_amount
-      - display_captured_amount
       - refunded_amount
-      - display_refunded_amount
       - claimed_amount
-      - display_claimed_amount
       - net_captured_amount
-      - display_net_captured_amount
       - refundable_amount
-      - display_refundable_amount
       x-typelizer: true
     Payout:
       type: object
@@ -21995,8 +21684,6 @@ components:
           type: string
         amount:
           type: string
-        display_amount:
-          type: string
         transfers_count:
           type: number
         provider:
@@ -22013,7 +21700,6 @@ components:
       - created_at
       - updated_at
       - amount
-      - display_amount
       - transfers_count
       - provider
       x-typelizer: true
@@ -22044,6 +21730,48 @@ components:
       - body_html
       - updated_at
       - created_at
+      x-typelizer: true
+    PriceHistory:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+        amount:
+          type: string
+          nullable: true
+        recorded_at:
+          type: string
+      required:
+      - id
+      - currency
+      - amount
+      - recorded_at
+      x-typelizer: true
+    Price:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+          nullable: true
+        amount:
+          type: string
+          nullable: true
+        compare_at_amount:
+          type: string
+          nullable: true
+        price_list_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - currency
+      - amount
+      - compare_at_amount
+      - price_list_id
       x-typelizer: true
     Product:
       type: object
@@ -22542,19 +22270,13 @@ components:
           type: boolean
         pre_tax_amount:
           type: string
-        display_pre_tax_amount:
-          type: string
         included_tax_total:
           type: string
         additional_tax_total:
           type: string
         tax_total:
           type: string
-        display_tax_total:
-          type: string
         refund_amount:
-          type: string
-        display_refund_amount:
           type: string
         variant_id:
           type: string
@@ -22576,13 +22298,10 @@ components:
       - received_quantity
       - resellable
       - pre_tax_amount
-      - display_pre_tax_amount
       - included_tax_total
       - additional_tax_total
       - tax_total
-      - display_tax_total
       - refund_amount
-      - display_refund_amount
       - variant_id
       - line_item_id
       - fulfillment_item_id
@@ -22615,11 +22334,7 @@ components:
           nullable: true
         refund_total:
           type: string
-        display_refund_total:
-          type: string
         refund_tax_total:
-          type: string
-        display_refund_tax_total:
           type: string
         approved_at:
           type: string
@@ -22649,8 +22364,6 @@ components:
           type: string
         refundable_total:
           type: string
-        display_refunded_total:
-          type: string
       required:
       - id
       - number
@@ -22658,9 +22371,7 @@ components:
       - order_id
       - reason_id
       - refund_total
-      - display_refund_total
       - refund_tax_total
-      - display_refund_tax_total
       - approved_at
       - received_at
       - refunded_at
@@ -22669,7 +22380,6 @@ components:
       - stock_location_id
       - refunded_total
       - refundable_total
-      - display_refunded_total
       x-typelizer: true
     ShippingLabel:
       type: object
@@ -22730,9 +22440,6 @@ components:
           - return
         cost:
           type: string
-        display_cost:
-          type: string
-          nullable: true
         integration_id:
           type: string
           nullable: true
@@ -22759,7 +22466,6 @@ components:
       - owner_id
       - owner_type
       - cost
-      - display_cost
       - integration_id
       - file_pending
       - download_url
@@ -22969,8 +22675,6 @@ components:
           type: string
         amount:
           type: string
-        display_amount:
-          type: string
         settled_amount:
           type: string
           nullable: true
@@ -23004,7 +22708,6 @@ components:
       - created_at
       - updated_at
       - amount
-      - display_amount
       - settled_amount
       - settled_currency
       - converted
