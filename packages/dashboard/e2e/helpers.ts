@@ -675,3 +675,28 @@ export async function switchAdminLocale(page: Page, locale: string): Promise<() 
     })
   }
 }
+
+// Records a list test seeded, deleted after the test so later specs in the
+// shard see the store they expect (the products index's first page, the
+// payment-method picker's providers).
+let seededRecords: { path: string; session: E2ELoginSession }[] = []
+
+/** Creates a record through the Admin API and deletes it after the test. */
+export async function seedRecord<T extends { id: string } = { id: string }>(
+  page: Page,
+  session: E2ELoginSession,
+  path: string,
+  data: object,
+): Promise<T> {
+  const record = await adminRequest<T>(page, session, 'post', path, data)
+  seededRecords.push({ path: `${path}/${record.id}`, session })
+  return record
+}
+
+/** Deletes what {@link seedRecord} created; call from `test.afterEach`. */
+export async function deleteSeededRecords(page: Page) {
+  for (const { path, session } of seededRecords.reverse()) {
+    await adminRequest(page, session, 'delete', path).catch(() => undefined)
+  }
+  seededRecords = []
+}

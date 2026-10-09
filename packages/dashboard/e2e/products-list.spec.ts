@@ -3,12 +3,14 @@ import {
   addRecordFilter,
   addTextFilter,
   adminRequest,
+  deleteSeededRecords,
   type E2ELoginSession,
   FIXTURE_PROMO_TAXON,
   gotoIndex,
   login,
   narrowQuickFilter,
   searchList,
+  seedRecord,
   sortList,
 } from './helpers'
 
@@ -29,7 +31,7 @@ async function seedProducts(page: Page, session: E2ELoginSession) {
     `/categories?q[name_eq]=${encodeURIComponent(FIXTURE_PROMO_TAXON)}`,
   )
   const create = (name: string, status: string, amount: number, extra: object = {}) =>
-    adminRequest<{ id: string; default_variant_id: string }>(page, session, 'post', '/products', {
+    seedRecord<{ id: string; default_variant_id: string }>(page, session, '/products', {
       name,
       status,
       prices: [{ amount, currency: 'USD' }],
@@ -57,6 +59,8 @@ async function seedProducts(page: Page, session: E2ELoginSession) {
 const row = (page: Page, name: string) => page.getByRole('row').filter({ hasText: name })
 
 test.describe('products list', () => {
+  test.afterEach(({ page }) => deleteSeededRecords(page))
+
   test('searches by name and by SKU', async ({ page }) => {
     const session = await login(page)
     const { stamp, cheap, pricey, draft } = await seedProducts(page, session)

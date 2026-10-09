@@ -2,11 +2,12 @@ import { expect, type Page, test } from '@playwright/test'
 import {
   addListFilter,
   addTextFilter,
-  adminRequest,
+  deleteSeededRecords,
   type E2ELoginSession,
   gotoIndex,
   login,
   searchList,
+  seedRecord,
   sortList,
 } from './helpers'
 
@@ -34,8 +35,8 @@ async function seedCustomers(page: Page, session: E2ELoginSession) {
     last_name: lastName,
     accepts_email_marketing: false,
   }
-  await adminRequest(page, session, 'post', '/customers', subscriber)
-  await adminRequest(page, session, 'post', '/customers', other)
+  await seedRecord(page, session, '/customers', subscriber)
+  await seedRecord(page, session, '/customers', other)
 
   return { lastName, subscriber, other }
 }
@@ -43,6 +44,8 @@ async function seedCustomers(page: Page, session: E2ELoginSession) {
 const row = (page: Page, email: string) => page.getByRole('row').filter({ hasText: email })
 
 test.describe('customers list', () => {
+  test.afterEach(({ page }) => deleteSeededRecords(page))
+
   test('searches by name and by email', async ({ page }) => {
     const session = await login(page)
     const { lastName, subscriber, other } = await seedCustomers(page, session)

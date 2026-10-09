@@ -1,5 +1,12 @@
 import { expect, type Page, test } from '@playwright/test'
-import { addListFilter, adminRequest, login, narrowQuickFilter, searchList } from './helpers'
+import {
+  addListFilter,
+  deleteSeededRecords,
+  login,
+  narrowQuickFilter,
+  searchList,
+  seedRecord,
+} from './helpers'
 
 // Searches and filters the API used to ignore, so each list came back whole
 // while the control said it was narrowed. Each test narrows a list of its own
@@ -7,6 +14,8 @@ import { addListFilter, adminRequest, login, narrowQuickFilter, searchList } fro
 
 const stamp = () => `${Date.now()}`
 const row = (page: Page, text: string) => page.getByRole('row').filter({ hasText: text })
+
+test.afterEach(({ page }) => deleteSeededRecords(page))
 
 async function openList(page: Page, path: string, search: RegExp) {
   await page.goto(path)
@@ -20,7 +29,7 @@ test.describe('list filters', () => {
     const kept = `https://shop-${id}.example.com`
     const other = `https://admin-${id}.example.com`
     for (const origin of [kept, other]) {
-      await adminRequest(page, session, 'post', '/allowed_origins', { origin })
+      await seedRecord(page, session, '/allowed_origins', { origin })
     }
 
     await openList(page, `/${session.store_id}/settings/allowed-origins`, /search by origin/i)
@@ -35,12 +44,12 @@ test.describe('list filters', () => {
     const id = stamp()
     const active = `E2E Active ${id}`
     const inactive = `E2E Inactive ${id}`
-    await adminRequest(page, session, 'post', '/payment_methods', {
+    await seedRecord(page, session, '/payment_methods', {
       type: 'check',
       name: active,
       active: true,
     })
-    await adminRequest(page, session, 'post', '/payment_methods', {
+    await seedRecord(page, session, '/payment_methods', {
       type: 'check',
       name: inactive,
       active: false,
@@ -59,7 +68,7 @@ test.describe('list filters', () => {
   test('filters sellers by status', async ({ page }) => {
     const session = await login(page)
     const name = `E2E Filter Seller ${stamp()}`
-    await adminRequest(page, session, 'post', '/sellers', {
+    await seedRecord(page, session, '/sellers', {
       name,
       contact_email: `filter-seller-${Date.now()}@example.com`,
     })
@@ -79,12 +88,12 @@ test.describe('list filters', () => {
     const id = stamp()
     const swatch = `e2e-swatch-${id}`
     const buttons = `e2e-buttons-${id}`
-    await adminRequest(page, session, 'post', '/option_types', {
+    await seedRecord(page, session, '/option_types', {
       name: swatch,
       label: swatch,
       kind: 'color_swatch',
     })
-    await adminRequest(page, session, 'post', '/option_types', {
+    await seedRecord(page, session, '/option_types', {
       name: buttons,
       label: buttons,
       kind: 'buttons',
@@ -109,7 +118,7 @@ test.describe('list filters', () => {
       [number, 'number'],
       [text, 'short_text'],
     ]) {
-      await adminRequest(page, session, 'post', '/custom_field_definitions', {
+      await seedRecord(page, session, '/custom_field_definitions', {
         namespace: 'e2e',
         key,
         field_type: fieldType,
