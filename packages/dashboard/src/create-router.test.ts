@@ -1,5 +1,14 @@
 import { __resetPluginRoutes, pluginRoutes } from '@spree/dashboard-core'
-import { type AnyRoute, createRootRoute, createRoute } from '@tanstack/react-router'
+import {
+  type AnyRoute,
+  type AnyRouter,
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  RouterProvider,
+} from '@tanstack/react-router'
+import { createElement } from 'react'
+import { renderToString } from 'react-dom/server'
 import { afterEach, describe, expect, it } from 'vitest'
 import { createDashboardRouter } from './create-router'
 
@@ -47,15 +56,45 @@ describe('createDashboardRouter', () => {
     expect(router.getMatchedRoutes('/store_1')[2]?.fullPath).toBe('/$storeId')
   })
 
-  it('mounts each route once when the router is built twice from one tree', () => {
+  it('leaves the generated tree untouched, so every router built from it is the same', () => {
     pluginRoutes.add({ key: 'sign-up', scope: 'public', path: '/sign-up', component: Page })
+    pluginRoutes.add({ key: 'account', scope: 'authenticated', path: '/account', component: Page })
+    const tree = shellTree()
+    const authenticated = (tree.children as unknown as AnyRoute[]).find(
+      (r) => (r.options as { id?: string }).id === '/_authenticated',
+    ) as AnyRoute
+    const rootChildren = tree.children
+    const authenticatedChildren = authenticated.children
+
+    const first = createDashboardRouter(tree)
+    const second = createDashboardRouter(tree)
+
+    expect(tree.children).toBe(rootChildren)
+    expect(tree.children).toHaveLength(2)
+    expect(authenticated.children).toBe(authenticatedChildren)
+    expect(authenticated.children).toHaveLength(2)
+    expect(Object.keys(second.routesById)).toEqual(Object.keys(first.routesById))
+    expect(Object.keys(second.routesById)).toEqual(
+      expect.arrayContaining(['/sign-up', '/_authenticated/account']),
+    )
+  })
+
+  it('renders a root registry route through the auth layout, for every router built', async () => {
+    pluginRoutes.add({
+      key: 'welcome',
+      scope: 'authenticated',
+      path: '/welcome/$step',
+      component: ({ params }) => createElement('p', null, `step ${params.step}`),
+    })
     const tree = shellTree()
 
-    createDashboardRouter(tree)
-    const router = createDashboardRouter(tree)
-
-    const ids = Object.values(router.routesById as Record<string, AnyRoute>).map((r) => r.id)
-    expect(ids.filter((id) => id === '/sign-up')).toHaveLength(1)
+    for (let build = 0; build < 2; build++) {
+      const router = createDashboardRouter(tree)
+      router.update({ history: createMemoryHistory({ initialEntries: ['/welcome/2'] }) })
+      await router.load()
+      const html = renderToString(createElement(RouterProvider, { router: router as AnyRouter }))
+      expect(html).toContain('step 2')
+    }
   })
 
   it('refuses a root route that takes the path of a dashboard page', () => {

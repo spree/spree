@@ -44,17 +44,13 @@ export function createDashboardRouter<TRouteTree extends AnyRoute>(
   routeTree: TRouteTree,
   { basepath }: DashboardRouterOptions = {},
 ) {
-  mountRootPluginRoutes(routeTree)
   // Cast because the shell's root route requires no router context, which
   // TypeScript cannot prove through the generic tree parameter. The return
   // type stays parameterized by TRouteTree — that's what makes links typed.
-  const options = { routeTree, basepath } as RouterConstructorOptions<
-    TRouteTree,
-    'never',
-    false,
-    RouterHistory,
-    Record<string, unknown>
-  >
+  const options = {
+    routeTree: withRootPluginRoutes(routeTree),
+    basepath,
+  } as RouterConstructorOptions<TRouteTree, 'never', false, RouterHistory, Record<string, unknown>>
   return createRouter({
     ...options,
     // Every route inherits this while its chunk or loader resolves. Without it
@@ -75,8 +71,6 @@ export function createDashboardRouter<TRouteTree extends AnyRoute>(
   })
 }
 
-const mountedRootRoutes = new WeakSet<AnyRoute>()
-
 /** Route options are a union of path and pathless shapes; both fields are optional here. */
 type RouteOptionsLike = { id?: string; path?: string }
 
@@ -84,29 +78,29 @@ type RouteOptionsLike = { id?: string; path?: string }
  * Registry routes scoped `public` or `authenticated` live at the root, where
  * the store's `$storeId` param would otherwise claim every URL — so instead of
  * a catch-all they become real routes: public ones next to the login page,
- * authenticated ones inside the auth guard, beside the store picker. Building
- * the router twice from the same tree (tests, hot reload) replaces them rather
- * than mounting them twice.
+ * authenticated ones inside the auth guard, beside the store selection page.
+ *
+ * The generated tree is shared by every router built from it, so it is never
+ * changed. The router gets views of the root and `_authenticated` routes that
+ * differ only in their children; every other read and write reaches the
+ * generated route.
  */
-function mountRootPluginRoutes(routeTree: AnyRoute) {
-  const authenticatedLayout = (routeTree.children as AnyRoute[] | undefined)?.find(
-    (route) => (route.options as RouteOptionsLike).id === '/_authenticated',
-  )
-  if (!authenticatedLayout) return
-
-  const parents = { public: routeTree, authenticated: authenticatedLayout }
-  for (const parent of Object.values(parents)) {
-    parent.addChildren(
-      (parent.children as AnyRoute[]).filter((route) => !mountedRootRoutes.has(route)),
-    )
-  }
-
+function withRootPluginRoutes<TRouteTree extends AnyRoute>(routeTree: TRouteTree): TRouteTree {
   const entries = getPluginRoutes().filter(
     (entry): entry is RootRouteEntry => entry.scope === 'public' || entry.scope === 'authenticated',
   )
-  if (entries.length === 0) return
+  if (entries.length === 0) return routeTree
+
+  const rootChildren = routeTree.children as AnyRoute[]
+  const authenticatedLayout = rootChildren.find(
+    (route) => (route.options as RouteOptionsLike).id === '/_authenticated',
+  )
+  if (!authenticatedLayout) {
+    throw new Error("Plugin routes outside a store need the dashboard's `_authenticated` route.")
+  }
 
   const taken = new Set(routePaths(routeTree, '').map(comparablePath))
+  const added: Record<RootRouteEntry['scope'], AnyRoute[]> = { public: [], authenticated: [] }
   for (const entry of entries) {
     if (taken.has(comparablePath(entry.path))) {
       throw new Error(
@@ -115,7 +109,7 @@ function mountRootPluginRoutes(routeTree: AnyRoute) {
     }
     taken.add(comparablePath(entry.path))
 
-    const parent = parents[entry.scope]
+    const parent = entry.scope === 'public' ? routeTree : authenticatedLayout
     const route: AnyRoute = createRoute({
       getParentRoute: () => parent,
       path: entry.path,
@@ -126,9 +120,23 @@ function mountRootPluginRoutes(routeTree: AnyRoute) {
         })
       },
     })
-    mountedRootRoutes.add(route)
-    parent.addChildren([...(parent.children as AnyRoute[]), route])
+    added[entry.scope].push(route)
   }
+
+  const authenticatedView = withChildren(authenticatedLayout, [
+    ...(authenticatedLayout.children as AnyRoute[]),
+    ...added.authenticated,
+  ])
+  return withChildren(routeTree, [
+    ...rootChildren.map((route) => (route === authenticatedLayout ? authenticatedView : route)),
+    ...added.public,
+  ])
+}
+
+function withChildren<TRoute extends AnyRoute>(route: TRoute, children: AnyRoute[]): TRoute {
+  return new Proxy(route, {
+    get: (target, property) => (property === 'children' ? children : Reflect.get(target, property)),
+  })
 }
 
 /** Full URL path of every route below `route`, read from the route options. */
