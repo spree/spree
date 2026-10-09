@@ -489,6 +489,14 @@ describe Spree::Preferences::Preferable, type: :model do
       expect(record.preferred_limit).to eq(42)
     end
 
+    it 'treats whitespace alone as unset for a nullable number' do
+      preferable_class.preference :cap, :integer, default: 5, nullable: true
+
+      record.set_preference(:cap, '   ')
+
+      expect(record.preferences[:cap]).to be_nil
+    end
+
     it 'refuses to expose a name that is not a preference or is already a method' do
       expect { preferable_class.exposes_preferences :not_declared }.to raise_error(ArgumentError, /no preference/)
       expect { preferable_class.exposes_preferences :flavor }.to raise_error(ArgumentError, /a method of that name exists/)

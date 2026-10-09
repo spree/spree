@@ -349,8 +349,12 @@ module Spree::Preferences::Preferable
     end
   end
 
-  def blank_preference_value?(value)
-    value.nil? || (value.respond_to?(:empty?) && value.empty?)
+  # Whitespace alone is no number or boolean, so for those it is blank too; a
+  # string keeps it.
+  def blank_preference_value?(value, type = nil)
+    return true if value.nil? || (value.respond_to?(:empty?) && value.empty?)
+
+    %i[integer boolean].include?(type) && value.is_a?(String) && value.strip.empty?
   end
 
   def convert_preference_value(value, type, nullable: false)
@@ -374,14 +378,14 @@ module Spree::Preferences::Preferable
       decimal_value ||= 0 unless nullable
       decimal_value.nil? ? nil : Spree::Money::Rounding.parse_decimal(decimal_value)
     when :integer
-      if blank_preference_value?(value)
+      if blank_preference_value?(value, :integer)
         nullable ? nil : 0
       else
         INTEGER_TYPE.cast(value) || 0
       end
     when :boolean
       # An explicit false is kept: it is neither nil nor empty.
-      if blank_preference_value?(value)
+      if blank_preference_value?(value, :boolean)
         nullable ? nil : false
       else
         BOOLEAN_TYPE.cast(value)
