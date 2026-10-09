@@ -104,10 +104,6 @@ describe Spree::DeliveryRate, type: :model do
 
   # Regression test for #3829
   context '#delivery_method' do
-    it 'can be retrieved' do
-      expect(shipping_rate.delivery_method.reload).to eq(delivery_method)
-    end
-
     it 'can be retrieved even when deleted' do
       delivery_method.update_column(:deleted_at, Time.current)
       shipping_rate.save
@@ -121,10 +117,6 @@ describe Spree::DeliveryRate, type: :model do
 
     before do
       shipping_rate.tax_rate = tax_rate
-    end
-
-    it 'can be retrieved' do
-      expect(shipping_rate.tax_rate.reload).to eq(tax_rate)
     end
 
     it 'can be retrieved even when deleted' do

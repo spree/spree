@@ -45,10 +45,10 @@ RSpec.describe Spree::GiftCard, type: :model do
   end
 
   describe 'Scopes' do
-    let(:active_gift_card) { create(:gift_card, status: :active) }
-    let(:redeemed_gift_card) { create(:gift_card, status: :redeemed) }
-    let(:partially_redeemed_gift_card) { create(:gift_card, status: :partially_redeemed) }
-    let(:expired_gift_card) { create(:gift_card, expires_at: Date.current, status: :active) }
+    let!(:active_gift_card) { create(:gift_card, status: :active) }
+    let!(:redeemed_gift_card) { create(:gift_card, status: :redeemed) }
+    let!(:partially_redeemed_gift_card) { create(:gift_card, status: :partially_redeemed) }
+    let!(:expired_gift_card) { create(:gift_card, expires_at: Date.current, status: :active) }
 
     describe '#masked_code' do
       it 'shows only the last four characters' do
@@ -57,8 +57,8 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
 
     describe '#active' do
-      it 'returns active gift cards' do
-        expect(described_class.active).to contain_exactly(active_gift_card)
+      it 'returns unexpired active and partially redeemed gift cards' do
+        expect(described_class.active).to contain_exactly(active_gift_card, partially_redeemed_gift_card)
       end
     end
 

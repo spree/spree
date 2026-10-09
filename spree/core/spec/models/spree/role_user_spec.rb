@@ -16,8 +16,6 @@ describe Spree::RoleUser do
       spree_role_user = described_class.create!(role: role, user: spree_user)
       admin_role_user = described_class.create!(role: role, user: admin_user)
 
-      expect(spree_user).not_to eq(admin_user)
-
       expect(spree_role_user.user).to eq(spree_user)
       expect(spree_role_user.user_type).to eq(spree_user.class.to_s)
 

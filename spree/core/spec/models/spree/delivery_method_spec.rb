@@ -141,7 +141,6 @@ describe Spree::DeliveryMethod, type: :model do
                                                                                                               ])
 
       expect(described_class.calculators).to eq([Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator])
-      expect(described_class.calculators).not_to eq([Spree::Calculator::FlatRate])
     end
   end
 

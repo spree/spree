@@ -206,7 +206,7 @@ module Spree
 
             allow(subject).to receive(:delivery_methods).and_return(shipping_methods)
 
-            subject.delivery_rates(package)
+            expect(subject.delivery_rates(package).map { |rate| [rate.cost, rate.selected] }).to eq [[1.00, true]]
           end
         end
 

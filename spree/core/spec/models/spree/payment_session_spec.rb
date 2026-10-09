@@ -283,18 +283,20 @@ RSpec.describe Spree::PaymentSession, type: :model do
       expect(payment_session.find_or_create_payment!.id).to eq(payment_session.payment.id)
     end
 
-    it 'handles RecordNotUnique by returning the existing payment' do
-      existing = create(:payment,
-                        order: order,
-                        payment_method: payment_method,
-                        response_code: payment_session.external_id,
-                        amount: payment_session.amount)
-
-      # Simulate a race condition where find_or_create_by! raises RecordNotUnique
-      allow(order.payments).to receive(:find_or_create_by!).and_raise(ActiveRecord::RecordNotUnique)
+    it 'handles RecordNotUnique by returning the payment a concurrent request created' do
+      existing = nil
+      allow(payment_session.owner.payments).to receive(:find_or_create_by!) do
+        existing = create(:payment,
+                          order: order,
+                          payment_method: payment_method,
+                          response_code: payment_session.external_id,
+                          amount: payment_session.amount)
+        raise ActiveRecord::RecordNotUnique
+      end
 
       payment = payment_session.find_or_create_payment!
 
+      expect(payment_session.owner.payments).to have_received(:find_or_create_by!)
       expect(payment.id).to eq(existing.id)
     end
   end
