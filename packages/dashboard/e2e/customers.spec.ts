@@ -231,9 +231,9 @@ test.describe('customers', () => {
     await expect(page.getByText(/40\.00/).first()).toBeVisible({ timeout: 15_000 })
   })
 
-  // The Edit dialog locks currency to the credit's currency, so editing an EUR
-  // credit must parse the new amount under the EUR market locale too. Issue in
-  // EUR, then edit to another comma-decimal value and confirm it round-trips.
+  // Editing an EUR credit reads the new amount in the admin's own number
+  // format. Issue in EUR, then edit to a comma-decimal value and confirm it
+  // round-trips.
   test('edits an EUR store credit with a localized amount', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)

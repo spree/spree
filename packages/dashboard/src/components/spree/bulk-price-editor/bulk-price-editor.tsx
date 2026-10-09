@@ -464,9 +464,9 @@ export function BulkPriceEditor({
       // Typing a price into the trailing blank row is what creates the rung.
       const promoted = promoteBlankRow(rowId)
       const targetId = promoted ?? rowId
-      // Normalized on commit, from the currency's market locale, so an edit
+      // Normalized on commit, from the admin's own number format, so an edit
       // holds the same canonical `"1234.56"` the API returns. The cell then
-      // shows exactly what Save will send (docs/plans/5.5-client-side-money-normalization.md).
+      // shows exactly what Save will send.
       const canonical = normalizeMoneyInput(next, moneyLocale) || null
 
       setEdits((prev) => {

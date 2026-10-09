@@ -1,12 +1,13 @@
 import type { Customer } from '@spree/admin-sdk'
-import { useStore } from '@spree/dashboard-core'
+import { useMoneyLocale, useStore } from '@spree/dashboard-core'
 import { Card, CardContent, RelativeTime } from '@spree/dashboard-ui'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { formatAmount } from '../../../lib/delivery-method-summary'
 
 export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const { defaultCurrency } = useStore()
   const orders = customer.orders_count ?? 0
   const totalSpent = Number(customer.total_spent ?? '0')
@@ -15,7 +16,7 @@ export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) 
   // period-decimal figure into it mixes separators (`1.234,56 €` → `1234.57 €`).
   const aovDisplay =
     orders > 0 && totalSpent > 0
-      ? formatAmount(totalSpent / orders, defaultCurrency, i18n.language)
+      ? formatAmount(totalSpent / orders, defaultCurrency, moneyLocale)
       : '—'
 
   return (

@@ -52,11 +52,10 @@ module Spree
           return [] if bases_sum <= 0
 
           total = [amount_for(bases_sum, value, value_type, order.currency), bases_sum].min
-          total_units = Spree::Money::Rounding.to_minor_units(total, order.currency)
-          shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(total_units, bases)
+          shares = Spree::Adjusters::LargestRemainder.apportion(total, bases, order.currency)
 
           line_items.each_with_index.filter_map do |line_item, index|
-            amount = -Spree::Money::Rounding.from_minor_units(shares[index], order.currency)
+            amount = -shares[index]
             next if amount.zero?
 
             create_row(order, line_item, label, amount, value, value_type)

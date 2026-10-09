@@ -20,6 +20,18 @@ module Spree
         end
         shares
       end
+
+      # Splits an amount across weights in the currency's minor units, so the
+      # shares are amounts that sum exactly to the one given.
+      #
+      # @param amount [BigDecimal]
+      # @param weights [Array<Numeric>] proportional bases (sum must be > 0)
+      # @param currency [String]
+      # @return [Array<BigDecimal>]
+      def apportion(amount, weights, currency)
+        units = Spree::Money::Rounding.to_minor_units(amount, currency)
+        largest_remainder_shares(units, weights).map { |share| Spree::Money::Rounding.from_minor_units(share, currency) }
+      end
     end
   end
 end

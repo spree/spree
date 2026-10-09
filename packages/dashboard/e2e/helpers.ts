@@ -538,3 +538,39 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
 
   return order as { id: string; number: string }
 }
+
+/**
+ * Switches the shared admin account and this browser to a dashboard language
+ * together, and returns a function that hands the account back its previous
+ * language. Call it before `login`, and the returned function in `afterEach`.
+ *
+ * Both must agree: when they differ the auth provider reloads to bring the
+ * browser in line with the account, and a reload during the boot refresh
+ * spends the single-use cookie twice — the loser is bounced to `/`
+ * unauthenticated. Other specs leave the shared account on whatever language
+ * they last saved, so this cannot assume it is unset.
+ */
+export async function switchAdminLocale(page: Page, locale: string): Promise<() => Promise<void>> {
+  const authHeaders = async () => {
+    const creds = getCredentials()
+    const res = await page.request.post('/api/v3/admin/auth/login', {
+      data: { email: creds.admin_email, password: creds.admin_password },
+    })
+    const { token } = (await res.json()) as { token: string }
+    return { Authorization: `Bearer ${token}` }
+  }
+
+  await page.addInitScript((value) => localStorage.setItem('spree-admin-locale', value), locale)
+  const headers = await authHeaders()
+  const me = await page.request.get('/api/v3/admin/me', { headers })
+  const saved = ((await me.json()) as { user: { selected_locale: string | null } }).user
+    .selected_locale
+  await page.request.patch('/api/v3/admin/me', { headers, data: { selected_locale: locale } })
+
+  return async () => {
+    await page.request.patch('/api/v3/admin/me', {
+      headers: await authHeaders(),
+      data: { selected_locale: saved },
+    })
+  }
+}

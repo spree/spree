@@ -4,8 +4,8 @@
 // dashboard converts here, in the browser, and never relies on the server to
 // parse comma-vs-period. See docs/plans/5.5-client-side-money-normalization.md.
 //
-// The locale is the currency's display locale (its market locale, e.g. EUR →
-// `de`), so the same locale drives both display formatting and this parse.
+// The locale is the admin's own (`useMoneyLocale`), the same one the field is
+// displayed in, so a value reads back exactly as it was shown.
 
 /**
  * Derives a locale's decimal and group separators via `Intl`. `fr` groups with

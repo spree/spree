@@ -11,21 +11,25 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
   describe '#call' do
     subject { presenter.call }
 
+    def money(amount)
+      Spree::Money::Rounding.format(amount, order.currency)
+    end
+
     it 'returns array with correct values' do
       expect(subject[0]).to eq order.number
       expect(subject[1]).to eq order.email
       expect(subject[2]).to eq order.status
       expect(subject[3]).to eq order.currency
-      expect(subject[4]).to eq order.item_total.to_f
-      expect(subject[5]).to eq order.shipment_total.to_f
-      expect(subject[6]).to eq order.tax_total.to_f
+      expect(subject[4]).to eq money(order.item_total)
+      expect(subject[5]).to eq money(order.delivery_total)
+      expect(subject[6]).to eq money(order.tax_total)
       expect(subject[7]).to eq order.included_tax_total.positive?
       expect(subject[8]).to eq(order.promo_total.negative? || line_item.promo_total.negative?)
       expect(subject[9]).to eq order.has_free_shipping?
-      expect(subject[10]).to eq order.promo_total.abs
+      expect(subject[10]).to eq money(order.discount_total.abs)
       expect(subject[11]).to eq order.promo_code
-      expect(subject[12]).to eq order.payments.store_credits.sum(:amount).abs
-      expect(subject[13]).to eq order.total.to_f
+      expect(subject[12]).to eq money(order.payments.store_credits.sum(:amount).abs)
+      expect(subject[13]).to eq money(order.total)
       expect(subject[17]).to eq line_item.product_id
       expect(subject[18]).to eq line_item.quantity
       expect(subject[19]).to eq line_item.sku

@@ -25,12 +25,10 @@ interface Props {
  * in form state the same way. No server fetch, no edit-tracking map: the
  * parent form's `isDirty` is the single source of truth for save gating.
  *
- * Amounts are STRINGS, not numbers. The merchant's raw input flows straight
- * through to the API; the backend's `Spree::LocalizedNumber.parse` handles
- * locale-aware parsing (comma decimals, grouped digits, etc.) so the
- * frontend doesn't have to reimplement it. Frontend coercion via `Number()`
- * would silently mangle inputs like `"1.234,56"` into `NaN` and drop the
- * price entirely.
+ * Amounts are STRINGS, not numbers: canonical `"1234.56"` in form state and
+ * on the wire, normalized from the admin's own number format as each cell
+ * commits. `Number()` coercion would lose precision and turn `"1.234,56"`
+ * into `NaN`.
  */
 export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
   const { t } = useTranslation()

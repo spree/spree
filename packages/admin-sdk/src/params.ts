@@ -201,11 +201,8 @@ export interface LineItemUpdateParams {
 export interface PaymentCreateParams {
   payment_method_id: string
   /**
-   * Decimal amount. Accept `string` so callers can ship the merchant's
-   * raw input verbatim — `Spree::LocalizedNumber.parse` handles
-   * locale-aware decoding (comma decimals, grouped digits, etc.) on the
-   * backend; `Number()`-coercing on the frontend would mangle inputs
-   * like `"1.234,56"` into `NaN`.
+   * Decimal amount as a canonical string (`"1234.56"`: period decimal, no
+   * grouping). The API does not parse localized input; normalize it first.
    */
   amount?: string | number
   source_id?: string
@@ -1164,11 +1161,8 @@ export interface VariantOptionPair {
 export interface VariantPrice {
   currency: string
   /**
-   * Decimal amount. Accept `string` so callers ship the merchant's raw
-   * input verbatim — `Spree::LocalizedNumber.parse` on the backend
-   * handles locale-aware decoding (comma decimals, grouped digits, etc.);
-   * `Number()`-coercing in the frontend mangles inputs like `"1.234,56"`
-   * into `NaN`.
+   * Decimal amount as a canonical string (`"1234.56"`: period decimal, no
+   * grouping). The API does not parse localized input; normalize it first.
    */
   amount: string | number
   compare_at_amount?: string | number | null

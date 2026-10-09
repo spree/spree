@@ -149,12 +149,10 @@ module Spree
         bases_sum = bases.sum
         return if bases_sum <= 0
 
-        currency = order.currency
-        total_units = Spree::Money::Rounding.to_minor_units([chosen[:amount].abs, bases_sum].min, currency)
-        shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(total_units, bases)
+        shares = Spree::Adjusters::LargestRemainder.apportion([chosen[:amount].abs, bases_sum].min, bases, order.currency)
 
         line_items.each_with_index do |line_item, index|
-          amount = -Spree::Money::Rounding.from_minor_units(shares[index], currency)
+          amount = -shares[index]
           next if amount.zero?
 
           persist_discount(line_item, chosen, amount)

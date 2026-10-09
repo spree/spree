@@ -192,6 +192,12 @@ module Spree
         quantize(BigDecimal(amount.to_s) * 100, 0).to_i
       end
 
+      # @param hundredths [Integer] as {#to_hundredths} returns
+      # @return [BigDecimal]
+      def from_hundredths(hundredths)
+        BigDecimal(hundredths) / 100
+      end
+
       # Whether an amount is missing or zero. Text that is not a number is
       # neither, so a malformed value is never mistaken for "nothing to pay".
       #

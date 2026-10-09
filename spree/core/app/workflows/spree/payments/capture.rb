@@ -86,6 +86,8 @@ module Spree
           if Spree::Payment.where(id: payment.id, status: 'completed').exists?
             already_captured = true
           else
+            # Read in the Money gem's minor units, as before; the gateway amount
+            # carries its currency once A2 lands (money plan).
             payment.capture_events.create!(amount: ::Money.new(@amount, payment.currency).to_d)
             # Split before completing, so payment.completed publishes with
             # the captured amount and the order recomputes from correct rows.

@@ -285,8 +285,7 @@ function AddPaymentDialog({
       : adminClient.orders.payments.create(orderId, {
           payment_method_id: paymentMethodId,
           ...(sourceId ? { source_id: sourceId } : {}),
-          // Ship raw merchant input; `Spree::LocalizedNumber.parse` on the
-          // backend handles locale-aware decoding (comma decimals etc.).
+          // A number input, so the value is already canonical ("49.5").
           ...(amount ? { amount } : {}),
         }),
   )

@@ -14,15 +14,17 @@ namespace :spree do
     DESC
     task audit_capture_events: :environment do
       listed = 0
+      # The wrong records were written with the Money gem's exponent, which
+      # differs from ISO 4217 for a few currencies (forint, ariary).
+      codes = ::Money::Currency.all.reject { |currency| currency.exponent == 2 }.map(&:iso_code)
+      in_codes = [Spree::Order, Spree::Cart, Spree::OrderGroup].map { |owner| owner.arel_table[:currency].in(codes) }.reduce(:or)
 
-      Spree::PaymentCaptureEvent.includes(payment: [:order, :cart, :order_group]).find_each do |event|
+      Spree::PaymentCaptureEvent.left_joins(payment: [:order, :cart, :order_group]).where(in_codes)
+                                .includes(payment: [:order, :cart, :order_group]).find_each do |event|
         payment = event.payment
         next if payment.nil?
 
-        # The wrong records were written with the Money gem's exponent, which
-        # differs from ISO 4217 for a few currencies (forint, ariary).
-        exponent = (::Money::Currency.find(payment.currency) || ::Money::Currency.find('USD')).exponent
-        next if exponent == 2
+        exponent = ::Money::Currency.find(payment.currency).exponent
 
         corrected = event.amount * (10**exponent) / 100
         puts [

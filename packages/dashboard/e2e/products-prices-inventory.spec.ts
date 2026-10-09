@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { expect, type Locator, type Page, test } from '@playwright/test'
-import { getCredentials, gotoIndex, login } from './helpers'
+import { gotoIndex, login, switchAdminLocale } from './helpers'
 import { E2E_DIR } from './paths'
 import {
   addOptionToVariants,
@@ -317,34 +317,10 @@ test.describe('product prices — number format', () => {
   })
 
   test.describe('in German', () => {
-    let savedLocale: string | null = null
+    let restoreLocale: () => Promise<void> = async () => {}
 
-    async function authHeaders(page: Page) {
-      const creds = getCredentials()
-      const res = await page.request.post('/api/v3/admin/auth/login', {
-        data: { email: creds.admin_email, password: creds.admin_password },
-      })
-      const { token } = (await res.json()) as { token: string }
-      return { Authorization: `Bearer ${token}` }
-    }
-
-    // Switch the shared account and the browser together: when they disagree
-    // the dashboard reloads mid-boot (see validation-messages.spec.ts).
-    async function speakGerman(page: Page): Promise<void> {
-      await page.addInitScript(() => localStorage.setItem('spree-admin-locale', 'de'))
-      const headers = await authHeaders(page)
-      const me = await page.request.get('/api/v3/admin/me', { headers })
-      savedLocale = ((await me.json()) as { user: { selected_locale: string | null } }).user
-        .selected_locale
-      await page.request.patch('/api/v3/admin/me', { headers, data: { selected_locale: 'de' } })
-    }
-
-    test.afterEach(async ({ page }) => {
-      const headers = await authHeaders(page)
-      await page.request.patch('/api/v3/admin/me', {
-        headers,
-        data: { selected_locale: savedLocale },
-      })
+    test.afterEach(async () => {
+      await restoreLocale()
     })
 
     test('a German-speaking admin types every currency with a comma, and repeated saves keep it', async ({
@@ -353,7 +329,7 @@ test.describe('product prices — number format', () => {
       const creds = await login(page)
       const productName = `E2E Comma ${Date.now()}`
       await createProduct(page, creds.store_id, productName)
-      await speakGerman(page)
+      restoreLocale = await switchAdminLocale(page, 'de')
       await page.reload()
 
       const prices = germanPricesCard(page)

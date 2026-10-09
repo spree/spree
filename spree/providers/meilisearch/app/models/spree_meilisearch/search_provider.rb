@@ -443,10 +443,11 @@ module SpreeMeilisearch
     # The bound as a plain decimal, or nil for anything else, so a malformed
     # or enormous price never reaches the filter expression.
     def price_filter_value(value)
-      text = value.to_s.strip
-      return unless text.length <= 32 && text.match?(Spree::Money::Rounding::CANONICAL_DECIMAL)
+      return if value.to_s.length > 32
 
-      Spree::Money::Rounding.format_decimal(text)
+      Spree::Money::Rounding.format_decimal(Spree::Money::Rounding.parse_decimal(value.to_s))
+    rescue Spree::Money::InvalidFormat
+      nil
     end
 
     def format_custom_field_filter_value(value, numeric)

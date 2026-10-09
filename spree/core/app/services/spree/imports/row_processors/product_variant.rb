@@ -89,10 +89,9 @@ module Spree
 
         def ensure_decimals!
           DECIMAL_FIELDS.each do |column|
-            text = attributes[column].to_s.strip
-            next if text.empty? || text.match?(Spree::Money::Rounding::CANONICAL_DECIMAL)
-
-            raise ArgumentError, I18n.t('spree.import_invalid_number', column: column, value: text)
+            Spree::Money::Rounding.parse_decimal(attributes[column])
+          rescue Spree::Money::InvalidFormat
+            raise ArgumentError, I18n.t('spree.import_invalid_number', column: column, value: attributes[column].to_s.strip)
           end
         end
 

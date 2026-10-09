@@ -26,7 +26,7 @@ module Spree
       else
         action = lambda do |store_credit|
           store_credit.authorize(
-            BigDecimal(amount_in_cents) / 100,
+            Spree::Money::Rounding.from_hundredths(amount_in_cents),
             gateway_options[:currency],
             action_originator: gateway_options[:originator]
           )
@@ -38,7 +38,7 @@ module Spree
     def capture(amount_in_cents, auth_code, gateway_options = {})
       action = lambda do |store_credit|
         store_credit.capture(
-          BigDecimal(amount_in_cents) / 100,
+          Spree::Money::Rounding.from_hundredths(amount_in_cents),
           auth_code,
           gateway_options[:currency],
           action_originator: gateway_options[:originator]
@@ -49,7 +49,7 @@ module Spree
 
     def purchase(amount_in_cents, store_credit, gateway_options = {})
       eligible_events = store_credit.store_credit_events.where(
-        amount: BigDecimal(amount_in_cents) / 100,
+        amount: Spree::Money::Rounding.from_hundredths(amount_in_cents),
         action: Spree::StoreCredit::ELIGIBLE_ACTION
       )
       event = eligible_events.detect do |eligible_event|
@@ -76,7 +76,7 @@ module Spree
         currency = gateway_options[:currency] || store_credit.currency
         originator = gateway_options[:originator]
 
-        store_credit.credit(BigDecimal(amount_in_cents) / 100, auth_code, currency, action_originator: originator)
+        store_credit.credit(Spree::Money::Rounding.from_hundredths(amount_in_cents), auth_code, currency, action_originator: originator)
       end
 
       handle_action(action, :credit, auth_code)
