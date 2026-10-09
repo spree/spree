@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { AuthProvider } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
-import { adminClient, useAuth } from '@spree/dashboard-core'
+import { adminClient, Slot, useAuth } from '@spree/dashboard-core'
 import { Button, Input, Label, Skeleton } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
@@ -50,6 +50,8 @@ function LoginPage() {
         isLoading={isLoadingProviders}
         failed={providersFailed}
       />
+
+      <Slot name="login.after" />
     </AuthShell>
   )
 }
