@@ -701,6 +701,7 @@
                           "developer/core-concepts/translations",
                           "developer/core-concepts/slugs",
                           "developer/core-concepts/metafields",
+                          "developer/core-concepts/external-references",
                           "developer/core-concepts/imports-exports",
                           "developer/core-concepts/reporting"
                         ]
@@ -2164,6 +2165,7 @@
                   "developer/core-concepts/translations",
                   "developer/core-concepts/slugs",
                   "developer/core-concepts/metafields",
+                  "developer/core-concepts/external-references",
                   "developer/core-concepts/imports-exports",
                   "developer/core-concepts/reporting"
                 ]
