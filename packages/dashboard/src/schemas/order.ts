@@ -5,12 +5,7 @@ import {
   type OrderUpdateParams,
   sumMoney,
 } from '@spree/admin-sdk'
-import {
-  formatMoney,
-  fulfilledQuantities,
-  type GroupableFulfillment,
-  i18n,
-} from '@spree/dashboard-core'
+import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 /**
@@ -173,11 +168,6 @@ export function orderToEditForm(
   const fulfilled = fulfilledQuantities(fulfillments)
 
   return { items: items.map((item) => lineItemToEditRow(item, fulfilled.get(item.id) ?? 0)) }
-}
-
-/** Formats a client-computed preview amount. */
-export function formatAmount(amount: string, currency: string): string {
-  return formatMoney(amount, currency, i18n.language)
 }
 
 /** The price a row lands on once saved, or null when it cannot be known. */

@@ -1,10 +1,9 @@
 import type { Claim, Exchange, Return } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-import { Money } from '../components/spree/money'
 import { translatedLabel } from '../lib/translated-label'
 
 /**

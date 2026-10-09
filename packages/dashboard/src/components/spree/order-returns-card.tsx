@@ -1,6 +1,7 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
 import {
   currencyParts,
+  formatAmount,
   isPositiveMoney,
   returnOwesNothing,
   returnRefundSummary,
@@ -40,7 +41,6 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
-import { formatAmount } from '../../lib/format-amount'
 import { variantLabel } from '../../lib/variant-label'
 import { ShippingDocuments } from './orders/shipping-documents'
 import { ShippingLabelRow } from './orders/shipping-label-row'

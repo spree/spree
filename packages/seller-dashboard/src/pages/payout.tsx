@@ -1,6 +1,7 @@
 import {
   formatMoney,
   formatStoreDateTime,
+  Money,
   PageHeader,
   Slot,
   useMoneyLocale,
@@ -128,7 +129,7 @@ export function PayoutPage() {
                       {t(`earnings.kinds.${transfer.kind}`, { defaultValue: transfer.kind })}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {formatMoney(transfer.amount, transfer.currency, locale)}
+                      <Money amount={transfer.amount} currency={transfer.currency} />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -148,7 +149,7 @@ export function PayoutPage() {
             </CardHeader>
             <div className="flex flex-col gap-3 px-6 pb-6">
               <ReadRow label={t('payouts.columns.amount')}>
-                {formatMoney(payout.amount, payout.currency, locale)}
+                <Money amount={payout.amount} currency={payout.currency} />
               </ReadRow>
               <ReadRow label={t('payouts.columns.reference')}>{payout.reference}</ReadRow>
               <ReadRow label={t('payouts.detail.period')}>

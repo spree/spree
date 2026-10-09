@@ -1,6 +1,7 @@
 import {
   adminClient,
   formatStoreDateTime,
+  Money,
   PageHeader,
   Slot,
   Subject,
@@ -28,7 +29,6 @@ import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Money } from '../../../../../components/spree/money'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { PayoutCompleteDialog } from '../../../../../components/spree/sellers/payout-complete-dialog'
 import { ReadRow } from '../../../../../components/spree/sellers/seller-read-row'

@@ -1,4 +1,5 @@
 import type { Customer, StoreCredit } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -23,7 +24,6 @@ import { EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from '@spree/da
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDeleteCustomerStoreCredit } from '../../../hooks/use-customer-store-credits'
-import { Money } from '../money'
 import { EditStoreCreditDialog } from '../store-credits/edit-store-credit-dialog'
 import { IssueStoreCreditDialog } from '../store-credits/issue-store-credit-dialog'
 

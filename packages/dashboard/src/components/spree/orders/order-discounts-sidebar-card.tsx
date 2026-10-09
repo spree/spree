@@ -1,6 +1,6 @@
 import type { Order } from '@spree/admin-sdk'
 import { isZeroMoney } from '@spree/admin-sdk'
-import { adminClient, useResourceKey } from '@spree/dashboard-core'
+import { adminClient, Money, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -27,7 +27,6 @@ import { useQuery } from '@tanstack/react-query'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
-import { Money } from '../money'
 
 export function DiscountsCard({ order }: { order: Order }) {
   const { t } = useTranslation()

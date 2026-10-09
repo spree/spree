@@ -1,5 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
-import { adminClient, currencyParts } from '@spree/dashboard-core'
+import { adminClient, currencyParts, Money } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -54,7 +54,6 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { useOrderGroup } from '../../../hooks/use-seller-ledger'
-import { Money } from '../money'
 
 export function PaymentsCard({ order }: { order: Order }) {
   const { t } = useTranslation()

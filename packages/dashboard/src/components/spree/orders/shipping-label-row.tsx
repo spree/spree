@@ -1,5 +1,5 @@
 import type { ShippingLabel } from '@spree/admin-sdk'
-import { downloadFromApi, getApiClient, useAuth } from '@spree/dashboard-core'
+import { downloadFromApi, getApiClient, Money, useAuth } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -13,7 +13,6 @@ import {
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PrinterIcon, ReceiptIcon, TrashIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Money } from '../money'
 
 /**
  * The label bound to a parcel: what it cost, how to print it, and how to give

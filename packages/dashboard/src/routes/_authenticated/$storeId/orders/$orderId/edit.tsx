@@ -4,6 +4,7 @@ import {
   adminClient,
   GONE_STATUSES,
   isPositiveMoney,
+  Money,
   mapSpreeErrorsToForm,
   PageHeader,
 } from '@spree/dashboard-core'
@@ -28,13 +29,11 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { Money } from '../../../../../components/spree/money'
 import { AddLineItemDialog } from '../../../../../components/spree/orders/line-item-dialogs'
 import { OrderEditItemsTable } from '../../../../../components/spree/orders/order-edit-items-table'
 import { useOrder, useOrderMutation } from '../../../../../hooks/use-order'
 import {
   buildOrderItemsPayload,
-  formatAmount,
   type OrderEditFormValues,
   type OrderEditItemValues,
   type OrderItemsPayload,
@@ -86,7 +85,7 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
                   <Money amount={order.item_total} currency={order.currency} />
                 </span>
                 <span className="font-medium">
-                  {formatAmount(projected as string, order.currency)}
+                  <Money amount={projected} currency={order.currency} />
                 </span>
               </span>
             ) : (
@@ -134,7 +133,9 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
                 <span className="font-normal text-muted-foreground line-through">
                   <Money amount={order.total} currency={order.currency} />
                 </span>
-                <span>{formatAmount(projected as string, order.currency)}</span>
+                <span>
+                  <Money amount={projected} currency={order.currency} />
+                </span>
               </span>
             ) : (
               <Money amount={order.total} currency={order.currency} />

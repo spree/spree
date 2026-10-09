@@ -1,5 +1,5 @@
 import type { Claim, Exchange, Order } from '@spree/admin-sdk'
-import { isPositiveMoney } from '@spree/dashboard-core'
+import { isPositiveMoney, Money } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -38,7 +38,6 @@ import {
   useOrderExchanges,
 } from '../../hooks/use-post-sale'
 import { variantLabel } from '../../lib/variant-label'
-import { Money } from './money'
 import {
   CreateClaimDialog,
   CreateExchangeDialog,

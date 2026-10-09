@@ -12,6 +12,7 @@ import type {
 import {
   adminClient,
   defineSearchEntry,
+  formatAmount,
   Subject,
   searchRegistry,
   useMoneyLocale,
@@ -28,7 +29,6 @@ import {
   UsersRoundIcon,
 } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { formatAmount } from '../lib/format-amount'
 
 // Each entry teaches the command palette how to search one resource: how to
 // fetch matches, render a result row, and where a row navigates. Resources are

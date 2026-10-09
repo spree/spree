@@ -1,13 +1,12 @@
 import type { Order } from '@spree/admin-sdk'
 import { isZeroMoney } from '@spree/admin-sdk'
-import { isPositiveMoney, LocaleLabel, useStore } from '@spree/dashboard-core'
+import { isPositiveMoney, LocaleLabel, Money, useStore } from '@spree/dashboard-core'
 import { Card, CardHeader, CardTitle, cn, Separator } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActorLabel } from '../actor-label'
-import { Money } from '../money'
 
 function formatDate(iso: string | null) {
   if (!iso) return '—'

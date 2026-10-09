@@ -1,9 +1,8 @@
 import type { PurchaseOrder } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { TruckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { Money } from '../components/spree/money'
 import { supplierAutocompleteProps } from '../hooks/use-suppliers'
 import { isClosed, PURCHASE_ORDER_STATUSES } from '../schemas/inventory-operations'
 

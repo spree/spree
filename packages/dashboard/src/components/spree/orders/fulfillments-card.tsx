@@ -1,8 +1,10 @@
 import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
 import {
   type FulfillmentItemRow,
+  formatAmount,
   fulfillmentItemRows,
   isPositiveMoney,
+  Money,
   unfulfilledItemRows,
   useMoneyLocale,
   useStockLocations,
@@ -60,9 +62,7 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
-import { formatAmount } from '../../../lib/format-amount'
 import { printPackingSlip } from '../../../lib/packing-slip'
-import { Money } from '../money'
 import { FulfillmentDeliveries } from './fulfillment-deliveries'
 import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'

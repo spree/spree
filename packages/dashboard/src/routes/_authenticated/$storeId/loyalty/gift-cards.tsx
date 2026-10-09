@@ -61,7 +61,7 @@ import {
   giftCardSingleValuesToParams,
 } from '../../../../schemas/gift-card'
 import '../../../../tables/gift-cards'
-import { Money } from '../../../../components/spree/money'
+import { Money } from '@spree/dashboard-core'
 
 const giftCardsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

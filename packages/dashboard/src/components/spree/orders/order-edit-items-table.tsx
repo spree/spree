@@ -1,4 +1,5 @@
 import { compareMoney, isDecimalString, multiplyMoney } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -16,12 +17,10 @@ import { PackageIcon, RotateCcwIcon, Undo2Icon, XIcon } from '@spree/dashboard-u
 import { Controller, type FieldArrayWithId, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
-  formatAmount,
   type OrderEditFormValues,
   projectedLineTotal,
   projectedPrice,
 } from '../../../schemas/order'
-import { Money } from '../money'
 
 /**
  * The staged items table. Every control writes to form state only; nothing is
@@ -255,14 +254,16 @@ function OrderEditItemRow({
           projectedTotal === null ? (
             '—'
           ) : (
-            formatAmount(projectedTotal, currency)
+            <Money amount={projectedTotal} currency={currency} />
           )
         ) : totalChanged ? (
           <span className="flex items-center justify-end gap-2">
             <span className="text-muted-foreground line-through">
               <Money amount={row.total} currency={currency} />
             </span>
-            <span className="font-medium">{formatAmount(projectedTotal as string, currency)}</span>
+            <span className="font-medium">
+              <Money amount={projectedTotal} currency={currency} />
+            </span>
           </span>
         ) : (
           <Money amount={row.total} currency={currency} />

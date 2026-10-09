@@ -1,4 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -10,7 +11,6 @@ import {
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { Money } from '../money'
 
 export function CustomerLastOrderCard({ order }: { order: Order }) {
   const { t } = useTranslation()

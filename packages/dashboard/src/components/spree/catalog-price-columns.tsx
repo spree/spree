@@ -1,4 +1,5 @@
 import type { CatalogPrice } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import type { ProductMembershipRow, SubRowLayout } from '@spree/dashboard-ui'
 import {
   Badge,
@@ -9,7 +10,6 @@ import {
   TooltipTrigger,
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
-import { Money } from './money'
 
 const AGREEMENT_SOURCES = ['explicit', 'automatic'] as const
 

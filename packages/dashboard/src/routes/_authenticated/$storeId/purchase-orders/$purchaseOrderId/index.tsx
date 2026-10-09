@@ -2,6 +2,7 @@ import type { PurchaseOrder, PurchaseOrderItem } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  Money,
   PageHeader,
   Slot,
   Subject,
@@ -38,7 +39,6 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
-import { Money } from '../../../../../components/spree/money'
 import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'

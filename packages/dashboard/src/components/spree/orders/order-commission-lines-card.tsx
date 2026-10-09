@@ -1,4 +1,5 @@
 import type { CommissionLine, Order } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -15,7 +16,6 @@ import { PercentIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useOrderCommissionLines } from '../../../hooks/use-order'
 import { commissionRateLabel } from '../../../lib/commission-line-rate-label'
-import { Money } from '../money'
 
 function commissionSubjectLabel(line: CommissionLine, order: Order, t: (key: string) => string) {
   if (line.line_item_id) {

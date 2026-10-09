@@ -1,12 +1,11 @@
 import { type Fulfillment, isZeroMoney, type Order, SpreeError } from '@spree/admin-sdk'
-import { useMoneyLocale, useStockLocations } from '@spree/dashboard-core'
+import { formatAmount, useMoneyLocale, useStockLocations } from '@spree/dashboard-core'
 import { FulfillmentEditDialog as SharedFulfillmentEditDialog } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 import { useOrder } from '../../../hooks/use-order'
 import { useStockCoverage } from '../../../hooks/use-stock-coverage'
-import { formatAmount } from '../../../lib/format-amount'
 
 /**
  * Where the fulfillment ships from and which priced service carries it.

@@ -1,4 +1,5 @@
 import type { Customer, Order } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Badge,
   Card,
@@ -17,7 +18,6 @@ import {
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { Money } from '../money'
 
 export function CustomerOrdersCard({
   customer,

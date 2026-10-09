@@ -2,6 +2,8 @@ import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
 import { isZeroMoney } from '@spree/admin-sdk'
 import {
   Can,
+  formatAmount,
+  Money,
   PageHeader,
   ResourceTable,
   resourceSearchSchema,
@@ -34,7 +36,6 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { Money } from '../../../../components/spree/money'
 import { EditStoreCreditDialog } from '../../../../components/spree/store-credits/edit-store-credit-dialog'
 import { IssueStoreCreditDialog } from '../../../../components/spree/store-credits/issue-store-credit-dialog'
 import { useDeleteCustomerStoreCredit } from '../../../../hooks/use-customer-store-credits'
@@ -44,7 +45,6 @@ import {
   useStoreCreditEvents,
 } from '../../../../hooks/use-store-credits'
 import { erasedFieldValue } from '../../../../lib/erased-customer'
-import { formatAmount } from '../../../../lib/format-amount'
 import { originLabel } from '../../../../tables/store-credits'
 
 const storeCreditsSearchSchema = resourceSearchSchema.extend({

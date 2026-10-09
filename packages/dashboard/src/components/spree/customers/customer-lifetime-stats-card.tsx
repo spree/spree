@@ -1,9 +1,8 @@
 import { type Customer, decimalPlaces } from '@spree/admin-sdk'
-import { isPositiveMoney, useMoneyLocale, useStore } from '@spree/dashboard-core'
+import { formatAmount, isPositiveMoney, useMoneyLocale, useStore } from '@spree/dashboard-core'
 import { Card, CardContent, RelativeTime } from '@spree/dashboard-ui'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { formatAmount } from '../../../lib/format-amount'
 
 export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) {
   const { t } = useTranslation()

@@ -1,5 +1,5 @@
 import type { SellerPayout } from '@spree/admin-sdk'
-import { useMoneyLocale } from '@spree/dashboard-core'
+import { formatAmount, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -17,7 +17,6 @@ import {
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCompletePayout } from '../../../hooks/use-seller-ledger'
-import { formatAmount } from '../../../lib/format-amount'
 
 /**
  * The operator saying a settlement reached the seller's bank.

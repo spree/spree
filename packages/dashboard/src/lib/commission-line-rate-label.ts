@@ -1,7 +1,6 @@
 import { type CommissionLine, isDecimalString, type Order } from '@spree/admin-sdk'
-import { prorateMoney } from '@spree/dashboard-core'
+import { formatAmount, prorateMoney } from '@spree/dashboard-core'
 import i18n, { type TFunction } from 'i18next'
-import { formatAmount } from './format-amount'
 
 function snapshottedFixedAmount(line: CommissionLine, order: Order, t: TFunction) {
   if (line.line_item_id) {

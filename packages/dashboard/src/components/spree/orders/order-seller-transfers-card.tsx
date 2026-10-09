@@ -1,5 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
-import { formatStoreDateTime, useStore } from '@spree/dashboard-core'
+import { formatStoreDateTime, Money, useStore } from '@spree/dashboard-core'
 import {
   Card,
   CardHeader,
@@ -16,7 +16,6 @@ import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useSellerTransfers } from '../../../hooks/use-seller-ledger'
-import { Money } from '../money'
 
 /**
  * What this order earned its seller, and what a refund has taken back.

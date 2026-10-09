@@ -7,7 +7,7 @@ import {
   type Order,
   sumMoney,
 } from '@spree/admin-sdk'
-import { adminClient, currencyParts, formatMoney, percentOf } from '@spree/dashboard-core'
+import { adminClient, currencyParts, formatMoney, Money, percentOf } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -71,7 +71,6 @@ import {
   type TaxLineGroup,
 } from '../../../lib/tax-line-groups'
 import { FEE_KINDS, SYSTEM_FEE_KINDS } from '../../../schemas/order'
-import { Money } from '../money'
 
 /** The API accepts any kind string, so unknown values fall back to the raw value. */
 function feeKindLabel(kind: string) {
