@@ -126,7 +126,7 @@ module Spree
           end
 
           attribute :preferred_default_minimum_payout_amount do |store|
-            Spree::Money::Rounding.format(store.preferred_default_minimum_payout_amount, store.default_currency)
+            Spree::Money::Rounding.format(store.preferred_default_minimum_payout_amount, store.default_currency, unit_price: true)
           end
 
           rate_attributes :preferred_default_commission_tax_rate

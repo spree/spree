@@ -13,7 +13,7 @@ module Spree
     include Spree::StorePreferences
     include Spree::CanonicalDecimals
 
-    canonical_decimals :amount, :compare_at_amount
+    canonical_decimals :amount, :compare_at_amount, places: Spree::Money::Rounding::UNIT_PRICE_DECIMALS
 
     publishes_lifecycle_events
 

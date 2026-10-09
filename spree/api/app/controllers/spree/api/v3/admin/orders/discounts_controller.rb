@@ -16,11 +16,16 @@ module Spree
               with_order_lock do
                 line_item = @parent.line_items.find_by_prefix_id!(params[:line_item_id]) if params[:line_item_id].present?
 
+                value_type = params[:value_type].presence || 'flat'
+                value_name = params[:value].present? ? :value : :amount
+                # A flat discount is money in the order's currency; a percentage is a rate.
+                value = value_type == 'percent' ? decimal_param(value_name) : money_param(value_name, @parent.currency)
+
                 result = Spree.order_discount_create_service.call(
                   order: @parent,
                   label: params[:label],
-                  value: params[:value].presence || params[:amount],
-                  value_type: params[:value_type].presence || 'flat',
+                  value: value,
+                  value_type: value_type,
                   line_item: line_item
                 )
 

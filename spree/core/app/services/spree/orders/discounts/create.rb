@@ -17,8 +17,8 @@ module Spree
         # @param line_item [Spree::LineItem, nil] nil distributes order-level
         # @return [Spree::ServiceModule::Result] value is the created rows
         def call(order:, label:, value:, value_type: 'flat', line_item: nil)
-          value = BigDecimal(value.to_s)
-          return failure(nil, I18n.t('spree.errors.messages.discount_value_must_be_positive')) unless value.positive?
+          value = Spree::Money::Rounding.parse_decimal(value)
+          return failure(nil, I18n.t('spree.errors.messages.discount_value_must_be_positive')) unless value&.positive?
           return failure(nil, I18n.t('spree.errors.messages.discount_value_type_invalid')) unless %w[flat percent].include?(value_type)
 
           rows = order.with_lock do
@@ -63,7 +63,7 @@ module Spree
         end
 
         def amount_for(base, value, value_type, currency)
-          value_type == 'percent' ? Spree::Money::Rounding.to_currency(base * value / 100, currency) : value
+          Spree::Money::Rounding.to_currency(value_type == 'percent' ? base * value / 100 : value, currency)
         end
 
         # Remaining discountable base: amount net of already-applied discounts.

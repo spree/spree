@@ -34,7 +34,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
         order_id: order.prefixed_id,
         line_item_id: line_item.prefixed_id,
         label: 'Appeasement',
-        value: 3,
+        value: '3.00',
         value_type: 'flat'
       }, as: :json
 
@@ -48,7 +48,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
       post :create, params: {
         order_id: order.prefixed_id,
         label: 'Order apology',
-        value: 4,
+        value: '4.00',
         value_type: 'flat'
       }, as: :json
 
@@ -62,7 +62,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
         order_id: order.prefixed_id,
         line_item_id: line_item.prefixed_id,
         label: 'Percent off',
-        value: 50,
+        value: '50',
         value_type: 'percent'
       }, as: :json
 

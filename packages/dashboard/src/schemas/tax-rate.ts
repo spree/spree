@@ -1,4 +1,4 @@
-import { compareMoney, type TaxRateParams } from '@spree/admin-sdk'
+import { compareMoney, isDecimalString, type TaxRateParams } from '@spree/admin-sdk'
 import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
@@ -9,7 +9,7 @@ export const taxRateFormSchema = z.object({
   rate_percent: z
     .string()
     .regex(/^\d+(\.\d+)?$/, { error: requiredMessage('tax_rate.amount') })
-    .refine((value) => compareMoney(value, '100') <= 0, {
+    .refine((value) => !isDecimalString(value) || compareMoney(value, '100') <= 0, {
       error: requiredMessage('tax_rate.amount'),
     }),
   // Required: a rate always taxes exactly one category.

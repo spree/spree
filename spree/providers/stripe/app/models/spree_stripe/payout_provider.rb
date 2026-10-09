@@ -321,7 +321,7 @@ module SpreeStripe
     end
 
     def minor_units(record)
-      SpreeStripe::Units.to_stripe(record.amount.abs, record.currency)
+      SpreeStripe::Units.to_stripe(record.amount.abs, record.currency, payout: true)
     end
 
     # Ties transfers paid from the platform balance to the checkout they

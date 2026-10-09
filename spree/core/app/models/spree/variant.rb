@@ -291,7 +291,8 @@ module Spree
     end
 
     # A blank value leaves these as they were rather than clearing them.
-    canonical_decimals :cost_price, :weight, :depth, :width, :height, ignore_blank: true
+    canonical_decimals :cost_price, places: Spree::Money::Rounding::UNIT_PRICE_DECIMALS, ignore_blank: true
+    canonical_decimals :weight, :depth, :width, :height, places: nil, ignore_blank: true
 
     accepts_nested_attributes_for(
       :stock_levels,

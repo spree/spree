@@ -15,6 +15,10 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::SingleStoreResource
+    include Spree::CanonicalDecimals
+
+    # A fraction (0.07125), held to the column's five decimals.
+    canonical_decimals :amount, places: 5
 
     with_options inverse_of: :tax_rates do
       belongs_to :tax_category,

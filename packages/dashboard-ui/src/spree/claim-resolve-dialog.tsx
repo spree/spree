@@ -95,7 +95,7 @@ export function ClaimResolveDialog({
   // say so here instead of letting the request fail.
   // The amount is the canonical decimal string a number input yields, so
   // "above zero" is unsigned digits with a non-zero digit among them.
-  const positiveAmount = /^\d*\.?\d+$/.test(amount) && /[1-9]/.test(amount)
+  const positiveAmount = /^(\d+(\.\d+)?|\.\d+)$/.test(amount) && /[1-9]/.test(amount)
   const ready =
     (!refunding || positiveAmount) && (!sendingReplacement || chosenReplacements.length > 0)
 

@@ -127,6 +127,15 @@ describe Spree::Price, type: :model do
       I18n.with_locale(:nl) { price.amount = '99.0' }
       expect(price.amount).to eq(BigDecimal('99'))
     end
+
+    it 'keeps a unit price to four decimals and refuses a fifth' do
+      price.amount = '0.0125'
+      expect(price).to be_valid
+
+      price.amount = '0.01255'
+      expect(price).not_to be_valid
+      expect(price.errors.details[:amount]).to include(error: :too_many_decimals, count: 4)
+    end
   end
 
   describe '#compare_at_amount=' do

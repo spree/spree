@@ -13714,8 +13714,11 @@ paths:
             application/json:
               example:
                 error:
-                  code: validation_error
-                  message: discount value must be a positive number
+                  code: invalid_money_format
+                  message: value must be a decimal string like "19.99"
+                  details:
+                    value:
+                    - must be a decimal string like "19.99"
       requestBody:
         content:
           application/json:
@@ -13726,8 +13729,8 @@ paths:
                   type: string
                   example: Customer appeasement
                 value:
-                  type: number
-                  example: 10
+                  type: string
+                  example: '10.00'
                 value_type:
                   type: string
                   enum:

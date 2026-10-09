@@ -7,6 +7,9 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasListPosition
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :price_adjustment_percentage, places: 3
 
     MATCH_POLICIES = %w[all any].freeze
 

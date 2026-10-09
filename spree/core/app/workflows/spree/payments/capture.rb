@@ -48,7 +48,7 @@ module Spree
 
       def capture_amount(amount)
         return payment.amount if amount.nil?
-        return BigDecimal(amount.to_s) unless amount.is_a?(Integer)
+        return Spree::Money::Rounding.to_currency(amount, payment.currency) unless amount.is_a?(Integer)
 
         Spree::Deprecation.warn(
           'Passing an Integer amount to the payment capture workflow is deprecated and is read as hundredths of ' \

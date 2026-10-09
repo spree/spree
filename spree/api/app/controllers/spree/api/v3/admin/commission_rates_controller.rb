@@ -12,6 +12,8 @@ module Spree
         # seller audience, because a seller must never see, let alone set, what
         # anyone is charged.
         class CommissionRatesController < ResourceController
+          # `value` is a percentage, a name too general to be in StrictMoneyParams' list.
+          before_action -> { decimal_param(:value) }, only: %i[create update]
           scoped_resource :commissions
 
           # GET /api/v3/admin/commission_rates/rule_types

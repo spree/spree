@@ -357,7 +357,14 @@ module Spree
       return Spree::Money.new(amount, currency: currency) if accepts_money_amounts
 
       warn_about_hundredths
-      Spree::Money::Rounding.to_hundredths(amount)
+      hundredths = Spree::Money::Rounding.to_hundredths(amount)
+      # A hundredth is the smallest amount these gateways can be sent; zero
+      # reads as "the whole amount" to many of them.
+      if hundredths.zero? && !amount.zero?
+        raise Spree::Core::GatewayError, "#{self.class.name} cannot take an amount below a hundredth of #{currency}"
+      end
+
+      hundredths
     end
 
     protected

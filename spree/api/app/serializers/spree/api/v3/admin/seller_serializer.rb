@@ -37,8 +37,10 @@ module Spree
           # response.
           _attributes.delete(:policies)
 
+          # Stored without a currency, so it is shown as stored rather than
+          # rounded to the store's: a rounded figure would be saved back.
           attribute :minimum_payout_amount do |seller|
-            Spree::Money::Rounding.format(seller.minimum_payout_amount, (current_store || Spree::Current.store)&.default_currency)
+            Spree::Money::Rounding.format(seller.minimum_payout_amount, (current_store || Spree::Current.store)&.default_currency, unit_price: true)
           end
 
           # Approved but away still cannot sell, and the list has to say so

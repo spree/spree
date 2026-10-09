@@ -236,7 +236,11 @@ module Spree
               priority: 100, symbol_first: false, thousands_separator: ',', decimal_mark: '.'
             )
           elsif currency.subunit_to_unit != subunit_to_unit
-            ::Money::Currency.inherit(code.downcase.to_sym, subunit_to_unit: subunit_to_unit)
+            # The smallest cash amount is counted in subunits, so it scales
+            # with them: 5 forints stays 5 forints, not 0.05.
+            scaled = currency.smallest_denomination &&
+                     currency.smallest_denomination * subunit_to_unit / currency.subunit_to_unit
+            ::Money::Currency.inherit(code.downcase.to_sym, subunit_to_unit: subunit_to_unit, smallest_denomination: scaled)
           end
         end
       end

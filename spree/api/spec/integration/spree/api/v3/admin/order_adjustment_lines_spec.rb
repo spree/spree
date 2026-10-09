@@ -77,7 +77,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
         type: :object,
         properties: {
           label: { type: :string, example: 'Customer appeasement' },
-          value: { type: :number, example: 10 },
+          value: { type: :string, example: '10.00' },
           value_type: { type: :string, enum: %w[flat percent], example: 'flat' },
           line_item_id: { type: :string, nullable: true, example: 'item_abc123', description: 'Target line item; omit to distribute order-level' }
         },
@@ -85,7 +85,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       }
 
       response '201', 'discount created' do
-        let(:body) { { label: 'Appeasement', value: 3, value_type: 'flat', line_item_id: line_item.prefixed_id } }
+        let(:body) { { label: 'Appeasement', value: '3.00', value_type: 'flat', line_item_id: line_item.prefixed_id } }
 
         run_test! do |response|
           data = JSON.parse(response.body)

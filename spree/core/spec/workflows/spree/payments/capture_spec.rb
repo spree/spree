@@ -53,6 +53,15 @@ RSpec.describe Spree::Payments::Capture do
       expect(remainder.amount).to eq(35.75)
     end
 
+    it "rounds a computed capture to the currency's decimals before recording it" do
+      expect(gateway).to receive(:capture).with(money('10.04'), '123', anything).and_return(success_response)
+      allow(gateway).to receive(:authorize).and_return(Spree::PaymentResponse.new(true, nil, {}, authorization: '456'))
+
+      described_class.call(payment: payment, amount: BigDecimal('10.0375'))
+
+      expect(payment.capture_events.sum(:amount)).to eq(BigDecimal('10.04'))
+    end
+
     context 'with exact amounts' do
       %w[0.29 1.15 1234567.89].each do |amount|
         it "records a capture of #{amount} to the cent" do

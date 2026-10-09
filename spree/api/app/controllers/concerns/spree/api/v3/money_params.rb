@@ -24,6 +24,18 @@ module Spree
           raise Spree::Money::InvalidFormat.new(error.message, field: name)
         end
 
+        # A rate or other plain decimal: any number of decimals, but still a
+        # canonical decimal string.
+        #
+        # @param name [Symbol] the request parameter
+        # @return [BigDecimal, nil] nil when the parameter is absent
+        # @raise [Spree::Money::InvalidFormat]
+        def decimal_param(name)
+          Spree::Money::Rounding.parse_canonical_decimal(params[name])
+        rescue Spree::Money::InvalidFormat => error
+          raise Spree::Money::InvalidFormat.new(error.message, field: name)
+        end
+
         private
 
         def render_invalid_money_format(error)

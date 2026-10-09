@@ -29,7 +29,7 @@ export const marketplaceSettingsFormSchema = z.object({
   // preference behind it is a fraction bounded at 1, so the field is bounded
   // at 100 and converted on the way in and out (see `percentToFraction`).
   commission_tax_rate_percentage: nonNegativeDecimal.refine(
-    (value) => compareMoney(value, '100') <= 0,
+    (value) => !isDecimalString(value) || compareMoney(value, '100') <= 0,
   ),
 })
 

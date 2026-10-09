@@ -322,6 +322,16 @@ describe Spree::TaxRate, type: :model do
     end
 
     describe '#rate_percent=' do
+      # The column keeps five decimals of the fraction; a sixth would be
+      # rounded away and charge a rate nobody entered.
+      it 'refuses a percentage more precise than the column keeps' do
+        tax_rate = build(:tax_rate)
+        tax_rate.rate_percent = '7.1255'
+
+        expect(tax_rate).not_to be_valid
+        expect(tax_rate.errors.details[:amount]).to include(error: :too_many_decimals, count: 5)
+      end
+
       it 'converts percentage to decimal amount' do
         tax_rate = build(:tax_rate)
         tax_rate.rate_percent = 8.25

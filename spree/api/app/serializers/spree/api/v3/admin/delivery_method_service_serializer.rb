@@ -10,7 +10,7 @@ module Spree
           attributes :carrier, :service, :label
 
           attribute :markup_flat do |record|
-            Spree::Money::Rounding.format(record.markup_flat, (current_store || Spree::Current.store)&.default_currency)
+            Spree::Money::Rounding.format(record.markup_flat, (current_store || Spree::Current.store)&.default_currency, unit_price: true)
           end
 
           rate_attributes :markup_percent

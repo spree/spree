@@ -2192,7 +2192,7 @@ export class AdminClient {
         orderId: string,
         params: {
           label: string
-          value: string | number
+          value: string
           value_type?: 'flat' | 'percent'
           line_item_id?: string
         },

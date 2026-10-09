@@ -25,9 +25,10 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
 
           # The flat markup is charged in whatever currency the rate is quoted
-          # in, so it is written to the store's default currency.
+          # in, so it is shown as stored rather than rounded to one currency:
+          # a rounded figure would be saved back.
           attribute :markup_flat do |record|
-            Spree::Money::Rounding.format(record.markup_flat, (current_store || Spree::Current.store)&.default_currency)
+            Spree::Money::Rounding.format(record.markup_flat, (current_store || Spree::Current.store)&.default_currency, unit_price: true)
           end
 
           rate_attributes :markup_percent

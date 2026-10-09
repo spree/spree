@@ -17,6 +17,14 @@ describe Spree::Refund, type: :model do
       I18n.with_locale(:nl) { refund.amount = '49.50' }
       expect(refund.amount).to eq(BigDecimal('49.50'))
     end
+
+    # The column keeps four decimals; a refund keeps its currency's two.
+    it 'refuses a fraction of a cent' do
+      refund.amount = '10.0049'
+
+      expect(refund).not_to be_valid
+      expect(refund.errors.details[:amount]).to include(error: :too_many_decimals, count: 2)
+    end
   end
 
   describe '#perform!' do
