@@ -76,6 +76,7 @@ module Spree
         # Orders. `restock_items` is hidden: it is deprecated and ignored, so
         # offering it would invite a model to set something that does nothing.
         order_cancel_workflow: { permission: 'write_orders', except: %i[restock_items] },
+        stock_level_bulk_upsert_workflow: 'write_stock',
         order_complete_workflow: 'write_orders',
 
         # Fulfillment

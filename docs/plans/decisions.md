@@ -8,6 +8,22 @@
 
 **Plan:** `6.0-uploads-and-file-ownership.md`.
 
+## 2026-10-10: Agent tools run through the Admin API, not beside it
+
+**Context:** The MCP branch (PR #14664) built its tools as a second way into the same data — their own store scoping, permission checks, Ransack call, writable-attribute lists and error shape, about 3,900 lines of Ruby. Probing the branch found three faults, all the same fault. A prefixed id filters nothing: `search_resources` calls `.ransack` directly and skips the controller step that decodes ids, so filtering variants by `product_id_eq: "prod_3uWpPTcf5W"` — the only form the tools return — answers 0 where the raw id answers 3, with no error. Extension attributes are invisible, because the writable list reads `resource_permitted_attributes` but not `additional_permitted_attributes`. And the stock upsert wrote to whichever shelf an id named, including another store's, because the scoping lived in its one caller.
+
+**Decision:** A tool call runs the real Admin API request path — routing, authentication, controller, serializer, error format — dispatched in-process through `Rails.application.call` with the caller's own credential and `Host` header. No internal trusted header, which would rebuild the boundary this removes. No HTTP to itself: a socket back to the same app holds one Puma thread waiting on another, so concurrent tool calls on a small pool deadlock it.
+
+`Spree::Current` does not reset across a nested dispatch — probed: an inner call overwrote the outer request's currency — so the adapter snapshots and restores it, with a spec proving a tool call cannot corrupt the MCP request's own state. Tool calls do not run inside a transaction the MCP controller opened.
+
+The catalog is the lasting asset: each entry names an operation, a permission, a description and a parameter projection, with schemas from OpenAPI rather than Ruby signatures. A capability with no endpoint becomes an endpoint first — the rule the dashboard already follows.
+
+Two simplifications follow. Generic create, update and destroy become correct for *every* resource, because the controller behind each runs whatever workflow it declares — the old rule that a resource with a workflow refuses the generic write existed only because those writes skipped workflows. That leaves dedicated tools for the non-CRUD member actions alone (cancel, complete, capture, fulfil, approve, activate). And the catalog is keyed by OpenAPI operation rather than by `Spree::Dependencies` key, so the contract spec walks `admin.yaml` instead of scanning controller source — and does not rest on a mechanism being replaced by workflow hooks.
+
+Two operational notes recorded with it: the rate limiter counts the dispatched operations, not the MCP envelope, or one agent turn counts twice; and the adapter trims index responses until the Admin API has sparse fieldsets, since a full admin payload is more than a model's context should hold.
+
+**Consequences:** Every guard added to the Admin API protects agents by construction. The prefixed-id fault stops existing rather than being patched, and the hand-written writable lists go. The branch loses more Ruby than it gains, which is the measure of the step. At 7 the same catalog runs under TypeScript with `@spree/admin-sdk`, differing only in which `fetch` it is given, so the Ruby adapter is deleted rather than ported. Credential filtering stays in the agent layer: guarding what leaves for a model is not the API's job.
+
 ## 2026-10-09: Typed filters keep sellers association-free, take arrays for `_in`, and ship no 5.x warning
 
 **Context:** List filters are being generated into OpenAPI and the SDKs from the Ransack allowlists, and PR C will reject unknown filters. Three choices fix what the published contract says before that happens.
