@@ -92,6 +92,16 @@ module Spree
         end
       end
 
+      it "keeps a gift on the seller's line that holds it" do
+        gifted_line = cart.line_items.detect { |line_item| line_item.seller_id == seller.id }
+        create(:line_item_gift, line_item: gifted_line)
+
+        seller_order = group.orders.detect { |order| order.seller_id == seller.id }
+
+        expect(seller_order.line_items.sum(&:gifted_quantity)).to eq(1)
+        expect(group.orders.reject { |order| order == seller_order }.flat_map(&:line_items).sum(&:gifted_quantity)).to eq(0)
+      end
+
       it 'accounts for every line item exactly once' do
         moved = group.orders.flat_map { |order| order.line_items.map(&:id) }
 

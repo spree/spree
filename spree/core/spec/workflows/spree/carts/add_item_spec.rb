@@ -29,6 +29,15 @@ module Spree
         expect(cart.line_items.count).to eq 1
         expect(expected_line_item.quantity).to eq(line_item.quantity + 1)
       end
+
+      it 'adds to the line its comparison accepts rather than the first of the variant' do
+        second_line_item = create(:line_item, cart: cart, order: nil, variant: variant)
+        comparer = ->(line_item:, **) { Spree::ServiceModule::Result.new(true, line_item == second_line_item, nil) }
+        allow(Spree).to receive(:cart_compare_line_items_service).and_return(comparer)
+
+        expect(execute).to be_success
+        expect([line_item.reload.quantity, second_line_item.reload.quantity]).to eq([1, 2])
+      end
     end
 
     context 'not given a fulfillment' do

@@ -444,7 +444,7 @@ The `Create line items` promotion action now discounts the items it adds down to
   **Delete the second action if you paired one with it.** The old guidance was to add a whole-order discount set to the gift's price to pay for the gift. That discount still applies, so a promotion configured the old way now discounts twice — the gift is free *and* the order discount comes off. Open each promotion using `Create line items`, and remove the accompanying `Create whole-order adjustment` that exists only to cancel out the gift.
 </Warning>
 
-Two further changes come with it. A customer who already has the gift variant in their cart now gets theirs free rather than a second copy being added, and the promotion applies where it previously did nothing at all. And a gift is only taken back out of the cart for promotions actually applied to that order, so a customer who bought the gift variant themselves without qualifying keeps it.
+Two further changes come with it. The gift is added on top of any copies of the gift variant the customer already has in their cart; it used to fill the line up to the gift quantity, so a customer who already had that many received nothing and the promotion did not apply. And when the promotion stops applying it takes back only the units it added, so a customer keeps the copies they chose themselves.
 
 A gift also no longer counts toward spend thresholds or toward the amount a percentage-off order discount is taken from. That includes the gift promotion's own threshold, so a "spend over a set amount, get a gift" promotion now takes the gift back once the paid items fall below the threshold.
 
@@ -460,6 +460,8 @@ A gift also no longer counts toward spend thresholds or toward the amount a perc
 | `order_cancel_service` | `order_cancel_workflow` | `Spree::Orders::Cancel` |
 | `order_complete_service` | `order_complete_workflow` | `Spree::Orders::Complete` |
 | `shipment_update_service`, `fulfillment_update_service` | `fulfillment_update_workflow` | `Spree::Fulfillments::Update` |
+
+A replacement registered for `cart_add_item_workflow`, `order_add_item_service`, `cart_remove_item_service` or `order_remove_item_service` must accept a `gift:` keyword: free-gift promotions pass the promotion action giving the gift when they add or take it back, and the line records those units as given by it. The two remove services must also accept `line_item:`, the line a gift is taken back from, so the units come off the line that holds them rather than another line of the same variant.
 
 New seams with no legacy counterpart:
 
