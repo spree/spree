@@ -377,7 +377,15 @@ describe Spree::PaymentMethod, type: :model do
 
         preference :mode, :string, default: 'live', in: %w[test live]
         preference :label, :string
+        preference :threshold, :decimal, default: 0
       end
+    end
+
+    # The API refuses a JSON number for a decimal, so it must not hand one out.
+    it 'serves a decimal default as a decimal string' do
+      field = gateway_class.serialized_preference_schema.find { |entry| entry[:key] == :threshold }
+
+      expect(field[:default]).to eq('0')
     end
 
     # The set is what the server validates against, so a form that does not

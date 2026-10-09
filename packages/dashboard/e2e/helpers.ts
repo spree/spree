@@ -73,7 +73,7 @@ export async function seedCatalogPickerProducts(
       const name = `${prefix} ${String(index + 1).padStart(2, '0')}`
       const res = await page.request.post('/api/v3/admin/products', {
         headers,
-        data: { name, status: 'active', price: 9.99 },
+        data: { name, status: 'active', price: '9.99' },
       })
       if (!res.ok()) {
         throw new Error(

@@ -14,7 +14,7 @@ async function issueStoreCredit(page: Page, accessToken: string, memo: string) {
     .then((res) => res.json())
   const created = await page.request.post(
     `/api/v3/admin/customers/${customers.data[0].id}/store_credits`,
-    { headers, data: { amount: 40, currency: 'USD', memo } },
+    { headers, data: { amount: '40.00', currency: 'USD', memo } },
   )
   expect(created.status(), await created.text()).toBe(201)
 }

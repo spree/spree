@@ -23778,7 +23778,7 @@ paths:
                   preference_schema:
                   - key: amount_min
                     type: decimal
-                    default: 100.0
+                    default: '100'
                   - key: operator_min
                     type: string
                     default: ">"
@@ -35326,7 +35326,7 @@ paths:
                   preference_schema:
                   - key: flat_percent
                     type: decimal
-                    default: 0
+                    default: '0'
                 - type: flat_rate
                   name: Flat rate
                   preference_schema:
@@ -35335,7 +35335,7 @@ paths:
                     default: {}
                   - key: amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: currency
                     type: string
                     default: USD
@@ -35344,10 +35344,10 @@ paths:
                   preference_schema:
                   - key: first_item
                     type: decimal
-                    default: 0.0
+                    default: '0'
                   - key: additional_item
                     type: decimal
-                    default: 0.0
+                    default: '0'
                   - key: max_items
                     type: integer
                     default: 0
@@ -35362,7 +35362,7 @@ paths:
                     default: {}
                   - key: amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: currency
                     type: string
                     default: USD
@@ -35371,13 +35371,13 @@ paths:
                   preference_schema:
                   - key: minimal_amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: normal_amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: discount_amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: currency
                     type: string
                     default: USD
@@ -35389,7 +35389,7 @@ paths:
                     default: {}
                   - key: amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: currency
                     type: string
                     default: USD

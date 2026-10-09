@@ -44,7 +44,7 @@ async function createPurchaseOrder(
       destination_location_id: destination.id,
       currency: 'USD',
       reference: `E2E PO ${Date.now()}`,
-      items: [{ variant_id: variants.data[0].id, quantity_ordered: quantity, unit_cost: 7.5 }],
+      items: [{ variant_id: variants.data[0].id, quantity_ordered: quantity, unit_cost: '7.50' }],
     },
   })
   expect(created.status(), await created.text()).toBe(201)
