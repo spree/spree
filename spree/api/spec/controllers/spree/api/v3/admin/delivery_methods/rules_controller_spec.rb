@@ -23,7 +23,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
       row = json_response['data'].first
       expect(row['type']).to eq('item_total_rule')
       expect(row['active']).to be(true)
-      expect(row['preferences']['minimum_amount']).to eq(25.0)
+      expect(row['preferences']['minimum_amount']).to eq('25')
       expect(row['preference_schema'].map { |field| field['key'] }).to contain_exactly('minimum_amount', 'maximum_amount')
     end
   end
