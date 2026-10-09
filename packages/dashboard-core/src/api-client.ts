@@ -667,3 +667,13 @@ export function getApiClient(): PanelApiClient {
 export function hasApiClient(): boolean {
   return registered !== null
 }
+
+/**
+ * Hands filters built at runtime to a typed SDK list method. A table builds
+ * its filters from its column definitions, and a page shared by both panels
+ * sends the same keys to two APIs with different filter types, so neither can
+ * be checked by the compiler; the API validates them instead.
+ */
+export function runtimeListParams<P>(params?: Record<string, unknown>): P {
+  return params as P
+}

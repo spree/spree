@@ -98,7 +98,7 @@ paths:
                   accepts_email_marketing: false
                   email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Julie Bode
-                  available_store_credit_total: '0.00'
+                  available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
                   default_billing_address:
@@ -206,7 +206,7 @@ paths:
                   accepts_email_marketing: false
                   email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Yuki Harvey
-                  available_store_credit_total: '0.00'
+                  available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
                   default_billing_address:
@@ -403,7 +403,7 @@ paths:
                   accepts_email_marketing: false
                   email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Lucas Stiedemann
-                  available_store_credit_total: '0.00'
+                  available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
                   default_billing_address:
@@ -490,12 +490,17 @@ paths:
         required: false
         schema:
           type: integer
-      - name: q[name_cont]
+      - name: q
         in: query
         required: false
-        description: Filter by name
+        style: deepObject
+        explode: true
         schema:
-          type: string
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
       - name: fields
         in: query
         required: false
@@ -503,6 +508,21 @@ paths:
           id is always included.
         schema:
           type: string
+      x-spree-filters:
+        table: Category
+        sortable:
+        - automatic
+        - children_count
+        - created_at
+        - depth
+        - id
+        - name
+        - parent_id
+        - permalink
+        - position
+        - pretty_name
+        - products_count
+        - updated_at
       responses:
         '200':
           description: categories found
@@ -707,12 +727,17 @@ paths:
         required: false
         schema:
           type: integer
-      - name: q[name_cont]
+      - name: q
         in: query
         required: false
-        description: Filter by name
+        style: deepObject
+        explode: true
         schema:
-          type: string
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
       - name: fields
         in: query
         required: false
@@ -720,6 +745,18 @@ paths:
           id is always included.
         schema:
           type: string
+      x-spree-filters:
+        table: Collection
+        sortable:
+        - automatic
+        - created_at
+        - id
+        - name
+        - permalink
+        - position
+        - products_count
+        - sort_order
+        - updated_at
       responses:
         '200':
           description: collections found
@@ -871,6 +908,34 @@ paths:
         required: false
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Product
+        sortable:
+        - available_on
+        - best_selling
+        - created_at
+        - description
+        - discontinue_on
+        - id
+        - manual
+        - name
+        - price
+        - seller_id
+        - slug
+        - status
+        - updated_at
+        custom_fields: true
       responses:
         '200':
           description: products found
@@ -904,9 +969,11 @@ paths:
                   tags: []
                   price:
                     id: price_UkLWZg9DAJ
-                    currency: USD
                     amount: '19.99'
+                    amount_in_cents: 1999
                     compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -986,50 +1053,17 @@ paths:
           best_selling, name, -name, -available_on, available_on'
         schema:
           type: string
-      - name: q[name_cont]
+      - name: q
         in: query
         required: false
-        description: Filter by name containing string
+        style: deepObject
+        explode: true
         schema:
-          type: string
-      - name: q[in_category]
-        in: query
-        required: false
-        description: Filter by category prefixed ID (includes descendants)
-        schema:
-          type: string
-      - name: q[in_categories][]
-        in: query
-        required: false
-        description: Filter by multiple category prefixed IDs (OR logic, includes
-          descendants)
-        schema:
-          type: string
-      - name: q[price_gte]
-        in: query
-        required: false
-        description: Filter by minimum price
-        schema:
-          type: number
-      - name: q[price_lte]
-        in: query
-        required: false
-        description: Filter by maximum price
-        schema:
-          type: number
-      - name: q[with_option_value_ids][]
-        in: query
-        required: false
-        description: Filter by option value prefix IDs (e.g., optval_abc). Pass multiple
-          values for OR logic.
-        schema:
-          type: string
-      - name: q[in_stock]
-        in: query
-        required: false
-        description: Filter to only in-stock products
-        schema:
-          type: boolean
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
       - name: expand
         in: query
         required: false
@@ -1044,6 +1078,23 @@ paths:
           id is always included.
         schema:
           type: string
+      x-spree-filters:
+        table: Product
+        sortable:
+        - available_on
+        - best_selling
+        - created_at
+        - description
+        - discontinue_on
+        - id
+        - manual
+        - name
+        - price
+        - seller_id
+        - slug
+        - status
+        - updated_at
+        custom_fields: true
       responses:
         '200':
           description: products found
@@ -1073,9 +1124,11 @@ paths:
                   tags: []
                   price:
                     id: price_UkLWZg9DAJ
-                    currency: USD
                     amount: '19.99'
+                    amount_in_cents: 1999
                     compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -1112,9 +1165,11 @@ paths:
                   tags: []
                   price:
                     id: price_EfhxLZ9ck8
-                    currency: USD
                     amount: '19.99'
+                    amount_in_cents: 1999
                     compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -1231,9 +1286,11 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  currency: USD
                   amount: '19.99'
+                  amount_in_cents: 1999
                   compare_at_amount:
+                  compare_at_amount_in_cents:
+                  currency: USD
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -1241,8 +1298,9 @@ paths:
                 seller_id:
                 prior_price:
                   id: _AXs1igzRC6
-                  currency: USD
                   amount: '9.99'
+                  amount_in_cents: 999
+                  currency: USD
                   display_amount: "$9.99"
                   recorded_at: '2025-12-31T12:00:00Z'
               schema:
@@ -1297,12 +1355,34 @@ paths:
         description: Scope filters to products in this category (prefix ID)
         schema:
           type: string
-      - name: q[name_cont]
+      - name: q
         in: query
         required: false
-        description: Filter by name containing string
+        style: deepObject
+        explode: true
         schema:
-          type: string
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Product
+        sortable:
+        - available_on
+        - best_selling
+        - created_at
+        - description
+        - discontinue_on
+        - id
+        - manual
+        - name
+        - price
+        - seller_id
+        - slug
+        - status
+        - updated_at
+        custom_fields: true
       responses:
         '200':
           description: filters scoped to category
@@ -1315,8 +1395,8 @@ paths:
                 filters:
                 - id: price
                   type: price_range
-                  min: '19.99'
-                  max: '19.99'
+                  min: 19.99
+                  max: 19.99
                   currency: USD
                 - id: availability
                   type: availability
@@ -1455,18 +1535,17 @@ paths:
           -created_at, updated_at, -updated_at'
         schema:
           type: string
-      - name: q[created_at_gt]
+      - name: q
         in: query
         required: false
-        description: Filter by created after date (ISO 8601)
+        style: deepObject
+        explode: true
         schema:
-          type: string
-      - name: q[updated_at_gt]
-        in: query
-        required: false
-        description: Filter by updated after date (ISO 8601)
-        schema:
-          type: string
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
       - name: expand
         in: query
         required: false
@@ -1482,6 +1561,27 @@ paths:
           id is always included.
         schema:
           type: string
+      x-spree-filters:
+        table: Order
+        sortable:
+        - channel_id
+        - completed_at
+        - created_at
+        - currency
+        - customer_id
+        - delivery_total
+        - fulfillment_status
+        - id
+        - item_total
+        - number
+        - order_group_id
+        - payment_status
+        - po_number
+        - seller_id
+        - status
+        - total
+        - total_quantity
+        - updated_at
       responses:
         '200':
           description: carts listed
@@ -1508,29 +1608,29 @@ paths:
                   total_quantity: 1
                   warnings: []
                   coupon_code:
-                  item_total: '10.00'
+                  item_total: '10.0'
                   display_item_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  tax_total: '0.00'
+                  tax_total: '0.0'
                   display_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  gift_card_total: '0.00'
+                  gift_card_total: '0.0'
                   display_gift_card_total: "$0.00"
-                  amount_due: '10.00'
+                  amount_due: '10.0'
                   display_amount_due: "$10.00"
-                  delivery_total: '0.00'
+                  delivery_total: '0.0'
                   display_delivery_total: "$0.00"
-                  fee_total: '0.00'
+                  fee_total: '0.0'
                   display_fee_total: "$0.00"
-                  store_credit_total: '0.00'
+                  store_credit_total: '0.0'
                   display_store_credit_total: "$0.00"
                   covered_by_store_credit: false
                   current_step: address
@@ -1570,21 +1670,21 @@ paths:
                     name: Product 225715
                     slug: product-225715
                     options_text: ''
-                    price: '10.00'
+                    price: '10.0'
                     display_price: "$10.00"
-                    total: '10.00'
+                    total: '10.0'
                     display_total: "$10.00"
-                    adjustment_total: '0.00'
+                    adjustment_total: '0.0'
                     display_adjustment_total: "$0.00"
-                    additional_tax_total: '0.00'
+                    additional_tax_total: '0.0'
                     display_additional_tax_total: "$0.00"
-                    included_tax_total: '0.00'
+                    included_tax_total: '0.0'
                     display_included_tax_total: "$0.00"
-                    discount_total: '0.00'
+                    discount_total: '0.0'
                     display_discount_total: "$0.00"
-                    pre_tax_amount: '10.00'
+                    pre_tax_amount: '10.0'
                     display_pre_tax_amount: "$10.00"
-                    discounted_amount: '10.00'
+                    discounted_amount: '10.0'
                     display_discounted_amount: "$10.00"
                     display_compare_at_amount: "$0.00"
                     compare_at_amount:
@@ -1629,29 +1729,29 @@ paths:
                   total_quantity: 1
                   warnings: []
                   coupon_code:
-                  item_total: '10.00'
+                  item_total: '10.0'
                   display_item_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  tax_total: '0.00'
+                  tax_total: '0.0'
                   display_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  gift_card_total: '0.00'
+                  gift_card_total: '0.0'
                   display_gift_card_total: "$0.00"
-                  amount_due: '10.00'
+                  amount_due: '10.0'
                   display_amount_due: "$10.00"
-                  delivery_total: '0.00'
+                  delivery_total: '0.0'
                   display_delivery_total: "$0.00"
-                  fee_total: '0.00'
+                  fee_total: '0.0'
                   display_fee_total: "$0.00"
-                  store_credit_total: '0.00'
+                  store_credit_total: '0'
                   display_store_credit_total: "$0.00"
                   covered_by_store_credit: false
                   current_step: address
@@ -1691,21 +1791,21 @@ paths:
                     name: Product 2262171
                     slug: product-2262171
                     options_text: ''
-                    price: '10.00'
+                    price: '10.0'
                     display_price: "$10.00"
-                    total: '10.00'
+                    total: '10.0'
                     display_total: "$10.00"
-                    adjustment_total: '0.00'
+                    adjustment_total: '0.0'
                     display_adjustment_total: "$0.00"
-                    additional_tax_total: '0.00'
+                    additional_tax_total: '0.0'
                     display_additional_tax_total: "$0.00"
-                    included_tax_total: '0.00'
+                    included_tax_total: '0.0'
                     display_included_tax_total: "$0.00"
-                    discount_total: '0.00'
+                    discount_total: '0.0'
                     display_discount_total: "$0.00"
-                    pre_tax_amount: '10.00'
+                    pre_tax_amount: '10.0'
                     display_pre_tax_amount: "$10.00"
-                    discounted_amount: '10.00'
+                    discounted_amount: '10.0'
                     display_discounted_amount: "$10.00"
                     display_compare_at_amount: "$0.00"
                     compare_at_amount:
@@ -1821,29 +1921,29 @@ paths:
                 total_quantity: 0
                 warnings: []
                 coupon_code:
-                item_total: '0.00'
+                item_total: '0.0'
                 display_item_total: "$0.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '0.00'
+                total: '0.0'
                 display_total: "$0.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.00'
+                amount_due: '0.0'
                 display_amount_due: "$0.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -2005,29 +2105,29 @@ paths:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
-                item_total: '0.00'
+                item_total: '0.0'
                 display_item_total: "$0.00"
-                adjustment_total: '17.00'
+                adjustment_total: '17.0'
                 display_adjustment_total: "$17.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '17.00'
+                total: '17.0'
                 display_total: "$17.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '17.00'
+                amount_due: '17.0'
                 display_amount_due: "$17.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '17.00'
+                fee_total: '17.0'
                 display_fee_total: "$17.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -2057,14 +2157,14 @@ paths:
                   kind: gift_wrap
                   line_item_id:
                   fulfillment_id:
-                  amount: '5.00'
+                  amount: '5.0'
                   display_amount: "$5.00"
                 - id: fee_gbHJdmfrXB
                   label: Import duty
                   kind: duty
                   line_item_id:
                   fulfillment_id:
-                  amount: '12.00'
+                  amount: '12.0'
                   display_amount: "$12.00"
                 items: []
                 fulfillments: []
@@ -2188,29 +2288,29 @@ paths:
                 total_quantity: 1
                 warnings: []
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '10.00'
+                amount_due: '10.0'
                 display_amount_due: "$10.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -2246,21 +2346,21 @@ paths:
                   name: Product 2313263
                   slug: product-2313263
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -2479,29 +2579,29 @@ paths:
                 total_quantity: 1
                 warnings: []
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '10.00'
+                amount_due: '10.0'
                 display_amount_due: "$10.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: delivery
@@ -2534,21 +2634,21 @@ paths:
                   name: Product 2338992
                   slug: product-2338992
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -2711,29 +2811,29 @@ paths:
                 fulfillment_status: backorder
                 payment_status: paid
                 completed_at: '2026-01-15T12:00:00.000Z'
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '20.00'
+                total: '20.0'
                 display_total: "$20.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '20.00'
+                amount_due: '20.0'
                 display_amount_due: "$20.00"
-                delivery_total: '10.00'
+                delivery_total: '10.0'
                 display_delivery_total: "$10.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 discounts: []
@@ -2749,21 +2849,21 @@ paths:
                   name: Product 2364794
                   slug: product-2364794
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -2778,17 +2878,17 @@ paths:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   unpriced: false
-                  cost: '10.00'
+                  cost: '10.0'
                   display_cost: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  tax_total: '0.00'
+                  tax_total: '0.0'
                   display_tax_total: "$0.00"
                   status: unfulfilled
                   fulfillment_type: shipping
@@ -2825,11 +2925,11 @@ paths:
                     delivery_method_id: dm_UkLWZg9DAJ
                     name: UPS Ground 113
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
-                    additional_tax_total: '0.00'
-                    included_tax_total: '0.00'
-                    tax_total: '0.00'
+                    cost: '10.0'
+                    total: '10.0'
+                    additional_tax_total: '0.0'
+                    included_tax_total: '0.0'
+                    tax_total: '0.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -2855,7 +2955,7 @@ paths:
                   response_code: BGS-518d4ef9738e
                   number: R1001-P1
                   status: completed
-                  amount: '20.00'
+                  amount: '20.0'
                   display_amount: "$20.00"
                   source_type: credit_card
                   source_id: card_UkLWZg9DAJ
@@ -3033,29 +3133,29 @@ paths:
                 - code: coupon_code_not_eligible
                   message: This coupon code can't be applied to orders less than $1,000,000.00.
                 coupon_code: big50
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '10.00'
+                amount_due: '10.0'
                 display_amount_due: "$10.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -3091,21 +3191,21 @@ paths:
                   name: Product 2652614
                   slug: product-2652614
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -3234,29 +3334,29 @@ paths:
                 total_quantity: 1
                 warnings: []
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '10.00'
+                amount_due: '10.0'
                 display_amount_due: "$10.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -3292,21 +3392,21 @@ paths:
                   name: Product 2663461
                   slug: product-2663461
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -3429,29 +3529,29 @@ paths:
                 total_quantity: 1
                 warnings: []
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '20.00'
+                total: '20.0'
                 display_total: "$20.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '20.00'
+                amount_due: '20.0'
                 display_amount_due: "$20.00"
-                delivery_total: '10.00'
+                delivery_total: '10.0'
                 display_delivery_total: "$10.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: payment
@@ -3481,21 +3581,21 @@ paths:
                   name: Product 2688182
                   slug: product-2688182
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -3510,17 +3610,17 @@ paths:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   unpriced: false
-                  cost: '10.00'
+                  cost: '10.0'
                   display_cost: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  tax_total: '0.00'
+                  tax_total: '0.0'
                   display_tax_total: "$0.00"
                   status: unfulfilled
                   fulfillment_type: shipping
@@ -3557,11 +3657,11 @@ paths:
                     delivery_method_id: dm_UkLWZg9DAJ
                     name: UPS Ground 130
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
-                    additional_tax_total: '0.00'
-                    included_tax_total: '0.00'
-                    tax_total: '0.00'
+                    cost: '10.0'
+                    total: '10.0'
+                    additional_tax_total: '0.0'
+                    included_tax_total: '0.0'
+                    tax_total: '0.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -3726,29 +3826,29 @@ paths:
                 total_quantity: 1
                 warnings: []
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '10.00'
+                gift_card_total: '10.0'
                 display_gift_card_total: "$10.00"
-                amount_due: '0.00'
+                amount_due: '0.0'
                 display_amount_due: "$0.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '10.00'
+                store_credit_total: '10.0'
                 display_store_credit_total: "-$10.00"
                 covered_by_store_credit: true
                 current_step: address
@@ -3780,21 +3880,21 @@ paths:
                   name: Product 2705702
                   slug: product-2705702
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -3808,15 +3908,15 @@ paths:
                   response_code: 1-SC-20260115120000000000
                   number: cart_UkLWZg9DAJ-P1
                   status: checkout
-                  amount: '10.00'
+                  amount: '10.0'
                   display_amount: "$10.00"
                   source_type: store_credit
                   source_id: credit_UkLWZg9DAJ
                   source:
                     id: credit_UkLWZg9DAJ
-                    amount: '10.00'
-                    amount_used: '0.00'
-                    amount_remaining: '10.00'
+                    amount: '10.0'
+                    amount_used: '0.0'
+                    amount_remaining: '10.0'
                     display_amount: "$10.00"
                     display_amount_used: "$0.00"
                     display_amount_remaining: "$10.00"
@@ -3836,10 +3936,10 @@ paths:
                   code: GIFTCODE1
                   status: active
                   currency: USD
-                  amount: '50.00'
-                  amount_used: '10.00'
-                  amount_authorized: '0.00'
-                  amount_remaining: '40.00'
+                  amount: '50.0'
+                  amount_used: '10.0'
+                  amount_authorized: '0.0'
+                  amount_remaining: '40.0'
                   display_amount: "$50.00"
                   display_amount_used: "$10.00"
                   display_amount_remaining: "$40.00"
@@ -3972,29 +4072,29 @@ paths:
                 total_quantity: 1
                 warnings: []
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '10.00'
+                amount_due: '10.0'
                 display_amount_due: "$10.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -4030,21 +4130,21 @@ paths:
                   name: Product 2749569
                   slug: product-2749569
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -4058,15 +4158,15 @@ paths:
                   response_code: 1-SC-20260115120000000000
                   number: cart_UkLWZg9DAJ-P1
                   status: invalid
-                  amount: '10.00'
+                  amount: '10.0'
                   display_amount: "$10.00"
                   source_type: store_credit
                   source_id: credit_UkLWZg9DAJ
                   source:
                     id: credit_UkLWZg9DAJ
-                    amount: '10.00'
-                    amount_used: '0.00'
-                    amount_remaining: '10.00'
+                    amount: '10.0'
+                    amount_used: '0.0'
+                    amount_remaining: '10.0'
                     display_amount: "$10.00"
                     display_amount_used: "$0.00"
                     display_amount_remaining: "$10.00"
@@ -4191,27 +4291,27 @@ paths:
                 coupon_code:
                 item_total: '29.99'
                 display_item_total: "$29.99"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
                 total: '29.99'
                 display_total: "$29.99"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
                 amount_due: '29.99'
                 display_amount_due: "$29.99"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -4247,21 +4347,21 @@ paths:
                   name: Product 27763
                   slug: product-27763
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -4282,13 +4382,13 @@ paths:
                   display_price: "$19.99"
                   total: '19.99'
                   display_total: "$19.99"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
                   pre_tax_amount: '19.99'
                   display_pre_tax_amount: "$19.99"
@@ -4452,29 +4552,29 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   item_index: 0
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '10.00'
+                amount_due: '10.0'
                 display_amount_due: "$10.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -4510,21 +4610,21 @@ paths:
                   name: Product 2849165
                   slug: product-2849165
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -4642,29 +4742,29 @@ paths:
                 total_quantity: 0
                 warnings: []
                 coupon_code:
-                item_total: '0.00'
+                item_total: '0.0'
                 display_item_total: "$0.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '0.00'
+                total: '0.0'
                 display_total: "$0.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.00'
+                amount_due: '0.0'
                 display_amount_due: "$0.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -4792,7 +4892,7 @@ paths:
                   client_secret: bogus_secret_a8b3afe691c933c1
                 customer_external_id:
                 expires_at:
-                amount: '10.00'
+                amount: '10.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: cart_UkLWZg9DAJ
                 cart_id: cart_UkLWZg9DAJ
@@ -4893,7 +4993,7 @@ paths:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                amount: '10.00'
+                amount: '10.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: cart_UkLWZg9DAJ
                 cart_id: cart_UkLWZg9DAJ
@@ -4961,7 +5061,7 @@ paths:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                amount: '50.00'
+                amount: '50.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: cart_UkLWZg9DAJ
                 cart_id: cart_UkLWZg9DAJ
@@ -5069,7 +5169,7 @@ paths:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                amount: '10.00'
+                amount: '10.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: cart_UkLWZg9DAJ
                 cart_id: cart_UkLWZg9DAJ
@@ -5169,7 +5269,7 @@ paths:
                 response_code:
                 number: cart_UkLWZg9DAJ-P1
                 status: checkout
-                amount: '10.00'
+                amount: '10.0'
                 display_amount: "$10.00"
                 source_type:
                 source_id:
@@ -5290,29 +5390,29 @@ paths:
                 total_quantity: 1
                 warnings: []
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.00'
+                amount_due: '0.0'
                 display_amount_due: "$0.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '10.00'
+                store_credit_total: '10.0'
                 display_store_credit_total: "-$10.00"
                 covered_by_store_credit: true
                 current_step: address
@@ -5344,21 +5444,21 @@ paths:
                   name: Product 3469789
                   slug: product-3469789
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -5372,15 +5472,15 @@ paths:
                   response_code: 1-SC-20260115120000000000
                   number: cart_UkLWZg9DAJ-P1
                   status: checkout
-                  amount: '10.00'
+                  amount: '10.0'
                   display_amount: "$10.00"
                   source_type: store_credit
                   source_id: credit_UkLWZg9DAJ
                   source:
                     id: credit_UkLWZg9DAJ
-                    amount: '50.00'
-                    amount_used: '0.00'
-                    amount_remaining: '50.00'
+                    amount: '50.0'
+                    amount_used: '0.0'
+                    amount_remaining: '50.0'
                     display_amount: "$50.00"
                     display_amount_used: "$0.00"
                     display_amount_remaining: "$50.00"
@@ -5500,29 +5600,29 @@ paths:
                 total_quantity: 1
                 warnings: []
                 coupon_code:
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
+                total: '10.0'
                 display_total: "$10.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '10.00'
+                amount_due: '10.0'
                 display_amount_due: "$10.00"
-                delivery_total: '0.00'
+                delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 current_step: address
@@ -5558,21 +5658,21 @@ paths:
                   name: Product 348179
                   slug: product-348179
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -5694,29 +5794,29 @@ paths:
                 fulfillment_status:
                 payment_status:
                 completed_at: '2026-01-15T12:00:00.000Z'
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '12.00'
+                adjustment_total: '12.0'
                 display_adjustment_total: "$12.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '122.00'
+                total: '122.0'
                 display_total: "$122.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '122.00'
+                amount_due: '122.0'
                 display_amount_due: "$122.00"
-                delivery_total: '100.00'
+                delivery_total: '100.0'
                 display_delivery_total: "$100.00"
-                fee_total: '12.00'
+                fee_total: '12.0'
                 display_fee_total: "$12.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 discounts: []
@@ -5726,7 +5826,7 @@ paths:
                   kind: duty
                   line_item_id:
                   fulfillment_id:
-                  amount: '12.00'
+                  amount: '12.0'
                   display_amount: "$12.00"
                 items:
                 - id: li_UkLWZg9DAJ
@@ -5739,21 +5839,21 @@ paths:
                   name: Product 288496
                   slug: product-288496
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -5768,17 +5868,17 @@ paths:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   unpriced: false
-                  cost: '100.00'
+                  cost: '100.0'
                   display_cost: "$100.00"
-                  total: '100.00'
+                  total: '100.0'
                   display_total: "$100.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  tax_total: '0.00'
+                  tax_total: '0.0'
                   display_tax_total: "$0.00"
                   status: unfulfilled
                   fulfillment_type: shipping
@@ -5824,11 +5924,11 @@ paths:
                     delivery_method_id: dm_UkLWZg9DAJ
                     name: UPS Ground 144
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
-                    additional_tax_total: '0.00'
-                    included_tax_total: '0.00'
-                    tax_total: '0.00'
+                    cost: '10.0'
+                    total: '10.0'
+                    additional_tax_total: '0.0'
+                    included_tax_total: '0.0'
+                    tax_total: '0.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -5973,6 +6073,33 @@ paths:
           id is always included.
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Address
+        sortable:
+        - address1
+        - address2
+        - city
+        - company
+        - country_code
+        - created_at
+        - first_name
+        - id
+        - last_name
+        - phone
+        - postal_code
+        - state_code
+        - updated_at
       responses:
         '200':
           description: addresses found
@@ -6516,6 +6643,24 @@ paths:
           id is always included.
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: CreditCard
+        sortable:
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: credit cards found
@@ -6741,49 +6886,17 @@ paths:
           -completed_at, total, -total, number, -number'
         schema:
           type: string
-      - name: q[completed_at_gt]
+      - name: q
         in: query
         required: false
-        description: Filter by completed after date (ISO 8601)
+        style: deepObject
+        explode: true
         schema:
-          type: string
-      - name: q[completed_at_lt]
-        in: query
-        required: false
-        description: Filter by completed before date (ISO 8601)
-        schema:
-          type: string
-      - name: q[number_eq]
-        in: query
-        required: false
-        description: Filter by exact order number (e.g., R123456)
-        schema:
-          type: string
-      - name: q[state_eq]
-        in: query
-        required: false
-        description: Filter by order state (complete, returned, canceled)
-        schema:
-          type: string
-      - name: q[payment_state_eq]
-        in: query
-        required: false
-        description: Filter by payment state (paid, balance_due, credit_owed, void,
-          failed)
-        schema:
-          type: string
-      - name: q[total_gteq]
-        in: query
-        required: false
-        description: Filter by minimum total
-        schema:
-          type: number
-      - name: q[total_lteq]
-        in: query
-        required: false
-        description: Filter by maximum total
-        schema:
-          type: number
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
       - name: expand
         in: query
         required: false
@@ -6799,6 +6912,27 @@ paths:
           id is always included.
         schema:
           type: string
+      x-spree-filters:
+        table: Order
+        sortable:
+        - channel_id
+        - completed_at
+        - created_at
+        - currency
+        - customer_id
+        - delivery_total
+        - fulfillment_status
+        - id
+        - item_total
+        - number
+        - order_group_id
+        - payment_status
+        - po_number
+        - seller_id
+        - status
+        - total
+        - total_quantity
+        - updated_at
       responses:
         '200':
           description: orders listed
@@ -6827,29 +6961,29 @@ paths:
                   fulfillment_status:
                   payment_status:
                   completed_at: '2026-01-15T12:00:00.000Z'
-                  item_total: '10.00'
+                  item_total: '10.0'
                   display_item_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  tax_total: '0.00'
+                  tax_total: '0.0'
                   display_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  total: '110.00'
+                  total: '110.0'
                   display_total: "$110.00"
-                  gift_card_total: '0.00'
+                  gift_card_total: '0.0'
                   display_gift_card_total: "$0.00"
-                  amount_due: '110.00'
+                  amount_due: '110.0'
                   display_amount_due: "$110.00"
-                  delivery_total: '100.00'
+                  delivery_total: '100.0'
                   display_delivery_total: "$100.00"
-                  fee_total: '0.00'
+                  fee_total: '0.0'
                   display_fee_total: "$0.00"
-                  store_credit_total: '0.00'
+                  store_credit_total: '0.0'
                   display_store_credit_total: "$0.00"
                   covered_by_store_credit: false
                   discounts: []
@@ -6865,21 +6999,21 @@ paths:
                     name: Product 2535270
                     slug: product-2535270
                     options_text: ''
-                    price: '10.00'
+                    price: '10.0'
                     display_price: "$10.00"
-                    total: '10.00'
+                    total: '10.0'
                     display_total: "$10.00"
-                    adjustment_total: '0.00'
+                    adjustment_total: '0.0'
                     display_adjustment_total: "$0.00"
-                    additional_tax_total: '0.00'
+                    additional_tax_total: '0.0'
                     display_additional_tax_total: "$0.00"
-                    included_tax_total: '0.00'
+                    included_tax_total: '0.0'
                     display_included_tax_total: "$0.00"
-                    discount_total: '0.00'
+                    discount_total: '0.0'
                     display_discount_total: "$0.00"
-                    pre_tax_amount: '10.00'
+                    pre_tax_amount: '10.0'
                     display_pre_tax_amount: "$10.00"
-                    discounted_amount: '10.00'
+                    discounted_amount: '10.0'
                     display_discounted_amount: "$10.00"
                     display_compare_at_amount: "$0.00"
                     compare_at_amount:
@@ -6894,17 +7028,17 @@ paths:
                     pickup_point_data:
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     unpriced: false
-                    cost: '100.00'
+                    cost: '100.0'
                     display_cost: "$100.00"
-                    total: '100.00'
+                    total: '100.0'
                     display_total: "$100.00"
-                    discount_total: '0.00'
+                    discount_total: '0.0'
                     display_discount_total: "$0.00"
-                    additional_tax_total: '0.00'
+                    additional_tax_total: '0.0'
                     display_additional_tax_total: "$0.00"
-                    included_tax_total: '0.00'
+                    included_tax_total: '0.0'
                     display_included_tax_total: "$0.00"
-                    tax_total: '0.00'
+                    tax_total: '0.0'
                     display_tax_total: "$0.00"
                     status: unfulfilled
                     fulfillment_type: shipping
@@ -6950,11 +7084,11 @@ paths:
                       delivery_method_id: dm_UkLWZg9DAJ
                       name: UPS Ground 123
                       selected: true
-                      cost: '10.00'
-                      total: '10.00'
-                      additional_tax_total: '0.00'
-                      included_tax_total: '0.00'
-                      tax_total: '0.00'
+                      cost: '10.0'
+                      total: '10.0'
+                      additional_tax_total: '0.0'
+                      included_tax_total: '0.0'
+                      tax_total: '0.0'
                       carrier:
                       service_level:
                       estimated_delivery_date:
@@ -7151,29 +7285,29 @@ paths:
                 fulfillment_status:
                 payment_status:
                 completed_at: '2026-01-15T12:00:00.000Z'
-                item_total: '10.00'
+                item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
+                adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.00'
+                discount_total: '0.0'
                 display_discount_total: "$0.00"
-                tax_total: '0.00'
+                tax_total: '0.0'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.00'
+                included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.00'
+                additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '110.00'
+                total: '110.0'
                 display_total: "$110.00"
-                gift_card_total: '0.00'
+                gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '110.00'
+                amount_due: '110.0'
                 display_amount_due: "$110.00"
-                delivery_total: '100.00'
+                delivery_total: '100.0'
                 display_delivery_total: "$100.00"
-                fee_total: '0.00'
+                fee_total: '0.0'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.00'
+                store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 discounts: []
@@ -7189,21 +7323,21 @@ paths:
                   name: Product 2555633
                   slug: product-2555633
                   options_text: ''
-                  price: '10.00'
+                  price: '10.0'
                   display_price: "$10.00"
-                  total: '10.00'
+                  total: '10.0'
                   display_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '10.00'
+                  pre_tax_amount: '10.0'
                   display_pre_tax_amount: "$10.00"
-                  discounted_amount: '10.00'
+                  discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -7218,17 +7352,17 @@ paths:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   unpriced: false
-                  cost: '100.00'
+                  cost: '100.0'
                   display_cost: "$100.00"
-                  total: '100.00'
+                  total: '100.0'
                   display_total: "$100.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  tax_total: '0.00'
+                  tax_total: '0.0'
                   display_tax_total: "$0.00"
                   status: unfulfilled
                   fulfillment_type: shipping
@@ -7274,11 +7408,11 @@ paths:
                     delivery_method_id: dm_UkLWZg9DAJ
                     name: UPS Ground 125
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
-                    additional_tax_total: '0.00'
-                    included_tax_total: '0.00'
-                    tax_total: '0.00'
+                    cost: '10.0'
+                    total: '10.0'
+                    additional_tax_total: '0.0'
+                    included_tax_total: '0.0'
+                    tax_total: '0.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
@@ -7421,7 +7555,7 @@ paths:
                   accepts_email_marketing: true
                   email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: John Doe
-                  available_store_credit_total: '0.00'
+                  available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
                   default_billing_address:
@@ -7542,7 +7676,7 @@ paths:
                 accepts_email_marketing: false
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Felix Rowe
-                available_store_credit_total: '0.00'
+                available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 addresses:
                 - id: addr_UkLWZg9DAJ
@@ -7699,7 +7833,7 @@ paths:
                 accepts_email_marketing: false
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Updated Name
-                available_store_credit_total: '0.00'
+                available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 addresses:
                 - id: addr_UkLWZg9DAJ
@@ -7868,6 +8002,29 @@ paths:
         required: false
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: DataRequest
+        sortable:
+        - completed_at
+        - created_at
+        - email
+        - id
+        - kind
+        - number
+        - requested_at
+        - status
+        - updated_at
       responses:
         '200':
           description: data requests found
@@ -8074,6 +8231,30 @@ paths:
           id is always included.
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: GiftCard
+        sortable:
+        - code
+        - created_at
+        - created_by_id
+        - currency
+        - customer_id
+        - expires_at
+        - gift_card_batch_id
+        - id
+        - status
+        - updated_at
       responses:
         '200':
           description: gift cards found
@@ -8085,10 +8266,10 @@ paths:
                   code: 1A288BF2DA45E295
                   status: active
                   currency: USD
-                  amount: '10.00'
-                  amount_used: '0.00'
-                  amount_authorized: '0.00'
-                  amount_remaining: '10.00'
+                  amount: '10.0'
+                  amount_used: '0.0'
+                  amount_authorized: '0.0'
+                  amount_remaining: '10.0'
                   display_amount: "$10.00"
                   display_amount_used: "$0.00"
                   display_amount_remaining: "$10.00"
@@ -8181,10 +8362,10 @@ paths:
                 code: B7180B830F0E5992
                 status: active
                 currency: USD
-                amount: '10.00'
-                amount_used: '0.00'
-                amount_authorized: '0.00'
-                amount_remaining: '10.00'
+                amount: '10.0'
+                amount_used: '0.0'
+                amount_authorized: '0.0'
+                amount_remaining: '10.0'
                 display_amount: "$10.00"
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$10.00"
@@ -8525,6 +8706,26 @@ paths:
           id is always included.
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: StoreCredit
+        sortable:
+        - amount
+        - created_at
+        - currency
+        - customer_id
+        - id
+        - updated_at
       responses:
         '200':
           description: store credits found
@@ -8533,9 +8734,9 @@ paths:
               example:
                 data:
                 - id: credit_UkLWZg9DAJ
-                  amount: '100.00'
-                  amount_used: '0.00'
-                  amount_remaining: '100.00'
+                  amount: '100.0'
+                  amount_used: '0.0'
+                  amount_remaining: '100.0'
                   display_amount: "$100.00"
                   display_amount_used: "$0.00"
                   display_amount_remaining: "$100.00"
@@ -8621,9 +8822,9 @@ paths:
             application/json:
               example:
                 id: credit_UkLWZg9DAJ
-                amount: '100.00'
-                amount_used: '0.00'
-                amount_remaining: '100.00'
+                amount: '100.0'
+                amount_used: '0.0'
+                amount_remaining: '100.0'
                 display_amount: "$100.00"
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$100.00"
@@ -8833,15 +9034,12 @@ paths:
                 - iso_code: USD
                   name: United States Dollar
                   symbol: "$"
-                  decimal_places: 2
                 - iso_code: EUR
                   name: Euro
                   symbol: "€"
-                  decimal_places: 2
                 - iso_code: GBP
                   name: British Pound
                   symbol: "£"
-                  decimal_places: 2
               schema:
                 type: object
                 properties:
@@ -9390,6 +9588,24 @@ paths:
           id is always included.
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Wishlist
+        sortable:
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: wishlists found
@@ -9787,9 +10003,11 @@ paths:
                   units_per_carton:
                   price:
                     id: price_gbHJdmfrXB
-                    currency: USD
                     amount: '19.99'
+                    amount_in_cents: 1999
                     compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -10178,6 +10396,26 @@ paths:
           id is always included.
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Policy
+        sortable:
+        - created_at
+        - id
+        - name
+        - owner_id
+        - owner_type
+        - updated_at
       responses:
         '200':
           description: policies listed
@@ -10415,6 +10653,23 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: CompanyMembership
+        sortable:
+        - created_at
+        - id
+        - updated_at
       responses:
         '200':
           description: memberships listed
@@ -10572,6 +10827,23 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: CompanyMembership
+        sortable:
+        - created_at
+        - id
+        - updated_at
       responses:
         '200':
           description: members listed
@@ -10684,6 +10956,33 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Address
+        sortable:
+        - address1
+        - address2
+        - city
+        - company
+        - country_code
+        - created_at
+        - first_name
+        - id
+        - last_name
+        - phone
+        - postal_code
+        - state_code
+        - updated_at
       responses:
         '200':
           description: addresses listed
@@ -10883,6 +11182,38 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Order
+        sortable:
+        - channel_id
+        - completed_at
+        - created_at
+        - currency
+        - customer_id
+        - delivery_total
+        - fulfillment_status
+        - id
+        - item_total
+        - number
+        - order_group_id
+        - payment_status
+        - po_number
+        - seller_id
+        - status
+        - total
+        - total_quantity
+        - updated_at
       responses:
         '200':
           description: orders listed
@@ -10911,29 +11242,29 @@ paths:
                   fulfillment_status:
                   payment_status:
                   completed_at: '2026-01-15T12:00:00.000Z'
-                  item_total: '10.00'
+                  item_total: '10.0'
                   display_item_total: "$10.00"
-                  adjustment_total: '0.00'
+                  adjustment_total: '0.0'
                   display_adjustment_total: "$0.00"
-                  discount_total: '0.00'
+                  discount_total: '0.0'
                   display_discount_total: "$0.00"
-                  tax_total: '0.00'
+                  tax_total: '0.0'
                   display_tax_total: "$0.00"
-                  included_tax_total: '0.00'
+                  included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.00'
+                  additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
-                  total: '110.00'
+                  total: '110.0'
                   display_total: "$110.00"
-                  gift_card_total: '0.00'
+                  gift_card_total: '0.0'
                   display_gift_card_total: "$0.00"
-                  amount_due: '110.00'
+                  amount_due: '110.0'
                   display_amount_due: "$110.00"
-                  delivery_total: '100.00'
+                  delivery_total: '100.0'
                   display_delivery_total: "$100.00"
-                  fee_total: '0.00'
+                  fee_total: '0.0'
                   display_fee_total: "$0.00"
-                  store_credit_total: '0.00'
+                  store_credit_total: '0.0'
                   display_store_credit_total: "$0.00"
                   covered_by_store_credit: false
                   discounts: []
@@ -10949,21 +11280,21 @@ paths:
                     name: Product 2525649
                     slug: product-2525649
                     options_text: ''
-                    price: '10.00'
+                    price: '10.0'
                     display_price: "$10.00"
-                    total: '10.00'
+                    total: '10.0'
                     display_total: "$10.00"
-                    adjustment_total: '0.00'
+                    adjustment_total: '0.0'
                     display_adjustment_total: "$0.00"
-                    additional_tax_total: '0.00'
+                    additional_tax_total: '0.0'
                     display_additional_tax_total: "$0.00"
-                    included_tax_total: '0.00'
+                    included_tax_total: '0.0'
                     display_included_tax_total: "$0.00"
-                    discount_total: '0.00'
+                    discount_total: '0.0'
                     display_discount_total: "$0.00"
-                    pre_tax_amount: '10.00'
+                    pre_tax_amount: '10.0'
                     display_pre_tax_amount: "$10.00"
-                    discounted_amount: '10.00'
+                    discounted_amount: '10.0'
                     display_discounted_amount: "$10.00"
                     display_compare_at_amount: "$0.00"
                     compare_at_amount:
@@ -10977,17 +11308,17 @@ paths:
                     pickup_point_data:
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     unpriced: false
-                    cost: '100.00'
+                    cost: '100.0'
                     display_cost: "$100.00"
-                    total: '100.00'
+                    total: '100.0'
                     display_total: "$100.00"
-                    discount_total: '0.00'
+                    discount_total: '0.0'
                     display_discount_total: "$0.00"
-                    additional_tax_total: '0.00'
+                    additional_tax_total: '0.0'
                     display_additional_tax_total: "$0.00"
-                    included_tax_total: '0.00'
+                    included_tax_total: '0.0'
                     display_included_tax_total: "$0.00"
-                    tax_total: '0.00'
+                    tax_total: '0.0'
                     display_tax_total: "$0.00"
                     status: unfulfilled
                     fulfillment_type: shipping
@@ -11033,11 +11364,11 @@ paths:
                       delivery_method_id: dm_UkLWZg9DAJ
                       name: UPS Ground 114
                       selected: true
-                      cost: '10.00'
-                      total: '10.00'
-                      additional_tax_total: '0.00'
-                      included_tax_total: '0.00'
-                      tax_total: '0.00'
+                      cost: '10.0'
+                      total: '10.0'
+                      additional_tax_total: '0.0'
+                      included_tax_total: '0.0'
+                      tax_total: '0.0'
                       carrier:
                       service_level:
                       estimated_delivery_date:
@@ -11276,6 +11607,27 @@ paths:
         description: 'Filter: shipping, digital, pickup'
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: DeliveryMethod
+        sortable:
+        - available_to_sellers
+        - created_at
+        - id
+        - name
+        - seller_id
+        - storefront_visible
+        - updated_at
       responses:
         '200':
           description: delivery methods found
@@ -11438,12 +11790,17 @@ paths:
         required: false
         schema:
           type: integer
-      - name: q[name_cont]
+      - name: q
         in: query
         required: false
-        description: Filter by name
+        style: deepObject
+        explode: true
         schema:
-          type: string
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
       - name: expand
         in: query
         required: false
@@ -11457,6 +11814,13 @@ paths:
         description: Comma-separated list of fields to include. id is always included.
         schema:
           type: string
+      x-spree-filters:
+        table: Seller
+        sortable:
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: sellers found
@@ -12142,10 +12506,10 @@ components:
           items:
             "$ref": "#/components/schemas/CheckoutRequirement"
         order_minimum:
-          type: string
+          type: number
           nullable: true
         order_minimum_shortfall:
-          type: string
+          type: number
           nullable: true
         below_order_minimum:
           type: boolean
@@ -12376,25 +12740,18 @@ components:
           nullable: true
         refund_amount:
           type: string
-          nullable: true
         paid_amount:
           type: string
-          nullable: true
         pre_tax_amount:
           type: string
-          nullable: true
         included_tax_total:
           type: string
-          nullable: true
         additional_tax_total:
           type: string
-          nullable: true
         tax_total:
           type: string
-          nullable: true
         display_refund_amount:
           type: string
-          nullable: true
         variant_id:
           type: string
           nullable: true
@@ -12466,10 +12823,8 @@ components:
           nullable: true
         refund_total:
           type: string
-          nullable: true
         display_refund_total:
           type: string
-          nullable: true
         approved_at:
           type: string
           nullable: true
@@ -12694,13 +13049,10 @@ components:
           type: string
         symbol:
           type: string
-        decimal_places:
-          type: number
       required:
       - iso_code
       - name
       - symbol
-      - decimal_places
       x-typelizer: true
     CustomField:
       type: object
@@ -12931,19 +13283,14 @@ components:
           type: boolean
         cost:
           type: string
-          nullable: true
         total:
           type: string
-          nullable: true
         additional_tax_total:
           type: string
-          nullable: true
         included_tax_total:
           type: string
-          nullable: true
         tax_total:
           type: string
-          nullable: true
         carrier:
           type: string
           nullable: true
@@ -12961,19 +13308,14 @@ components:
           nullable: true
         display_cost:
           type: string
-          nullable: true
         display_total:
           type: string
-          nullable: true
         display_additional_tax_total:
           type: string
-          nullable: true
         display_included_tax_total:
           type: string
-          nullable: true
         display_tax_total:
           type: string
-          nullable: true
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
       required:
@@ -13223,19 +13565,14 @@ components:
           type: boolean
         original_price:
           type: string
-          nullable: true
         new_variant_price:
           type: string
-          nullable: true
         price_difference:
           type: string
-          nullable: true
         original_tax_total:
           type: string
-          nullable: true
         new_tax_total:
           type: string
-          nullable: true
         original_variant_id:
           type: string
           nullable: true
@@ -13294,10 +13631,8 @@ components:
           nullable: true
         price_difference:
           type: string
-          nullable: true
         display_price_difference:
           type: string
-          nullable: true
         approved_at:
           type: string
           nullable: true
@@ -14719,7 +15054,6 @@ components:
           nullable: true
         amount:
           type: string
-          nullable: true
         payment_method_id:
           type: string
         order_id:
@@ -14840,19 +15174,21 @@ components:
       properties:
         id:
           type: string
-        currency:
-          type: string
         amount:
           type: string
-          nullable: true
+        amount_in_cents:
+          type: number
+        currency:
+          type: string
         display_amount:
           type: string
         recorded_at:
           type: string
       required:
       - id
-      - currency
       - amount
+      - amount_in_cents
+      - currency
       - display_amount
       - recorded_at
       x-typelizer: true
@@ -14861,13 +15197,19 @@ components:
       properties:
         id:
           type: string
-        currency:
-          type: string
-          nullable: true
         amount:
           type: string
           nullable: true
+        amount_in_cents:
+          type: number
+          nullable: true
         compare_at_amount:
+          type: string
+          nullable: true
+        compare_at_amount_in_cents:
+          type: number
+          nullable: true
+        currency:
           type: string
           nullable: true
         display_amount:
@@ -14881,9 +15223,11 @@ components:
           nullable: true
       required:
       - id
-      - currency
       - amount
+      - amount_in_cents
       - compare_at_amount
+      - compare_at_amount_in_cents
+      - currency
       - display_amount
       - display_compare_at_amount
       - price_list_id
@@ -15024,9 +15368,9 @@ components:
           enum:
           - price_range
         min:
-          type: string
+          type: number
         max:
-          type: string
+          type: number
         currency:
           type: string
       required:
@@ -15363,28 +15707,20 @@ components:
           type: boolean
         pre_tax_amount:
           type: string
-          nullable: true
         display_pre_tax_amount:
           type: string
-          nullable: true
         included_tax_total:
           type: string
-          nullable: true
         additional_tax_total:
           type: string
-          nullable: true
         tax_total:
           type: string
-          nullable: true
         display_tax_total:
           type: string
-          nullable: true
         refund_amount:
           type: string
-          nullable: true
         display_refund_amount:
           type: string
-          nullable: true
         variant_id:
           type: string
           nullable: true
@@ -15454,16 +15790,12 @@ components:
           nullable: true
         refund_total:
           type: string
-          nullable: true
         display_refund_total:
           type: string
-          nullable: true
         refund_tax_total:
           type: string
-          nullable: true
         display_refund_tax_total:
           type: string
-          nullable: true
         approved_at:
           type: string
           nullable: true
@@ -15814,10 +16146,8 @@ components:
           nullable: true
         amount:
           type: string
-          nullable: true
         display_amount:
           type: string
-          nullable: true
         created_at:
           type: string
       required:
@@ -15836,22 +16166,16 @@ components:
           type: string
         amount:
           type: string
-          nullable: true
         amount_used:
           type: string
-          nullable: true
         amount_remaining:
           type: string
-          nullable: true
         display_amount:
           type: string
-          nullable: true
         display_amount_used:
           type: string
-          nullable: true
         display_amount_remaining:
           type: string
-          nullable: true
         currency:
           type: string
       required:
@@ -15910,7 +16234,6 @@ components:
           type: boolean
         rate:
           type: string
-          nullable: true
         tax_rate_id:
           type: string
           nullable: true
@@ -16128,3 +16451,273 @@ components:
       - is_default
       - is_private
       x-typelizer: true
+  x-spree-filter-tables:
+    Address:
+      attributes:
+        address1: text
+        address2: text
+        city: text
+        company: text
+        country_code: text
+        created_at: datetime
+        first_name: text
+        id: id
+        last_name: text
+        phone: text
+        postal_code: text
+        state_code: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Category:
+      attributes:
+        automatic: boolean
+        children_count: integer
+        created_at: datetime
+        depth: integer
+        id: id
+        name: text
+        parent_id: id
+        permalink: text
+        position: integer
+        pretty_name: text
+        products_count: integer
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Collection:
+      attributes:
+        automatic: boolean
+        created_at: datetime
+        id: id
+        name: text
+        permalink: text
+        position: integer
+        products_count: integer
+        sort_order:
+          enum:
+          - manual
+          - best_selling
+          - price asc
+          - price desc
+          - available_on desc
+          - available_on asc
+          - name asc
+          - name desc
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    CompanyMembership:
+      attributes:
+        created_at: datetime
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    CreditCard:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    DataRequest:
+      attributes:
+        completed_at: datetime
+        created_at: datetime
+        email: text
+        id: id
+        kind:
+          enum:
+          - access
+          - erasure
+        number: text
+        requested_at: datetime
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+        updated_at: datetime
+      associations: {}
+      scopes:
+        access: boolean
+        erasure: boolean
+        in_progress: boolean
+    DeliveryMethod:
+      attributes:
+        available_to_sellers: boolean
+        created_at: datetime
+        id: id
+        name: text
+        seller_id: id
+        storefront_visible: boolean
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    GiftCard:
+      attributes:
+        code: text
+        created_at: datetime
+        created_by_id: id
+        currency: text
+        customer_id: id
+        expires_at: date
+        gift_card_batch_id: id
+        id: id
+        status:
+          enum:
+          - active
+          - partially_redeemed
+          - redeemed
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        active: boolean
+        expired: boolean
+        partially_redeemed: boolean
+        redeemed: boolean
+    Order:
+      attributes:
+        channel_id: id
+        completed_at: datetime
+        created_at: datetime
+        currency: text
+        customer_id: id
+        delivery_total: decimal
+        fulfillment_status:
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
+        id: id
+        item_total: decimal
+        number: text
+        order_group_id: id
+        payment_status:
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
+          - balance_due
+          - credit_owed
+          - failed
+          - void
+        po_number: text
+        seller_id: id
+        status:
+          enum:
+          - draft
+          - placed
+          - canceled
+        total: decimal
+        total_quantity: integer
+        updated_at: datetime
+      associations: {}
+      scopes:
+        complete: boolean
+        incomplete: boolean
+        partially_refunded: boolean
+        refunded: boolean
+    Policy:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        owner_id: id
+        owner_type: type
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Product:
+      attributes:
+        available_on: datetime
+        created_at: datetime
+        description: text
+        discontinue_on: datetime
+        id: id
+        name: text
+        seller_id: id
+        slug: text
+        status:
+          enum:
+          - draft
+          - active
+          - archived
+          - proposed
+          - rejected
+        updated_at: datetime
+      associations:
+        categories: Category
+        collections: Collection
+        tags: Tag
+      scopes:
+        ascend_by_price: boolean
+        descend_by_price: boolean
+        in_categories:
+          list: id
+        in_category: id
+        in_collection: id
+        in_stock: boolean
+        in_taxon: id
+        not_discontinued: boolean
+        out_of_stock: boolean
+        price_between:
+        - decimal
+        - decimal
+        price_gte: decimal
+        price_lte: decimal
+        search: text
+        search_by_name: text
+        with_option_value_ids:
+          list: id
+    Seller:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    StoreCredit:
+      attributes:
+        amount: decimal
+        created_at: datetime
+        currency: text
+        customer_id: id
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes:
+        from_gift_card: boolean
+        outstanding: boolean
+    Tag:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Wishlist:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}

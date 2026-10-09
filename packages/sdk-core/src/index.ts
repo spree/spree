@@ -1,5 +1,16 @@
 // Request infrastructure
 
+export type {
+  BooleanFilters,
+  CustomFieldFilters,
+  EnumFilters,
+  IdFilters,
+  OrFilters,
+  Prefixed,
+  RangeFilters,
+  SortKey,
+  TextFilters,
+} from './filters'
 export type { ResolvedRetryConfig } from './helpers'
 // Helpers
 export { getParams, resolveRetryConfig } from './helpers'

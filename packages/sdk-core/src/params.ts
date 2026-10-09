@@ -12,7 +12,7 @@ type ParamValue = string | number | boolean | (string | number)[] | undefined
  * - Keys already in `q[...]` format pass through (backward compat)
  * - All other keys are wrapped: `name_cont` → `q[name_cont]`
  */
-export function transformListParams(params: Record<string, unknown>): Record<string, ParamValue> {
+export function transformListParams(params: object): Record<string, ParamValue> {
   const result: Record<string, ParamValue> = {}
 
   for (const [key, value] of Object.entries(params)) {

@@ -76,6 +76,17 @@ jobs:
             exit 1
           fi
 
+      # Filter types come from the filter tables in docs/api-reference, which
+      # swaggerize writes from the model allowlists.
+      - name: Check SDK filter types are up to date
+        run: |
+          pnpm generate:filters
+          if [ -n "$(git status --porcelain -- 'packages/*/src/types/filters.generated.ts')" ]; then
+            git diff -- 'packages/*/src/types/filters.generated.ts'
+            echo "::error::SDK filter types are out of date. Run 'pnpm generate:filters' and commit the result."
+            exit 1
+          fi
+
       - run: pnpm turbo lint typecheck test build --cache-dir=.turbo
 
   # Creates a new project with create-spree-app the way a user would, but from

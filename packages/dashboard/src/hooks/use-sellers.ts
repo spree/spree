@@ -4,9 +4,11 @@ import type {
   Seller,
   SellerApproveParams,
   SellerCreateParams,
+  SellerFilters,
   SellerInviteParams,
   SellerRejectParams,
   SellerReopenOnboardingParams,
+  SellerSort,
   SellerSuspendParams,
   SellerUpdateParams,
 } from '@spree/admin-sdk'
@@ -19,7 +21,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
-export function useSellers(params?: ListParams & Record<string, unknown>) {
+export function useSellers(params?: ListParams<SellerFilters, SellerSort>) {
   return useQuery({
     queryKey: useResourceKey('sellers', params ? JSON.stringify(params) : 'all'),
     queryFn: () => adminClient.sellers.list(params),

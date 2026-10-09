@@ -5,6 +5,15 @@ import { UploadIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { importTypeLabel } from '../lib/import-types'
 
+const IMPORT_STATUSES = [
+  'pending',
+  'mapping',
+  'completed_mapping',
+  'processing',
+  'completed',
+  'failed',
+]
+
 defineTable<Import>('imports', {
   title: i18n.t('admin.pages.settings.imports.title'),
   docsPath: 'manage-products/import-products',
@@ -34,6 +43,11 @@ defineTable<Import>('imports', {
       label: i18n.t('admin.pages.settings.imports.table.status'),
       sortable: true,
       filterable: true,
+      filterType: 'enum',
+      filterOptions: IMPORT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.imports.status.${status}`),
+      })),
       default: true,
       render: (imp) => (
         <StatusBadge status={imp.status} label={i18n.t(`admin.imports.status.${imp.status}`)} />

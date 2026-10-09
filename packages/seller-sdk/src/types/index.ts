@@ -42,6 +42,7 @@ export interface AuthTokens {
   sellers: SellerSummary[]
 }
 
+export type * from './filters.generated'
 export type { default as Delivery } from './generated/Delivery'
 // Named enums — open string unions for lists an extension may extend (statuses, fee kinds)
 export type * from './generated/Enums'

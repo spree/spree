@@ -12417,6 +12417,27 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: DeliveryMethod
+        sortable:
+        - available_to_sellers
+        - created_at
+        - id
+        - name
+        - seller_id
+        - storefront_visible
+        - updated_at
       responses:
         '200':
           description: delivery methods listed
@@ -12441,12 +12462,11 @@ paths:
                   editable: true
                   delivery_profile_id: fp_UkLWZg9DAJ
                   delivery_zone_id:
-                  calculator:
-                    type: flat_rate
-                    preferences:
-                      amounts: {}
-                      amount: '10.00'
-                      currency: USD
+                  calculator_type: flat_rate
+                  calculator_preferences:
+                    amounts: {}
+                    amount: '10.0'
+                    currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
                   code: UPS_GROUND_74
@@ -12464,12 +12484,11 @@ paths:
                   editable: false
                   delivery_profile_id: fp_UkLWZg9DAJ
                   delivery_zone_id:
-                  calculator:
-                    type: flat_rate
-                    preferences:
-                      amounts: {}
-                      amount: '10.00'
-                      currency: USD
+                  calculator_type: flat_rate
+                  calculator_preferences:
+                    amounts: {}
+                    amount: '10.0'
+                    currency: USD
                 meta:
                   page: 1
                   limit: 25
@@ -12534,12 +12553,11 @@ paths:
                 editable: true
                 delivery_profile_id: fp_gbHJdmfrXB
                 delivery_zone_id:
-                calculator:
-                  type: flat_rate
-                  preferences:
-                    amounts: {}
-                    amount: '9.99'
-                    currency: USD
+                calculator_type: flat_rate
+                calculator_preferences:
+                  amounts: {}
+                  amount: '9.99'
+                  currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
         '422':
@@ -12587,18 +12605,10 @@ paths:
                 estimated_transit_business_days_max:
                   type: integer
                   nullable: true
-                calculator:
+                calculator_type:
+                  type: string
+                calculator_preferences:
                   type: object
-                  description: 'How the method is priced: a type from `/delivery_methods/calculators`
-                    and its preferences, per that type''s `schema`.'
-                  properties:
-                    type:
-                      type: string
-                      example: flat_rate
-                    preferences:
-                      type: object
-                      example:
-                        amount: '12.5'
                 rules:
                   type: array
                   description: Conditions on the method, from `/delivery_methods/rule_types`
@@ -12653,12 +12663,11 @@ paths:
                 editable: true
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_zone_id:
-                calculator:
-                  type: flat_rate
-                  preferences:
-                    amounts: {}
-                    amount: '10.00'
-                    currency: USD
+                calculator_type: flat_rate
+                calculator_preferences:
+                  amounts: {}
+                  amount: '10.0'
+                  currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
     patch:
@@ -12693,12 +12702,11 @@ paths:
                 editable: true
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_zone_id:
-                calculator:
-                  type: flat_rate
-                  preferences:
-                    amounts: {}
-                    amount: '10.00'
-                    currency: USD
+                calculator_type: flat_rate
+                calculator_preferences:
+                  amounts: {}
+                  amount: '10.0'
+                  currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
       requestBody:
@@ -12733,18 +12741,10 @@ paths:
                 estimated_transit_business_days_max:
                   type: integer
                   nullable: true
-                calculator:
+                calculator_type:
+                  type: string
+                calculator_preferences:
                   type: object
-                  description: 'How the method is priced: a type from `/delivery_methods/calculators`
-                    and its preferences, per that type''s `schema`.'
-                  properties:
-                    type:
-                      type: string
-                      example: flat_rate
-                    preferences:
-                      type: object
-                      example:
-                        amount: '12.5'
                 rules:
                   type: array
                   description: Replaces the whole set — a rule dropped here is deleted,
@@ -12793,69 +12793,43 @@ paths:
                   name: Item total
                   description: Limits the delivery method to carts within an item
                     total range
-                  schema:
-                    type: object
-                    properties:
-                      minimum_amount:
-                        type:
-                        - string
-                        - 'null'
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                      maximum_amount:
-                        type:
-                        - string
-                        - 'null'
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                    additionalProperties: false
+                  preference_schema:
+                  - key: minimum_amount
+                    type: decimal
+                    default:
+                  - key: maximum_amount
+                    type: decimal
+                    default:
                 - type: weight_rule
                   name: Weight
                   description: Limits the delivery method to packages within a weight
                     range
-                  schema:
-                    type: object
-                    properties:
-                      minimum_weight:
-                        type:
-                        - string
-                        - 'null'
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                      maximum_weight:
-                        type:
-                        - string
-                        - 'null'
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                    additionalProperties: false
+                  preference_schema:
+                  - key: minimum_weight
+                    type: decimal
+                    default:
+                  - key: maximum_weight
+                    type: decimal
+                    default:
                 - type: volume_rule
                   name: Volume
                   description: Limits the delivery method to shipments within a volume
                     range, in cubic meters
-                  schema:
-                    type: object
-                    properties:
-                      minimum_volume:
-                        type:
-                        - string
-                        - 'null'
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                      maximum_volume:
-                        type:
-                        - string
-                        - 'null'
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                    additionalProperties: false
+                  preference_schema:
+                  - key: minimum_volume
+                    type: decimal
+                    default:
+                  - key: maximum_volume
+                    type: decimal
+                    default:
                 - type: company_rule
                   name: Company
                   description: Offers the delivery method only to orders placed for
                     a company, or only to orders that are not
-                  schema:
-                    type: object
-                    properties:
-                      company_orders_only:
-                        type: boolean
-                        default: true
-                    additionalProperties: false
+                  preference_schema:
+                  - key: company_orders_only
+                    type: boolean
+                    default: true
               schema:
                 type: object
                 properties:
@@ -12870,9 +12844,10 @@ paths:
                           type: string
                         description:
                           type: string
-                        schema:
-                          type: object
-                          description: JSON Schema of the type's `preferences`
+                        preference_schema:
+                          type: array
+                          items:
+                            type: object
                 required:
                 - data
   "/api/v3/seller/delivery_methods/calculators":
@@ -12897,140 +12872,76 @@ paths:
                 data:
                 - type: flat_percent_item_total
                   name: Flat Percent
-                  schema:
-                    type: object
-                    properties:
-                      flat_percent:
-                        type: string
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                    additionalProperties: false
+                  preference_schema:
+                  - key: flat_percent
+                    type: decimal
+                    default: 0
                 - type: flat_rate
                   name: Flat rate
-                  schema:
-                    type: object
-                    properties:
-                      amounts:
-                        type: object
-                        propertyNames:
-                          type: string
-                          format: currency
-                          pattern: "^[A-Z]{3}$"
-                        additionalProperties:
-                          type: string
-                          format: money
-                          pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: {}
-                      amount:
-                        type: string
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                      currency:
-                        type: string
-                        format: currency
-                        pattern: "^[A-Z]{3}$"
-                    additionalProperties: false
+                  preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
+                  - key: amount
+                    type: decimal
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: flexi_rate
                   name: Flexible Rate per package item
-                  schema:
-                    type: object
-                    properties:
-                      first_item:
-                        type: string
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                      additional_item:
-                        type: string
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                      max_items:
-                        type: integer
-                        default: 0
-                      currency:
-                        type: string
-                        format: currency
-                        pattern: "^[A-Z]{3}$"
-                    additionalProperties: false
+                  preference_schema:
+                  - key: first_item
+                    type: decimal
+                    default: 0.0
+                  - key: additional_item
+                    type: decimal
+                    default: 0.0
+                  - key: max_items
+                    type: integer
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: per_item
                   name: Flat rate per package item
-                  schema:
-                    type: object
-                    properties:
-                      amounts:
-                        type: object
-                        propertyNames:
-                          type: string
-                          format: currency
-                          pattern: "^[A-Z]{3}$"
-                        additionalProperties:
-                          type: string
-                          format: money
-                          pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: {}
-                      amount:
-                        type: string
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                      currency:
-                        type: string
-                        format: currency
-                        pattern: "^[A-Z]{3}$"
-                    additionalProperties: false
+                  preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
+                  - key: amount
+                    type: decimal
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: price_sack
                   name: Price sack
-                  schema:
-                    type: object
-                    properties:
-                      minimal_amount:
-                        type: string
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                      normal_amount:
-                        type: string
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                      discount_amount:
-                        type: string
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                      currency:
-                        type: string
-                        format: currency
-                        pattern: "^[A-Z]{3}$"
-                    additionalProperties: false
+                  preference_schema:
+                  - key: minimal_amount
+                    type: decimal
+                    default: 0
+                  - key: normal_amount
+                    type: decimal
+                    default: 0
+                  - key: discount_amount
+                    type: decimal
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: digital_delivery
                   name: Digital Delivery
-                  schema:
-                    type: object
-                    properties:
-                      amounts:
-                        type: object
-                        propertyNames:
-                          type: string
-                          format: currency
-                          pattern: "^[A-Z]{3}$"
-                        additionalProperties:
-                          type: string
-                          format: money
-                          pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: {}
-                      amount:
-                        type: string
-                        format: money
-                        pattern: "^-?\\d+(\\.\\d+)?$"
-                        default: '0'
-                      currency:
-                        type: string
-                        format: currency
-                        pattern: "^[A-Z]{3}$"
-                    additionalProperties: false
+                  preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
+                  - key: amount
+                    type: decimal
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
               schema:
                 type: object
                 properties:
@@ -13043,9 +12954,10 @@ paths:
                           type: string
                         name:
                           type: string
-                        schema:
-                          type: object
-                          description: JSON Schema of the type's `preferences`
+                        preference_schema:
+                          type: array
+                          items:
+                            type: object
                 required:
                 - data
   "/api/v3/seller/delivery_profiles":
@@ -13081,6 +12993,25 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: DeliveryProfile
+        sortable:
+        - created_at
+        - id
+        - name
+        - position
+        - updated_at
       responses:
         '200':
           description: delivery profiles listed
@@ -13156,6 +13087,25 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: DeliveryZone
+        sortable:
+        - created_at
+        - delivery_profile_id
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: delivery zones listed
@@ -13433,6 +13383,26 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Policy
+        sortable:
+        - created_at
+        - id
+        - name
+        - owner_id
+        - owner_type
+        - updated_at
       responses:
         '200':
           description: policies listed
@@ -13653,6 +13623,24 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: ProductType
+        sortable:
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: product types listed
@@ -13752,6 +13740,30 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Product
+        sortable:
+        - available_on
+        - created_at
+        - description
+        - discontinue_on
+        - id
+        - name
+        - seller_id
+        - slug
+        - status
+        - updated_at
       responses:
         '200':
           description: products listed
@@ -13796,9 +13808,13 @@ paths:
                   tags: []
                   price:
                     id: price_UkLWZg9DAJ
-                    currency: USD
                     amount: '19.99'
+                    amount_in_cents: 1999
                     compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
+                    display_amount: "$19.99"
+                    display_compare_at_amount:
                     price_list_id:
                   original_price:
                   seller_id: sel_UkLWZg9DAJ
@@ -13879,9 +13895,13 @@ paths:
                 tags: []
                 price:
                   id: price_gbHJdmfrXB
-                  currency: USD
-                  amount: '24.00'
+                  amount: '24.0'
+                  amount_in_cents: 2400
                   compare_at_amount:
+                  compare_at_amount_in_cents:
+                  currency: USD
+                  display_amount: "$24.00"
+                  display_compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -14027,9 +14047,13 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  currency: USD
                   amount: '19.99'
+                  amount_in_cents: 1999
                   compare_at_amount:
+                  compare_at_amount_in_cents:
+                  currency: USD
+                  display_amount: "$19.99"
+                  display_compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -14098,9 +14122,13 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  currency: USD
                   amount: '19.99'
+                  amount_in_cents: 1999
                   compare_at_amount:
+                  compare_at_amount_in_cents:
+                  currency: USD
+                  display_amount: "$19.99"
+                  display_compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -14188,7 +14216,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
-                timezone: UTC
+                preferred_timezone: UTC
                 status: approved
                 legal_name:
                 registration_number:
@@ -14261,7 +14289,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
-                timezone: UTC
+                preferred_timezone: UTC
                 status: approved
                 legal_name:
                 registration_number:
@@ -14388,6 +14416,32 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: StockLocation
+        sortable:
+        - active
+        - country_code
+        - created_at
+        - default
+        - id
+        - kind
+        - name
+        - pickup_enabled
+        - returns_enabled
+        - seller_id
+        - state_code
+        - updated_at
       responses:
         '200':
           description: stock locations listed
@@ -15034,10 +15088,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--685d4d35ee0893406644de01b3a620fa83d60919
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--960d2ace20dcac09a64a9f83e74bd34afd509a8b
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--797b5132d835a69150dbb871e0d72eb9fc44565a
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0665a8407df778c5384d8f20024911ee96f3551e
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -15101,11 +15155,16 @@ paths:
                 - currency: USD
                   settlement_currency: USD
                   converted: false
-                  earned: '40.00'
-                  pending: '0.00'
-                  payable: '40.00'
-                  paid: '15.00'
-                  balance: '25.00'
+                  earned: '40.0'
+                  display_earned: "$40.00"
+                  payable: '40.0'
+                  display_payable: "$40.00"
+                  paid: '15.0'
+                  display_paid: "$15.00"
+                  balance: '25.0'
+                  display_balance: "$25.00"
+                  pending: '0.0'
+                  display_pending: "$0.00"
               schema:
                 type: object
                 properties:
@@ -15136,6 +15195,25 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Claim
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: claims listed
@@ -15149,7 +15227,8 @@ paths:
                   resolution:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
-                  refund_total: '0.00'
+                  refund_total: '0.0'
+                  display_refund_total: "$0.00"
                   approved_at:
                   resolved_at:
                   denied_at:
@@ -15204,7 +15283,8 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.00'
+                refund_total: '0.0'
+                display_refund_total: "$0.00"
                 approved_at:
                 resolved_at:
                 denied_at:
@@ -15286,7 +15366,8 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.00'
+                refund_total: '0.0'
+                display_refund_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 resolved_at:
                 denied_at:
@@ -15335,7 +15416,8 @@ paths:
                 resolution: refund
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.00'
+                refund_total: '0.0'
+                display_refund_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 resolved_at: '2026-01-15T12:00:00Z'
                 denied_at:
@@ -15406,7 +15488,8 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.00'
+                refund_total: '0.0'
+                display_refund_total: "$0.00"
                 approved_at:
                 resolved_at:
                 denied_at: '2026-01-15T12:00:00Z'
@@ -15431,6 +15514,25 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: ClaimReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -15481,6 +15583,25 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Exchange
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: exchanges listed
@@ -15494,6 +15615,7 @@ paths:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   price_difference: '9.99'
+                  display_price_difference: "$9.99"
                   approved_at:
                   received_at:
                   fulfilled_at:
@@ -15549,6 +15671,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
+                display_price_difference: "$9.99"
                 approved_at:
                 received_at:
                 fulfilled_at:
@@ -15628,6 +15751,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
+                display_price_difference: "$9.99"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 fulfilled_at: '2026-01-15T12:00:00Z'
@@ -15855,6 +15979,24 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Fulfillment
+        sortable:
+        - created_at
+        - id
+        - number
+        - updated_at
       responses:
         '200':
           description: fulfillments listed
@@ -15888,12 +16030,13 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 81
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
+                    cost: '10.0'
+                    total: '10.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    unpriced: false
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -15994,12 +16137,13 @@ paths:
                 - id: dr_gbHJdmfrXB
                   name: UPS Ground 82
                   selected: true
-                  cost: '10.00'
-                  total: '10.00'
+                  cost: '10.0'
+                  total: '10.0'
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  unpriced: false
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-1
@@ -16107,12 +16251,13 @@ paths:
                 - id: dr_gbHJdmfrXB
                   name: UPS Ground 83
                   selected: true
-                  cost: '10.00'
-                  total: '10.00'
+                  cost: '10.0'
+                  total: '10.0'
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  unpriced: false
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-2
@@ -16200,12 +16345,13 @@ paths:
                 - id: dr_gbHJdmfrXB
                   name: UPS Ground 84
                   selected: true
-                  cost: '10.00'
-                  total: '10.00'
+                  cost: '10.0'
+                  total: '10.0'
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  unpriced: false
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: U10000
@@ -16335,6 +16481,38 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Order
+        sortable:
+        - channel_id
+        - completed_at
+        - created_at
+        - currency
+        - customer_id
+        - delivery_total
+        - fulfillment_status
+        - id
+        - item_total
+        - number
+        - order_group_id
+        - payment_status
+        - po_number
+        - seller_id
+        - status
+        - total
+        - total_quantity
+        - updated_at
       responses:
         '200':
           description: orders listed
@@ -16355,19 +16533,32 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   internal_note:
                   internal_note_html:
-                  item_total: '10.00'
-                  delivery_total: '100.00'
-                  discount_total: '0.00'
-                  adjustment_total: '0.00'
-                  included_tax_total: '0.00'
-                  additional_tax_total: '0.00'
-                  tax_total: '0.00'
-                  total: '110.00'
-                  payment_total: '0.00'
-                  amount_due: '110.00'
-                  commission_amount_total: '0.00'
-                  commission_tax_total: '0.00'
-                  commission_total: '0.00'
+                  item_total: '10.0'
+                  display_item_total: "$10.00"
+                  delivery_total: '100.0'
+                  display_delivery_total: "$100.00"
+                  discount_total: '0.0'
+                  display_discount_total: "$0.00"
+                  adjustment_total: '0.0'
+                  display_adjustment_total: "$0.00"
+                  included_tax_total: '0.0'
+                  display_included_tax_total: "$0.00"
+                  additional_tax_total: '0.0'
+                  display_additional_tax_total: "$0.00"
+                  tax_total: '0.0'
+                  display_tax_total: "$0.00"
+                  total: '110.0'
+                  display_total: "$110.00"
+                  payment_total: '0.0'
+                  display_payment_total: "$0.00"
+                  amount_due: '110.0'
+                  display_amount_due: "$110.00"
+                  commission_amount_total: '0.0'
+                  display_commission_amount_total: "$0.00"
+                  commission_tax_total: '0.0'
+                  display_commission_tax_total: "$0.00"
+                  commission_total: '0.0'
+                  display_commission_total: "$0.00"
                   canceled_at:
                   cancel_reason_name:
                   cancel_note:
@@ -16377,10 +16568,13 @@ paths:
                     options_text: ''
                     quantity: 1
                     currency: USD
-                    price: '10.00'
-                    discounted_amount: '10.00'
-                    additional_tax_total: '0.00'
-                    total: '10.00'
+                    price: '10.0'
+                    display_price: "$10.00"
+                    discounted_amount: '10.0'
+                    display_discounted_amount: "$10.00"
+                    additional_tax_total: '0.0'
+                    total: '10.0'
+                    display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
                     sku: SKU-257
                     thumbnail_url:
@@ -16411,12 +16605,13 @@ paths:
                     - id: dr_gbHJdmfrXB
                       name: UPS Ground 86
                       selected: true
-                      cost: '10.00'
-                      total: '10.00'
+                      cost: '10.0'
+                      total: '10.0'
                       carrier:
                       service_level:
                       estimated_delivery_date:
-                      unpriced: false
+                      display_cost: "$10.00"
+                      display_total: "$10.00"
                     deliveries:
                     - id: dlv_UkLWZg9DAJ
                       tracking_number: U10000
@@ -16542,19 +16737,32 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.00'
-                delivery_total: '100.00'
-                discount_total: '0.00'
-                adjustment_total: '0.00'
-                included_tax_total: '0.00'
-                additional_tax_total: '0.00'
-                tax_total: '0.00'
-                total: '110.00'
-                payment_total: '0.00'
-                amount_due: '110.00'
-                commission_amount_total: '0.00'
-                commission_tax_total: '0.00'
-                commission_total: '0.00'
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
@@ -16564,10 +16772,13 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.00'
-                  discounted_amount: '10.00'
-                  additional_tax_total: '0.00'
-                  total: '10.00'
+                  price: '10.0'
+                  display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
+                  additional_tax_total: '0.0'
+                  total: '10.0'
+                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-258
                   thumbnail_url:
@@ -16598,12 +16809,13 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 87
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
+                    cost: '10.0'
+                    total: '10.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    unpriced: false
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -16725,19 +16937,32 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.00'
-                delivery_total: '100.00'
-                discount_total: '0.00'
-                adjustment_total: '0.00'
-                included_tax_total: '0.00'
-                additional_tax_total: '0.00'
-                tax_total: '0.00'
-                total: '110.00'
-                payment_total: '0.00'
-                amount_due: '0.00'
-                commission_amount_total: '0.00'
-                commission_tax_total: '0.00'
-                commission_total: '0.00'
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: "-0.0"
+                display_amount_due: "$0.00"
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at: '2026-01-15T12:00:00Z'
                 cancel_reason_name:
                 cancel_note:
@@ -16747,10 +16972,13 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.00'
-                  discounted_amount: '10.00'
-                  additional_tax_total: '0.00'
-                  total: '10.00'
+                  price: '10.0'
+                  display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
+                  additional_tax_total: '0.0'
+                  total: '10.0'
+                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-261
                   thumbnail_url:
@@ -16781,12 +17009,13 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 90
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
+                    cost: '10.0'
+                    total: '10.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    unpriced: false
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -16915,19 +17144,32 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.00'
-                delivery_total: '100.00'
-                discount_total: '0.00'
-                adjustment_total: '0.00'
-                included_tax_total: '0.00'
-                additional_tax_total: '0.00'
-                tax_total: '0.00'
-                total: '110.00'
-                payment_total: '0.00'
-                amount_due: '110.00'
-                commission_amount_total: '0.00'
-                commission_tax_total: '0.00'
-                commission_total: '0.00'
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
@@ -16937,10 +17179,13 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.00'
-                  discounted_amount: '10.00'
-                  additional_tax_total: '0.00'
-                  total: '10.00'
+                  price: '10.0'
+                  display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
+                  additional_tax_total: '0.0'
+                  total: '10.0'
+                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-262
                   thumbnail_url:
@@ -16971,12 +17216,13 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 91
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
+                    cost: '10.0'
+                    total: '10.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    unpriced: false
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17168,19 +17414,32 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.00'
-                delivery_total: '100.00'
-                discount_total: '0.00'
-                adjustment_total: '0.00'
-                included_tax_total: '0.00'
-                additional_tax_total: '0.00'
-                tax_total: '0.00'
-                total: '110.00'
-                payment_total: '0.00'
-                amount_due: '110.00'
-                commission_amount_total: '0.00'
-                commission_tax_total: '0.00'
-                commission_total: '0.00'
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
@@ -17190,10 +17449,13 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.00'
-                  discounted_amount: '10.00'
-                  additional_tax_total: '0.00'
-                  total: '10.00'
+                  price: '10.0'
+                  display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
+                  additional_tax_total: '0.0'
+                  total: '10.0'
+                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-264
                   thumbnail_url:
@@ -17224,12 +17486,13 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 93
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
+                    cost: '10.0'
+                    total: '10.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    unpriced: false
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17327,19 +17590,32 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note: Packed with the fragile insert.
                 internal_note_html: "<p>Packed with the fragile insert.</p>"
-                item_total: '10.00'
-                delivery_total: '100.00'
-                discount_total: '0.00'
-                adjustment_total: '0.00'
-                included_tax_total: '0.00'
-                additional_tax_total: '0.00'
-                tax_total: '0.00'
-                total: '110.00'
-                payment_total: '0.00'
-                amount_due: '110.00'
-                commission_amount_total: '0.00'
-                commission_tax_total: '0.00'
-                commission_total: '0.00'
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
@@ -17349,10 +17625,13 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.00'
-                  discounted_amount: '10.00'
-                  additional_tax_total: '0.00'
-                  total: '10.00'
+                  price: '10.0'
+                  display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
+                  additional_tax_total: '0.0'
+                  total: '10.0'
+                  display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
                   sku: SKU-265
                   thumbnail_url:
@@ -17383,12 +17662,13 @@ paths:
                   - id: dr_gbHJdmfrXB
                     name: UPS Ground 94
                     selected: true
-                    cost: '10.00'
-                    total: '10.00'
+                    cost: '10.0'
+                    total: '10.0'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    unpriced: false
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17493,6 +17773,25 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: OrderCancellationReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -17568,6 +17867,27 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: PackageType
+        sortable:
+        - created_at
+        - default
+        - id
+        - kind
+        - name
+        - seller_id
+        - updated_at
       responses:
         '200':
           description: package types listed
@@ -17922,17 +18242,31 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
-      - name: q[status_eq]
+      - name: q
         in: query
         required: false
+        style: deepObject
+        explode: true
         schema:
-          type: string
-          enum:
-          - pending
-          - processing
-          - completed
-          - failed
-          - unresolved
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: SellerPayout
+        sortable:
+        - amount
+        - created_at
+        - currency
+        - id
+        - period_end
+        - period_start
+        - provider
+        - reference
+        - seller_id
+        - status
+        - updated_at
       responses:
         '200':
           description: payouts listed
@@ -17948,7 +18282,8 @@ paths:
                   period_end:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '120.00'
+                  amount: '120.0'
+                  display_amount: "$120.00"
                   transfers_count: 1
                   provider: system
                 meta:
@@ -18009,7 +18344,8 @@ paths:
                 period_end:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '120.00'
+                amount: '120.0'
+                display_amount: "$120.00"
                 transfers_count: 1
                 provider: system
               schema:
@@ -18050,6 +18386,25 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: Return
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: returns listed
@@ -18062,16 +18417,19 @@ paths:
                   status: requested
                   order_id: or_UkLWZg9DAJ
                   reason_id:
-                  refund_total: '10.00'
-                  refund_tax_total: '0.00'
+                  refund_total: '10.0'
+                  display_refund_total: "$10.00"
+                  refund_tax_total: '0.0'
+                  display_refund_tax_total: "$0.00"
                   approved_at:
                   received_at:
                   refunded_at:
                   canceled_at:
                   memo:
                   stock_location_id: sloc_UkLWZg9DAJ
-                  refunded_total: '0.00'
-                  refundable_total: '10.00'
+                  refunded_total: '0.0'
+                  refundable_total: '10.0'
+                  display_refunded_total: "$0.00"
                 meta:
                   page: 1
                   limit: 25
@@ -18121,16 +18479,19 @@ paths:
                 status: requested
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.00'
-                refund_tax_total: '0.00'
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                refund_tax_total: '0.0'
+                display_refund_tax_total: "$0.00"
                 approved_at:
                 received_at:
                 refunded_at:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.00'
-                refundable_total: '10.00'
+                refunded_total: '0.0'
+                refundable_total: '10.0'
+                display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
         '422':
@@ -18206,16 +18567,19 @@ paths:
                 status: approved
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.00'
-                refund_tax_total: '0.00'
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                refund_tax_total: '0.0'
+                display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at:
                 refunded_at:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.00'
-                refundable_total: '10.00'
+                refunded_total: '0.0'
+                refundable_total: '10.0'
+                display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
   "/api/v3/seller/orders/{order_id}/returns/{id}/receive":
@@ -18257,16 +18621,19 @@ paths:
                 status: received
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.00'
-                refund_tax_total: '0.00'
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                refund_tax_total: '0.0'
+                display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.00'
-                refundable_total: '10.00'
+                refunded_total: '0.0'
+                refundable_total: '10.0'
+                display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
       requestBody:
@@ -18331,16 +18698,19 @@ paths:
                 status: refunded
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.00'
-                refund_tax_total: '0.00'
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                refund_tax_total: '0.0'
+                display_refund_tax_total: "$0.00"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at: '2026-01-15T12:00:00Z'
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '10.00'
-                refundable_total: '0.00'
+                refunded_total: '10.0'
+                refundable_total: '0.0'
+                display_refunded_total: "$10.00"
               schema:
                 "$ref": "#/components/schemas/Return"
         '422':
@@ -18401,16 +18771,19 @@ paths:
                 status: canceled
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.00'
-                refund_tax_total: '0.00'
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                refund_tax_total: '0.0'
+                display_refund_tax_total: "$0.00"
                 approved_at:
                 received_at:
                 refunded_at:
                 canceled_at: '2026-01-15T12:00:00Z'
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.00'
-                refundable_total: '10.00'
+                refunded_total: '0.0'
+                refundable_total: '10.0'
+                display_refunded_total: "$0.00"
               schema:
                 "$ref": "#/components/schemas/Return"
   "/api/v3/seller/return_reasons":
@@ -18431,6 +18804,25 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: ReturnReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -18481,6 +18873,23 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: TaxIdentifier
+        sortable:
+        - created_at
+        - id
+        - updated_at
       responses:
         '200':
           description: registrations returned
@@ -18688,37 +19097,32 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
-      - name: q[order_id_eq]
+      - name: q
         in: query
         required: false
-        description: Only the rows for this order
+        style: deepObject
+        explode: true
         schema:
-          type: string
-      - name: q[payout_id_eq]
-        in: query
-        required: false
-        description: Only the rows this settlement covers
-        schema:
-          type: string
-      - name: q[status_eq]
-        in: query
-        required: false
-        schema:
-          type: string
-          enum:
-          - pending
-          - processing
-          - completed
-          - failed
-          - unresolved
-      - name: q[kind_eq]
-        in: query
-        required: false
-        schema:
-          type: string
-          enum:
-          - earning
-          - refund_reversal
+          type: object
+          additionalProperties: true
+        description: Filters, as `q[<attribute>_<predicate>]=value`. The attributes,
+          predicates, associations and scopes this endpoint accepts are listed in
+          `x-spree-filters`.
+      x-spree-filters:
+        table: SellerTransfer
+        sortable:
+        - amount
+        - created_at
+        - currency
+        - id
+        - kind
+        - order_id
+        - payout_id
+        - provider
+        - reference
+        - seller_id
+        - status
+        - updated_at
       responses:
         '200':
           description: transfers listed
@@ -18733,8 +19137,9 @@ paths:
                   reference:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '42.00'
-                  settled_amount: '42.00'
+                  amount: '42.0'
+                  display_amount: "$42.00"
+                  settled_amount: '42.0'
                   settled_currency: USD
                   converted: false
                   order_id: or_UkLWZg9DAJ
@@ -18799,8 +19204,9 @@ paths:
                 reference:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '42.00'
-                settled_amount: '42.00'
+                amount: '42.0'
+                display_amount: "$42.00"
+                settled_amount: '42.0'
                 settled_currency: USD
                 converted: false
                 order_id: or_UkLWZg9DAJ
@@ -19122,21 +19528,50 @@ components:
       - id
       - name
       - code
-    PreferenceSchema:
+    PreferenceField:
       type: object
-      description: 'The JSON Schema (draft 2020-12) of a type''s `preferences`: one
-        property per setting, with `format` (`money`, `currency`, `iso-country`, `prefixed-id`,
-        …), `enum`, `default`, `x-spree-secret` for a secret and `x-spree-prefix`
-        for an id list. Unknown keys are refused.'
-      additionalProperties: true
-      example:
-        type: object
-        properties:
-          amount:
-            type: string
-            format: money
-            default: '0.0'
-        additionalProperties: false
+      description: A single configurable preference on a payment method, promotion
+        rule/action, or calculator. The frontend uses `type` + `default` to render
+        a sensible input.
+      properties:
+        key:
+          type: string
+          example: amount_min
+        type:
+          type: string
+          example: decimal
+          description: string | text | password | integer | decimal | boolean | array
+            | hash
+        default:
+          description: Default value (any JSON type), null when there is no default
+          nullable: true
+      required:
+      - key
+      - type
+    PromotionActionCalculator:
+      type: object
+      description: The action's nested calculator (when the action carries one — null
+        for actions like `free_shipping`)
+      properties:
+        type:
+          type: string
+          example: flat_rate
+          description: Wire shorthand for the calculator subclass
+        label:
+          type: string
+          example: Flat Rate
+        preferences:
+          type: object
+          additionalProperties: true
+        preference_schema:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PreferenceField"
+      required:
+      - type
+      - label
+      - preferences
+      - preference_schema
     PromotionActionLineItem:
       type: object
       description: One row in a `create_line_items` action — the variant added to
@@ -19576,6 +20011,69 @@ components:
       - option_type_label
       - image_url
       x-typelizer: true
+    PriceHistory:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: string
+        amount_in_cents:
+          type: number
+        currency:
+          type: string
+        display_amount:
+          type: string
+        recorded_at:
+          type: string
+      required:
+      - id
+      - amount
+      - amount_in_cents
+      - currency
+      - display_amount
+      - recorded_at
+      x-typelizer: true
+    Price:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: string
+          nullable: true
+        amount_in_cents:
+          type: number
+          nullable: true
+        compare_at_amount:
+          type: string
+          nullable: true
+        compare_at_amount_in_cents:
+          type: number
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        display_amount:
+          type: string
+          nullable: true
+        display_compare_at_amount:
+          type: string
+          nullable: true
+        price_list_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - amount
+      - amount_in_cents
+      - compare_at_amount
+      - compare_at_amount_in_cents
+      - currency
+      - display_amount
+      - display_compare_at_amount
+      - price_list_id
+      x-typelizer: true
     Account:
       type: object
       properties:
@@ -19621,23 +20119,38 @@ components:
           type: boolean
         earned:
           type: string
-        pending:
+        display_earned:
           type: string
         payable:
           type: string
+        display_payable:
+          type: string
         paid:
           type: string
+        display_paid:
+          type: string
         balance:
+          type: string
+        display_balance:
+          type: string
+        pending:
+          type: string
+        display_pending:
           type: string
       required:
       - currency
       - settlement_currency
       - converted
       - earned
-      - pending
+      - display_earned
       - payable
+      - display_payable
       - paid
+      - display_paid
       - balance
+      - display_balance
+      - pending
+      - display_pending
       x-typelizer: true
     ClaimLineItem:
       type: object
@@ -19662,6 +20175,8 @@ components:
         additional_tax_total:
           type: string
         tax_total:
+          type: string
+        display_refund_amount:
           type: string
         variant_id:
           type: string
@@ -19688,6 +20203,7 @@ components:
       - included_tax_total
       - additional_tax_total
       - tax_total
+      - display_refund_amount
       - variant_id
       - replacement_variant_id
       - line_item_id
@@ -19723,6 +20239,8 @@ components:
           nullable: true
         refund_total:
           type: string
+        display_refund_total:
+          type: string
         approved_at:
           type: string
           nullable: true
@@ -19752,6 +20270,7 @@ components:
       - order_id
       - reason_id
       - refund_total
+      - display_refund_total
       - approved_at
       - resolved_at
       - denied_at
@@ -19770,12 +20289,15 @@ components:
           description: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule,
             channel_rule, volume_rule, company_rule. Extensions may register more.'
         preferences:
-          "$ref": "#/components/schemas/DeliveryMethodRulePreferences"
+          type: object
+        preference_schema:
+          type: object
       required:
       - id
       - active
       - type
       - preferences
+      - preference_schema
       x-typelizer: true
     DeliveryMethod:
       type: object
@@ -19823,9 +20345,11 @@ components:
         delivery_zone_id:
           type: string
           nullable: true
-        calculator:
-          allOf:
-          - "$ref": "#/components/schemas/DeliveryMethodCalculator"
+        calculator_type:
+          type: string
+          nullable: true
+        calculator_preferences:
+          type: object
           nullable: true
       required:
       - id
@@ -19845,7 +20369,8 @@ components:
       - editable
       - delivery_profile_id
       - delivery_zone_id
-      - calculator
+      - calculator_type
+      - calculator_preferences
       x-typelizer: true
     DeliveryProfile:
       type: object
@@ -19886,8 +20411,10 @@ components:
         estimated_delivery_date:
           type: string
           nullable: true
-        unpriced:
-          type: boolean
+        display_cost:
+          type: string
+        display_total:
+          type: string
       required:
       - id
       - name
@@ -19897,7 +20424,8 @@ components:
       - carrier
       - service_level
       - estimated_delivery_date
-      - unpriced
+      - display_cost
+      - display_total
       x-typelizer: true
     Delivery:
       type: object
@@ -20062,6 +20590,8 @@ components:
           nullable: true
         price_difference:
           type: string
+        display_price_difference:
+          type: string
         approved_at:
           type: string
           nullable: true
@@ -20093,6 +20623,7 @@ components:
       - order_id
       - reason_id
       - price_difference
+      - display_price_difference
       - approved_at
       - received_at
       - fulfilled_at
@@ -20375,7 +20906,7 @@ components:
         processing_errors:
           type: string
           nullable: true
-        delimiter:
+        preferred_delimiter:
           type: string
         original_filename:
           type: string
@@ -20418,7 +20949,7 @@ components:
       - owner_id
       - user_id
       - processing_errors
-      - delimiter
+      - preferred_delimiter
       - original_filename
       - original_byte_size
       - original_file_url
@@ -20582,13 +21113,22 @@ components:
         price:
           type: string
           nullable: true
+        display_price:
+          type: string
+          nullable: true
         discounted_amount:
+          type: string
+          nullable: true
+        display_discounted_amount:
           type: string
           nullable: true
         additional_tax_total:
           type: string
           nullable: true
         total:
+          type: string
+          nullable: true
+        display_total:
           type: string
           nullable: true
         variant_id:
@@ -20607,9 +21147,12 @@ components:
       - quantity
       - currency
       - price
+      - display_price
       - discounted_amount
+      - display_discounted_amount
       - additional_tax_total
       - total
+      - display_total
       - variant_id
       - sku
       - thumbnail_url
@@ -20674,40 +21217,79 @@ components:
         item_total:
           type: string
           nullable: true
+        display_item_total:
+          type: string
+          nullable: true
         delivery_total:
+          type: string
+          nullable: true
+        display_delivery_total:
           type: string
           nullable: true
         discount_total:
           type: string
           nullable: true
+        display_discount_total:
+          type: string
+          nullable: true
         adjustment_total:
+          type: string
+          nullable: true
+        display_adjustment_total:
           type: string
           nullable: true
         included_tax_total:
           type: string
           nullable: true
+        display_included_tax_total:
+          type: string
+          nullable: true
         additional_tax_total:
+          type: string
+          nullable: true
+        display_additional_tax_total:
           type: string
           nullable: true
         tax_total:
           type: string
           nullable: true
+        display_tax_total:
+          type: string
+          nullable: true
         total:
+          type: string
+          nullable: true
+        display_total:
           type: string
           nullable: true
         payment_total:
           type: string
           nullable: true
+        display_payment_total:
+          type: string
+          nullable: true
         amount_due:
+          type: string
+          nullable: true
+        display_amount_due:
           type: string
           nullable: true
         commission_amount_total:
           type: string
           nullable: true
+        display_commission_amount_total:
+          type: string
+          nullable: true
         commission_tax_total:
           type: string
           nullable: true
+        display_commission_tax_total:
+          type: string
+          nullable: true
         commission_total:
+          type: string
+          nullable: true
+        display_commission_total:
           type: string
           nullable: true
         canceled_at:
@@ -20750,18 +21332,31 @@ components:
       - internal_note
       - internal_note_html
       - item_total
+      - display_item_total
       - delivery_total
+      - display_delivery_total
       - discount_total
+      - display_discount_total
       - adjustment_total
+      - display_adjustment_total
       - included_tax_total
+      - display_included_tax_total
       - additional_tax_total
+      - display_additional_tax_total
       - tax_total
+      - display_tax_total
       - total
+      - display_total
       - payment_total
+      - display_payment_total
       - amount_due
+      - display_amount_due
       - commission_amount_total
+      - display_commission_amount_total
       - commission_tax_total
+      - display_commission_tax_total
       - commission_total
+      - display_commission_total
       - canceled_at
       - cancel_reason_name
       - cancel_note
@@ -20857,26 +21452,44 @@ components:
           type: string
         authorized_amount:
           type: string
+        display_authorized_amount:
+          type: string
         captured_amount:
+          type: string
+        display_captured_amount:
           type: string
         refunded_amount:
           type: string
+        display_refunded_amount:
+          type: string
         claimed_amount:
+          type: string
+        display_claimed_amount:
           type: string
         net_captured_amount:
           type: string
+        display_net_captured_amount:
+          type: string
         refundable_amount:
+          type: string
+        display_refundable_amount:
           type: string
       required:
       - id
       - currency
       - created_at
       - authorized_amount
+      - display_authorized_amount
       - captured_amount
+      - display_captured_amount
       - refunded_amount
+      - display_refunded_amount
       - claimed_amount
+      - display_claimed_amount
       - net_captured_amount
+      - display_net_captured_amount
       - refundable_amount
+      - display_refundable_amount
       x-typelizer: true
     Payout:
       type: object
@@ -20902,6 +21515,8 @@ components:
           type: string
         amount:
           type: string
+        display_amount:
+          type: string
         transfers_count:
           type: number
         provider:
@@ -20918,6 +21533,7 @@ components:
       - created_at
       - updated_at
       - amount
+      - display_amount
       - transfers_count
       - provider
       x-typelizer: true
@@ -20948,48 +21564,6 @@ components:
       - body_html
       - updated_at
       - created_at
-      x-typelizer: true
-    PriceHistory:
-      type: object
-      properties:
-        id:
-          type: string
-        currency:
-          type: string
-        amount:
-          type: string
-          nullable: true
-        recorded_at:
-          type: string
-      required:
-      - id
-      - currency
-      - amount
-      - recorded_at
-      x-typelizer: true
-    Price:
-      type: object
-      properties:
-        id:
-          type: string
-        currency:
-          type: string
-          nullable: true
-        amount:
-          type: string
-          nullable: true
-        compare_at_amount:
-          type: string
-          nullable: true
-        price_list_id:
-          type: string
-          nullable: true
-      required:
-      - id
-      - currency
-      - amount
-      - compare_at_amount
-      - price_list_id
       x-typelizer: true
     Product:
       type: object
@@ -21219,7 +21793,7 @@ components:
         cover_photo_url:
           type: string
           nullable: true
-        timezone:
+        preferred_timezone:
           type: string
           nullable: true
         status:
@@ -21294,7 +21868,7 @@ components:
       - logo_url
       - square_logo_url
       - cover_photo_url
-      - timezone
+      - preferred_timezone
       - status
       - legal_name
       - registration_number
@@ -21488,13 +22062,19 @@ components:
           type: boolean
         pre_tax_amount:
           type: string
+        display_pre_tax_amount:
+          type: string
         included_tax_total:
           type: string
         additional_tax_total:
           type: string
         tax_total:
           type: string
+        display_tax_total:
+          type: string
         refund_amount:
+          type: string
+        display_refund_amount:
           type: string
         variant_id:
           type: string
@@ -21516,10 +22096,13 @@ components:
       - received_quantity
       - resellable
       - pre_tax_amount
+      - display_pre_tax_amount
       - included_tax_total
       - additional_tax_total
       - tax_total
+      - display_tax_total
       - refund_amount
+      - display_refund_amount
       - variant_id
       - line_item_id
       - fulfillment_item_id
@@ -21552,7 +22135,11 @@ components:
           nullable: true
         refund_total:
           type: string
+        display_refund_total:
+          type: string
         refund_tax_total:
+          type: string
+        display_refund_tax_total:
           type: string
         approved_at:
           type: string
@@ -21582,6 +22169,8 @@ components:
           type: string
         refundable_total:
           type: string
+        display_refunded_total:
+          type: string
       required:
       - id
       - number
@@ -21589,7 +22178,9 @@ components:
       - order_id
       - reason_id
       - refund_total
+      - display_refund_total
       - refund_tax_total
+      - display_refund_tax_total
       - approved_at
       - received_at
       - refunded_at
@@ -21598,6 +22189,7 @@ components:
       - stock_location_id
       - refunded_total
       - refundable_total
+      - display_refunded_total
       x-typelizer: true
     ShippingLabel:
       type: object
@@ -21658,6 +22250,8 @@ components:
           - return
         cost:
           type: string
+        display_cost:
+          type: string
         integration_id:
           type: string
           nullable: true
@@ -21684,6 +22278,7 @@ components:
       - owner_id
       - owner_type
       - cost
+      - display_cost
       - integration_id
       - file_pending
       - download_url
@@ -21893,6 +22488,8 @@ components:
           type: string
         amount:
           type: string
+        display_amount:
+          type: string
         settled_amount:
           type: string
           nullable: true
@@ -21926,6 +22523,7 @@ components:
       - created_at
       - updated_at
       - amount
+      - display_amount
       - settled_amount
       - settled_currency
       - converted
@@ -22039,6 +22637,9 @@ components:
           type: object
         position:
           type: number
+        cost_price:
+          type: string
+          nullable: true
         cost_currency:
           type: string
           nullable: true
@@ -22061,9 +22662,6 @@ components:
           type: string
         updated_at:
           type: string
-        cost_price:
-          type: string
-          nullable: true
         preorderable:
           type: boolean
         available_stock:
@@ -22109,6 +22707,7 @@ components:
       - option_values
       - metadata
       - position
+      - cost_price
       - cost_currency
       - barcode
       - backorder_limit
@@ -22117,7 +22716,6 @@ components:
       - customs_description
       - created_at
       - updated_at
-      - cost_price
       - preorderable
       - available_stock
       - total_on_hand
@@ -22158,241 +22756,309 @@ components:
       - square_logo_url
       - cover_photo_url
       x-typelizer: true
-    DeliveryCalculatorDigitalDeliveryPreferences:
-      type: object
-      properties:
-        amounts:
-          type: object
-          additionalProperties:
-            type: string
-            format: money
-            pattern: "^-?\\d+(\\.\\d+)?$"
-          default: {}
-          x-spree-property-names:
-            type: string
-            format: currency
-            pattern: "^[A-Z]{3}$"
-        amount:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-        currency:
-          type: string
-          format: currency
-          pattern: "^[A-Z]{3}$"
-      additionalProperties: false
-    DeliveryCalculatorFlatPercentItemTotalPreferences:
-      type: object
-      properties:
-        flat_percent:
-          type: string
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-      additionalProperties: false
-    DeliveryCalculatorFlatRatePreferences:
-      type: object
-      properties:
-        amounts:
-          type: object
-          additionalProperties:
-            type: string
-            format: money
-            pattern: "^-?\\d+(\\.\\d+)?$"
-          default: {}
-          x-spree-property-names:
-            type: string
-            format: currency
-            pattern: "^[A-Z]{3}$"
-        amount:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-        currency:
-          type: string
-          format: currency
-          pattern: "^[A-Z]{3}$"
-      additionalProperties: false
-    DeliveryCalculatorFlexiRatePreferences:
-      type: object
-      properties:
-        first_item:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-        additional_item:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-        max_items:
-          type: integer
-          default: 0
-        currency:
-          type: string
-          format: currency
-          pattern: "^[A-Z]{3}$"
-      additionalProperties: false
-    DeliveryCalculatorPerItemPreferences:
-      type: object
-      properties:
-        amounts:
-          type: object
-          additionalProperties:
-            type: string
-            format: money
-            pattern: "^-?\\d+(\\.\\d+)?$"
-          default: {}
-          x-spree-property-names:
-            type: string
-            format: currency
-            pattern: "^[A-Z]{3}$"
-        amount:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-        currency:
-          type: string
-          format: currency
-          pattern: "^[A-Z]{3}$"
-      additionalProperties: false
-    DeliveryCalculatorPriceSackPreferences:
-      type: object
-      properties:
-        minimal_amount:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-        normal_amount:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-        discount_amount:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          default: '0'
-        currency:
-          type: string
-          format: currency
-          pattern: "^[A-Z]{3}$"
-      additionalProperties: false
-    DeliveryCalculatorPreferences:
-      description: Settings of a delivery calculator, shaped by its `type` (see `x-spree-preferences-by-type`).
-        A type an extension registers is a plain object, described by the `schema`
-        its `/types` entry carries.
-      anyOf:
-      - "$ref": "#/components/schemas/DeliveryCalculatorDigitalDeliveryPreferences"
-      - "$ref": "#/components/schemas/DeliveryCalculatorFlatPercentItemTotalPreferences"
-      - "$ref": "#/components/schemas/DeliveryCalculatorFlatRatePreferences"
-      - "$ref": "#/components/schemas/DeliveryCalculatorFlexiRatePreferences"
-      - "$ref": "#/components/schemas/DeliveryCalculatorPerItemPreferences"
-      - "$ref": "#/components/schemas/DeliveryCalculatorPriceSackPreferences"
-      - type: object
-        additionalProperties: true
-      x-spree-preferences-by-type:
-        digital_delivery: "#/components/schemas/DeliveryCalculatorDigitalDeliveryPreferences"
-        flat_percent_item_total: "#/components/schemas/DeliveryCalculatorFlatPercentItemTotalPreferences"
-        flat_rate: "#/components/schemas/DeliveryCalculatorFlatRatePreferences"
-        flexi_rate: "#/components/schemas/DeliveryCalculatorFlexiRatePreferences"
-        per_item: "#/components/schemas/DeliveryCalculatorPerItemPreferences"
-        price_sack: "#/components/schemas/DeliveryCalculatorPriceSackPreferences"
-    DeliveryMethodRuleChannelRulePreferences:
-      type: object
-      properties:
-        channel_ids:
-          type: array
-          items:
-            type: string
-            format: prefixed-id
-            pattern: "^ch_[A-Za-z0-9]+$"
-            x-spree-prefix: ch
-          default: []
-      additionalProperties: false
-    DeliveryMethodRuleCompanyRulePreferences:
-      type: object
-      properties:
-        company_orders_only:
-          type: boolean
-          default: true
-      additionalProperties: false
-    DeliveryMethodRuleExcludedProductsRulePreferences:
-      type: object
-      properties: {}
-      additionalProperties: false
-    DeliveryMethodRuleItemTotalRulePreferences:
-      type: object
-      properties:
-        minimum_amount:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-        maximum_amount:
-          type: string
-          format: money
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-      additionalProperties: false
-    DeliveryMethodRuleVolumeRulePreferences:
-      type: object
-      properties:
-        minimum_volume:
-          type: string
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-        maximum_volume:
-          type: string
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-      additionalProperties: false
-    DeliveryMethodRuleWeightRulePreferences:
-      type: object
-      properties:
-        minimum_weight:
-          type: string
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-        maximum_weight:
-          type: string
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-      additionalProperties: false
-    DeliveryMethodRulePreferences:
-      description: Settings of a delivery method rule, shaped by its `type` (see `x-spree-preferences-by-type`).
-        A type an extension registers is a plain object, described by the `schema`
-        its `/types` entry carries.
-      anyOf:
-      - "$ref": "#/components/schemas/DeliveryMethodRuleChannelRulePreferences"
-      - "$ref": "#/components/schemas/DeliveryMethodRuleCompanyRulePreferences"
-      - "$ref": "#/components/schemas/DeliveryMethodRuleExcludedProductsRulePreferences"
-      - "$ref": "#/components/schemas/DeliveryMethodRuleItemTotalRulePreferences"
-      - "$ref": "#/components/schemas/DeliveryMethodRuleVolumeRulePreferences"
-      - "$ref": "#/components/schemas/DeliveryMethodRuleWeightRulePreferences"
-      - type: object
-        additionalProperties: true
-      x-spree-preferences-by-type:
-        channel_rule: "#/components/schemas/DeliveryMethodRuleChannelRulePreferences"
-        company_rule: "#/components/schemas/DeliveryMethodRuleCompanyRulePreferences"
-        excluded_products_rule: "#/components/schemas/DeliveryMethodRuleExcludedProductsRulePreferences"
-        item_total_rule: "#/components/schemas/DeliveryMethodRuleItemTotalRulePreferences"
-        volume_rule: "#/components/schemas/DeliveryMethodRuleVolumeRulePreferences"
-        weight_rule: "#/components/schemas/DeliveryMethodRuleWeightRulePreferences"
-    DeliveryMethodCalculator:
-      type: object
-      description: How the delivery method prices a shipment
-      properties:
-        type:
-          type: string
-          example: flat_rate
-          description: Wire shorthand for the calculator subclass
-        preferences:
-          "$ref": "#/components/schemas/DeliveryCalculatorPreferences"
-      required:
-      - type
-      - preferences
+  x-spree-filter-tables:
+    Claim:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - open
+          - approved
+          - resolved
+          - denied
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    ClaimReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    DeliveryMethod:
+      attributes:
+        available_to_sellers: boolean
+        created_at: datetime
+        id: id
+        name: text
+        seller_id: id
+        storefront_visible: boolean
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    DeliveryProfile:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        position: integer
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    DeliveryZone:
+      attributes:
+        created_at: datetime
+        delivery_profile_id: id
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Exchange:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - fulfilled
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Fulfillment:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Order:
+      attributes:
+        channel_id: id
+        completed_at: datetime
+        created_at: datetime
+        currency: text
+        customer_id: id
+        delivery_total: decimal
+        fulfillment_status:
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
+        id: id
+        item_total: decimal
+        number: text
+        order_group_id: id
+        payment_status:
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
+          - balance_due
+          - credit_owed
+          - failed
+          - void
+        po_number: text
+        seller_id: id
+        status:
+          enum:
+          - draft
+          - placed
+          - canceled
+        total: decimal
+        total_quantity: integer
+        updated_at: datetime
+      associations: {}
+      scopes:
+        complete: boolean
+        incomplete: boolean
+        partially_refunded: boolean
+        refunded: boolean
+    OrderCancellationReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    PackageType:
+      attributes:
+        created_at: datetime
+        default: boolean
+        id: id
+        kind:
+          enum:
+          - box
+          - envelope
+          - carton
+          - pallet
+          - container
+        name: text
+        seller_id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Policy:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        owner_id: id
+        owner_type: type
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Product:
+      attributes:
+        available_on: datetime
+        created_at: datetime
+        description: text
+        discontinue_on: datetime
+        id: id
+        name: text
+        seller_id: id
+        slug: text
+        status:
+          enum:
+          - draft
+          - active
+          - archived
+          - proposed
+          - rejected
+        updated_at: datetime
+      associations: {}
+      scopes:
+        ascend_by_price: boolean
+        descend_by_price: boolean
+        in_categories:
+          list: id
+        in_category: id
+        in_collection: id
+        in_stock: boolean
+        in_taxon: id
+        not_discontinued: boolean
+        out_of_stock: boolean
+        price_between:
+        - decimal
+        - decimal
+        price_gte: decimal
+        price_lte: decimal
+        search: text
+        search_by_name: text
+        with_option_value_ids:
+          list: id
+    ProductType:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Return:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - refunded
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    ReturnReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    SellerPayout:
+      attributes:
+        amount: decimal
+        created_at: datetime
+        currency: text
+        id: id
+        period_end: datetime
+        period_start: datetime
+        provider: text
+        reference: text
+        seller_id: id
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    SellerTransfer:
+      attributes:
+        amount: decimal
+        created_at: datetime
+        currency: text
+        id: id
+        kind:
+          enum:
+          - earning
+          - refund_reversal
+        order_id: id
+        payout_id: id
+        provider: text
+        reference: text
+        seller_id: id
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    StockLocation:
+      attributes:
+        active: boolean
+        country_code: text
+        created_at: datetime
+        default: boolean
+        id: id
+        kind: text
+        name: text
+        pickup_enabled: boolean
+        returns_enabled: boolean
+        seller_id: id
+        state_code: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    TaxIdentifier:
+      attributes:
+        created_at: datetime
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}

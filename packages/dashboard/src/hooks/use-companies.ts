@@ -52,7 +52,7 @@ export function useCompanyChildren(parentId: string | undefined, page = 1, limit
       adminClient.companies.list(
         parentId
           ? { page, limit, parent_id_eq: parentId, sort: 'name' }
-          : { page, limit, parent_id_null: 1, sort: 'name' },
+          : { page, limit, parent_id_null: true, sort: 'name' },
       ),
     placeholderData: (previous) => previous,
   })

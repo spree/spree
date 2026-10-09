@@ -1,5 +1,17 @@
 import type { AddressParams, ListParams } from '@spree/sdk-core'
+import type {
+  CategoryFilters,
+  CategorySort,
+  CollectionFilters,
+  CollectionSort,
+  OrderFilters,
+  OrderSort,
+  ProductFilters,
+  ProductSort,
+} from './filters.generated'
 import type { Cart as CartType } from './generated'
+
+export type * from './filters.generated'
 
 // Re-export all generated types (unprefixed: Product, Order, etc.)
 export type {
@@ -120,68 +132,13 @@ export interface RegisterParams {
   metadata?: Record<string, unknown>
 }
 
-export interface ProductListParams extends ListParams {
-  /** Sort: 'price', '-price', 'best_selling', 'name', '-name', '-available_on', 'available_on' */
-  sort?: string
-  /** Full-text search across name and SKU */
-  search?: string
-  /** Filter: name contains */
-  name_cont?: string
-  /** Filter: price >= value */
-  price_gte?: number
-  /** Filter: price <= value */
-  price_lte?: number
-  /** Filter by option value prefix IDs */
-  with_option_value_ids?: string[]
-  /** Filter: only in-stock products */
-  in_stock?: boolean
-  /** Filter: only out-of-stock products */
-  out_of_stock?: boolean
-  /** Filter: products in category (includes descendants) */
-  in_category?: string
-  /** Filter: products in any of the given categories (includes descendants, OR logic) */
-  in_categories?: string[]
-  /**
-   * Filter: products in a collection (flat — collections have no hierarchy).
-   * Prefer `client.collections.products.list()` for a collection listing: it
-   * applies the collection's own `sort_order` as the default.
-   */
-  in_collection?: string
-  /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | (string | number)[] | undefined
-}
+export type ProductListParams = ListParams<ProductFilters, ProductSort>
 
-export interface CategoryListParams extends ListParams {
-  /** Sort order, e.g. 'name', '-created_at' */
-  sort?: string
-  /** Filter: name contains */
-  name_cont?: string
-  parent_id_eq?: string | number
-  depth_eq?: number
-  /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | (string | number)[] | undefined
-}
+export type CategoryListParams = ListParams<CategoryFilters, CategorySort>
 
-export interface CollectionListParams extends ListParams {
-  /** Sort order, e.g. 'position', 'name', '-created_at' */
-  sort?: string
-  /** Filter: name contains */
-  name_cont?: string
-  /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | (string | number)[] | undefined
-}
+export type CollectionListParams = ListParams<CollectionFilters, CollectionSort>
 
-export interface OrderListParams extends ListParams {
-  /** Sort order, e.g. 'completed_at desc' */
-  sort?: string
-  /** Full-text search across number, email, customer name */
-  search?: string
-  state_eq?: string
-  completed_at_gte?: string
-  completed_at_lte?: string
-  /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | (string | number)[] | undefined
-}
+export type OrderListParams = ListParams<OrderFilters, OrderSort>
 
 // Line item input for bulk cart/order operations
 export interface LineItemInput {

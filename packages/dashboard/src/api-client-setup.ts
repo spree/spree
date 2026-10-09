@@ -1,4 +1,4 @@
-import { adminClient, setApiClient } from '@spree/dashboard-core'
+import { adminClient, runtimeListParams, setApiClient } from '@spree/dashboard-core'
 
 /**
  * Registers the Admin API client as this panel's client.
@@ -27,13 +27,16 @@ setApiClient({
   // operator imports every registered dataset; a seller's client narrows
   // `types` to their own.
   imports: {
-    list: (params) => adminClient.imports.list(params),
+    list: (params) => adminClient.imports.list(runtimeListParams(params)),
     get: (id) => adminClient.imports.get(id),
     create: (params) => adminClient.imports.create(params),
     completeMapping: (id, params) => adminClient.imports.completeMapping(id, params),
     retryFailedRows: (id) => adminClient.imports.retryFailedRows(id),
     delete: (id) => adminClient.imports.delete(id),
-    rows: { list: (importId, params) => adminClient.imports.rows.list(importId, params) },
+    rows: {
+      list: (importId, params) =>
+        adminClient.imports.rows.list(importId, runtimeListParams(params)),
+    },
     types: ['products', 'customers', 'product_translations'],
     templateUrl: (type) => `/api/v3/admin/imports/template?type=${encodeURIComponent(type)}`,
     exampleUrl: (type) => `/api/v3/admin/imports/example?type=${encodeURIComponent(type)}`,
@@ -41,7 +44,7 @@ setApiClient({
   },
   // Backs the shared stock-locations page, which both panels render.
   stockLocations: {
-    list: (params) => adminClient.stockLocations.list(params),
+    list: (params) => adminClient.stockLocations.list(runtimeListParams(params)),
     get: (id) => adminClient.stockLocations.get(id),
     create: (params) => adminClient.stockLocations.create(params),
     update: (id, params) => adminClient.stockLocations.update(id, params),
@@ -49,14 +52,15 @@ setApiClient({
   },
   // Reference data for the shared product form.
   optionTypes: {
-    list: (params) => adminClient.optionTypes.list({ ...params, expand: ['option_values'] }),
+    list: (params) =>
+      adminClient.optionTypes.list(runtimeListParams({ ...params, expand: ['option_values'] })),
     create: (params) => adminClient.optionTypes.create(params),
     update: (id, params) => adminClient.optionTypes.update(id, params),
   },
-  categories: { list: (params) => adminClient.categories.list(params) },
-  collections: { list: (params) => adminClient.collections.list(params) },
+  categories: { list: (params) => adminClient.categories.list(runtimeListParams(params)) },
+  collections: { list: (params) => adminClient.collections.list(runtimeListParams(params)) },
   productTypes: {
-    list: (params) => adminClient.productTypes.list(params),
+    list: (params) => adminClient.productTypes.list(runtimeListParams(params)),
     get: (id) => adminClient.productTypes.get(id),
   },
   // Backs the shared export dialog. `type` is widened to a string by the
@@ -67,19 +71,21 @@ setApiClient({
       adminClient.exports.create(params as Parameters<typeof adminClient.exports.create>[0]),
     get: (id) => adminClient.exports.get(id),
   },
-  taxCategories: { list: (params) => adminClient.taxCategories.list(params) },
-  deliveryProfiles: { list: (params) => adminClient.deliveryProfiles.list(params) },
+  taxCategories: { list: (params) => adminClient.taxCategories.list(runtimeListParams(params)) },
+  deliveryProfiles: {
+    list: (params) => adminClient.deliveryProfiles.list(runtimeListParams(params)),
+  },
   // Writes as well as reads: the packaging settings page is shared with the
   // seller panel, and its create/edit/delete go through this registration.
   packageTypes: {
-    list: (params) => adminClient.packageTypes.list(params),
+    list: (params) => adminClient.packageTypes.list(runtimeListParams(params)),
     get: (id) => adminClient.packageTypes.get(id),
     create: (params) => adminClient.packageTypes.create(params),
     update: (id, params) => adminClient.packageTypes.update(id, params),
     delete: (id) => adminClient.packageTypes.delete(id),
   },
   deleteProductMedia: (productId, mediaId) => adminClient.products.media.delete(productId, mediaId),
-  mediaLibrary: { list: (params) => adminClient.media.list(params) },
+  mediaLibrary: { list: (params) => adminClient.media.list(runtimeListParams(params)) },
   tags: {
     list: (params) => adminClient.tags.list(params as { taggable_type: string; q?: string }),
   },

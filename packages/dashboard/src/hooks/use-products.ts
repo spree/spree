@@ -2,6 +2,7 @@ import type { Product } from '@spree/admin-sdk'
 import type { FilterRule } from '@spree/dashboard-core'
 import {
   adminClient,
+  runtimeListParams,
   STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceMutation,
@@ -56,7 +57,7 @@ export function useProducts({
         params[key] = filter.value
       }
 
-      return adminClient.products.list(params)
+      return adminClient.products.list(runtimeListParams(params))
     },
   })
 }

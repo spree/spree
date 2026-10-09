@@ -1,4 +1,4 @@
-import { setApiClient } from '@spree/dashboard-core'
+import { runtimeListParams, setApiClient } from '@spree/dashboard-core'
 import type { SellerApiClient, SellerExportCreateParams } from '@spree/seller-sdk'
 import { createSellerClient } from '@spree/seller-sdk'
 
@@ -89,7 +89,7 @@ export function createSellerApiClient({
     // the marketplace and translations of catalog copy are its merchandising,
     // so the Seller API refuses both and the wizard offers neither.
     imports: {
-      list: (params) => sellerClient().imports.list(params),
+      list: (params) => sellerClient().imports.list(runtimeListParams(params)),
       get: (id) => sellerClient().imports.get(id),
       create: (params) =>
         sellerClient().imports.create({
@@ -101,7 +101,10 @@ export function createSellerApiClient({
       completeMapping: (id, params) => sellerClient().imports.completeMapping(id, params),
       retryFailedRows: (id) => sellerClient().imports.retryFailedRows(id),
       delete: (id) => sellerClient().imports.delete(id),
-      rows: { list: (importId, params) => sellerClient().imports.rows.list(importId, params) },
+      rows: {
+        list: (importId, params) =>
+          sellerClient().imports.rows.list(importId, runtimeListParams(params)),
+      },
       types: ['products'],
       // This panel's product list is keyed `seller-products`, so core's
       // default `products` invalidation would miss it and the list would sit
@@ -115,7 +118,7 @@ export function createSellerApiClient({
     // stock levels and is named on historical fulfillments, so the Seller API
     // does not offer it and the page hides the action accordingly.
     stockLocations: {
-      list: (params) => sellerClient().stockLocations.list(params),
+      list: (params) => sellerClient().stockLocations.list(runtimeListParams(params)),
       get: (id) => sellerClient().stockLocations.get(id),
       create: (params) => sellerClient().stockLocations.create(params),
       update: (id, params) => sellerClient().stockLocations.update(id, params),
@@ -126,16 +129,18 @@ export function createSellerApiClient({
     // shared Categorization card offers just these two
     // (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
     productTypes: {
-      list: (params) => sellerClient().productTypes.list(params),
+      list: (params) => sellerClient().productTypes.list(runtimeListParams(params)),
       get: (id) => sellerClient().productTypes.get(id),
     },
-    deliveryProfiles: { list: (params) => sellerClient().deliveryProfiles.list(params) },
+    deliveryProfiles: {
+      list: (params) => sellerClient().deliveryProfiles.list(runtimeListParams(params)),
+    },
     // What this seller packs into: their own boxes and cartons, plus the
     // marketplace's shared packaging, which the API lists read-only. Backs
     // both the packaging settings page and the variant editor's carton
     // picker (docs/plans/6.0-seller-package-types.md).
     packageTypes: {
-      list: (params) => sellerClient().packageTypes.list(params),
+      list: (params) => sellerClient().packageTypes.list(runtimeListParams(params)),
       get: (id) => sellerClient().packageTypes.get(id),
       create: (params) => sellerClient().packageTypes.create(params),
       update: (id, params) => sellerClient().packageTypes.update(id, params),

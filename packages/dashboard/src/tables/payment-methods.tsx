@@ -32,7 +32,6 @@ defineTable<PaymentMethod>('payment-methods', {
       key: 'type',
       label: i18n.t('admin.fields.payment_method.type.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (pm) => <Badge variant="outline">{pm.type}</Badge>,
     },

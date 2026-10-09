@@ -31,7 +31,6 @@ defineTable<CustomerGroup>('customer-groups', {
     {
       key: 'customers_count',
       label: i18n.t('admin.customers.groups.columns.customers'),
-      sortable: true,
       default: true,
       render: (g) => g.customers_count,
     },

@@ -9,6 +9,7 @@ export type {
   PreferencePropertySchema,
   PreferenceSchema,
 } from '@spree/sdk-core'
+export type * from './filters.generated'
 // Hand-written discovery-endpoint types (controller-shaped, not generated):
 // entries returned by the delivery-method provider discovery endpoints.
 export type {

@@ -4,6 +4,7 @@ import {
   Can,
   ResourceTable,
   resourceSearchSchema,
+  runtimeListParams,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
@@ -67,7 +68,9 @@ function PriceListsPage() {
       // Standalone lists only. A list a catalog owns has no rules and no
       // audience of its own — it is edited on that catalog, and listing it
       // here would offer a page whose controls do not apply to it.
-      queryFn={(params) => adminClient.priceLists.list({ ...params, catalog_id_null: true })}
+      queryFn={(params: Record<string, unknown>) =>
+        adminClient.priceLists.list(runtimeListParams({ ...params, catalog_id_null: true }))
+      }
       searchParams={search}
       rowActions={(list) => (
         <RowActions

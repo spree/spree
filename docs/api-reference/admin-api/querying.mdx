@@ -47,7 +47,20 @@ The SDK automatically wraps filter keys in `q[...]` and appends `[]` for array v
 | `gt` / `gteq` | Greater than / greater than or equal | `total_gteq: 100` | `q[total_gteq]=100` |
 | `in` | In a list | `status_in: ['complete', 'canceled']` | `q[status_in][]=complete&q[status_in][]=canceled` |
 | `null` / `not_null` | Is null / not null | `completed_at_not_null: true` | `q[completed_at_not_null]=true` |
-| `true` / `false` | Boolean | `accepts_email_marketing_true: 1` | `q[accepts_email_marketing_true]=1` |
+| `true` / `false` | Boolean | `accepts_email_marketing_true: true` | `q[accepts_email_marketing_true]=true` |
+
+### Which filters an endpoint accepts
+
+Each list endpoint accepts the attributes, associations and scopes its resource allows, and only the predicates that fit each attribute's kind of value:
+
+| Kind of value | Predicates |
+|---|---|
+| Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+| Amounts, counts, dates and times | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+| Statuses, prefixed IDs and types | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+| True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+
+Filters reach associated records at most two levels deep (`line_items_variant_sku_eq`). The API reference lists every endpoint's filters and sortable fields in its `x-spree-filters` entry, and the SDK types each `list()` call from that list, so a misspelled filter or sort field is a compile error rather than an unfiltered response.
 
 ### Prefixed IDs in filters
 
@@ -109,9 +122,9 @@ const customers = await client.customers.list({
   tags_name_eq: 'wholesale',
 })
 
-// Products in a specific category
-const products = await client.products.list({
-  taxons_id_eq: 'ctg_xxx',
+// Orders containing a specific variant
+const orders = await client.orders.list({
+  line_items_variant_id_eq: 'variant_xxx',
 })
 ```
 

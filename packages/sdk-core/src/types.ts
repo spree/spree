@@ -63,16 +63,26 @@ export interface ErrorResponse {
 }
 
 // Query params
-export interface ListParams {
+interface PageParams {
   page?: number
   limit?: number
-  /** Sort order. Prefix with - for descending, e.g. '-created_at', 'name'. Comma-separated for multiple fields. */
-  sort?: string
   /** Associations to expand. Supports dot notation for nested expand (max 4 levels), e.g. ['variants', 'variants.media'] */
   expand?: string[]
   /** Fields to include in response, e.g. ['name', 'slug', 'price']. Omit to return all fields. 'id' is always included. */
   fields?: string[]
 }
+
+/**
+ * A list request: pagination, expansion, sorting and the endpoint's filters
+ * (`F`, generated from the API's filter tables, sent as `q[...]`).
+ */
+export type ListParams<
+  F extends object = Record<never, never>,
+  S extends string = string,
+> = PageParams & {
+  /** Sort order. Prefix with - for descending, e.g. '-created_at', 'name'. Comma-separated for multiple fields. */
+  sort?: S
+} & F
 
 // Address params
 export interface AddressParams {
