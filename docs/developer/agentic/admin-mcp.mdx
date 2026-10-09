@@ -51,7 +51,7 @@ The tools are not a mirror of the API's endpoints — there would be hundreds, a
 | Answering with numbers | `describe_reporting`, `query_report` | Revenue, orders and units, sliced by time, product, channel or country — the same figures the dashboard charts show |
 | Doing things | One tool per operation: `orders_create`, `orders_cancel`, `fulfillments_mark_delivered`, `products_activate`, `refunds_create`, `price_lists_activate` and around fifty more | Each runs the same workflow the dashboard runs, so validations, emails and webhooks behave identically |
 | Merchandising | `curate_products` | Which products a category, collection, catalog or price list holds |
-| Receiving files | `upload_file` | Storing a CSV, image or document the merchant provided, for another tool to use |
+| Receiving files | `upload_file`, then `media_create` or `create_import` | A merchant hands over images or a CSV: store the file, then put it in a product gallery or start an import from it |
 | Reading files | MCP resources | Finished exports, and documents attached to records — a buyer's purchase order, a shipping label |
 | Store setup | `create_resource`, `update_resource`, `delete_resource` | Markets, channels, delivery and payment methods, tax rates and the rest of the settings screens |
 
