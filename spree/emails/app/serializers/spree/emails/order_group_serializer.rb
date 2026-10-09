@@ -21,11 +21,11 @@ module Spree
       end
 
       attribute :delivery_total do |group|
-        group.delivery_total.to_s
+        Spree::Money::Rounding.format(group.delivery_total, group.currency)
       end
 
       attribute :additional_tax_total do |group|
-        group.additional_tax_total.to_s
+        Spree::Money::Rounding.format(group.additional_tax_total, group.currency)
       end
 
       attribute :display_additional_tax_total do |group|
@@ -33,7 +33,7 @@ module Spree
       end
 
       attribute :gift_card_total do |group|
-        group.gift_card_total.to_s
+        Spree::Money::Rounding.format(group.gift_card_total, group.currency)
       end
 
       attribute :display_gift_card_total do |group|

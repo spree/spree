@@ -93,7 +93,7 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
         schema '$ref' => '#/components/schemas/CommissionLine'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['total']).to eq('12.1')
+          expect(JSON.parse(response.body)['total']).to eq('12.10')
         end
       end
 

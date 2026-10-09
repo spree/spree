@@ -7,6 +7,9 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasListPosition
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :price_adjustment_percentage, places: 3
 
     MATCH_POLICIES = %w[all any].freeze
 
@@ -389,9 +392,8 @@ module Spree
 
         current = current_values[price_id]
 
-        # Parse amounts using LocalizedNumber for proper decimal handling
-        amount = attrs[:amount].present? ? Spree::LocalizedNumber.parse(attrs[:amount]) : nil
-        compare_at_amount = attrs[:compare_at_amount].present? ? Spree::LocalizedNumber.parse(attrs[:compare_at_amount]) : nil
+        amount = Spree::Money::Rounding.parse_decimal(attrs[:amount])
+        compare_at_amount = Spree::Money::Rounding.parse_decimal(attrs[:compare_at_amount])
 
         # Clear compare_at_amount if it equals amount
         compare_at_amount = nil if compare_at_amount == amount

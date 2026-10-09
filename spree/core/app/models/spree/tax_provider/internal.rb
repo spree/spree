@@ -136,7 +136,7 @@ module Spree
             write_tax_line(owner, item, rate, 0, 'customer_exempt', jurisdiction,
                            data: exemption_data(exemption, exemption_subject))
           else
-            write_tax_line(owner, item, rate, compute_tax(rate, item, relevant_rates),
+            write_tax_line(owner, item, rate, compute_tax(rate, item, relevant_rates, owner.currency),
                            reason_for(rate), jurisdiction)
           end
         end
@@ -169,16 +169,19 @@ module Spree
         item.respond_to?(:taxable_basis) ? item.taxable_basis : item.amount
       end
 
-      def compute_tax(rate, item, relevant_rates)
+      # Rounded per line, half up, to the order's currency — the internal
+      # provider's choice; other providers round as their jurisdictions require.
+      def compute_tax(rate, item, relevant_rates, currency)
         basis = taxable_basis(item)
 
-        if rate.included_in_price
-          included_sum = relevant_rates.select(&:included_in_price).sum(&:amount)
-          included_sum = rate.amount if included_sum.zero?
-          (basis / (1 + included_sum) * rate.amount).round(2)
-        else
-          (basis * rate.amount).round(2)
-        end
+        tax = if rate.included_in_price
+                included_sum = relevant_rates.select(&:included_in_price).sum(&:amount)
+                included_sum = rate.amount if included_sum.zero?
+                basis / (1 + included_sum) * rate.amount
+              else
+                basis * rate.amount
+              end
+        Spree::Money::Rounding.to_currency(tax, currency)
       end
 
       # Pre-tax amounts are stored so refund and reporting code can weigh

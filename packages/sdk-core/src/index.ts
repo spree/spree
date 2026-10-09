@@ -3,6 +3,17 @@
 export type { ResolvedRetryConfig } from './helpers'
 // Helpers
 export { getParams, resolveRetryConfig } from './helpers'
+// Money
+export {
+  compareMoney,
+  decimalPlaces,
+  isDecimalString,
+  isZeroMoney,
+  multiplyMoney,
+  negateMoney,
+  subtractMoney,
+  sumMoney,
+} from './money'
 // Params
 export { transformListParams } from './params'
 export type {

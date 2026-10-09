@@ -22,7 +22,7 @@ async function seedProductWithPlainDescriptionTranslation(
   }
   const created = await page.request.post('/api/v3/admin/products', {
     headers,
-    data: { name, status: 'active', price: 9.99 },
+    data: { name, status: 'active', price: '9.99' },
   })
   if (!created.ok()) {
     throw new Error(`Failed to seed product: ${created.status()} ${await created.text()}`)

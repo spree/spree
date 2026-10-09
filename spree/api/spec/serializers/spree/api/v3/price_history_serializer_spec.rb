@@ -14,8 +14,7 @@ RSpec.describe Spree::Api::V3::PriceHistorySerializer do
 
   it 'includes amount fields' do
     expect(subject).to include(
-      'amount' => '9.99'.to_d,
-      'amount_in_cents' => 999,
+      'amount' => '9.99',
       'currency' => 'USD'
     )
   end
@@ -35,7 +34,7 @@ RSpec.describe Spree::Api::V3::PriceHistorySerializer do
 
     it 'uses the correct currency for display' do
       expect(subject['currency']).to eq('EUR')
-      expect(subject['amount']).to eq('19.99'.to_d)
+      expect(subject['amount']).to eq('19.99')
     end
   end
 end
@@ -54,8 +53,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceHistorySerializer do
 
   it 'includes store serializer fields' do
     expect(subject).to include(
-      'amount' => '9.99'.to_d,
-      'amount_in_cents' => 999,
+      'amount' => '9.99',
       'currency' => 'USD',
       'display_amount' => '$9.99'
     )
@@ -64,7 +62,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceHistorySerializer do
   it 'includes admin-only fields' do
     expect(subject['variant_id']).to eq(variant.prefixed_id)
     expect(subject['price_id']).to eq(price.prefixed_id)
-    expect(subject['compare_at_amount']).to eq('14.99'.to_d)
+    expect(subject['compare_at_amount']).to eq('14.99')
     expect(subject['created_at']).to be_present
   end
 end

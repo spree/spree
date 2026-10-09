@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreCreditsController, type: :controller 
 
       subject
       entry = json_response['data'].find { |c| c['id'] == store_credit.prefixed_id }
-      expect(entry['amount_authorized']).to eq('10.0')
+      expect(entry['amount_authorized']).to eq('10.00')
       expect(entry['display_amount_authorized']).to match(/\$10\.00/)
     end
 

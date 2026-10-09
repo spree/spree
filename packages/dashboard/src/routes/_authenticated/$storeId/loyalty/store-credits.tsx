@@ -1,4 +1,5 @@
 import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/admin-sdk'
 import {
   Can,
   PageHeader,
@@ -203,7 +204,7 @@ function useStoreCreditActions() {
 
   const canDelete = (credit: StoreCredit) =>
     !!credit.customer_id &&
-    Number(credit.amount_used) === 0 &&
+    isZeroMoney(credit.amount_used) &&
     permissions.can('destroy', Subject.StoreCredit)
 
   /** Resolves to whether the credit was deleted, so a cancel keeps the panel open. */

@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Admin::SellerPayoutsController, type: :controller
       row = json_response['data'].first
       expect(row['id']).to start_with('vpo_')
       expect(row['seller_name']).to eq('Sparks Audio')
-      expect(row['amount']).to eq('120.0')
+      expect(row['amount']).to eq('120.00')
       expect(row['display_amount']).to eq('$120.00')
       expect(row['status']).to eq('pending')
       expect(row['provider']).to eq('system')

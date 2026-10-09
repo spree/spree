@@ -1,6 +1,7 @@
 module Spree
   module Adjusters
-    # Largest-remainder apportionment of an integer cent total across weights.
+    # Largest-remainder apportionment of an integer total, in the currency's
+    # minor units, across weights.
     # Shared by promotion order-level distribution and manual admin discounts
     # so both split identically (sum of shares always equals the total).
     module LargestRemainder
@@ -18,6 +19,18 @@ module Spree
           shares[index] += 1
         end
         shares
+      end
+
+      # Splits an amount across weights in the currency's minor units, so the
+      # shares are amounts that sum exactly to the one given.
+      #
+      # @param amount [BigDecimal]
+      # @param weights [Array<Numeric>] proportional bases (sum must be > 0)
+      # @param currency [String]
+      # @return [Array<BigDecimal>]
+      def apportion(amount, weights, currency)
+        units = Spree::Money::Rounding.to_minor_units(amount, currency)
+        largest_remainder_shares(units, weights).map { |share| Spree::Money::Rounding.from_minor_units(share, currency) }
       end
     end
   end

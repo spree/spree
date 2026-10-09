@@ -130,15 +130,16 @@ export interface StoreUpdateParams {
   /** Blank means the built-in provider: the marketplace settles by hand. */
   preferred_payout_provider?: string
   preferred_default_payouts_schedule_interval?: string
-  preferred_default_minimum_payout_amount?: number
+  /** A decimal string in the store's currency, e.g. `"50.00"`. */
+  preferred_default_minimum_payout_amount?: string
   /** Admits a seller as soon as they finish onboarding, with no operator review. */
   preferred_auto_approve_sellers?: boolean
   /** Puts a seller's product on sale the moment they submit it, with no review. */
   preferred_auto_approve_seller_products?: boolean
   /** When false, transactional seller emails (approval, payouts, etc.) are suppressed. */
   preferred_send_seller_transactional_emails?: boolean
-  /** Tax charged on commission as a fraction (0.23 is 23%), when neither the rate nor the tax provider names one. */
-  preferred_default_commission_tax_rate?: number
+  /** Tax charged on commission as a fraction (`"0.23"` is 23%), when neither the rate nor the tax provider names one. */
+  preferred_default_commission_tax_rate?: string
 }
 
 export interface OptionValueParams {
@@ -201,20 +202,17 @@ export interface LineItemUpdateParams {
 export interface PaymentCreateParams {
   payment_method_id: string
   /**
-   * Decimal amount. Accept `string` so callers can ship the merchant's
-   * raw input verbatim — `Spree::LocalizedNumber.parse` handles
-   * locale-aware decoding (comma decimals, grouped digits, etc.) on the
-   * backend; `Number()`-coercing on the frontend would mangle inputs
-   * like `"1.234,56"` into `NaN`.
+   * Decimal amount as a canonical string (`"1234.56"`: period decimal, no
+   * grouping). The API does not parse localized input; normalize it first.
    */
-  amount?: string | number
+  amount?: string
   source_id?: string
 }
 
 export interface RefundCreateParams {
   payment_id: string
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  amount: string | number
+  amount: string
   /** Refund reason ID (`rr_…`). Omitted → the store's first refund reason. */
   refund_reason_id?: string
 }
@@ -249,7 +247,7 @@ export interface FulfillmentCreateParams {
    * `status: 'shipped'`; pending fulfillments are re-priced by the rate
    * engine.
    */
-  cost?: string | number
+  cost?: string
   /** Pass 'shipped' to register an already-shipped external fulfillment */
   status?: 'shipped'
   /** Line item quantities to fulfill; omit to fulfill every not-yet-shipped unit */
@@ -314,7 +312,7 @@ interface ShippingLabelDetails {
   /** Carrier service the label was bought at. */
   service?: string
   /** What the merchant paid the carrier. Admin-only accounting data; it never touches the order's shipping charge. */
-  cost?: string | number
+  cost?: string
   /** Currency of the cost. */
   currency?: string
   /** `pdf`, `png` or `zpl`; taken from the file when omitted. */
@@ -467,7 +465,7 @@ export interface ClaimCreateParams {
     description?: string
     send_replacement?: boolean
     replacement_variant_id?: string
-    refund_amount?: string | number
+    refund_amount?: string
   }>
   reason_id?: string
   memo?: string
@@ -484,7 +482,7 @@ export interface ClaimResolveParams {
   resolution: 'refund' | 'replacement' | 'refund_and_replacement'
   refund_method?: 'original_payment' | 'store_credit'
   /** Decimal amount; defaults to the claim total */
-  amount?: string | number
+  amount?: string
   /**
    * Which claim lines to send a replacement for. Omit to keep whatever the
    * claim was opened with — the merchant usually decides what to send when
@@ -498,7 +496,7 @@ export interface ReturnRefundParams {
    * Decimal amount; see `PaymentCreateParams.amount` for the string
    * rationale. Defaults to the value of what was actually received.
    */
-  amount?: string | number
+  amount?: string
   /**
    * `store_credit` issues credit immediately; `original_payment` refunds
    * through the gateway that took the money.
@@ -638,7 +636,7 @@ export interface OrderCancelParams {
    * ordinary order, where the gateway returns the payment in full.
    * Decimal amount; see `PaymentCreateParams.amount` for the string rationale.
    */
-  refund_amount?: string | number
+  refund_amount?: string
   notify_customer?: boolean
 }
 
@@ -652,7 +650,7 @@ export interface GiftCardApplyParams {
  * `customer_id` (customer prefixed ID) attaches the card to a specific customer.
  */
 export interface GiftCardCreateParams {
-  amount: string | number
+  amount: string
   currency?: string
   code?: string
   expires_at?: string | null
@@ -660,7 +658,7 @@ export interface GiftCardCreateParams {
 }
 
 export interface GiftCardUpdateParams {
-  amount?: string | number
+  amount?: string
   expires_at?: string | null
   customer_id?: string | null
 }
@@ -673,7 +671,7 @@ export interface GiftCardUpdateParams {
  */
 export interface GiftCardBatchCreateParams {
   prefix: string
-  amount: string | number
+  amount: string
   codes_count: number
   currency?: string
   expires_at?: string | null
@@ -681,7 +679,7 @@ export interface GiftCardBatchCreateParams {
 
 export interface StoreCreditApplyParams {
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  amount?: string | number
+  amount?: string
 }
 
 export interface CustomerCreateParams {
@@ -735,14 +733,14 @@ export interface CustomerAddressParams {
 
 export interface CustomerStoreCreditCreateParams {
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  amount: string | number
+  amount: string
   currency: string
   memo?: string
 }
 
 export interface CustomerStoreCreditUpdateParams {
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  amount?: string | number
+  amount?: string
   memo?: string
 }
 
@@ -978,7 +976,7 @@ export interface ProductUpdateParams {
 export interface ProductVariantInput {
   id?: string
   sku?: string
-  cost_price?: string | number
+  cost_price?: string
   cost_currency?: string
   weight?: number
   height?: number
@@ -1164,14 +1162,11 @@ export interface VariantOptionPair {
 export interface VariantPrice {
   currency: string
   /**
-   * Decimal amount. Accept `string` so callers ship the merchant's raw
-   * input verbatim — `Spree::LocalizedNumber.parse` on the backend
-   * handles locale-aware decoding (comma decimals, grouped digits, etc.);
-   * `Number()`-coercing in the frontend mangles inputs like `"1.234,56"`
-   * into `NaN`.
+   * Decimal amount as a canonical string (`"1234.56"`: period decimal, no
+   * grouping). The API does not parse localized input; normalize it first.
    */
-  amount: string | number
-  compare_at_amount?: string | number | null
+  amount: string
+  compare_at_amount?: string | null
 }
 
 /** Stock for one variant at one location. */
@@ -1193,7 +1188,7 @@ export interface VariantCreateParams {
   external_references?: ExternalReferencesParams
   sku?: string
   /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
-  cost_price?: string | number
+  cost_price?: string
   cost_currency?: string
   weight?: number
   height?: number
@@ -1234,7 +1229,7 @@ export interface VariantUpdateParams {
   external_references?: ExternalReferencesParams
   sku?: string
   /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
-  cost_price?: string | number
+  cost_price?: string
   cost_currency?: string
   weight?: number
   height?: number
@@ -1932,7 +1927,7 @@ export interface SellerCreateParams {
   cover_photo?: string | null
   tax_remittance?: 'seller' | 'platform'
   payouts_schedule_interval?: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'manual' | null
-  minimum_payout_amount?: string | number | null
+  minimum_payout_amount?: string | null
   /** Set while the seller is away: the catalog stays but stops selling. */
   holiday_mode_until?: string | null
   /**
@@ -2109,14 +2104,14 @@ export interface CommissionRateCreateParams {
   /** `percentage` charges a share of the sale; `fixed` charges a flat fee. */
   kind: 'percentage' | 'fixed'
   /** A percentage (e.g. `10` for 10%) or a flat amount, per `kind`. */
-  value: number
+  value: string
   /**
    * What a flat fee charges, keyed by currency: `{ USD: '5.00', GBP: '4.00' }`.
    * A rate is skipped for a currency it states no amount in, so that sale
    * falls through to the next matching rate rather than being charged a
    * converted figure nobody set. Replaces the whole set on write.
    */
-  amounts?: Record<string, string | number>
+  amounts?: Record<string, string>
   /**
    * Charge on the item's gross price rather than its net one. Off by default:
    * in the EU the fee is a separate supply from the sale, so it is charged on
@@ -2135,12 +2130,12 @@ export interface CommissionRateCreateParams {
    * than against a converted figure nobody set. Replaces the whole set on
    * write, and never disturbs `amounts`.
    */
-  bounds?: Record<string, { min_amount?: number | null; max_amount?: number | null }>
+  bounds?: Record<string, { min_amount?: string | null; max_amount?: string | null }>
   /**
    * VAT on the commission itself, as a fraction (e.g. `0.21`). Leave null to
    * let the store's tax engine answer for the seller's own jurisdiction.
    */
-  commission_tax_rate?: number | null
+  commission_tax_rate?: string | null
   /** The rate's full targeting; the server replaces what it holds with this. */
   rules?: CommissionRuleDraft[]
   metadata?: Record<string, unknown>
@@ -2311,8 +2306,8 @@ export interface PriceListPriceOverrideParams {
   currency: string
   /** The rung of the variant's ladder. Omit for the bottom rung. */
   min_quantity?: number
-  amount?: string | number | null
-  compare_at_amount?: string | number | null
+  amount?: string | null
+  compare_at_amount?: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -2332,8 +2327,8 @@ export interface PriceCreateParams {
    * ladder's bottom rung. Anything above 1 requires a `price_list_id`.
    */
   min_quantity?: number
-  amount: string | number | null
-  compare_at_amount?: string | number | null
+  amount: string | null
+  compare_at_amount?: string | null
   /** Omit / null for a base price; prefixed `pl_…` for a list override. */
   price_list_id?: string | null
 }
@@ -2343,8 +2338,8 @@ export interface PriceUpdateParams {
    *  `(variant_id, currency, price_list_id, min_quantity)` index — not
    *  supported. Move a rung by deleting it and creating the new one. */
   // variant_id, currency, price_list_id, min_quantity intentionally omitted.
-  amount?: string | number | null
-  compare_at_amount?: string | number | null
+  amount?: string | null
+  compare_at_amount?: string | null
 }
 
 /**
@@ -2376,8 +2371,8 @@ export interface PriceBulkUpsertRow {
    * ten rungs on one list per currency.
    */
   min_quantity?: number
-  amount?: string | number | null
-  compare_at_amount?: string | number | null
+  amount?: string | null
+  compare_at_amount?: string | null
 }
 
 export interface PaymentMethodCreateParams {
@@ -2818,9 +2813,9 @@ export interface DeliveryMethodParams {
    * Method-level percentage handling fee added on top of provider-quoted
    * rates. Ignored for calculator-priced methods.
    */
-  markup_percent?: number | string | null
+  markup_percent?: string | null
   /** Method-level flat handling fee added on top of provider-quoted rates. */
-  markup_flat?: number | string | null
+  markup_flat?: string | null
   /**
    * Carrier service rows: which provider services this method offers, each
    * with an optional display label and markup override. Replaces the full
@@ -2841,9 +2836,9 @@ export interface DeliveryMethodServiceParams {
   /** Display label shown to customers instead of the carrier-derived name. */
   label?: string | null
   /** Overrides the method-level flat markup for this service. */
-  markup_flat?: number | string | null
+  markup_flat?: string | null
   /** Overrides the method-level percentage markup for this service. */
-  markup_percent?: number | string | null
+  markup_percent?: string | null
   position?: number
 }
 
@@ -3039,7 +3034,7 @@ export interface CatalogQuantityRuleParams {
 export interface CatalogOrderMinimumParams {
   /** ISO 4217 code. Required on create; unique per catalog. */
   currency?: string
-  amount?: string | number
+  amount?: string
 }
 
 /**
@@ -3092,7 +3087,10 @@ export interface TaxExemptionCertificateParams {
 
 export interface TaxRateParams {
   name?: string
-  amount?: number | string
+  /** The rate as a fraction in a decimal string, e.g. `"0.23"`. Send this or `rate_percent`. */
+  rate?: string
+  /** The rate as a percentage in a decimal string, e.g. `"23"`. */
+  rate_percent?: string
   /** Where the rate applies. A rate naming no country taxes everywhere. */
   country_code?: string | null
   state_code?: string | null

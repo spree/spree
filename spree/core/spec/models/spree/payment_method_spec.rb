@@ -117,6 +117,30 @@ describe Spree::PaymentMethod, type: :model do
     end
   end
 
+  describe '#gateway_amount' do
+    it 'hands a method that takes money amounts the amount with its currency' do
+      method = Spree::Gateway::Bogus.new
+
+      expect(method.gateway_amount(BigDecimal('1000'), 'JPY')).to eq(Spree::Money.new(BigDecimal('1000'), currency: 'JPY'))
+    end
+
+    it 'hands any other method hundredths, warning once that the bridge is going' do
+      legacy = Class.new(Spree::PaymentMethod) { def self.name = 'LegacyGateway' }.new
+      expect(Spree::Deprecation).to receive(:warn).once.with(/accepts_money_amounts/)
+
+      expect(legacy.gateway_amount(BigDecimal('19.99'), 'USD')).to eq(1999)
+      expect(legacy.gateway_amount(BigDecimal('1000'), 'JPY')).to eq(100_000)
+    end
+
+    # Zero hundredths reads as "capture everything" to many gateways.
+    it 'refuses to hand an old method an amount below a hundredth' do
+      legacy = Class.new(Spree::PaymentMethod) { def self.name = 'LegacyGateway' }.new
+      allow(Spree::Deprecation).to receive(:warn)
+
+      expect { legacy.gateway_amount(BigDecimal('0.004'), 'KWD') }.to raise_error(Spree::Core::GatewayError, /hundredth/)
+    end
+  end
+
   describe '#auto_capture?' do
     class TestGateway < Spree::Gateway
       def provider_class
@@ -361,7 +385,15 @@ describe Spree::PaymentMethod, type: :model do
 
         preference :mode, :string, default: 'live', in: %w[test live]
         preference :label, :string
+        preference :threshold, :decimal, default: 0
       end
+    end
+
+    # The API refuses a JSON number for a decimal, so it must not hand one out.
+    it 'serves a decimal default as a decimal string' do
+      field = gateway_class.serialized_preference_schema.find { |entry| entry[:key] == :threshold }
+
+      expect(field[:default]).to eq('0')
     end
 
     # The set is what the server validates against, so a form that does not

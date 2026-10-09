@@ -97,7 +97,7 @@ RSpec.describe Spree::Api::V3::Seller::Orders::ClaimsController, type: :controll
 
       patch :resolve, params: {
         order_id: order.prefixed_id, id: claim.prefixed_id,
-        resolution: 'refund', refund_method: 'store_credit', amount: 5
+        resolution: 'refund', refund_method: 'store_credit', amount: '5.00'
       }, as: :json
 
       expect(response).to have_http_status(:ok)

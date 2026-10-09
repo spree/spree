@@ -3,8 +3,10 @@ import type { StoreCredit } from '@spree/admin-sdk'
 import {
   CurrencySelect,
   currencyParts,
+  isPositiveMoney,
   mapSpreeErrorsToForm,
   normalizeMoneyInput,
+  useMoneyLocale,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -27,7 +29,6 @@ import {
 } from '@spree/dashboard-ui'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useCurrencyLocale } from '../../../hooks/use-currency-locale'
 import {
   type StoreCreditUpdateParams,
   useUpdateCustomerStoreCredit,
@@ -50,16 +51,13 @@ export function EditStoreCreditDialog({
   // Server rejects amount changes once any of it has been used. Lock the
   // field so the merchant doesn't submit a value that will only come back
   // as a 422 store_credit_in_use.
-  const amountLocked = Number(credit.amount_used ?? 0) > 0
+  const amountLocked = isPositiveMoney(credit.amount_used)
 
-  const localeForCurrency = useCurrencyLocale()
-  // Currency is locked on edit, so resolve its market locale once. The amount
-  // hydrates from the canonical API value (`"50.00"`) but is displayed/edited
-  // in that locale's format (`"50,00"` for EUR); on submit we normalize back to
-  // canonical. Displaying in the same locale we normalize from keeps an
-  // untouched amount from being mangled on save.
-  const creditLocale = localeForCurrency(credit.currency) || 'en'
-  const { decimal, symbol } = currencyParts(credit.currency, creditLocale)
+  // The amount hydrates from the canonical API value ("50.00") and is shown in
+  // the person's own number format ("50,00" in German); submit normalizes it
+  // back under the same locale, so an untouched amount is never mangled.
+  const moneyLocale = useMoneyLocale()
+  const { decimal, symbol } = currencyParts(credit.currency, moneyLocale)
 
   const form = useForm<EditStoreCreditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,10 +76,8 @@ export function EditStoreCreditDialog({
 
     if (!amountLocked) {
       const amountValue = values.amount.toString().trim()
-      // Normalize from the credit's display locale to the canonical
-      // `"1234.56"` the API expects.
       if (amountValue) {
-        params.amount = normalizeMoneyInput(amountValue, creditLocale)
+        params.amount = normalizeMoneyInput(amountValue, moneyLocale)
       }
     }
 

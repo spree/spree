@@ -120,7 +120,7 @@ RSpec.describe Spree::Api::V3::Admin::Catalogs::ProductsController, type: :contr
       get :index, params: { catalog_id: catalog.prefixed_id, expand: 'catalog_price' }, as: :json
 
       price = json_response['data'].first['catalog_variants'].first
-      expect(price['amount']).to eq('85.0')
+      expect(price['amount']).to eq('85.00')
       expect(price['source']).to eq('automatic')
     end
 

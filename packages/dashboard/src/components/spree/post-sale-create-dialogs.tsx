@@ -1,7 +1,10 @@
 import type { Claim, Order, Variant } from '@spree/admin-sdk'
+import { sumMoney } from '@spree/admin-sdk'
 import {
   adminClient,
   currencyParts,
+  isPositiveMoney,
+  paidForUnits,
   ResourceCombobox,
   useStockLocations,
   useStore,
@@ -304,8 +307,7 @@ export function CreateClaimDialog({
         id: item.id,
         label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
         quantity: item.quantity,
-        discountedAmount: item.discounted_amount,
-        additionalTaxTotal: item.additional_tax_total,
+        paidFor: (quantity: number) => paidForUnits(item, quantity, order.currency),
       }))}
       currencySymbol={currencySymbol}
       reasonField={<ReasonField kind="claim-reasons" value={reasonId} onChange={setReasonId} />}
@@ -336,14 +338,9 @@ export function ResolveClaimDialog({
   // A claim opened without per-item amounts has a refund_total of zero, and
   // the workflow refuses to refund nothing — offer what the customer paid for
   // the claimed items instead, which is also the ceiling it enforces.
-  const recorded = Number(claim.refund_total)
-  const paid = lines.reduce((sum, line) => sum + Number(line.paid_amount ?? 0), 0)
+  const paid = sumMoney(lines.map((line) => line.paid_amount))
   const defaultAmount =
-    Number.isFinite(recorded) && recorded > 0
-      ? claim.refund_total
-      : paid > 0
-        ? paid.toFixed(2)
-        : claim.refund_total
+    isPositiveMoney(claim.refund_total) || !isPositiveMoney(paid) ? claim.refund_total : paid
 
   return (
     <ClaimResolveDialog

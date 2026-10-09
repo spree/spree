@@ -10,6 +10,10 @@ module Spree
   # and not twenty percent off an already-discounted number
   # (docs/plans/6.0-volume-pricing.md).
   class PriceAdjustmentTier < Spree.base_class
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :percentage, places: 3
+
     has_prefix_id :pat
 
     # How many bands one list may carry, matching the break cap so a merchant

@@ -33,11 +33,8 @@ export const variantOptionPairSchema = z.object({
 
 export type VariantOptionPair = z.infer<typeof variantOptionPairSchema>
 
-// Form-side prices use raw STRING amounts (the merchant's typed input).
-// The backend's `Spree::LocalizedNumber.parse` handles locale-aware parsing
-// (comma decimals, grouped digits, etc.), so the frontend ships exactly what
-// the merchant typed — no `Number(...)` coercion that mangles `"1.234,56"`
-// into `NaN` and silently drops the price.
+// Form-side prices are canonical decimal STRINGS ("1234.56"), never numbers:
+// `Number(...)` coercion loses precision and turns `"1.234,56"` into `NaN`.
 export const variantPriceFormSchema = z.object({
   currency: z.string(),
   amount: z.string(),

@@ -11,7 +11,7 @@ export const PaymentSessionSchema = z.object({
   external_data: z.record(z.string(), z.unknown()),
   customer_external_id: z.string().nullable(),
   expires_at: z.string().nullable(),
-  amount: z.string(),
+  amount: z.string().nullable(),
   payment_method_id: z.string(),
   order_id: z.string().nullable(),
   cart_id: z.string().nullable(),

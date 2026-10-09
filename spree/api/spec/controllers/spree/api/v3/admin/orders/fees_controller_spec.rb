@@ -19,7 +19,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FeesController, type: :controller 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].length).to eq(1)
       expect(json_response['data'].first['label']).to eq('Handling')
-      expect(json_response['data'].first['amount']).to eq('5.0')
+      expect(json_response['data'].first['amount']).to eq('5.00')
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FeesController, type: :controller 
     it 'creates an order-level fee and re-sums totals' do
       original_total = order.total
 
-      post :create, params: { order_id: order.prefixed_id, label: 'Gift wrap', amount: 4, kind: 'gift_wrap' }, as: :json
+      post :create, params: { order_id: order.prefixed_id, label: 'Gift wrap', amount: '4.00', kind: 'gift_wrap' }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['label']).to eq('Gift wrap')
@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FeesController, type: :controller 
 
     it 'creates a line-item fee' do
       post :create, params: {
-        order_id: order.prefixed_id, line_item_id: line_item.prefixed_id, label: 'Restocking', amount: 2
+        order_id: order.prefixed_id, line_item_id: line_item.prefixed_id, label: 'Restocking', amount: '2.00'
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -47,13 +47,13 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FeesController, type: :controller 
     end
 
     it 'rejects a negative amount' do
-      post :create, params: { order_id: order.prefixed_id, label: 'Credit', amount: -3 }, as: :json
+      post :create, params: { order_id: order.prefixed_id, label: 'Credit', amount: '-3.00' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'rejects an unknown kind' do
-      post :create, params: { order_id: order.prefixed_id, label: 'Mystery', amount: 3, kind: 'nonsense' }, as: :json
+      post :create, params: { order_id: order.prefixed_id, label: 'Mystery', amount: '3.00', kind: 'nonsense' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -66,7 +66,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FeesController, type: :controller 
       order.recalculate_totals!
       with_fee_total = order.reload.total
 
-      patch :update, params: { order_id: order.prefixed_id, id: fee.prefixed_id, amount: 8 }, as: :json
+      patch :update, params: { order_id: order.prefixed_id, id: fee.prefixed_id, amount: '8.00' }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(fee.reload.amount).to eq(8)

@@ -8,7 +8,7 @@ const client = createAdminClient({
 // region:example
 const fee = await client.orders.fees.create('or_abc123', {
   label: 'Gift wrap',
-  amount: 4,
+  amount: '4.00',
   kind: 'gift_wrap',
 })
 

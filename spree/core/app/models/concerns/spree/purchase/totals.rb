@@ -39,7 +39,7 @@ module Spree
 
         line_items.sum(BigDecimal('0')) do |line_item|
           gifted_quantity = excluded_gift_promo_actions.sum { |action| action.gifted_quantity_of(line_item) }
-          line_item.price * [gifted_quantity, line_item.quantity].min
+          Spree::Money::Rounding.to_currency(line_item.price * [gifted_quantity, line_item.quantity].min, line_item.currency)
         end
       end
 

@@ -20,6 +20,13 @@ module Spree
       include Spree::Security::PaymentMethods
     end
 
+    # Whether authorize, purchase, capture and credit take the amount as a
+    # Spree::Money (amount and currency) and convert it to the provider's own
+    # unit. Methods that have not opted in receive an integer in hundredths of
+    # the currency, which is wrong for yen and dinar; that bridge is removed in
+    # Spree 6.1.
+    class_attribute :accepts_money_amounts, default: false, instance_writer: false
+
     # Blank falls back to the store, so a method only overrides when a merchant
     # deliberately picks one — the meaning the auto_capture boolean already had.
     normalizes :capture_method, with: ->(value) { value.presence }
@@ -339,6 +346,27 @@ module Spree
       self.storefront_visible = value.to_s != 'back_end'
     end
 
+
+    # The amount in the form this payment method's gateway calls take.
+    #
+    # @param amount [BigDecimal] in the currency's own units ("19.99")
+    # @param currency [String]
+    # @return [Spree::Money, Integer] a Spree::Money for methods that accept
+    #   money amounts, otherwise hundredths of the currency (deprecated)
+    def gateway_amount(amount, currency)
+      return Spree::Money.new(amount, currency: currency) if accepts_money_amounts
+
+      warn_about_hundredths
+      hundredths = Spree::Money::Rounding.to_hundredths(amount)
+      # A hundredth is the smallest amount these gateways can be sent; zero
+      # reads as "the whole amount" to many of them.
+      if hundredths.zero? && !amount.zero?
+        raise Spree::Core::GatewayError, "#{self.class.name} cannot take an amount below a hundredth of #{currency}"
+      end
+
+      hundredths
+    end
+
     protected
 
     def public_preference_keys
@@ -347,6 +375,17 @@ module Spree
 
     def set_name
       self.name ||= default_name
+    end
+
+    def warn_about_hundredths
+      return if self.class.instance_variable_get(:@warned_about_hundredths)
+
+      self.class.instance_variable_set(:@warned_about_hundredths, true)
+      Spree::Deprecation.warn(
+        "#{self.class.name} receives amounts as an integer in hundredths, which is wrong for currencies " \
+        'without two decimals. Set `self.accepts_money_amounts = true` and take a Spree::Money ' \
+        '(amount and currency); hundredths are removed in Spree 6.1.'
+      )
     end
   end
 end

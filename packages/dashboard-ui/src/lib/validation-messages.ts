@@ -17,3 +17,15 @@ import i18n from 'i18next'
 export function requiredMessage(field: string): () => string {
   return () => i18n.t('admin.validation.required', { field: i18n.t(`admin.fields.${field}.label`) })
 }
+
+/**
+ * Lazy "<Field> can have at most <count> decimal places" message, for amounts
+ * and rates the server keeps to a fixed number of decimals.
+ */
+export function decimalPlacesMessage(field: string, count: number): () => string {
+  return () =>
+    i18n.t('admin.validation.too_many_decimals', {
+      field: i18n.t(`admin.fields.${field}.label`),
+      count,
+    })
+}

@@ -156,7 +156,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
 
       response '201', 'commission rate created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: 'Audio sellers', kind: 'percentage', value: 12.5 } }
+        let(:body) { { name: 'Audio sellers', kind: 'percentage', value: '12.5' } }
 
         schema '$ref' => '#/components/schemas/CommissionRate'
 
@@ -169,7 +169,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       response '422', 'validation failed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         # A flat fee means nothing without a currency to charge it in.
-        let(:body) { { name: 'Flat fee', kind: 'fixed', value: 2 } }
+        let(:body) { { name: 'Flat fee', kind: 'fixed', value: '2' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -298,12 +298,12 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       response '200', 'commission rate updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { commission_rate.prefixed_id }
-        let(:body) { { value: 15 } }
+        let(:body) { { value: '15' } }
 
         schema '$ref' => '#/components/schemas/CommissionRate'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['value']).to eq('15.0')
+          expect(JSON.parse(response.body)['value']).to eq('15')
         end
       end
     end

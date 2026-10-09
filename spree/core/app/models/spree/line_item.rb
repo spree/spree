@@ -231,7 +231,7 @@ module Spree
     #
     # @return [BigDecimal]
     def amount
-      price * quantity
+      Spree::Money::Rounding.to_currency(price * quantity, currency)
     end
 
     # Returns the compare at amount (compare at price * quantity) of the line item

@@ -3,7 +3,7 @@ import type {
   GiftCardCreateParams,
   GiftCardUpdateParams,
 } from '@spree/admin-sdk'
-import { blankToNull, blankToUndefined, i18n } from '@spree/dashboard-core'
+import { blankToNull, blankToUndefined, i18n, isPositiveMoney } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 // Mirrors `Spree::Config[:gift_card_batch_limit]`. Hardcoded for now; if the
@@ -17,18 +17,9 @@ const prefixRequired = () => i18n.t('admin.pages.promotions.gift_cards.validatio
 const currencyRequired = () =>
   i18n.t('admin.pages.promotions.gift_cards.validation.currency_required')
 
-// Amounts stay as STRINGS — the merchant's raw input flows straight through
-// to the backend's `Spree::LocalizedNumber.parse`, which handles locale-aware
-// parsing (comma decimals, grouped digits, etc.). Coercing via `Number()`
-// silently mangles `"1.234,56"` into `NaN`. We still validate "is positive"
-// via a lightweight string regex so the form surface stays honest.
-const positiveAmountString = z.string().refine(
-  (s) => {
-    const n = Number(s.replace(',', '.'))
-    return Number.isFinite(n) && n > 0
-  },
-  { error: amountPositive },
-)
+// Amounts stay strings, from a number input that always yields a canonical
+// value ("49.5"), and are sent as typed.
+const positiveAmountString = z.string().refine(isPositiveMoney, { error: amountPositive })
 
 export const giftCardCreateFormSchema = z
   .object({

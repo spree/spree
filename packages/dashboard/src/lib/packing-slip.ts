@@ -1,4 +1,12 @@
-import type { Fulfillment, LineItem, Order } from '@spree/admin-sdk'
+import {
+  type Fulfillment,
+  isDecimalString,
+  isZeroMoney,
+  type LineItem,
+  multiplyMoney,
+  type Order,
+  sumMoney,
+} from '@spree/admin-sdk'
 import { fulfillmentItemRows } from '@spree/dashboard-core'
 import type { TFunction } from 'i18next'
 import i18n from 'i18next'
@@ -97,8 +105,8 @@ function buildRows(order: Order, fulfillment: Fulfillment): PackingSlipRow[] {
 
   return fulfillmentItemRows(fulfillment, order.items ?? []).map((row) => {
     const lineItem = byId.get(row.key)
-    const unitPrice = lineItem ? Number(lineItem.price) : Number.NaN
-    const canPrice = lineItem != null && Number.isFinite(unitPrice)
+    const unitPrice = lineItem?.price
+    const canPrice = lineItem != null && isDecimalString(unitPrice)
 
     // Prefer the server's formatted total when this parcel holds the whole
     // line; compute per-parcel only when a partial quantity ships, so the
@@ -107,7 +115,7 @@ function buildRows(order: Order, fulfillment: Fulfillment): PackingSlipRow[] {
       ? null
       : row.quantity === lineItem.quantity
         ? lineItem.display_total
-        : formatAmount(unitPrice * row.quantity, currency)
+        : formatAmount(multiplyMoney(unitPrice, row.quantity, currency), currency)
 
     return {
       key: row.key,
@@ -142,21 +150,21 @@ function buildSummary(
     const lines: SummaryLine[] = [
       { label: key('packing_slip_subtotal'), value: order.display_item_total, emphasized: false },
     ]
-    if (Number(order.delivery_total) !== 0) {
+    if (!isZeroMoney(order.delivery_total)) {
       lines.push({
         label: key('packing_slip_shipping'),
         value: order.display_delivery_total,
         emphasized: false,
       })
     }
-    if (Number(order.discount_total) !== 0) {
+    if (!isZeroMoney(order.discount_total)) {
       lines.push({
         label: key('packing_slip_discount'),
         value: order.display_discount_total,
         emphasized: false,
       })
     }
-    if (Number(order.tax_total) !== 0) {
+    if (!isZeroMoney(order.tax_total)) {
       lines.push({
         label: key('packing_slip_tax'),
         value: order.display_tax_total,
@@ -167,12 +175,13 @@ function buildSummary(
     return lines
   }
 
-  const subtotal = (order.items ?? []).reduce((sum, item) => {
-    const row = rows.find((candidate) => candidate.key === item.id)
-    if (!row) return sum
-    const price = Number(item.price)
-    return Number.isFinite(price) ? sum + price * row.quantity : sum
-  }, 0)
+  const subtotal = sumMoney(
+    (order.items ?? []).map((item) => {
+      const row = rows.find((candidate) => candidate.key === item.id)
+      return row && isDecimalString(item.price) ? multiplyMoney(item.price, row.quantity) : null
+    }),
+    order.currency,
+  )
   const formatted = formatAmount(subtotal, order.currency)
 
   return [

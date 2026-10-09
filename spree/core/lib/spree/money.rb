@@ -5,6 +5,18 @@ Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
 module Spree
   class Money
+    # An amount that is not a canonical decimal string: a JSON number, a
+    # localized or padded string, or more decimals than the field allows.
+    class InvalidFormat < ArgumentError
+      # @return [Symbol, nil] the request field the amount came from
+      attr_reader :field
+
+      def initialize(message = nil, field: nil)
+        super(message)
+        @field = field
+      end
+    end
+
     # How Spree rounds an amount to a currency.
     #
     # Lives here beside the rounding mode above because "how much is this worth
@@ -14,41 +26,151 @@ module Spree
     module Rounding
       module_function
 
+      # ISO 4217 minor units, the one table Ruby and the TypeScript clients
+      # share. The Money gem disagrees for a few currencies (it writes HUF
+      # without decimals), so Spree reads its own copy.
+      EXPONENTS = JSON.parse(File.read(File.expand_path('../../config/currency_exponents.json', __dir__))).freeze
+
+      # Unit prices may be quoted below the minor unit ("0.0125" USD); amounts
+      # that change hands never are.
+      UNIT_PRICE_DECIMALS = 4
+
+      CANONICAL_DECIMAL = /\A-?\d+(\.\d+)?\z/
+
+      ROUNDING_MODES = {
+        half_up: BigDecimal::ROUND_HALF_UP,
+        half_even: BigDecimal::ROUND_HALF_EVEN,
+        half_down: BigDecimal::ROUND_HALF_DOWN,
+        up: BigDecimal::ROUND_UP,
+        down: BigDecimal::ROUND_DOWN
+      }.freeze
+
       # The number of decimal places a currency is written in: 2 for most, 0
       # for yen, 3 for dinar. An unknown currency falls back to two places
       # rather than raising — a sale is not the moment to discover a typo in a
       # currency code.
       #
-      # Note that Spree's money columns are `decimal(_, 2)` throughout, so a
-      # three-decimal currency still loses its last place on the way into the
-      # database. Rounding here to the currency's own precision keeps the
-      # arithmetic honest and means widening those columns would be the only
-      # change needed; it does not by itself make Spree dinar-exact.
-      #
       # @param currency [String, ::Money::Currency, nil]
       # @return [Integer]
       def precision(currency)
-        (::Money::Currency.find(currency) || ::Money::Currency.find('USD')).exponent
+        code = currency.respond_to?(:iso_code) ? currency.iso_code : currency.to_s.upcase
+        EXPONENTS[code] || ::Money::Currency.find(code)&.exponent || EXPONENTS['USD']
       end
 
-      # Rounds to the currency's own minor unit, half-up, so amounts reconcile
-      # to the cent when they are summed.
+      # Rounds to the currency's own minor unit, so amounts reconcile to the
+      # cent when they are summed.
       #
       # @param amount [Numeric, String, nil]
       # @param currency [String, ::Money::Currency, nil]
+      # @param mode [Symbol] one of {ROUNDING_MODES}; tax providers pick their own
       # @return [BigDecimal]
-      def to_currency(amount, currency)
-        quantize(amount, precision(currency))
+      def to_currency(amount, currency, mode: :half_up)
+        quantize(amount, precision(currency), mode: mode)
       end
 
       # The same rounding against a precision already in hand.
       #
       # @param amount [Numeric, String, nil]
       # @param precision [Integer]
+      # @param mode [Symbol] one of {ROUNDING_MODES}
       # @return [BigDecimal]
-      def quantize(amount, precision)
-        BigDecimal(amount.to_s).round(precision, BigDecimal::ROUND_HALF_UP)
+      def quantize(amount, precision, mode: :half_up)
+        BigDecimal(amount.to_s).round(precision, ROUNDING_MODES.fetch(mode))
       end
+
+      # Reads a money amount from an API request. Only a canonical decimal
+      # string is accepted — never a JSON number, which may already have lost
+      # precision as a float, and never more decimals than the field holds.
+      #
+      # @param value [String, nil]
+      # @param currency [String, ::Money::Currency, nil] nil when unknown,
+      #   which allows up to {UNIT_PRICE_DECIMALS} decimals
+      # @param unit_price [Boolean] allows up to {UNIT_PRICE_DECIMALS} decimals
+      # @return [BigDecimal, nil]
+      # @raise [Spree::Money::InvalidFormat]
+      def parse_canonical(value, currency, unit_price: false)
+        amount = parse_canonical_decimal(value)
+        return if amount.nil?
+
+        allowed = if currency.nil? || unit_price
+                    [precision(currency), UNIT_PRICE_DECIMALS].max
+                  else
+                    precision(currency)
+                  end
+        raise InvalidFormat, "has more than #{allowed} decimal places" if decimal_places(value) > allowed
+
+        amount
+      end
+
+      # Reads a rate or percentage from an API request: a canonical decimal
+      # string with no limit on its decimals.
+      #
+      # @param value [String, nil]
+      # @return [BigDecimal, nil]
+      # @raise [Spree::Money::InvalidFormat]
+      def parse_canonical_decimal(value)
+        return if value.nil?
+        raise InvalidFormat, 'must be a decimal string like "19.99"' unless value.is_a?(String) && value.match?(CANONICAL_DECIMAL)
+
+        BigDecimal(value)
+      end
+
+      # Reads a decimal from a caller that may send a number or text: a blank
+      # is nil, a number passes, and text must be a plain decimal ("16.50"),
+      # never read as a wrong number the way `"1,599.99".to_d` reads 1.
+      #
+      # @param value [Numeric, String, nil]
+      # @return [BigDecimal, nil]
+      # @raise [Spree::Money::InvalidFormat]
+      def parse_decimal(value)
+        return if value.nil? || (value.is_a?(String) && value.strip.empty?)
+        return BigDecimal(value.to_s) if value.is_a?(Numeric)
+
+        parse_canonical_decimal(value.is_a?(String) ? value.strip : value)
+      end
+
+      # Writes an amount the way the API and exports carry it: exactly the
+      # currency's decimal places ("10.00", "1.500", "100"). A unit price keeps
+      # up to {UNIT_PRICE_DECIMALS}, with zeros beyond the currency's own
+      # places dropped ("0.0125", "19.99").
+      #
+      # @param amount [Numeric, String, nil]
+      # @param currency [String, ::Money::Currency, nil]
+      # @param unit_price [Boolean]
+      # @return [String, nil]
+      def format(amount, currency, unit_price: false)
+        return if amount.nil?
+
+        places = precision(currency)
+        kept = unit_price ? [places, UNIT_PRICE_DECIMALS].max : places
+        rounded = quantize(amount, kept)
+        whole, fraction = (rounded.zero? ? BigDecimal(0) : rounded).to_s('F').split('.')
+        fraction = without_trailing_zeros(fraction.to_s).ljust(places, '0')
+        fraction.empty? ? whole : "#{whole}.#{fraction}"
+      end
+
+      # Writes a rate or percentage with no trailing zeros ("0.23", "23").
+      #
+      # @param value [Numeric, String, nil]
+      # @return [String, nil]
+      def format_decimal(value)
+        return if value.nil?
+
+        without_trailing_zeros(BigDecimal(value.to_s).to_s('F')).delete_suffix('.')
+      end
+
+      # Trailing zeros carry no value, so "1000.0" is a whole yen.
+      def decimal_places(value)
+        value.include?('.') ? without_trailing_zeros(value.split('.').last).length : 0
+      end
+      private_class_method :decimal_places
+
+      # Scans back to the last other digit, in linear time on request input.
+      def without_trailing_zeros(text)
+        last = text.rindex(/[^0]/)
+        last ? text[0..last] : ''
+      end
+      private_class_method :without_trailing_zeros
 
       # An amount as a whole number of the currency's smallest unit — cents for
       # most currencies, whole yen for one written without decimals.
@@ -67,13 +189,64 @@ module Spree
         (BigDecimal(amount.to_s) * (10**precision(currency))).round.to_i
       end
 
+      # An amount in hundredths of the currency, whatever its own minor unit:
+      # the unit payment gateways are called with until they take amounts with
+      # their currency.
+      #
+      # @param amount [Numeric, String]
+      # @return [Integer]
+      def to_hundredths(amount)
+        quantize(BigDecimal(amount.to_s) * 100, 0).to_i
+      end
+
+      # @param hundredths [Integer] as {#to_hundredths} returns
+      # @return [BigDecimal]
+      def from_hundredths(hundredths)
+        BigDecimal(hundredths) / 100
+      end
+
+      # Whether an amount is missing or zero. Text that is not a number is
+      # neither, so a malformed value is never mistaken for "nothing to pay".
+      #
+      # @param value [Numeric, String, nil]
+      # @return [Boolean]
+      def blank_or_zero?(value)
+        return true if value.blank?
+
+        BigDecimal(value.to_s, exception: false)&.zero? || false
+      end
+
       # @param units [Integer] whole minor units, as {#to_minor_units} returns
       # @param currency [String, ::Money::Currency, nil]
       # @return [BigDecimal]
       def from_minor_units(units, currency)
         BigDecimal(units) / (10**precision(currency))
       end
+
+      # Makes the Money gem agree with {EXPONENTS}, so formatting, `cents`
+      # and anything else built on it use ISO 4217 decimals too.
+      def register_with_money_gem!
+        EXPONENTS.each do |code, exponent|
+          subunit_to_unit = 10**exponent
+          currency = ::Money::Currency.find(code)
+
+          if currency.nil?
+            ::Money::Currency.register(
+              iso_code: code, name: code, symbol: code, subunit: nil, subunit_to_unit: subunit_to_unit,
+              priority: 100, symbol_first: false, thousands_separator: ',', decimal_mark: '.'
+            )
+          elsif currency.subunit_to_unit != subunit_to_unit
+            # The smallest cash amount is counted in subunits, so it scales
+            # with them: 5 forints stays 5 forints, not 0.05.
+            scaled = currency.smallest_denomination &&
+                     currency.smallest_denomination * subunit_to_unit / currency.subunit_to_unit
+            ::Money::Currency.inherit(code.downcase.to_sym, subunit_to_unit: subunit_to_unit, smallest_denomination: scaled)
+          end
+        end
+      end
     end
+
+    Rounding.register_with_money_gem!
 
     include Comparable
 
@@ -102,8 +275,12 @@ module Spree
       @options = Spree::Money.default_formatting_rules.merge(options)
     end
 
+    # The amount in hundredths of the currency, whatever its own minor unit —
+    # the unit payment gateways have always been called with.
+    #
+    # @return [Integer]
     def amount_in_cents
-      (cents / currency.subunit_to_unit.to_f * 100).round
+      Rounding.to_hundredths(to_d)
     end
 
     def abs

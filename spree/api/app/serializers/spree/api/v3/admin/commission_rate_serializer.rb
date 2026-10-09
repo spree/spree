@@ -10,21 +10,16 @@ module Spree
         # were actually charged (Spree::CommissionLine) on their own branch,
         # never the rules that produced it.
         class CommissionRateSerializer < V3::BaseSerializer
-          # Decimals serialize as strings, like every other money-ish field on
-          # the admin API: a rate has to round-trip exactly, and a float does
-          # not promise that.
           typelize name: :string,
                    code: 'string | null',
                    enabled: :boolean,
                    position: :number,
                    global: :boolean,
                    kind: [:string, enum: Spree::CommissionRate::KINDS],
-                   value: :string,
                    amounts: 'Record<string, string>',
                    bounds: 'Record<string, { min_amount: string | null; max_amount: string | null }>',
                    tax_inclusive: :boolean,
                    include_shipping: :boolean,
-                   commission_tax_rate: 'string | null',
                    metadata: 'Record<string, unknown> | null',
                    deleted_at: 'string | null'
 
@@ -32,22 +27,23 @@ module Spree
                      :tax_inclusive, :include_shipping, :metadata,
                      deleted_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
-          %i[value commission_tax_rate].each do |decimal|
-            attribute(decimal) { |rate| rate.public_send(decimal)&.to_s }
-          end
+          # +value+ is the percentage a percentage rate charges; a flat fee's
+          # money lives in +amounts+, per currency.
+          rate_attributes :value, :commission_tax_rate
+          typelize value: [:string, nullable: false]
 
           # What a flat fee charges, per currency. Empty on a percentage rate,
           # which needs no amount of its own.
           attribute :amounts do |rate|
-            rate.amounts.transform_values(&:to_s)
+            rate.amounts.to_h { |currency, amount| [currency, Spree::Money::Rounding.format(amount, currency)] }
           end
 
           # The floor and cap a percentage charges within, per currency. Each
           # holds only in its own currency, so a rate may bound some and leave
           # others unbounded.
           attribute :bounds do |rate|
-            rate.bounds.transform_values do |bound|
-              bound.transform_values { |amount| amount&.to_s }
+            rate.bounds.to_h do |currency, bound|
+              [currency, bound.transform_values { |amount| Spree::Money::Rounding.format(amount, currency) }]
             end
           end
 

@@ -12,8 +12,11 @@ module Spree
 
         attributes :label, :kind, :code, :value_type
 
+        # A percent discount carries a rate; a flat one an amount.
         attribute :value do |record|
-          record.value&.to_s
+          next Spree::Money::Rounding.format_decimal(record.value) if record.value_type == 'percent'
+
+          Spree::Money::Rounding.format(record.value, record.currency) unless params[:hide_prices]
         end
 
         prefixed_id_attributes :promotion, :line_item, :fulfillment

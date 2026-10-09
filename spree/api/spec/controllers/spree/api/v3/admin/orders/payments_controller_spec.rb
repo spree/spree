@@ -175,6 +175,34 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(payment.reload.status).to eq('completed')
     end
 
+    context 'with a partial amount' do
+      it 'hands the workflow the exact amount' do
+        expect(Spree.payment_capture_workflow).to receive(:call).with(payment: payment, amount: BigDecimal('1.15')).and_call_original
+
+        patch :capture, params: {
+          order_id: order_with_payment.prefixed_id,
+          id: payment.prefixed_id,
+          amount: '1.15'
+        }, as: :json
+      end
+
+      [1.15, '1,15', '1.155', '-5.00', '0', 'abc'].each do |amount|
+        it "refuses #{amount.inspect} with invalid_money_format" do
+          expect(Spree.payment_capture_workflow).not_to receive(:call)
+
+          patch :capture, params: {
+            order_id: order_with_payment.prefixed_id,
+            id: payment.prefixed_id,
+            amount: amount
+          }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['code']).to eq('invalid_money_format')
+          expect(json_response['error']['details']).to have_key('amount')
+        end
+      end
+    end
+
     context 'when payment is already completed' do
       before { payment.update_column(:status, 'completed') }
 

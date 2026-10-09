@@ -16,12 +16,12 @@ module Spree
                    documents: "Array<{ kind: string; url: string }>",
                    provider_generates_labels: :boolean,
                    order_id: [:string, nullable: true],
-                   stock_location_id: [:string, nullable: true],
-                   adjustment_total: :string,
-                   pre_tax_amount: :string
+                   stock_location_id: [:string, nullable: true]
 
-          attributes :metadata, :adjustment_total, :pre_tax_amount,
-                     created_at: :iso8601, updated_at: :iso8601
+          attributes :metadata, created_at: :iso8601, updated_at: :iso8601
+
+          money_attributes :adjustment_total, :pre_tax_amount
+          typelize adjustment_total: [:string, nullable: false], pre_tax_amount: [:string, nullable: false]
 
           prefixed_id_attributes :order, :stock_location
 

@@ -114,12 +114,15 @@ function formatField(
 }
 
 function formatMoney(value: unknown, currency: string): string {
-  const n = typeof value === 'number' ? value : Number(value)
-  if (Number.isNaN(n)) return String(value)
+  const amount = String(value)
+  if (!/^-?\d+(\.\d+)?$/.test(amount)) return amount
   try {
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(n)
+    // `Intl` reads a numeric string exactly; its ES2022 typings only list numbers.
+    return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(
+      amount as unknown as number,
+    )
   } catch {
-    return `${n} ${currency}`
+    return `${amount} ${currency}`
   }
 }
 

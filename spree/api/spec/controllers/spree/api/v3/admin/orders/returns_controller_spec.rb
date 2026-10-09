@@ -39,11 +39,12 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       }, as: :json
 
       line = json_response['return_line_items'].sole
-      expect(json_response['refund_total']).to eq((line_item.price + 1).to_s)
-      expect(json_response['refund_tax_total']).to eq('1.0')
-      expect(line).to include('pre_tax_amount' => line_item.price.to_s, 'additional_tax_total' => '1.0',
-                              'refund_amount' => (line_item.price + 1).to_s)
-      expect(line['tax_lines'].sole).to include('credit' => true, 'amount' => '1.0', 'return_line_item_id' => line['id'])
+      expect(json_response['refund_total']).to eq(Spree::Money::Rounding.format(line_item.price + 1, 'USD'))
+      expect(json_response['refund_tax_total']).to eq('1.00')
+      expect(line).to include('pre_tax_amount' => Spree::Money::Rounding.format(line_item.price, 'USD'),
+                              'additional_tax_total' => '1.00',
+                              'refund_amount' => Spree::Money::Rounding.format(line_item.price + 1, 'USD'))
+      expect(line['tax_lines'].sole).to include('credit' => true, 'amount' => '1.00', 'return_line_item_id' => line['id'])
     end
 
     it 'rejects returning more than was fulfilled' do

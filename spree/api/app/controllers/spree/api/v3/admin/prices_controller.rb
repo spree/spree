@@ -67,6 +67,15 @@ module Spree
               )
             end
 
+            if (malformed = result.error&.value.try(:[], :malformed_amounts))
+              return render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_money_format],
+                message: I18n.t('activerecord.errors.models.spree/price_list.attributes.base.malformed_price').upcase_first,
+                status: :unprocessable_content,
+                details: { rows: malformed }
+              )
+            end
+
             if (negative = result.error&.value.try(:[], :invalid_amounts))
               return render_error(
                 code: 'invalid_amount',

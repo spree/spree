@@ -75,7 +75,7 @@ module Spree
                          :fee_total, :display_fee_total
 
         attribute :store_credit_total do |order|
-          order.total_applied_store_credit.to_s unless params[:hide_prices]
+          Spree::Money::Rounding.format(order.total_applied_store_credit, order.currency) unless params[:hide_prices]
         end
 
         attribute :display_store_credit_total do |order|

@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
-import { currencyParts, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  currencyParts,
+  fractionToPercent,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  percentToFraction,
+} from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -49,11 +55,9 @@ import {
   useUpdateStoreSettings,
 } from '../../../../hooks/use-store-settings'
 import {
-  fractionToPercentage,
   type MarketplaceSettingsFormValues,
   marketplaceSettingsFormSchema,
   PAYOUT_SCHEDULE_INTERVALS,
-  percentageToFraction,
 } from '../../../../schemas/marketplace'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/marketplace')({
@@ -92,16 +96,16 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
       preferred_default_payouts_schedule_interval:
         (store.preferred_default_payouts_schedule_interval as (typeof PAYOUT_SCHEDULE_INTERVALS)[number]) ??
         'monthly',
-      preferred_default_minimum_payout_amount: Number(
-        store.preferred_default_minimum_payout_amount ?? 0,
+      // `String` only until the regenerated Store type reads these as the decimal strings the API sends.
+      preferred_default_minimum_payout_amount: String(
+        store.preferred_default_minimum_payout_amount ?? '0',
       ),
       preferred_auto_approve_sellers: store.preferred_auto_approve_sellers ?? false,
       preferred_auto_approve_seller_products: store.preferred_auto_approve_seller_products ?? false,
       preferred_send_seller_transactional_emails:
         store.preferred_send_seller_transactional_emails ?? true,
-      commission_tax_rate_percentage: fractionToPercentage(
-        store.preferred_default_commission_tax_rate,
-      ),
+      commission_tax_rate_percentage:
+        fractionToPercent(String(store.preferred_default_commission_tax_rate ?? '')) || '0',
     },
   })
 
@@ -157,7 +161,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
         preferred_auto_approve_seller_products: values.preferred_auto_approve_seller_products,
         preferred_send_seller_transactional_emails:
           values.preferred_send_seller_transactional_emails,
-        preferred_default_commission_tax_rate: percentageToFraction(
+        preferred_default_commission_tax_rate: percentToFraction(
           values.commission_tax_rate_percentage,
         ),
       })
@@ -307,7 +311,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           id="payout-minimum"
                           type="number"
                           min={0}
-                          step="0.01"
+                          step="any"
                           inputMode="decimal"
                           aria-invalid={
                             !!errors.preferred_default_minimum_payout_amount || undefined
@@ -386,7 +390,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           type="number"
                           min={0}
                           max={100}
-                          step="0.01"
+                          step="any"
                           aria-invalid={!!errors.commission_tax_rate_percentage || undefined}
                           {...form.register('commission_tax_rate_percentage')}
                         />

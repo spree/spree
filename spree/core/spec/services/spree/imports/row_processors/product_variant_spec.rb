@@ -50,6 +50,15 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     # fallback they would answer the store's own unit either way, so an import
     # that dropped them looked correct everywhere except the editor, which
     # shows the raw column so a save cannot stamp one store's unit on a row.
+    context 'with a number written with a thousands separator' do
+      let(:row_data) { csv_row_hash('slug' => 'grouped-kettle', 'name' => 'Grouped Kettle', 'price' => '1,599.99') }
+
+      it 'fails the row naming the column instead of saving 1' do
+        expect { described_class.new(row) }.to raise_error(ArgumentError, 'price must be a number like 16.50, got 1,599.99.')
+        expect(Spree::Product.find_by(slug: 'grouped-kettle')).to be_nil
+      end
+    end
+
     it 'stores the units the file declared alongside the measurements' do
       default_variant = product.default_variant
 

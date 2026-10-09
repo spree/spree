@@ -29,20 +29,6 @@ module Spree
                    total: [:string, nullable: false], display_total: [:string, nullable: false],
                    amount_due: [:string, nullable: false], display_amount_due: [:string, nullable: false]
 
-          # Back-office only: what the marketplace earned on this sale — the fee,
-          # the tax charged on it, and the two together. Never on the store
-          # serializer: a commission settles between the platform and the
-          # seller, and the shopper does not pay it.
-          #
-          # The tax stands on its own because it is separately reportable —
-          # the platform files it as output tax on a B2B supply to the seller.
-          typelize commission_amount_total: [:string, nullable: false],
-                   display_commission_amount_total: [:string, nullable: false],
-                   commission_tax_total: [:string, nullable: false],
-                   display_commission_tax_total: [:string, nullable: false],
-                   commission_total: [:string, nullable: false],
-                   display_commission_total: [:string, nullable: false]
-
           typelize status: [:string, enum: Spree::Order::STATUSES],
                    last_ip_address: [:string, nullable: true],
                    considered_risky: :boolean, confirmation_delivered: :boolean,
@@ -59,20 +45,35 @@ module Spree
                    cancel_reason_id: [:string, nullable: true],
                    cancel_reason_name: [:string, nullable: true],
                    cancel_note: [:string, nullable: true],
-                   payment_total: :string, display_payment_total: :string,
                    tags: [:string, multi: true],
                    metadata: 'Record<string, unknown>'
 
           # Admin-only attributes
           attributes :status, :last_ip_address, :considered_risky,
                      :confirmation_delivered, :store_owner_notification_delivered,
-                     :payment_total, :display_payment_total, :metadata,
-                     :cancel_note,
-                     :commission_amount_total, :display_commission_amount_total,
-                     :commission_tax_total, :display_commission_tax_total,
-                     :commission_total, :display_commission_total,
+                     :metadata, :cancel_note,
                      canceled_at: :iso8601, approved_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          money_attributes :payment_total, :display_payment_total
+          typelize payment_total: [:string, nullable: false], display_payment_total: [:string, nullable: false]
+
+          # Back-office only: what the marketplace earned on this sale — the fee,
+          # the tax charged on it, and the two together. Never on the store
+          # serializer: a commission settles between the platform and the
+          # seller, and the shopper does not pay it.
+          #
+          # The tax stands on its own because it is separately reportable —
+          # the platform files it as output tax on a B2B supply to the seller.
+          money_attributes :commission_amount_total, :display_commission_amount_total,
+                           :commission_tax_total, :display_commission_tax_total,
+                           :commission_total, :display_commission_total
+          typelize commission_amount_total: [:string, nullable: false],
+                   display_commission_amount_total: [:string, nullable: false],
+                   commission_tax_total: [:string, nullable: false],
+                   display_commission_tax_total: [:string, nullable: false],
+                   commission_total: [:string, nullable: false],
+                   display_commission_total: [:string, nullable: false]
 
           prefixed_id_attributes :preferred_stock_location
 

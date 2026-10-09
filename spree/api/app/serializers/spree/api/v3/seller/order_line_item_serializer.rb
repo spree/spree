@@ -18,7 +18,8 @@ module Spree
           attributes :name, :options_text, :quantity, :currency
 
           # The tax charged on top is what a claim refunds beside the goods.
-          money_attributes :price, :display_price, :discounted_amount, :display_discounted_amount,
+          money_attributes :price, :display_price, unit_price: true
+          money_attributes :discounted_amount, :display_discounted_amount,
                            :additional_tax_total, :total, :display_total
 
           prefixed_id_attributes :variant

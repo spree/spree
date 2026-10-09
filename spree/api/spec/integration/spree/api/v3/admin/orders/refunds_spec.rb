@@ -73,7 +73,7 @@ RSpec.describe 'Admin Order Refunds API', type: :request, swagger_doc: 'api-refe
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['amount']).to eq('5.0')
+          expect(data['amount']).to eq('5.00')
         end
       end
     end

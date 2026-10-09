@@ -29,7 +29,7 @@ const blackFriday = await client.promotions.create({
     },
     {
       type: 'item_total',
-      preferences: { amount_min: 100, operator_min: 'gte' },
+      preferences: { amount_min: '100.00', operator_min: 'gte' },
     },
     {
       type: 'product',
@@ -42,7 +42,7 @@ const blackFriday = await client.promotions.create({
       type: 'create_item_adjustments',
       calculator: {
         type: 'percent_on_line_item',
-        preferences: { percent: 25 },
+        preferences: { percent: '25' },
       },
     },
     { type: 'free_shipping' },

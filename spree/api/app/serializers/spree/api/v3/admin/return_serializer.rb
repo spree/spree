@@ -11,9 +11,8 @@ module Spree
                    stock_location_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
                    created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
-                   refunded_total: :string,
-                   display_refunded_total: :string,
-                   refundable_total: :string
+                   refund_total: [:string, nullable: false], display_refund_total: [:string, nullable: false],
+                   refund_tax_total: [:string, nullable: false], display_refund_tax_total: [:string, nullable: false]
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
@@ -21,7 +20,10 @@ module Spree
 
           actor_attributes :created_by
 
-          attributes refunded_total: :string, display_refunded_total: :string, refundable_total: :string
+          money_attributes :refunded_total, :display_refunded_total, :refundable_total
+          typelize refunded_total: [:string, nullable: false], display_refunded_total: [:string, nullable: false],
+                   refundable_total: [:string, nullable: false]
+
           many :return_line_items,
                resource: proc { Spree.api.admin_return_line_item_serializer },
                if: proc { expand?('return_line_items') }

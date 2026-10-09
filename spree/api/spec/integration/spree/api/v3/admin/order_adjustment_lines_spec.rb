@@ -77,7 +77,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
         type: :object,
         properties: {
           label: { type: :string, example: 'Customer appeasement' },
-          value: { type: :number, example: 10 },
+          value: { type: :string, example: '10.00' },
           value_type: { type: :string, enum: %w[flat percent], example: 'flat' },
           line_item_id: { type: :string, nullable: true, example: 'item_abc123', description: 'Target line item; omit to distribute order-level' }
         },
@@ -85,11 +85,11 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       }
 
       response '201', 'discount created' do
-        let(:body) { { label: 'Appeasement', value: 3, value_type: 'flat', line_item_id: line_item.prefixed_id } }
+        let(:body) { { label: 'Appeasement', value: '3.00', value_type: 'flat', line_item_id: line_item.prefixed_id } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['data'].first['amount']).to eq('-3.0')
+          expect(data['data'].first['amount']).to eq('-3.00')
         end
       end
 
@@ -119,7 +119,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
         type: :object,
         properties: {
           label: { type: :string, example: 'Gift wrap' },
-          amount: { type: :number, example: 4 },
+          amount: { type: :string, example: '4.00' },
           kind: { type: :string, enum: Spree::Fee::KINDS, example: 'gift_wrap', description: "Defaults to 'surcharge'" },
           line_item_id: { type: :string, nullable: true },
           fulfillment_id: { type: :string, nullable: true }
@@ -128,17 +128,17 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       }
 
       response '201', 'fee created' do
-        let(:body) { { label: 'Gift wrap', amount: 4, kind: 'gift_wrap' } }
+        let(:body) { { label: 'Gift wrap', amount: '4.00', kind: 'gift_wrap' } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['label']).to eq('Gift wrap')
-          expect(data['amount']).to eq('4.0')
+          expect(data['amount']).to eq('4.00')
         end
       end
 
       response '422', 'invalid fee' do
-        let(:body) { { label: 'Mystery', amount: 4, kind: 'nonsense' } }
+        let(:body) { { label: 'Mystery', amount: '4.00', kind: 'nonsense' } }
 
         run_test!
       end

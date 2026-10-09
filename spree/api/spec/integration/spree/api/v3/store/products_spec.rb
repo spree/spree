@@ -184,7 +184,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
           expect(lowest['amount']).to eq('9.99')
           expect(lowest['currency']).to eq('USD')
           expect(lowest['display_amount']).to be_present
-          expect(lowest['amount_in_cents']).to eq(999)
+          expect(lowest).not_to have_key('amount_in_cents')
           expect(lowest['recorded_at']).to be_present
         end
       end

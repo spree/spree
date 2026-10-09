@@ -16,16 +16,41 @@ module Spree
           object.prefixed_id
         end
 
-        # Declares money/display attributes that render +null+ for gated
-        # (prices_hidden) guests, keyed off the same +hide_prices+ flag the
-        # +price_for+/+price_in+ helpers use — so the whole price surface
-        # (product prices AND cart/order/line-item totals) is gated from one
-        # place instead of per-attribute opt-in.
-        def self.money_attributes(*names)
+        # Declares money attributes, written as decimal strings with exactly
+        # the currency's decimal places ("10.00", "1.500", "100"), or up to
+        # four for unit prices ("0.0125"). +display_*+ names pass through as
+        # formatted. All render +null+ for gated (prices_hidden) guests, keyed
+        # off the same +hide_prices+ flag the +price_for+/+price_in+ helpers
+        # use, so the whole price surface is gated from one place.
+        #
+        # @param currency [Symbol, Proc] the record's reader for its currency,
+        #   or a block taking the record
+        # @param unit_price [Boolean]
+        def self.money_attributes(*names, currency: :currency, unit_price: false)
           typelize(**names.index_with { [:string, nullable: true] })
 
           names.each do |name|
-            attribute(name) { |object| object.public_send(name) unless params[:hide_prices] }
+            attribute(name) do |object|
+              next if params[:hide_prices]
+
+              value = object.public_send(name)
+              next value if name.to_s.start_with?('display_') || value.nil?
+
+              code = currency.is_a?(Proc) ? currency.call(object) : object.public_send(currency)
+              Spree::Money::Rounding.format(value, code, unit_price: unit_price)
+            end
+          end
+        end
+
+        # Declares rates and percentages, written as decimal strings without
+        # trailing zeros ("0.23", "7.25", "10"). A name ending +_percent+ or
+        # +_percentage+ holds 0-100; +rate+ or a name ending +_rate+ holds a
+        # fraction.
+        def self.rate_attributes(*names)
+          typelize(**names.index_with { [:string, nullable: true] })
+
+          names.each do |name|
+            attribute(name) { |object| Spree::Money::Rounding.format_decimal(object.public_send(name)) }
           end
         end
 

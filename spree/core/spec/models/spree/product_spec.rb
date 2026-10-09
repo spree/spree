@@ -198,12 +198,6 @@ describe Spree::Product, type: :model do
     end
 
     describe '#price_in' do
-      # Regression test for #1173
-      it 'strips non-price characters' do
-        product.default_variant.set_price('USD', '$10')
-        expect(product.price_in('USD').amount).to eq(10.0)
-      end
-
       it 'shows the amount' do
         product.default_variant.set_price('USD', 10.55)
         expect(product.price_in('USD').display_amount.to_s).to eq('$10.55')
@@ -1407,14 +1401,14 @@ describe Spree::Product, type: :model do
 
         expect(eur_default_variant[slug_idx]).to eq product.slug
         expect(eur_default_variant[sku_idx]).to eq product.default_variant.sku
-        expect(eur_default_variant[price_idx]).to eq 10.99
+        expect(eur_default_variant[price_idx]).to eq '10.99'
         expect(eur_default_variant[currency_idx]).to eq 'EUR'
         expect(eur_default_variant[name_idx]).to be_nil
 
         expect(eur_variant[slug_idx]).to eq product.slug
         expect(eur_variant[sku_idx]).to eq variant1.sku
-        expect(eur_variant[price_idx]).to eq 52.99
-        expect(eur_variant[compare_idx]).to eq 62.99
+        expect(eur_variant[price_idx]).to eq '52.99'
+        expect(eur_variant[compare_idx]).to eq '62.99'
         expect(eur_variant[currency_idx]).to eq 'EUR'
         expect(eur_variant[name_idx]).to be_nil
       end

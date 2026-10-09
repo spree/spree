@@ -36,6 +36,9 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasListPosition
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :value, places: 5
     include Spree::TypedAssociations
 
     KINDS = %w[percentage fixed].freeze

@@ -33,6 +33,50 @@ test.describe('commission rates', () => {
     await expect(row.getByText(/^15(\.0+)?%$/)).toBeVisible({ timeout: 15_000 })
   })
 
+  // Amounts and rates go to the API as exact decimal strings, so each one
+  // must read back as typed when the rate is reopened.
+  test('keeps a flat fee per currency exactly', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, COMMISSION_RATES_PATH(creds.store_id), CTA)
+
+    const name = `E2E Flat Commission ${Date.now()}`
+    await page.getByRole('button', { name: CTA }).click()
+    await page.locator('#name').fill(name)
+    await page.locator('#kind').click()
+    await page.getByRole('option', { name: /^flat fee$/i }).click()
+    await page.getByRole('dialog').getByLabel('USD', { exact: true }).fill('1.25')
+    await page.getByRole('button', { name: /create commission rate/i }).click()
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    await rowButton(page, name).click()
+    await expect(page.getByRole('dialog').getByLabel('USD', { exact: true })).toHaveValue('1.25', {
+      timeout: 15_000,
+    })
+  })
+
+  test('keeps a percentage with its floor, cap and tax exactly', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, COMMISSION_RATES_PATH(creds.store_id), CTA)
+
+    const name = `E2E Bounded Commission ${Date.now()}`
+    await page.getByRole('button', { name: CTA }).click()
+    const sheet = page.getByRole('dialog')
+    await page.locator('#name').fill(name)
+    await page.locator('#value').fill('12.5')
+    await sheet.getByLabel('USD Minimum', { exact: true }).fill('0.50')
+    await sheet.getByLabel('USD Maximum', { exact: true }).fill('25.00')
+    await page.locator('#commission_tax_rate').fill('7.125')
+    await page.getByRole('button', { name: /create commission rate/i }).click()
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    await rowButton(page, name).click()
+    const reopened = page.getByRole('dialog')
+    await expect(page.locator('#value')).toHaveValue('12.5', { timeout: 15_000 })
+    await expect(reopened.getByLabel('USD Minimum', { exact: true })).toHaveValue('0.50')
+    await expect(reopened.getByLabel('USD Maximum', { exact: true })).toHaveValue('25.00')
+    await expect(page.locator('#commission_tax_rate')).toHaveValue('7.125')
+  })
+
   test('deletes a rate after confirming', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, COMMISSION_RATES_PATH(creds.store_id), CTA)

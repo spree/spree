@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Admin::PurchaseOrdersController, type: :controlle
       row = json_response['data'].find { |po| po['id'] == purchase_order.prefixed_id }
       expect(row).to include(
         'status' => 'draft', 'items_count' => 1, 'quantity_ordered_total' => 100,
-        'quantity_received_total' => 0, 'subtotal' => '1250.0', 'editable' => true
+        'quantity_received_total' => 0, 'subtotal' => '1250.00', 'editable' => true
       )
       expect(row['supplier_id']).to eq(supplier.prefixed_id)
     end
@@ -237,7 +237,7 @@ RSpec.describe Spree::Api::V3::Admin::PurchaseOrdersController, type: :controlle
 
       expect(response).to have_http_status(:ok)
       line = json_response['items'].sole
-      expect(line).to include('quantity_ordered' => 100, 'unit_cost' => '12.5',
+      expect(line).to include('quantity_ordered' => 100, 'unit_cost' => '12.50',
                               'display_unit_cost' => '$12.50', 'outstanding' => 100)
       expect(json_response['supplier']['name']).to eq('Acme Wholesale')
     end

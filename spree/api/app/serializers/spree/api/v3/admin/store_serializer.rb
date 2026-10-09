@@ -47,11 +47,11 @@ module Spree
                    preferred_inventory_provider_failure_policy: :string,
                    preferred_payout_provider: [:string, nullable: true, comment: 'Payout provider; null uses the installation default. Built-in: system. Provider gems register more (e.g. stripe).'],
                    preferred_default_payouts_schedule_interval: :string,
-                   preferred_default_minimum_payout_amount: :number,
+                   preferred_default_minimum_payout_amount: [:string, nullable: true],
                    preferred_auto_approve_sellers: :boolean,
                    preferred_auto_approve_seller_products: :boolean,
                    preferred_send_seller_transactional_emails: :boolean,
-                   preferred_default_commission_tax_rate: :number,
+                   preferred_default_commission_tax_rate: [:string, nullable: true],
                    preferred_document_number_format: :string,
                    preferred_order_number_prefix: :string,
                    preferred_order_number_suffix: :string,
@@ -126,12 +126,10 @@ module Spree
           end
 
           attribute :preferred_default_minimum_payout_amount do |store|
-            store.preferred_default_minimum_payout_amount&.to_f
+            Spree::Money::Rounding.format(store.preferred_default_minimum_payout_amount, store.default_currency, unit_price: true)
           end
 
-          attribute :preferred_default_commission_tax_rate do |store|
-            store.preferred_default_commission_tax_rate&.to_f
-          end
+          rate_attributes :preferred_default_commission_tax_rate
 
           attribute :url, &:storefront_url
 

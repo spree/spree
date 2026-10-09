@@ -9,8 +9,6 @@ module Spree
                  status: [:string, enum: Spree::Exchange.statuses, enum_type_name: 'ExchangeStatus'],
                  order_id: [:string, nullable: true],
                  reason_id: [:string, nullable: true],
-                 price_difference: :string,
-                 display_price_difference: :string,
                  approved_at: [:string, nullable: true],
                  received_at: [:string, nullable: true],
                  fulfilled_at: [:string, nullable: true],
@@ -20,7 +18,8 @@ module Spree
 
         prefixed_id_attributes :order, :reason
 
-        attributes price_difference: :string, display_price_difference: :string
+        money_attributes :price_difference, :display_price_difference
+
         attribute :approved_at do |exchange|
           exchange.approved_at&.iso8601
         end

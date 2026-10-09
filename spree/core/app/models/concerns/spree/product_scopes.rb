@@ -20,7 +20,8 @@ module Spree
                             .group("#{Variant.table_name}.product_id")
                             .to_sql
 
-        price_expr = Arel.sql('COALESCE(price_agg.agg_price, 999999999)')
+        # Above any price decimal(19,4) holds, so an unpriced product sorts last.
+        price_expr = Arel.sql('COALESCE(price_agg.agg_price, 1000000000000000)')
 
         joins("LEFT JOIN (#{price_agg_sql}) AS price_agg ON price_agg.product_id = #{Product.table_name}.id").
           select("#{Product.table_name}.*").

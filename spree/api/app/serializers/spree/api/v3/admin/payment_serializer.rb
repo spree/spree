@@ -8,7 +8,6 @@ module Spree
           typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false]
 
           typelize metadata: 'Record<string, unknown>',
-                   captured_amount: :string,
                    order_id: [:string, nullable: true],
                    avs_response: [:string, nullable: true],
                    cvv_response_code: [:string, nullable: true],
@@ -17,7 +16,9 @@ module Spree
           attributes :metadata, :avs_response, :cvv_response_code, :cvv_response_message,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attributes captured_amount: :string
+          money_attributes :captured_amount
+          typelize captured_amount: [:string, nullable: false]
+
           prefixed_id_attributes :order
 
           # Override inherited associations to use admin serializers

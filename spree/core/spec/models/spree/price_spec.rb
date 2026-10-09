@@ -113,14 +113,28 @@ describe Spree::Price, type: :model do
 
   describe '#amount=' do
     let(:price) { build :price }
-    let(:amount) { '3,0A0' }
 
-    before do
-      price.amount = amount
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
+      I18n.with_locale(:nl) { price.amount = '49.50' }
+      expect(price.amount).to eq(BigDecimal('49.50'))
     end
 
-    it 'is expected to equal to localized number' do
-      expect(price.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    it 'refuses text it would otherwise misread, naming the attribute' do
+      expect { price.amount = '1,599.99' }.to raise_error(Spree::Money::InvalidFormat) { |error| expect(error.field).to eq(:amount) }
+    end
+
+    it 'does not grow when what it read back is saved again' do
+      I18n.with_locale(:nl) { price.amount = '99.0' }
+      expect(price.amount).to eq(BigDecimal('99'))
+    end
+
+    it 'keeps a unit price to four decimals and refuses a fifth' do
+      price.amount = '0.0125'
+      expect(price).to be_valid
+
+      price.amount = '0.01255'
+      expect(price).not_to be_valid
+      expect(price.errors.details[:amount]).to include(error: :too_many_decimals, count: 4)
     end
   end
 
@@ -132,8 +146,8 @@ describe Spree::Price, type: :model do
       price.compare_at_amount = compare_at_amount
     end
 
-    it 'is expected to equal to localized number' do
-      expect(price.compare_at_amount).to eq(Spree::LocalizedNumber.parse(compare_at_amount))
+    it 'stores a canonical decimal exactly' do
+      expect(price.compare_at_amount).to eq(BigDecimal('169.99'))
     end
 
     context 'with empty string being passed as value' do

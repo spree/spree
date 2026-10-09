@@ -16,6 +16,7 @@
     "lint:fix": "biome check --fix ."
   },
   "dependencies": {
+    "@spree/admin-sdk": "workspace:^",
     "@spree/seller-dashboard": "workspace:^",
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",

@@ -63,7 +63,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
           row = data['data'].find { |po| po['id'] == order_record.prefixed_id }
           expect(row['status']).to eq('draft')
           expect(row['quantity_ordered_total']).to eq(100)
-          expect(row['subtotal']).to eq('1250.0')
+          expect(row['subtotal']).to eq('1250.00')
         end
       end
 
@@ -186,7 +186,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['items'].first['unit_cost']).to eq('12.5')
+          expect(data['items'].first['unit_cost']).to eq('12.50')
           expect(data['supplier']['name']).to eq('Acme Wholesale')
         end
       end

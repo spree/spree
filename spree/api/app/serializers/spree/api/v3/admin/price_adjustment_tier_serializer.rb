@@ -6,15 +6,12 @@ module Spree
         # the list itself — the storefront sees resolved prices, never the
         # arithmetic behind them.
         class PriceAdjustmentTierSerializer < V3::BaseSerializer
-          typelize min_quantity: :number, percentage: :string
+          typelize min_quantity: :number
 
           attributes :min_quantity
 
-          # A decimal as a string, like every other money-shaped value on the
-          # wire — a float would round the merchant's own figure.
-          attribute :percentage do |tier|
-            tier.percentage&.to_s
-          end
+          rate_attributes :percentage
+          typelize percentage: [:string, nullable: false]
         end
       end
     end

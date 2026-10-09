@@ -1,4 +1,4 @@
-import { currencyParts } from '@spree/dashboard-core'
+import { currencyParts, paidForUnits } from '@spree/dashboard-core'
 import {
   Field,
   FieldLabel,
@@ -137,8 +137,7 @@ export function CreateClaimDialog({
         id: item.id,
         label: unitLabel(item),
         quantity: item.quantity,
-        discountedAmount: item.discounted_amount,
-        additionalTaxTotal: item.additional_tax_total,
+        paidFor: (quantity: number) => paidForUnits(item, quantity, order.currency),
       }))}
       currencySymbol={currencySymbol}
       reasonField={<ClaimReasonField value={reasonId} onChange={setReasonId} />}

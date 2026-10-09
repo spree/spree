@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { DeliveryProfile, DeliveryZone } from '@spree/admin-sdk'
+import { isDecimalString, isZeroMoney } from '@spree/admin-sdk'
 import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
@@ -31,7 +32,7 @@ import { DeliveryMethodFormCards } from './delivery-method-form'
 /** API decimals arrive as strings ("0.0"); show blank instead of a noisy zero. */
 function decimalToForm(value: string | null | undefined) {
   if (value === null || value === undefined || value === '') return ''
-  return Number(value) === 0 ? '' : String(value)
+  return isDecimalString(value) && isZeroMoney(value) ? '' : String(value)
 }
 
 /** Whether a rule kind is configured with a product list rather than preferences. */

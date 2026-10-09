@@ -1,5 +1,16 @@
-import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
-import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
+import {
+  isDecimalString,
+  type LineItem,
+  multiplyMoney,
+  type OrderUpdateParams,
+  sumMoney,
+} from '@spree/admin-sdk'
+import {
+  formatMoney,
+  fulfilledQuantities,
+  type GroupableFulfillment,
+  i18n,
+} from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 /**
@@ -166,36 +177,30 @@ export function orderToEditForm(
 }
 
 /** Formats a client-computed preview amount; server money arrives as `display_*`. */
-export function formatAmount(amount: number, currency: string): string {
-  return new Intl.NumberFormat(i18n.language, { style: 'currency', currency }).format(amount)
+export function formatAmount(amount: string, currency: string): string {
+  return formatMoney(amount, currency, i18n.language)
 }
 
 /** The price a row lands on once saved, or null when it cannot be known. */
-export function projectedPrice(item: OrderEditItemValues): number | null {
+export function projectedPrice(item: OrderEditItemValues): string | null {
   const source = item.revert_price ? item.catalog_price : item.price
-  if (source == null || source === '') return null
-
-  const parsed = Number(source)
-  return Number.isFinite(parsed) ? parsed : null
+  return isDecimalString(source) ? source : null
 }
 
 /** What the line costs after saving; null propagates so a total is never partial. */
-export function projectedLineTotal(item: OrderEditItemValues): number | null {
-  if (item.removed) return 0
+export function projectedLineTotal(item: OrderEditItemValues): string | null {
+  if (item.removed) return '0'
 
   const price = projectedPrice(item)
-  return price === null ? null : price * item.quantity
+  return price === null || !Number.isInteger(item.quantity)
+    ? null
+    : multiplyMoney(price, item.quantity)
 }
 
 /** Projected item subtotal; null if any row is unprojectable. */
-export function projectedSubtotal(items: OrderEditItemValues[]): number | null {
-  let sum = 0
-  for (const item of items) {
-    const total = projectedLineTotal(item)
-    if (total === null) return null
-    sum += total
-  }
-  return sum
+export function projectedSubtotal(items: OrderEditItemValues[]): string | null {
+  const totals = items.map(projectedLineTotal)
+  return totals.includes(null) ? null : sumMoney(totals)
 }
 
 export type OrderItemsPayload = NonNullable<OrderUpdateParams['items']>

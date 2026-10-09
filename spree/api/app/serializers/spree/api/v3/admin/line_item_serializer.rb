@@ -34,7 +34,7 @@ module Spree
           # Base price, not resolved: resolving would call the pricing provider
           # once per line on a read path that must stay provider-free.
           attribute :catalog_price do |line_item|
-            line_item.variant&.amount_in(line_item.currency)&.to_s
+            Spree::Money::Rounding.format(line_item.variant&.amount_in(line_item.currency), line_item.currency, unit_price: true)
           end
 
           # Which agreement priced this line. The list id is stamped on the
@@ -58,9 +58,7 @@ module Spree
             line_item.price_list&.catalog&.name
           end
 
-          attribute :cost_price do |line_item|
-            line_item.cost_price&.to_s
-          end
+          money_attributes :cost_price, unit_price: true
 
           prefixed_id_attributes :tax_category
 

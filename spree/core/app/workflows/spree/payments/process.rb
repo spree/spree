@@ -57,7 +57,9 @@ module Spree
 
         response = payment.protect_from_connection_error do
           instrument_gateway_call(verb, payment.payment_method) do
-            payment.payment_method.public_send(verb, payment.money.amount_in_cents, payment.source, payment.gateway_options)
+            payment.payment_method.public_send(
+              verb, payment.payment_method.gateway_amount(payment.amount, payment.currency), payment.source, payment.gateway_options
+            )
           end
         end
 

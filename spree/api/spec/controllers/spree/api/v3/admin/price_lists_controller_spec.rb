@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
 
       get :show, params: { id: owned.prefixed_id }, as: :json
 
-      expect(json_response['price_adjustment_percentage']).to eq('-15.0')
+      expect(json_response['price_adjustment_percentage']).to eq('-15')
       expect(json_response['automatic_pricing']).to be true
     end
   end

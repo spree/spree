@@ -1465,6 +1465,7 @@
         "seeded_report_read_only": "This is a built-in report and cannot be changed. Save a copy instead.",
         "taken": "has already been taken",
         "too_long": "is too long (maximum is {{count}} characters)",
+        "too_many_decimals": "has more than {{count}} decimal places",
         "too_short": "is too short (minimum is {{count}} characters)",
         "wrong_length": "is the wrong length (should be {{count}} characters)"
       },
@@ -1481,7 +1482,8 @@
       "passwords_dont_match": "Passwords do not match",
       "positive_number": "{{field}} must be greater than 0",
       "required": "{{field}} is required",
-      "store_name_required": "Store name is required"
+      "store_name_required": "Store name is required",
+      "too_many_decimals": "{{field}} can have at most {{count}} decimal places"
     },
     "products": {
       "autocomplete": {

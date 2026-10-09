@@ -894,7 +894,7 @@ function ServiceOverridesSheet({
               <InputGroupInput
                 id={`service-markup-flat-${index}`}
                 type="number"
-                step="0.01"
+                step="any"
                 min="0"
                 placeholder="0"
                 {...form.register(`services.${index}.markup_flat`)}
@@ -909,7 +909,7 @@ function ServiceOverridesSheet({
               <InputGroupInput
                 id={`service-markup-percent-${index}`}
                 type="number"
-                step="0.01"
+                step="any"
                 min="0"
                 placeholder="0"
                 {...form.register(`services.${index}.markup_percent`)}
@@ -1111,7 +1111,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                 <InputGroupInput
                   id="markup_percent"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   placeholder="0"
                   {...form.register('markup_percent')}
@@ -1132,7 +1132,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                 <InputGroupInput
                   id="markup_flat"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   placeholder="0"
                   {...form.register('markup_flat')}

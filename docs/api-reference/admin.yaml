@@ -391,6 +391,8 @@ paths:
                 - write_package_types
                 - read_webhooks
                 - write_webhooks
+                - read_email_templates
+                - write_email_templates
                 - read_integrations
                 - write_integrations
                 - read_api_keys
@@ -528,6 +530,8 @@ paths:
                 - write_package_types
                 - read_webhooks
                 - write_webhooks
+                - read_email_templates
+                - write_email_templates
                 - read_integrations
                 - write_integrations
                 - read_api_keys
@@ -859,9 +863,7 @@ paths:
                   name: Afghanistan
                   currency: AFN
                   locales:
-                  - ps
-                  - uz
-                  - tk
+                  - en
                 - code: AG
                   name: Antigua and Barbuda
                   currency: XCD
@@ -876,12 +878,12 @@ paths:
                   name: Albania
                   currency: ALL
                   locales:
-                  - sq
+                  - en
                 - code: AM
                   name: Armenia
                   currency: AMD
                   locales:
-                  - hy
+                  - en
                 - code: AO
                   name: Angola
                   currency: AOA
@@ -892,13 +894,11 @@ paths:
                   currency: ARS
                   locales:
                   - es
-                  - gn
                 - code: AS
                   name: American Samoa
                   currency: USD
                   locales:
                   - en
-                  - sm
                 - code: AT
                   name: Austria
                   currency: EUR
@@ -918,15 +918,12 @@ paths:
                   name: Azerbaijan
                   currency: AZN
                   locales:
-                  - az
-                  - hy
+                  - en
                 - code: BA
                   name: Bosnia and Herzegovina
                   currency: BAM
                   locales:
-                  - bs
-                  - hr
-                  - sr
+                  - en
                 - code: BB
                   name: Barbados
                   currency: BBD
@@ -936,7 +933,7 @@ paths:
                   name: Bangladesh
                   currency: BDT
                   locales:
-                  - bn
+                  - en
                 - code: BE
                   name: Belgium
                   currency: EUR
@@ -949,7 +946,6 @@ paths:
                   currency: XOF
                   locales:
                   - fr
-                  - ff
                 - code: BG
                   name: Bulgaria
                   currency: EUR
@@ -965,7 +961,6 @@ paths:
                   currency: BIF
                   locales:
                   - fr
-                  - rn
                 - code: BJ
                   name: Benin
                   currency: XOF
@@ -985,14 +980,12 @@ paths:
                   name: Brunei Darussalam
                   currency: BND
                   locales:
-                  - ms
+                  - en
                 - code: BO
                   name: Bolivia
                   currency: BOB
                   locales:
                   - es
-                  - ay
-                  - qu
                 - code: BQ
                   name: Bonaire, Sint Eustatius and Saba
                   currency: USD
@@ -1013,13 +1006,12 @@ paths:
                   name: Bhutan
                   currency: BTN
                   locales:
-                  - dz
+                  - en
                 - code: BW
                   name: Botswana
                   currency: BWP
                   locales:
                   - en
-                  - tn
                 - code: BY
                   name: Belarus
                   currency: BYN
@@ -1048,22 +1040,16 @@ paths:
                   currency: CDF
                   locales:
                   - fr
-                  - ln
-                  - kg
-                  - sw
-                  - lu
                 - code: CF
                   name: Central African Republic
                   currency: XAF
                   locales:
                   - fr
-                  - sg
                 - code: CG
                   name: Congo
                   currency: XAF
                   locales:
                   - fr
-                  - ln
                 - code: CH
                   name: Switzerland
                   currency: CHF
@@ -1071,7 +1057,6 @@ paths:
                   - de
                   - fr
                   - it
-                  - rm
                 - code: CI
                   name: Côte d'Ivoire
                   currency: XOF
@@ -1097,7 +1082,7 @@ paths:
                   name: China
                   currency: CNY
                   locales:
-                  - zh
+                  - zh-CN
                 - code: CO
                   name: Colombia
                   currency: COP
@@ -1128,15 +1113,13 @@ paths:
                   currency: AUD
                   locales:
                   - en
-                  - zh
-                  - ms
+                  - zh-CN
                 - code: CY
                   name: Cyprus
                   currency: EUR
                   locales:
                   - el
                   - tr
-                  - hy
                 - code: CZ
                   name: Czechia
                   currency: CZK
@@ -1194,7 +1177,6 @@ paths:
                   locales:
                   - en
                   - ar
-                  - ti
                 - code: ES
                   name: Spain
                   currency: EUR
@@ -1204,7 +1186,7 @@ paths:
                   name: Ethiopia
                   currency: ETB
                   locales:
-                  - am
+                  - en
                 - code: FI
                   name: Finland
                   currency: EUR
@@ -1216,8 +1198,6 @@ paths:
                   currency: FJD
                   locales:
                   - en
-                  - fj
-                  - hi
                 - code: FK
                   name: Falkland Islands (Malvinas)
                   currency: FKP
@@ -1232,7 +1212,7 @@ paths:
                   name: Faroe Islands
                   currency: DKK
                   locales:
-                  - fo
+                  - en
                 - code: FR
                   name: France
                   currency: EUR
@@ -1257,7 +1237,7 @@ paths:
                   name: Georgia
                   currency: GEL
                   locales:
-                  - ka
+                  - en
                 - code: GF
                   name: French Guiana
                   currency: EUR
@@ -1283,7 +1263,7 @@ paths:
                   name: Greenland
                   currency: DKK
                   locales:
-                  - kl
+                  - en
                 - code: GM
                   name: Gambia
                   currency: GMD
@@ -1294,7 +1274,6 @@ paths:
                   currency: GNF
                   locales:
                   - fr
-                  - ff
                 - code: GP
                   name: Guadeloupe
                   currency: EUR
@@ -1321,7 +1300,6 @@ paths:
                   currency: USD
                   locales:
                   - en
-                  - ch
                   - es
                 - code: GW
                   name: Guinea-Bissau
@@ -1338,7 +1316,7 @@ paths:
                   currency: HKD
                   locales:
                   - en
-                  - zh
+                  - zh-CN
                 - code: HN
                   name: Honduras
                   currency: HNL
@@ -1348,13 +1326,12 @@ paths:
                   name: Croatia
                   currency: EUR
                   locales:
-                  - hr
+                  - en
                 - code: HT
                   name: Haiti
                   currency: HTG
                   locales:
                   - fr
-                  - ht
                 - code: HU
                   name: Hungary
                   currency: HUF
@@ -1370,24 +1347,20 @@ paths:
                   currency: EUR
                   locales:
                   - en
-                  - ga
                 - code: IL
                   name: Israel
                   currency: ILS
                   locales:
-                  - he
                   - ar
                 - code: IM
                   name: Isle of Man
                   currency: GBP
                   locales:
                   - en
-                  - gv
                 - code: IN
                   name: India
                   currency: INR
                   locales:
-                  - hi
                   - en
                 - code: IQ
                   name: Iraq
@@ -1403,7 +1376,7 @@ paths:
                   name: Iceland
                   currency: ISK
                   locales:
-                  - is
+                  - en
                 - code: IT
                   name: Italy
                   currency: EUR
@@ -1435,12 +1408,10 @@ paths:
                   currency: KES
                   locales:
                   - en
-                  - sw
                 - code: KG
                   name: Kyrgyzstan
                   currency: KGS
                   locales:
-                  - ky
                   - ru
                 - code: KH
                   name: Cambodia
@@ -1487,13 +1458,12 @@ paths:
                   name: Kazakhstan
                   currency: KZT
                   locales:
-                  - kk
                   - ru
                 - code: LA
                   name: Lao People's Democratic Republic
                   currency: LAK
                   locales:
-                  - lo
+                  - en
                 - code: LB
                   name: Lebanon
                   currency: LBP
@@ -1514,8 +1484,7 @@ paths:
                   name: Sri Lanka
                   currency: LKR
                   locales:
-                  - si
-                  - ta
+                  - en
                 - code: LR
                   name: Liberia
                   currency: LRD
@@ -1526,7 +1495,6 @@ paths:
                   currency: LSL
                   locales:
                   - en
-                  - st
                 - code: LT
                   name: Lithuania
                   currency: EUR
@@ -1538,7 +1506,6 @@ paths:
                   locales:
                   - fr
                   - de
-                  - lb
                 - code: LV
                   name: Latvia
                   currency: EUR
@@ -1568,10 +1535,7 @@ paths:
                   name: Montenegro
                   currency: EUR
                   locales:
-                  - sr
-                  - bs
-                  - sq
-                  - hr
+                  - en
                 - code: MF
                   name: Saint Martin (French part)
                   currency: EUR
@@ -1584,18 +1548,16 @@ paths:
                   currency: MGA
                   locales:
                   - fr
-                  - mg
                 - code: MH
                   name: Marshall Islands
                   currency: USD
                   locales:
                   - en
-                  - mh
                 - code: MK
                   name: North Macedonia
                   currency: MKD
                   locales:
-                  - mk
+                  - en
                 - code: ML
                   name: Mali
                   currency: XOF
@@ -1605,24 +1567,23 @@ paths:
                   name: Myanmar
                   currency: MMK
                   locales:
-                  - my
+                  - en
                 - code: MN
                   name: Mongolia
                   currency: MNT
                   locales:
-                  - mn
+                  - en
                 - code: MO
                   name: Macao
                   currency: MOP
                   locales:
-                  - zh
+                  - zh-CN
                   - pt
                 - code: MP
                   name: Northern Mariana Islands
                   currency: USD
                   locales:
                   - en
-                  - ch
                 - code: MQ
                   name: Martinique
                   currency: EUR
@@ -1643,7 +1604,6 @@ paths:
                   name: Malta
                   currency: EUR
                   locales:
-                  - mt
                   - en
                 - code: MU
                   name: Mauritius
@@ -1654,13 +1614,12 @@ paths:
                   name: Maldives
                   currency: MVR
                   locales:
-                  - dv
+                  - en
                 - code: MW
                   name: Malawi
                   currency: MWK
                   locales:
                   - en
-                  - ny
                 - code: MX
                   name: Mexico
                   currency: MXN
@@ -1670,7 +1629,6 @@ paths:
                   name: Malaysia
                   currency: MYR
                   locales:
-                  - ms
                   - en
                 - code: MZ
                   name: Mozambique
@@ -1682,7 +1640,6 @@ paths:
                   currency: NAD
                   locales:
                   - en
-                  - af
                 - code: NC
                   name: New Caledonia
                   currency: XPF
@@ -1718,7 +1675,6 @@ paths:
                   currency: NOK
                   locales:
                   - nb
-                  - nn
                 - code: NP
                   name: Nepal
                   currency: NPR
@@ -1729,7 +1685,6 @@ paths:
                   currency: AUD
                   locales:
                   - en
-                  - na
                 - code: NU
                   name: Niue
                   currency: NZD
@@ -1769,14 +1724,12 @@ paths:
                   name: Philippines
                   currency: PHP
                   locales:
-                  - tl
                   - en
                 - code: PK
                   name: Pakistan
                   currency: PKR
                   locales:
                   - en
-                  - ur
                 - code: PL
                   name: Poland
                   currency: PLN
@@ -1803,7 +1756,6 @@ paths:
                   currency: ILS
                   locales:
                   - ar
-                  - he
                   - en
                 - code: PT
                   name: Portugal
@@ -1820,7 +1772,6 @@ paths:
                   currency: PYG
                   locales:
                   - es
-                  - gn
                 - code: QA
                   name: Qatar
                   currency: QAR
@@ -1840,7 +1791,7 @@ paths:
                   name: Serbia
                   currency: RSD
                   locales:
-                  - sr
+                  - en
                 - code: RU
                   name: Russian Federation
                   currency: RUB
@@ -1850,7 +1801,6 @@ paths:
                   name: Rwanda
                   currency: RWF
                   locales:
-                  - rw
                   - en
                   - fr
                 - code: SA
@@ -1885,8 +1835,6 @@ paths:
                   currency: SGD
                   locales:
                   - en
-                  - ms
-                  - ta
                 - code: SH
                   name: Saint Helena, Ascension and Tristan da Cunha
                   currency: SHP
@@ -1896,12 +1844,12 @@ paths:
                   name: Slovenia
                   currency: EUR
                   locales:
-                  - sl
+                  - sl-SI
                 - code: SJ
                   name: Svalbard and Jan Mayen
                   currency: NOK
                   locales:
-                  - 'no'
+                  - en
                 - code: SK
                   name: Slovakia
                   currency: EUR
@@ -1926,7 +1874,6 @@ paths:
                   name: Somalia
                   currency: SOS
                   locales:
-                  - so
                   - ar
                 - code: SR
                   name: Suriname
@@ -1965,7 +1912,6 @@ paths:
                   currency: SZL
                   locales:
                   - en
-                  - ss
                 - code: TC
                   name: Turks and Caicos Islands
                   currency: USD
@@ -1991,7 +1937,6 @@ paths:
                   name: Tajikistan
                   currency: TJS
                   locales:
-                  - tg
                   - ru
                 - code: TK
                   name: Tokelau
@@ -2007,7 +1952,7 @@ paths:
                   name: Turkmenistan
                   currency: TMT
                   locales:
-                  - tk
+                  - en
                 - code: TN
                   name: Tunisia
                   currency: TND
@@ -2019,7 +1964,6 @@ paths:
                   currency: TOP
                   locales:
                   - en
-                  - to
                 - code: TR
                   name: Türkiye
                   currency: TRY
@@ -2039,12 +1983,11 @@ paths:
                   name: Taiwan
                   currency: TWD
                   locales:
-                  - zh
+                  - zh-CN
                 - code: TZ
                   name: Tanzania
                   currency: TZS
                   locales:
-                  - sw
                   - en
                 - code: UA
                   name: Ukraine
@@ -2056,7 +1999,6 @@ paths:
                   currency: UGX
                   locales:
                   - en
-                  - sw
                 - code: US
                   name: United States
                   currency: USD
@@ -2071,13 +2013,12 @@ paths:
                   name: Uzbekistan
                   currency: UZS
                   locales:
-                  - uz
+                  - en
                 - code: VA
                   name: Holy See (Vatican City State)
                   currency: EUR
                   locales:
                   - it
-                  - la
                 - code: VC
                   name: Saint Vincent and the Grenadines
                   currency: XCD
@@ -2107,7 +2048,6 @@ paths:
                   name: Vanuatu
                   currency: VUV
                   locales:
-                  - bi
                   - en
                   - fr
                 - code: WF
@@ -2119,7 +2059,6 @@ paths:
                   name: Samoa
                   currency: WST
                   locales:
-                  - sm
                   - en
                 - code: YE
                   name: Yemen
@@ -2135,16 +2074,7 @@ paths:
                   name: South Africa
                   currency: ZAR
                   locales:
-                  - af
                   - en
-                  - nr
-                  - st
-                  - ss
-                  - tn
-                  - ts
-                  - ve
-                  - xh
-                  - zu
                 - code: ZM
                   name: Zambia
                   currency: ZMW
@@ -2155,8 +2085,6 @@ paths:
                   currency: USD
                   locales:
                   - en
-                  - sn
-                  - nd
   "/api/v3/admin/allowed_origins":
     get:
       summary: List allowed origins
@@ -5313,7 +5241,7 @@ paths:
                   accepts_email_marketing: false
                   email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Dan Ebert
-                  available_store_credit_total: '0'
+                  available_store_credit_total: '0.00'
                   display_available_store_credit_total: "$0.00"
                   failed_attempts: 0
                   metadata: {}
@@ -5328,7 +5256,7 @@ paths:
                   default_billing_address_id:
                   default_shipping_address_id:
                   orders_count: 0
-                  total_spent: '0.0'
+                  total_spent: '0.00'
                   display_total_spent: "$0.00"
                   last_order_completed_at:
                   customer_group_ids:
@@ -5621,7 +5549,7 @@ paths:
                 accepts_email_marketing: false
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Redacted Redacted
-                available_store_credit_total: '0'
+                available_store_credit_total: '0.00'
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
@@ -5636,7 +5564,7 @@ paths:
                 default_billing_address_id:
                 default_shipping_address_id:
                 orders_count: 0
-                total_spent: '0.0'
+                total_spent: '0.00'
                 display_total_spent: "$0.00"
                 last_order_completed_at:
                 customer_group_ids: []
@@ -6309,9 +6237,9 @@ paths:
               example:
                 data:
                 - id: credit_UkLWZg9DAJ
-                  amount: '50.0'
-                  amount_used: '0.0'
-                  amount_remaining: '50.0'
+                  amount: '50.00'
+                  amount_used: '0.00'
+                  amount_remaining: '50.00'
                   display_amount: "$50.00"
                   display_amount_used: "$0.00"
                   display_amount_remaining: "$50.00"
@@ -6320,7 +6248,7 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount_authorized: '0.0'
+                  amount_authorized: '0.00'
                   outstanding: true
                   display_amount_authorized: "$0.00"
                   customer_id: cust_UkLWZg9DAJ
@@ -6391,9 +6319,9 @@ paths:
             application/json:
               example:
                 id: credit_gbHJdmfrXB
-                amount: '25.0'
-                amount_used: '0.0'
-                amount_remaining: '25.0'
+                amount: '25.00'
+                amount_used: '0.00'
+                amount_remaining: '25.00'
                 display_amount: "$25.00"
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$25.00"
@@ -6402,7 +6330,7 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount_authorized: '0.0'
+                amount_authorized: '0.00'
                 outstanding: true
                 display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
@@ -6484,9 +6412,9 @@ paths:
             application/json:
               example:
                 id: credit_UkLWZg9DAJ
-                amount: '50.0'
-                amount_used: '0.0'
-                amount_remaining: '50.0'
+                amount: '50.00'
+                amount_used: '0.00'
+                amount_remaining: '50.00'
                 display_amount: "$50.00"
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$50.00"
@@ -6495,7 +6423,7 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount_authorized: '0.0'
+                amount_authorized: '0.00'
                 outstanding: true
                 display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
@@ -6651,7 +6579,7 @@ paths:
                   accepts_email_marketing: false
                   email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Jane Doe
-                  available_store_credit_total: '0'
+                  available_store_credit_total: '0.00'
                   display_available_store_credit_total: "$0.00"
                   failed_attempts: 0
                   metadata: {}
@@ -6666,7 +6594,7 @@ paths:
                   default_billing_address_id:
                   default_shipping_address_id:
                   orders_count: 0
-                  total_spent: '0'
+                  total_spent: '0.00'
                   display_total_spent: "$0.00"
                   last_order_completed_at:
                   customer_group_ids: []
@@ -6739,7 +6667,7 @@ paths:
                 accepts_email_marketing: false
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: New Customer
-                available_store_credit_total: '0'
+                available_store_credit_total: '0.00'
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
@@ -6754,7 +6682,7 @@ paths:
                 default_billing_address_id:
                 default_shipping_address_id:
                 orders_count: 0
-                total_spent: '0.0'
+                total_spent: '0.00'
                 display_total_spent: "$0.00"
                 last_order_completed_at:
                 customer_group_ids: []
@@ -6859,7 +6787,7 @@ paths:
                 accepts_email_marketing: false
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Jane Doe
-                available_store_credit_total: '0'
+                available_store_credit_total: '0.00'
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
@@ -6874,7 +6802,7 @@ paths:
                 default_billing_address_id:
                 default_shipping_address_id:
                 orders_count: 0
-                total_spent: '0'
+                total_spent: '0.00'
                 display_total_spent: "$0.00"
                 last_order_completed_at:
                 customer_group_ids: []
@@ -6937,7 +6865,7 @@ paths:
                 accepts_email_marketing: false
                 email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Updated Doe
-                available_store_credit_total: '0'
+                available_store_credit_total: '0.00'
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
@@ -6952,7 +6880,7 @@ paths:
                 default_billing_address_id:
                 default_shipping_address_id:
                 orders_count: 0
-                total_spent: '0.0'
+                total_spent: '0.00'
                 display_total_spent: "$0.00"
                 last_order_completed_at:
                 customer_group_ids: []
@@ -8161,20 +8089,20 @@ paths:
             application/json:
               example:
                 id:
-                subject: ''
+                subject: Order R123456789 confirmed
                 html: "<!doctype html><html lang=\"en\" dir=\"auto\" xmlns=\"http://www.w3.org/1999/xhtml\"
-                  xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><title></title><!--[if
-                  !mso]><!--><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><!--<![endif]--><meta
-                  http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta
-                  name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<style
-                  type=\"text/css\">\n#outlook a { padding: 0; }\nbody { margin: 0;
-                  padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust:
-                  100%; }\ntable, td { border-collapse: collapse; mso-table-lspace:
-                  0pt; mso-table-rspace: 0pt; }\nimg { border: 0; height: auto; line-height:
-                  100%; outline: none; text-decoration: none; -ms-interpolation-mode:
-                  bicubic; }\np { display: block; margin: 13px 0; }\n</style>\n<!--[if
-                  mso]>\n<noscript>\n<xml>\n<o:OfficeDocumentSettings>\n  <o:AllowPNG/>\n
-                  \ <o:PixelsPerInch>96</o:PixelsPerInch>\n</o:OfficeDocumentSettings>\n</xml>\n</noscript>\n<![endif]-->\n<!--[if
+                  xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><title>Order
+                  R123456789 confirmed</title><!--[if !mso]><!--><meta http-equiv=\"X-UA-Compatible\"
+                  content=\"IE=edge\"><!--<![endif]--><meta http-equiv=\"Content-Type\"
+                  content=\"text/html; charset=UTF-8\"><meta name=\"viewport\" content=\"width=device-width,
+                  initial-scale=1\">\n<style type=\"text/css\">\n#outlook a { padding:
+                  0; }\nbody { margin: 0; padding: 0; -webkit-text-size-adjust: 100%;
+                  -ms-text-size-adjust: 100%; }\ntable, td { border-collapse: collapse;
+                  mso-table-lspace: 0pt; mso-table-rspace: 0pt; }\nimg { border: 0;
+                  height: auto; line-height: 100%; outline: none; text-decoration:
+                  none; -ms-interpolation-mode: bicubic; }\np { display: block; margin:
+                  13px 0; }\n</style>\n<!--[if mso]>\n<noscript>\n<xml>\n<o:OfficeDocumentSettings>\n
+                  \ <o:AllowPNG/>\n  <o:PixelsPerInch>96</o:PixelsPerInch>\n</o:OfficeDocumentSettings>\n</xml>\n</noscript>\n<![endif]-->\n<!--[if
                   lte mso 11]>\n<style type=\"text/css\">\n.mj-outlook-group-fix {
                   width:100% !important; }\n</style>\n<![endif]-->\n<style type=\"text/css\">@media
                   only screen and (min-width:480px) { .mj-column-per-100 { width:100%
@@ -8469,6 +8397,75 @@ paths:
                   type: string
                 email_key:
                   type: string
+  "/api/v3/admin/email_templates/{email_template_id}/sample_records":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    get:
+      summary: List records to preview an email template with
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The store's five latest records the template can be previewed with,
+        newest first, to pass as `record_id` to the preview. For the layout
+        and partials, those of the email `email_key` names. Empty for an
+        email that needs no record.
+
+
+        **Required scope:** `write_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The latest orders to preview the order confirmation with; pass one's id as `record_id`.
+          const { data: records } = await client.emailTemplates.sampleRecords.list(
+            'spree.order_mailer.confirm_email',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /email_templates/{email_template_id}/sample_records
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: email_key
+        in: query
+        required: false
+        description: For the layout or a partial, the email to show it in
+        schema:
+          type: string
+      responses:
+        '200':
+          description: records found
+          content:
+            application/json:
+              example:
+                data:
+                - id: or_UkLWZg9DAJ
+                  label: R1001
+                  created_at: '2026-01-15T12:00:00.000Z'
   "/api/v3/admin/email_templates/{email_template_id}/revisions":
     parameters:
     - name: email_template_id
@@ -8670,75 +8667,6 @@ paths:
                   example: any
                 lock_version:
                   type: integer
-  "/api/v3/admin/email_templates/{email_template_id}/sample_records":
-    parameters:
-    - name: email_template_id
-      in: path
-      required: true
-      description: The template key with dots
-      schema:
-        type: string
-    get:
-      summary: List records to preview an email template with
-      tags:
-      - Email Templates
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        The store's five latest records the template can be previewed with,
-        newest first, to pass as `record_id` to the preview. For the layout
-        and partials, those of the email `email_key` names. Empty for an
-        email that needs no record.
-
-
-        **Required scope:** `write_email_templates` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          // The latest orders to preview the order confirmation with; pass one's id as `record_id`.
-          const { data: records } = await client.emailTemplates.sampleRecords.list(
-            'spree.order_mailer.confirm_email',
-          )
-      - lang: bash
-        label: Spree CLI
-        source: spree api get /email_templates/{email_template_id}/sample_records
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: email_key
-        in: query
-        required: false
-        description: For the layout or a partial, the email to show it in
-        schema:
-          type: string
-      responses:
-        '200':
-          description: records found
-          content:
-            application/json:
-              example:
-                data:
-                - id: or_UkLWZg9DAJ
-                  label: R1001
-                  created_at: '2026-01-15T12:00:00.000Z'
   "/api/v3/admin/exports":
     get:
       summary: List exports
@@ -9164,17 +9092,17 @@ paths:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   unpriced: false
-                  cost: '100.0'
+                  cost: '100.00'
                   display_cost: "$100.00"
-                  total: '100.0'
+                  total: '100.00'
                   display_total: "$100.00"
-                  discount_total: '0.0'
+                  discount_total: '0.00'
                   display_discount_total: "$0.00"
-                  additional_tax_total: '0.0'
+                  additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.0'
+                  included_tax_total: '0.00'
                   display_included_tax_total: "$0.00"
-                  tax_total: '0.0'
+                  tax_total: '0.00'
                   display_tax_total: "$0.00"
                   status: unfulfilled
                   fulfillment_type: shipping
@@ -9199,10 +9127,10 @@ paths:
                     updated_at: '2026-01-15T12:00:00.000Z'
                     shipping_label_id:
                   metadata: {}
-                  adjustment_total: '0.0'
-                  pre_tax_amount: '100.0'
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  adjustment_total: '0.00'
+                  pre_tax_amount: '100.00'
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_UkLWZg9DAJ
                   documents: []
@@ -9281,17 +9209,17 @@ paths:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_EfhxLZ9ck8
                 unpriced: false
-                cost: '100.0'
+                cost: '100.00'
                 display_cost: "$100.00"
-                total: '100.0'
+                total: '100.00'
                 display_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
                 status: fulfilled
                 fulfillment_type: shipping
@@ -9316,10 +9244,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
                 metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '0.0'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                adjustment_total: '0.00'
+                pre_tax_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
@@ -9473,17 +9401,17 @@ paths:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
-                cost: '100.0'
+                cost: '100.00'
                 display_cost: "$100.00"
-                total: '100.0'
+                total: '100.00'
                 display_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
                 status: unfulfilled
                 fulfillment_type: shipping
@@ -9508,10 +9436,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
                 metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                adjustment_total: '0.00'
+                pre_tax_amount: '100.00'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
@@ -9582,17 +9510,17 @@ paths:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
-                cost: '100.0'
+                cost: '100.00'
                 display_cost: "$100.00"
-                total: '100.0'
+                total: '100.00'
                 display_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
                 status: unfulfilled
                 fulfillment_type: shipping
@@ -9617,10 +9545,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
                 metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                adjustment_total: '0.00'
+                pre_tax_amount: '100.00'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
@@ -9705,17 +9633,17 @@ paths:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
-                cost: '100.0'
+                cost: '100.00'
                 display_cost: "$100.00"
-                total: '100.0'
+                total: '100.00'
                 display_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
                 status: fulfilled
                 fulfillment_type: shipping
@@ -9740,10 +9668,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
                 metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                adjustment_total: '0.00'
+                pre_tax_amount: '100.00'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
@@ -9818,17 +9746,17 @@ paths:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
-                cost: '100.0'
+                cost: '100.00'
                 display_cost: "$100.00"
-                total: '100.0'
+                total: '100.00'
                 display_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
                 status: delivered
                 fulfillment_type: shipping
@@ -9853,10 +9781,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
                 metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                adjustment_total: '0.00'
+                pre_tax_amount: '100.00'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
@@ -9949,17 +9877,17 @@ paths:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
-                cost: '100.0'
+                cost: '100.00'
                 display_cost: "$100.00"
-                total: '100.0'
+                total: '100.00'
                 display_total: "$100.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
                 status: canceled
                 fulfillment_type: shipping
@@ -9984,10 +9912,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
                 metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                adjustment_total: '0.00'
+                pre_tax_amount: '100.00'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
@@ -10069,17 +9997,17 @@ paths:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   unpriced: false
-                  cost: '10.0'
+                  cost: '10.00'
                   display_cost: "$10.00"
-                  total: '10.0'
+                  total: '10.00'
                   display_total: "$10.00"
-                  discount_total: '0.0'
+                  discount_total: '0.00'
                   display_discount_total: "$0.00"
-                  additional_tax_total: '0.0'
+                  additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.0'
+                  included_tax_total: '0.00'
                   display_included_tax_total: "$0.00"
-                  tax_total: '0.0'
+                  tax_total: '0.00'
                   display_tax_total: "$0.00"
                   status: unfulfilled
                   fulfillment_type: shipping
@@ -10091,10 +10019,10 @@ paths:
                     quantity: 1
                   deliveries: []
                   metadata: {}
-                  adjustment_total: '0.0'
-                  pre_tax_amount: '0.0'
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  adjustment_total: '0.00'
+                  pre_tax_amount: '0.00'
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_gbHJdmfrXB
                   documents: []
@@ -10198,7 +10126,7 @@ paths:
                   prefix: WELCOME
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '50.0'
+                  amount: '50.00'
                   expires_at:
                   created_by_id:
                 meta:
@@ -10283,7 +10211,7 @@ paths:
                 prefix: NEWCAMP
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '25.0'
+                amount: '25.00'
                 expires_at: '2030-12-31'
                 created_by_id: adm_UkLWZg9DAJ
               schema:
@@ -10390,7 +10318,7 @@ paths:
                 prefix: WELCOME
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '50.0'
+                amount: '50.00'
                 expires_at:
                 created_by_id:
               schema:
@@ -10498,10 +10426,10 @@ paths:
                   code: C5BC700C4EF16A06
                   status: active
                   currency: USD
-                  amount: '50.0'
-                  amount_used: '0.0'
-                  amount_authorized: '0.0'
-                  amount_remaining: '50.0'
+                  amount: '50.00'
+                  amount_used: '0.00'
+                  amount_authorized: '0.00'
+                  amount_remaining: '50.00'
                   display_amount: "$50.00"
                   display_amount_used: "$0.00"
                   display_amount_remaining: "$50.00"
@@ -10517,10 +10445,10 @@ paths:
                   code: 3BECEA5A776AD146
                   status: active
                   currency: USD
-                  amount: '25.0'
-                  amount_used: '0.0'
-                  amount_authorized: '0.0'
-                  amount_remaining: '25.0'
+                  amount: '25.00'
+                  amount_used: '0.00'
+                  amount_authorized: '0.00'
+                  amount_remaining: '25.00'
                   display_amount: "$25.00"
                   display_amount_used: "$0.00"
                   display_amount_remaining: "$25.00"
@@ -10620,10 +10548,10 @@ paths:
                 code: A68048412201A26B
                 status: active
                 currency: USD
-                amount: '25.0'
-                amount_used: '0.0'
-                amount_authorized: '0.0'
-                amount_remaining: '25.0'
+                amount: '25.00'
+                amount_used: '0.00'
+                amount_authorized: '0.00'
+                amount_remaining: '25.00'
                 display_amount: "$25.00"
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$25.00"
@@ -10748,10 +10676,10 @@ paths:
                 code: 06BEABE5C26AA7E5
                 status: active
                 currency: USD
-                amount: '50.0'
-                amount_used: '0.0'
-                amount_authorized: '0.0'
-                amount_remaining: '50.0'
+                amount: '50.00'
+                amount_used: '0.00'
+                amount_authorized: '0.00'
+                amount_remaining: '50.00'
                 display_amount: "$50.00"
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$50.00"
@@ -10826,10 +10754,10 @@ paths:
                 code: E34E66F15D82A3CD
                 status: active
                 currency: USD
-                amount: '75.0'
-                amount_used: '0.0'
-                amount_authorized: '0.0'
-                amount_remaining: '75.0'
+                amount: '75.00'
+                amount_used: '0.00'
+                amount_authorized: '0.00'
+                amount_remaining: '75.00'
                 display_amount: "$75.00"
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$75.00"
@@ -11030,6 +10958,9 @@ paths:
                     required: false
                   - name: inventory_backorderable
                     label: Inventory Backorderable
+                    required: false
+                  - name: stock_location
+                    label: Stock Location
                     required: false
                   - name: tax_category
                     label: Tax Category
@@ -11235,6 +11166,9 @@ paths:
                 - name: inventory_backorderable
                   label: Inventory Backorderable
                   required: false
+                - name: stock_location
+                  label: Stock Location
+                  required: false
                 - name: tax_category
                   label: Tax Category
                   required: false
@@ -11402,86 +11336,90 @@ paths:
                   file_column:
                   required: false
                 - id: immap_F0GX8NaP3Y
-                  schema_field: tax_category
+                  schema_field: stock_location
                   file_column:
                   required: false
                 - id: immap_kOKT9MVfb0
-                  schema_field: product_type
+                  schema_field: tax_category
                   file_column:
                   required: false
                 - id: immap_3uWpPTcf5W
-                  schema_field: hs_code
+                  schema_field: product_type
                   file_column:
                   required: false
                 - id: immap_D6Psx31WaT
-                  schema_field: country_of_origin
+                  schema_field: hs_code
                   file_column:
                   required: false
                 - id: immap_msx3nOJap6
-                  schema_field: customs_description
+                  schema_field: country_of_origin
                   file_column:
                   required: false
                 - id: immap_5CQZnCRf8J
-                  schema_field: carton
+                  schema_field: customs_description
                   file_column:
                   required: false
                 - id: immap_M2nyloHRUQ
-                  schema_field: units_per_carton
+                  schema_field: carton
                   file_column:
                   required: false
                 - id: immap_prklVeMgbn
-                  schema_field: carton_weight
+                  schema_field: units_per_carton
                   file_column:
                   required: false
                 - id: immap_so8jaGonyx
-                  schema_field: cartons_per_pallet
+                  schema_field: carton_weight
                   file_column:
                   required: false
                 - id: immap_rsClYtECFI
-                  schema_field: image1_src
+                  schema_field: cartons_per_pallet
                   file_column:
                   required: false
                 - id: immap_8DR0I7fEbw
-                  schema_field: image2_src
+                  schema_field: image1_src
                   file_column:
                   required: false
                 - id: immap_aAtNvLSUAr
-                  schema_field: image3_src
+                  schema_field: image2_src
                   file_column:
                   required: false
                 - id: immap_QiA48cIW7A
-                  schema_field: option1_name
+                  schema_field: image3_src
                   file_column:
                   required: false
                 - id: immap_QDA48cIW7A
-                  schema_field: option1_value
+                  schema_field: option1_name
                   file_column:
                   required: false
                 - id: immap_8cR0I7fEbw
-                  schema_field: option2_name
+                  schema_field: option1_value
                   file_column:
                   required: false
                 - id: immap_oqlrKdXjaP
-                  schema_field: option2_value
+                  schema_field: option2_name
                   file_column:
                   required: false
                 - id: immap_48Olu6p4zZ
-                  schema_field: option3_name
+                  schema_field: option2_value
                   file_column:
                   required: false
                 - id: immap_qp31JYFduR
-                  schema_field: option3_value
+                  schema_field: option3_name
                   file_column:
                   required: false
                 - id: immap_JgaEBgznCp
-                  schema_field: category1
+                  schema_field: option3_value
                   file_column:
                   required: false
                 - id: immap_tXyJwvFCuK
-                  schema_field: category2
+                  schema_field: category1
                   file_column:
                   required: false
                 - id: immap_NJzXvxTk8u
+                  schema_field: category2
+                  file_column:
+                  required: false
+                - id: immap_XLbb5HTmVa
                   schema_field: category3
                   file_column:
                   required: false
@@ -11734,6 +11672,9 @@ paths:
                   required: false
                 - name: inventory_backorderable
                   label: Inventory Backorderable
+                  required: false
+                - name: stock_location
+                  label: Stock Location
                   required: false
                 - name: tax_category
                   label: Tax Category
@@ -11997,6 +11938,9 @@ paths:
                 - name: inventory_backorderable
                   label: Inventory Backorderable
                   required: false
+                - name: stock_location
+                  label: Stock Location
+                  required: false
                 - name: tax_category
                   label: Tax Category
                   required: false
@@ -12156,86 +12100,90 @@ paths:
                   file_column: inventory_backorderable
                   required: false
                 - id: immap_F0GX8NaP3Y
+                  schema_field: stock_location
+                  file_column:
+                  required: false
+                - id: immap_kOKT9MVfb0
                   schema_field: tax_category
                   file_column: tax_category
                   required: false
-                - id: immap_kOKT9MVfb0
+                - id: immap_3uWpPTcf5W
                   schema_field: product_type
                   file_column:
                   required: false
-                - id: immap_3uWpPTcf5W
+                - id: immap_D6Psx31WaT
                   schema_field: hs_code
                   file_column:
                   required: false
-                - id: immap_D6Psx31WaT
+                - id: immap_msx3nOJap6
                   schema_field: country_of_origin
                   file_column:
                   required: false
-                - id: immap_msx3nOJap6
+                - id: immap_5CQZnCRf8J
                   schema_field: customs_description
                   file_column:
                   required: false
-                - id: immap_5CQZnCRf8J
+                - id: immap_M2nyloHRUQ
                   schema_field: carton
                   file_column:
                   required: false
-                - id: immap_M2nyloHRUQ
+                - id: immap_prklVeMgbn
                   schema_field: units_per_carton
                   file_column:
                   required: false
-                - id: immap_prklVeMgbn
+                - id: immap_so8jaGonyx
                   schema_field: carton_weight
                   file_column:
                   required: false
-                - id: immap_so8jaGonyx
+                - id: immap_rsClYtECFI
                   schema_field: cartons_per_pallet
                   file_column:
                   required: false
-                - id: immap_rsClYtECFI
+                - id: immap_8DR0I7fEbw
                   schema_field: image1_src
                   file_column: image1_src
                   required: false
-                - id: immap_8DR0I7fEbw
+                - id: immap_aAtNvLSUAr
                   schema_field: image2_src
                   file_column: image2_src
                   required: false
-                - id: immap_aAtNvLSUAr
+                - id: immap_QiA48cIW7A
                   schema_field: image3_src
                   file_column: image3_src
                   required: false
-                - id: immap_QiA48cIW7A
+                - id: immap_QDA48cIW7A
                   schema_field: option1_name
                   file_column: option1_name
                   required: false
-                - id: immap_QDA48cIW7A
+                - id: immap_8cR0I7fEbw
                   schema_field: option1_value
                   file_column: option1_value
                   required: false
-                - id: immap_8cR0I7fEbw
+                - id: immap_oqlrKdXjaP
                   schema_field: option2_name
                   file_column: option2_name
                   required: false
-                - id: immap_oqlrKdXjaP
+                - id: immap_48Olu6p4zZ
                   schema_field: option2_value
                   file_column: option2_value
                   required: false
-                - id: immap_48Olu6p4zZ
+                - id: immap_qp31JYFduR
                   schema_field: option3_name
                   file_column: option3_name
                   required: false
-                - id: immap_qp31JYFduR
+                - id: immap_JgaEBgznCp
                   schema_field: option3_value
                   file_column: option3_value
                   required: false
-                - id: immap_JgaEBgznCp
+                - id: immap_tXyJwvFCuK
                   schema_field: category1
                   file_column: category1
                   required: false
-                - id: immap_tXyJwvFCuK
+                - id: immap_NJzXvxTk8u
                   schema_field: category2
                   file_column: category2
                   required: false
-                - id: immap_NJzXvxTk8u
+                - id: immap_XLbb5HTmVa
                   schema_field: category3
                   file_column: category3
                   required: false
@@ -12385,6 +12333,9 @@ paths:
                   required: false
                 - name: inventory_backorderable
                   label: Inventory Backorderable
+                  required: false
+                - name: stock_location
+                  label: Stock Location
                   required: false
                 - name: tax_category
                   label: Tax Category
@@ -13590,7 +13541,7 @@ paths:
                   return_line_item_id:
                   claim_line_item_id:
                   exchange_line_item_id:
-                  amount: '1.5'
+                  amount: '1.50'
                   display_amount: "$1.50"
                   provider_id: internal
                   metadata: {}
@@ -13671,7 +13622,7 @@ paths:
                   promotion_id:
                   line_item_id: li_UkLWZg9DAJ
                   fulfillment_id:
-                  amount: "-2.0"
+                  amount: "-2.00"
                   display_amount: "-$2.00"
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -13711,14 +13662,14 @@ paths:
           // Line-item discount; omit line_item_id to distribute across the order.
           const { data: discounts } = await client.orders.discounts.create('or_abc123', {
             label: 'Customer appeasement',
-            value: 10,
+            value: '10',
             value_type: 'flat',
             line_item_id: 'item_abc123',
           })
       - lang: bash
         label: Spree CLI
         source: spree api post /orders/{order_id}/discounts -d '{"label":"Customer
-          appeasement","value":10,"value_type":"flat","line_item_id":"item_abc123"}'
+          appeasement","value":"10","value_type":"flat","line_item_id":"item_abc123"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13748,11 +13699,11 @@ paths:
                   kind: manual
                   code:
                   value_type: flat
-                  value: '3.0'
+                  value: '3.00'
                   promotion_id:
                   line_item_id: li_UkLWZg9DAJ
                   fulfillment_id:
-                  amount: "-3.0"
+                  amount: "-3.00"
                   display_amount: "-$3.00"
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -13763,8 +13714,11 @@ paths:
             application/json:
               example:
                 error:
-                  code: validation_error
-                  message: discount value must be a positive number
+                  code: invalid_money_format
+                  message: value must be a decimal string like "19.99"
+                  details:
+                    value:
+                    - must be a decimal string like "19.99"
       requestBody:
         content:
           application/json:
@@ -13775,8 +13729,8 @@ paths:
                   type: string
                   example: Customer appeasement
                 value:
-                  type: number
-                  example: 10
+                  type: string
+                  example: '10.00'
                 value_type:
                   type: string
                   enum:
@@ -13816,12 +13770,12 @@ paths:
 
           const fee = await client.orders.fees.create('or_abc123', {
             label: 'Gift wrap',
-            amount: 4,
+            amount: '4.00',
             kind: 'gift_wrap',
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /orders/{order_id}/fees -d '{"label":"Gift wrap","amount":4,"kind":"gift_wrap"}'
+        source: spree api post /orders/{order_id}/fees -d '{"label":"Gift wrap","amount":"4.00","kind":"gift_wrap"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13850,7 +13804,7 @@ paths:
                 kind: gift_wrap
                 line_item_id:
                 fulfillment_id:
-                amount: '4.0'
+                amount: '4.00'
                 display_amount: "$4.00"
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13879,8 +13833,8 @@ paths:
                   type: string
                   example: Gift wrap
                 amount:
-                  type: number
-                  example: 4
+                  type: string
+                  example: '4.00'
                 kind:
                   type: string
                   enum:
@@ -13959,10 +13913,10 @@ paths:
                 code: "************2F41"
                 status: active
                 currency: USD
-                amount: '10.0'
-                amount_used: '10.0'
-                amount_authorized: '0.0'
-                amount_remaining: '0.0'
+                amount: '10.00'
+                amount_used: '10.00'
+                amount_authorized: '0.00'
+                amount_remaining: '0.00'
                 display_amount: "$10.00"
                 display_amount_used: "$10.00"
                 display_amount_remaining: "$0.00"
@@ -14116,21 +14070,21 @@ paths:
                   name: Product 479180
                   slug: product-479180
                   options_text: 'Size: S'
-                  price: '10.0'
+                  price: '10.00'
                   display_price: "$10.00"
-                  total: '20.0'
+                  total: '20.00'
                   display_total: "$20.00"
-                  adjustment_total: '0.0'
+                  adjustment_total: '0.00'
                   display_adjustment_total: "$0.00"
-                  additional_tax_total: '0.0'
+                  additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.0'
+                  included_tax_total: '0.00'
                   display_included_tax_total: "$0.00"
-                  discount_total: '0.0'
+                  discount_total: '0.00'
                   display_discount_total: "$0.00"
-                  pre_tax_amount: '20.0'
+                  pre_tax_amount: '20.00'
                   display_pre_tax_amount: "$20.00"
-                  discounted_amount: '20.0'
+                  discounted_amount: '20.00'
                   display_discounted_amount: "$20.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
@@ -14158,7 +14112,7 @@ paths:
                   price_list_name:
                   catalog_id:
                   catalog_name:
-                  cost_price: '17.0'
+                  cost_price: '17.00'
                   tax_category_id: taxcat_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -14237,13 +14191,13 @@ paths:
                 display_price: "$19.99"
                 total: '59.97'
                 display_total: "$59.97"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
                 pre_tax_amount: '59.97'
                 display_pre_tax_amount: "$59.97"
@@ -14275,7 +14229,7 @@ paths:
                 price_list_name:
                 catalog_id:
                 catalog_name:
-                cost_price: '17.0'
+                cost_price: '17.00'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
         content:
@@ -14372,21 +14326,21 @@ paths:
                 name: Product 502714
                 slug: product-502714
                 options_text: 'Size: S'
-                price: '10.0'
+                price: '10.00'
                 display_price: "$10.00"
-                total: '20.0'
+                total: '20.00'
                 display_total: "$20.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                pre_tax_amount: '20.0'
+                pre_tax_amount: '20.00'
                 display_pre_tax_amount: "$20.00"
-                discounted_amount: '20.0'
+                discounted_amount: '20.00'
                 display_discounted_amount: "$20.00"
                 display_compare_at_amount: "$0.00"
                 compare_at_amount:
@@ -14414,7 +14368,7 @@ paths:
                 price_list_name:
                 catalog_id:
                 catalog_name:
-                cost_price: '17.0'
+                cost_price: '17.00'
                 tax_category_id: taxcat_UkLWZg9DAJ
     patch:
       summary: Update an item
@@ -14488,13 +14442,13 @@ paths:
                 display_price: "$19.99"
                 total: '99.95'
                 display_total: "$99.95"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
                 pre_tax_amount: '99.95'
                 display_pre_tax_amount: "$99.95"
@@ -14526,7 +14480,7 @@ paths:
                 price_list_name:
                 catalog_id:
                 catalog_name:
-                cost_price: '17.0'
+                cost_price: '17.00'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
         content:
@@ -14663,29 +14617,29 @@ paths:
                 fulfillment_status:
                 payment_status:
                 completed_at:
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                gift_card_total: '0.0'
+                gift_card_total: '0.00'
                 display_gift_card_total: "$0.00"
-                amount_due: '60.0'
+                amount_due: '60.00'
                 display_amount_due: "$60.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                fee_total: '0.0'
+                fee_total: '0.00'
                 display_fee_total: "$0.00"
-                store_credit_total: '50.0'
+                store_credit_total: '50.00'
                 display_store_credit_total: "-$50.00"
                 covered_by_store_credit: false
                 gift_card:
@@ -14711,20 +14665,20 @@ paths:
                 considered_risky: false
                 confirmation_delivered: false
                 store_owner_notification_delivered:
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                display_payment_total: "$0.00"
+                commission_amount_total: '0.00'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.00'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.00'
+                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -14929,29 +14883,29 @@ paths:
                   fulfillment_status:
                   payment_status:
                   completed_at:
-                  item_total: '0.0'
+                  item_total: '0.00'
                   display_item_total: "$0.00"
-                  adjustment_total: '0.0'
+                  adjustment_total: '0.00'
                   display_adjustment_total: "$0.00"
-                  discount_total: '0.0'
+                  discount_total: '0.00'
                   display_discount_total: "$0.00"
-                  tax_total: '0.0'
+                  tax_total: '0.00'
                   display_tax_total: "$0.00"
-                  included_tax_total: '0.0'
+                  included_tax_total: '0.00'
                   display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.0'
+                  additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  total: '0.0'
+                  total: '0.00'
                   display_total: "$0.00"
-                  gift_card_total: '0.0'
+                  gift_card_total: '0.00'
                   display_gift_card_total: "$0.00"
-                  amount_due: '0.0'
+                  amount_due: '0.00'
                   display_amount_due: "$0.00"
-                  delivery_total: '0.0'
+                  delivery_total: '0.00'
                   display_delivery_total: "$0.00"
                   fee_total:
                   display_fee_total: "$0.00"
-                  store_credit_total: '0.0'
+                  store_credit_total: '0.00'
                   display_store_credit_total: "$0.00"
                   covered_by_store_credit: false
                   gift_card:
@@ -14977,20 +14931,20 @@ paths:
                   considered_risky: false
                   confirmation_delivered: false
                   store_owner_notification_delivered:
-                  payment_total: '0.0'
-                  display_payment_total: "$0.00"
                   metadata: {}
                   cancel_note:
-                  commission_amount_total: '0.0'
-                  display_commission_amount_total: "$0.00"
-                  commission_tax_total: '0.0'
-                  display_commission_tax_total: "$0.00"
-                  commission_total: '0.0'
-                  display_commission_total: "$0.00"
                   canceled_at:
                   approved_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  payment_total: '0.00'
+                  display_payment_total: "$0.00"
+                  commission_amount_total: '0.00'
+                  display_commission_amount_total: "$0.00"
+                  commission_tax_total: '0.00'
+                  display_commission_tax_total: "$0.00"
+                  commission_total: '0.00'
+                  display_commission_total: "$0.00"
                   preferred_stock_location_id:
                   po_document_url:
                   seller_id:
@@ -15172,29 +15126,29 @@ paths:
                 fulfillment_status:
                 payment_status:
                 completed_at:
-                item_total: '0.0'
+                item_total: '0.00'
                 display_item_total: "$0.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '0.0'
+                total: '0.00'
                 display_total: "$0.00"
-                gift_card_total: '0.0'
+                gift_card_total: '0.00'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
+                amount_due: '0.00'
                 display_amount_due: "$0.00"
-                delivery_total: '0.0'
+                delivery_total: '0.00'
                 display_delivery_total: "$0.00"
-                fee_total: '0.0'
+                fee_total: '0.00'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.0'
+                store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
@@ -15220,20 +15174,20 @@ paths:
                 considered_risky: false
                 confirmation_delivered: false
                 store_owner_notification_delivered:
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                display_payment_total: "$0.00"
+                commission_amount_total: '0.00'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.00'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.00'
+                display_commission_total: "$0.00"
                 preferred_stock_location_id: sloc_UkLWZg9DAJ
                 po_document_url:
                 seller_id:
@@ -15448,29 +15402,29 @@ paths:
                 fulfillment_status:
                 payment_status:
                 completed_at:
-                item_total: '0.0'
+                item_total: '0.00'
                 display_item_total: "$0.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '0.0'
+                total: '0.00'
                 display_total: "$0.00"
-                gift_card_total: '0.0'
+                gift_card_total: '0.00'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
+                amount_due: '0.00'
                 display_amount_due: "$0.00"
-                delivery_total: '0.0'
+                delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total:
                 display_fee_total: "$0.00"
-                store_credit_total: '0.0'
+                store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
@@ -15496,20 +15450,20 @@ paths:
                 considered_risky: false
                 confirmation_delivered: false
                 store_owner_notification_delivered:
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                display_payment_total: "$0.00"
+                commission_amount_total: '0.00'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.00'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.00'
+                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -15610,31 +15564,31 @@ paths:
                 total_quantity: 0
                 coupon_code:
                 fulfillment_status:
-                payment_status:
+                payment_status: none
                 completed_at:
-                item_total: '0.0'
+                item_total: '0.00'
                 display_item_total: "$0.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '0.0'
+                total: '0.00'
                 display_total: "$0.00"
-                gift_card_total: '0.0'
+                gift_card_total: '0.00'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
+                amount_due: '0.00'
                 display_amount_due: "$0.00"
-                delivery_total: '0.0'
+                delivery_total: '0.00'
                 display_delivery_total: "$0.00"
-                fee_total: '0.0'
+                fee_total: '0.00'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.0'
+                store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
@@ -15660,20 +15614,20 @@ paths:
                 considered_risky: false
                 confirmation_delivered: false
                 store_owner_notification_delivered:
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                display_payment_total: "$0.00"
+                commission_amount_total: '0.00'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.00'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.00'
+                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -15895,29 +15849,29 @@ paths:
                 fulfillment_status: unfulfilled
                 payment_status: paid
                 completed_at: '2026-01-15T12:00:00.000Z'
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                gift_card_total: '0.0'
+                gift_card_total: '0.00'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
+                amount_due: '0.00'
                 display_amount_due: "$0.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                fee_total: '0.0'
+                fee_total: '0.00'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.0'
+                store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
@@ -15943,20 +15897,20 @@ paths:
                 considered_risky: false
                 confirmation_delivered: false
                 store_owner_notification_delivered:
-                payment_total: '110.0'
-                display_payment_total: "$110.00"
                 metadata: {}
                 cancel_note:
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '110.00'
+                display_payment_total: "$110.00"
+                commission_amount_total: '0.00'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.00'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.00'
+                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -16094,29 +16048,29 @@ paths:
                 fulfillment_status: canceled
                 payment_status: none
                 completed_at: '2026-01-15T12:00:00.000Z'
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                gift_card_total: '0.0'
+                gift_card_total: '0.00'
                 display_gift_card_total: "$0.00"
-                amount_due: "-0.0"
+                amount_due: '0.00'
                 display_amount_due: "$0.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                fee_total: '0.0'
+                fee_total: '0.00'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.0'
+                store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
@@ -16142,20 +16096,20 @@ paths:
                 considered_risky: false
                 confirmation_delivered: false
                 store_owner_notification_delivered:
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
                 canceled_at: '2026-01-15T12:00:00.000Z'
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                display_payment_total: "$0.00"
+                commission_amount_total: '0.00'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.00'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.00'
+                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -16271,29 +16225,29 @@ paths:
                 fulfillment_status:
                 payment_status:
                 completed_at: '2026-01-15T12:00:00.000Z'
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                gift_card_total: '0.0'
+                gift_card_total: '0.00'
                 display_gift_card_total: "$0.00"
-                amount_due: '110.0'
+                amount_due: '110.00'
                 display_amount_due: "$110.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                fee_total: '0.0'
+                fee_total: '0.00'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.0'
+                store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
@@ -16319,20 +16273,20 @@ paths:
                 considered_risky: false
                 confirmation_delivered: false
                 store_owner_notification_delivered:
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                display_payment_total: "$0.00"
+                commission_amount_total: '0.00'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.00'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.00'
+                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -16422,29 +16376,29 @@ paths:
                 fulfillment_status:
                 payment_status:
                 completed_at: '2026-01-15T12:00:00.000Z'
-                item_total: '10.0'
+                item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.0'
+                adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
-                discount_total: '0.0'
+                discount_total: '0.00'
                 display_discount_total: "$0.00"
-                tax_total: '0.0'
+                tax_total: '0.00'
                 display_tax_total: "$0.00"
-                included_tax_total: '0.0'
+                included_tax_total: '0.00'
                 display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
+                additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '110.0'
+                total: '110.00'
                 display_total: "$110.00"
-                gift_card_total: '0.0'
+                gift_card_total: '0.00'
                 display_gift_card_total: "$0.00"
-                amount_due: '110.0'
+                amount_due: '110.00'
                 display_amount_due: "$110.00"
-                delivery_total: '100.0'
+                delivery_total: '100.00'
                 display_delivery_total: "$100.00"
-                fee_total: '0.0'
+                fee_total: '0.00'
                 display_fee_total: "$0.00"
-                store_credit_total: '0.0'
+                store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 gift_card:
@@ -16470,20 +16424,20 @@ paths:
                 considered_risky: false
                 confirmation_delivered: false
                 store_owner_notification_delivered:
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                display_payment_total: "$0.00"
+                commission_amount_total: '0.00'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.00'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.00'
+                display_commission_total: "$0.00"
                 preferred_stock_location_id:
                 po_document_url:
                 seller_id:
@@ -16577,6 +16531,9 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   preferences: {}
                   preference_schema: []
+                  logo_url:
+                  docs_url:
+                  third_party: false
                 meta:
                   page: 1
                   limit: 25
@@ -16642,10 +16599,16 @@ paths:
                   - key: dummy_secret_key
                     type: password
                     default:
+                  logo_url:
+                  docs_url:
+                  third_party: true
                 - type: custom_payment_source_method
                   label: Custom Payment Source Method
                   description:
                   preference_schema: []
+                  logo_url:
+                  docs_url:
+                  third_party: false
   "/api/v3/admin/payment_methods/{id}":
     get:
       summary: Show a payment method
@@ -16726,6 +16689,9 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferences: {}
                 preference_schema: []
+                logo_url:
+                docs_url:
+                third_party: false
   "/api/v3/admin/orders/{order_id}/payments":
     get:
       summary: List payments
@@ -16797,7 +16763,7 @@ paths:
                   response_code: BGS-343039b69b86
                   number: R1001-P1
                   status: completed
-                  amount: '110.0'
+                  amount: '110.00'
                   display_amount: "$110.00"
                   source_type: credit_card
                   source_id: card_UkLWZg9DAJ
@@ -16821,7 +16787,7 @@ paths:
                   cvv_response_message:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  captured_amount: '0.0'
+                  captured_amount: '0.00'
                   order_id: or_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -16892,7 +16858,7 @@ paths:
                 response_code:
                 number: R1002-P1
                 status: checkout
-                amount: '110.0'
+                amount: '110.00'
                 display_amount: "$110.00"
                 source_type:
                 source_id:
@@ -16903,7 +16869,7 @@ paths:
                 cvv_response_message:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                captured_amount: '0.0'
+                captured_amount: '0.00'
                 order_id: or_gbHJdmfrXB
       requestBody:
         content:
@@ -16998,7 +16964,7 @@ paths:
                 response_code: BGS-4a236d40ef07
                 number: R1001-P1
                 status: completed
-                amount: '110.0'
+                amount: '110.00'
                 display_amount: "$110.00"
                 source_type: credit_card
                 source_id: card_UkLWZg9DAJ
@@ -17022,7 +16988,7 @@ paths:
                 cvv_response_message:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                captured_amount: '0.0'
+                captured_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
     patch:
@@ -17087,7 +17053,7 @@ paths:
                 response_code: BGS-ccc19f06b194
                 number: R1001-P1
                 status: completed
-                amount: '110.0'
+                amount: '110.00'
                 display_amount: "$110.00"
                 source_type: credit_card
                 source_id: card_UkLWZg9DAJ
@@ -17111,7 +17077,7 @@ paths:
                 cvv_response_message:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                captured_amount: '110.0'
+                captured_amount: '110.00'
                 order_id: or_UkLWZg9DAJ
         '422':
           description: capture failed
@@ -17185,7 +17151,7 @@ paths:
                 response_code: void-BGS-11f2e975ba0c
                 number: R1001-P1
                 status: void
-                amount: '110.0'
+                amount: '110.00'
                 display_amount: "$110.00"
                 source_type: credit_card
                 source_id: card_UkLWZg9DAJ
@@ -17209,7 +17175,7 @@ paths:
                 cvv_response_message:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                captured_amount: '0.0'
+                captured_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/price_lists":
     get:
@@ -18032,11 +17998,9 @@ paths:
               example:
                 data:
                 - id: price_UkLWZg9DAJ
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -18045,11 +18009,9 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 - id: price_gbHJdmfrXB
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -18058,11 +18020,9 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 - id: price_EfhxLZ9ck8
-                  amount: '5.0'
-                  amount_in_cents: 500
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '5.00'
+                  compare_at_amount:
                   display_amount: "$5.00"
                   display_compare_at_amount:
                   price_list_id: pl_UkLWZg9DAJ
@@ -18142,11 +18102,9 @@ paths:
             application/json:
               example:
                 id: price_uw2YK1rnl0
-                amount: '9.99'
-                amount_in_cents: 999
-                compare_at_amount:
-                compare_at_amount_in_cents:
                 currency: EUR
+                amount: '9.99'
+                compare_at_amount:
                 display_amount: "€9.99"
                 display_compare_at_amount:
                 price_list_id:
@@ -18231,11 +18189,9 @@ paths:
             application/json:
               example:
                 id: price_EfhxLZ9ck8
-                amount: '5.0'
-                amount_in_cents: 500
-                compare_at_amount:
-                compare_at_amount_in_cents:
                 currency: USD
+                amount: '5.00'
+                compare_at_amount:
                 display_amount: "$5.00"
                 display_compare_at_amount:
                 price_list_id: pl_UkLWZg9DAJ
@@ -18298,11 +18254,9 @@ paths:
             application/json:
               example:
                 id: price_EfhxLZ9ck8
-                amount: '12.34'
-                amount_in_cents: 1234
-                compare_at_amount:
-                compare_at_amount_in_cents:
                 currency: USD
+                amount: '12.34'
+                compare_at_amount:
                 display_amount: "$12.34"
                 display_compare_at_amount:
                 price_list_id: pl_UkLWZg9DAJ
@@ -19115,11 +19069,9 @@ paths:
                   tags: []
                   price:
                     id: price_UkLWZg9DAJ
-                    amount: '19.99'
-                    amount_in_cents: 1999
-                    compare_at_amount:
-                    compare_at_amount_in_cents:
                     currency: USD
+                    amount: '19.99'
+                    compare_at_amount:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -19510,11 +19462,9 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -19634,11 +19584,9 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -23186,7 +23134,7 @@ paths:
               },
               {
                 type: 'item_total',
-                preferences: { amount_min: 100, operator_min: 'gte' },
+                preferences: { amount_min: '100.00', operator_min: 'gte' },
               },
               {
                 type: 'product',
@@ -23199,7 +23147,7 @@ paths:
                 type: 'create_item_adjustments',
                 calculator: {
                   type: 'percent_on_line_item',
-                  preferences: { percent: 25 },
+                  preferences: { percent: '25' },
                 },
               },
               { type: 'free_shipping' },
@@ -23470,7 +23418,7 @@ paths:
               // Add a new rule
               {
                 type: 'item_total',
-                preferences: { amount_min: 50, operator_min: 'gte' },
+                preferences: { amount_min: '50.00', operator_min: 'gte' },
               },
             ],
             actions: [
@@ -23480,7 +23428,7 @@ paths:
                 type: 'create_item_adjustments',
                 calculator: {
                   type: 'percent_on_line_item',
-                  preferences: { percent: 15 },
+                  preferences: { percent: '15' },
                 },
               },
             ],
@@ -23717,7 +23665,8 @@ paths:
                 data:
                 - type: create_line_items
                   label: Create line items
-                  description: Populates the cart with the specified quantity of variant
+                  description: Adds the specified quantity of a variant to the cart
+                    free of charge
                   preference_schema: []
                 - type: create_item_adjustments
                   label: Create per-line-item adjustment
@@ -23832,7 +23781,7 @@ paths:
                   preference_schema:
                   - key: amount_min
                     type: decimal
-                    default: 100.0
+                    default: '100'
                   - key: operator_min
                     type: string
                     default: ">"
@@ -24006,7 +23955,7 @@ paths:
               example:
                 id: re_UkLWZg9DAJ
                 transaction_id: BGS-c5ae59a82a25
-                amount: '5.0'
+                amount: '5.00'
                 payment_id: py_UkLWZg9DAJ
                 refund_reason_id: rr_UkLWZg9DAJ
                 originator_id:
@@ -24014,7 +23963,7 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                tax_amount: '0.0'
+                tax_amount: '0.00'
                 refunder_id: adm_UkLWZg9DAJ
                 refunder_type: admin_user
       requestBody:
@@ -24066,7 +24015,7 @@ paths:
               example:
                 data:
                 - code: de
-                  name: de
+                  name: Deutsch
                   default: false
                   rtl: false
                 - code: en
@@ -24074,7 +24023,7 @@ paths:
                   default: true
                   rtl: false
                 - code: fr
-                  name: fr
+                  name: Français
                   default: false
                   rtl: false
   "/api/v3/admin/store":
@@ -24179,8 +24128,8 @@ paths:
                 preferred_order_routing_strategy: rules
                 preferred_payout_provider:
                 order_number_sequence_started: false
-                preferred_default_minimum_payout_amount: 0.0
-                preferred_default_commission_tax_rate: 0.0
+                preferred_default_minimum_payout_amount: '0.00'
+                preferred_default_commission_tax_rate: '0'
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
@@ -24518,8 +24467,8 @@ paths:
                 preferred_order_routing_strategy: rules
                 preferred_payout_provider:
                 order_number_sequence_started: false
-                preferred_default_minimum_payout_amount: 0.0
-                preferred_default_commission_tax_rate: 0.0
+                preferred_default_minimum_payout_amount: '0.00'
+                preferred_default_commission_tax_rate: '0'
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
@@ -24925,8 +24874,8 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   deleted_at:
-                  amount: '0.19'
-                  amount_percentage: 19.0
+                  rate: '0.19'
+                  rate_percent: '19'
                   tax_category_id: taxcat_UkLWZg9DAJ
                   store_id: store_UkLWZg9DAJ
                   country_code: DE
@@ -24971,8 +24920,8 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Creates a tax rate for the current store. Give either `amount` as a
-        decimal (`0.19`) or `amount_percentage` as a percentage (`19`).
+        Creates a tax rate for the current store. Give either `rate` as a
+        decimal string (`"0.19"`) or `rate_percent` as a percentage string (`"19"`).
 
         Name the jurisdiction with `country_code` (and `state_code` for a
         state-level rate). Omitting the country makes the rate apply everywhere.
@@ -25008,8 +24957,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 deleted_at:
-                amount: '0.19'
-                amount_percentage: 19.0
+                rate: '0.19'
+                rate_percent: '19'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 store_id: store_UkLWZg9DAJ
                 country_code: DE
@@ -25044,12 +24993,12 @@ paths:
                 name:
                   type: string
                   description: Customer-facing rate name, e.g. "VAT"
-                amount:
+                rate:
                   type: string
-                  description: Rate as a decimal, e.g. "0.19"
-                amount_percentage:
-                  type: number
-                  description: Rate as a percentage, e.g. 19
+                  description: Rate as a decimal string, e.g. "0.19"
+                rate_percent:
+                  type: string
+                  description: Rate as a percentage string, e.g. "19"
                 included_in_price:
                   type: boolean
                 show_rate_in_label:
@@ -25108,8 +25057,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 deleted_at:
-                amount: '0.19'
-                amount_percentage: 19.0
+                rate: '0.19'
+                rate_percent: '19'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 store_id: store_UkLWZg9DAJ
                 country_code: DE
@@ -25150,8 +25099,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 deleted_at:
-                amount: '0.07'
-                amount_percentage: 7.0
+                rate: '0.07'
+                rate_percent: '7'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 store_id: store_UkLWZg9DAJ
                 country_code: DE
@@ -25166,10 +25115,10 @@ paths:
               properties:
                 name:
                   type: string
-                amount:
+                rate:
                   type: string
-                amount_percentage:
-                  type: number
+                rate_percent:
+                  type: string
                 included_in_price:
                   type: boolean
                 show_rate_in_label:
@@ -26364,6 +26313,20 @@ paths:
                   group_label: Settings
                   label: Webhooks
                   description: Webhook endpoints and deliveries
+                - key: read_email_templates
+                  resource: email_templates
+                  kind: read
+                  group: settings
+                  group_label: Settings
+                  label: Email templates
+                  description: Customer email templates and the email layout
+                - key: write_email_templates
+                  resource: email_templates
+                  kind: write
+                  group: settings
+                  group_label: Settings
+                  label: Email templates
+                  description: Customer email templates and the email layout
                 - key: read_integrations
                   resource: integrations
                   kind: read
@@ -26407,7 +26370,7 @@ paths:
                   label: Staff & roles
                   description: Team members, invitations, roles and their permissions
                 meta:
-                  count: 55
+                  count: 57
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -26508,6 +26471,8 @@ paths:
                   - write_package_types
                   - read_webhooks
                   - write_webhooks
+                  - read_email_templates
+                  - write_email_templates
                   - read_integrations
                   - write_integrations
                   - read_api_keys
@@ -27530,9 +27495,9 @@ paths:
               example:
                 data:
                 - id: credit_UkLWZg9DAJ
-                  amount: '50.0'
-                  amount_used: '0.0'
-                  amount_remaining: '50.0'
+                  amount: '50.00'
+                  amount_used: '0.00'
+                  amount_remaining: '50.00'
                   display_amount: "$50.00"
                   display_amount_used: "$0.00"
                   display_amount_remaining: "$50.00"
@@ -27541,7 +27506,7 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount_authorized: '0.0'
+                  amount_authorized: '0.00'
                   outstanding: true
                   display_amount_authorized: "$0.00"
                   customer_id: cust_UkLWZg9DAJ
@@ -27646,9 +27611,9 @@ paths:
             application/json:
               example:
                 id: credit_UkLWZg9DAJ
-                amount: '50.0'
-                amount_used: '0.0'
-                amount_remaining: '50.0'
+                amount: '50.00'
+                amount_used: '0.00'
+                amount_remaining: '50.00'
                 display_amount: "$50.00"
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$50.00"
@@ -27657,7 +27622,7 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount_authorized: '0.0'
+                amount_authorized: '0.00'
                 outstanding: true
                 display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
@@ -27746,7 +27711,7 @@ paths:
                   action: allocation
                   authorization_code: 1-SC-20260115120000000000
                   display_action: Added
-                  amount: '50.0'
+                  amount: '50.00'
                   display_amount: "$50.00"
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -27880,11 +27845,9 @@ paths:
                   units_per_carton:
                   price:
                     id: price_UkLWZg9DAJ
-                    amount: '19.99'
-                    amount_in_cents: 1999
-                    compare_at_amount:
-                    compare_at_amount_in_cents:
                     currency: USD
+                    amount: '19.99'
+                    compare_at_amount:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -27894,7 +27857,6 @@ paths:
                   external_references: {}
                   metadata: {}
                   position: 1
-                  cost_price: '17.0'
                   cost_currency: USD
                   barcode:
                   backorder_limit:
@@ -27906,8 +27868,9 @@ paths:
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  cost_price: '17.00'
                   preorderable: false
-                  tax_category_id: taxcat_UkLWZg9DAJ
+                  tax_category_id:
                   carton_package_type_id:
                   units_per_pallet:
                   available_stock: 0
@@ -27939,11 +27902,9 @@ paths:
                   units_per_carton:
                   price:
                     id: price_gbHJdmfrXB
-                    amount: '19.99'
-                    amount_in_cents: 1999
-                    compare_at_amount:
-                    compare_at_amount_in_cents:
                     currency: USD
+                    amount: '19.99'
+                    compare_at_amount:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -27965,7 +27926,6 @@ paths:
                   external_references: {}
                   metadata: {}
                   position: 2
-                  cost_price: '17.0'
                   cost_currency: USD
                   barcode:
                   backorder_limit:
@@ -27977,8 +27937,9 @@ paths:
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  cost_price: '17.00'
                   preorderable: false
-                  tax_category_id: taxcat_UkLWZg9DAJ
+                  tax_category_id:
                   carton_package_type_id:
                   units_per_pallet:
                   available_stock: 0
@@ -28085,11 +28046,9 @@ paths:
                 units_per_carton:
                 price:
                   id: price_EfhxLZ9ck8
-                  amount: '24.99'
-                  amount_in_cents: 2499
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '24.99'
+                  compare_at_amount:
                   display_amount: "$24.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -28111,7 +28070,6 @@ paths:
                 external_references: {}
                 metadata: {}
                 position: 3
-                cost_price:
                 cost_currency: USD
                 barcode:
                 backorder_limit:
@@ -28123,8 +28081,9 @@ paths:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                cost_price:
                 preorderable: false
-                tax_category_id: taxcat_UkLWZg9DAJ
+                tax_category_id:
                 carton_package_type_id:
                 units_per_pallet:
                 available_stock: 0
@@ -28334,11 +28293,9 @@ paths:
                 units_per_carton:
                 price:
                   id: price_gbHJdmfrXB
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -28360,7 +28317,6 @@ paths:
                 external_references: {}
                 metadata: {}
                 position: 2
-                cost_price: '17.0'
                 cost_currency: USD
                 barcode:
                 backorder_limit:
@@ -28372,8 +28328,9 @@ paths:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                cost_price: '17.00'
                 preorderable: false
-                tax_category_id: taxcat_UkLWZg9DAJ
+                tax_category_id:
                 carton_package_type_id:
                 units_per_pallet:
                 available_stock: 0
@@ -28474,11 +28431,9 @@ paths:
                 units_per_carton:
                 price:
                   id: price_gbHJdmfrXB
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -28500,7 +28455,6 @@ paths:
                 external_references: {}
                 metadata: {}
                 position: 2
-                cost_price: '17.0'
                 cost_currency: USD
                 barcode:
                 backorder_limit:
@@ -28512,8 +28466,9 @@ paths:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                cost_price: '17.00'
                 preorderable: false
-                tax_category_id: taxcat_UkLWZg9DAJ
+                tax_category_id:
                 carton_package_type_id:
                 units_per_pallet:
                 available_stock: 0
@@ -29535,7 +29490,7 @@ paths:
                   data:
                     message: This is a test webhook from Spree.
                   metadata:
-                    spree_version: 6.0.0.beta2
+                    spree_version: 6.0.0.rc1
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks/orders
   "/api/v3/admin/webhook_endpoints/{id}/enable":
@@ -29996,6 +29951,18 @@ paths:
                   replaced_by:
                 - name: digital_link.updated
                   group: digital_link
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: email_template.published
+                  group: email_template
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: email_template.reverted
+                  group: email_template
                   credential_permission:
                   credential: false
                   deprecated: false
@@ -31546,7 +31513,7 @@ paths:
                     currency: USD
                     source: automatic
                     break_count: 0
-                    amount: '80.0'
+                    amount: '80.00'
                     display_amount: "$80.00"
                     tiers: []
                 meta:
@@ -31706,7 +31673,7 @@ paths:
                   currency: USD
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '500.0'
+                  amount: '500.00'
                   display_amount: "$500.00"
                 meta:
                   page: 1
@@ -31755,7 +31722,7 @@ paths:
                 currency: USD
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '500.0'
+                amount: '500.00'
                 display_amount: "$500.00"
         '422':
           description: invalid request
@@ -31830,7 +31797,7 @@ paths:
                 currency: USD
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '750.0'
+                amount: '750.00'
                 display_amount: "$750.00"
       requestBody:
         content:
@@ -32835,11 +32802,11 @@ paths:
                   state_code:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  rate: '10.0'
-                  tax_rate: '0.0'
-                  amount: '10.0'
-                  tax_amount: '2.1'
-                  total: '12.1'
+                  rate: '10'
+                  tax_rate: '0'
+                  amount: '10.00'
+                  tax_amount: '2.10'
+                  total: '12.10'
                   display_amount: "$10.00"
                   display_tax_amount: "$2.10"
                   display_total: "$12.10"
@@ -32922,11 +32889,11 @@ paths:
                 state_code:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                rate: '10.0'
-                tax_rate: '0.0'
-                amount: '10.0'
-                tax_amount: '2.1'
-                total: '12.1'
+                rate: '10'
+                tax_rate: '0'
+                amount: '10.00'
+                tax_amount: '2.10'
+                total: '12.10'
                 display_amount: "$10.00"
                 display_tax_amount: "$2.10"
                 display_total: "$12.10"
@@ -33048,7 +33015,7 @@ paths:
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  value: '10.0'
+                  value: '10'
                   commission_tax_rate:
                   amounts: {}
                   bounds: {}
@@ -33129,12 +33096,12 @@ paths:
           const commissionRate = await client.commissionRates.create({
             name: 'Audio sellers',
             kind: 'percentage',
-            value: 12.5,
+            value: '12.5',
             rules: [{ type: 'seller_rule', preferences: { seller_ids: ['sel_a1b2c3'] } }],
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /commission_rates -d '{"name":"Audio sellers","kind":"percentage","value":12.5,"rules":[{"type":"seller_rule","preferences":{"seller_ids":["sel_a1b2c3"]}}]}'
+        source: spree api post /commission_rates -d '{"name":"Audio sellers","kind":"percentage","value":"12.5","rules":[{"type":"seller_rule","preferences":{"seller_ids":["sel_a1b2c3"]}}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -33452,7 +33419,7 @@ paths:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                value: '10.0'
+                value: '10'
                 commission_tax_rate:
                 amounts: {}
                 bounds: {}
@@ -33501,7 +33468,7 @@ paths:
           // Every rule has to hold, so this charges 15% only on camera sales worth 50 or
           // more. Call ruleTypes() for the kinds this marketplace has.
           const commissionRate = await client.commissionRates.update('crate_a1b2c3', {
-            value: 15,
+            value: '15',
             position: 1,
             rules: [
               { type: 'category_rule', preferences: { category_ids: ['ctg_d4e5f6'] } },
@@ -33510,7 +33477,7 @@ paths:
           })
       - lang: bash
         label: Spree CLI
-        source: spree api patch /commission_rates/{id} -d '{"value":15,"position":1,"rules":[{"type":"category_rule","preferences":{"category_ids":["ctg_d4e5f6"]}},{"type":"item_total_rule","preferences":{"min_amount":"50"}}]}'
+        source: spree api patch /commission_rates/{id} -d '{"value":"15","position":1,"rules":[{"type":"category_rule","preferences":{"category_ids":["ctg_d4e5f6"]}},{"type":"item_total_rule","preferences":{"min_amount":"50"}}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -33540,7 +33507,7 @@ paths:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                value: '15.0'
+                value: '15'
                 commission_tax_rate:
                 amounts: {}
                 bounds: {}
@@ -35147,12 +35114,12 @@ paths:
                   admin_name:
                   storefront_visible: true
                   tracking_url:
-                  markup_flat: '0.0'
-                  markup_percent: '0.0'
                   available_to_sellers: false
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   deleted_at:
+                  markup_flat: '0.00'
+                  markup_percent: '0'
                   seller_id:
                   seller_name:
                   services: []
@@ -35206,11 +35173,11 @@ paths:
             name: 'Express',
             storefront_visible: true,
             calculator_type: 'flat_rate',
-            calculator_preferences: { amount: 12.5 },
+            calculator_preferences: { amount: '12.50' },
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /delivery_methods -d '{"name":"Express","storefront_visible":true,"calculator_type":"flat_rate","calculator_preferences":{"amount":12.5}}'
+        source: spree api post /delivery_methods -d '{"name":"Express","storefront_visible":true,"calculator_type":"flat_rate","calculator_preferences":{"amount":"12.50"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -35239,12 +35206,12 @@ paths:
                 admin_name:
                 storefront_visible: true
                 tracking_url:
-                markup_flat: '0.0'
-                markup_percent: '0.0'
                 available_to_sellers: false
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 deleted_at:
+                markup_flat: '0.00'
+                markup_percent: '0'
                 seller_id:
                 seller_name:
                 services: []
@@ -35306,7 +35273,7 @@ paths:
                 calculator_preferences:
                   type: object
                   example:
-                    amount: 12.5
+                    amount: '12.50'
                 delivery_zone_id:
                   type: string
                   nullable: true
@@ -35362,7 +35329,7 @@ paths:
                   preference_schema:
                   - key: flat_percent
                     type: decimal
-                    default: 0
+                    default: '0'
                 - type: flat_rate
                   name: Flat rate
                   preference_schema:
@@ -35371,7 +35338,7 @@ paths:
                     default: {}
                   - key: amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: currency
                     type: string
                     default: USD
@@ -35380,10 +35347,10 @@ paths:
                   preference_schema:
                   - key: first_item
                     type: decimal
-                    default: 0.0
+                    default: '0'
                   - key: additional_item
                     type: decimal
-                    default: 0.0
+                    default: '0'
                   - key: max_items
                     type: integer
                     default: 0
@@ -35398,7 +35365,7 @@ paths:
                     default: {}
                   - key: amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: currency
                     type: string
                     default: USD
@@ -35407,13 +35374,13 @@ paths:
                   preference_schema:
                   - key: minimal_amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: normal_amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: discount_amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: currency
                     type: string
                     default: USD
@@ -35425,7 +35392,7 @@ paths:
                     default: {}
                   - key: amount
                     type: decimal
-                    default: 0
+                    default: '0'
                   - key: currency
                     type: string
                     default: USD
@@ -35764,6 +35731,7 @@ paths:
                   group: shipping
                   description:
                   logo_url:
+                  docs_url:
                   preference_schema:
                   - key: api_key
                     type: password
@@ -35882,13 +35850,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--842df2157f0239c97e8da1cb68e59bad0bb1c65c/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--efc4098d67c95b766076ffd76169e7d49199c517/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e5a1c73260840c5ab2bb78ebed47f7f5db621e85/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--60df672360d3d2c45cd72572b2e6faf9882995e1/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74872e2b62fcbb93875b99ea99356c004855f9d3/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--e97abb6268b26c7a282c61cd0aedea525f75a555/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d3a46db98d461edbc92f4d1d14f99f639cb15087/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--63ef6aa9ca6a6e3b5704dc687ed6f080fabf692f/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e7847a62f1405e24752088eb14d831cf14ae3b1/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4ff8dae08e622f6f0994f915853fb55ea5dd6096/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a564119223492e47a2b9ea3bccabab85e29b91bb/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--1c91b3d2baa279b11c9ef793097134edaacbb97f/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -35896,10 +35864,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8bb0d93bcda0e7a158700e75fe6ce3f53ca8d223/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b97c0026639f4fcf9a36eba47fe3cfe943cf96d7/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -35970,13 +35938,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--842df2157f0239c97e8da1cb68e59bad0bb1c65c/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--efc4098d67c95b766076ffd76169e7d49199c517/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e5a1c73260840c5ab2bb78ebed47f7f5db621e85/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--60df672360d3d2c45cd72572b2e6faf9882995e1/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74872e2b62fcbb93875b99ea99356c004855f9d3/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--e97abb6268b26c7a282c61cd0aedea525f75a555/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d3a46db98d461edbc92f4d1d14f99f639cb15087/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--63ef6aa9ca6a6e3b5704dc687ed6f080fabf692f/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e7847a62f1405e24752088eb14d831cf14ae3b1/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4ff8dae08e622f6f0994f915853fb55ea5dd6096/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a564119223492e47a2b9ea3bccabab85e29b91bb/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--1c91b3d2baa279b11c9ef793097134edaacbb97f/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -35984,10 +35952,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8bb0d93bcda0e7a158700e75fe6ce3f53ca8d223/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b97c0026639f4fcf9a36eba47fe3cfe943cf96d7/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2f007f4f0a7103707989ed889e97fb9bb2b5259d/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -36144,13 +36112,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--842df2157f0239c97e8da1cb68e59bad0bb1c65c/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--efc4098d67c95b766076ffd76169e7d49199c517/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e5a1c73260840c5ab2bb78ebed47f7f5db621e85/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--60df672360d3d2c45cd72572b2e6faf9882995e1/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74872e2b62fcbb93875b99ea99356c004855f9d3/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--e97abb6268b26c7a282c61cd0aedea525f75a555/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d3a46db98d461edbc92f4d1d14f99f639cb15087/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--63ef6aa9ca6a6e3b5704dc687ed6f080fabf692f/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e7847a62f1405e24752088eb14d831cf14ae3b1/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4ff8dae08e622f6f0994f915853fb55ea5dd6096/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a564119223492e47a2b9ea3bccabab85e29b91bb/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--1c91b3d2baa279b11c9ef793097134edaacbb97f/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -36158,10 +36126,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8bb0d93bcda0e7a158700e75fe6ce3f53ca8d223/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b97c0026639f4fcf9a36eba47fe3cfe943cf96d7/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0308aece2ba2eba07d1537e46361140cca1800b4/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -37607,12 +37575,12 @@ paths:
                     currency: USD
                     source: base
                     break_count: 1
-                    amount: '100.0'
+                    amount: '100.00'
                     display_amount: "$100.00"
                     tiers:
                     - min_quantity: 24
                       display_amount: "$80.00"
-                      amount: '80.0'
+                      amount: '80.00'
                 meta:
                   page: 1
                   limit: 25
@@ -38239,7 +38207,7 @@ paths:
                   closed_short: false
                   quantity_ordered_total: 100
                   editable: true
-                  subtotal: '1250.0'
+                  subtotal: '1250.00'
                   display_subtotal: "$1,250.00"
                   supplier_id: sup_UkLWZg9DAJ
                   destination_location_id: sloc_UkLWZg9DAJ
@@ -38351,7 +38319,7 @@ paths:
                 closed_short: false
                 quantity_ordered_total: 100
                 editable: true
-                subtotal: '1250.0'
+                subtotal: '1250.00'
                 display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
@@ -38480,7 +38448,7 @@ paths:
                 closed_short: false
                 quantity_ordered_total: 100
                 editable: true
-                subtotal: '1250.0'
+                subtotal: '1250.00'
                 display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
@@ -38494,9 +38462,9 @@ paths:
                   currency: USD
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  unit_cost: '12.5'
-                  total_cost: '1250.0'
+                  unit_cost: '12.50'
                   display_unit_cost: "$12.50"
+                  total_cost: '1250.00'
                   display_total_cost: "$1,250.00"
                   purchase_order_id: po_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
@@ -38598,7 +38566,7 @@ paths:
                 closed_short: false
                 quantity_ordered_total: 100
                 editable: false
-                subtotal: '1250.0'
+                subtotal: '1250.00'
                 display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
@@ -38902,7 +38870,7 @@ paths:
                 closed_short: false
                 quantity_ordered_total: 100
                 editable: true
-                subtotal: '1250.0'
+                subtotal: '1250.00'
                 display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
@@ -38989,7 +38957,7 @@ paths:
                 closed_short: true
                 quantity_ordered_total: 100
                 editable: false
-                subtotal: '1250.0'
+                subtotal: '1250.00'
                 display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
@@ -39068,7 +39036,7 @@ paths:
                 closed_short: false
                 quantity_ordered_total: 100
                 editable: false
-                subtotal: '1250.0'
+                subtotal: '1250.00'
                 display_subtotal: "$1,250.00"
                 supplier_id: sup_UkLWZg9DAJ
                 destination_location_id: sloc_UkLWZg9DAJ
@@ -40876,15 +40844,15 @@ paths:
                   settlement_currency: USD
                   converted: false
                   seller_id: sel_UkLWZg9DAJ
-                  earned: '40.0'
+                  earned: '40.00'
                   display_earned: "$40.00"
-                  payable: '40.0'
+                  payable: '40.00'
                   display_payable: "$40.00"
-                  paid: '0.0'
+                  paid: '0.00'
                   display_paid: "$0.00"
-                  balance: '40.0'
+                  balance: '40.00'
                   display_balance: "$40.00"
-                  pending: '0.0'
+                  pending: '0.00'
                   display_pending: "$0.00"
               schema:
                 type: object
@@ -40965,7 +40933,7 @@ paths:
                   period_end: '2026-01-15T12:00:00.000Z'
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '40.0'
+                  amount: '40.00'
                   display_amount: "$40.00"
                   seller_id: sel_UkLWZg9DAJ
                   seller_name: Sparks Audio
@@ -41047,7 +41015,7 @@ paths:
                 period_end:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '40.0'
+                amount: '40.00'
                 display_amount: "$40.00"
                 seller_id: sel_UkLWZg9DAJ
                 seller_name: Sparks Audio
@@ -43960,10 +43928,10 @@ components:
           items:
             "$ref": "#/components/schemas/CheckoutRequirement"
         order_minimum:
-          type: number
+          type: string
           nullable: true
         order_minimum_shortfall:
-          type: number
+          type: string
           nullable: true
         below_order_minimum:
           type: boolean
@@ -45624,12 +45592,6 @@ components:
         tracking_url:
           type: string
           nullable: true
-        markup_flat:
-          type: string
-          nullable: true
-        markup_percent:
-          type: string
-          nullable: true
         available_to_sellers:
           type: boolean
         created_at:
@@ -45638,6 +45600,12 @@ components:
           type: string
         deleted_at:
           type: string
+        markup_flat:
+          type: string
+          nullable: true
+        markup_percent:
+          type: string
+          nullable: true
         seller_id:
           type: string
           nullable: true
@@ -45699,12 +45667,12 @@ components:
       - admin_name
       - storefront_visible
       - tracking_url
-      - markup_flat
-      - markup_percent
       - available_to_sellers
       - created_at
       - updated_at
       - deleted_at
+      - markup_flat
+      - markup_percent
       - seller_id
       - seller_name
       - services
@@ -46225,6 +46193,187 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    EmailTemplateDraft:
+      type: object
+      properties:
+        id:
+          type: string
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+        lock_version:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        updated_by_id:
+          type: string
+          nullable: true
+        updated_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        updated_by:
+          "$ref": "#/components/schemas/Actor"
+      required:
+      - id
+      - subject
+      - body
+      - lock_version
+      - created_at
+      - updated_at
+      - updated_by_id
+      - updated_by_type
+      x-typelizer: true
+    EmailTemplatePreview:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        subject:
+          type: string
+        html:
+          type: string
+        text:
+          type: string
+        email_key:
+          type: string
+        variables:
+          type: object
+      required:
+      - id
+      - subject
+      - html
+      - text
+      - email_key
+      - variables
+      x-typelizer: true
+    EmailTemplateRevision:
+      type: object
+      properties:
+        id:
+          type: string
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+        created_at:
+          type: string
+        published_by_id:
+          type: string
+          nullable: true
+        published_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        published_by:
+          "$ref": "#/components/schemas/Actor"
+      required:
+      - id
+      - subject
+      - body
+      - created_at
+      - published_by_id
+      - published_by_type
+      x-typelizer: true
+    EmailTemplateSampleRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        created_at:
+          type: string
+      required:
+      - id
+      - label
+      - created_at
+      x-typelizer: true
+    EmailTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+        language:
+          type: string
+        customized_languages:
+          type: array
+          items:
+            type: string
+        kind:
+          type: string
+          enum:
+          - email
+          - layout
+          - partial
+        customized:
+          type: boolean
+        published_at:
+          type: string
+          nullable: true
+        default_subject:
+          type: string
+          nullable: true
+        default_body:
+          type: string
+        published_language:
+          type: string
+          nullable: true
+        default_changed:
+          type: boolean
+        base_subject:
+          type: string
+          nullable: true
+        base_body:
+          type: string
+          nullable: true
+        draft:
+          allOf:
+          - "$ref": "#/components/schemas/EmailTemplateDraft"
+          nullable: true
+      required:
+      - id
+      - key
+      - subject
+      - body
+      - language
+      - customized_languages
+      - kind
+      - customized
+      - published_at
+      - default_subject
+      - default_body
+      - published_language
+      - default_changed
+      - base_subject
+      - base_body
+      - draft
+      x-typelizer: true
     ExchangeLineItem:
       type: object
       properties:
@@ -46700,13 +46849,13 @@ components:
             "$ref": "#/components/schemas/TaxLine"
         metadata:
           type: object
-        adjustment_total:
-          type: string
-        pre_tax_amount:
-          type: string
         created_at:
           type: string
         updated_at:
+          type: string
+        adjustment_total:
+          type: string
+        pre_tax_amount:
           type: string
         order_id:
           type: string
@@ -46755,10 +46904,10 @@ components:
       - items
       - deliveries
       - metadata
-      - adjustment_total
-      - pre_tax_amount
       - created_at
       - updated_at
+      - adjustment_total
+      - pre_tax_amount
       - order_id
       - stock_location_id
       - documents
@@ -47974,15 +48123,25 @@ components:
           type: boolean
         store_owner_notification_delivered:
           type: boolean
-        payment_total:
-          type: string
-        display_payment_total:
-          type: string
         metadata:
           type: object
         cancel_note:
           type: string
           nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        approved_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        payment_total:
+          type: string
+        display_payment_total:
+          type: string
         commission_amount_total:
           type: string
         display_commission_amount_total:
@@ -47994,16 +48153,6 @@ components:
         commission_total:
           type: string
         display_commission_total:
-          type: string
-        canceled_at:
-          type: string
-          nullable: true
-        approved_at:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-        updated_at:
           type: string
         preferred_stock_location_id:
           type: string
@@ -48176,20 +48325,20 @@ components:
       - considered_risky
       - confirmation_delivered
       - store_owner_notification_delivered
-      - payment_total
-      - display_payment_total
       - metadata
       - cancel_note
+      - canceled_at
+      - approved_at
+      - created_at
+      - updated_at
+      - payment_total
+      - display_payment_total
       - commission_amount_total
       - display_commission_amount_total
       - commission_tax_total
       - display_commission_tax_total
       - commission_total
       - display_commission_total
-      - canceled_at
-      - approved_at
-      - created_at
-      - updated_at
       - preferred_stock_location_id
       - po_document_url
       - seller_id
@@ -48340,6 +48489,14 @@ components:
           type: object
         preference_schema:
           type: object
+        logo_url:
+          type: string
+          nullable: true
+        docs_url:
+          type: string
+          nullable: true
+        third_party:
+          type: boolean
       required:
       - id
       - name
@@ -48358,6 +48515,9 @@ components:
       - updated_at
       - preferences
       - preference_schema
+      - logo_url
+      - docs_url
+      - third_party
       x-typelizer: true
     Payment:
       type: object
@@ -48621,12 +48781,11 @@ components:
       properties:
         id:
           type: string
-        amount:
-          type: string
-        amount_in_cents:
-          type: number
         currency:
           type: string
+        amount:
+          type: string
+          nullable: true
         display_amount:
           type: string
         recorded_at:
@@ -48642,9 +48801,8 @@ components:
           type: string
       required:
       - id
-      - amount
-      - amount_in_cents
       - currency
+      - amount
       - display_amount
       - recorded_at
       - variant_id
@@ -48804,19 +48962,13 @@ components:
       properties:
         id:
           type: string
+        currency:
+          type: string
+          nullable: true
         amount:
           type: string
           nullable: true
-        amount_in_cents:
-          type: number
-          nullable: true
         compare_at_amount:
-          type: string
-          nullable: true
-        compare_at_amount_in_cents:
-          type: number
-          nullable: true
-        currency:
           type: string
           nullable: true
         display_amount:
@@ -48841,11 +48993,9 @@ components:
           "$ref": "#/components/schemas/Variant"
       required:
       - id
-      - amount
-      - amount_in_cents
-      - compare_at_amount
-      - compare_at_amount_in_cents
       - currency
+      - amount
+      - compare_at_amount
       - display_amount
       - display_compare_at_amount
       - price_list_id
@@ -49438,9 +49588,9 @@ components:
           type: string
         unit_cost:
           type: string
-        total_cost:
-          type: string
         display_unit_cost:
+          type: string
+        total_cost:
           type: string
         display_total_cost:
           type: string
@@ -49476,8 +49626,8 @@ components:
       - created_at
       - updated_at
       - unit_cost
-      - total_cost
       - display_unit_cost
+      - total_cost
       - display_total_cost
       - purchase_order_id
       - variant_id
@@ -50567,6 +50717,7 @@ components:
           type: string
         display_cost:
           type: string
+          nullable: true
         integration_id:
           type: string
           nullable: true
@@ -51490,9 +51641,11 @@ components:
         order_number_sequence_started:
           type: boolean
         preferred_default_minimum_payout_amount:
-          type: number
+          type: string
+          nullable: true
         preferred_default_commission_tax_rate:
-          type: number
+          type: string
+          nullable: true
         url:
           type: string
         api_url:
@@ -51847,6 +52000,7 @@ components:
           type: boolean
         rate:
           type: string
+          nullable: true
         tax_rate_id:
           type: string
           nullable: true
@@ -51943,10 +52097,11 @@ components:
         deleted_at:
           type: string
           nullable: true
-        amount:
+        rate:
           type: string
-        amount_percentage:
-          type: number
+          nullable: true
+        rate_percent:
+          type: string
           nullable: true
         tax_category_id:
           type: string
@@ -51969,8 +52124,8 @@ components:
       - created_at
       - updated_at
       - deleted_at
-      - amount
-      - amount_percentage
+      - rate
+      - rate_percent
       - tax_category_id
       - store_id
       - country_code
@@ -52082,9 +52237,6 @@ components:
           type: object
         position:
           type: number
-        cost_price:
-          type: string
-          nullable: true
         cost_currency:
           type: string
           nullable: true
@@ -52116,6 +52268,9 @@ components:
           type: string
         updated_at:
           type: string
+        cost_price:
+          type: string
+          nullable: true
         preorderable:
           type: boolean
         tax_category_id:
@@ -52178,7 +52333,6 @@ components:
       - external_references
       - metadata
       - position
-      - cost_price
       - cost_currency
       - barcode
       - backorder_limit
@@ -52190,6 +52344,7 @@ components:
       - deleted_at
       - created_at
       - updated_at
+      - cost_price
       - preorderable
       - tax_category_id
       - carton_package_type_id
@@ -52343,184 +52498,4 @@ components:
       - credential
       - deprecated
       - replaced_by
-    EmailTemplateDraft:
-      type: object
-      properties:
-        id:
-          type: string
-        subject:
-          type: string
-          nullable: true
-        body:
-          type: string
-        lock_version:
-          type: number
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        updated_by_id:
-          type: string
-          nullable: true
-        updated_by_type:
-          anyOf:
-          - type: string
-            enum:
-            - admin_user
-            - api_key
-          - type: string
-          nullable: true
-          description: The values listed are the built-in ones; extensions may add
-            more.
-        updated_by:
-          "$ref": "#/components/schemas/Actor"
-      required:
-      - id
-      - subject
-      - body
-      - lock_version
-      - created_at
-      - updated_at
-      - updated_by_id
-      - updated_by_type
-      x-typelizer: true
-    EmailTemplatePreview:
-      type: object
-      properties:
-        id:
-          type: string
-          nullable: true
-        subject:
-          type: string
-        html:
-          type: string
-        text:
-          type: string
-        email_key:
-          type: string
-        variables:
-          type: object
-      required:
-      - id
-      - subject
-      - html
-      - text
-      - email_key
-      - variables
-      x-typelizer: true
-    EmailTemplateRevision:
-      type: object
-      properties:
-        id:
-          type: string
-        subject:
-          type: string
-          nullable: true
-        body:
-          type: string
-        created_at:
-          type: string
-        published_by_id:
-          type: string
-          nullable: true
-        published_by_type:
-          anyOf:
-          - type: string
-            enum:
-            - admin_user
-            - api_key
-          - type: string
-          nullable: true
-          description: The values listed are the built-in ones; extensions may add
-            more.
-        published_by:
-          "$ref": "#/components/schemas/Actor"
-      required:
-      - id
-      - subject
-      - body
-      - created_at
-      - published_by_id
-      - published_by_type
-      x-typelizer: true
-    EmailTemplateSampleRecord:
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-        created_at:
-          type: string
-      required:
-      - id
-      - label
-      - created_at
-      x-typelizer: true
-    EmailTemplate:
-      type: object
-      properties:
-        id:
-          type: string
-        key:
-          type: string
-        subject:
-          type: string
-          nullable: true
-        body:
-          type: string
-        language:
-          type: string
-        customized_languages:
-          type: array
-          items:
-            type: string
-        kind:
-          type: string
-          enum:
-          - email
-          - layout
-          - partial
-        customized:
-          type: boolean
-        published_at:
-          type: string
-          nullable: true
-        default_subject:
-          type: string
-          nullable: true
-        default_body:
-          type: string
-        published_language:
-          type: string
-          nullable: true
-        default_changed:
-          type: boolean
-        base_subject:
-          type: string
-          nullable: true
-        base_body:
-          type: string
-          nullable: true
-        draft:
-          allOf:
-          - "$ref": "#/components/schemas/EmailTemplateDraft"
-          nullable: true
-      required:
-      - id
-      - key
-      - subject
-      - body
-      - language
-      - customized_languages
-      - kind
-      - customized
-      - published_at
-      - default_subject
-      - default_body
-      - published_language
-      - default_changed
-      - base_subject
-      - base_body
-      - draft
       x-typelizer: true

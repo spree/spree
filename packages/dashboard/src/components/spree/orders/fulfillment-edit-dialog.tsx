@@ -1,4 +1,4 @@
-import { type Fulfillment, type Order, SpreeError } from '@spree/admin-sdk'
+import { type Fulfillment, isZeroMoney, type Order, SpreeError } from '@spree/admin-sdk'
 import { useStockLocations } from '@spree/dashboard-core'
 import { FulfillmentEditDialog as SharedFulfillmentEditDialog } from '@spree/dashboard-ui'
 import { useState } from 'react'
@@ -58,7 +58,7 @@ export function FulfillmentEditDialog({
   const rateOptions = (fulfillment.delivery_rates ?? []).map((rate) => ({
     value: rate.id,
     label: `${rate.name} — ${
-      !rate.unpriced && Number.parseFloat(rate.cost) === 0
+      !rate.unpriced && isZeroMoney(rate.cost)
         ? t('admin.orders.detail.fulfillments.free')
         : rate.display_cost
     }`,

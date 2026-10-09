@@ -121,7 +121,7 @@ module Spree
 
         percent = service_row&.markup_percent || delivery_method.markup_percent || 0
         flat = service_row&.markup_flat || delivery_method.markup_flat || 0
-        (cost * (1 + (percent / 100)) + flat).round(2)
+        Spree::Money::Rounding.to_currency(cost * (1 + (percent / 100)) + flat, currency)
       end
 
       # Display name for provider-priced rates: the merchant's label override,

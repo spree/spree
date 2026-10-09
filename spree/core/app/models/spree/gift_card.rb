@@ -5,6 +5,9 @@ module Spree
     extend DisplayMoney
     include Spree::SingleStoreResource
     include Spree::HasCustomFields
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
     publishes_lifecycle_events
@@ -81,12 +84,6 @@ module Spree
     # Money
     #
     money_methods :amount, :amount_used, :amount_authorized, :amount_remaining
-
-    # Sets the amount
-    # @param amount [String]
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
 
     # Calculates the remaining amount
     # @return [Decimal]

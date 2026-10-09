@@ -86,6 +86,25 @@ describe Spree::Adjusters::Promotion, type: :model do
       expect(rows.map(&:line_item_id)).to match_array(order.line_items.ids)
     end
 
+    it 'splits a remainder to the cent and sums exactly to the promotion amount' do
+      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, code: nil, kind: :automatic, store: store)
+      promo.activate(order: order)
+
+      amounts = order.discounts.reload.map(&:amount)
+      expect(amounts).to match_array([BigDecimal('-3.34'), BigDecimal('-3.33'), BigDecimal('-3.33')])
+      expect(amounts.sum).to eq(BigDecimal('-10'))
+    end
+
+    it 'splits a yen promotion in whole yen' do
+      order.update_columns(currency: 'JPY')
+      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, code: nil, kind: :automatic, store: store)
+      promo.promotion_actions.first.calculator.update!(preferred_currency: 'JPY')
+      promo.activate(order: order)
+
+      amounts = order.discounts.reload.map(&:amount)
+      expect(amounts).to match_array([BigDecimal('-4'), BigDecimal('-3'), BigDecimal('-3')])
+    end
+
     it 'never distributes more than the remaining line bases' do
       promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 9_999, code: nil, kind: :automatic, store: store)
       promo.activate(order: order)

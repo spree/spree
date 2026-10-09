@@ -361,7 +361,7 @@ test.describe('delivery profiles', () => {
 
   // A method left on the default would reopen as Internal whether or not the
   // stored provider round-tripped, so pick the other built-in one.
-  test('prices a method through the freight rate provider, and it reopens that way', async ({
+  test('prices a method through the freight rate provider with a markup, and it reopens that way', async ({
     page,
   }) => {
     const creds = await login(page)
@@ -385,6 +385,9 @@ test.describe('delivery profiles', () => {
     await rateProvider.click()
     await page.getByRole('option', { name: /^freight$/i }).click()
     await expect(rateProvider).toContainText(/^freight$/i)
+    // A provider-priced method carries the store's markup on top of the quote.
+    await sheet.locator('#markup_percent').fill('7.5')
+    await sheet.locator('#markup_flat').fill('2.50')
 
     await page.getByRole('button', { name: /create delivery method/i }).click()
     await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
@@ -392,9 +395,11 @@ test.describe('delivery profiles', () => {
     })
 
     await page.getByText(methodName).click()
-    await expect(fieldSelect(page.getByRole('dialog'), 'Rate provider')).toContainText(
-      /^freight$/i,
-      { timeout: 15_000 },
-    )
+    const reopened = page.getByRole('dialog')
+    await expect(fieldSelect(reopened, 'Rate provider')).toContainText(/^freight$/i, {
+      timeout: 15_000,
+    })
+    await expect(reopened.locator('#markup_percent')).toHaveValue('7.5')
+    await expect(reopened.locator('#markup_flat')).toHaveValue('2.50')
   })
 })

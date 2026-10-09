@@ -12,7 +12,7 @@ const client = createAdminClient({
 const commissionRate = await client.commissionRates.create({
   name: 'Audio sellers',
   kind: 'percentage',
-  value: 12.5,
+  value: '12.5',
   rules: [{ type: 'seller_rule', preferences: { seller_ids: ['sel_a1b2c3'] } }],
 })
 

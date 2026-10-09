@@ -1,5 +1,11 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
-import { currencyParts, useStore } from '@spree/dashboard-core'
+import {
+  currencyParts,
+  isPositiveMoney,
+  returnOwesNothing,
+  returnRefundSummary,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -17,8 +23,6 @@ import {
   type RefundMethod,
   ReturnReceiveDialog,
   ReturnRefundDialog,
-  returnOwesNothing,
-  returnRefundSummary,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -408,8 +412,9 @@ function RefundDialog({
   return (
     <ReturnRefundDialog
       refundableTotal={returnRecord.refundable_total}
+      owesNothing={returnOwesNothing(returnRecord.refundable_total)}
       refundTaxTotal={
-        Number(returnRecord.refund_tax_total) > 0
+        isPositiveMoney(returnRecord.refund_tax_total)
           ? returnRecord.display_refund_tax_total
           : undefined
       }

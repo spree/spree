@@ -67,7 +67,7 @@ module Spree
       private
 
       def exchange_multiplier
-        payment.payment_method.try(:exchange_multiplier) || 1.0
+        payment.payment_method.try(:exchange_multiplier) || 1
       end
     end
   end

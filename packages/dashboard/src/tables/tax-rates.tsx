@@ -30,8 +30,7 @@ defineTable<TaxRate>('tax-rates', {
       label: i18n.t('admin.fields.tax_rate.amount.label'),
       sortable: true,
       default: true,
-      render: (taxRate) =>
-        taxRate.amount_percentage === null ? '—' : `${taxRate.amount_percentage}%`,
+      render: (taxRate) => (taxRate.rate_percent == null ? '—' : `${taxRate.rate_percent}%`),
     },
     {
       key: 'country_code',

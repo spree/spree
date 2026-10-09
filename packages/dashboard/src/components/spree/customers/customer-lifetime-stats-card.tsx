@@ -1,28 +1,26 @@
-import type { Customer } from '@spree/admin-sdk'
-import { useStore } from '@spree/dashboard-core'
+import { type Customer, decimalPlaces } from '@spree/admin-sdk'
+import { isPositiveMoney, useMoneyLocale, useStore } from '@spree/dashboard-core'
 import { Card, CardContent, RelativeTime } from '@spree/dashboard-ui'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCurrencyLocale } from '../../../hooks/use-currency-locale'
 import { formatAmount } from '../../../lib/delivery-method-summary'
 
 export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const { defaultCurrency } = useStore()
-  const localeForCurrency = useCurrencyLocale()
   const orders = customer.orders_count ?? 0
-  const totalSpent = Number(customer.total_spent ?? '0')
-  // Format the average from the number rather than rewriting the digits inside
+  const totalSpent = customer.total_spent
+  // Format the average from the amount rather than rewriting the digits inside
   // `display_total_spent`: that string is already localized, so substituting a
   // period-decimal figure into it mixes separators (`1.234,56 €` → `1234.57 €`).
+  // Dividing needs a number; the average is only displayed, never sent or compared.
+  const averageForDisplay =
+    orders > 0 && isPositiveMoney(totalSpent)
+      ? (Number(totalSpent) / orders).toFixed(decimalPlaces(defaultCurrency))
+      : null
   const aovDisplay =
-    orders > 0 && totalSpent > 0
-      ? formatAmount(
-          totalSpent / orders,
-          defaultCurrency,
-          localeForCurrency(defaultCurrency) || i18n.language,
-        )
-      : '—'
+    averageForDisplay === null ? '—' : formatAmount(averageForDisplay, defaultCurrency, moneyLocale)
 
   return (
     <Card>

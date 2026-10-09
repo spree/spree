@@ -2,6 +2,7 @@ import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
 import {
   type FulfillmentItemRow,
   fulfillmentItemRows,
+  isPositiveMoney,
   unfulfilledItemRows,
   useStockLocations,
 } from '@spree/dashboard-core'
@@ -562,7 +563,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           is still pending. */}
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
-        Number.parseFloat(fulfillment.cost) > 0) && (
+        isPositiveMoney(fulfillment.cost)) && (
         <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually

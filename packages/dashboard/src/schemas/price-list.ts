@@ -4,7 +4,13 @@ import type {
   PriceListUpdateParams,
   PriceRule,
 } from '@spree/admin-sdk'
-import { blankToNull, defaultPreferences } from '@spree/dashboard-core'
+import { isDecimalString, isZeroMoney } from '@spree/admin-sdk'
+import {
+  blankToNull,
+  defaultPreferences,
+  isPositiveMoney,
+  shiftDecimalPoint,
+} from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -133,10 +139,10 @@ export const priceListFormSchema = z
  * now: a percentage adjustment is valid only on a list a catalog owns, so
  * the standalone editor no longer offers it.
  */
-export function parsePercentage(value: string | undefined): number | null {
-  if (!value?.trim()) return null
-  const parsed = Number(value)
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+export function parsePercentage(value: string | undefined): string | null {
+  const trimmed = value?.trim()
+  // Rewritten without trailing zeros, so "5.0" and "5" are one percentage.
+  return isPositiveMoney(trimmed) ? shiftDecimalPoint(trimmed as string, 0) : null
 }
 
 /**
@@ -183,18 +189,18 @@ export function adjustmentFormValues(percentage: string | null | undefined): {
   adjustment_direction: AdjustmentDirection
   adjustment_magnitude: string
 } {
-  const parsed = percentage == null || percentage === '' ? null : Number(percentage)
   // Zero is no adjustment, and the form's own rules require a magnitude
   // above zero for automatic mode — loading it as automatic would leave the
   // page unsaveable until the user noticed the error.
-  if (parsed === null || !Number.isFinite(parsed) || parsed === 0) {
+  if (!isDecimalString(percentage) || isZeroMoney(percentage)) {
     return { pricing_mode: 'fixed', adjustment_direction: 'decrease', adjustment_magnitude: '' }
   }
 
+  const negative = percentage.startsWith('-')
   return {
     pricing_mode: 'automatic',
-    adjustment_direction: parsed < 0 ? 'decrease' : 'increase',
-    adjustment_magnitude: String(Math.abs(parsed)),
+    adjustment_direction: negative ? 'decrease' : 'increase',
+    adjustment_magnitude: shiftDecimalPoint(negative ? percentage.slice(1) : percentage, 0),
   }
 }
 

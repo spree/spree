@@ -218,7 +218,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       row = json_response['payment_splits'].first
       expect(row['id']).to eq(split.prefixed_id)
       expect(row).to include('payment_id' => payment.prefixed_id, 'payment_number' => payment.number,
-                             'order_id' => child.prefixed_id, 'captured_amount' => '100.0')
+                             'order_id' => child.prefixed_id, 'captured_amount' => '100.00')
     end
 
     subject { get :show, params: { id: order.prefixed_id }, as: :json }
@@ -400,7 +400,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         let(:create_params) do
           {
             email: 'test@example.com',
-            items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }]
+            items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '-1' }]
           }
         end
 
@@ -453,8 +453,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(created.delivery_total).to eq(5)
         expect(created.total).to eq(created.item_total + created.delivery_total + created.adjustment_total)
 
-        expect(json_response['delivery_total']).to eq('5.0')
-        expect(json_response['total']).to eq(created.total.to_s)
+        expect(json_response['delivery_total']).to eq('5.00')
+        expect(json_response['total']).to eq(Spree::Money::Rounding.format(created.total, created.currency))
       end
     end
 
@@ -811,7 +811,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       it 'refuses with an actionable message' do
         patch :update, params: {
           id: order.prefixed_id,
-          items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }]
+          items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '-1' }]
         }, as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
@@ -852,8 +852,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(order.fulfillments.first.selected_shipping_rate).to be_present
         expect(order.delivery_total).to eq(5)
 
-        expect(json_response['delivery_total']).to eq('5.0')
-        expect(json_response['total']).to eq(order.total.to_s)
+        expect(json_response['delivery_total']).to eq('5.00')
+        expect(json_response['total']).to eq(Spree::Money::Rounding.format(order.total, order.currency))
       end
 
       context 'when the order already has shipments' do

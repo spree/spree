@@ -7,6 +7,18 @@ export function formatPrice(price: Pick<Price, 'amount' | 'currency' | 'display_
   return price.display_amount ?? `${price.currency} ${price.amount}`
 }
 
+/**
+ * Formats a decimal-string amount ("1234.50") in a currency and locale. The
+ * string goes to `Intl` as it is — `Intl` reads numeric strings exactly — so
+ * the amount never passes through a JavaScript number.
+ */
+export function formatMoney(amount: string, currency: string, locale?: string): string {
+  // ES2023's Intl typings accept a numeric string; this package targets ES2022.
+  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(
+    amount as unknown as number,
+  )
+}
+
 export function formatStoreDateTime(iso: string, timezone: string) {
   return formatInTimeZone(parseISO(iso), timezone, 'PPP p')
 }

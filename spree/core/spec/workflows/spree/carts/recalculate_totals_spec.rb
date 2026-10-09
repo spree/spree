@@ -19,6 +19,47 @@ module Spree
         expect(order.total).to eq(order.item_total + order.delivery_total + order.adjustment_total)
       end
 
+      context 'rounding conformance across currencies' do
+        def priced_order(currency, price, quantity)
+          order = create(:order_with_line_items, store: store, line_items_count: 1)
+          order.update_columns(currency: currency)
+          order.line_items.first.update_columns(currency: currency, price: BigDecimal(price), quantity: quantity)
+          described_class.call(cart: order.reload)
+          order.reload
+        end
+
+        it 'keeps a dinar total to the thousandth' do
+          order = priced_order('KWD', '1.505', 3)
+
+          expect(order.item_total).to eq(BigDecimal('4.515'))
+        end
+
+        it 'holds a dong total above one hundred million' do
+          order = priced_order('VND', '150000000', 2)
+
+          expect(order.item_total).to eq(BigDecimal('300000000'))
+        end
+
+        it 'rounds a line priced below the cent to whole cents' do
+          order = priced_order('USD', '0.0125', 3)
+
+          expect(order.item_total).to eq(BigDecimal('0.04'))
+        end
+
+        it 'keeps a sub-cent unit price exact when the quantity makes it whole' do
+          order = priced_order('USD', '0.0125', 1000)
+
+          expect(order.line_items.first.price).to eq(BigDecimal('0.0125'))
+          expect(order.item_total).to eq(BigDecimal('12.5'))
+        end
+
+        it 'rounds a yen total to whole yen' do
+          order = priced_order('JPY', '100.5', 1)
+
+          expect(order.item_total).to eq(BigDecimal('101'))
+        end
+      end
+
       it 'nets refunds out of the payment total' do
         order = create(:completed_order_with_totals, store: store)
         payment = create(:payment, order: order, amount: order.total, status: 'completed')

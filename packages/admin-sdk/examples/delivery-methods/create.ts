@@ -10,7 +10,7 @@ const deliveryMethod = await client.deliveryMethods.create({
   name: 'Express',
   storefront_visible: true,
   calculator_type: 'flat_rate',
-  calculator_preferences: { amount: 12.5 },
+  calculator_preferences: { amount: '12.50' },
 })
 
 // endregion:example

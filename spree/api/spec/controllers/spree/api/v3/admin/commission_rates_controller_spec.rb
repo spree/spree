@@ -67,7 +67,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       post :create, params: {
         name: 'Audio sellers',
         kind: 'percentage',
-        value: 12.5,
+        value: '12.5',
         rules: [{ type: 'seller_rule', preferences: { seller_ids: [seller.prefixed_id] } }]
       }, as: :json
 
@@ -79,14 +79,14 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     end
 
     it 'refuses a fixed rate that states no amount anywhere' do
-      post :create, params: { name: 'Flat', kind: 'fixed', value: 2 }, as: :json
+      post :create, params: { name: 'Flat', kind: 'fixed', value: '2' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
     it 'names the unknown rule type in the code and its value, not just the sentence' do
       post :create, params: {
-        name: 'Bad rule', kind: 'percentage', value: 10,
+        name: 'Bad rule', kind: 'percentage', value: '10',
         rules: [{ type: 'wishlist_rule', preferences: {} }]
       }, as: :json
 
@@ -100,7 +100,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     end
 
     it 'refuses a percentage above one hundred' do
-      post :create, params: { name: 'Too high', kind: 'percentage', value: 150 }, as: :json
+      post :create, params: { name: 'Too high', kind: 'percentage', value: '150' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(json_response['error']['code']).to eq('validation_error')
@@ -108,14 +108,14 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
     it 'writes a floor and a cap per currency' do
       post :create, params: {
-        name: 'Bounded', kind: 'percentage', value: 10,
+        name: 'Bounded', kind: 'percentage', value: '10',
         bounds: { 'USD' => { min_amount: '2', max_amount: '20' }, 'PLN' => { max_amount: '80' } }
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['bounds']).to eq(
-        'USD' => { 'min_amount' => '2.0', 'max_amount' => '20.0' },
-        'PLN' => { 'min_amount' => nil, 'max_amount' => '80.0' }
+        'USD' => { 'min_amount' => '2.00', 'max_amount' => '20.00' },
+        'PLN' => { 'min_amount' => nil, 'max_amount' => '80.00' }
       )
     end
   end

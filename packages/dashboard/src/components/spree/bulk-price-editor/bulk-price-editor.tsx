@@ -3,13 +3,13 @@ import {
   adminClient,
   currencyParts,
   normalizeMoneyInput,
+  useMoneyLocale,
   useResourceKey,
 } from '@spree/dashboard-core'
 import { type BulkPriceRow, BulkPriceTable, toastManager } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCurrencyLocale } from '../../../hooks/use-currency-locale'
 import { useBulkUpsertPrices } from '../../../hooks/use-prices'
 import { MAXIMUM_QUANTITY_TIERS } from '../../../schemas/price-list'
 
@@ -141,7 +141,7 @@ export function BulkPriceEditor({
   // wrapper would put a fresh reference in every callback's dep array
   // and tank the parent via the `onStateChange` effect below.
   const { mutateAsync: bulkUpsertAsync, isPending: isSaving } = useBulkUpsertPrices(priceListId)
-  const localeForCurrency = useCurrencyLocale()
+  const moneyLocale = useMoneyLocale()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const deferredSearch = useDeferredValue(search)
@@ -149,15 +149,12 @@ export function BulkPriceEditor({
   const sanitizedFilter = useMemo(() => sanitizeFilter(filter), [filter])
   const filterKey = useMemo(() => stableFilterKey(sanitizedFilter), [sanitizedFilter])
 
-  // Format the grid in the currency's market locale (e.g. EUR → `de`, comma
-  // decimal). The same locale normalizes each typed amount to canonical form as the
-  // cell commits (see `handleChange`), so the grid shows what Save sends. Falls
-  // back to `en` (canonical period-decimal), NOT the UI language — money
-  // formatting/parsing must never depend on the dashboard's language.
-  const marketLocale = localeForCurrency(currency) || 'en'
+  // The grid is shown in the person's own number format, and the same locale
+  // normalizes each typed amount as the cell commits (see `handleChange`), so
+  // the grid shows what Save sends.
   const { symbol, decimal } = useMemo(
-    () => currencyParts(currency, marketLocale),
-    [currency, marketLocale],
+    () => currencyParts(currency, moneyLocale),
+    [currency, moneyLocale],
   )
 
   const { data, isLoading } = useQuery({
@@ -467,10 +464,10 @@ export function BulkPriceEditor({
       // Typing a price into the trailing blank row is what creates the rung.
       const promoted = promoteBlankRow(rowId)
       const targetId = promoted ?? rowId
-      // Normalized on commit, from the currency's market locale, so an edit
+      // Normalized on commit, from the admin's own number format, so an edit
       // holds the same canonical `"1234.56"` the API returns. The cell then
-      // shows exactly what Save will send (docs/plans/5.5-client-side-money-normalization.md).
-      const canonical = normalizeMoneyInput(next, marketLocale) || null
+      // shows exactly what Save will send.
+      const canonical = normalizeMoneyInput(next, moneyLocale) || null
 
       setEdits((prev) => {
         // A draft rung has no stored row, so it is found by its own id.
@@ -510,7 +507,7 @@ export function BulkPriceEditor({
         return out
       })
     },
-    [baselineRows, marketLocale, promoteBlankRow],
+    [baselineRows, moneyLocale, promoteBlankRow],
   )
 
   // The plus on the blank row does the same thing a keystroke does — it is

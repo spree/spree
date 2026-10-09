@@ -895,8 +895,7 @@ module Spree
     def capture_at_gateway(payment, amount)
       return 0 if amount <= 0
 
-      units = Spree::Money::Rounding.to_minor_units(amount, payment.currency)
-      result = Spree.payment_capture_workflow.call(payment: payment, amount: units)
+      result = Spree.payment_capture_workflow.call(payment: payment, amount: amount)
       raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
 
       amount

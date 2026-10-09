@@ -1,4 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/admin-sdk'
 import { adminClient, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
@@ -42,7 +43,7 @@ export function DiscountsCard({ order }: { order: Order }) {
   )
 
   const isEditable = !order.completed_at
-  const couponPending = Boolean(order.coupon_code) && Number.parseFloat(order.discount_total) === 0
+  const couponPending = Boolean(order.coupon_code) && isZeroMoney(order.discount_total)
 
   return (
     <>

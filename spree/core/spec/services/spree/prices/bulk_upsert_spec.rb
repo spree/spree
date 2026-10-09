@@ -129,6 +129,20 @@ RSpec.describe Spree::Prices::BulkUpsert do
       expect(base.amount).to eq(BigDecimal('7.77'))
     end
 
+    it 'refuses an amount it would otherwise misread, naming the row' do
+      result = described_class.call(rows: [{ variant_id: variant.id, currency: 'USD', amount: '1,599.99' }])
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(malformed_amounts: [{ index: 0 }])
+    end
+
+    it 'refuses an amount that is not a number rather than clearing the price' do
+      result = described_class.call(rows: [{ variant_id: variant.id, currency: 'USD', price_list_id: price_list.id, amount: false }])
+
+      expect(result).to be_failure
+      expect(override.reload.amount).to eq(BigDecimal('5.00'))
+    end
+
     it 'drops rows missing variant_id or currency' do
       result = described_class.call(rows: [{ amount: '9.99' }])
 

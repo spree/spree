@@ -46,7 +46,7 @@ module Spree
       #
       # @return [Boolean]
       def payment_required?
-        total.to_f > 0.0
+        total.to_d.positive?
       end
 
       # Whether a confirm/review pass is expected before completion —

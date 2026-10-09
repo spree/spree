@@ -34,9 +34,9 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
       expect(row['commission_rate']['name']).to eq('Standard commission')
-      expect(row['amount']).to eq('10.0')
-      expect(row['tax_amount']).to eq('2.1')
-      expect(row['total']).to eq('12.1')
+      expect(row['amount']).to eq('10.00')
+      expect(row['tax_amount']).to eq('2.10')
+      expect(row['total']).to eq('12.10')
       expect(row['display_total']).to eq('$12.10')
     end
 

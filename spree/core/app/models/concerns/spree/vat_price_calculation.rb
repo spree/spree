@@ -1,6 +1,9 @@
 module Spree
   # Restates a VAT-inclusive price for a customer in another country: the
   # home-country VAT comes out, the destination's goes on.
+  #
+  # The including class answers +currency+, which the restated amount is
+  # rounded to.
   module VatPriceCalculation
     # Cheapest test first: a domestic sale needs no restatement whatever the
     # provider is, so the provider lookup (a constantize and an instantiation) is
@@ -11,7 +14,7 @@ module Spree
       return amount if amount.nil? || !outside_default_vat_zone?(price_options)
       return amount unless restatement_available?(price_options)
 
-      round_to_two_places(add_foreign_vat_for(amount, price_options))
+      Spree::Money::Rounding.to_currency(add_foreign_vat_for(amount, price_options), currency)
     end
 
     private
@@ -66,7 +69,7 @@ module Spree
         lookup[:country] = country_from(price_options)
       end
 
-      Spree::TaxRate.included_tax_amount_for(lookup).to_f
+      Spree::TaxRate.included_tax_amount_for(lookup).to_d
     end
 
     # +current_price_options+ is documented as an override point, so an app may
@@ -91,10 +94,6 @@ module Spree
       return @default_tax_country if defined?(@default_tax_country)
 
       @default_tax_country = Spree::Current.store&.default_country
-    end
-
-    def round_to_two_places(amount)
-      Spree::Money::Rounding.quantize(amount, 2)
     end
   end
 end

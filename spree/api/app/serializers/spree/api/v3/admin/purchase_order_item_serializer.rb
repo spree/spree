@@ -9,10 +9,6 @@ module Spree
                    quantity_rejected: :number,
                    quantity_over: :number,
                    outstanding: :number,
-                   unit_cost: :string,
-                   display_unit_cost: :string,
-                   total_cost: :string,
-                   display_total_cost: :string,
                    currency: 'string | null',
                    purchase_order_id: 'string | null',
                    thumbnail_url: 'string | null',
@@ -26,13 +22,11 @@ module Spree
                      :outstanding, :currency,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # Money on the wire is a decimal string: a float would round the
-          # merchant's own figure.
-          attribute :unit_cost do |item|
-            item.unit_cost&.to_s
-          end
+          money_attributes :unit_cost, :display_unit_cost, unit_price: true
+          money_attributes :total_cost, :display_total_cost
+          typelize unit_cost: [:string, nullable: false], display_unit_cost: [:string, nullable: false],
+                   total_cost: [:string, nullable: false], display_total_cost: [:string, nullable: false]
 
-          attributes total_cost: :string, display_unit_cost: :string, display_total_cost: :string
           attribute :purchase_order_id do |item|
             Spree::PurchaseOrder.prefixed_id_for(item.purchase_order_id)
           end

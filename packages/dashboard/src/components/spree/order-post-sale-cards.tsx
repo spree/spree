@@ -1,4 +1,5 @@
 import type { Claim, Exchange, Order } from '@spree/admin-sdk'
+import { isPositiveMoney } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -129,7 +130,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                               // A dearer replacement leaves the customer owing
                               // the difference, which fulfilling puts on the order.
                               if (
-                                Number(exchange.price_difference) > 0 &&
+                                isPositiveMoney(exchange.price_difference) &&
                                 !(await confirm({
                                   message: t(
                                     'admin.pages.orders.detail.exchanges.confirm.balance_due',

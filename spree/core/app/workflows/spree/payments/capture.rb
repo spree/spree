@@ -14,11 +14,13 @@ module Spree
       hooks :validate, :before_capture, :after_capture
 
       # @param payment [Spree::Payment] a completed payment is a no-op
-      # @param amount [Integer, nil] amount in cents; nil captures in full,
-      #   a smaller amount splits the remainder into a new pending payment
+      # @param amount [BigDecimal, nil] in the currency's own units; nil
+      #   captures in full, a smaller amount splits the remainder into a new
+      #   pending payment. An Integer is read as hundredths of the currency,
+      #   the pre-6.0 contract (deprecated, removed in 6.1).
       def perform(payment:, amount: nil)
         super
-        @amount = amount || payment.money.amount_in_cents
+        @amount = capture_amount(amount)
 
         step :ensure_capturable
         # Veto point — fraud holds, manual review. Before any money moves.
@@ -44,6 +46,17 @@ module Spree
 
       attr_reader :response, :remainder
 
+      def capture_amount(amount)
+        return payment.amount if amount.nil?
+        return Spree::Money::Rounding.to_currency(amount, payment.currency) unless amount.is_a?(Integer)
+
+        Spree::Deprecation.warn(
+          'Passing an Integer amount to the payment capture workflow is deprecated and is read as hundredths of ' \
+          'the currency. Pass the amount in the currency\'s own units as a BigDecimal; removed in Spree 6.1.'
+        )
+        Spree::Money::Rounding.from_hundredths(amount)
+      end
+
       # An already-captured payment returns success rather than failing:
       # capture is naturally idempotent and double-submitted admin actions
       # must not surface as errors. A failed payment is capturable — the
@@ -65,7 +78,9 @@ module Spree
       def capture_at_gateway
         @response = payment.protect_from_connection_error do
           instrument_gateway_call(:capture, payment.payment_method) do
-            payment.payment_method.capture(@amount, payment.response_code, payment.gateway_options)
+            payment.payment_method.capture(
+              payment.payment_method.gateway_amount(@amount, payment.currency), payment.response_code, payment.gateway_options
+            )
           end
         end
 
@@ -86,7 +101,7 @@ module Spree
           if Spree::Payment.where(id: payment.id, status: 'completed').exists?
             already_captured = true
           else
-            payment.capture_events.create!(amount: ::Money.new(@amount, payment.currency).to_f)
+            payment.capture_events.create!(amount: @amount)
             # Split before completing, so payment.completed publishes with
             # the captured amount and the order recomputes from correct rows.
             @remainder = payment.split_uncaptured_amount

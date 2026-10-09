@@ -63,8 +63,8 @@ module Spree
           {
             id: 'price',
             type: 'price_range',
-            min: min.to_f,
-            max: max.to_f,
+            min: min,
+            max: max,
             currency: @currency
           }
         end

@@ -81,7 +81,7 @@ RSpec.describe 'Cart Discount Codes API', type: :request, swagger_doc: 'api-refe
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['coupon_code']).to eq('big50')
-          expect(data['discount_total']).to eq('0.0')
+          expect(data['discount_total']).to eq('0.00')
           warning = data['warnings'].sole
           expect(warning['code']).to eq('coupon_code_not_eligible')
           expect(warning['message']).to be_present

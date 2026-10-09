@@ -778,6 +778,9 @@ importers:
 
   packages/seller-dashboard-starter:
     dependencies:
+      '@spree/admin-sdk':
+        specifier: workspace:^
+        version: link:../admin-sdk
       '@spree/dashboard-core':
         specifier: workspace:^
         version: link:../dashboard-core

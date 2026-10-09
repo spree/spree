@@ -1,15 +1,20 @@
-import type { DeliveryMethodRule } from '@spree/admin-sdk'
+import { type DeliveryMethodRule, isDecimalString, isZeroMoney } from '@spree/admin-sdk'
+import { formatMoney } from '@spree/dashboard-core'
 import type { TFunction } from 'i18next'
 
-function toNumber(value: unknown): number | null {
-  if (value === null || value === undefined || value === '') return null
-  const parsed = Number(value)
-  return Number.isNaN(parsed) ? null : parsed
+/**
+ * A stored preference as a decimal string. The API answers with strings; a
+ * number still sitting in preferences saved before 6.0 is read as its digits.
+ */
+function toDecimal(value: unknown): string | null {
+  const text =
+    typeof value === 'number' ? String(value) : typeof value === 'string' ? value.trim() : ''
+  return isDecimalString(text) ? text : null
 }
 
 /** One stored delivery amount and the ISO currency it was entered in. */
 export type ListedAmount = {
-  amount: number
+  amount: string
   currency: string
 }
 
@@ -34,7 +39,7 @@ function hashEntry(amounts: Record<string, unknown>, currency: string): unknown 
 function writeHashAmount(
   amounts: Record<string, unknown>,
   currency: string,
-  value: number | null,
+  value: string | null,
 ): void {
   const existing = hashKey(amounts, currency)
   if (existing !== undefined) delete amounts[existing]
@@ -66,15 +71,15 @@ export function amountForCurrency(
   preferences: Record<string, unknown> | null | undefined,
   currency: string,
   defaultCurrency: string,
-): number | null {
+): string | null {
   const code = currency.toUpperCase()
   const fromHash = hashEntry(amountsHash(preferences), code)
   if (fromHash !== undefined && fromHash !== null && fromHash !== '') {
-    return toNumber(fromHash)
+    return toDecimal(fromHash)
   }
 
   if (legacyCurrency(preferences, defaultCurrency) !== code) return null
-  return toNumber(preferences?.amount)
+  return toDecimal(preferences?.amount)
 }
 
 /**
@@ -94,7 +99,7 @@ export function applyCurrencyAmount(
 ): Record<string, unknown> {
   const code = currency.toUpperCase()
   const defaultCode = defaultCurrency.toUpperCase()
-  const parsed = raw === '' ? null : toNumber(raw)
+  const parsed = toDecimal(raw)
   const nextAmounts = { ...amountsHash(preferences) }
   const namedCurrency = legacyCurrency(preferences, defaultCurrency)
 
@@ -145,14 +150,14 @@ export function listedAmounts(
   const defaultCode = defaultCurrency.toUpperCase()
 
   for (const [code, value] of Object.entries(amountsHash(preferences))) {
-    const parsed = toNumber(value)
+    const parsed = toDecimal(value)
     if (parsed === null) continue
     const currency = code.toUpperCase()
     listed.push({ amount: parsed, currency })
     seen.add(currency)
   }
 
-  const legacyAmount = toNumber(preferences?.amount)
+  const legacyAmount = toDecimal(preferences?.amount)
   if (legacyAmount !== null) {
     const named = legacyCurrency(preferences, defaultCurrency)
     if (!seen.has(named)) {
@@ -172,14 +177,14 @@ export function listedAmounts(
  * priced some other way (per item, tiered, per carrier quote) and has no
  * single number to show. Prefer `listedAmounts` when the currency matters.
  */
-export function flatAmount(preferences: Record<string, unknown> | null | undefined): number | null {
-  return toNumber(preferences?.amount)
+export function flatAmount(preferences: Record<string, unknown> | null | undefined): string | null {
+  return toDecimal(preferences?.amount)
 }
 
 /** Formats an amount in the given currency, falling back to a bare number. */
-export function formatAmount(amount: number, currency: string, locale?: string): string {
+export function formatAmount(amount: string, currency: string, locale?: string): string {
   try {
-    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount)
+    return formatMoney(amount, currency, locale)
   } catch {
     return `${amount} ${currency}`
   }
@@ -197,7 +202,9 @@ export function formatListedPrice(
   freeLabel: string,
   separator: string,
 ): string {
-  const priced = listedAmounts(preferences, defaultCurrency).filter((row) => row.amount !== 0)
+  const priced = listedAmounts(preferences, defaultCurrency).filter(
+    (row) => !isZeroMoney(row.amount),
+  )
   if (priced.length === 0) return freeLabel
   return priced.map((row) => formatAmount(row.amount, row.currency, locale)).join(separator)
 }
@@ -224,8 +231,8 @@ function summarizeRule(
   const preferences = (rule.preferences ?? {}) as Record<string, unknown>
 
   if (rule.type === 'weight_rule') {
-    const min = toNumber(preferences.minimum_weight)
-    const max = toNumber(preferences.maximum_weight)
+    const min = toDecimal(preferences.minimum_weight)
+    const max = toDecimal(preferences.maximum_weight)
     if (min !== null && max !== null) {
       return t('admin.delivery_methods.rule_summary.weight_between', {
         min,
@@ -243,9 +250,9 @@ function summarizeRule(
   }
 
   if (rule.type === 'item_total_rule') {
-    const min = toNumber(preferences.minimum_amount)
-    const max = toNumber(preferences.maximum_amount)
-    const money = (value: number) => formatAmount(value, currency, locale)
+    const min = toDecimal(preferences.minimum_amount)
+    const max = toDecimal(preferences.maximum_amount)
+    const money = (value: string) => formatAmount(value, currency, locale)
     if (min !== null && max !== null) {
       return t('admin.delivery_methods.rule_summary.total_between', {
         min: money(min),

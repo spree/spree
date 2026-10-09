@@ -1,7 +1,11 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { expect, type Locator, type Page, test } from '@playwright/test'
-import { gotoIndex, login } from './helpers'
+import { gotoIndex, login, switchAdminLocale } from './helpers'
+import { E2E_DIR } from './paths'
 import {
   addOptionToVariants,
+  card,
   createProduct,
   inventoryCard,
   pricesCard,
@@ -152,11 +156,10 @@ test.describe('product prices — single variant', () => {
     ).toHaveValue('12')
   })
 
-  // Multi-currency + localized. The inline Prices card switches currency via
-  // its header selector; each currency's prices ride the SAME product PATCH.
-  // Enter a USD price (period) and a EUR price comma-decimal (`34,56`), save
-  // once, and confirm each round-trips in its own currency/locale — proving the
-  // per-currency client-side normalization in the batched product update.
+  // Multi-currency. The inline Prices card switches currency via its header
+  // selector; each currency's prices ride the SAME product PATCH. A USD price
+  // with a period and a EUR price with a comma (`34,56`, a comma before two
+  // digits being read as the decimal) both round-trip from one save.
   test('sets prices in two currencies (USD period + EUR comma) in one save', async ({ page }) => {
     const creds = await login(page)
 
@@ -167,8 +170,7 @@ test.describe('product prices — single variant', () => {
     // USD default — period decimal.
     await fillGridCell(card.getByRole('textbox', { name: /^price for default$/i }), '12.50')
 
-    // Switch the Prices card to EUR; the grid formats in the EUR market locale
-    // (de: comma decimal). Enter `34,56` → must persist as 34.56.
+    // Switch the Prices card to EUR. Enter `34,56` → must persist as 34.56.
     await card.getByRole('combobox').first().click()
     await page.getByRole('option', { name: 'EUR' }).click()
     await fillGridCell(card.getByRole('textbox', { name: /^price for default$/i }), '34,56')
@@ -181,7 +183,7 @@ test.describe('product prices — single variant', () => {
     await page.reload()
     const reloaded = pricesCard(page)
     // EUR cell is shown after reload (card defaults back to USD); switch to EUR
-    // and confirm the comma-decimal value persisted as 34,56 (not 3456).
+    // and confirm the comma-typed value persisted as 34.56 (not 3456).
     await reloaded.getByRole('combobox').first().click()
     await page.getByRole('option', { name: 'EUR' }).click()
     await expect(reloaded.getByRole('textbox', { name: /^price for default$/i })).toHaveValue(
@@ -196,10 +198,9 @@ test.describe('product prices — single variant', () => {
   })
 
   // Regression: a save that includes an UNTOUCHED EUR price must not re-parse
-  // it. Form state holds the canonical API value (`34.56`); under the EUR
-  // market locale `.` is a thousands separator, so re-normalizing on save would
-  // mangle `34.56` → `3456`. Editing a non-price field must leave the EUR price
-  // intact.
+  // it. Form state holds the canonical API value (`34.56`); re-normalizing it
+  // on save under a comma-decimal format would mangle it to `3456`. Editing a
+  // non-price field must leave the EUR price intact.
   test('preserves an untouched EUR price when saving an unrelated field', async ({ page }) => {
     const creds = await login(page)
 
@@ -234,6 +235,156 @@ test.describe('product prices — single variant', () => {
       /^34[.,]56$/,
     )
   })
+})
+
+// ---------------------------------------------------------------------------
+// Money entry — the person's own number format, any currency, any market
+// ---------------------------------------------------------------------------
+
+// Prices are shown and typed in the number format of the person using the
+// dashboard, whatever the currency or market, and saving the product again must
+// leave them as they are. The API returns "49.5" for 49.50 until amounts are
+// written to the currency's decimals, so the expectations allow the trailing
+// zero to be missing; what they rule out is a separator read the wrong way.
+test.describe('product prices — number format', () => {
+  // The German labels the product page shows, read from the dashboard's own
+  // translations so the spec follows them.
+  const germanLocale = JSON.parse(
+    readFileSync(resolve(E2E_DIR, '../../dashboard-core/src/locales/de.json'), 'utf-8'),
+  ) as Record<string, unknown>
+  const inGerman = (key: string): string =>
+    key
+      .split('.')
+      .reduce<unknown>(
+        (node, part) => (node as Record<string, unknown>)[part],
+        germanLocale,
+      ) as string
+  const german = {
+    prices: inGerman('admin.common.prices'),
+    priceForDefault: new RegExp(
+      `^${inGerman('admin.pages.products.price_lists.edit_prices.price_aria').replace(
+        '{{label}}',
+        inGerman('admin.pages.products.price_lists.edit_prices.variant_default'),
+      )}$`,
+    ),
+    save: inGerman('admin.products.save_label'),
+  }
+
+  function priceCell(card: Locator, name: string | RegExp = /^price for default$/i): Locator {
+    return card.getByRole('textbox', { name })
+  }
+
+  async function showCurrency(page: Page, card: Locator, currency: string): Promise<void> {
+    await card.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: currency }).click()
+  }
+
+  async function saveProduct(page: Page, label: string | RegExp = /save product/i): Promise<void> {
+    await page.getByRole('button', { name: label }).click()
+    await expect(page.getByRole('button', { name: label })).toBeDisabled({ timeout: 30_000 })
+  }
+
+  // Saves the product with only its name changed, the way a merchant saves it
+  // again without opening the prices.
+  async function saveAgainUntouched(page: Page, name: string): Promise<void> {
+    await page.reload()
+    await page.getByLabel(/^name$/i).fill(name)
+    await saveProduct(page)
+  }
+
+  test('an English-speaking admin types every currency with a period, and repeated saves keep it', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const productName = `E2E Period ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+
+    const card = pricesCard(page)
+    await fillGridCell(priceCell(card), '1,234.56')
+    // EUR's market writes German, but the person typing writes English.
+    await showCurrency(page, card, 'EUR')
+    await fillGridCell(priceCell(card), '49.50')
+    await saveProduct(page)
+
+    await saveAgainUntouched(page, `${productName} (2)`)
+    await saveAgainUntouched(page, `${productName} (3)`)
+
+    await page.reload()
+    const reloaded = pricesCard(page)
+    await expect(priceCell(reloaded)).toHaveValue('1234.56')
+    await showCurrency(page, reloaded, 'EUR')
+    await expect(priceCell(reloaded)).toHaveValue(/^49\.50?$/)
+  })
+
+  test.describe('in German', () => {
+    let restoreLocale: () => Promise<void> = async () => {}
+
+    test.afterEach(async () => {
+      await restoreLocale()
+    })
+
+    test('a German-speaking admin types every currency with a comma, and repeated saves keep it', async ({
+      page,
+    }) => {
+      const creds = await login(page)
+      const productName = `E2E Comma ${Date.now()}`
+      await createProduct(page, creds.store_id, productName)
+      restoreLocale = await switchAdminLocale(page, 'de')
+      await page.reload()
+
+      const prices = germanPricesCard(page)
+      // USD's market writes English, but the person typing writes German.
+      await fillGridCell(priceCell(prices, german.priceForDefault), '1.234,56')
+      await showCurrency(page, prices, 'EUR')
+      await fillGridCell(priceCell(prices, german.priceForDefault), '49,50')
+      await saveProduct(page, german.save)
+
+      for (const round of [2, 3]) {
+        await page.reload()
+        await page.getByLabel(/^name$/i).fill(`${productName} (${round})`)
+        await saveProduct(page, german.save)
+      }
+
+      await page.reload()
+      const reloaded = germanPricesCard(page)
+      await expect(priceCell(reloaded, german.priceForDefault)).toHaveValue('1234,56')
+      await showCurrency(page, reloaded, 'EUR')
+      await expect(priceCell(reloaded, german.priceForDefault)).toHaveValue(/^49,50?$/)
+    })
+
+    function germanPricesCard(page: Page): Locator {
+      return card(page, new RegExp(`^${german.prices}$`))
+    }
+  })
+
+  // The reported bug: in a store whose default market writes a comma decimal,
+  // the server read "49.50" as 4950, and every save of an unchanged 99 added a
+  // zero. The store also sells in USD through a second market.
+  for (const [typed, shown] of [
+    ['49.50', /^49\.50?$/],
+    ['99', /^99(\.0+)?$/],
+    ['1,234.56', /^1234\.56$/],
+  ] as const) {
+    test(`a store whose market writes a comma decimal saves ${typed} exactly`, async ({ page }) => {
+      const creds = await login(page)
+      const productName = `E2E Dutch ${typed} ${Date.now()}`
+      await createProduct(page, creds.comma_store_id, productName)
+      const card = pricesCard(page)
+      await fillGridCell(priceCell(card), typed)
+      await showCurrency(page, card, 'USD')
+      await fillGridCell(priceCell(card), typed)
+      await saveProduct(page)
+
+      await saveAgainUntouched(page, `${productName} (2)`)
+      await saveAgainUntouched(page, `${productName} (3)`)
+
+      await page.reload()
+      const reloaded = pricesCard(page)
+      await expect(priceCell(reloaded)).toHaveValue(shown)
+      await showCurrency(page, reloaded, 'USD')
+      await expect(priceCell(reloaded)).toHaveValue(shown)
+    })
+  }
 })
 
 // ---------------------------------------------------------------------------
