@@ -518,7 +518,13 @@ function NumberPreferenceInput({
       if (Number.isInteger(number)) onChange(number)
       return
     }
-    onChange(DECIMAL_REGEX.test(trimmed) ? trimmed : String(number))
+    // `.5` or `1e-7` is a number the server would refuse as typed; send its
+    // plain decimal form.
+    onChange(
+      DECIMAL_REGEX.test(trimmed)
+        ? trimmed
+        : number.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 }),
+    )
   }
 
   return (

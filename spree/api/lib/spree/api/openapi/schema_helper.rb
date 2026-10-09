@@ -35,6 +35,29 @@ module Spree
         end
 
         # Common schemas that are not from serializers
+        # The nested calculator of a promotion action and a delivery method,
+        # keyed by the preference family its `preferences` belong to.
+        CALCULATOR_SCHEMAS = {
+          'PromotionCalculator' => [:PromotionActionCalculator, {
+            type: :object,
+            description: "The action's nested calculator (when the action carries one — null for actions like `free_shipping`)",
+            properties: {
+              type: { type: :string, example: 'flat_rate', description: 'Wire shorthand for the calculator subclass' },
+              preferences: { '$ref' => '#/components/schemas/PromotionCalculatorPreferences' }
+            },
+            required: %w[type preferences]
+          }],
+          'DeliveryCalculator' => [:DeliveryMethodCalculator, {
+            type: :object,
+            description: 'How the delivery method prices a shipment',
+            properties: {
+              type: { type: :string, example: 'flat_rate', description: 'Wire shorthand for the calculator subclass' },
+              preferences: { '$ref' => '#/components/schemas/DeliveryCalculatorPreferences' }
+            },
+            required: %w[type preferences]
+          }]
+        }.freeze
+
         def common_schemas
           {
             PaginationMeta: {
@@ -171,24 +194,6 @@ module Spree
                            '`x-spree-secret` for a secret and `x-spree-prefix` for an id list. Unknown keys are refused.',
               additionalProperties: true,
               example: { type: 'object', properties: { amount: { type: 'string', format: 'money', default: '0.0' } }, additionalProperties: false }
-            },
-            PromotionActionCalculator: {
-              type: :object,
-              description: "The action's nested calculator (when the action carries one — null for actions like `free_shipping`)",
-              properties: {
-                type: { type: :string, example: 'flat_rate', description: 'Wire shorthand for the calculator subclass' },
-                preferences: { '$ref' => '#/components/schemas/PromotionCalculatorPreferences' }
-              },
-              required: %w[type preferences]
-            },
-            DeliveryMethodCalculator: {
-              type: :object,
-              description: 'How the delivery method prices a shipment',
-              properties: {
-                type: { type: :string, example: 'flat_rate', description: 'Wire shorthand for the calculator subclass' },
-                preferences: { '$ref' => '#/components/schemas/DeliveryCalculatorPreferences' }
-              },
-              required: %w[type preferences]
             },
             PromotionActionLineItem: {
               type: :object,
@@ -583,6 +588,9 @@ module Spree
             props[key] = { '$ref' => "#/components/schemas/#{family}Preferences" } if props&.key?(key)
           end
 
+          # A calculator names its family's union, so it is published only
+          # alongside that union.
+          CALCULATOR_SCHEMAS.slice(*families).each_value { |name, schema| schemas[name] = schema }
           patch_delivery_method_calculator(schemas)
           schemas
         end
