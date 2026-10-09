@@ -146,19 +146,19 @@ function associationsType(
 function render(spec: Spec): string {
   checkPredicates(spec.components?.['x-spree-filter-predicates'])
   const tables = spec.components?.['x-spree-filter-tables'] ?? {}
-  const roots = new Map<string, Omit<EndpointFilters, 'table'>>()
-
-  // Endpoints listing the same records share one type; their sort fields and
-  // custom-field support combine.
+  // Endpoints listing the same records share one type, keyed by what they
+  // accept: the search-backed lists (custom fields, provider sorts) get their
+  // own `<Table>Search…` types when plain lists of the same records exist too.
+  const groups = new Map<string, { table: string; search: boolean; sortable: Set<string> }>()
   for (const operations of Object.values(spec.paths)) {
     const filters = operations.get?.['x-spree-filters']
     if (!filters) continue
 
-    const known = roots.get(filters.table)
-    roots.set(filters.table, {
-      sortable: [...new Set([...(known?.sortable ?? []), ...filters.sortable])].sort(),
-      custom_fields: Boolean(known?.custom_fields || filters.custom_fields),
-    })
+    const search = Boolean(filters.custom_fields)
+    const key = `${filters.table}:${search}`
+    const group = groups.get(key) ?? { table: filters.table, search, sortable: new Set<string>() }
+    for (const field of filters.sortable) group.sortable.add(field)
+    groups.set(key, group)
   }
 
   const out: string[] = []
@@ -167,24 +167,28 @@ function render(spec: Spec): string {
     out.push(`export type ${name}Fields = ${fieldsType(tables[name])}`, '')
   }
 
-  for (const [name, endpoint] of [...roots].sort(([a], [b]) => a.localeCompare(b))) {
+  const sorted = [...groups.values()].sort(
+    (a, b) => a.table.localeCompare(b.table) || Number(a.search) - Number(b.search),
+  )
+  for (const { table: name, search, sortable } of sorted) {
     const table = tables[name]
+    const typeName = search && groups.has(`${name}:false`) ? `${name}Search` : name
     const parts = [`${name}Fields`, ...associationsType(tables, table, 0), 'Filter.OrFilters']
     const scopes = scopesType(table)
     if (scopes) parts.push(scopes)
-    if (endpoint.custom_fields) parts.push('Filter.CustomFieldFilters')
+    if (search) parts.push('Filter.CustomFieldFilters')
 
-    const sortable = endpoint.sortable.length ? union(endpoint.sortable) : 'never'
-    const sort = endpoint.custom_fields
-      ? `Filter.SortKey<${sortable} | \`cf_\${string}\`>`
-      : `Filter.SortKey<${sortable}>`
+    const fields = sortable.size ? union([...sortable].sort()) : 'never'
+    const sort = search
+      ? `Filter.SortKey<${fields} | \`cf_\${string}\`>`
+      : `Filter.SortKey<${fields}>`
 
     // Filters an app adds through its own extensions, which the published
     // types cannot know about: `declare module` the SDK and add them here.
-    out.push(`export interface ${name}FilterExtensions {}`, '')
+    if (typeName === name) out.push(`export interface ${name}FilterExtensions {}`, '')
     parts.push(`${name}FilterExtensions`)
-    out.push(`export type ${name}Filters = ${parts.join('\n  & ')}`, '')
-    out.push(`export type ${name}Sort = ${sort}`, '')
+    out.push(`export type ${typeName}Filters = ${parts.join('\n  & ')}`, '')
+    out.push(`export type ${typeName}Sort = ${sort}`, '')
   }
 
   // A namespace import, so no table name can collide with a building block.

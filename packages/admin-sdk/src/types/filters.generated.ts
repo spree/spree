@@ -889,10 +889,45 @@ export type ProductFilters = ProductFields
     search_by_name?: string
     with_option_value_ids?: string | string[]
   }
+  & ProductFilterExtensions
+
+export type ProductSort = Filter.SortKey<'available_on' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'name' | 'seller_id' | 'slug' | 'status' | 'updated_at'>
+
+export type ProductSearchFilters = ProductFields
+  & Filter.Prefixed<'categories_', CategoryFields & Filter.Prefixed<'parent_', CategoryFields>>
+  & Filter.Prefixed<'channels_', ChannelFields>
+  & Filter.Prefixed<'collections_', CollectionFields>
+  & Filter.Prefixed<'default_variant_', VariantFields & Filter.Prefixed<'option_values_', OptionValueFields> & Filter.Prefixed<'prices_', PriceFields> & Filter.Prefixed<'product_', ProductFields> & Filter.Prefixed<'seller_', SellerFields> & Filter.Prefixed<'tax_category_', TaxCategoryFields>>
+  & Filter.Prefixed<'labels_', TagFields>
+  & Filter.Prefixed<'option_types_', OptionTypeFields>
+  & Filter.Prefixed<'product_categories_', ProductCategoryFields>
+  & Filter.Prefixed<'product_type_', ProductTypeFields & Filter.Prefixed<'option_types_', OptionTypeFields>>
+  & Filter.Prefixed<'seller_', SellerFields>
+  & Filter.Prefixed<'store_', StoreFields>
+  & Filter.Prefixed<'tags_', TagFields>
+  & Filter.Prefixed<'variants_', VariantFields & Filter.Prefixed<'option_values_', OptionValueFields> & Filter.Prefixed<'prices_', PriceFields> & Filter.Prefixed<'product_', ProductFields> & Filter.Prefixed<'seller_', SellerFields> & Filter.Prefixed<'tax_category_', TaxCategoryFields>>
+  & Filter.OrFilters
+  & {
+    ascend_by_price?: boolean
+    descend_by_price?: boolean
+    in_categories?: string | string[]
+    in_category?: string
+    in_collection?: string
+    in_stock?: boolean
+    in_taxon?: string
+    not_discontinued?: boolean
+    out_of_stock?: boolean
+    price_between?: [string | number, string | number]
+    price_gte?: string | number
+    price_lte?: string | number
+    search?: string
+    search_by_name?: string
+    with_option_value_ids?: string | string[]
+  }
   & Filter.CustomFieldFilters
   & ProductFilterExtensions
 
-export type ProductSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | `cf_${string}`>
+export type ProductSearchSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | `cf_${string}`>
 
 export interface ProductTypeFilterExtensions {}
 

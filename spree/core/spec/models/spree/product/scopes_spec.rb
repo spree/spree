@@ -59,6 +59,11 @@ describe 'Product scopes', type: :model do
       expect(Spree::Product.in_taxon(@parent_category).to_a.size).to eq(1)
     end
 
+    it 'calling Product.in_taxon with a prefixed ID, as a filter does' do
+      expect(Spree::Product.in_taxon(@parent_category.prefixed_id)).to include(product)
+      expect(Spree::Product.in_taxon('ctg_unknown')).to be_empty
+    end
+
     context 'returns correct products for category' do
       let(:other_category) { create(:category, products: [product]) }
       let!(:product_2) { create(:product, categories: [@child_category, other_category]) }

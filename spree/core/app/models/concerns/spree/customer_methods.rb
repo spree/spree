@@ -223,10 +223,11 @@ module Spree
       }
 
       # Customers with standing for a company: members of the node or of any
-      # ancestor (see #standing_for?). Accepts a record, an id, or an array.
-      scope :with_standing_for_company, ->(companies) {
+      # ancestor (see #standing_for?). Accepts records, ids, or an array; a
+      # splat because Ransack passes each value of a list as its own argument.
+      scope :with_standing_for_company, ->(*companies) {
         scoped = Spree::Current.store&.companies || Spree::Company.none
-        nodes = Array.wrap(companies).filter_map do |company|
+        nodes = companies.flatten.filter_map do |company|
           company.is_a?(Spree::Company) ? company : scoped.find_by_param(company)
         end
         next none if nodes.empty?

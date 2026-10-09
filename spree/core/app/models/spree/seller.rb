@@ -44,7 +44,7 @@ module Spree
     # The storefront lists approved sellers only, and a seller's contact
     # address is back-office data.
     self.whitelisted_ransackable_attributes = %w[status contact_email]
-    self.private_ransackable_attributes = { store: %w[status contact_email] }
+    self.private_ransackable_attributes = { store: %w[status contact_email], seller: %w[status contact_email] }
 
     # Who remits consumer tax on this seller's sales. `seller` means they are
     # merchant of record; `platform` is the marketplace-facilitator case, and

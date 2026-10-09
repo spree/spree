@@ -97,8 +97,8 @@ import type {
   PriceListFilters,
   PriceListSort,
   PriceSort,
-  ProductFilters,
-  ProductSort,
+  ProductSearchFilters,
+  ProductSearchSort,
   ProductTypeFilters,
   ProductTypeSort,
   PromotionActionFilters,
@@ -1199,7 +1199,7 @@ export class AdminClient {
 
   readonly products = {
     list: (
-      params?: ListParams<ProductFilters, ProductSort>,
+      params?: ListParams<ProductSearchFilters, ProductSearchSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Product>> =>
       this.request<PaginatedResponse<Product>>('GET', '/products', {

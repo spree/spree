@@ -398,12 +398,25 @@ module Spree
           end
         end
 
-        # @param attribute [String, nil] a `*type` column of {#model_class}
+        # A `*type` column of {#model_class}, or of a model it reaches through
+        # its associations (`payment_method_type`), as the filter tables publish.
+        #
+        # @param attribute [String, nil]
         # @return [Proc, nil] shorthand → stored class name
-        def api_type_resolver(attribute)
-          return if attribute.nil? || !model_class.respond_to?(:api_type_resolver)
+        def api_type_resolver(attribute, model = model_class, depth = 0)
+          return if attribute.nil? || !model.respond_to?(:api_type_resolver)
 
-          model_class.api_type_resolver(attribute)
+          model.api_type_resolver(attribute) || begin
+            return if depth >= Spree::Api::V3::FilterTable::MAX_DEPTH
+
+            model.reflect_on_all_associations.each do |reflection|
+              next if reflection.polymorphic? || !attribute.start_with?("#{reflection.name}_")
+
+              resolver = api_type_resolver(attribute.delete_prefix("#{reflection.name}_"), reflection.klass, depth + 1)
+              return resolver if resolver
+            end
+            nil
+          end
         end
 
         # Matches both prefixed-FK predicates (`product_id_in`, `tax_category_id_eq`)
