@@ -1,5 +1,12 @@
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 import { login, openProfileDialog } from './helpers'
+
+const FIXTURE_IMAGE = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  'fixtures/test-image.png',
+)
 
 const STORE_PATH = (storeId: string) => `/${storeId}/settings/store`
 const EMAILS_PATH = (storeId: string) => `/${storeId}/settings/emails`
@@ -275,6 +282,35 @@ test.describe('store settings — emails', () => {
     await expect(page.locator('#store-mail-from-address')).toHaveValue(sender, { timeout: 15_000 })
     await expect(page.locator('#store-customer-support-email')).toHaveValue(support)
     await expect(page.locator('#store-new-order-notifications-email')).toHaveValue(ops)
+  })
+
+  // Uploads, saves and then removes the logo, so the shared store ends where
+  // it started.
+  test('uploads the email logo, then removes it', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(EMAILS_PATH(creds.store_id))
+    await expect(page.locator('#store-mail-from-address')).toBeVisible({ timeout: 15_000 })
+
+    const savedLogo = page.getByText(/^attached file$/i)
+    const save = page.getByRole('button', { name: /^save$/i })
+
+    await page.locator('input[type="file"]').setInputFiles(FIXTURE_IMAGE)
+    await expect(page.getByText(/uploading/i)).toBeHidden({ timeout: 30_000 })
+    await expect(savedLogo).toBeVisible()
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(savedLogo).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^remove$/i }).click()
+    await expect(savedLogo).toHaveCount(0)
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(page.locator('#store-mail-from-address')).toBeVisible({ timeout: 15_000 })
+    await expect(savedLogo).toHaveCount(0)
   })
 
   test('flags an invalid mail_from_address inline', async ({ page }) => {

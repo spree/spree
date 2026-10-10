@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, login } from './helpers'
+import { createPlacedOrder, FIXTURE_PROMO_PRODUCT, login } from './helpers'
 
 const NEW_ORDER_PATH = (storeId: string) => `/${storeId}/orders/new`
 
@@ -85,5 +85,37 @@ test.describe('order fulfillments', () => {
     await expect(card.getByRole('button', { name: /add tracking/i })).toHaveCount(0)
     await expect(card.getByRole('button', { name: /buy label/i })).toHaveCount(0)
     await expect(card.getByRole('button', { name: /print label/i })).toHaveCount(0)
+  })
+
+  // A label bought elsewhere goes to private storage, under the
+  // `file_signed_id` name the label endpoint now requires.
+  test('uploads a label bought elsewhere onto a placed order', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { ship: false })
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+
+    const card = fulfillmentsCard(page)
+    await card
+      .getByRole('button', { name: /^actions$/i })
+      .first()
+      .click({ timeout: 15_000 })
+    await page.getByRole('menuitem', { name: /^upload label$/i }).click()
+
+    const dialog = page.getByRole('dialog')
+    await dialog.locator('input[type="file"]').setInputFiles({
+      name: 'label.pdf',
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('%PDF-1.4\n%%EOF\n'),
+    })
+    await dialog.locator('#label-tracking-number').fill(`1Z${Date.now()}`)
+
+    // Saving is disabled until the upload resolves.
+    const submit = dialog.getByRole('button', { name: /^upload label$/i })
+    await expect(submit).toBeEnabled({ timeout: 30_000 })
+    await submit.click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(card.getByText(/^uploaded$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByRole('button', { name: /print label/i })).toBeVisible()
   })
 })
