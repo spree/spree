@@ -76,7 +76,7 @@ RSpec.describe Spree::Mcp::Server do
       let(:scopes) { ['write_products'] }
 
       it 'offers that resource\'s workflow tools' do
-        expect(names).to include('products_update', 'products_activate')
+        expect(names).to include('products_activate', 'products_draft')
       end
 
       it 'offers no other resource\'s write tools' do
@@ -104,7 +104,7 @@ RSpec.describe Spree::Mcp::Server do
 
       it 'never offers the principal or the store as a parameter' do
         cancel = tools.find { |tool| tool['name'] == 'orders_cancel' }
-        create = tools.find { |tool| tool['name'] == 'products_create' }
+        create = tools.find { |tool| tool['name'] == 'variants_create' }
 
         expect(cancel.dig('inputSchema', 'properties')).not_to have_key('canceler')
         expect(create.dig('inputSchema', 'properties')).not_to have_key('store')

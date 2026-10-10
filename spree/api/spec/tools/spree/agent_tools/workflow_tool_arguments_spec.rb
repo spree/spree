@@ -17,29 +17,36 @@ RSpec.describe 'agent workflow tool arguments' do
     let(:stock_location) { store.stock_locations.first || create(:stock_location, store: store) }
     let(:variant) { create(:variant) }
 
-    # A purchase order's `items:` names a variant per row. Left as a string
-    # the association is handed a prefixed id and the record fails with
-    # "must exist", which reads to the model as a bad id rather than a step
-    # the tool skipped.
+    # A purchase order's items name a variant per row. The ids inside those
+    # rows have to be decoded too, not just the ones at the top level.
     it 'resolves them to records' do
-      result = tool('purchase_orders_create').call(
-        supplier: supplier.prefixed_id,
-        destination_location: stock_location.prefixed_id,
-        items: [{ 'variant' => variant.prefixed_id, 'quantity_ordered' => 2, 'unit_cost' => 5 }]
+      result = tool('create_resource').call(
+        resource: 'purchase_orders',
+        attributes: {
+          'supplier_id' => supplier.prefixed_id,
+          'destination_location_id' => stock_location.prefixed_id,
+          'items' => [{ 'variant_id' => variant.prefixed_id, 'quantity_ordered' => 2,
+                        'unit_cost' => '5.00' }]
+        }
       )
 
       expect(result[:error]).to be_nil
       expect(store.purchase_orders.last.items.first.variant).to eq(variant)
     end
 
-    it 'names the row and the field when an id matches nothing' do
-      result = tool('purchase_orders_create').call(
-        supplier: supplier.prefixed_id,
-        destination_location: stock_location.prefixed_id,
-        items: [{ 'variant' => 'variant_nope', 'quantity_ordered' => 1, 'unit_cost' => 1 }]
+    it 'names what was not found when an id inside a row matches nothing' do
+      result = tool('create_resource').call(
+        resource: 'purchase_orders',
+        attributes: {
+          'supplier_id' => supplier.prefixed_id,
+          'destination_location_id' => stock_location.prefixed_id,
+          'items' => [{ 'variant_id' => 'variant_nope', 'quantity_ordered' => 1,
+                        'unit_cost' => '1.00' }]
+        }
       )
 
-      expect(result[:error]).to include('variant', 'items')
+      expect(result[:error]).to include('Variant')
+      expect(store.purchase_orders).to be_empty
     end
   end
 
@@ -54,8 +61,8 @@ RSpec.describe 'agent workflow tool arguments' do
     let(:other_store) { create(:store) }
 
     it 'is refused by name on create rather than written' do
-      result = tool('products_create').call(
-        attributes: { 'name' => 'Tenancy probe', 'store_id' => other_store.id }
+      result = tool('create_resource').call(
+        resource: 'products', attributes: { 'name' => 'Tenancy probe', 'store_id' => other_store.id }
       )
 
       expect(result[:error]).to include('store_id')
@@ -67,8 +74,8 @@ RSpec.describe 'agent workflow tool arguments' do
     it 'cannot move an existing record to another store' do
       product = create(:product, store: store)
 
-      result = tool('products_update').call(
-        product: product.prefixed_id, attributes: { 'store_id' => other_store.id }
+      result = tool('update_resource').call(
+        resource: 'products', id: product.prefixed_id, attributes: { 'store_id' => other_store.id }
       )
 
       expect(result[:error]).to include('store_id')
@@ -107,10 +114,14 @@ RSpec.describe 'agent workflow tool arguments' do
     let(:variant) { create(:variant) }
 
     it 'leaves it unset rather than failing the call' do
-      result = tool('purchase_orders_create').call(
-        supplier: supplier.prefixed_id,
-        destination_location: stock_location.prefixed_id,
-        items: [{ 'variant' => variant.prefixed_id, 'quantity_ordered' => 1, 'unit_cost' => 3 }]
+      result = tool('create_resource').call(
+        resource: 'purchase_orders',
+        attributes: {
+          'supplier_id' => supplier.prefixed_id,
+          'destination_location_id' => stock_location.prefixed_id,
+          'items' => [{ 'variant_id' => variant.prefixed_id, 'quantity_ordered' => 1,
+                        'unit_cost' => '3.00' }]
+        }
       )
 
       expect(result[:error]).to be_nil
@@ -121,12 +132,16 @@ RSpec.describe 'agent workflow tool arguments' do
       admin = create(:admin_user)
       admin_context = Spree::AgentTools::Context.new(store: store, user: admin, request_headers: agent_headers_for(admin))
       admin_tool = Spree.agent_tools.available_for(admin_context).
-                   find { |candidate| candidate.tool_name == 'purchase_orders_create' }
+                   find { |candidate| candidate.tool_name == 'create_resource' }
 
       result = admin_tool.call(
-        supplier: supplier.prefixed_id,
-        destination_location: stock_location.prefixed_id,
-        items: [{ 'variant' => variant.prefixed_id, 'quantity_ordered' => 1, 'unit_cost' => 3 }]
+        resource: 'purchase_orders',
+        attributes: {
+          'supplier_id' => supplier.prefixed_id,
+          'destination_location_id' => stock_location.prefixed_id,
+          'items' => [{ 'variant_id' => variant.prefixed_id, 'quantity_ordered' => 1,
+                        'unit_cost' => '3.00' }]
+        }
       )
 
       expect(result[:error]).to be_nil

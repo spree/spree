@@ -5,6 +5,7 @@ require_relative 'configuration'
 require_relative 'agent_write_schemas'
 require_relative 'agent_resource_map'
 require_relative 'agent_membership_map'
+require_relative 'agent_workflow_endpoints'
 require_relative 'oauth'
 
 module Spree

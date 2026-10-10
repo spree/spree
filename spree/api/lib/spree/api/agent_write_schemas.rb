@@ -41,6 +41,21 @@ module Spree
           Spree::Api::Engine.root.join('..', '..', 'docs', 'api-reference', 'admin.yaml')
         end
 
+        # The parsed document, for a reader that needs more of it than the
+        # write bodies — the workflow endpoint map wants the member actions'
+        # bodies too, and parsing a megabyte of YAML twice is wasteful.
+        #
+        # @return [Hash]
+        def document
+          @document ||= begin
+            path = spec_path
+            File.exist?(path) ? (YAML.unsafe_load_file(path) || {}) : {}
+          rescue StandardError => e
+            Rails.logger.warn("[Spree] could not read the admin API document: #{e.class}: #{e.message}")
+            {}
+          end
+        end
+
         private
 
         def schemas

@@ -392,6 +392,60 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/admin/sellers/{id}/reopen_onboarding' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
+
+    patch 'Send a seller back to onboarding' do
+      tags 'Sellers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Hands an application back to the seller to finish, rather than
+        approving or rejecting it. Only a seller whose application is ready
+        for review can be sent back, and the note says what is missing.
+      DESC
+      admin_scope :write, :sellers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, required: false, schema: {
+        type: :object,
+        properties: {
+          note: { type: :string, description: 'What the seller still has to supply',
+                  example: 'Your bank details do not match the registered business name.' }
+        }
+      }
+
+      response '200', 'seller back in onboarding' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { seller.prefixed_id }
+        let(:body) { { note: 'Your bank details do not match the registered business name.' } }
+
+        before { seller.update!(status: 'ready_for_review') }
+
+        schema '$ref' => '#/components/schemas/Seller'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['status']).to eq('onboarding')
+        end
+      end
+
+      response '422', 'the seller is not awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { seller.prefixed_id }
+        let(:body) { {} }
+
+        before { seller.update!(status: 'approved') }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/sellers/{id}/reject' do
     parameter name: :id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
 
