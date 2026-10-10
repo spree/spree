@@ -40,13 +40,21 @@ module Spree
       #   grant carries. They *narrow* the user's own authority and can never
       #   widen it, so a merchant who consented to reading products does not
       #   hand over everything their role could do.
-      def initialize(store:, user: nil, api_key: nil, ability: nil, granted_scopes: nil)
+      # @return [Hash] the Rack headers the caller authenticated with, which a
+      #   dispatched Admin API call repeats verbatim. Empty for a caller that
+      #   arrived without a request — a job, a console, a spec — which can
+      #   only reach tools that do not dispatch.
+      attr_reader :request_headers
+
+      def initialize(store:, user: nil, api_key: nil, ability: nil, granted_scopes: nil,
+                     request_headers: {})
         raise ArgumentError, 'Spree::AgentTools::Context needs a user or an api_key' if user.nil? && api_key.nil?
 
         @store = store
         @user = user
         @api_key = api_key
         @granted_scopes = granted_scopes
+        @request_headers = request_headers.to_h
         @ability = ability || (Spree::Dependencies.ability_class.constantize.new(user, store: store) if user)
       end
 
