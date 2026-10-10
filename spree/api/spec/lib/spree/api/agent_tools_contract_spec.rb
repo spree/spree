@@ -240,12 +240,15 @@ RSpec.describe 'agent tool contract' do
       expect(with_workflow.map(&:generic_writes?).uniq).to eq([false])
     end
 
-    it 'refuses generic writes for a resource written through a Tier 1 service' do
-      service_written = Spree::AgentTools::ResourceMap.all.select do |entry|
-        Spree::Api::AgentResourceMap::SERVICE_WRITTEN_MODELS.include?(entry.model_name)
-      end
+    # The list of service-written models this used to assert over is gone
+    # (2026-10-10). A generic write dispatches to the controller, so a
+    # resource whose controller orchestrates is reached through that
+    # orchestration rather than around it — an order is writable now, and
+    # correctly.
+    it 'allows a generic write for a resource whose controller orchestrates' do
+      orders = Spree::AgentTools::ResourceMap.find('orders')
 
-      expect(service_written.map(&:generic_writes?).uniq - [false]).to be_empty
+      expect(orders.write_permission).to eq('write_orders')
     end
 
     it 'gives every generically writable resource a documented attribute list' do
@@ -306,12 +309,11 @@ RSpec.describe 'agent tool contract' do
     # body must resolve in both.
     it 'keys a writable resource the same way the OpenAPI document does' do
       # Everything deliberately read-only, for a reason recorded elsewhere:
-      # written through a workflow, written through a Tier 1 service, gated
-      # per request (imports and exports), or contested between two
+      # written through a workflow it declares, gated per request (imports
+      # and exports), handing out authority, or contested between two
       # controllers and therefore read-only by the collision rule.
       deliberate = Spree::AgentTools::ResourceMap.all.select do |entry|
         entry.create_workflow_key.present? || entry.update_workflow_key.present? ||
-          Spree::Api::AgentResourceMap::SERVICE_WRITTEN_MODELS.include?(entry.model_name) ||
           Spree::Api::AgentResourceMap::DYNAMIC_SCOPE_RESOURCES.key?(entry.key) ||
           authority_keys.include?(entry.key) ||
           contested_keys.include?(entry.key)

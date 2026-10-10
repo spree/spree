@@ -20,14 +20,27 @@ RSpec.describe 'assistant authorization' do
   let(:ability) { full_ability }
   let(:full_ability) { Spree::Dependencies.ability_class.constantize.new(admin, store: store) }
 
-  before do
-    narrowed = Class.new(Spree::Ability) do
-      def initialize(user, options = {})
-        super
-        cannot %i[read update destroy], Spree::Product, name: 'Hidden Product'
-      end
+  # Defined once at load rather than built per example: a dispatched request
+  # resolves the class by name through `Spree::Dependencies`, and an
+  # anonymous class stubbed onto a constant inside `before` was not always
+  # the one it found when the whole suite ran.
+  # Keyed on the record's own id, not on its name: a rule matching
+  # 'Hidden Product' also matched any leftover of that name another spec had
+  # created, and then the example was asserting about the wrong record.
+  class NarrowedTestAbility < Spree::Ability
+    def initialize(user, options = {})
+      super
+      hidden_id = RSpec.current_example&.metadata&.dig(:hidden_product_id)
+      cannot %i[read update destroy], Spree::Product, id: hidden_id if hidden_id
     end
-    stub_const('NarrowedTestAbility', narrowed)
+  end
+
+  before do
+    RSpec.current_example.metadata[:hidden_product_id] = hidden.id
+    # `Spree.ability_class` is what the controller calls, and it answers a
+    # class rather than a name — stubbing `Spree::Dependencies.ability_class`
+    # left the dispatched request building the default ability.
+    allow(Spree).to receive(:ability_class).and_return(NarrowedTestAbility)
     allow(Spree::Dependencies).to receive(:ability_class).and_return('NarrowedTestAbility')
   end
 
