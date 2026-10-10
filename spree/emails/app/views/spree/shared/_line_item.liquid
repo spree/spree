@@ -19,8 +19,8 @@
             {%- if item.options_text != blank -%}<p class="item_meta">{{ item.options_text }}</p>{%- endif -%}
           </td>
           <td class="item_amount" align="right" valign="middle">
-            <p class="item_qty">{{ item.quantity }} x {{ item.display_price }}</p>
-            <p class="item_price">{{ item.display_amount }}</p>
+            <p class="item_qty">{{ item.quantity }} x {{ item.price | money }}</p>
+            <p class="item_price">{{ item.amount | money }}</p>
           </td>
         </tr>
       </table>
