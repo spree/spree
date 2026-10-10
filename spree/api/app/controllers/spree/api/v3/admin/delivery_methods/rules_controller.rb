@@ -17,7 +17,7 @@ module Spree
                 return render_error(
                   code: ERROR_CODES[:validation_error],
                   message: I18n.t('spree.errors.messages.invalid_delivery_method_rule'),
-                  status: :unprocessable_entity
+                  status: :unprocessable_content
                 )
               end
 

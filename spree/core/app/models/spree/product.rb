@@ -713,7 +713,7 @@ module Spree
     end
 
     def discontinue!
-      self.discontinue_on = Time.current
+      write_publication_date(:discontinue_on, Time.current)
       self.status = 'archived'
       save(validate: false)
     end

@@ -8,6 +8,13 @@ module Spree
     let(:cart) { create(:cart, store: store) }
     let(:line_item) { create(:line_item, cart: cart, order: nil) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
+    it 'warns that it is deprecated' do
+      subject.call(cart: cart, line_item: line_item, quantity: 1)
+      expect(Spree::Deprecation).to have_received(:warn).with(/Spree::Carts::SetQuantity is deprecated/)
+    end
+
     context 'with non-backorderable item' do
       before do
         line_item.variant.stock_levels.first.update(backorderable: false)

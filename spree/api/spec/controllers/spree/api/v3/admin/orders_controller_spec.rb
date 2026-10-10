@@ -407,7 +407,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         it 'refuses with an actionable message' do
           expect { subject }.not_to change(Spree::Order, :count)
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(response.body).to include('non-negative number')
         end
       end
@@ -814,7 +814,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '-1' }]
         }, as: :json
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include('non-negative number')
         expect(order.reload.line_items).to be_empty
       end

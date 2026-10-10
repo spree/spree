@@ -559,6 +559,25 @@ module Spree
         )
       end
 
+      # Deprecated constant aliases warn when their file loads. Leaving them
+      # out of eager loading keeps every boot quiet; they still load, and
+      # warn, the first time something references the old name.
+      DEPRECATED_ALIAS_FILES = %w[
+        app/models/concerns/spree/user_methods.rb
+        app/models/spree/asset.rb
+        app/models/spree/classification.rb
+        app/models/spree/promotion/rules/taxon.rb
+        app/models/spree/promotion_rule_taxon.rb
+        app/models/spree/return_authorization_reason.rb
+        app/models/spree/taxon.rb
+        app/services/spree/checkout/add_store_credit.rb
+        app/services/spree/checkout/remove_store_credit.rb
+      ].freeze
+
+      initializer 'spree.deprecated_aliases.skip_eager_load' do
+        Rails.autoloaders.main.do_not_eager_load(*DEPRECATED_ALIAS_FILES.map { |path| root.join(path) })
+      end
+
       # filter sensitive information during logging
       initializer 'spree.params.filter' do |app|
         app.config.filter_parameters += [

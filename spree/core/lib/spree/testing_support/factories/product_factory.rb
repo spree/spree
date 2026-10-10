@@ -38,8 +38,17 @@ FactoryBot.define do
       price { 19.99 }
       compare_at_price { nil }
       currency { nil }
+      published_at { nil }
+      unpublished_at { nil }
     end
 
+    # The deprecated +available_on=+/+discontinue_on=+ setters warn, so the
+    # dates go straight onto the legacy columns, which code still reads and
+    # which seed the default-channel publication created below.
+    after(:build) do |product, evaluator|
+      product[:available_on] = evaluator.published_at if evaluator.published_at
+      product[:discontinue_on] = evaluator.unpublished_at if evaluator.unpublished_at
+    end
     before(:create) do |_product|
       create(:stock_location) unless Spree::StockLocation.any?
     end

@@ -830,7 +830,6 @@ module Spree
     end
 
     def fulfill!
-      fulfillments.each { |shipment| shipment.update!(self) if shipment.persisted? }
       save!
       update_statuses!
     end

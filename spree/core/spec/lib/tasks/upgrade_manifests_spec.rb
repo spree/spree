@@ -8,14 +8,16 @@ require 'rake'
 describe 'spree:upgrade manifests' do
   manifests = Dir[Spree::Core::Engine.root.join('lib', 'spree', 'upgrades', '*', 'manifest.yml')].sort
 
-  # Load core's rake files into a throwaway application so tasks other specs
-  # load individually don't get their actions registered twice.
-  let(:rake_app) do
+  # Load core's rake files once, into a throwaway application, so tasks other
+  # specs load individually don't get their actions registered twice. Those
+  # specs may already have defined the files' constants, so redefining them
+  # here is expected.
+  before(:all) do
     original = Rake.application
     Rake.application = Rake::Application.new
     Rake::Task.define_task(:environment)
-    Dir[Spree::Core::Engine.root.join('lib', 'tasks', '*.rake')].sort.each { |file| load file }
-    Rake.application
+    silence_warnings { Dir[Spree::Core::Engine.root.join('lib', 'tasks', '*.rake')].sort.each { |file| load file } }
+    @rake_app = Rake.application
   ensure
     Rake.application = original
   end
@@ -44,7 +46,7 @@ describe 'spree:upgrade manifests' do
       it 'names a defined rake task for every required step' do
         missing = manifest['steps'].reject { |step| step['optional'] }.
                   map { |step| step['task'] }.
-                  reject { |task| rake_app.lookup(task) }
+                  reject { |task| @rake_app.lookup(task) }
 
         expect(missing).to be_empty, "manifest references undefined rake tasks: #{missing.join(', ')}"
       end
