@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
-import { templateVariables } from '../../../lib/email-template-variables'
+import { insertionFor, templateVariables } from '../../../lib/email-template-variables'
 
 /** The variables a template receives, with the fields worth pointing out. */
 export function EmailTemplateVariablesCard({
@@ -34,7 +34,7 @@ export function EmailTemplateVariablesCard({
                         key={field}
                         type="button"
                         aria-label={t('admin.email_templates.variables.insert', { variable: path })}
-                        onClick={() => onInsert(`{{ ${path} }}`)}
+                        onClick={() => onInsert(insertionFor(variable, field))}
                         className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs hover:bg-accent-strong focus-visible:outline-2 focus-visible:outline-ring"
                       >
                         {path}

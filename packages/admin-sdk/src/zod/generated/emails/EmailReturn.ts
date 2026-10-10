@@ -16,6 +16,7 @@ export const EmailReturnSchema = z.object({
   received_at: z.string().nullable(),
   refunded_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
+  refunded_total: z.string(),
   display_refunded_total: z.string(),
   returned_items: z.array(EmailLineItemSchema),
 });
