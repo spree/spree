@@ -163,6 +163,7 @@ RSpec.describe Spree::CustomField, type: :model do
     it 'assigns through metafield_definition=' do
       definition = create(:custom_field_definition)
       custom_field = Spree::CustomField.new
+      expect(Spree::Deprecation).to receive(:warn).with(/metafield_definition= is deprecated/)
       custom_field.metafield_definition = definition
 
       expect(custom_field.custom_field_definition).to eq(definition)

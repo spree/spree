@@ -1356,12 +1356,15 @@ describe Spree::Variant, type: :model do
   describe '#secondary_image' do
     let(:variant) { create(:variant) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'with images pinned to the variant' do
       let!(:image1) { create(:media, position: 1, viewable: variant) }
       let!(:image2) { create(:media, position: 2, viewable: variant) }
 
       it 'returns the second image' do
         expect(variant.secondary_image).to eq(image2)
+        expect(Spree::Deprecation).to have_received(:warn).with(/Variant#secondary_image is deprecated/)
       end
     end
 
@@ -1384,6 +1387,7 @@ describe Spree::Variant, type: :model do
     let!(:image3) { create(:media, position: 3, viewable: variant) }
 
     it 'returns all images except the default' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Variant#additional_images is deprecated/)
       expect(variant.additional_images).to eq([image2, image3])
     end
   end

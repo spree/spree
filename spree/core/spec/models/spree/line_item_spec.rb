@@ -402,7 +402,7 @@ describe Spree::LineItem, type: :model do
         variant.stock_levels.update_all count_on_hand: 5, backorderable: false
         Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         order.rebuild_fulfillments!
-        order.finalize!
+        Spree.order_complete_workflow.call(order: order, payment_pending: true)
         order.reload
       end
 
@@ -431,7 +431,7 @@ describe Spree::LineItem, type: :model do
         variant.stock_levels.update_all count_on_hand: 7, backorderable: false
         Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         order.rebuild_fulfillments!
-        order.finalize!
+        Spree.order_complete_workflow.call(order: order, payment_pending: true)
         order.reload
       end
 

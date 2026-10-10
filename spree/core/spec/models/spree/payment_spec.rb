@@ -274,11 +274,14 @@ describe Spree::Payment, type: :model do
   end
 
   context 'processing' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     describe '#process!' do
       it 'purchases when the method charges at checkout' do
         payment.payment_method.capture_method = 'checkout'
         payment.process!
         expect(payment).to be_completed
+        expect(Spree::Deprecation).to have_received(:warn).with(/Payment#process! is deprecated/)
       end
 
       # Regression test for #4598
@@ -304,6 +307,7 @@ describe Spree::Payment, type: :model do
                                                                    card,
                                                                    anything).and_return(success_response)
         payment.authorize!
+        expect(Spree::Deprecation).to have_received(:warn).with(/Payment#authorize! is deprecated/)
       end
 
       it 'calls authorize on the gateway with the currency code' do
@@ -371,7 +375,9 @@ describe Spree::Payment, type: :model do
       it 'instruments the purchase gateway call as gateway.spree_payments' do
         allow(gateway).to receive(:purchase).and_return(success_response)
 
-        notifications = capture_gateway_notifications { payment.purchase! }
+        notifications = capture_gateway_notifications do
+          Spree.payment_process_workflow.call(payment: payment, action: :purchase)
+        end
 
         expect(notifications.sole).to include(action: 'purchase', payment_method_type: 'Spree::Gateway::Bogus')
       end
@@ -381,7 +387,7 @@ describe Spree::Payment, type: :model do
         payment.response_code = "BGS-#{SecureRandom.hex(6)}"
         allow(gateway).to receive(:capture).and_return(success_response)
 
-        notifications = capture_gateway_notifications { payment.capture! }
+        notifications = capture_gateway_notifications { Spree.payment_capture_workflow.call(payment: payment) }
 
         expect(notifications.sole).to include(action: 'capture', payment_method_type: 'Spree::Gateway::Bogus')
       end
@@ -391,6 +397,7 @@ describe Spree::Payment, type: :model do
       it 'calls purchase on the gateway with the payment amount' do
         expect(gateway).to receive(:purchase).with(gateway_amount, card, anything).and_return(success_response)
         payment.purchase!
+        expect(Spree::Deprecation).to have_received(:warn).with(/Payment#purchase! is deprecated/)
       end
 
       context 'if successful' do
@@ -569,6 +576,7 @@ describe Spree::Payment, type: :model do
             expect(payment.owner).to receive(:with_lock).and_call_original
 
             payment.capture!
+            expect(Spree::Deprecation).to have_received(:warn).with(/Payment#capture! is deprecated/)
           end
 
           it 'records nothing when another caller already completed the payment' do
@@ -634,6 +642,7 @@ describe Spree::Payment, type: :model do
           payment.response_code = 'abc'
           payment.void_transaction!
           expect(payment.response_code).to start_with('void-BGS-')
+          expect(Spree::Deprecation).to have_received(:warn).with(/Payment#void_transaction! is deprecated/)
         end
       end
 
@@ -655,6 +664,8 @@ describe Spree::Payment, type: :model do
   end
 
   context 'with source optional' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'when payment method does not require source' do
       let(:check_payment_method) { create(:check_payment_method, store: order.store, capture_method: 'manual') }
 
@@ -1143,6 +1154,7 @@ describe Spree::Payment, type: :model do
       it { is_expected.to be_falsey }
 
       it 'is still answered by the deprecated has_invalid_state? alias' do
+        expect(Spree::Deprecation).to receive(:warn).with(/has_invalid_state\? is deprecated/)
         expect(payment.has_invalid_state?).to be_falsey
       end
     end

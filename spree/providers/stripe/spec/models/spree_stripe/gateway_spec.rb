@@ -399,7 +399,7 @@ RSpec.describe SpreeStripe::Gateway do
       let!(:order) { create(:order, store: store, total: 10, customer: create(:customer)) }
       let!(:gateway_customer) { create(:gateway_customer, customer: order.customer, payment_method: gateway) }
 
-      let!(:payment) { create(:payment, state: 'completed', order: order, payment_method: gateway, amount: 10.0, response_code: payment_intent_id) }
+      let!(:payment) { create(:payment, status: 'completed', order: order, payment_method: gateway, amount: 10.0, response_code: payment_intent_id) }
       let!(:refund) { create(:refund, payment: payment, amount: 2.0) }
 
       let(:payment_intent_id) { 'pi_3QXmL12ESifGlJez0v0B8tUn' }

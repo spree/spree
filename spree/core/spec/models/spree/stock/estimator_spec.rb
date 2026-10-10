@@ -238,7 +238,7 @@ module Spree
               sm.tax_category_id = tax_rate.tax_category_id
               sm.save
             end
-            package.shipping_methods.map(&:reload)
+            package.eligible_delivery_methods.map(&:reload)
           end
 
           it 'links the shipping rate and the tax rate' do

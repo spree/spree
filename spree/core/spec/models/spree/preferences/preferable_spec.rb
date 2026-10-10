@@ -70,11 +70,18 @@ describe Spree::Preferences::Preferable, type: :model do
 
   describe 'preference access' do
     it 'handles ghost methods for preferences' do
+      @b.preferred_flavor = 'mint'
+      expect(@b.preferred_flavor).to eq 'mint'
+    end
+
+    it 'warns when a deprecated preference is written' do
+      expect(Spree::Deprecation).to receive(:warn).with(/`color` is deprecated. Please use colour instead/)
       @a.preferred_color = 'blue'
       expect(@a.preferred_color).to eq 'blue'
     end
 
     it 'parent and child instances have their own prefs' do
+      allow(Spree::Deprecation).to receive(:warn)
       @a.preferred_color = 'red'
       @b.preferred_color = 'blue'
 
@@ -274,7 +281,7 @@ describe Spree::Preferences::Preferable, type: :model do
 
     context 'converts array preferences to array values' do
       before do
-        A.preference :is_array, :array, default: []
+        Spree::Deprecation.silence { A.preference :is_array, :array, default: [] }
       end
 
       it 'with arrays' do
@@ -295,7 +302,7 @@ describe Spree::Preferences::Preferable, type: :model do
 
     context 'converts hash preferences to hash values' do
       before do
-        A.preference :is_hash, :hash, default: {}
+        Spree::Deprecation.silence { A.preference :is_hash, :hash, default: {} }
       end
 
       it 'with hash' do
@@ -386,8 +393,10 @@ describe Spree::Preferences::Preferable, type: :model do
 
     context 'converts any preferences to any values' do
       before do
-        A.preference :product_ids, :any, default: []
-        A.preference :product_attributes, :any, default: {}
+        Spree::Deprecation.silence do
+          A.preference :product_ids, :any, default: []
+          A.preference :product_attributes, :any, default: {}
+        end
         @a = A.new
       end
 
@@ -578,7 +587,7 @@ describe Spree::Preferences::Preferable, type: :model do
 
       class PrefTest < Spree::Base
         preference :pref_test_pref, :string, default: 'abc'
-        preference :pref_test_any, :any, default: []
+        Spree::Deprecation.silence { preference :pref_test_any, :any, default: [] }
         preference :pref_test_decimal, :decimal, default: 0
         preference :pref_test_datetime, :datetime
       end

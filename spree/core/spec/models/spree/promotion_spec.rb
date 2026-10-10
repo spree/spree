@@ -999,7 +999,7 @@ describe Spree::Promotion, type: :model do
 
       rule = promotion.rules.first
       expect(rule).to be_a(Spree::Promotion::Rules::Category)
-      expect(rule.taxons).to contain_exactly(category)
+      expect(rule.categories).to contain_exactly(category)
     end
 
     # Regression: `category_ids=` on Rules::Taxon is a custom setter (not a
@@ -1013,7 +1013,7 @@ describe Spree::Promotion, type: :model do
 
       rule = fresh.reload.rules.first
       expect(rule).to be_a(Spree::Promotion::Rules::Category)
-      expect(rule.taxons).to contain_exactly(category)
+      expect(rule.categories).to contain_exactly(category)
     end
 
     it 'defers application until after_save on a new promotion record' do

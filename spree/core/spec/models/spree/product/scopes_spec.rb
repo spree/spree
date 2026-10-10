@@ -487,17 +487,17 @@ describe 'Product scopes', type: :model do
       end
 
       it 'includes a future-dated product with an active pre-order variant' do
-        active_product.master.update_columns(preorderable: true)
+        active_product.default_variant.update_columns(preorderable: true)
         expect(Spree::Product.available(Time.current, 'USD', include_preorderable: true)).to include(active_product)
       end
 
       it "excludes it when the pre-order's ship date has already passed" do
-        active_product.master.update_columns(preorderable: true, preorder_ships_at: 1.day.ago)
+        active_product.default_variant.update_columns(preorderable: true, preorder_ships_at: 1.day.ago)
         expect(Spree::Product.available(Time.current, 'USD', include_preorderable: true)).not_to include(active_product)
       end
 
       it 'still excludes a future-dated product with no pre-order variant' do
-        active_product.master.update_columns(preorderable: false)
+        active_product.default_variant.update_columns(preorderable: false)
         expect(Spree::Product.available(Time.current, 'USD', include_preorderable: true)).not_to include(active_product)
       end
     end

@@ -22,14 +22,14 @@ module Spree
     end
 
     def positions_to_be_valid(category)
-      positions = category.reload.classifications.map(&:position)
-      expect(positions).to eq((1..category.classifications.count).to_a)
+      positions = category.reload.product_categories.map(&:position)
+      expect(positions).to eq((1..category.product_categories.count).to_a)
     end
 
     context 'removing product from category' do
       before do
         p = taxon_with_5_products.products[1]
-        expect(p.classifications.first.position).to eq(2)
+        expect(p.product_categories.first.position).to eq(2)
         taxon_with_5_products.products.destroy(p)
       end
 
@@ -54,7 +54,7 @@ module Spree
     context 'removing category from product' do
       before do
         p = taxon_with_5_products.products[1]
-        p.taxons.destroy(taxon_with_5_products)
+        p.categories.destroy(taxon_with_5_products)
         p.save!
       end
 
@@ -63,10 +63,10 @@ module Spree
       end
     end
 
-    context "replacing product's taxons" do
+    context "replacing product's categories" do
       before do
         p = taxon_with_5_products.products[1]
-        p.taxons = []
+        p.categories = []
         p.save!
       end
 
@@ -77,7 +77,7 @@ module Spree
 
     context 'destroying classification' do
       before do
-        classification = taxon_with_5_products.classifications[1]
+        classification = taxon_with_5_products.product_categories[1]
         classification.destroy
       end
 

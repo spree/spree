@@ -54,7 +54,7 @@ describe Spree::Order, type: :model do
 
         it 'subscribes to newsletter', :events do
           expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, customer: order.customer, store: order.store)
-          order.finalize!
+          Spree.order_complete_workflow.call(order: order, payment_pending: true)
         end
       end
 
@@ -63,7 +63,7 @@ describe Spree::Order, type: :model do
 
         it 'does not subscribe to newsletter', :events do
           expect(Spree::NewsletterSubscriber).not_to receive(:subscribe)
-          order.finalize!
+          Spree.order_complete_workflow.call(order: order, payment_pending: true)
         end
       end
     end
@@ -78,7 +78,7 @@ describe Spree::Order, type: :model do
 
       it 'redeems the gift card' do
         expect(gift_card.redeemed_at).to be_nil
-        expect { order.finalize! }.to change { gift_card.reload.status }.from('active').to('redeemed')
+        expect { Spree.order_complete_workflow.call(order: order, payment_pending: true) }.to change { gift_card.reload.status }.from('active').to('redeemed')
         expect(gift_card.amount_used).to eq(order.total)
         expect(gift_card.amount_remaining).to eq(0)
         expect(gift_card.redeemed_at).to be_present
@@ -88,7 +88,7 @@ describe Spree::Order, type: :model do
         let(:gift_card) { create(:gift_card, amount: order.total + 1, store: store) }
 
         it 'partially redeems the gift card' do
-          expect { order.finalize! }.to change { gift_card.reload.status }.from('active').to('partially_redeemed')
+          expect { Spree.order_complete_workflow.call(order: order, payment_pending: true) }.to change { gift_card.reload.status }.from('active').to('partially_redeemed')
           expect(gift_card.amount_used).to eq(order.total)
           expect(gift_card.amount_remaining).to eq(1)
           expect(gift_card.redeemed_at).to be_nil
@@ -106,7 +106,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'creates a new user', :events do
-          expect { order.finalize! }.to change { Spree.customer_class.count }.by(1)
+          expect { Spree.order_complete_workflow.call(order: order, payment_pending: true) }.to change { Spree.customer_class.count }.by(1)
           # The subscriber attaches the user on its own loaded instance.
           expect(order.reload.customer).to be_present
           expect(order.customer.email).to eq(order.email)
@@ -119,7 +119,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'does not create a new user', :events do
-          expect { order.finalize! }.not_to change { Spree.customer_class.count }
+          expect { Spree.order_complete_workflow.call(order: order, payment_pending: true) }.not_to change { Spree.customer_class.count }
         end
       end
     end

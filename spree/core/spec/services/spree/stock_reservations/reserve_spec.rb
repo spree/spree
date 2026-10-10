@@ -8,7 +8,7 @@ describe Spree::StockReservations::Reserve do
   let(:order) { create(:order, store: store) }
   let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 3) }
 
-  subject(:result) { described_class.call(order: order) }
+  subject(:result) { described_class.call(cart: order) }
 
   context 'when stock_reservations_enabled is true' do
     before { stub_store_preferences(store, stock_reservations_enabled: true) }
@@ -33,8 +33,8 @@ describe Spree::StockReservations::Reserve do
     end
 
     it 'is idempotent — calling twice updates the same reservation, not creating a new one' do
-      described_class.call(order: order)
-      expect { described_class.call(order: order) }.not_to change(Spree::StockReservation, :count)
+      described_class.call(cart: order)
+      expect { described_class.call(cart: order) }.not_to change(Spree::StockReservation, :count)
     end
 
     it 'holds the units on the level, and re-holding moves the figure by the difference' do
@@ -42,7 +42,7 @@ describe Spree::StockReservations::Reserve do
 
       line_item.update!(quantity: 5)
 
-      expect { described_class.call(order: order) }.to change { stock_level.reload.reserved_count }.from(3).to(5)
+      expect { described_class.call(cart: order) }.to change { stock_level.reload.reserved_count }.from(3).to(5)
     end
 
     # A hold that lapsed and was revived by a later edit is a hold again, and
@@ -51,7 +51,7 @@ describe Spree::StockReservations::Reserve do
       result
       Spree::StockReservation.last.update_column(:expires_at, 1.minute.ago)
 
-      described_class.call(order: order)
+      described_class.call(cart: order)
 
       expect(Spree::StockReservation.last).to be_active
       expect(stock_level.reload.reserved_count).to eq(3)

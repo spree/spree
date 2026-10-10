@@ -71,7 +71,7 @@ describe Spree::Order, type: :model do
 
     describe '.for_channel' do
       let!(:channel) { create(:channel) }
-      let!(:channeled_order) { create(:order, user: user, channel: channel) }
+      let!(:channeled_order) { create(:order, customer: user, channel: channel) }
 
       it 'filters by the given channel and returns all orders for nil' do
         expect(described_class.for_channel(channel)).to contain_exactly(channeled_order)
@@ -199,7 +199,7 @@ describe Spree::Order, type: :model do
         :payment,
         order: order,
         amount: order.total,
-        state: 'completed'
+        status: 'completed'
       )
     end
     let(:payment_method) { double }
@@ -243,7 +243,7 @@ describe Spree::Order, type: :model do
 
         expect(order.status).to eq('canceled')
         expect(order.shipments).to all(have_attributes(state: 'canceled'))
-        expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
+        expect(order.payments.store_credits).to all(have_attributes(status: 'void'))
       end
     end
   end
@@ -254,11 +254,14 @@ describe Spree::Order, type: :model do
     let(:admin_user) { create :admin_user }
     let(:order) { create(:completed_order_with_totals) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'when canceled_at is not given' do
       it 'saves canceled_at to Time.current' do
         Timecop.freeze(Time.current) do
           subject
           expect(order.reload.canceled_at.to_s).to eq Time.current.to_s
+          expect(Spree::Deprecation).to have_received(:warn).with(/Order#canceled_by is deprecated/)
         end
       end
     end
@@ -322,6 +325,8 @@ describe Spree::Order, type: :model do
 
     let(:order) { create :order_with_line_items }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'when variant is destroyed' do
       before do
         order.line_items.first.variant.discontinue!
@@ -340,6 +345,7 @@ describe Spree::Order, type: :model do
     context 'when no variants are destroyed' do
       it 'is true' do
         expect(subject).to be_truthy
+        expect(Spree::Deprecation).to have_received(:warn).with(/ensure_line_item_variants_are_not_discontinued is deprecated/)
       end
     end
   end
@@ -348,12 +354,14 @@ describe Spree::Order, type: :model do
     subject { order.ensure_line_items_are_in_stock }
 
     before do
+      allow(Spree::Deprecation).to receive(:warn)
       allow(order).to receive(:insufficient_stock_lines).and_return([true])
     end
 
     it 'has error message' do
       subject
       expect(order.errors[:base]).to include(I18n.t('spree.insufficient_stock_lines_present'))
+      expect(Spree::Deprecation).to have_received(:warn).with(/ensure_line_items_are_in_stock is deprecated/)
     end
 
     it 'is false' do
@@ -433,6 +441,7 @@ describe Spree::Order, type: :model do
     it 'includes an active storefront-visible method' do
       payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)
 
+      expect(Spree::Deprecation).to receive(:warn).with(/collect_payment_methods is deprecated/)
       expect(order.send(:collect_payment_methods)).to include(payment_method)
     end
   end
@@ -444,6 +453,7 @@ describe Spree::Order, type: :model do
 
     it 'does not include a payment method from different stores' do
       payment_method = store_2.payment_methods.create!(name: 'Fake', active: true)
+      expect(Spree::Deprecation).to receive(:warn).with(/collect_frontend_payment_methods is deprecated/).twice
       expect(order.collect_frontend_payment_methods).not_to include(payment_method)
 
       expect(order_from_different_store.collect_frontend_payment_methods).to include(payment_method)
@@ -1284,9 +1294,12 @@ describe Spree::Order, type: :model do
 
     let!(:order) { create(:order_with_line_items, line_items_count: 10) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'without promotions' do
       it 'returns 0' do
         expect(subject).to eq(BigDecimal('0.00'))
+        expect(Spree::Deprecation).to have_received(:warn).with(/cart_promo_total is deprecated/)
       end
     end
 
@@ -1539,8 +1552,8 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#fully_shipped?' do
-    subject { order.fully_shipped? }
+  describe '#fully_fulfilled?' do
+    subject { order.fully_fulfilled? }
 
     let!(:shipments) do
       create_list(
@@ -1562,6 +1575,11 @@ describe Spree::Order, type: :model do
 
     context 'when not all order shipments were shipped' do
       it { expect(subject).to eq(false) }
+    end
+
+    it 'is still answered by the deprecated fully_shipped?' do
+      expect(Spree::Deprecation).to receive(:warn).with(/fully_shipped\? is deprecated/)
+      expect(order.fully_shipped?).to eq(false)
     end
   end
 
@@ -1776,8 +1794,8 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#line_items_without_shipping_rates' do
-    subject { order.line_items_without_shipping_rates }
+  describe '#line_items_without_delivery_rates' do
+    subject { order.line_items_without_delivery_rates }
 
     let(:order) { create(:order_with_line_items) }
     let(:shipment) { order.fulfillments.first }
@@ -1796,6 +1814,11 @@ describe Spree::Order, type: :model do
 
       it 'returns the line items without shipping rates' do
         expect(subject).to eq([line_item])
+      end
+
+      it 'is still answered by the deprecated line_items_without_shipping_rates' do
+        expect(Spree::Deprecation).to receive(:warn).with(/line_items_without_shipping_rates is deprecated/)
+        expect(order.line_items_without_shipping_rates).to eq([line_item])
       end
     end
 
@@ -1989,9 +2012,12 @@ describe Spree::Order, type: :model do
   describe '#remove_out_of_stock_items!' do
     let(:order) { create(:order_with_totals, store: store, customer: user) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'when all items are in stock' do
       it 'does not remove any items' do
         expect { order.remove_out_of_stock_items! }.not_to change { order.line_items.count }
+        expect(Spree::Deprecation).to have_received(:warn).with(/remove_out_of_stock_items! is deprecated/)
       end
 
       it 'sets warnings to empty array' do

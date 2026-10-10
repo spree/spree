@@ -150,20 +150,25 @@ module Spree
         end
       end
 
-      describe '#shipments' do
+      describe '#fulfillments' do
         let(:packages) { [build(:stock_package_fulfilled), build(:stock_package_fulfilled)] }
 
         before { allow(subject).to receive(:packages).and_return(packages) }
 
-        it 'turns packages into shipments' do
-          shipments = subject.shipments
-          expect(shipments.count).to eq packages.count
-          expect(shipments).to all(be_a(Fulfillment))
+        it 'turns packages into fulfillments' do
+          fulfillments = subject.fulfillments
+          expect(fulfillments.count).to eq packages.count
+          expect(fulfillments).to all(be_a(Fulfillment))
         end
 
-        it "puts the order's ship address on the shipments" do
-          shipments = subject.shipments
-          shipments.each { |shipment| expect(shipment.address).to eq order.ship_address }
+        it "puts the order's ship address on the fulfillments" do
+          fulfillments = subject.fulfillments
+          fulfillments.each { |fulfillment| expect(fulfillment.address).to eq order.ship_address }
+        end
+
+        it 'is still returned by the deprecated #shipments' do
+          expect(Spree::Deprecation).to receive(:warn).with(/Coordinator#shipments is deprecated/)
+          expect(subject.shipments.count).to eq packages.count
         end
       end
 
