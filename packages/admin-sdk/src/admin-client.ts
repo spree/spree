@@ -1,5 +1,6 @@
 import type {
   EmailPasswordLogin,
+  FileUploadCreateParams,
   ListParams,
   LoginCredentials,
   PaginatedResponse,
@@ -8,8 +9,9 @@ import type {
   ProviderLogin,
   RequestFn,
   RequestOptions,
+  UploadFileOptions,
 } from '@spree/sdk-core'
-import { getParams, transformListParams } from '@spree/sdk-core'
+import { getParams, transformListParams, uploadFile } from '@spree/sdk-core'
 import type {
   AddressFilters,
   AddressSort,
@@ -437,7 +439,6 @@ import type {
   DigitalAssetCreateParams,
   DigitalAssetProvider,
   DigitalAssetUpdateParams,
-  DirectUploadCreateParams,
   EmailTemplateDraftParams,
   EmailTemplateLanguageParams,
   EmailTemplatePreviewParams,
@@ -612,6 +613,7 @@ import type {
   Exchange,
   Export,
   Fee,
+  FileUpload,
   Fulfillment,
   FulfillmentProviderOption,
   GiftCard,
@@ -1783,7 +1785,7 @@ export class AdminClient {
       /**
        * The carrier documents bought or uploaded for a parcel. Creating one
        * with no body buys it through the parcel's carrier account; creating it
-       * with a `file` (a signed blob id from `directUploads.create()`) records
+       * with a `file_signed_id` (from `files.upload()`) records
        * postage the merchant bought elsewhere. To print one, fetch
        * `download_url` with the `Authorization` header and drive the browser
        * download from a Blob — the bytes are streamed through the API rather
@@ -4112,8 +4114,8 @@ export class AdminClient {
      * sale, since a verified certificate stops counting once its expiry date
      * passes.
      *
-     * Upload the document via `directUploads.create()` first and pass the
-     * returned `signed_id` as `document`. To read it back, fetch
+     * Upload the document via `files.upload()` first and pass the
+     * returned `signed_id` as `document_signed_id`. To read it back, fetch
      * `document_url` with the `Authorization` header and drive the browser
      * download from a Blob — the bytes are streamed through the API rather
      * than served from storage, so a top-level navigation carrying no JWT
@@ -4387,8 +4389,8 @@ export class AdminClient {
 
   /**
    * Queues asynchronous CSV imports and drives the mapping flow. Upload the
-   * file via `directUploads.create()` first, then `create()` the import with
-   * the returned `signed_id` — the response is in the `mapping` state and
+   * file via `files.upload()` first, then `create()` the import with
+   * the returned `signed_id` as `attachment_signed_id` — the response is in the `mapping` state and
    * carries `schema_fields`, `csv_headers`, a `sample_row` and the
    * auto-assigned `mappings`. Adjust mappings if needed and call
    * `completeMapping(id)` to start processing, then poll `get(id)` while
@@ -5734,17 +5736,38 @@ export class AdminClient {
   }
 
   // ============================================
-  // Direct Uploads (Active Storage)
+  // Files
   // ============================================
 
-  readonly directUploads = {
+  /**
+   * Uploading the files other endpoints use — product media, imports, logos,
+   * documents. Each upload returns a `signed_id`: pass it unchanged to the
+   * endpoint that uses the file (`signed_id`, `avatar_signed_id`,
+   * `attachment_signed_id`, …) within a day, after which it expires.
+   */
+  readonly files = {
+    /**
+     * Creates an upload. JSON metadata returns `upload`, the storage target to
+     * send the bytes to; a `FormData` body with a `file` part stores the bytes
+     * directly and returns `upload: null`. `upload()` does both steps for you.
+     */
     create: (
-      params: DirectUploadCreateParams,
+      params: FileUploadCreateParams | FormData,
       options?: RequestOptions,
-    ): Promise<{
-      direct_upload: { url: string; headers: Record<string, string> }
-      signed_id: string
-    }> => this.request('POST', '/direct_uploads', { ...options, body: params }),
+    ): Promise<FileUpload> =>
+      this.request<FileUpload>('POST', '/files', { ...options, body: params }),
+
+    /**
+     * Uploads a file and resolves to the response; its `signed_id` is what the
+     * endpoint that uses the file takes. Pass `visibility: 'private'` for
+     * documents, imports and digital products.
+     */
+    upload: (
+      file: Blob,
+      options: UploadFileOptions = {},
+      requestOptions?: RequestOptions,
+    ): Promise<FileUpload> =>
+      uploadFile((body) => this.files.create(body, requestOptions), file, options),
   }
 
   // ============================================

@@ -155,9 +155,12 @@ export function createRequestFn(
         }
       })
     }
+    // A multipart body sets its own Content-Type, boundary included.
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
+
     // Build headers
     const requestHeaders: Record<string, string> = {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...headers,
     }
 
@@ -207,7 +210,7 @@ export function createRequestFn(
         const response = await config.fetchFn(url.toString(), {
           method,
           headers: requestHeaders,
-          body: body ? JSON.stringify(body) : undefined,
+          body: isFormData ? body : body ? JSON.stringify(body) : undefined,
           credentials: config.credentials,
         })
 

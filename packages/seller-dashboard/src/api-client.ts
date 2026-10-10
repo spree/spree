@@ -71,7 +71,7 @@ export function createSellerApiClient({
     // The shared address form reads countries through the registered client,
     // so it works in a panel that has no admin credential.
     listCountries: () => sellerClient().countries.list(),
-    createDirectUpload: (params) => sellerClient().directUploads.create(params),
+    uploadFile: (file, options) => sellerClient().files.upload(file, options),
     // A file download is a bare fetch, so it does not go through the client
     // and picks up none of its headers. Without the seller header the Seller
     // API refuses the request before the action runs, so an export would

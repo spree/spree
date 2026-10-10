@@ -36,7 +36,7 @@ const RANSACK_PREDICATES = [
   'blank',
 ]
 
-const API_VERBS = ['get', 'post', 'patch', 'delete', 'endpoints', 'schema', 'status']
+const API_VERBS = ['get', 'post', 'patch', 'delete', 'upload', 'endpoints', 'schema', 'status']
 
 // Keep in sync with `Spree::ApiKey.known_scopes` — the permission catalog keys
 // plus aliases (spree/core/lib/spree/core/permission_configuration.rb).

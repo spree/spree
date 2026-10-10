@@ -54,3 +54,5 @@ export type {
   ProviderLogin,
   ValidationErrorDetail,
 } from './types'
+export type { FileUploadCreateParams, FileUploadResponse, UploadFileOptions } from './uploads'
+export { computeChecksum, uploadFile } from './uploads'

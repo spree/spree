@@ -75,7 +75,7 @@ interface ImportButtonProps {
 
 /**
  * Toolbar entry point for CSV imports: opens a Sheet with the upload form
- * (file, delimiter, template download). The CSV direct-uploads on pick via
+ * (file, delimiter, template download). The CSV uploads on pick via
  * `FileUploadField`; submitting creates the import from the signed blob id
  * and hands it to `onCreated`.
  */
@@ -190,6 +190,9 @@ export function ImportButton({
               // Windows browsers report `.csv` as `application/vnd.ms-excel`,
               // which the server's content-type validation rejects.
               transformFile={(picked) => new File([picked], picked.name, { type: 'text/csv' })}
+              // Imports are kept on private storage: a CSV can carry
+              // customer data.
+              private
             />
 
             <Field>

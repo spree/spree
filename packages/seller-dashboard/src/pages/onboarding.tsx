@@ -244,7 +244,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     mutationFn: () =>
       sellerClient().requirementSubmissions.create(requirement.id, {
         note: note || undefined,
-        file: file.signedId || undefined,
+        file_signed_id: file.signedId || undefined,
       }),
     onSuccess: () => {
       setNote('')

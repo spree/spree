@@ -1,4 +1,4 @@
-import { formatFileSize, type ProductFormValues, useDirectUpload } from '@spree/dashboard-core'
+import { formatFileSize, type ProductFormValues, useFileUpload } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -43,7 +43,7 @@ export function DigitalFilesFormCard({
   const confirm = useConfirm()
   // Files are only ever served through an authorized, signed link, so they go
   // to private storage — never the public bucket.
-  const directUpload = useDirectUpload({ private: true })
+  const fileUpload = useFileUpload({ visibility: 'private' })
   const [pending, setPending] = useState<PendingUpload[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -56,7 +56,7 @@ export function DigitalFilesFormCard({
         const uploadId = crypto.randomUUID()
         setPending((prev) => [...prev, { id: uploadId, name: file.name }])
         try {
-          const { signedId } = await directUpload.mutateAsync(file)
+          const { signedId } = await fileUpload.mutateAsync(file)
           const current = form.getValues('digital_assets') ?? []
           form.setValue(
             'digital_assets',
@@ -77,7 +77,7 @@ export function DigitalFilesFormCard({
         }
       }
     },
-    [directUpload, form, t],
+    [fileUpload, form, t],
   )
 
   function handleFileInput(event: React.ChangeEvent<HTMLInputElement>) {

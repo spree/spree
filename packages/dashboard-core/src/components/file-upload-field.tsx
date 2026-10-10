@@ -15,7 +15,7 @@ import {
 import { FileIcon, UploadCloudIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDirectUpload } from '../hooks/use-direct-upload'
+import { useFileUpload } from '../hooks/use-file-upload'
 
 /**
  * Controlled upload state. A field is in exactly one of three states:
@@ -89,7 +89,7 @@ export interface FileUploadFieldProps {
 }
 
 /**
- * Universal single-file upload field backed by ActiveStorage direct upload.
+ * Universal single-file upload field backed by `POST /files`.
  * Picking or dropping a file uploads it immediately; the attached file (or
  * the persisted server-side one) renders as an `Attachment` with a remove
  * action. Fully controlled — the consumer maps {@link FileUploadValue} onto
@@ -115,7 +115,7 @@ export function FileUploadField({
   onUploadingChange,
 }: FileUploadFieldProps) {
   const { t } = useTranslation()
-  const directUpload = useDirectUpload({ private: privateStorage })
+  const fileUpload = useFileUpload({ visibility: privateStorage ? 'private' : 'public' })
   const [pending, setPending] = useState<File | null>(null)
 
   const isImage = variant === 'image'
@@ -153,7 +153,7 @@ export function FileUploadField({
     setPending(file)
     onUploadingChange?.(true)
     try {
-      const result = await directUpload.mutateAsync(file)
+      const result = await fileUpload.mutateAsync(file)
       // Revoke a preview we're replacing in-place; the object URL otherwise
       // lives in caller-owned state, so its lifetime is their responsibility
       // (a hidden-then-shown card must not remount with a dead URL).

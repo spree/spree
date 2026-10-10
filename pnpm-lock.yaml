@@ -690,6 +690,12 @@ importers:
 
   packages/sdk-core:
     devDependencies:
+      '@types/spark-md5':
+        specifier: ^3.0.5
+        version: 3.0.5
+      spark-md5:
+        specifier: ^3.0.2
+        version: 3.0.2
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.29)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)

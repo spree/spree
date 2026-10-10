@@ -1,3 +1,5 @@
+import { openAsBlob } from 'node:fs'
+import { basename } from 'node:path'
 import { createAdminClient } from '@spree/admin-sdk'
 import { type Command, Option } from 'commander'
 import { printTable } from 'console-table-printer'
@@ -89,6 +91,7 @@ export function registerApiCommand(program: Command): void {
       '  spree api get /products -q status_eq=active --limit 10',
       '  spree api post /products -d \'{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}\'',
       '  spree api get /orders/ord_x8k2J9aQ --expand items,payments',
+      '  spree api upload ./products.csv --private   # prints a signed_id to pass to another endpoint',
       '',
       'Discover the surface (offline, no server needed):',
       '  spree api endpoints --search <term>   # find endpoints + required scopes',
@@ -149,6 +152,38 @@ export function registerApiCommand(program: Command): void {
       }
     })
   }
+
+  // --- File upload -----------------------------------------------------------
+
+  withSharedFlags(
+    api
+      .command('upload <file>')
+      .description(
+        'Upload a file (10 MB by default) and print its signed_id, e.g. `spree api upload ./logo.png`',
+      )
+      .option('--private', 'store on private storage (documents, imports, digital products)')
+      .option('--content-type <type>', 'content type, when it cannot be read from the file'),
+  ).action(
+    async (file: string, flags: SharedFlags & { private?: boolean; contentType?: string }) => {
+      let baseUrl: string | undefined
+      try {
+        // Open the file before resolving credentials, so a wrong path fails
+        // fast without minting a project key.
+        const blob = await openAsBlob(file)
+        const { client, credentials } = await clientFor(flags)
+        baseUrl = credentials.baseUrl
+        const result = await client.files.upload(blob, {
+          method: 'multipart',
+          filename: basename(file),
+          contentType: flags.contentType,
+          visibility: flags.private ? 'private' : 'public',
+        })
+        printResult(result, flags.format)
+      } catch (error) {
+        handleApiError(error, { baseUrl })
+      }
+    },
+  )
 
   // --- Schema introspection (bundled OpenAPI snapshot) ----------------------
 

@@ -202,10 +202,10 @@ export interface UpdateCartParams {
    */
   po_number?: string | null
   /**
-   * ActiveStorage signed blob id of the buyer's purchase order, from
+   * The `signed_id` of the buyer's purchase order, from
    * `POST /store/carts/:id/po_document`. Blank detaches the document.
    */
-  po_document?: string | null
+  po_document_signed_id?: string | null
 }
 
 // Payments

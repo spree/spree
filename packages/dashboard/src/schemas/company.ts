@@ -3,7 +3,7 @@ import type {
   TaxExemptionCertificateParams,
   TaxIdentifierParams,
 } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { blankToNull, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -107,6 +107,6 @@ export function taxExemptionCertificateValuesToParams(
     issued_at: blankToNull(values.issued_at),
     expires_at: blankToNull(values.expires_at),
     issuing_authority: blankToNull(values.issuing_authority),
-    ...(values.document_signed_id ? { document: values.document_signed_id } : {}),
+    ...signedIdParam('document', values.document_signed_id),
   }
 }

@@ -5,7 +5,7 @@ import {
   ImageUploadField,
   PageHeader,
   Subject,
-  useDirectUpload,
+  useFileUpload,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -111,7 +111,7 @@ function MediaLibraryPage() {
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const directUpload = useDirectUpload()
+  const fileUpload = useFileUpload()
   const createFile = useCreateMediaLibraryFile()
   const deleteFile = useDeleteMediaLibraryFile()
 
@@ -147,7 +147,7 @@ function MediaLibraryPage() {
         // Per file, so one bad file doesn't discard the ones that worked and
         // the merchant is told which failed.
         try {
-          const upload = await directUpload.mutateAsync(file)
+          const upload = await fileUpload.mutateAsync(file)
           await createFile.mutateAsync({
             signed_id: upload.signedId,
             alt: file.name,
