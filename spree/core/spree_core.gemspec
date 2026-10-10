@@ -40,6 +40,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'benchmark' # needed for ruby 4.0 and benchmark gem
   s.add_dependency 'cancancan', '~> 3.2'
   s.add_dependency 'countries'
+  # OAuth 2.1 authorization server. Pinned to a release candidate because it
+  # is the first version carrying RFC 8707 resource indicators, which the MCP
+  # authorization spec requires and which cannot be added from outside — the
+  # audience has to be bound when the token is issued. Relax to '~> 6.0' once
+  # 6.0.0 is final.
+  s.add_dependency 'doorkeeper', '~> 6.0.0.rc2'
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
   s.add_dependency 'highline', '>= 2', '< 4' # Necessary for the install generator

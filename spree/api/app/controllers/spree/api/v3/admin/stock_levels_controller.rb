@@ -35,7 +35,7 @@ module Spree
               )
             end
 
-            result = Spree.stock_level_bulk_upsert_service.call(rows: rows)
+            result = Spree.stock_level_bulk_upsert_workflow.call(store: current_store, rows: rows)
             render json: result.value
           end
 

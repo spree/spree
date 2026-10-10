@@ -55,10 +55,16 @@ module Spree
             [:user, { attachment_attachment: :blob }]
           end
 
+          # Narrowed to the kinds this caller may read.
+          #
+          # Filtered for every principal that carries a ceiling, not only a
+          # secret key: an OAuth token resolves as a staff user with no key,
+          # so testing for one let an agent list every export in the store —
+          # including that customer and gift-card exports exist — whatever the
+          # merchant consented to. A staff member on a narrow role was
+          # unfiltered for the same reason.
           def scope
             collection = super
-            return collection unless scope_limited_principal?
-
             collection.where(type: readable_export_types)
           end
 
@@ -127,10 +133,16 @@ module Spree
             action_name == 'create' ? resolve_export_type(params[:type]) : find_resource.class
           end
 
+          # `read_all` is not a catalog key, so it is asked of a secret key
+          # directly; every shipped export declares a required scope, and an
+          # extension type that declares none is readable only by a key that
+          # holds everything.
           def readable_export_types
             Spree::Export.available_types.select do |type|
               required = type.required_scope
-              required ? current_api_key.has_scope?("read_#{required}") : current_api_key.has_scope?('read_all')
+              next current_api_key&.has_scope?('read_all') if required.blank?
+
+              holds_permission?("read_#{required}")
             end.map(&:to_s)
           end
         end

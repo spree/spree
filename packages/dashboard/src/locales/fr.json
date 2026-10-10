@@ -2398,6 +2398,16 @@
           "label": "Emballage par défaut",
           "help": "L'emballage sur lequel vos tarifs de colis sont calculés. Un seul par défaut à la fois."
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Nom",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "URL de rappel",
+          "help": "Issue de la documentation du client. Les codes d'autorisation y sont livrés : ce doit être l'adresse publiée par le client."
+        }
       }
     },
     "gift_cards": {
@@ -4075,6 +4085,47 @@
           "admission_description": "Activer l’une de ces options supprime une décision humaine. Acceptable sur une marketplace sur invitation, risqué sur une marketplace ouverte à tous.",
           "communication_title": "Communication",
           "commission_tax_title": "Taxe sur la commission"
+        },
+        "connected_apps": {
+          "title": "Agents connectés",
+          "subtitle": "Agents IA auxquels un membre de l'équipe a donné accès à cette boutique. La révocation prend effet immédiatement.",
+          "empty": "Aucun agent n'a encore été connecté.",
+          "revoke": "Révoquer l’accès",
+          "table": {
+            "name": "Agent",
+            "access": "Accès",
+            "authorized_by": "Autorisé par",
+            "last_authorized": "Dernière autorisation",
+            "status": "Statut"
+          },
+          "revoke_confirm": {
+            "title": "Révoquer l’accès ?",
+            "message": "{{name}} cessera de fonctionner immédiatement. Toute personne qui l’utilise devra se connecter à nouveau."
+          },
+          "status": {
+            "connected": "Connecté",
+            "not_connected": "Non connecté"
+          }
+        },
+        "oauth_clients": {
+          "title": "Clients OAuth",
+          "subtitle": "Les clients OAuth enregistrés pour cette boutique. La connexion se fait depuis Agents connectés.",
+          "empty": "Aucun client enregistré.",
+          "register": "Enregistrer un client",
+          "table": {
+            "client_id": "Identifiant client",
+            "created": "Enregistré"
+          },
+          "delete_confirm": {
+            "title": "Supprimer ce client ?",
+            "message": "{{name}} cessera de fonctionner immédiatement et son enregistrement sera supprimé."
+          },
+          "form": {
+            "create_title": "Enregistrer un client",
+            "edit_title": "Modifier le client",
+            "description": "Enregistrez un client OAuth pour pouvoir le connecter à cette boutique."
+          },
+          "copy_client_id": "Copier l'identifiant client"
         }
       },
       "staff": {
@@ -4125,6 +4176,20 @@
         },
         "total": "Total",
         "translated": "Traduit"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Autoriser l’application",
+          "subtitle": "Vérifiez ce que cette application demande avant de l’autoriser.",
+          "intro": "{{client}} souhaite accéder à cette boutique en votre nom. Elle ne pourra faire que ce que vous autorisez ci-dessous, et jamais plus que vos propres autorisations ne le permettent.",
+          "permissions_heading": "Autorisations",
+          "revoke_hint": "Vous pouvez révoquer cet accès à tout moment dans Paramètres → Applications connectées.",
+          "approve": "Autoriser l’accès",
+          "deny": "Annuler",
+          "invalid_request": "Cette demande d’autorisation n’est pas valide. Recommencez depuis l’application qui vous a envoyé ici.",
+          "decision_failed": "La décision n’a pas pu être enregistrée. Réessayez.",
+          "withheld": "Non proposé, car votre propre rôle ne comprend pas : {{permissions}}"
+        }
       }
     },
     "payment_methods": {
@@ -4185,7 +4250,8 @@
         "staff": "Membres de l’équipe, invitations, rôles et leurs permissions",
         "stock": "Niveaux de stock, emplacements, mouvements et transferts",
         "store_credits": "Avoirs des clients",
-        "webhooks": "Points de terminaison et livraisons de webhooks"
+        "webhooks": "Points de terminaison et livraisons de webhooks",
+        "oauth_applications": "Clients OAuth enregistrés pour cette boutique"
       },
       "grid": {
         "read_aria": "Voir {{resource}}",
@@ -4237,7 +4303,8 @@
         "staff": "Équipe et rôles",
         "stock": "Stock",
         "store_credits": "Avoirs en boutique",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "oauth_applications": "Applications OAuth"
       }
     },
     "policies": {
@@ -5115,7 +5182,9 @@
         "webhooks": "Points de terminaison notifiés lors d'événements",
         "package_types": "Cartons, palettes et conteneurs",
         "suppliers": "À qui vous achetez votre stock, et comment les joindre",
-        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission"
+        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission",
+        "connected_apps": "Agents IA ayant accès à cette boutique",
+        "oauth_clients": "Enregistrer et configurer des clients OAuth"
       },
       "groups": {
         "audit": "Audit",
@@ -5153,7 +5222,9 @@
         "webhooks": "Webhooks",
         "package_types": "Types d'emballage",
         "suppliers": "Fournisseurs",
-        "marketplace": "Paramètres"
+        "marketplace": "Paramètres",
+        "connected_apps": "Agents connectés",
+        "oauth_clients": "Clients OAuth"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -6269,6 +6340,42 @@
       "every_language": {
         "notice": "Les clients de toutes les langues reçoivent cette version jusqu'à ce que vous en publiiez une pour {{language}}."
       }
+    },
+    "mcp_connect": {
+      "open_cta": "Connecter un agent",
+      "title": "Connecter un agent",
+      "subtitle": "Choisissez l'assistant auquel donner accès à cette boutique.",
+      "step_paste": "Collez cette adresse dans le connecteur ou les réglages MCP de votre client.",
+      "step_sign_in": "Il vous renvoie ici pour vous connecter.",
+      "step_approve": "Approuvez ce que l’agent peut faire. Vous pouvez le retirer à tout moment sur cette page.",
+      "client_id_label": "Identifiant client",
+      "client_id_help": "Certains clients le demandent avant de démarrer.",
+      "ready_title": "{{client}} est prêt à être connecté",
+      "ready_subtitle": "Collez ceci dans le client, puis approuvez ce qu'il peut faire.",
+      "endpoint_label": "Adresse MCP de votre boutique",
+      "copy_endpoint": "Copier l'adresse",
+      "copy_client_id": "Copier l'identifiant client",
+      "other_title": "Autre chose",
+      "bounded_note": "Un agent n'obtient jamais plus que vous, et uniquement ce que vous approuvez.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop et Claude Code",
+        "chatgpt": "ChatGPT et Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai et Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Tout autre client parlant MCP",
+      "continue": "Continuer",
+      "run_label": "Exécutez ceci",
+      "copy_command": "Copier la commande",
+      "cli_then_sign_in": "Votre navigateur s'ouvrira pour vous connecter et approuver ce que l'agent peut faire."
     }
   }
 }

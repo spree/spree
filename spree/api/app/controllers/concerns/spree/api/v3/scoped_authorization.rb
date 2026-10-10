@@ -142,7 +142,7 @@ module Spree
           # fallback, host-registered types) defer to CanCanCan's `authorize!`
           # — the caller stays gated per subject, just not by key.
           return unless Spree.permissions.key?(required)
-          return if ability.permission_keys.include?(required)
+          return if staff_permission_keys.include?(required)
 
           Rails.logger.info do
             "[Spree] Access denied: user=#{current_user.id} required=#{required} " \
@@ -216,7 +216,54 @@ module Spree
           ability = current_ability
           return true unless ability.respond_to?(:permission_keys)
 
-          ability.permission_keys.include?(key.to_s)
+          staff_permission_keys.include?(key.to_s)
+        end
+
+        # What a staff principal may do here, as catalog keys.
+        #
+        # Usually their roles' keys. When the request arrived on a delegated
+        # credential — an OAuth token a staff member approved for an agent or
+        # an app — the grant's scopes narrow that set: the person consented to
+        # part of their authority, not all of it. The grant can only ever
+        # subtract, so approving a client never widens what its owner holds.
+        #
+        # @return [Array<String>]
+        def staff_permission_keys
+          @staff_permission_keys ||= begin
+            ability = current_ability
+            held = ability.respond_to?(:permission_keys) ? ability.permission_keys.map(&:to_s) : []
+            granted = delegated_permission_keys
+            granted.nil? ? held : held & granted
+          end
+        end
+
+        # The scopes of the delegated credential this request arrived on, or
+        # nil when the staff member is acting directly (a dashboard session).
+        #
+        # Controllers that accept an OAuth token override
+        # `current_oauth_token`; everything else inherits nil and is unchanged.
+        #
+        # @return [Array<String>, nil]
+        def delegated_permission_keys
+          token = current_oauth_token
+          return nil if token.blank?
+
+          Spree.permissions.expand_keys(token.scopes.to_a)
+        end
+
+        # The delegated credential this request arrived on.
+        #
+        # Resolved here rather than overridden per controller: this module is
+        # included after the authentication concerns, so an override in one of
+        # them loses to this definition and the narrowing silently stops
+        # happening — which is how a token scoped to `read_products` once
+        # created one.
+        #
+        # @return [Spree::OauthAccessToken, nil]
+        def current_oauth_token
+          return nil unless respond_to?(:admin_oauth_token, true)
+
+          admin_oauth_token
         end
       end
     end

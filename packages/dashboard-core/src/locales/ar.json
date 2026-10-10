@@ -183,7 +183,9 @@
       "searching": "جارٍ البحث…",
       "select_placeholder": "اختر…",
       "unsaved_changes": "لديك تغييرات غير محفوظة.",
-      "yes": "نعم"
+      "yes": "نعم",
+      "done": "تم",
+      "error": "حدث خطأ ما."
     },
     "components": {
       "address_block": {

@@ -1296,6 +1296,48 @@ export interface CustomFieldDefinitionUpdateParams {
   sortable?: boolean
 }
 
+/**
+ * The OAuth authorization request, forwarded from the query string the client
+ * sent the browser to. Passed through unchanged so the authorization server
+ * validates it rather than the dashboard — PKCE and the audience in
+ * particular must not be re-derived here.
+ */
+export interface OauthAuthorizationParams {
+  client_id: string
+  redirect_uri: string
+  response_type: string
+  /** Space-delimited permission keys, the same vocabulary as API-key scopes. */
+  scope?: string
+  state?: string
+  code_challenge?: string
+  code_challenge_method?: string
+  /** RFC 8707: which protected resource the token is being requested for. */
+  resource?: string
+}
+
+/** What a client is asking a merchant to approve. */
+export interface OauthAuthorizationRequest {
+  client_name: string
+  /**
+   * Every permission the requested scopes imply, expanded — so the screen
+   * lists what is actually being granted rather than the shorthand asked for.
+   */
+  scopes: string[]
+  /**
+   * Of those, the ones this person can actually hand over. A grant only ever
+   * narrows the approver's own authority, so anything they do not hold is
+   * not offered.
+   */
+  grantable_scopes: string[]
+  resource: string | null
+  redirect_uri: string
+}
+
+/** Where to send the browser once the merchant has decided. */
+export interface OauthRedirect {
+  redirect_uri: string
+}
+
 export interface ApiKeyCreateParams {
   name: string
   key_type: 'publishable' | 'secret'

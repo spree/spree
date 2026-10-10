@@ -125,6 +125,7 @@ export type { default as InvitationAcceptanceLink } from './generated/Invitation
 export type { default as LineItem } from './generated/LineItem'
 export type { default as Market } from './generated/Market'
 export type { default as Media } from './generated/Media'
+export type { default as OauthApplication } from './generated/OauthApplication'
 export type { default as OptionType } from './generated/OptionType'
 export type { default as OptionValue } from './generated/OptionValue'
 export type { default as Order } from './generated/Order'

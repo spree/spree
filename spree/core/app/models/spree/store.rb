@@ -8,6 +8,12 @@ module Spree
 
     include FriendlyId
     include Spree::TranslatableResource
+
+    # The store itself is settings — see Admin::StoreController.
+    def self.translation_write_permission
+      'write_settings'
+    end
+
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::Stores::Setup
@@ -337,6 +343,7 @@ module Spree
     has_many :catalogs, class_name: 'Spree::Catalog', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
+    has_many :oauth_applications, class_name: 'Spree::OauthApplication', dependent: :destroy
     has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy
 
     #

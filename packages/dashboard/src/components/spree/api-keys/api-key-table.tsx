@@ -33,6 +33,8 @@ import { BanIcon, CheckIcon, CopyIcon, KeyRoundIcon, PencilIcon } from '@spree/d
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDeleteApiKey, useRevokeApiKey } from '../../../hooks/use-api-keys'
+import { usePermissionCatalog } from '../../../hooks/use-roles'
+import { permissionKeyLabel } from '../permission-picker'
 
 /**
  * The two kinds of key are listed side by side but answer different questions:
@@ -316,8 +318,13 @@ function ApiKeyRow({
 // usual table widths.
 const SCOPE_PREVIEW_COUNT = 3
 
-function ScopeList({ scopes }: { scopes: string[] }) {
+export function ScopeList({ scopes }: { scopes: string[] }) {
   const { t } = useTranslation()
+  const { data: catalog } = usePermissionCatalog()
+
+  // Same shape as the roles table: a filled badge means "everything", an
+  // outlined one means a named permission, so the two read differently at a
+  // glance wherever permissions are listed.
   if (scopes.includes('write_all')) {
     return <Badge>{t('admin.pages.settings.api_keys.scope_badge.full_access')}</Badge>
   }
@@ -334,8 +341,8 @@ function ScopeList({ scopes }: { scopes: string[] }) {
   return (
     <div className="flex max-w-xs flex-wrap items-center gap-1">
       {preview.map((scope) => (
-        <Badge key={scope} className="font-mono text-[10px]">
-          {scope}
+        <Badge key={scope} variant="outline">
+          {permissionKeyLabel(t, catalog?.data, scope)}
         </Badge>
       ))}
       {overflow.length > 0 && (
@@ -350,14 +357,16 @@ function ScopeList({ scopes }: { scopes: string[] }) {
                 count: overflow.length,
               })}
             >
-              <Badge className="font-mono text-[10px] hover:bg-accent">+{overflow.length}</Badge>
+              <Badge variant="secondary" className="hover:bg-accent">
+                +{overflow.length}
+              </Badge>
             </button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-auto max-w-sm p-2">
             <div className="flex max-h-60 flex-col gap-1 overflow-y-auto">
               {scopes.map((scope) => (
-                <Badge key={scope} className="self-start font-mono text-[10px]">
-                  {scope}
+                <Badge key={scope} variant="outline" className="self-start">
+                  {permissionKeyLabel(t, catalog?.data, scope)}
                 </Badge>
               ))}
             </div>

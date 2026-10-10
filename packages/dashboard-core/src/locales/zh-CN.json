@@ -183,7 +183,9 @@
       "searching": "搜索中…",
       "select_placeholder": "请选择…",
       "unsaved_changes": "您有未保存的更改。",
-      "yes": "是"
+      "yes": "是",
+      "done": "完成",
+      "error": "出了点问题。"
     },
     "components": {
       "address_block": {

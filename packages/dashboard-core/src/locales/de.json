@@ -183,7 +183,9 @@
       "searching": "Wird gesucht…",
       "select_placeholder": "Auswählen…",
       "unsaved_changes": "Sie haben ungespeicherte Änderungen.",
-      "yes": "Ja"
+      "yes": "Ja",
+      "done": "Fertig",
+      "error": "Etwas ist schiefgelaufen."
     },
     "components": {
       "address_block": {

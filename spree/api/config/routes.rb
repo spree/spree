@@ -238,6 +238,22 @@ Spree::Core::Engine.add_routes do
         post 'auth/password_resets', to: 'password_resets#create'
         patch 'auth/password_resets/:id', to: 'password_resets#update'
 
+        # OAuth 2.1 consent, read and decided by the dashboard. The admin's
+        # own session authorizes it: a secret key may authenticate here but
+        # can never grant authority on a person's behalf.
+        namespace :oauth do
+          get 'authorize', to: 'authorizations#show'
+          post 'authorize', to: 'authorizations#create'
+          delete 'authorize', to: 'authorizations#destroy'
+
+          # The OAuth clients registered against this store. Deleting one
+          # removes the registration; revoking a connection is the nested
+          # `tokens` resource, because that is what revoking deletes.
+          resources :applications do
+            resource :tokens, only: :destroy, controller: 'application_tokens'
+          end
+        end
+
         # Semantic reporting (docs/plans/6.0-analytics-semantic-layer.md)
         namespace :reporting do
           post :query
@@ -1050,6 +1066,14 @@ Spree::Core::Engine.add_routes do
         end
       end
 
+      # RFC 9728 Protected Resource Metadata. One document per protected
+      # resource, named by the surface that registered it, so a client
+      # discovers which authorization server guards the URL it was given.
+      # Unauthenticated: a client has no credential at the point it asks.
+      get 'oauth/protected-resource/:resource_key',
+          to: 'oauth/metadata#show',
+          as: :oauth_protected_resource
+
       # Webhooks (outside of store namespace — no API key authentication)
       namespace :webhooks do
         post 'payments/:payment_method_id', to: 'payments#create', as: :payment_webhook
@@ -1063,5 +1087,35 @@ Spree::Core::Engine.add_routes do
         post 'payouts/:payment_method_id', to: 'payouts#create', as: :payout_webhook
       end
     end
+  end
+
+  # The authorization server's own endpoints: /oauth/authorize, /oauth/token,
+  # /oauth/revoke and RFC 8414 metadata. Outside the versioned API namespace —
+  # the OAuth protocol is not a Spree API resource and its paths are fixed by
+  # the spec and by what clients expect to find.
+  #
+  # `authorizations` is NOT skipped. Skipping it would leave the metadata
+  # document without an `authorization_endpoint`, which is required for the
+  # code flow, so a consumer client would have nowhere to send the browser.
+  # The controller is Spree's own and redirects to the dashboard's consent
+  # screen instead of rendering Doorkeeper's HTML.
+  #
+  # The application-management controllers stay skipped: connected apps are
+  # managed through /api/v3/admin/oauth/applications, under the Admin API's
+  # own authentication.
+  # `controllers` is a block method, not an option to `use_doorkeeper`.
+  #
+  # Doorkeeper's own controllers need a leading slash because these routes are
+  # drawn inside Spree::Core::Engine, which isolates the namespace — a bare
+  # `doorkeeper/tokens` resolves as `Spree::Doorkeeper::Tokens` and fails on
+  # the first request. Spree's own authorizations controller is named from the
+  # application root WITHOUT a slash, because the metadata document builds its
+  # URL with `url_for(controller: "/#{name}")` and adds the slash itself.
+  use_doorkeeper scope: 'oauth' do
+    controllers authorizations: 'api/v3/oauth/authorizations',
+                tokens: '/doorkeeper/tokens',
+                token_info: '/doorkeeper/token_info',
+                metadata: '/spree/api/v3/oauth/server_metadata'
+    skip_controllers :applications, :authorized_applications
   end
 end

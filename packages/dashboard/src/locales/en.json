@@ -2398,6 +2398,16 @@
           "label": "Default box",
           "help": "The packaging your parcel quotes are built on. One default at a time."
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "Callback URL",
+          "help": "From the client’s own documentation. Authorization codes are delivered here, so it must be the address the client publishes."
+        }
       }
     },
     "gift_cards": {
@@ -4075,6 +4085,47 @@
           "admission_description": "Turning either of these on removes a human decision. Fine for an invite-only marketplace where you already know every seller; risky for one anyone can join.",
           "communication_title": "Communication",
           "commission_tax_title": "Commission tax"
+        },
+        "connected_apps": {
+          "title": "Connected agents",
+          "subtitle": "AI agents a team member has given access to this store. Revoking takes effect immediately.",
+          "empty": "No agents have been connected yet.",
+          "revoke": "Revoke access",
+          "table": {
+            "name": "Agent",
+            "access": "Access",
+            "authorized_by": "Approved by",
+            "last_authorized": "Last authorized",
+            "status": "Status"
+          },
+          "revoke_confirm": {
+            "title": "Revoke access?",
+            "message": "{{name}} will stop working immediately. Anyone using it will need to connect again."
+          },
+          "status": {
+            "connected": "Connected",
+            "not_connected": "Not connected"
+          }
+        },
+        "oauth_clients": {
+          "title": "OAuth clients",
+          "subtitle": "The OAuth clients registered against this store. A merchant connects one from Connected agents.",
+          "empty": "No clients registered yet.",
+          "register": "Register a client",
+          "table": {
+            "client_id": "Client ID",
+            "created": "Registered"
+          },
+          "delete_confirm": {
+            "title": "Delete this client?",
+            "message": "{{name}} will stop working immediately and its registration will be removed."
+          },
+          "form": {
+            "create_title": "Register a client",
+            "edit_title": "Edit client",
+            "description": "Register an OAuth client so it can be connected to this store."
+          },
+          "copy_client_id": "Copy client ID"
         }
       },
       "staff": {
@@ -4125,6 +4176,20 @@
         },
         "total": "Total",
         "translated": "Translated"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Authorize application",
+          "subtitle": "Review what this application is asking for before you allow it.",
+          "intro": "{{client}} wants access to this store on your behalf. It will be able to do only what you allow below, and never more than your own permissions allow.",
+          "permissions_heading": "Permissions",
+          "revoke_hint": "You can revoke this at any time under Settings → Connected apps.",
+          "approve": "Allow access",
+          "deny": "Cancel",
+          "invalid_request": "This authorization request is not valid. Start again from the application that sent you here.",
+          "decision_failed": "The decision could not be recorded. Try again.",
+          "withheld": "Not offered, because your own role does not include: {{permissions}}"
+        }
       }
     },
     "payment_methods": {
@@ -4185,7 +4250,8 @@
         "staff": "Team members, invitations, roles and their permissions",
         "stock": "Stock levels, locations, movements and transfers",
         "store_credits": "Customer store credit balances",
-        "webhooks": "Webhook endpoints and deliveries"
+        "webhooks": "Webhook endpoints and deliveries",
+        "oauth_applications": "OAuth clients registered against this store"
       },
       "grid": {
         "read_aria": "View {{resource}}",
@@ -4237,7 +4303,8 @@
         "staff": "Staff & roles",
         "stock": "Stock",
         "store_credits": "Store credits",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "oauth_applications": "OAuth applications"
       }
     },
     "policies": {
@@ -5115,7 +5182,9 @@
         "webhooks": "Endpoints notified when events happen",
         "package_types": "Boxes, cartons, pallets and containers",
         "suppliers": "Who you buy stock from, and how to reach them",
-        "marketplace": "Seller payouts, seller approval, seller emails and commission tax"
+        "marketplace": "Seller payouts, seller approval, seller emails and commission tax",
+        "connected_apps": "AI agents with access to this store",
+        "oauth_clients": "Register and configure OAuth clients"
       },
       "groups": {
         "audit": "Audit",
@@ -5153,7 +5222,9 @@
         "webhooks": "Webhooks",
         "package_types": "Package types",
         "suppliers": "Suppliers",
-        "marketplace": "Settings"
+        "marketplace": "Settings",
+        "connected_apps": "Connected agents",
+        "oauth_clients": "OAuth clients"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -6269,6 +6340,42 @@
       "every_language": {
         "notice": "Customers in every language receive this version until you publish one for {{language}}."
       }
+    },
+    "mcp_connect": {
+      "open_cta": "Connect an agent",
+      "title": "Connect an agent",
+      "subtitle": "Choose the assistant you want to give access to this store.",
+      "step_paste": "Paste this address into your client’s connector or MCP settings.",
+      "step_sign_in": "It sends you here to sign in.",
+      "step_approve": "Approve what the agent may do. You can take it back at any time on this page.",
+      "client_id_label": "Client ID",
+      "client_id_help": "Some clients ask for this before they will start.",
+      "ready_title": "{{client}} is ready to connect",
+      "ready_subtitle": "Paste these into the client, then approve what it may do.",
+      "endpoint_label": "Your store's MCP address",
+      "copy_endpoint": "Copy address",
+      "copy_client_id": "Copy client ID",
+      "other_title": "Something else",
+      "bounded_note": "An agent never gets more than you have, and only what you approve.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop and Claude Code",
+        "chatgpt": "ChatGPT and Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai & Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Any other client that speaks MCP",
+      "continue": "Continue",
+      "run_label": "Run this",
+      "copy_command": "Copy command",
+      "cli_then_sign_in": "It will open your browser to sign in and approve what the agent may do."
     }
   }
 }

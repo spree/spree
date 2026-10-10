@@ -43,6 +43,8 @@ module Spree
                                :actor_classes,
                                :custom_fields,
                                :reporting,
+                               :agent_tools,
+                               :agent_attachments,
                                :integrations,
                                :number_generators,
                                :subscribers,
@@ -157,6 +159,17 @@ module Spree
         app.config.spree.reporting = Spree::Reporting::Registry.new
         Spree::Reporting::DefaultVocabulary.install(app.config.spree.reporting)
       end
+
+      # Seed the agent-tool registry before app initializers so applications
+      # and extensions can register their own tools and expose their own
+      # workflows in config/initializers (see docs/plans/6.0-mcp-server.md).
+      initializer 'spree.register.agent_tools', before: :load_config_initializers do |app|
+        app.config.spree.agent_tools = Spree::AgentTools::Registry.new
+        app.config.spree.agent_attachments = Spree::AgentTools::AttachmentRegistry.new
+        Spree::AgentTools::DefaultCatalog.install(app.config.spree.agent_tools,
+                                                 app.config.spree.agent_attachments)
+      end
+
 
       # Country and subdivision names are translated by the countries gem, which
       # only loads the locales it is told about. This runs after initialization
@@ -587,7 +600,14 @@ module Spree
           :verification_value,
           :client_id,
           :client_secret,
-          :refresh_token
+          :refresh_token,
+          # The OAuth token exchange posts these. The code is single-use and
+          # spent the moment it is logged, but the verifier beside it is what
+          # PKCE relies on — logging both hands anyone who can read the log
+          # everything they need to race the exchange.
+          :code,
+          :code_verifier,
+          :code_challenge
         ]
       end
 

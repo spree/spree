@@ -2393,6 +2393,16 @@
           "label": "默认包装",
           "help": "您的包裹报价所依据的包装。同一时间只能有一个默认包装。"
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "名称",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "回调地址",
+          "help": "来自客户端自己的文档。授权码会发送到这里，因此必须是客户端公布的地址。"
+        }
       }
     },
     "gift_cards": {
@@ -4065,6 +4075,47 @@
           "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
           "communication_title": "沟通",
           "commission_tax_title": "佣金税"
+        },
+        "connected_apps": {
+          "title": "已连接的代理",
+          "subtitle": "团队成员授予此店铺访问权限的 AI 代理。撤销立即生效。",
+          "empty": "尚未连接任何代理。",
+          "revoke": "撤销访问权限",
+          "table": {
+            "name": "代理",
+            "access": "访问权限",
+            "authorized_by": "批准人",
+            "last_authorized": "最后授权时间",
+            "status": "状态"
+          },
+          "revoke_confirm": {
+            "title": "撤销访问权限？",
+            "message": "{{name}} 将立即停止工作。使用它的人需要重新连接。"
+          },
+          "status": {
+            "connected": "已连接",
+            "not_connected": "未连接"
+          }
+        },
+        "oauth_clients": {
+          "title": "OAuth 客户端",
+          "subtitle": "已在此店铺注册的 OAuth 客户端。连接请在“已连接的代理”中完成。",
+          "empty": "尚未注册任何客户端。",
+          "register": "注册客户端",
+          "table": {
+            "client_id": "客户端 ID",
+            "created": "注册时间"
+          },
+          "delete_confirm": {
+            "title": "删除此客户端？",
+            "message": "{{name}} 将立即停止工作，其注册记录也会被删除。"
+          },
+          "form": {
+            "create_title": "注册客户端",
+            "edit_title": "编辑客户端",
+            "description": "注册 OAuth 客户端后即可将其连接到此店铺。"
+          },
+          "copy_client_id": "复制客户端 ID"
         }
       },
       "staff": {
@@ -4115,6 +4166,20 @@
         },
         "total": "总计",
         "translated": "已翻译"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "授权应用",
+          "subtitle": "在允许之前，请查看此应用请求的权限。",
+          "intro": "{{client}} 希望代表您访问此店铺。它只能执行您在下方允许的操作，且绝不会超出您自己的权限范围。",
+          "permissions_heading": "权限",
+          "revoke_hint": "您可以随时在“设置 → 已连接的应用”中撤销。",
+          "approve": "允许访问",
+          "deny": "取消",
+          "invalid_request": "此授权请求无效。请从引导您来此的应用重新开始。",
+          "decision_failed": "无法记录此决定，请重试。",
+          "withheld": "未提供，因为您自己的角色不包含：{{permissions}}"
+        }
       }
     },
     "payment_methods": {
@@ -4175,7 +4240,8 @@
         "staff": "团队成员、邀请、角色及其权限",
         "stock": "库存水平、仓库、变动与调拨",
         "store_credits": "客户店铺余额",
-        "webhooks": "Webhook 端点与投递记录"
+        "webhooks": "Webhook 端点与投递记录",
+        "oauth_applications": "已在此店铺注册的 OAuth 客户端"
       },
       "grid": {
         "read_aria": "查看{{resource}}",
@@ -4227,7 +4293,8 @@
         "staff": "团队与角色",
         "stock": "库存",
         "store_credits": "店铺信用",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "oauth_applications": "OAuth 应用"
       }
     },
     "policies": {
@@ -5104,7 +5171,9 @@
         "webhooks": "事件发生时接收通知的端点",
         "package_types": "纸箱、外箱、托盘与集装箱",
         "suppliers": "你从谁那里采购库存，以及如何联系他们",
-        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税"
+        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税",
+        "connected_apps": "有权访问此店铺的 AI 代理",
+        "oauth_clients": "注册并配置 OAuth 客户端"
       },
       "groups": {
         "audit": "审计",
@@ -5142,7 +5211,9 @@
         "webhooks": "Webhooks",
         "package_types": "包装类型",
         "suppliers": "供应商",
-        "marketplace": "设置"
+        "marketplace": "设置",
+        "connected_apps": "已连接的代理",
+        "oauth_clients": "OAuth 客户端"
       },
       "breadcrumbs": {
         "marketplace": "平台"
@@ -6256,6 +6327,42 @@
       "every_language": {
         "notice": "在您为{{language}}发布版本之前，所有语言的客户都会收到此版本。"
       }
+    },
+    "mcp_connect": {
+      "open_cta": "连接代理",
+      "title": "连接代理",
+      "subtitle": "选择要授予此店铺访问权限的助手。",
+      "step_paste": "将此地址粘贴到客户端的连接器或 MCP 设置中。",
+      "step_sign_in": "它会把您送到这里登录。",
+      "step_approve": "确认代理可以做什么。您随时可以在此页面收回。",
+      "client_id_label": "客户端 ID",
+      "client_id_help": "部分客户端在开始前会要求填写。",
+      "ready_title": "{{client}} 已可连接",
+      "ready_subtitle": "将这些粘贴到客户端，然后批准它可以做什么。",
+      "endpoint_label": "您店铺的 MCP 地址",
+      "copy_endpoint": "复制地址",
+      "copy_client_id": "复制客户端 ID",
+      "other_title": "其他",
+      "bounded_note": "代理获得的权限绝不会超过您自己的，且仅限于您批准的部分。",
+      "clients": {
+        "claude": "claude.ai、Claude Desktop 和 Claude Code",
+        "chatgpt": "ChatGPT 和 Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai 与桌面版",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "任何其他支持 MCP 的客户端",
+      "continue": "继续",
+      "run_label": "运行此命令",
+      "copy_command": "复制命令",
+      "cli_then_sign_in": "它会打开浏览器，让您登录并批准代理可以执行的操作。"
     }
   }
 }

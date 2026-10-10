@@ -1,0 +1,111 @@
+module Spree
+  module Mcp
+    # Builds an `MCP::Server` for one caller.
+    #
+    # Per request, not per process. A server carries the tools its caller may
+    # use and nothing else — a key minted to read orders is never told a
+    # refund tool exists — so the tool list cannot be shared between
+    # principals, and the gem's own Rack transport (one server for every
+    # request) is not what mounts this. An ordinary admin API controller does,
+    # and hands the JSON-RPC message to {MCP::Server#handle_json}.
+    module Server
+      # What the model is told about using this server at discovery, so it
+      # reaches for the discovery tools before guessing at names and filters.
+      INSTRUCTIONS = <<~TEXT.freeze
+        This server manages one Spree store's back office.
+
+        Start with describe_resource to learn which resources exist and which
+        fields each can be filtered and sorted by, then search_resources to find
+        records and get_resource to read one in full. For numbers — revenue,
+        orders, units — use describe_reporting and then query_report rather than
+        counting records yourself.
+
+        Which products a category, collection, catalog or price list holds is
+        curate_products — merchandising is mostly membership, and that one tool
+        covers every one of those parents.
+
+        Writes are named after what they do: a tool per operation, each running
+        the same workflow the dashboard runs, so validations and notifications
+        behave identically. Record arguments are prefixed ids as they appear in
+        search results. You are only offered the tools this credential permits,
+        so a tool you cannot see is one this store has not granted.
+
+        A file the merchant gives you goes the other way: upload_file stores it
+        and answers with an id, which you then pass to whatever uses it —
+        media_create to put an image on a product, create_import to start a
+        CSV import. Storing one changes nothing by itself.
+
+        Files are MCP resources, not tool results. A finished export is one:
+        after create_export, read its contents from resources rather than
+        reporting a download path — the path is for the merchant, the
+        resource is for you. So are the documents attached to records — a
+        buyer's purchase order, a shipping label — which come back as the
+        file itself for you to read.
+      TEXT
+
+      class << self
+        # @param context [Spree::AgentTools::Context] who is asking, and where
+        # @return [MCP::Server]
+        def for(context)
+          server = ::MCP::Server.new(
+            name: 'spree-admin',
+            title: "#{context.store.name} (Spree admin)",
+            version: Spree.version,
+            instructions: INSTRUCTIONS,
+            tools: tools_for(context),
+            server_context: { store_id: context.store.id }
+          )
+
+          register_resources(server, context)
+          server
+        end
+
+        # The files a client may fetch: finished exports, and the documents
+        # attached to records — a buyer's purchase order, a shipping label.
+        #
+        # A tool result has to fit the model's context; a file does not, so
+        # `create_export` hands back an id rather than a file. Resources are
+        # the protocol's answer: the client sees what exists and fetches a
+        # body only when it decides to.
+        #
+        # Handlers rather than a fixed list, because what exists depends on
+        # the store and on what this grant may read — both known only per
+        # request. The closure carries the caller, so a resource one
+        # credential can see is never offered to another.
+        #
+        # The protocol allows one handler of each kind, so the sources are
+        # composed here: each owns which of its records the caller may see,
+        # and each answers only for its own URI scheme.
+        SOURCES = [Exports, Attachments].freeze
+
+        def register_resources(server, context)
+          server.resources_list_handler { SOURCES.flat_map { |source| source.list(context) } }
+
+          server.resources_read_handler do |params|
+            uri = params[:uri] || params['uri']
+            contents = SOURCES.lazy.filter_map { |source| source.read(context, uri) }.first
+            # A file another store owns, or one this grant may not read, is
+            # indistinguishable from one that does not exist — the same answer
+            # the tools give, so a probe learns nothing either way.
+            raise ::MCP::Server::ResourceNotFoundError.new(uri, params) if contents.nil?
+
+            contents
+          end
+        end
+
+        # The tools this caller may use, as MCP definitions.
+        #
+        # Filtering happens here rather than at call time, so a tool the
+        # credential cannot use is never named to the model — and a call to
+        # something it was not offered is "unknown tool", not "forbidden",
+        # which says less about what else exists.
+        #
+        # @param context [Spree::AgentTools::Context]
+        # @return [Array<Class<MCP::Tool>>]
+        def tools_for(context)
+          Spree.agent_tools.available_for(context).map { |tool| ToolAdapter.build(tool) }
+        end
+      end
+    end
+  end
+end

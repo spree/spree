@@ -92,6 +92,14 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
           locale: { type: :string, example: 'en-US' },
           customer_note: { type: :string, description: 'Public, customer-visible note' },
           internal_note: { type: :string, description: 'Staff-only note' },
+          po_number: {
+            type: :string,
+            description: "The buyer's own purchase order reference, which they reconcile the order, the invoice and the payment against."
+          },
+          po_document_signed_id: {
+            type: :string,
+            description: "Signed id of the buyer's purchase order document, from POST /api/v3/admin/files. Served back through the order's po_document action."
+          },
           metadata: { type: :object, description: 'Arbitrary key/value metadata' },
           shipping_address: {
             type: :object,
@@ -223,6 +231,14 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
           preferred_stock_location_id: {
             type: :string,
             description: "Stock Location ID to prefer for fulfillment. Re-runs Order Routing's PreferredLocation rule on subsequent shipment rebuilds."
+          },
+          po_number: {
+            type: :string,
+            description: "The buyer's own purchase order reference, which they reconcile the order, the invoice and the payment against."
+          },
+          po_document_signed_id: {
+            type: :string,
+            description: 'Signed id of the buyer\'s purchase order document, from POST /api/v3/admin/files. Served back through the order\'s po_document action.'
           },
           shipping_address: {
             type: :object,

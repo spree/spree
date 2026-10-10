@@ -15,6 +15,10 @@ require 'alba'
 require 'acts-as-taggable-on'
 require 'awesome_nested_set'
 require 'cancan'
+# The OAuth models include Doorkeeper's mixins, so the gem has to be loaded
+# before they are autoloaded — core owns the tables, api owns the server
+# configuration.
+require 'doorkeeper'
 require 'countries/global'
 require 'friendly_id'
 require 'json_schemer'
@@ -512,6 +516,15 @@ module Spree
   # @return [Spree::Reporting::Registry]
   singleton_class.delegate :reporting, :reporting=, to: :spree_config
 
+  # The agent-tool registry — what an MCP client or the dashboard assistant
+  # may do on a merchant's behalf. A contract like +Spree.integrations+ and
+  # +Spree.reporting+: an extension registers a tool without depending on
+  # either adapter. See docs/plans/6.0-mcp-server.md.
+  #
+  # @return [Spree::AgentTools::Registry]
+  singleton_class.delegate :agent_tools, :agent_tools=, to: :spree_config
+  singleton_class.delegate :agent_attachments, :agent_attachments=, to: :spree_config
+
   # The permission catalog — the grant vocabulary shared by staff roles and
   # secret API key scopes. Roles themselves are data (Spree::Role#permissions);
   # code only registers the vocabulary.
@@ -634,6 +647,8 @@ require 'spree/money'
 require 'spree/service_module'
 require 'spree/workflow'
 require 'spree/reporting'
+require 'spree/agent_tool'
+require 'spree/agent_tools'
 require 'spree/events'
 require 'spree/store_scope_guard'
 require 'spree/uploads'

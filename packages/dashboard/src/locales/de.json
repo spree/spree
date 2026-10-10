@@ -2398,6 +2398,16 @@
           "label": "Standardverpackung",
           "help": "Die Verpackung, auf der Ihre Paketangebote basieren. Nur eine Standardverpackung gleichzeitig."
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "Callback-URL",
+          "help": "Aus der Dokumentation des Clients. Autorisierungscodes werden hierhin geliefert, daher muss es die vom Client veröffentlichte Adresse sein."
+        }
       }
     },
     "gift_cards": {
@@ -4075,6 +4085,47 @@
           "admission_description": "Wenn Sie eine dieser Optionen aktivieren, entfällt eine menschliche Entscheidung. Für einen Marktplatz nur auf Einladung in Ordnung, für einen offenen riskant.",
           "communication_title": "Kommunikation",
           "commission_tax_title": "Steuer auf Provision"
+        },
+        "connected_apps": {
+          "title": "Verbundene Agenten",
+          "subtitle": "KI-Agenten, denen ein Teammitglied Zugriff auf diesen Shop gegeben hat. Der Widerruf gilt sofort.",
+          "empty": "Es wurden noch keine Agenten verbunden.",
+          "revoke": "Zugriff widerrufen",
+          "table": {
+            "name": "Agent",
+            "access": "Zugriff",
+            "authorized_by": "Genehmigt von",
+            "last_authorized": "Letzte Autorisierung",
+            "status": "Status"
+          },
+          "revoke_confirm": {
+            "title": "Zugriff widerrufen?",
+            "message": "{{name}} funktioniert ab sofort nicht mehr. Wer es nutzt, muss sich erneut verbinden."
+          },
+          "status": {
+            "connected": "Verbunden",
+            "not_connected": "Nicht verbunden"
+          }
+        },
+        "oauth_clients": {
+          "title": "OAuth-Clients",
+          "subtitle": "Die für diesen Shop registrierten OAuth-Clients. Verbunden werden sie unter „Verbundene Agenten“.",
+          "empty": "Noch keine Clients registriert.",
+          "register": "Client registrieren",
+          "table": {
+            "client_id": "Client-ID",
+            "created": "Registriert"
+          },
+          "delete_confirm": {
+            "title": "Diesen Client löschen?",
+            "message": "{{name}} funktioniert sofort nicht mehr und die Registrierung wird entfernt."
+          },
+          "form": {
+            "create_title": "Client registrieren",
+            "edit_title": "Client bearbeiten",
+            "description": "Registrieren Sie einen OAuth-Client, damit er mit diesem Shop verbunden werden kann."
+          },
+          "copy_client_id": "Client-ID kopieren"
         }
       },
       "staff": {
@@ -4125,6 +4176,20 @@
         },
         "total": "Gesamt",
         "translated": "Übersetzt"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Anwendung autorisieren",
+          "subtitle": "Prüfen Sie, was diese Anwendung anfordert, bevor Sie sie zulassen.",
+          "intro": "{{client}} möchte in Ihrem Namen auf diesen Shop zugreifen. Die Anwendung kann nur das tun, was Sie unten zulassen, und niemals mehr als Ihre eigenen Berechtigungen erlauben.",
+          "permissions_heading": "Berechtigungen",
+          "revoke_hint": "Sie können dies jederzeit unter Einstellungen → Verbundene Apps widerrufen.",
+          "approve": "Zugriff erlauben",
+          "deny": "Abbrechen",
+          "invalid_request": "Diese Autorisierungsanfrage ist ungültig. Beginnen Sie erneut in der Anwendung, die Sie hierher geschickt hat.",
+          "decision_failed": "Die Entscheidung konnte nicht gespeichert werden. Versuchen Sie es erneut.",
+          "withheld": "Nicht angeboten, da Ihre eigene Rolle Folgendes nicht umfasst: {{permissions}}"
+        }
       }
     },
     "payment_methods": {
@@ -4185,7 +4250,8 @@
         "staff": "Teammitglieder, Einladungen, Rollen und ihre Berechtigungen",
         "stock": "Bestände, Lagerorte, Bewegungen und Transfers",
         "store_credits": "Guthaben der Kunden",
-        "webhooks": "Webhook-Endpunkte und Zustellungen"
+        "webhooks": "Webhook-Endpunkte und Zustellungen",
+        "oauth_applications": "Für diesen Shop registrierte OAuth-Clients"
       },
       "grid": {
         "read_aria": "{{resource}} ansehen",
@@ -4237,7 +4303,8 @@
         "staff": "Team & Rollen",
         "stock": "Bestand",
         "store_credits": "Guthaben",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "oauth_applications": "OAuth-Anwendungen"
       }
     },
     "policies": {
@@ -5115,7 +5182,9 @@
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
-        "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision"
+        "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
+        "connected_apps": "KI-Agenten mit Zugriff auf diesen Shop",
+        "oauth_clients": "OAuth-Clients registrieren und konfigurieren"
       },
       "groups": {
         "audit": "Audit",
@@ -5153,7 +5222,9 @@
         "webhooks": "Webhooks",
         "package_types": "Verpackungsarten",
         "suppliers": "Lieferanten",
-        "marketplace": "Einstellungen"
+        "marketplace": "Einstellungen",
+        "connected_apps": "Verbundene Agenten",
+        "oauth_clients": "OAuth-Clients"
       },
       "breadcrumbs": {
         "marketplace": "Marktplatz"
@@ -6269,6 +6340,42 @@
       "every_language": {
         "notice": "Kunden in allen Sprachen erhalten diese Version, bis Sie eine für {{language}} veröffentlichen."
       }
+    },
+    "mcp_connect": {
+      "open_cta": "Agent verbinden",
+      "title": "Agent verbinden",
+      "subtitle": "Wählen Sie den Assistenten, dem Sie Zugriff auf diesen Shop geben möchten.",
+      "step_paste": "Fügen Sie diese Adresse in den Connector oder die MCP-Einstellungen Ihres Clients ein.",
+      "step_sign_in": "Sie werden zur Anmeldung hierher geschickt.",
+      "step_approve": "Geben Sie frei, was der Agent tun darf. Sie können dies jederzeit auf dieser Seite zurücknehmen.",
+      "client_id_label": "Client-ID",
+      "client_id_help": "Manche Clients fragen danach, bevor sie starten.",
+      "ready_title": "{{client}} kann verbunden werden",
+      "ready_subtitle": "Fügen Sie dies im Client ein und genehmigen Sie dann, was er tun darf.",
+      "endpoint_label": "Die MCP-Adresse Ihres Shops",
+      "copy_endpoint": "Adresse kopieren",
+      "copy_client_id": "Client-ID kopieren",
+      "other_title": "Etwas anderes",
+      "bounded_note": "Ein Agent erhält nie mehr als Sie selbst haben, und nur das, was Sie genehmigen.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop und Claude Code",
+        "chatgpt": "ChatGPT und Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai & Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Jeder andere Client, der MCP spricht",
+      "continue": "Weiter",
+      "run_label": "Diesen Befehl ausführen",
+      "copy_command": "Befehl kopieren",
+      "cli_then_sign_in": "Es öffnet den Browser zum Anmelden und Genehmigen dessen, was der Agent tun darf."
     }
   }
 }

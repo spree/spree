@@ -85,6 +85,8 @@ export function PermissionGrid({
   onChange,
   disabled = false,
   disabledKeys,
+  className,
+  bare = false,
 }: {
   entries: Permission[]
   value: string[]
@@ -93,6 +95,13 @@ export function PermissionGrid({
   disabled?: boolean
   /** Keys the caller may not grant (beyond their own) — rendered disabled. */
   disabledKeys?: Set<string>
+  /** Extra classes for the grid's outer frame. */
+  className?: string
+  /**
+   * Drops the frame and the horizontal padding, for a caller that already
+   * draws both — a card section rather than a field inside a form.
+   */
+  bare?: boolean
 }) {
   const { t } = useTranslation()
   const rows = buildPermissionRows(entries)
@@ -111,15 +120,28 @@ export function PermissionGrid({
   }
 
   return (
-    <div className={cn('flex flex-col rounded-md border border-border', disabled && 'opacity-70')}>
-      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-x-6 gap-y-2 p-3 text-sm">
+    <div
+      className={cn(
+        'flex flex-col',
+        !bare && 'rounded-md border border-border',
+        disabled && 'opacity-70',
+        className,
+      )}
+    >
+      <div
+        className={cn(
+          'grid grid-cols-[1fr_auto_auto] items-center gap-x-6 gap-y-2 p-3 text-sm',
+          // A caller drawing its own frame pads the frame, not the grid.
+          bare && 'px-0',
+        )}
+      >
         <span className="font-medium text-muted-foreground">
           {t('admin.permissions.grid.resource_header')}
         </span>
-        <span className="w-12 text-center font-medium text-muted-foreground">
+        <span className="w-16 whitespace-nowrap text-center font-medium text-muted-foreground">
           {t('admin.permissions.grid.read_header')}
         </span>
-        <span className="w-12 text-center font-medium text-muted-foreground">
+        <span className="w-16 whitespace-nowrap text-center font-medium text-muted-foreground">
           {t('admin.permissions.grid.write_header')}
         </span>
 

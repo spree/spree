@@ -29,9 +29,10 @@ module Spree
           # authorization, and rendering.
           class BatchesController < Admin::BaseController
             # The batch spans heterogeneous resource types, so a single static
-            # scope can't gate it. We verify the API key holds the matching
-            # write_<resource> scope for EVERY entry (see require_batch_scopes!),
-            # which is stricter than the static check and keeps the audit model.
+            # scope can't gate it. We verify the caller holds the matching
+            # write_<resource> permission for EVERY entry (see
+            # require_batch_scopes!), which is stricter than the static check
+            # and keeps the audit model.
             skip_scope_check!
 
             # POST /api/v3/admin/translations/batch
@@ -55,19 +56,24 @@ module Spree
 
             private
 
-            # For API-key callers, require write_<resource> for every distinct
-            # resource type in the batch. JWT callers bypass (current_api_key is
-            # nil) and rely on the per-record authorize!(:update, record) above.
-            # Returns false (and renders 403) when a scope is missing.
+            # Require write_<resource> for every distinct resource type in the
+            # batch.
+            #
+            # Asked of the caller rather than of a secret key, because there
+            # are three principals and only one of them carries scopes on a
+            # key. An OAuth token resolves as a staff user with no key, so
+            # reading `current_api_key` here waved it through and the ceiling
+            # the merchant consented to went unenforced on the one write this
+            # controller performs — `holds_permission?` answers for all three.
+            #
+            # Returns false (and renders 403) when a permission is missing.
             def require_batch_scopes!(batch)
-              return true unless current_api_key
-
-              missing = batch.required_scopes.reject { |scope| current_api_key.has_scope?(scope) }
+              missing = batch.required_scopes.reject { |scope| holds_permission?(scope) }
               return true if missing.empty?
 
               render_error(
                 code: ERROR_CODES[:access_denied],
-                message: "API key lacks scope(s): #{missing.join(', ')}",
+                message: "You do not have permission to #{missing.map { |key| key.tr('_', ' ') }.to_sentence}.",
                 status: :forbidden,
                 details: { required_scopes: missing }
               )

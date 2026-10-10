@@ -1,0 +1,149 @@
+---
+title: "Admin MCP Server"
+sidebarTitle: Admin MCP
+description: "Let Claude, Cursor or your own agent merchandise the catalog, answer reporting questions and manage store setup in plain language, under the same permissions as the Admin API."
+---
+
+Your store can host a [Model Context Protocol](https://modelcontextprotocol.io) server of its own. Where the [docs MCP server](/developer/agentic/mcp) lets an agent read Spree's documentation, this one lets an agent operate *your* store: find products, answer "what did we sell in Germany last month", cancel an order, mark a shipment delivered, add a market.
+
+It runs inside your Spree application — there is no separate service to deploy — and a request goes through the same tenancy, permission and validation rules as the Admin API. An agent can do exactly what the credential you give it allows, and nothing else.
+
+```text
+https://your-store.com/api/v3/admin/mcp
+```
+
+<Note>
+  The server is an optional gem. Add `spree_mcp` to your `Gemfile` and restart; there is nothing else to configure.
+
+  ```ruby server/Gemfile
+  gem 'spree_mcp'
+  ```
+</Note>
+
+## Connecting
+
+Paste your store's MCP URL into the client. It will send you to Spree, where you sign in and approve what the agent may do.
+
+```text
+https://your-store.com/api/v3/admin/mcp
+```
+
+That is the whole setup — there is no key to mint or paste. Every MCP client works this way: Claude Code, Cursor, VS Code, claude.ai, Claude Desktop, ChatGPT and anything else implementing the protocol's authorization.
+
+What you approve matters more than it looks:
+
+- **An agent never gets more than you have.** The grant narrows your own permissions, so a staff member who cannot issue refunds cannot approve an agent that can.
+- **Only what you approved.** Approving product access does not quietly include orders — the tools for anything else are not even offered.
+- **It is yours, not the store's.** Each person connects for themselves, so an agent's actions are recorded against whoever approved it.
+- **Revoke whenever you like.** **Settings → Connected apps** lists everything connected, who approved it and when each was last used. Revoking stops it on the next call.
+
+<Note>
+  A Spree API key is not accepted here, and that is deliberate: an agent acts for a person, so it carries that person's own permissions rather than a standing credential with nobody behind it. For scripted access that cannot sign in — a CI job, a server-side integration — use the [`spree api` CLI](/developer/cli/admin-api), which is what API keys are for.
+</Note>
+
+## What the agent can do
+
+The tools are not a mirror of the API's endpoints — there would be hundreds, and a catalog that size makes a model worse at choosing. They come in four groups instead.
+
+| Group | Tools | What they are for |
+| --- | --- | --- |
+| Finding things | `describe_resource`, `search_resources`, `get_resource` | Discovering which resources exist and what they can be filtered by, then finding and reading records |
+| Answering with numbers | `describe_reporting`, `query_report` | Revenue, orders and units, sliced by time, product, channel or country — the same figures the dashboard charts show |
+| Doing things | One tool per operation: `orders_create`, `orders_cancel`, `fulfillments_mark_delivered`, `products_activate`, `refunds_create`, `price_lists_activate` and around fifty more | Each runs the same workflow the dashboard runs, so validations, emails and webhooks behave identically |
+| Merchandising | `curate_products` | Which products a category, collection, catalog or price list holds |
+| Receiving files | `upload_file`, then `media_create` or `create_import` | A merchant hands over images or a CSV: store the file, then put it in a product gallery or start an import from it |
+| Reading files | MCP resources | Finished exports, and documents attached to records — a buyer's purchase order, a shipping label |
+| Store setup | `create_resource`, `update_resource`, `delete_resource` | Markets, channels, delivery and payment methods, tax rates and the rest of the settings screens |
+
+An agent is only ever shown the tools its key permits, so the list stays small and relevant: a key minted for order operations sees around twenty.
+
+### How a conversation goes
+
+The agent picks tools from what you ask; there is no command to learn.
+
+> **You:** Which products are out of stock, and what did we sell in Germany last month?
+
+The agent calls `describe_resource` to learn that products can be filtered by an `out_of_stock` scope, `search_resources` to list them, then `describe_reporting` and `query_report` for the German figures — and answers in one reply.
+
+> **You:** Cancel order R123456789, refund the customer, and tell them why.
+
+The agent finds the order, then calls `orders_cancel`. Your client asks you to confirm before the call runs; Spree then runs the same cancellation the dashboard runs, and the order's timeline records the API key as the canceller, so an audit later shows which agent did it.
+
+## What it will not do
+
+Some things are deliberately out of reach, whatever scopes the key holds.
+
+- **Credentials.** API keys, integrations, webhook endpoints and gift card codes are never returned by any tool. A gift card code is the money itself, and an integration's settings are where provider credentials live.
+- **Erasing a customer.** GDPR erasure is irreversible and is not something to put behind a single confirmation prompt. Do it in the dashboard.
+- **Files.** Media uploads, import files and label downloads. The protocol carries text and structured data.
+- **Order editing.** Adding line items, discounts and fees to an existing order still runs through paths that are not yet workflows. Cancelling, refunding and fulfilling all work today.
+
+## Adding your own tools
+
+The catalog is a registry in `spree_core`, so an extension or a host application adds to it without depending on the MCP gem. Two kinds of thing to add.
+
+**A back-office operation you already have as a workflow.** Name its `Spree::Dependencies` key and the permission that should gate it:
+
+```ruby server/config/initializers/spree.rb
+Spree.agent_tools.expose_workflows(supplier_sync_workflow: 'write_purchasing')
+```
+
+That is the whole change. The tool's name comes from the workflow's own key (`suppliers.sync` becomes `suppliers_sync`), its description from the class's leading comment, and its parameters from `perform`'s signature and the YARD `@param` lines above it — so the tool and the workflow cannot drift apart. Two rules the derivation relies on: every parameter needs an `@param` with a type, and a parameter naming a record must be typed as a model the agent can already read.
+
+**Something that is not a workflow** — a lookup against another system, a report of your own. Subclass `Spree::AgentTool` and register the class by name:
+
+```ruby app/tools/my_shop/agent_tools/supplier_stock.rb
+module MyShop
+  module AgentTools
+    # Asks the supplier's API what they hold, so a merchant can ask before
+    # committing to a purchase order.
+    class SupplierStock < Spree::AgentTool
+      tool_name 'supplier_stock'
+      description 'Current stock at a supplier, by SKU.'
+      permission 'read_purchasing'
+
+      param :sku, description: 'The SKU to look up', required: true
+
+      def call(sku:)
+        stock = MyShop::SupplierApi.stock_for(sku, store: context.store)
+        return { error: "No supplier carries #{sku}." } if stock.nil?
+
+        { summary: "#{sku}: #{stock} available", sku: sku, available: stock }
+      end
+    end
+  end
+end
+```
+
+```ruby server/config/initializers/spree.rb
+Spree.agent_tools << 'MyShop::AgentTools::SupplierStock'
+```
+
+Four things worth knowing when you write one:
+
+- **Registration is by name, not by class**, so your edits to a description or a parameter take effect on the next request rather than needing a restart.
+- **`context` is who is asking**: `context.store` is always the caller's store, and `context.principal` is the admin or the API key — pass it to anything that records who acted.
+- **A refusal is `{ error: '…' }`**, not an exception. The model reads that text and corrects itself, so write it as an instruction rather than a stack trace.
+- **Keep the result small.** It lands in the model's context. Return a `summary` line plus the few fields that answer the question, and let the caller ask for more.
+
+A tool is offered only to a credential holding its `permission`, so a key that cannot read purchasing never learns `supplier_stock` exists.
+
+## Choosing between this and the CLI
+
+The two surfaces take different credentials, and the difference is the point: **this server takes a person's approval, the CLI takes an API key.**
+
+| | Admin MCP | [`spree api` CLI](/developer/cli/admin-api) |
+| --- | --- | --- |
+| Credential | Sign in and approve | A secret API key |
+| Suits | An agent acting for someone, conversationally | Scripts, CI, bulk work, anything without a browser |
+| Reach | The tools listed above | Every endpoint |
+| Actions recorded against | The person who approved | The key |
+
+Reach for the CLI when the work is scripted or needs the full API. Reach for this server when an agent is doing the work on someone's behalf — a tool shaped like "cancel this order" gives a model far less room to go wrong than composing the HTTP call itself, and each one runs the same workflow the dashboard runs.
+
+## See also
+
+- [Docs MCP server](/developer/agentic/mcp) — the same protocol, for reading Spree's documentation
+- [Agent skills](/developer/agentic/agent-skills) — teaching an agent how your team works with Spree
+- [API keys and scopes](/user/settings/api-keys) — minting a key and what each scope grants
+- [Permissions](/developer/customization/permissions) — the catalog the scopes come from

@@ -77,6 +77,7 @@ export { MarketSchema, type Market } from './Market';
 export { MediaSchema, type Media } from './Media';
 export { MembershipProductSchema, type MembershipProduct } from './MembershipProduct';
 export { NewsletterSubscriberSchema, type NewsletterSubscriber } from './NewsletterSubscriber';
+export { OauthApplicationSchema, type OauthApplication } from './OauthApplication';
 export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';
 export { OrderSchema, type Order } from './Order';

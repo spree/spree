@@ -1,0 +1,246 @@
+module Spree
+  module Api
+    # OAuth 2.1 authorization server for the Spree API.
+    #
+    # Spree is the authorization server here, not a client of one: a
+    # self-hosted store has no external identity provider to delegate to, and
+    # requiring one would exclude the installations this exists for. This is
+    # the opposite direction from SSO login, which makes Spree an OIDC client
+    # so staff can sign in through a provider; the two share a spec family and
+    # almost no code.
+    #
+    # The first consumer is the Admin MCP server, whose consumer clients
+    # (hosted connectors) accept no other credential. A marketplace app or a
+    # merchant-approved integration is the same flow with a different client,
+    # which is why this lives in `spree_api` rather than in any one gem that
+    # happens to need it.
+    module Oauth
+      # Protected resources, each registered by the surface that owns it as a
+      # path relative to this application's own origin.
+      #
+      #   Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp')
+      #
+      # A path rather than a full URL because the identifier must equal the
+      # URL the client was actually pointed at: the origin comes from the
+      # request where there is one, and from the application's configured
+      # URL options otherwise. A store's own `url` column is deliberately not
+      # consulted — it describes the storefront, which is frequently neither
+      # the host nor the scheme the Admin API answers on.
+      # Whether a redirect URI points at the machine the client runs on.
+      #
+      # Decided by parsing the host as an address, the same way Doorkeeper
+      # does when it ignores the port of a loopback redirect — so `localhost`
+      # is deliberately not loopback here either, and a registration must use
+      # the IP literal for an ephemeral port to match.
+      #
+      # @param uri [URI, String]
+      # @return [Boolean]
+      def self.loopback_uri?(uri)
+        host = uri.respond_to?(:host) ? uri.host : URI.parse(uri.to_s).host
+        return false if host.blank?
+
+        IPAddr.new(host).loopback?
+      rescue StandardError
+        false
+      end
+
+      mattr_accessor :resources, default: {}
+
+      class << self
+        # @param key [Symbol]
+        # @param path [String] absolute path this resource answers on
+        def register_resource(key, path)
+          resources[key.to_sym] = path
+        end
+
+        # @param origin [String, nil] scheme and host the client used
+        # @return [Array<String>] every resource identifier this installation
+        #   serves
+        def resource_identifiers(origin = nil)
+          base = origin.presence || application_origin
+          resources.values.map { |path| "#{base}#{path}" }
+        end
+
+        # The audiences a grant for one surface is bound to.
+        #
+        # An MCP grant carries the Admin API too, because a tool call reaches
+        # data by dispatching to an Admin API operation — as the same grant,
+        # with the same scopes. Widening the audience is not widening the
+        # authority: a token for the Admin API alone is still refused at the
+        # MCP endpoint.
+        #
+        # @param key [Symbol]
+        # @param origin [String, nil] scheme and host the client used
+        # @return [String] space-separated indicators, as RFC 8707 takes them
+        def granted_audience(key, origin = nil)
+          keys = key.to_sym == :mcp ? %i[mcp admin] : [key.to_sym]
+
+          keys.filter_map { |name| resource_identifier(name, origin) }.uniq.join(' ')
+        end
+
+        # @param key [Symbol]
+        # @param origin [String, nil] scheme and host the client used
+        # @return [String, nil]
+        def resource_identifier(key, origin = nil)
+          path = resources[key.to_sym]
+          return if path.nil?
+
+          "#{origin.presence || application_origin}#{path}"
+        end
+
+        # Where this application answers, from the URL options a deployment
+        # already has to set for mailer links to work.
+        #
+        # @return [String]
+        def application_origin
+          options = Rails.application.routes.default_url_options
+          host = options[:host]
+          return '' if host.blank?
+
+          origin = "#{options[:protocol].presence || 'https'}://#{host}"
+          options[:port].present? ? "#{origin}:#{options[:port]}" : origin
+        end
+
+        # The grantable scope list, re-read after host and extension
+        # initializers have run.
+        #
+        # `optional_scopes` builds its value eagerly, and an extension
+        # registers its scopes from a config initializer — which runs after
+        # {.configure!}, because a host's own `doorkeeper.rb` has to be able
+        # to win. Without this second pass the vocabulary would be whatever
+        # core shipped, and an extension's keys could never be granted.
+        def refresh_scopes!
+          ::Doorkeeper.config.instance_variable_set(
+            :@optional_scopes,
+            ::Doorkeeper::OAuth::Scopes.from_array(staff_scope_keys)
+          )
+        end
+
+        # Scopes that govern credentials rather than commerce, and so are
+        # never offered to a delegated client.
+        #
+        # Granting an agent `write_oauth_applications` would let it connect another
+        # agent; `write_api_keys` would let it mint a key that outlives the
+        # grant it was given. Neither is an escalation a merchant could
+        # reasonably be asked to judge on a consent screen, and the tools
+        # withhold the models anyway — so the scopes should not be offered in
+        # the first place, rather than offered and quietly inert.
+        CREDENTIAL_SCOPES = %w[oauth_applications api_keys integrations webhooks staff].freeze
+
+        # @return [Array<String>]
+        def staff_scope_keys
+          Spree.permissions.grantable_keys(Spree::PermissionConfiguration::STAFF_AUDIENCE).
+            reject { |key| CREDENTIAL_SCOPES.any? { |scope| key.to_s.end_with?("_#{scope}") } }
+        end
+
+        # Whether every requested audience names a resource this application
+        # actually serves.
+        #
+        # Compared by path rather than by full URL: the origin a client used
+        # is whatever it was pointed at, and a deployment behind a proxy or
+        # reachable at several hostnames would otherwise refuse its own
+        # tokens.
+        #
+        # @param requested [Array<String>] the `resource` values asked for
+        # @return [Boolean]
+        def indicators_valid?(requested, _client = nil)
+          return false if requested.blank?
+
+          paths = resources.values
+          requested.all? do |indicator|
+            path = URI.parse(indicator.to_s).path
+            paths.include?(path)
+          rescue URI::InvalidURIError
+            false
+          end
+        end
+
+        def configure!
+          ::Doorkeeper.configure do
+            orm :active_record
+
+            application_class 'Spree::OauthApplication'
+            access_grant_class 'Spree::OauthAccessGrant'
+            access_token_class 'Spree::OauthAccessToken'
+
+            # Consent is Spree's own, at
+            # `Spree::Api::V3::Admin::Oauth::AuthorizationsController`, and
+            # Doorkeeper's authorization controllers are not mounted — so
+            # this is only reached if a host app mounts them. Failing loudly
+            # beats a NoMethodError inside a before_action, which
+            # `handle_auth_errors :raise` would turn into a 500 on an
+            # authorization endpoint.
+            resource_owner_authenticator do
+              raise "Doorkeeper's own consent screens are not mounted in Spree. " \
+                    'Consent is served by the Admin API at /api/v3/admin/oauth/authorize.'
+            end
+
+            # An admin user today, a customer when a storefront client needs
+            # one — recorded polymorphically so either can own a grant.
+            use_polymorphic_resource_owner
+
+            # Authorization code only. A password grant asks a client to
+            # handle someone's password, and client credentials identify no
+            # person, so neither belongs on a surface whose authority is a
+            # user's own permissions.
+            grant_flows %w[authorization_code]
+
+            # Mandatory, not merely supported: these are public clients, and
+            # without PKCE an intercepted code is enough to obtain a token.
+            force_pkce
+            # S256 only — `plain` is in the gem's defaults and protects
+            # nothing against an intercepted code.
+            pkce_code_challenge_methods %w[S256]
+
+            # A redirect URI is where authorization codes are delivered, so a
+            # plain-http one hands them to anyone on the path — except a
+            # loopback one, which never leaves the machine. A terminal client
+            # listens on an ephemeral local port and has no certificate for
+            # it, so RFC 8252 §7.3 makes that the recommended shape, and
+            # refusing it would lock out Claude Code and Codex entirely.
+            #
+            # Passed as a callable so the exemption is per URI rather than
+            # per environment: everything else still has to be https.
+            force_ssl_in_redirect_uri do |uri|
+              next false if Rails.env.development?
+
+              !Spree::Api::Oauth.loopback_uri?(uri)
+            end
+
+            # RFC 8707. Registering the validator is what binds an audience
+            # into the token; left nil, the `resource` parameter is ignored
+            # and a token minted for another service would be accepted.
+            resource_indicator_validator(lambda do |requested, _client|
+              Spree::Api::Oauth.indicators_valid?(requested)
+            end)
+
+            # Spree's own permission catalog is the scope vocabulary, so a
+            # grant carries the same keys an API key would and the tool
+            # registry needs no translation. Seeded here and re-read in
+            # `refresh_scopes!` once extensions have registered theirs.
+            optional_scopes(*Spree::Api::Oauth.staff_scope_keys)
+
+            use_refresh_token
+            # One live token per authorization, so re-consenting does not
+            # leave the previous one usable.
+            revoke_previous_authorization_code_token
+            # No `fallback: :plain`: every token this server writes is
+            # hashed, so a plaintext lookup could never match and keeping
+            # the path alive only invites a future migration to rely on it.
+            hash_token_secrets
+            access_token_expires_in 2.hours
+            # Refresh rotation with replay detection comes from the
+            # `previous_refresh_token` column the migration adds — Doorkeeper
+            # enables it by the column's presence, not by a setting.
+
+            api_only
+            handle_auth_errors :raise
+            # Never from a query parameter: the spec forbids it, and a URL
+            # reaches logs and proxies.
+            access_token_methods :from_bearer_authorization
+          end
+        end
+      end
+    end
+  end
+end

@@ -12,18 +12,22 @@ module Spree
     # A feed states absolute levels (+count_on_hand+), which is what an
     # external system knows. The movement records the delta between what Spree
     # held and what the feed says.
-    class BulkUpsert
-      prepend Spree::ServiceModule::Base
+    class BulkUpsert < Spree::Workflow
 
       # What the stock history shows against a movement this service wrote.
       FEED_REASON = 'inventory_feed'.freeze
 
-      # @param rows [Array<Hash>] each with +variant_id+, +stock_location_id+,
-      #   and either +count_on_hand+ (absolute) or +adjustment+ (relative);
-      #   +backorderable+ optional
+      # @param store [Spree::Store] whose shelves these are. Ids are resolved
+      #   through it, so a row naming another store's variant is not found
+      #   rather than written.
+      # @param rows [Array<Hash>] one per shelf: +variant_id+ and
+      #   +stock_location_id+ naming it (prefixed ids, or raw), then either
+      #   +count_on_hand+ (the figure it should end at) or +adjustment+ (a
+      #   signed change); +backorderable+ optional
       # @return [Spree::ServiceModule::Result] +{ stock_level_count: N }+
-      def call(rows:)
-        rows = Array(rows).map { |row| row.with_indifferent_access }
+      def perform(store:, rows:)
+        @store = store
+        rows = resolve(Array(rows).map { |row| row.with_indifferent_access })
         keyed = rows.select { |row| row[:variant_id].present? && row[:stock_location_id].present? }
         return success(stock_level_count: 0) if keyed.empty?
 
@@ -40,6 +44,44 @@ module Spree
       end
 
       private
+
+      # Names become this store's own ids, or nothing.
+      #
+      # Resolved here rather than by the caller, because a row reaching
+      # `find_or_initialize_by` unscoped writes to whichever shelf the id
+      # happens to name — including another merchant's. One caller decoding
+      # ids correctly does not make the workflow safe for the next one.
+      def resolve(rows)
+        variants = scoped_ids(store_variants, Spree::Variant, rows.map { |row| row[:variant_id] })
+        locations = scoped_ids(store_stock_locations, Spree::StockLocation,
+                               rows.map { |row| row[:stock_location_id] })
+
+        rows.map do |row|
+          row.merge(
+            variant_id: variants[row[:variant_id]],
+            stock_location_id: locations[row[:stock_location_id]]
+          ).compact
+        end
+      end
+
+      # Accepts a prefixed id or a raw one: the Admin API speaks prefixed,
+      # while the importer and seeds hold records they already loaded.
+      def scoped_ids(scope, model, values)
+        decoded = values.compact.uniq.index_with do |value|
+          model.decode_own_prefixed_id(value) || value
+        end
+        found = scope.where(id: decoded.values.compact).pluck(:id).map(&:to_s).to_set
+
+        decoded.transform_values { |id| id if id && found.include?(id.to_s) }
+      end
+
+      def store_variants
+        @store.variants
+      end
+
+      def store_stock_locations
+        @store.stock_locations
+      end
 
       def apply_row(row)
         stock_level = Spree::StockLevel.find_or_initialize_by(

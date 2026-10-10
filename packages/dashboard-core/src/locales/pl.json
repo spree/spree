@@ -184,7 +184,9 @@
       "searching": "Wyszukiwanie…",
       "select_placeholder": "Wybierz…",
       "unsaved_changes": "Masz niezapisane zmiany.",
-      "yes": "Tak"
+      "yes": "Tak",
+      "done": "Gotowe",
+      "error": "Coś poszło nie tak."
     },
     "components": {
       "address_block": {
