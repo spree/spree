@@ -25,16 +25,17 @@ module Spree
         prepared = Array(rows).map { |row| row.respond_to?(:to_h) ? row.to_h.stringify_keys : {} }
         return { error: 'Give at least one row.' } if prepared.empty?
 
-        missing = prepared.each_with_index.filter_map do |row, index|
-          index if row['variant_id'].blank? || row['stock_location_id'].blank?
-        end
-        return { error: "Every row needs a variant_id and a stock_location_id (rows #{missing.join(', ')})." } if
-          missing.any?
-
         response = ApiDispatch.new(context).call(
           method: :post, path: '/api/v3/admin/stock_levels/bulk_upsert', body: { stock_levels: prepared }
         )
-        return { error: response.error_message } unless response.success?
+
+        unless response.success?
+          # The endpoint names the missing field per row, which is what lets a
+          # model repair its own request rather than resend it whole.
+          rows = response.body.is_a?(Hash) ? response.body.dig('error', 'details', 'rows') : nil
+
+          return { error: response.error_message, rows: rows }.compact
+        end
 
         changed = response.body.is_a?(Hash) ? response.body['stock_level_count'] : nil
 

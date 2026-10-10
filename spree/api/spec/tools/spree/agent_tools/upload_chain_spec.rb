@@ -62,8 +62,10 @@ RSpec.describe 'agent tools that consume an upload' do
     it 'refuses a product in another store' do
       theirs = create(:product, store: create(:store, code: "other-#{SecureRandom.hex(4)}"))
 
-      expect(tool('media_create').call(file_id: upload_binary('x.png', png), product_id: theirs.prefixed_id)[:error]).
-        to include('No product found')
+      result = tool('media_create').call(file_id: upload_binary('x.png', png), product_id: theirs.prefixed_id)
+
+      expect(result[:error]).to be_present
+      expect(theirs.reload.media).to be_empty
     end
 
     it 'is withheld from a caller who cannot write media' do
