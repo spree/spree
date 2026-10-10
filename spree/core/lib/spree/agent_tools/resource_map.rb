@@ -46,13 +46,17 @@ module Spree
           distinct.nil? ? true : distinct
         end
 
-        # Whether the generic write tools may touch this resource at all.
-        # A resource written through a workflow must be written through its
-        # workflow tool, so there is exactly one way to write each thing.
+        # Whether the generic write tools may touch this resource.
+        #
+        # A declared workflow no longer excludes it: the generic writes
+        # dispatch to the controller, which runs its own workflow, so there
+        # is still exactly one way to write each thing and this is it.
+        # What is left to answer is whether the endpoint accepts a body at
+        # all.
         #
         # @return [Boolean]
         def generic_writes?
-          create_workflow_key.blank? && update_workflow_key.blank? && write_permission.present?
+          write_permission.present?
         end
 
         # The attributes the Admin API would accept on a write, so the generic

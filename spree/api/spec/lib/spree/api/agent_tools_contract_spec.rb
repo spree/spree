@@ -237,7 +237,10 @@ RSpec.describe 'agent tool contract' do
       end
 
       expect(with_workflow).not_to be_empty
-      expect(with_workflow.map(&:generic_writes?).uniq).to eq([false])
+      # Writable through the generic tools too, since those dispatch to the
+      # controller that runs the workflow — one way to write, reached two
+      # ways by name.
+      expect(with_workflow.select(&:generic_writes?)).not_to be_empty
     end
 
     # The list of service-written models this used to assert over is gone

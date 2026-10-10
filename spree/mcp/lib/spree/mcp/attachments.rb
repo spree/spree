@@ -13,10 +13,13 @@ module Spree
     module Attachments
       URI_SCHEME = 'spree+file'.freeze
 
-      # Base64 adds a third again on the wire, and the body is read into
-      # memory to send it. Beyond this a file is named and sized but not
-      # inlined — the merchant opens it in the dashboard instead.
-      MAX_INLINE_BYTES = 4_000_000
+      # Base64 adds a third again, and a model has to read every byte of it:
+      # the 4 MB this used to allow is about 1.4 million tokens, which no
+      # context window holds, so the promise could never be kept. 300 KB of
+      # binary is roughly 100,000 tokens — the size of a scanned page, which
+      # is what these files are. Beyond it a file is named and sized but not
+      # inlined, and the merchant opens it in the dashboard.
+      MAX_INLINE_BYTES = 300_000
 
       # Per resource, newest first. A store accumulates these indefinitely and
       # every descriptor is sent on each listing.
