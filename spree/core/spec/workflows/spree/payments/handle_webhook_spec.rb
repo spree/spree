@@ -65,7 +65,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
       it 'completes the payment' do
         subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
 
-        expect(order.reload.payments.first.state).to eq('completed')
+        expect(order.reload.payments.first.status).to eq('completed')
       end
 
       it 'completes the order with payment_state=paid' do
@@ -91,7 +91,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
 
         expect(result).to be_success
         expect(order.reload.payments.count).to eq(1)
-        expect(order.payments.first.state).to eq('pending')
+        expect(order.payments.first.status).to eq('pending')
       end
 
       it 'completes the payment session' do

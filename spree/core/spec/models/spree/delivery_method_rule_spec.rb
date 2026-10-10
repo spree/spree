@@ -175,7 +175,7 @@ describe Spree::DeliveryMethodRule, type: :model do
 
     let(:company_package) do
       create(:company_membership, company: company, customer: customer)
-      cart = create(:cart, store: store, user: customer, company: company)
+      cart = create(:cart, store: store, customer: customer, company: company)
       create(:line_item, cart: cart, order: nil)
       fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
       fulfillment.to_package

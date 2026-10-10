@@ -13,7 +13,7 @@ RSpec.describe Spree::Payment::CustomEvents do
 
   describe 'payment.paid event' do
     it 'does not publish payment.paid when state changes to something other than completed' do
-      payment.update!(state: 'processing')
+      payment.update!(status: 'processing')
 
       expect(Spree::Events).not_to have_received(:publish).with('payment.paid', anything, anything)
     end
@@ -21,7 +21,7 @@ RSpec.describe Spree::Payment::CustomEvents do
     it 'does not publish when events are disabled' do
       allow(Spree::Events).to receive(:enabled?).and_return(false)
 
-      payment.update!(state: 'completed')
+      payment.update!(status: 'completed')
 
       expect(Spree::Events).not_to have_received(:publish).with('payment.paid', anything, anything)
     end
@@ -31,7 +31,7 @@ RSpec.describe Spree::Payment::CustomEvents do
     it 'publishes order.paid when payment completes and order is fully paid' do
       payment.update!(amount: order.total)
 
-      payment.update!(state: 'completed')
+      payment.update!(status: 'completed')
 
       expect(Spree::Events).to have_received(:publish).with('payment.paid', anything, anything)
       expect(Spree::Events).to have_received(:publish).with('order.paid', anything, anything)
@@ -40,7 +40,7 @@ RSpec.describe Spree::Payment::CustomEvents do
     it 'does not publish order.paid when order still has outstanding balance' do
       payment.update!(amount: order.total - 1)
 
-      payment.update!(state: 'completed')
+      payment.update!(status: 'completed')
 
       expect(Spree::Events).to have_received(:publish).with('payment.paid', anything, anything)
       expect(Spree::Events).not_to have_received(:publish).with('order.paid', anything, anything)

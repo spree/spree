@@ -89,8 +89,11 @@ describe Spree::PaymentMethod, type: :model do
     let(:visible_method) { build(:check_payment_method) }
     let(:admin_only_method) { build(:check_payment_method, storefront_visible: false) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     it 'reads the boolean back as the old tri-state value' do
       expect(visible_method.display_on).to eq('both')
+      expect(Spree::Deprecation).to have_received(:warn).with(/display_on is deprecated/)
       expect(admin_only_method.display_on).to eq('back_end')
     end
 
@@ -345,7 +348,7 @@ describe Spree::PaymentMethod, type: :model do
       Class.new(Spree::Gateway) do
         def self.name = 'TestConstrainedGateway'
 
-        preference :mode, :string, default: 'live', in: %w[test live]
+        preference :mode, :string, default: 'live', choices: %w[test live]
         preference :label, :string
         preference :threshold, :decimal, default: 0
       end

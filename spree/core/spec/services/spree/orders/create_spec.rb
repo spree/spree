@@ -61,7 +61,7 @@ module Spree
           expect(order).to be_persisted
           expect(order.status).to eq('draft')
           expect(order.shipments).to be_empty
-          expect(order.shipment_total).to eq(0)
+          expect(order.delivery_total).to eq(0)
         end
       end
 
@@ -78,7 +78,7 @@ module Spree
           order = subject.value
           expect(order.line_items.count).to eq(1)
           expect(order.shipments).to be_empty
-          expect(order.shipment_total).to eq(0)
+          expect(order.delivery_total).to eq(0)
           expect(order.total).to eq(order.item_total)
         end
       end
@@ -96,7 +96,7 @@ module Spree
           order = subject.value
           expect(order.ship_address).to be_present
           expect(order.shipments).to be_empty
-          expect(order.shipment_total).to eq(0)
+          expect(order.delivery_total).to eq(0)
         end
       end
 
@@ -118,14 +118,14 @@ module Spree
           expect(order.fulfillments.first.shipping_rates).not_to be_empty
           expect(order.fulfillments.first.selected_shipping_rate).to be_present
 
-          expect(order.shipment_total).to eq(5)
-          expect(order.total).to eq(order.item_total + order.shipment_total + order.adjustment_total)
+          expect(order.delivery_total).to eq(5)
+          expect(order.total).to eq(order.item_total + order.delivery_total + order.adjustment_total)
         end
 
         it 'persists the totals to the database' do
           subject
           order = subject.value.reload
-          expect(order.shipment_total).to eq(5)
+          expect(order.delivery_total).to eq(5)
           expect(order.total).to eq(order.item_total + 5 + order.adjustment_total)
         end
       end
@@ -146,7 +146,7 @@ module Spree
         it 'does not build shipments' do
           expect(subject).to be_success
           expect(subject.value.shipments).to be_empty
-          expect(subject.value.shipment_total).to eq(0)
+          expect(subject.value.delivery_total).to eq(0)
         end
       end
 
@@ -170,13 +170,13 @@ module Spree
 
           # Shipments still exist, gross cost is still 5 (cost column on the shipment)
           expect(order.shipments.size).to eq(1)
-          expect(order.shipment_total).to eq(5)
+          expect(order.delivery_total).to eq(5)
 
           # Promo created a -5 adjustment on the shipment
           shipment = order.fulfillments.first
           expect(shipment.adjustment_total).to eq(-5)
           expect(shipment.discounts.promotion.size).to eq(1)
-          expect(order.shipping_discount).to eq(5)
+          expect(order.fulfillment_discount).to eq(5)
 
           # Promotion is associated with the order
           expect(order.promotions).to include(promotion)
@@ -229,7 +229,7 @@ module Spree
           shipment = order.fulfillments.first
           expect(shipment).to be_present
           expect(shipment.adjustment_total).to eq(-5)
-          expect(order.shipping_discount).to eq(5)
+          expect(order.fulfillment_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
         end
       end

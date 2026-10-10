@@ -271,7 +271,7 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
       it 'uses the same cf_* attributes on every market/locale document' do
         create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en')
         create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de')
-        create(:price, variant: product.master, amount: 9.99, currency: 'EUR')
+        create(:price, variant: product.default_variant, amount: 9.99, currency: 'EUR')
 
         docs = described_class.new(product.reload, store.reload).call
         expect(docs.size).to be > 1

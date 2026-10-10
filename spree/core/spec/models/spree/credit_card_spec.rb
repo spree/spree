@@ -482,7 +482,7 @@ describe Spree::CreditCard, type: :model do
       it 'invalidates the payment' do
         card.destroy
 
-        expect(checkout_payment.reload.state).to eq('invalid')
+        expect(checkout_payment.reload.status).to eq('invalid')
       end
     end
 
@@ -493,8 +493,8 @@ describe Spree::CreditCard, type: :model do
       it 'voids the payments' do
         card.destroy
 
-        expect(completed_payment.reload.state).to eq('void')
-        expect(pending_payment.reload.state).to eq('void')
+        expect(completed_payment.reload.status).to eq('void')
+        expect(pending_payment.reload.status).to eq('void')
       end
     end
 
@@ -505,7 +505,7 @@ describe Spree::CreditCard, type: :model do
       it 'does not modify payments on completed orders' do
         card.destroy
 
-        expect(completed_order_payment.reload.state).to eq('completed')
+        expect(completed_order_payment.reload.status).to eq('completed')
       end
     end
   end

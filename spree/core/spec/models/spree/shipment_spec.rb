@@ -477,10 +477,10 @@ describe Spree::Fulfillment, type: :model do
       ]
     end
 
-    it 'returns shipping_method from selected shipping_rate' do
+    it 'returns the delivery method from the selected rate' do
       shipment.shipping_rates.delete_all
       shipment.shipping_rates.create shipping_method: shipping_method1, cost: 10.00, selected: true
-      expect(shipment.shipping_method).to eq shipping_method1
+      expect(shipment.delivery_method).to eq shipping_method1
     end
 
     context 'carry_over_selection' do
@@ -654,6 +654,7 @@ describe Spree::Fulfillment, type: :model do
       allow(shipment).to receive(:allocated_quantities).and_return(variant.id => 1)
       shipment.stock_location = create(:stock_location)
       expect(shipment.stock_location).to receive(:release).with(variant, 1, shipment)
+      expect(Spree::Deprecation).to receive(:warn).with(/after_cancel is deprecated/)
       shipment.after_cancel
     end
 
@@ -662,7 +663,7 @@ describe Spree::Fulfillment, type: :model do
       allow(shipment).to receive(:provider).and_return(instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true))
       shipment.stock_location = create(:stock_location)
       expect(shipment.stock_location).not_to receive(:release)
-      shipment.after_cancel
+      Spree::Deprecation.silence { shipment.after_cancel }
     end
 
     context 'with backordered inventory units' do
@@ -674,7 +675,7 @@ describe Spree::Fulfillment, type: :model do
         Spree::Orders::AddItem.call(order: order, variant: variant)
         order.rebuild_fulfillments!
 
-        Spree::Carts::AddItem.call(order: other_order, variant: variant)
+        Spree::Orders::AddItem.call(order: other_order, variant: variant)
         other_order.rebuild_fulfillments!
       end
 
@@ -778,14 +779,14 @@ describe Spree::Fulfillment, type: :model do
     end
 
     it 'updates order totals when a different shipping rate is selected' do
-      expect(order.shipment_total).to eq(10)
+      expect(order.delivery_total).to eq(10)
 
       # Select the more expensive shipping rate
       shipping_rate_2 = shipment.shipping_rates.find_by(shipping_method: shipping_method_2)
       shipment.selected_shipping_rate_id = shipping_rate_2.id
 
       order.reload
-      expect(order.shipment_total).to eq(20)
+      expect(order.delivery_total).to eq(20)
     end
 
     it 'updates the shipment cost to match the selected shipping rate' do
@@ -939,7 +940,7 @@ describe Spree::Fulfillment, type: :model do
 
     before do
       perform_enqueued_jobs(only: Spree::StockLocations::StockLevels::CreateJob)
-      shipping_method = order.fulfillments.first.shipping_method
+      shipping_method = order.fulfillments.first.delivery_method
       shipping_method.calculator.preferences[:amount] = order.fulfillments.first.cost
       shipping_method.calculator.save!
     end
@@ -969,12 +970,12 @@ describe Spree::Fulfillment, type: :model do
       expect(new_shipment.cost).to eq(shipment.cost)
     end
 
-    it 'updates `order.shipment_total` to the sum of shipments cost' do
+    it 'updates `order.delivery_total` to the sum of shipments cost' do
       shipment = order.fulfillments.first
       shipment.transfer_to_location(variant, 1, shipment.stock_location)
 
       order.reload
-      expect(order.shipment_total).to eq(order.shipments.sum(&:cost))
+      expect(order.delivery_total).to eq(order.shipments.sum(&:cost))
     end
   end
 

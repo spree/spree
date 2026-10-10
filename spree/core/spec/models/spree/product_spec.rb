@@ -300,7 +300,7 @@ describe Spree::Product, type: :model do
 
     context 'hard deletion' do
       it 'doesnt raise ActiveRecordError error' do
-        expect { product.really_destroy! }.not_to raise_error(ActiveRecord::ActiveRecordError)
+        expect { product.really_destroy! }.not_to raise_error
       end
     end
 
@@ -1018,9 +1018,12 @@ describe Spree::Product, type: :model do
   describe '#secondary_image' do
     let(:product) { create(:product) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'when no variants have images' do
       it 'returns nil' do
         expect(product.secondary_image).to be_nil
+        expect(Spree::Deprecation).to have_received(:warn).with(/Product#secondary_image is deprecated/)
       end
     end
 

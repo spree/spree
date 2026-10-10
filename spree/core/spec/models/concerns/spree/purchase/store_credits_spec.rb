@@ -136,12 +136,12 @@ RSpec.shared_examples 'a store credits host' do
       let(:record) { completed_record_with_store_credit_payment }
 
       it 'leaves the store credit payments untouched' do
-        store_credit_payments = record.payments.store_credits.map { |payment| [payment.id, payment.state] }
+        store_credit_payments = record.payments.store_credits.map { |payment| [payment.id, payment.status] }
         expect(store_credit_payments).not_to be_empty
 
         subject
 
-        expect(record.reload.payments.store_credits.map { |payment| [payment.id, payment.state] }).to eq(store_credit_payments)
+        expect(record.reload.payments.store_credits.map { |payment| [payment.id, payment.status] }).to eq(store_credit_payments)
       end
     end
   end

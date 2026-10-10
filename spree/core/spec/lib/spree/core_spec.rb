@@ -45,6 +45,9 @@ describe Spree do
     end
 
     it 'delegates reads and writes to customer_class' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Spree.user_class= is deprecated/)
+      expect(Spree::Deprecation).to receive(:warn).with(/Spree.user_class is deprecated/)
+
       described_class.user_class = 'Spree::Customer'
 
       expect(described_class.user_class).to eq(Spree::Customer)

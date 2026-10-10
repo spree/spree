@@ -5,7 +5,11 @@ require 'spec_helper'
 # the taxons queue, and the method bridges warn through Spree::Deprecation.
 RSpec.describe 'Taxon -> Category deprecation aliases' do
   describe 'constant aliases resolve to the canonical class' do
+    # Each alias warns once, when its file first loads, so another spec may
+    # already have loaded it.
     it 'keeps them as true class aliases (not proxies), so is_a?/STI stay correct' do
+      allow(Spree::Deprecation).to receive(:warn)
+
       expect(Spree::Taxon).to equal(Spree::Category)
       expect(Spree::Classification).to equal(Spree::ProductCategory)
       expect(Spree::PromotionRuleTaxon).to equal(Spree::PromotionRuleCategory)
