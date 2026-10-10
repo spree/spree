@@ -19,7 +19,21 @@ module Spree
       Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
                          :dashboard_path, :scope_name, :write_permission,
                          :writable_attributes, :create_workflow_key, :update_workflow_key,
-                         :distinct, keyword_init: true) do
+                         :distinct, :api_paths, keyword_init: true) do
+        # The Admin API path for one of this resource's operations, which is
+        # how a tool reaches it.
+        #
+        # @param action [Symbol] :index, :show, :create, :update, :destroy
+        # @return [String, nil]
+        def api_path(action)
+          Array(api_paths).to_h[action.to_sym]
+        end
+
+        # @return [Boolean] whether a tool can dispatch to this resource
+        def dispatchable?
+          api_path(:index).present?
+        end
+
         # Whether a search may add DISTINCT.
         #
         # Postgres rejects SELECT DISTINCT beside an ORDER BY the select list
@@ -174,14 +188,15 @@ module Spree
         # @return [Entry]
         def register(key:, model_name:, permission:, serializer_name:, dashboard_path: nil, scope_name: nil,
                      write_permission: nil, writable_attributes: [], create_workflow_key: nil,
-                     update_workflow_key: nil, distinct: nil)
+                     update_workflow_key: nil, distinct: nil, api_paths: nil)
           entry = Entry.new(key: key.to_s, model_name: model_name, permission: permission,
                             serializer_name: serializer_name, dashboard_path: dashboard_path,
                             scope_name: scope_name, write_permission: write_permission,
                             writable_attributes: writable_attributes,
                             create_workflow_key: create_workflow_key,
                             update_workflow_key: update_workflow_key,
-                            distinct: distinct)
+                            distinct: distinct,
+                            api_paths: api_paths&.to_a)
           entries[entry.key] = entry
         end
 

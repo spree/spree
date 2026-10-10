@@ -65,6 +65,34 @@ RSpec.describe Spree::AgentTools::ResourceMap do
   # Postgres refuses SELECT DISTINCT beside an ORDER BY the select list does
   # not carry, which is why some controllers turn it off. A search adding it
   # anyway answered every price query with a 500.
+  # A tool names an operation, so the map has to know where each resource's
+  # operations live. Read from the routes rather than built from the key.
+  describe 'the Admin API path for a resource' do
+    it 'is the top-level route, not a nested one' do
+      expect(described_class.find('products').api_path(:index)).to eq('/api/v3/admin/products')
+      expect(described_class.find('products').api_path(:show)).to eq('/api/v3/admin/products/:id')
+    end
+
+    # Products are served by five controllers, including
+    # `catalogs/products`. Collisions resolve by permission breadth, which
+    # says nothing about depth — so the winner kept whichever path won on
+    # scope, and a tool was handed `:catalog_id` with nothing to fill it.
+    it 'prefers the shallowest path across colliding controllers' do
+      %w[products orders variants].each do |key|
+        expect(described_class.find(key).api_path(:index)).not_to include(':')
+      end
+    end
+
+    it 'keeps the parent segment for a genuinely nested resource' do
+      expect(described_class.find('line_items').api_path(:index)).to include(':')
+    end
+
+    it 'knows which resources a tool can dispatch to' do
+      expect(described_class.find('products')).to be_dispatchable
+      expect(described_class.find('imports')).not_to be_dispatchable
+    end
+  end
+
   describe 'a resource whose controller disables DISTINCT' do
     it 'carries that through to the map' do
       expect(described_class.find('prices').distinct?).to be(false)
