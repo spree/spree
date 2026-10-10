@@ -14,7 +14,7 @@ These two variables are all a production deployment strictly needs:
 | `DATABASE_URL` | Database connection URL — see [Database Configuration](/developer/deployment/database) | `postgres://user:pass@localhost:5432/spree` |
 | `SECRET_KEY_BASE` | Secret used to encrypt sessions and cookies. Generate with `openssl rand -hex 64` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
 
-You'll almost always want to set [`RAILS_HOST`](#urls-and-hosts) too — without it, generated URLs point at `localhost`, and the three [Active Record encryption](#active-record-encryption) keys — without them, secrets Spree stores are kept in plain text.
+You'll almost always want to set [`SPREE_HOST`](#urls-and-hosts) too — without it, generated URLs point at `localhost`, and the three [Active Record encryption](#active-record-encryption) keys — without them, secrets Spree stores are kept in plain text.
 
 ## Active Record encryption
 
@@ -73,16 +73,20 @@ Apps created from an older `spree-starter` also need `config/application.rb` to 
 
 ## URLs and Hosts
 
-`RAILS_HOST` is the canonical public host of your deployment. URLs Spree generates outside a request context use it — links in emails, webhook payloads, and image/attachment URLs in API responses (for the latter, `CDN_HOST` takes precedence when set).
+`SPREE_HOST` is the canonical public host of your deployment. URLs Spree generates outside a request context use it — links in emails, webhook payloads, and image/attachment URLs in API responses (for the latter, `CDN_HOST` takes precedence when set).
+
+<Note>
+  This setting used to be called `RAILS_HOST`. That name still works, so an existing deployment needs no change — `SPREE_HOST` wins when both are set.
+</Note>
 
 <Warning>
-When neither `RAILS_HOST` nor `CDN_HOST` is configured, image and attachment URLs fall back to the store's URL setting, which is `localhost` on a fresh install — API responses will contain `https://localhost/...` URLs.
+When neither `SPREE_HOST` nor `CDN_HOST` is configured, image and attachment URLs fall back to the store's URL setting, which is `localhost` on a fresh install — API responses will contain `https://localhost/...` URLs.
 </Warning>
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `RAILS_HOST` | — | Public host, optionally with a port — e.g. `store.example.com` or `203.0.113.7:8080`. Host only, no protocol. On [Render](/developer/deployment/render), falls back to the platform-provided `RENDER_EXTERNAL_HOSTNAME`. |
-| `CDN_HOST` | — | Optional host for serving static assets and images, e.g. a CDN distribution in front of your app — see [CDN](/developer/deployment/cdn). Host only, no protocol. Falls back to `RAILS_HOST`. |
+| `SPREE_HOST` | — | Public host, optionally with a port — e.g. `store.example.com` or `203.0.113.7:8080`. Host only, no protocol. On [Render](/developer/deployment/render), falls back to the platform-provided `RENDER_EXTERNAL_HOSTNAME`. |
+| `CDN_HOST` | — | Optional host for serving static assets and images, e.g. a CDN distribution in front of your app — see [CDN](/developer/deployment/cdn). Host only, no protocol. Falls back to `SPREE_HOST`. |
 
 Generated URLs use `https` unless both `RAILS_FORCE_SSL` and `RAILS_ASSUME_SSL` are set to `false` (see [SSL](#ssl)).
 
@@ -122,7 +126,7 @@ Spree works with any SMTP provider (Resend, Postmark, Mailgun, SendGrid, Amazon 
 | `SMTP_PASSWORD` | — | SMTP auth password |
 | `SMTP_FROM_ADDRESS` | — | Default "from" email address |
 
-Links in emails use the host configured via [`RAILS_HOST`](#urls-and-hosts).
+Links in emails use the host configured via [`SPREE_HOST`](#urls-and-hosts).
 
 ## Application
 
