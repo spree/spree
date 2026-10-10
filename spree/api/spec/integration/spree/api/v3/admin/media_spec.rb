@@ -48,7 +48,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Adds a file to the library without placing it on anything. Upload the
-        file first through the direct-upload endpoint, then send the signed id
+        file first through `POST /api/v3/admin/files`, then send the signed id
         here. Put the file on a product by posting to that product's media with
         this record's id as `source_media_id`.
       DESC
@@ -60,7 +60,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          signed_id: { type: :string, description: 'Direct-upload signed id for the file.' },
+          signed_id: { type: :string, description: 'The `signed_id` returned by POST /api/v3/admin/files.' },
           alt: { type: :string, example: 'Folded on a table' },
           media_type: { type: :string, enum: %w[image video external_video], example: 'image' },
           external_video_url: { type: :string, description: 'YouTube or Vimeo link, for an external video.' }

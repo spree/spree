@@ -46,8 +46,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~MD
-        Queues a CSV import. Upload the file first via `POST /api/v3/admin/direct_uploads`
-        and pass the returned `signed_id` as `attachment`. On success the import is in the
+        Queues a CSV import. Upload the file first via `POST /api/v3/admin/files`
+        and pass the returned `signed_id` as `attachment_signed_id`. On success the import is in the
         `mapping` state and the response carries the mapping payload: `schema_fields`
         (the canonical columns for the type), `csv_headers`, a `sample_row`, and the
         auto-assigned `mappings`.
@@ -62,7 +62,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
         type: :object,
-        required: %w[type attachment],
+        required: %w[type attachment_signed_id],
         properties: {
           type: {
             type: :string,
@@ -81,9 +81,9 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
                          'Must belong to the current store.',
             example: 'pl_86Rf07xd4z'
           },
-          attachment: {
+          attachment_signed_id: {
             type: :string,
-            description: 'ActiveStorage signed blob id from POST /api/v3/admin/direct_uploads.',
+            description: 'The `signed_id` returned by POST /api/v3/admin/files.',
             example: 'eyJfcmFpbHMiOnsiZGF0YSI6MX0=--signed'
           },
           delimiter: {
@@ -107,7 +107,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
         let(:body) do
           {
             type: 'products',
-            attachment: csv_blob("slug,sku,name,price\nwidget,W-1,Widget,10.00\n").signed_id
+            attachment_signed_id: csv_blob("slug,sku,name,price\nwidget,W-1,Widget,10.00\n").signed_id
           }
         end
 
@@ -122,7 +122,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
       response '422', 'unknown import type' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { type: 'Spree::Unknown', attachment: csv_blob("slug\nx\n").signed_id } }
+        let(:body) { { type: 'Spree::Unknown', attachment_signed_id: csv_blob("slug\nx\n").signed_id } }
 
         run_test!
       end

@@ -86,11 +86,11 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it 'attaches a document from a direct upload' do
+    it 'attaches an uploaded document' do
       post :create, params: {
         company_id: company.prefixed_id,
         certificate_number: 'DE-1', reason_code: 'resale',
-        document: pdf_blob.signed_id
+        document_signed_id: pdf_blob.signed_id
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       post :create, params: {
         company_id: company.prefixed_id,
         certificate_number: 'DE-1', reason_code: 'resale',
-        document: pdf_blob.signed_id
+        document_signed_id: pdf_blob.signed_id
       }, as: :json
 
       certificate = company.tax_exemption_certificates.sole
@@ -128,7 +128,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       post :create, params: {
         company_id: company.prefixed_id,
         certificate_number: 'DE-1', reason_code: 'resale',
-        document: 'not-a-real-signed-id'
+        document_signed_id: 'not-a-real-signed-id'
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)

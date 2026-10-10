@@ -202,6 +202,7 @@ module Spree
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :square_logo, service: Spree.public_storage_service_name
     has_one_attached :cover_photo, service: Spree.public_storage_service_name
+    signed_id_attachments :logo, :square_logo, :cover_photo
 
     #
     # Validations

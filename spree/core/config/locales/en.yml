@@ -1795,6 +1795,7 @@ en:
     type: Type
     unable_to_connect_to_gateway: Unable to connect to gateway.
     updated_at: Updated at
+    upload_reference_invalid: The file reference is invalid or has expired. Upload the file again.
     url: URL
     user: User
     validation:

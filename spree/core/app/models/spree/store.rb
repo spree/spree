@@ -387,6 +387,7 @@ module Spree
     #
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :mailer_logo, service: Spree.public_storage_service_name
+    signed_id_attachments :logo, :mailer_logo
 
     # First-run setup credential (docs/plans/6.0-store-context-and-first-run-setup.md):
     # printed by the installer, only consulted by the setup endpoint while no

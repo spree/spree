@@ -13,7 +13,7 @@ module Spree
       attr_reader :shipping_label
 
       # @param owner [Spree::Fulfillment, Spree::Return]
-      # @param file [ActionDispatch::Http::UploadedFile, String] the file, or a signed blob id from a direct upload
+      # @param file [ActionDispatch::Http::UploadedFile, String] the file, or a signed id from POST /files
       # @param tracking_number [String] the number printed on the label
       # @param carrier [String, nil] free text; detected from the number when omitted
       # @param service [String, nil]
@@ -69,7 +69,7 @@ module Spree
         failure(@shipping_label) unless @shipping_label.save
       end
 
-      # A direct-upload blob carries the type the client declared, which the
+      # An uploaded blob carries the type the client declared, which the
       # attachment validator re-decides from the bytes; either way the
       # extension is the merchant-visible answer, so it wins when it names a
       # format Spree knows.

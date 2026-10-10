@@ -84,7 +84,7 @@ module Spree
           private
 
           def label_permitted_keys
-            [:file, :tracking_number, :carrier, :service,
+            [:file_signed_id, :tracking_number, :carrier, :service,
              :cost, :currency, :file_format, :tracking_url]
           end
 
@@ -96,19 +96,22 @@ module Spree
           #
           # Every key is passed whether or not the request carried it, so the
           # workflow sees a missing tracking number as a blank one to reject
-          # rather than a keyword it was never given.
+          # rather than a keyword it was never given. The workflow takes any
+          # attachable as `file`; the API names the reference `file_signed_id`.
           def record_uploaded_label
             with_order_lock do
+              attributes = label_permitted_keys.index_with { |key| label_params[key] }
               result = Spree.shipping_label_record_workflow.call(
                 owner: @parent,
-                **label_permitted_keys.index_with { |key| label_params[key] }
+                file: attributes.delete(:file_signed_id),
+                **attributes
               )
 
               render_result(result, status: :created)
             end
           end
 
-          # A tampered or expired direct-upload signature is a bad parameter,
+          # A tampered or expired upload reference is a bad parameter,
           # not a server fault.
           def render_invalid_signature
             render_error(

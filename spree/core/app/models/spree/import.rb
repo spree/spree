@@ -73,6 +73,7 @@ module Spree
     # Attachments
     #
     has_one_attached :attachment, service: Spree.private_storage_service_name
+    signed_id_attachments :attachment
 
     #
     # Status

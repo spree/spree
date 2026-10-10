@@ -205,14 +205,14 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
           },
           minimum_payout_amount: { type: :string, example: '25.0', nullable: true },
           holiday_mode_until: { type: :string, format: 'date-time', nullable: true },
-          logo: {
+          logo_signed_id: {
             type: :string, nullable: true,
-            description: 'ActiveStorage signed id of a direct-uploaded file. Send `null` ' \
-                         'to remove the attachment, or omit the key to leave it alone. ' \
-                         'Same for `square_logo` and `cover_photo`.'
+            description: 'The `signed_id` returned by POST /api/v3/admin/files. Send `null` ' \
+                         'to remove the image, or omit the key to leave it alone. ' \
+                         'Same for `square_logo_signed_id` and `cover_photo_signed_id`.'
           },
-          square_logo: { type: :string, nullable: true },
-          cover_photo: { type: :string, nullable: true },
+          square_logo_signed_id: { type: :string, nullable: true },
+          cover_photo_signed_id: { type: :string, nullable: true },
           billing_address: SELLER_ADDRESS_SCHEMA,
           returns_address: SELLER_ADDRESS_SCHEMA
         }

@@ -388,22 +388,6 @@ module Spree
               },
               required: %w[iso iso3 name]
             },
-            DirectUploadResponse: {
-              type: :object,
-              description: 'A presigned upload target. PUT the file to `direct_upload.url` with the given headers, then send `signed_id` as the submission\'s `file`.',
-              properties: {
-                signed_id: { type: :string, description: 'Send this as a submission\'s `file`', example: 'eyJfcmFpbHMiOnsibWVzc2FnZSI6...' },
-                direct_upload: {
-                  type: :object,
-                  properties: {
-                    url: { type: :string, example: 'https://storage.example.com/uploads/abc123' },
-                    headers: { type: :object, additionalProperties: { type: :string } }
-                  },
-                  required: %w[url headers]
-                }
-              },
-              required: %w[signed_id direct_upload]
-            },
             AuthProvidersResponse: {
               type: :object,
               description: 'Sign-in methods this marketplace offers sellers, for the login page',

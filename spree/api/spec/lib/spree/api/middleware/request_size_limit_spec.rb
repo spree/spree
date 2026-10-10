@@ -50,6 +50,23 @@ RSpec.describe Spree::Api::Middleware::RequestSizeLimit do
       end
     end
 
+    context 'file uploads' do
+      let(:multipart_limit) { Spree::Config[:max_multipart_upload_size] + described_class::MULTIPART_ENVELOPE }
+
+      it 'holds POST /files to the multipart upload limit instead' do
+        %w[/api/v3/admin/files /api/v3/seller/files].each do |path|
+          expect(middleware.call(env_for(path, content_length: multipart_limit)).first).to eq(200)
+          expect(middleware.call(env_for(path, content_length: multipart_limit + 1)).first).to eq(413)
+        end
+      end
+
+      it 'keeps the general limit for the Store API' do
+        status, _headers, _body = middleware.call(env_for('/api/v3/store/files', content_length: 1_000_000))
+
+        expect(status).to eq(413)
+      end
+    end
+
     context 'non-API requests' do
       it 'does not limit requests to other paths' do
         status, _headers, _body = middleware.call(env_for('/admin/products', content_length: 10_000_000))

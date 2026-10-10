@@ -24,7 +24,7 @@ module Spree
             def create
               authorize!(:create, Spree::ShippingLabel)
 
-              if label_params[:file].blank?
+              if label_params[:file_signed_id].blank?
                 return render_error(
                   code: ERROR_CODES[:validation_error],
                   message: I18n.t('spree.shipping_labels.errors.file_required'),

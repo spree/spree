@@ -73,7 +73,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         post :create,
              params: {
                type: 'products',
-               attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
+               attachment_signed_id: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
              },
              as: :json
       }.to change(Spree::Import, :count).by(1)
@@ -102,7 +102,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
            params: {
              type: 'products',
              delimiter: ';',
-             attachment: csv_signed_id("slug;sku;name;price\nwidget;W-1;Widget;10.00\n")
+             attachment_signed_id: csv_signed_id("slug;sku;name;price\nwidget;W-1;Widget;10.00\n")
            },
            as: :json
 
@@ -141,7 +141,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       it 'ignores the list on a type that has none' do
         post :create,
              params: { type: 'products', price_list_id: price_list.prefixed_id,
-                       attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n") },
+                       attachment_signed_id: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n") },
              as: :json
 
         expect(response).to have_http_status(:created)
@@ -158,7 +158,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         post :create,
              params: {
                type: 'products',
-               attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n"),
+               attachment_signed_id: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n"),
                results_url: 'https://admin.example.com/store_abc/settings/imports'
              },
              as: :json
@@ -172,7 +172,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         post :create,
              params: {
                type: 'products',
-               attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n"),
+               attachment_signed_id: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n"),
                results_url: 'https://evil.example.com/phish'
              },
              as: :json
@@ -183,14 +183,14 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
     end
 
     it 'rejects unregistered import types' do
-      post :create, params: { type: 'Spree::User', attachment: csv_signed_id("slug\nx\n") }, as: :json
+      post :create, params: { type: 'Spree::User', attachment_signed_id: csv_signed_id("slug\nx\n") }, as: :json
 
       # Falls back to Spree::Import which fails the `type` presence validation
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'rejects an invalid attachment signed id' do
-      post :create, params: { type: 'products', attachment: 'not-a-signed-id' }, as: :json
+      post :create, params: { type: 'products', attachment_signed_id: 'not-a-signed-id' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -200,7 +200,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         io: StringIO.new('{}'), filename: 'import.json', content_type: 'application/json'
       )
 
-      post :create, params: { type: 'products', attachment: blob.signed_id }, as: :json
+      post :create, params: { type: 'products', attachment_signed_id: blob.signed_id }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -209,7 +209,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       post :create,
            params: {
              type: 'products',
-             attachment: csv_signed_id("slug,\"sku\nbroken")
+             attachment_signed_id: csv_signed_id("slug,\"sku\nbroken")
            },
            as: :json
 
@@ -458,7 +458,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         post :create,
              params: {
                type: 'products',
-               attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
+               attachment_signed_id: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
              },
              as: :json
 
@@ -467,7 +467,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       end
 
       it 'rejects creating a Customers import without write_customers' do
-        post :create, params: { type: 'customers', attachment: csv_signed_id("email\nx@y.com\n") }, as: :json
+        post :create, params: { type: 'customers', attachment_signed_id: csv_signed_id("email\nx@y.com\n") }, as: :json
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['details']['required_scope']).to eq('write_customers')
@@ -479,7 +479,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         price_list = create(:price_list, store: store)
 
         post :create,
-             params: { type: 'price_list_prices', price_list_id: price_list.prefixed_id, attachment: csv_signed_id("sku,price\nW-1,1\n") },
+             params: { type: 'price_list_prices', price_list_id: price_list.prefixed_id, attachment_signed_id: csv_signed_id("sku,price\nW-1,1\n") },
              as: :json
 
         expect(response).to have_http_status(:created)
@@ -510,7 +510,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
           post :create,
                params: {
                  type: 'products',
-                 attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
+                 attachment_signed_id: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
                },
                as: :json
 

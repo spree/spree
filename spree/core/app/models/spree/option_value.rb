@@ -19,6 +19,7 @@ module Spree
     # Attachments
     #
     has_one_attached :image
+    signed_id_attachments :image
 
     #
     # Associations

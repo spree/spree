@@ -3,6 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     include Spree::PrefixedId
+    include Spree::SignedIdAttachments
     include Spree::HasCustomFields
     include Spree::UserAddress
     include Spree::UserPaymentSource
@@ -119,6 +120,7 @@ module Spree
       # Attachments
       #
       has_one_attached :avatar, service: Spree.public_storage_service_name
+      signed_id_attachments :avatar
 
       has_spree_rich_text :internal_note
 

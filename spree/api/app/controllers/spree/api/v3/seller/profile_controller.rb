@@ -107,7 +107,7 @@ module Spree
             normalize_params(
               params.permit(:name, :contact_email, :billing_email, :about,
                             :legal_name, :registration_number,
-                            :logo, :square_logo, :cover_photo,
+                            :logo_signed_id, :square_logo_signed_id, :cover_photo_signed_id,
                             billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
                             custom_fields: [:id, :custom_field_definition_id, :value,
                                             { value: [] }, { value: {} }])

@@ -88,11 +88,10 @@ module Spree
               [{ document_attachment: :blob }]
             end
 
-            # `document` is an ActiveStorage signed blob id from
-            # POST /api/v3/admin/direct_uploads.
+            # `document_signed_id` comes from POST /api/v3/admin/files.
             def permitted_params
               params.permit(:certificate_number, :reason_code, :issuing_authority,
-                            :issued_at, :expires_at, :country_code, :state_code, :document,
+                            :issued_at, :expires_at, :country_code, :state_code, :document_signed_id,
                             metadata: {})
             end
 
@@ -117,7 +116,7 @@ module Spree
             def render_invalid_signature
               render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: 'Invalid document signed id',
+                message: 'Invalid document_signed_id',
                 status: :unprocessable_content
               )
             end

@@ -107,6 +107,7 @@ module Spree
           rescue_from ActiveRecord::RecordNotSaved, with: :handle_record_not_saved
           rescue_from ArgumentError, with: :handle_argument_error
           rescue_from ActionDispatch::Http::Parameters::ParseError, with: :handle_parse_error
+          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :handle_invalid_signature
         end
 
         protected
@@ -274,6 +275,16 @@ module Spree
             code: ERROR_CODES[:invalid_request],
             message: exception.message,
             status: :bad_request
+          )
+        end
+
+        # A `signed_id` that was tampered with, or has expired (they last a
+        # day), is a bad parameter rather than a server fault.
+        def handle_invalid_signature(_exception)
+          render_error(
+            code: ERROR_CODES[:parameter_invalid],
+            message: I18n.t('spree.upload_reference_invalid'),
+            status: :unprocessable_content
           )
         end
 

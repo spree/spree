@@ -15,12 +15,12 @@ module Spree
 
             # POST .../labels
             #
-            # Buys the label through the parcel's provider, or — when a `file`
+            # Buys the label through the parcel's provider, or — when a `file_signed_id`
             # is given — records one the merchant bought elsewhere.
             def create
               authorize!(:create, Spree::ShippingLabel)
 
-              return record_uploaded_label if label_params[:file].present?
+              return record_uploaded_label if label_params[:file_signed_id].present?
 
               with_order_lock do
                 result = Spree.shipping_label_purchase_workflow.call(owner: @parent)

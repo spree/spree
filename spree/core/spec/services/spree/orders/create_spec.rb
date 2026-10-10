@@ -280,7 +280,7 @@ module Spree
         result = nil
         expect {
           result = described_class.call(
-            store: store, params: { email: 'buyer@example.com', po_document: orphan_blob.signed_id }
+            store: store, params: { email: 'buyer@example.com', po_document_signed_id: orphan_blob.signed_id }
           )
         }.not_to raise_error
 

@@ -760,3 +760,21 @@ steps:
       this step again.
 
       Idempotent.
+
+  - id: assign_upload_stores
+    name: "Record which store owns every uploaded file"
+    task: "spree:uploads:assign_stores"
+    notes: |
+      Spree 6.0 records the store that owns every uploaded file, so a file from
+      one store cannot be attached in another and storage can be measured and
+      cleaned up per store. New files get their store when they are uploaded;
+      this gives existing files the store of the record they are attached to.
+
+      Files attached in more than one store are listed and left unchanged for
+      you to resolve. Files attached to nothing keep no store; the daily purge
+      of never-attached uploads deletes them (schedule
+      Spree::Uploads::PurgeUnattachedJob, see the upgrade guide).
+
+      Run AFTER the steps that create or move attachments (media, categories,
+      returns), so their files are covered. Idempotent — files that already
+      have a store are skipped.

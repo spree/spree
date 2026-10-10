@@ -62,8 +62,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
         until verified.
 
         `country_code` and `state_code` say where the certificate holds — omit both for one valid
-        everywhere, give only the country for one valid throughout it. `document` takes an ActiveStorage
-        signed blob id obtained from `POST /api/v3/admin/direct_uploads`.
+        everywhere, give only the country for one valid throughout it. `document_signed_id` takes the
+        `signed_id` returned by `POST /api/v3/admin/files`.
       DESC
       admin_scope :write, :customers
 
@@ -78,9 +78,9 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
           state_code: { type: :string, nullable: true, example: 'BE' },
           expires_at: { type: :string, format: 'date-time', nullable: true },
           issuing_authority: { type: :string, nullable: true, example: 'Finanzamt Berlin' },
-          document: {
+          document_signed_id: {
             type: :string,
-            description: 'ActiveStorage signed blob id from POST /api/v3/admin/direct_uploads.',
+            description: 'The `signed_id` returned by POST /api/v3/admin/files.',
             example: 'eyJfcmFpbHMiOnsiZGF0YSI6MX0=--signed'
           }
         },
@@ -93,7 +93,7 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
             certificate_number: 'DE-RESALE-7',
             reason_code: 'resale',
             country_code: germany.iso,
-            document: pdf_blob.signed_id
+            document_signed_id: pdf_blob.signed_id
           }
         end
 

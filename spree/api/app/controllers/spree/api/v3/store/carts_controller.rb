@@ -5,7 +5,7 @@ module Spree
         class CartsController < Store::ResourceController
           include Spree::Api::V3::CartResolvable
           include Spree::Api::V3::OrderLock
-          # The cart accepts a `po_document` signed blob id.
+          # The cart accepts a `po_document_signed_id`.
           include ActiveStorage::SetCurrent
 
           # A tampered signed id would otherwise surface as a 500.
@@ -207,7 +207,7 @@ module Spree
               # The buyer's own purchase-order reference, and the signed blob id
               # of the document behind it (from POST .../carts/:id/po_document).
               :po_number,
-              :po_document,
+              :po_document_signed_id,
               :use_shipping,
               shipping_address: address_params,
               billing_address: address_params,
