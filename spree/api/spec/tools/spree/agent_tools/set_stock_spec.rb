@@ -60,8 +60,15 @@ RSpec.describe 'agent stock setting' do
       expect(tool.call(rows: [])[:error]).to include('at least one row')
     end
 
-    it 'needs a variant and a location on every row' do
-      expect(tool.call(rows: [{ 'count_on_hand' => 5 }])[:error]).to include('variant_id')
+    # The endpoint names which field each row is missing, and the tool passes
+    # that through — a model repairs the row it got wrong instead of resending
+    # the whole batch.
+    it 'names the row that is missing a variant and a location' do
+      result = tool.call(rows: [{ 'count_on_hand' => 5 }])
+
+      expect(result[:error]).to include('variant')
+      expect(result[:rows].to_a.first).to include('index' => 0)
+      expect(result[:rows].to_a.first['missing']).to include('variant_id', 'stock_location_id')
     end
 
     # The endpoint's own refusal: a count and an adjustment together is

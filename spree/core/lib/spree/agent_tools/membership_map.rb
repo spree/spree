@@ -8,49 +8,9 @@ module Spree
     # fills it from the controllers that adopt the membership concern, so a
     # parent that adopts it later is curated without a new tool.
     module MembershipMap
-      Entry = Struct.new(:target, :model_name, :permission, :positioned, :service_namespace,
-                         :api_path, keyword_init: true) do
-        # @return [Class]
-        def model_class
-          model_name.constantize
-        end
-
-        # Whether members carry an order the merchant arranged by hand.
-        def positioned?
-          positioned.present?
-        end
-
-        # Adds products to this parent, the way its own controller does.
-        #
-        # Two shapes exist and both are the controller's: a curation service
-        # for the parents that publish events and reindex, a model method for
-        # the ones that write a join row. Carried here so the tool never has
-        # to know which parent it is holding.
-        def add(parent, products)
-          return if products.empty?
-
-          if service_namespace
-            "#{service_namespace}::AddProducts".constantize.call(service_key => [parent], products: products)
-          else
-            parent.add_products(products.map(&:id))
-          end
-        end
-
-        def remove(parent, products)
-          return if products.empty?
-
-          if service_namespace
-            "#{service_namespace}::RemoveProducts".constantize.call(service_key => [parent], products: products)
-          else
-            parent.remove_products(products.map(&:id))
-          end
-        end
-
-        # `Spree::Categories::AddProducts` takes `categories:`.
-        def service_key
-          target.pluralize.to_sym
-        end
-      end
+      # Curation runs through the parent's own nested products endpoint, so
+      # an entry only needs to say which parent, what it costs and where.
+      Entry = Struct.new(:target, :permission, :api_path, keyword_init: true)
 
       class << self
         # @return [Array<Entry>]
@@ -71,11 +31,8 @@ module Spree
           all.map(&:target).sort
         end
 
-        def register(target:, model_name:, permission:, positioned: false, service_namespace: nil,
-                     api_path: nil)
-          entries[target.to_s] = Entry.new(target: target.to_s, model_name: model_name,
-                                           permission: permission, positioned: positioned,
-                                           service_namespace: service_namespace,
+        def register(target:, permission:, api_path: nil)
+          entries[target.to_s] = Entry.new(target: target.to_s, permission: permission,
                                            api_path: api_path)
         end
 

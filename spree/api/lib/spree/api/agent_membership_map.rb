@@ -24,10 +24,7 @@ module Spree
 
             map.register(
               target: target,
-              model_name: entry.model_name,
               permission: write_permission_for(entry),
-              positioned: controller.method_defined?(:reposition),
-              service_namespace: service_namespace_for(target),
               api_path: membership_path_for(controller)
             )
           end
@@ -69,18 +66,6 @@ module Spree
         # the routes name it too.
         def target_for(controller)
           controller.name.to_s.split('::')[-2]&.underscore&.singularize
-        end
-
-        # A parent whose curation goes through a service has one named for it
-        # — `Spree::Categories::AddProducts`, which publishes events and
-        # reindexes. The others write the join row from the model. Probed
-        # rather than listed, so a parent that gains a service is followed.
-        def service_namespace_for(target)
-          namespace = "Spree::#{target.camelize.pluralize}"
-          return unless "#{namespace}::AddProducts".safe_constantize
-          return unless "#{namespace}::RemoveProducts".safe_constantize
-
-          namespace
         end
       end
     end

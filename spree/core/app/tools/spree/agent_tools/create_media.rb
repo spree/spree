@@ -22,16 +22,44 @@ module Spree
       param :alt, description: 'Alt text describing the image, for accessibility and SEO'
 
       def call(file_id:, product_id: nil, alt: nil)
-        product = nil
-        if product_id.present?
-          product = find_product(product_id)
-          return { error: "No product found for #{product_id.inspect}." } if product.nil?
+        # Placement is the path: nested under a product puts the file in that
+        # product's gallery, the flat one leaves it in the library. The
+        # endpoint resolves the parent, checks it and verifies the signed id,
+        # so there is nothing to look up here first.
+        path = if product_id.present?
+                 "/api/v3/admin/products/#{product_id}/media"
+               else
+                 '/api/v3/admin/media'
+               end
 
-          refusal = unauthorized(:update, product)
-          return refusal if refusal
+        response = ApiDispatch.new(context).call(
+          method: :post, path: path, body: { signed_id: file_id, alt: alt.presence }.compact
+        )
+        unless response.success?
+          # The endpoint speaks about signed references in general, since many
+          # of its parameters are one. Here it is always a file, so the
+          # refusal names the tool that produces a valid id.
+          message = response.error_message
+          if response.status == 422 && message.to_s.match?(/signed reference/i)
+            message = "#{file_id.inspect} is not a file this store uploaded, or it has expired. " \
+                      'Call upload_file first and pass the file_id it returns.'
+          end
+
+          return { error: message }
         end
 
-        build_and_save(file_id: file_id, product: product, alt: alt)
+        media = response.data.to_h
+
+        {
+          ok: true,
+          id: media['id'],
+          filename: media['filename'],
+          media_type: media['media_type'],
+          product_id: product_id.presence,
+          # The media library has no page of its own in the map, so the link
+          # that helps is the product's — where the merchant will look at it.
+          dashboard_path: product_id.presence && dashboard_path_for(product_id)
+        }.compact
       end
 
       def summary(arguments)
@@ -42,38 +70,11 @@ module Spree
 
       private
 
-      def build_and_save(file_id:, product:, alt:)
-        media = Spree::Media.new(store: context.store, alt: alt.presence)
-        media.viewable = product if product
+      def dashboard_path_for(product_id)
+        path = ResourceMap.find('products')&.dashboard_path
+        return if path.blank?
 
-        # The signed id is verified by ActiveStorage itself: one that was not
-        # issued by this installation does not resolve, so a model cannot
-        # invent a reference to someone else's file.
-        media.attachment = file_id
-
-        return { error: media.errors.full_messages.to_sentence.presence || 'The file could not be added.' } unless
-          media.save
-
-        {
-          ok: true,
-          id: media.prefixed_id,
-          filename: media.attachment.filename.to_s,
-          media_type: media.media_type,
-          product_id: product&.prefixed_id,
-          # The media library has no page of its own in the map, so the link
-          # that helps is the product's — where the merchant will look at it.
-          dashboard_path: product && ResourceMap.find('products')&.dashboard_path_for(product)
-        }.compact
-      rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
-        { error: "#{file_id.inspect} is not a file this store uploaded. Call upload_file first." }
-      rescue ActiveStorage::FileNotFoundError
-        { error: 'That upload did not finish — its bytes are missing. Upload the file again.' }
-      end
-
-      def find_product(id)
-        context.accessible(Spree::Product.for_store(context.store), :update).find_by_prefix_id(id)
-      rescue StandardError
-        nil
+        format(path, id: product_id)
       end
     end
   end
