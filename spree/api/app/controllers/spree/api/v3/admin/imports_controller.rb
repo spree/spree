@@ -52,12 +52,6 @@ module Spree
             else
               render_errors(@resource.errors)
             end
-          rescue ActiveSupport::MessageVerifier::InvalidSignature
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: 'Invalid attachment_signed_id',
-              status: :unprocessable_content
-            )
           end
 
           # PATCH /api/v3/admin/imports/:id/complete_mapping

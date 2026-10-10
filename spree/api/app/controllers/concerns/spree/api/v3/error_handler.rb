@@ -309,10 +309,14 @@ module Spree
         end
 
         # A setting the API reads and writes under its plain name reports its
-        # errors under that name too, never the `preferred_` one the model uses.
+        # errors under that name too, never the `preferred_` one the model uses;
+        # an attachment slot reports them under the `<slot>_signed_id` it is
+        # written with.
         def wire_error_attribute(errors, attribute)
           record_class = errors.objects.first&.base&.class
-          (record_class.exposed_preference_name(attribute) if record_class.respond_to?(:exposed_preference_name)) || attribute
+          (record_class.exposed_preference_name(attribute) if record_class.respond_to?(:exposed_preference_name)) ||
+            (record_class.signed_id_attribute_for(attribute) if record_class.respond_to?(:signed_id_attribute_for)) ||
+            attribute
         end
 
         # Infer error code from context

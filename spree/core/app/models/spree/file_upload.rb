@@ -51,7 +51,7 @@ module Spree
 
     # @return [Boolean] whether the bytes travel in the request
     def multipart?
-      file.present?
+      file.respond_to?(:read)
     end
 
     # @return [Boolean] whether the file lands on private storage
@@ -99,9 +99,10 @@ module Spree
 
     private
 
-    # The size and type of a multipart upload come from the bytes, never from
-    # what the client declared: Marcel reads the content, so a renamed
-    # executable is not accepted as an image.
+    # The size of a multipart upload comes from the bytes, and so does its type
+    # wherever the bytes carry a recognisable signature: Marcel reads the
+    # content first, so a renamed executable is not accepted as an image. Only
+    # bytes it cannot place fall back to the declared type and the file name.
     def read_file_facts
       io = file.respond_to?(:to_io) ? file.to_io : file
       self.filename = filename.presence || file.try(:original_filename)

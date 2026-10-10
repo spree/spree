@@ -14,9 +14,6 @@ module Spree
             # standard actions have to be listed alongside the custom ones.
             before_action :set_resource, only: [:show, :update, :destroy, :verify, :revoke, :download]
 
-            # A tampered signed id would otherwise surface as a 500.
-            rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_signature
-
             # PATCH /api/v3/admin/companies/:company_id/tax_exemption_certificates/:id/verify
             def verify
               result = Spree.tax_exemption_certificate_verify_workflow.call(
@@ -109,16 +106,6 @@ module Spree
                        end
 
               authorize!(mapped, resource)
-            end
-
-            private
-
-            def render_invalid_signature
-              render_error(
-                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: 'Invalid document_signed_id',
-                status: :unprocessable_content
-              )
             end
           end
         end

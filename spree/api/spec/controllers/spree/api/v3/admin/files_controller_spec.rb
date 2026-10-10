@@ -78,6 +78,13 @@ RSpec.describe Spree::Api::V3::Admin::FilesController, type: :controller do
       expect(json_response['error']['details']).to have_key('visibility')
     end
 
+    it 'treats a file that is not a file as a presigned upload missing its checksum' do
+      post :create, params: { file: 'abc', filename: 'a.png', content_type: 'image/png', byte_size: 3 }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']).to have_key('checksum')
+    end
+
     it 'requires a checksum for a presigned upload' do
       post :create, params: presigned_params.except(:checksum), as: :json
 

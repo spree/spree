@@ -349,6 +349,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
               value={file}
               onChange={setFile}
               accept={requirement.accepted_content_types?.join(',')}
+              private
               label={t('onboarding.document_label')}
               help={t('onboarding.document_help')}
             />

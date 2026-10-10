@@ -21,6 +21,10 @@ module Spree
               authorize!(:create, Spree::ShippingLabel)
 
               return record_uploaded_label if label_params[:file_signed_id].present?
+              # Buying is the default only when no file is sent at all. A file
+              # under its old name would otherwise fall through to buying a
+              # label on the carrier account.
+              return render_misnamed_label_file if params.key?(:file)
 
               with_order_lock do
                 result = Spree.shipping_label_purchase_workflow.call(owner: @parent)
@@ -58,6 +62,16 @@ module Spree
                         else
                           @order.fulfillments.find_by_prefix_id!(params[:fulfillment_id])
                         end
+            end
+
+            private
+
+            def render_misnamed_label_file
+              render_error(
+                code: ERROR_CODES[:parameter_invalid],
+                message: I18n.t('spree.shipping_labels.errors.file_renamed'),
+                status: :unprocessable_content
+              )
             end
           end
         end

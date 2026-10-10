@@ -43,8 +43,10 @@ module Spree
         ActiveStorage::Attachment
       end
 
+      # Renditions and previews take their store from their original file, so
+      # they go last, once the originals have one.
       def record_types
-        attachments.distinct.pluck(:record_type)
+        attachments.distinct.pluck(:record_type).sort_by { |record_type| [record_type.start_with?('ActiveStorage::') ? 1 : 0, record_type] }
       end
 
       def unassigned_attachments(record_type)

@@ -1676,6 +1676,7 @@ en:
       errors:
         already_purchased: This parcel already has an active shipping label
         file_fetch_failed: The label file could not be fetched from the carrier (HTTP %{status})
+        file_renamed: Send the uploaded label's signed id as file_signed_id
         file_required: An uploaded label needs a file
         no_file_url: The carrier did not provide a file for this label
         not_refund_requested: Only a label awaiting the carrier's refund decision can be confirmed refunded
@@ -1796,6 +1797,7 @@ en:
     unable_to_connect_to_gateway: Unable to connect to gateway.
     updated_at: Updated at
     upload_reference_invalid: The file reference is invalid or has expired. Upload the file again.
+    upload_wrong_visibility: must be uploaded with %{visibility} visibility
     url: URL
     user: User
     validation:

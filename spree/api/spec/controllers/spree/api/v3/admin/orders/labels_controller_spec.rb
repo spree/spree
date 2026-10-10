@@ -64,6 +64,17 @@ RSpec.describe Spree::Api::V3::Admin::Orders::LabelsController, type: :controlle
         expect(fulfillment.reload.tracking).to eq('1Z879E930346834440')
       end
 
+      it 'refuses a file sent under its old name rather than buying a label' do
+        expect(Spree.shipping_label_purchase_workflow).not_to receive(:call)
+
+        post :create, params: {
+          order_id: order.prefixed_id, fulfillment_id: fulfillment.prefixed_id, file: signed_file, tracking_number: 'X'
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('parameter_invalid')
+      end
+
       it 'refuses an upload with no tracking number' do
         post :create, params: {
           order_id: order.prefixed_id, fulfillment_id: fulfillment.prefixed_id, file_signed_id: signed_file
