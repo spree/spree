@@ -15049,6 +15049,51 @@ components:
       - amount
       - display_amount
       x-typelizer: true
+    FileUpload:
+      type: object
+      properties:
+        signed_id:
+          type: string
+        filename:
+          type: string
+        content_type:
+          type: string
+        byte_size:
+          type: number
+        visibility:
+          type: string
+          enum:
+          - public
+          - private
+        expires_at:
+          type: string
+        upload:
+          allOf:
+          - "$ref": "#/components/schemas/FileUploadTarget"
+          nullable: true
+      required:
+      - signed_id
+      - filename
+      - content_type
+      - byte_size
+      - visibility
+      - expires_at
+      - upload
+      x-typelizer: true
+    FileUploadTarget:
+      type: object
+      properties:
+        method:
+          type: string
+        url:
+          type: string
+        headers:
+          type: object
+      required:
+      - method
+      - url
+      - headers
+      x-typelizer: true
     FreightSummary:
       type: object
       properties:
