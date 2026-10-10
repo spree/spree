@@ -96,9 +96,9 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
             type: :string,
             description: "The buyer's own purchase order reference, which they reconcile the order, the invoice and the payment against."
           },
-          po_document: {
+          po_document_signed_id: {
             type: :string,
-            description: "Signed blob id of the buyer's purchase order document, from POST /api/v3/admin/direct_uploads. Served back through the order's po_document action."
+            description: "Signed id of the buyer's purchase order document, from POST /api/v3/admin/files. Served back through the order's po_document action."
           },
           metadata: { type: :object, description: 'Arbitrary key/value metadata' },
           shipping_address: {
@@ -236,9 +236,9 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
             type: :string,
             description: "The buyer's own purchase order reference, which they reconcile the order, the invoice and the payment against."
           },
-          po_document: {
+          po_document_signed_id: {
             type: :string,
-            description: 'Signed blob id of the buyer\'s purchase order document, from POST /api/v3/admin/direct_uploads. Served back through the order\'s po_document action.'
+            description: 'Signed id of the buyer\'s purchase order document, from POST /api/v3/admin/files. Served back through the order\'s po_document action.'
           },
           shipping_address: {
             type: :object,

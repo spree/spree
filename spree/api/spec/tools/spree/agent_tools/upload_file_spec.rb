@@ -69,8 +69,8 @@ RSpec.describe 'agent file upload' do
     it 'refuses a file whose bytes are not a kind it stores' do
       result = upload('harmless.csv', "<html><script>alert(1)</script></html>")
 
-      # The endpoint's allowlist, in its own words.
       expect(result[:error]).to include('text/html')
+      expect(result[:supported_content_types]).to include('text/csv')
     end
 
     it 'refuses an executable however it is named' do
@@ -78,9 +78,9 @@ RSpec.describe 'agent file upload' do
     end
 
     it 'refuses a file beyond the cap' do
-      stub_const('Spree::Api::V3::Admin::DirectUploadsController::MAX_UPLOAD_BYTES', 16)
+      allow(Spree::Config).to receive(:max_multipart_upload_size).and_return(16)
 
-      expect(upload('big.csv', 'x' * 64)[:error]).to include('must be under')
+      expect(upload('big.csv', 'x' * 64)[:error]).to match(/less than or equal to|must be under/)
     end
 
     it 'is withheld from a caller who cannot write' do
