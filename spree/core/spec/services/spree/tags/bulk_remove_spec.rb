@@ -10,8 +10,7 @@ module Spree
       subject { described_class.call(tag_names: tag_names, records: products, context: context) }
 
       before do
-        # Add tags to products initially
-        Spree::Tags::BulkAdd.call(tag_names: tag_names, records: products, context: context)
+        Spree::Tags::BulkAdd.call(tag_names: ['tag1', 'tag2', 'tag3'], records: products, context: context)
       end
 
       it 'removes taggings for each product-tag pair' do
@@ -31,6 +30,27 @@ module Spree
 
       it 'touches all products' do
         expect { subject }.to change { Spree::Product.where(id: products.pluck(:id)).pluck(:updated_at) }
+      end
+
+      it 'publishes tagging.bulk_removed event' do
+        expect(Spree::Events).to receive(:publish).with(
+          'tagging.bulk_removed',
+          hash_including(:taggings, :taggable_type, :context)
+        )
+        subject
+      end
+
+      context 'when tags do not exist' do
+        let(:tag_names) { ['nonexistent_tag'] }
+
+        it 'does not remove any taggings' do
+          expect { subject }.not_to change { ActsAsTaggableOn::Tagging.count }
+        end
+
+        it 'does not publish event' do
+          expect(Spree::Events).not_to receive(:publish)
+          subject
+        end
       end
     end
   end
