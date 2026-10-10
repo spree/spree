@@ -147,8 +147,9 @@ import { createAdminClient } from '@spree/admin-sdk'
 
 const client = createAdminClient({ baseUrl, secretKey })
 
-// `signed_id` comes from a direct upload; see the Active Storage docs for
-// generating one client-side.
+// `signed_id` comes from uploading the file first; see Uploads.
+const { signed_id: signedBlobId } = await client.files.upload(file)
+
 const media = await client.products.media.create('prod_86Rf07xd4z', {
   signed_id: signedBlobId,
   alt: 'Front view',
@@ -171,7 +172,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/medi
 
 #### Creating media from a remote URL
 
-When the image already lives at a public URL, pass `url` instead of a `signed_id` — Spree fetches the remote file and stores it as product media, so you skip the direct-upload step entirely.
+When the image already lives at a public URL, pass `url` instead of a `signed_id` — Spree fetches the remote file and stores it as product media, so you skip the [upload](/api-reference/admin-api/uploads) step entirely.
 
 <CodeGroup>
 

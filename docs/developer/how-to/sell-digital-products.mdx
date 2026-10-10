@@ -48,12 +48,8 @@ A product's delivery profile is auto-assigned when it is created — from its pr
 Upload the file to **private storage** and attach it to the variant as a digital asset. Private storage matters: a digital file is only ever served through a short-lived signed link, so the Admin API refuses a blob that landed on the public bucket.
 
 ```typescript Admin SDK
-// Request a private upload slot, PUT the file, then attach the blob.
-const { direct_upload, signed_id } = await adminClient.directUploads.create({
-  private: true,
-  blob: { filename: 'guide.pdf', byte_size: file.size, checksum, content_type: 'application/pdf' },
-})
-await fetch(direct_upload.url, { method: 'PUT', headers: direct_upload.headers, body: file })
+// Upload the file to private storage, then attach it.
+const { signed_id } = await adminClient.files.upload(file, { visibility: 'private' })
 
 await adminClient.products.digitalAssets.create('prod_86Rf07xd4z', { signed_id })
 ```

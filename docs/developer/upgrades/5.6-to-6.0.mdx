@@ -205,6 +205,14 @@ bundle exec rake spree:upgrade:migrate_country_state_codes
 
 Countries and states are no longer database records in 6.0. Addresses, delivery zone members, market countries, stock locations and stores now name them by ISO code (`country_code`, `state_code`), and this task fills those columns from the old `country_id` / `state_id` references. The old `country_iso` / `state_abbr` names still work on addresses for one release.
 
+### Record which store owns every uploaded file
+
+```bash
+bundle exec rake spree:uploads:assign_stores
+```
+
+Every uploaded file now records the store that owns it (`active_storage_blobs.store_id`). New uploads get it when they are made; this task gives existing files the store of the record they are attached to. A file attached in more than one store is listed and left alone for you to resolve. Safe to re-run at any time.
+
 ## Enable Active Record encryption
 
 Spree encrypts payment gateway and integration secrets, webhook endpoint signing secrets, payment gateway customer IDs and the OAuth tokens on user identities with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html) — but only when encryption keys are configured. Without keys these values are stored in plain text. New 6.0 projects get keys at setup; upgraded applications need to add them.
@@ -500,6 +508,39 @@ recover from a mistaken cancellation too — a new fulfillment, never a revived
 one. An order whose every parcel was recalled now reads
 `fulfillment_status: unfulfilled` rather than `canceled`; only a canceled
 order reads `canceled`.
+
+## File uploads
+
+`POST /direct_uploads` is removed from the Admin and Seller APIs. Upload through `POST /files` instead ([Uploads](/api-reference/admin-api/uploads)): the request is flat (`filename`, `content_type`, `byte_size`, `checksum`, `visibility`), the bytes go to `upload.url`, and small files can be sent in the request itself. In the SDKs, `directUploads.create()` becomes `files.upload(file, { visibility })`; `private: true` becomes `visibility: 'private'`.
+
+The `signed_id` an upload returns now **expires after a day** (`expires_at`). Store the file's record, not the `signed_id`.
+
+Every parameter that takes a `signed_id` is renamed to `<name>_signed_id`:
+
+| Endpoint | Before | After |
+|---|---|---|
+| Admin `/me`, Seller `/me`, Admin customers | `avatar` | `avatar_signed_id` |
+| Admin store settings | `mailer_logo` (and the new `logo`) | `mailer_logo_signed_id`, `logo_signed_id` |
+| Admin sellers, Seller profile | `logo`, `square_logo`, `cover_photo` | `logo_signed_id`, `square_logo_signed_id`, `cover_photo_signed_id` |
+| Admin categories, collections | `image`, `square_image` | `image_signed_id`, `square_image_signed_id` |
+| Admin option values | `image` | `image_signed_id` |
+| Admin tax exemption certificates | `document` | `document_signed_id` |
+| Admin and Seller imports | `attachment` | `attachment_signed_id` |
+| Admin and Seller shipping labels, Seller requirement submissions | `file` | `file_signed_id` |
+| Admin orders, Store API carts | `po_document` | `po_document_signed_id` |
+
+The Store API's `POST /carts/:id/po_document` keeps its route but takes the same flat request and returns the same response as `POST /files`.
+
+Uploads that are never attached are now deleted after two days. Schedule the job daily in `server/config/recurring.yml`:
+
+```yaml server/config/recurring.yml
+production:
+  purge_unattached_uploads:
+    class: Spree::Uploads::PurgeUnattachedJob
+    schedule: every day at 4am
+```
+
+Attaching a file uploaded in another store is logged in 6.0 and refused from 6.1. If your logs show `Spree 6.1 refuses this attachment`, fix the code that creates that file before upgrading to 6.1.
 
 ## Payment source IDs use the `psrc_` prefix
 
@@ -1065,6 +1106,7 @@ const orders = isOrderGroup(result) ? result.orders : [result]
 | Rich text comes in two shapes | Render `description_html` for markup; `description` is plain text | [Rich-text fields](#rich-text-fields-read-as-plain-text-plus-html) |
 | Payment source IDs | Stored `source_id` values change prefix from `ps_` to `psrc_` | [Payment source IDs](#payment-source-ids-use-the-psrc_-prefix) |
 | Completed carts are read-only | Read post-checkout data from the order, not the cart | [The Cart/Order split](#the-cartorder-split) |
+| Purchase order document | Send `po_document_signed_id` on the cart; `POST /carts/:id/po_document` takes a flat request | [File uploads](#file-uploads) |
 
 ## For extension authors
 
