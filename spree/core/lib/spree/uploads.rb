@@ -54,32 +54,39 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
+        before_validation :adopt_owner_store, on: :create
         after_create :check_blob_store
       end
 
       private
 
-      def check_blob_store
-        return unless blob&.has_attribute?(:store_id)
-        return if record.nil?
+      # A file Spree just made from bytes it holds (an export, a purchased
+      # label) is created in the same call that attaches it, so it simply
+      # takes its owner's store, written with the file itself.
+      def adopt_owner_store
+        return unless blob&.new_record? && blob.has_attribute?(:store_id) && record
 
-        owner_store_id = Spree::Uploads.store_id_for(record)
+        blob.store_id ||= owner_store_id
+      end
+
+      def check_blob_store
+        return unless blob&.has_attribute?(:store_id) && record
         return if owner_store_id.nil?
 
         if blob.store_id.nil?
-          # A file Spree just made from bytes it holds (an export, a purchased
-          # label) is created in the same call that attaches it, so it simply
-          # takes its owner's store. Only an existing file without one is
-          # worth reporting.
-          return blob.update_column(:store_id, owner_store_id) if blob.previously_new_record?
-
-          report_store_mismatch('has no store', owner_store_id)
+          report_store_mismatch('has no store')
         elsif blob.store_id.to_s != owner_store_id.to_s
-          report_store_mismatch("belongs to store #{blob.store_id}", owner_store_id)
+          report_store_mismatch("belongs to store #{blob.store_id}")
         end
       end
 
-      def report_store_mismatch(reason, owner_store_id)
+      def owner_store_id
+        return @owner_store_id if defined?(@owner_store_id)
+
+        @owner_store_id = Spree::Uploads.store_id_for(record)
+      end
+
+      def report_store_mismatch(reason)
         Rails.logger.warn(
           "[Spree] Attached file #{blob.id} #{reason}, but #{record_type}##{record_id} (#{name}) " \
           "belongs to store #{owner_store_id}. Spree 6.1 refuses this attachment."

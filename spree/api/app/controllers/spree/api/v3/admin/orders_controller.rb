@@ -10,9 +10,6 @@ module Spree
           # The order accepts a `po_document_signed_id` and streams it back.
           include ActiveStorage::SetCurrent
 
-          # A tampered signed id would otherwise surface as a 500.
-          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
-
           skip_before_action :set_resource, only: [:index, :create]
           before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
 
@@ -243,14 +240,6 @@ module Spree
           end
 
           private
-
-          def render_invalid_po_document
-            render_error(
-              code: ERROR_CODES[:validation_error],
-              message: I18n.t('spree.po_document_invalid_signed_id'),
-              status: :unprocessable_content
-            )
-          end
 
           def resolve_customer
             customer_param = params[:customer_id].presence

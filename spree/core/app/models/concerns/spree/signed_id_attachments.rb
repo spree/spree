@@ -14,14 +14,13 @@ module Spree
 
     included do
       class_attribute :signed_id_attachment_slots, instance_writer: false, default: []
-
-      validate :signed_id_attachments_on_their_storage, if: -> { signed_id_attachment_slots.any? }
     end
 
     class_methods do
       # @param slots [Array<Symbol>] `has_one_attached` slot names
       # @return [void]
       def signed_id_attachments(*slots)
+        validate :signed_id_attachments_on_their_storage if signed_id_attachment_slots.empty?
         self.signed_id_attachment_slots += slots
 
         slots.each do |slot|

@@ -104,7 +104,6 @@ module Spree
     # content first, so a renamed executable is not accepted as an image. Only
     # bytes it cannot place fall back to the declared type and the file name.
     def read_file_facts
-      io = file.respond_to?(:to_io) ? file.to_io : file
       self.filename = filename.presence || file.try(:original_filename)
       self.byte_size = io.size
       self.content_type = Marcel::MimeType.for(io, name: filename, declared_type: content_type.presence || file.try(:content_type))
@@ -119,7 +118,6 @@ module Spree
     end
 
     def store_bytes
-      io = file.respond_to?(:to_io) ? file.to_io : file
       ActiveStorage::Blob.build_after_unfurling(
         io: io, filename: filename, content_type: content_type, service_name: service_name, identify: false
       ).tap do |blob|
@@ -127,6 +125,10 @@ module Spree
         blob.save!
         blob.upload_without_unfurling(io)
       end
+    end
+
+    def io
+      @io ||= file.respond_to?(:to_io) ? file.to_io : file
     end
 
     def service_name

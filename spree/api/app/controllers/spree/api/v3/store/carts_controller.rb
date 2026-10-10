@@ -8,9 +8,6 @@ module Spree
           # The cart accepts a `po_document_signed_id`.
           include ActiveStorage::SetCurrent
 
-          # A tampered signed id would otherwise surface as a 500.
-          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
-
           skip_before_action :set_resource
           prepend_before_action :require_authentication!, only: [:index, :associate]
 
@@ -183,14 +180,6 @@ module Spree
           end
 
           private
-
-          def render_invalid_po_document
-            render_error(
-              code: ERROR_CODES[:validation_error],
-              message: I18n.t('spree.po_document_invalid_signed_id'),
-              status: :unprocessable_content
-            )
-          end
 
           def permitted_params
             params.permit(

@@ -18,9 +18,6 @@ module Spree
           included do
             include ActiveStorage::SetCurrent
             include Spree::Api::V3::StreamsShippingLabel
-
-            rescue_from ActiveSupport::MessageVerifier::InvalidSignature,
-                        with: :render_invalid_signature
           end
 
           # GET .../labels/:id/download
@@ -100,25 +97,14 @@ module Spree
           # attachable as `file`; the API names the reference `file_signed_id`.
           def record_uploaded_label
             with_order_lock do
-              attributes = label_permitted_keys.index_with { |key| label_params[key] }
               result = Spree.shipping_label_record_workflow.call(
                 owner: @parent,
-                file: attributes.delete(:file_signed_id),
-                **attributes
+                file: label_params[:file_signed_id],
+                **(label_permitted_keys - [:file_signed_id]).index_with { |key| label_params[key] }
               )
 
               render_result(result, status: :created)
             end
-          end
-
-          # A tampered or expired upload reference is a bad parameter,
-          # not a server fault.
-          def render_invalid_signature
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:parameter_invalid],
-              message: I18n.t('spree.shipping_labels.errors.file_required'),
-              status: :unprocessable_content
-            )
           end
         end
       end
