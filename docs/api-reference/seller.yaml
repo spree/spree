@@ -727,7 +727,7 @@ paths:
         `X-Spree-Seller-Id`, because the account is the same whichever seller
         they are acting for.
 
-        `avatar` takes an ActiveStorage direct-upload signed id to set the
+        `avatar_signed_id` takes the `signed_id` from `POST /files` to set the
         photo, or `null` to remove it; omit it to leave the current one alone.
         `email` is identity-bound and cannot be changed here.
       parameters: []
@@ -765,7 +765,7 @@ paths:
                   message: Avatar has an invalid content type (authorized content
                     types are PNG, JPG, GIF, WEBP)
                   details:
-                    avatar:
+                    avatar_signed_id:
                     - has an invalid content type (authorized content types are PNG,
                       JPG, GIF, WEBP)
               schema:
@@ -796,10 +796,11 @@ paths:
                   type: string
                   example: de
                   description: Panel display language, as a code the panel ships.
-                avatar:
+                avatar_signed_id:
                   type: string
                   nullable: true
-                  description: Direct-upload signed id, or `null` to remove the photo.
+                  description: The `signed_id` returned by POST /files, or `null`
+                    to remove the photo.
   "/api/v3/seller/countries":
     get:
       summary: List countries
@@ -13421,8 +13422,8 @@ paths:
         needs to correct something submits again rather than editing, and the
         latest one counts.
 
-        `file` is **not** a multipart upload — it is the `signed_id` returned by
-        `POST /api/v3/seller/direct_uploads`, so the bytes are already in storage
+        `file_signed_id` is the `signed_id` returned by
+        `POST /api/v3/seller/files`, so the bytes are already in storage
         by the time this runs.
 
         An attestation is accepted on the spot; a requirement the operator
@@ -13474,10 +13475,10 @@ paths:
                   type: string
                   description: A reference number or external identifier, for requirements
                     that ask for one
-                file:
+                file_signed_id:
                   type: string
-                  description: A direct-upload `signed_id`, for requirements that
-                    ask for a document
+                  description: The `signed_id` returned by POST /files, for requirements
+                    that ask for a document
   "/api/v3/seller/requirement_submissions/{id}/download":
     parameters:
     - name: id
@@ -14663,14 +14664,15 @@ paths:
                 registration_number:
                   type: string
                   nullable: true
-                logo:
+                logo_signed_id:
                   type: string
                   nullable: true
-                  description: ActiveStorage signed id; `null` removes the attachment
-                square_logo:
+                  description: The `signed_id` returned by POST /files; `null` removes
+                    the image
+                square_logo_signed_id:
                   type: string
                   nullable: true
-                cover_photo:
+                cover_photo_signed_id:
                   type: string
                   nullable: true
                 accept_terms:
@@ -15390,27 +15392,28 @@ paths:
                   message: Admin user not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/seller/direct_uploads":
+  "/api/v3/seller/files":
     post:
-      summary: Create a direct upload
+      summary: Upload a file
       tags:
-      - Uploads
+      - Files
       security:
       - bearer_auth: []
       description: |
-        Presigns an upload target for a file the seller is about to send.
+        Accepts a file and returns a `signed_id` to send wherever the file
+        belongs — as a requirement submission's `file_signed_id`, or as
+        `logo_signed_id`, `square_logo_signed_id` or `cover_photo_signed_id` on
+        the profile. The file is attached to nothing at this point; the
+        endpoint that takes the `signed_id` is the one that checks ownership.
 
-        Three steps: post the file's metadata here, `PUT` the bytes to the
-        returned `direct_upload.url` with the headers it names, then send the
-        returned `signed_id` wherever the file belongs — as a requirement
-        submission's `file`, or as `logo`, `square_logo` or `cover_photo` on the
-        profile.
+        Send the file's metadata as JSON, then `PUT` the bytes to `upload.url`
+        with exactly `upload.headers`; or send small files (10 MB by default)
+        as a multipart `file` part, in which case `upload` is null.
 
-        The blob is attached to nothing at this point. The endpoint that consumes
-        the `signed_id` is the one that checks ownership.
-
-        `checksum` is the file's MD5 digest, base64-encoded — the storage service
-        verifies the upload against it.
+        `signed_id` is opaque and expires at `expires_at`, one day after the
+        upload. `visibility` is `public` (the default, web images, videos and
+        CSV only) or `private` (any type). `checksum` is the file's MD5
+        digest, base64-encoded.
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15423,42 +15426,81 @@ paths:
           content:
             application/json:
               example:
-                direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--1f5050701bdb56c56ae8346d9fef78a0405b680c
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--bb0b6973ee0447f02cdcd29af88cf330e909e39c
+                filename: registration.pdf
+                content_type: application/pdf
+                byte_size: 51234
+                visibility: private
+                expires_at: '2026-01-16T12:00:00.000Z'
+                upload:
+                  method: PUT
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--8107f48df9ba51d19f7688d473fda995d4063f66
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--af56ca8eaae24da2ded09307646bc7e0eb2e0c3e
               schema:
-                "$ref": "#/components/schemas/DirectUploadResponse"
+                "$ref": "#/components/schemas/FileUpload"
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                blob:
-                  type: object
-                  properties:
-                    filename:
-                      type: string
-                      example: registration.pdf
-                    byte_size:
-                      type: integer
-                      example: 51234
-                    checksum:
-                      type: string
-                      description: Base64-encoded MD5 digest of the file
-                      example: rL0Y20zC+Fzt72VPzMSk2A==
-                    content_type:
-                      type: string
-                      example: application/pdf
-                  required:
-                  - filename
-                  - byte_size
-                  - checksum
-                  - content_type
+                filename:
+                  type: string
+                  example: registration.pdf
+                content_type:
+                  type: string
+                  example: application/pdf
+                byte_size:
+                  type: integer
+                  example: 51234
+                checksum:
+                  type: string
+                  description: Base64-encoded MD5 digest of the file
+                  example: rL0Y20zC+Fzt72VPzMSk2A==
+                visibility:
+                  type: string
+                  enum:
+                  - public
+                  - private
+                  default: public
+                file:
+                  type: string
+                  format: binary
+                  description: The bytes, for a multipart upload
               required:
-              - blob
+              - filename
+              - content_type
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  example: registration.pdf
+                content_type:
+                  type: string
+                  example: application/pdf
+                byte_size:
+                  type: integer
+                  example: 51234
+                checksum:
+                  type: string
+                  description: Base64-encoded MD5 digest of the file
+                  example: rL0Y20zC+Fzt72VPzMSk2A==
+                visibility:
+                  type: string
+                  enum:
+                  - public
+                  - private
+                  default: public
+                file:
+                  type: string
+                  format: binary
+                  description: The bytes, for a multipart upload
+              required:
+              - filename
+              - content_type
   "/api/v3/seller/balances":
     get:
       summary: List balances
@@ -20322,8 +20364,8 @@ tags:
   description: Where the seller keeps stock, and so where their returns are sent
 - name: Team
   description: Who runs this seller, and the invitations nobody has accepted yet
-- name: Uploads
-  description: Presigned direct uploads for the documents onboarding asks for
+- name: Files
+  description: Uploading the files a profile, a submission or an import uses
 components:
   securitySchemes:
     bearer_auth:
@@ -20761,31 +20803,6 @@ components:
       - iso
       - iso3
       - name
-    DirectUploadResponse:
-      type: object
-      description: A presigned upload target. PUT the file to `direct_upload.url`
-        with the given headers, then send `signed_id` as the submission's `file`.
-      properties:
-        signed_id:
-          type: string
-          description: Send this as a submission's `file`
-          example: eyJfcmFpbHMiOnsibWVzc2FnZSI6...
-        direct_upload:
-          type: object
-          properties:
-            url:
-              type: string
-              example: https://storage.example.com/uploads/abc123
-            headers:
-              type: object
-              additionalProperties:
-                type: string
-          required:
-          - url
-          - headers
-      required:
-      - signed_id
-      - direct_upload
     AuthProvidersResponse:
       type: object
       description: Sign-in methods this marketplace offers sellers, for the login
@@ -21606,6 +21623,51 @@ components:
       - filename
       - byte_size
       - download_url
+      x-typelizer: true
+    FileUpload:
+      type: object
+      properties:
+        signed_id:
+          type: string
+        filename:
+          type: string
+        content_type:
+          type: string
+        byte_size:
+          type: number
+        visibility:
+          type: string
+          enum:
+          - public
+          - private
+        expires_at:
+          type: string
+        upload:
+          allOf:
+          - "$ref": "#/components/schemas/FileUploadTarget"
+          nullable: true
+      required:
+      - signed_id
+      - filename
+      - content_type
+      - byte_size
+      - visibility
+      - expires_at
+      - upload
+      x-typelizer: true
+    FileUploadTarget:
+      type: object
+      properties:
+        method:
+          type: string
+        url:
+          type: string
+        headers:
+          type: object
+      required:
+      - method
+      - url
+      - headers
       x-typelizer: true
     FulfillmentItem:
       type: object

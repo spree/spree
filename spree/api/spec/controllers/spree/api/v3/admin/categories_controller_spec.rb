@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       imaged = create(:category, :with_header_image)
       expect(imaged.reload.image).to be_attached
 
-      patch :update, params: { id: imaged.prefixed_id, image: nil }, as: :json
+      patch :update, params: { id: imaged.prefixed_id, image_signed_id: nil }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(imaged.reload.image).not_to be_attached

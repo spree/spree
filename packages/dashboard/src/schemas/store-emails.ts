@@ -47,11 +47,11 @@ export const storeEmailsFormSchema = z.object({
   email_heading_color: optionalColor,
   email_font: z.enum(EMAIL_FONTS),
 
-  // Active Storage signed_id from a fresh direct upload. Frontend-only state.
+  // signed_id from a fresh upload. Frontend-only state.
   mailer_logo_signed_id: z.string().nullable().optional(),
   // Local blob URL for the just-picked file so the preview updates before save.
   mailer_logo_preview_url: z.string().nullable().optional(),
-  // Tracks the user clicking "Remove logo" — collapses to `mailer_logo: null`.
+  // Tracks the user clicking "Remove logo" — collapses to `mailer_logo_signed_id: null`.
   mailer_logo_cleared: z.boolean().optional(),
 })
 

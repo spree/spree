@@ -626,18 +626,16 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -d '{ "po_number": "PO-2026-0418" }'
 
 # Attaching the document: ask for an upload URL, upload the file there,
-# then send the returned signed_id as po_document on a cart update
+# then send the returned signed_id as po_document_signed_id on a cart update
 curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/po_document' \
   -H 'X-Spree-API-Key: pk_xxx' \
   -H "Authorization: Bearer $CUSTOMER_JWT" \
   -H 'Content-Type: application/json' \
   -d '{
-        "blob": {
-          "filename": "PO-2026-0418.pdf",
-          "byte_size": 48213,
-          "checksum": "BASE64_MD5",
-          "content_type": "application/pdf"
-        }
+        "filename": "PO-2026-0418.pdf",
+        "byte_size": 48213,
+        "checksum": "BASE64_MD5",
+        "content_type": "application/pdf"
       }'
 ```
 
@@ -820,7 +818,7 @@ const certificate = await adminClient.companies.taxExemptionCertificates.create(
   country_code: 'US',
   state_code: 'CA',
   expires_at: '2027-12-31',
-  document: signedId, // from adminClient.directUploads.create()
+  document_signed_id: signedId, // from adminClient.files.upload(file, { visibility: 'private' })
 })
 
 await adminClient.companies.taxExemptionCertificates.verify('comp_xxx', certificate.id)

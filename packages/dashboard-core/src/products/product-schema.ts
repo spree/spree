@@ -98,7 +98,7 @@ export const customFieldFormSchema = z.object({
 export type CustomFieldFormValues = z.infer<typeof customFieldFormSchema>
 
 // Media in form state. Persisted entries carry an `id`; pre-save entries carry
-// a `signed_id` (from a completed ActiveStorage direct upload) or a
+// a `signed_id` (from a completed upload) or a
 // `source_media_id` (a file picked from the library). All can hold edits to
 // alt, position, and variant_ids that the parent product PATCH/POST ships
 // inline. previewUrl + uploadId are UI-only; stripped at submit.

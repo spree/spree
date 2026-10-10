@@ -1,3 +1,13 @@
+## 2026-10-10: One upload endpoint, store-owned blobs, and `<slot>_signed_id` everywhere
+
+**Context:** Files reached Spree through `/direct_uploads`, which copied Active Storage's nested request and minted references that never expired, and nothing recorded which store a blob belonged to. Endpoints that took those references named them seven different ways.
+
+**Decision:** `POST /api/v3/admin/files` and `POST /api/v3/seller/files` replace `/direct_uploads` with no alias: a flat request, `visibility` (`public`/`private`), presigned or multipart bytes, and one response carrying an opaque `signed_id` that expires after a day. Blobs gain a nullable `store_id`, set on every creation and backfilled by the 6.0 upgrade; attaching a blob from another store is logged in 6.0 and refused in 6.1. Every parameter that takes an upload reference is `signed_id` or `<slot>_signed_id` (`avatar_signed_id`, `logo_signed_id`, `po_document_signed_id`, …). Public uploads are allowlisted (web images, videos, CSV); private uploads accept any type. A daily job purges blobs never attached, after `Spree::Config.unattached_upload_retention_days`. The Store API purchase-order presigner keeps its cart-nested route but adopts the same contract. In 6.1 blobs also record who uploaded them.
+
+**Consequences:** A new endpoint that takes a file uses `<slot>_signed_id`, never `file`, `document` or `attachment`. A blob Spree creates must belong to a store: pass `store_id`, or create it where `Spree::Current.store` is set. API responses never contain a blob id, storage key or Rails blob URL; a response offering an existing file for reuse mints a fresh expiring `signed_id`. Supersedes `6.0-digital-assets.md`'s "never multipart through the API request": multipart is allowed for small files through `/files`.
+
+**Plan:** `6.0-uploads-and-file-ownership.md`.
+
 ## 2026-10-09: Typed filters keep sellers association-free, take arrays for `_in`, and ship no 5.x warning
 
 **Context:** List filters are being generated into OpenAPI and the SDKs from the Ransack allowlists, and PR C will reject unknown filters. Three choices fix what the published contract says before that happens.

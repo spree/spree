@@ -23,8 +23,8 @@ module Spree
 
           # POST /api/v3/admin/imports
           #
-          # `attachment` is an ActiveStorage signed blob id obtained from
-          # POST /api/v3/admin/direct_uploads. On success the import advances
+          # `attachment_signed_id` is a signed id obtained from
+          # POST /api/v3/admin/files. On success the import advances
           # straight into `mapping` (auto-assigning file columns from the CSV
           # headers), so the response already carries the mapping payload.
           def create
@@ -52,12 +52,6 @@ module Spree
             else
               render_errors(@resource.errors)
             end
-          rescue ActiveSupport::MessageVerifier::InvalidSignature
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: 'Invalid attachment signed id',
-              status: :unprocessable_content
-            )
           end
 
           # PATCH /api/v3/admin/imports/:id/complete_mapping
@@ -263,7 +257,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :delimiter, :results_url, :price_list_id)
+            params.permit(*model_additional_permitted_attributes, :type, :attachment_signed_id, :delimiter, :results_url, :price_list_id)
           end
 
           # A price-list import writes into one list, named by its prefixed id.

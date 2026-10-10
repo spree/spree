@@ -125,7 +125,7 @@ export function useFulfillmentActions(orderId: string) {
       ...params
     }: {
       fulfillmentId: string
-      file: string
+      file_signed_id: string
       // Required: a label with no tracking number is refused server-side,
       // since nothing could then follow the parcel it prints.
       tracking_number: string

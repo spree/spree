@@ -125,7 +125,8 @@ module Spree
               :email_text_color,
               :email_heading_color,
               :email_font,
-              :mailer_logo
+              :logo_signed_id,
+              :mailer_logo_signed_id
             )
           end
         end

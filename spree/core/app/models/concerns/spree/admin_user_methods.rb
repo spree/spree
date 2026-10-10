@@ -4,6 +4,7 @@ module Spree
 
     include Spree::Actor
     include Spree::PrefixedId
+    include Spree::SignedIdAttachments
     include Spree::UserRoles
     include Spree::RansackableAttributes
 
@@ -66,6 +67,7 @@ module Spree
 
       # Attachments
       has_one_attached :avatar, service: Spree.public_storage_service_name
+      signed_id_attachments :avatar
 
       validates :avatar, content_type: Rails.application.config.active_storage.web_image_content_types
 

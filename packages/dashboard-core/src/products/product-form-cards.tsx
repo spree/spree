@@ -20,7 +20,7 @@ import {
   parseVideoUrl,
   ResourceMultiAutocomplete,
   TagCombobox,
-  useDirectUpload,
+  useFileUpload,
   useOptionalStore,
 } from '@spree/dashboard-core'
 import {
@@ -296,7 +296,7 @@ export function MediaCard({
   form: UseFormReturn<ProductFormValues, any, any>
 }) {
   const { t } = useTranslation()
-  const directUpload = useDirectUpload()
+  const fileUpload = useFileUpload()
   const deleteMedia = useDeleteProductMedia(productId ?? '')
   const confirm = useConfirm()
   const [pending, setPending] = useState<PendingUpload[]>([])
@@ -349,7 +349,7 @@ export function MediaCard({
         const preview = URL.createObjectURL(file)
         setPending((prev) => [...prev, { id: uploadId, file, preview, progress: 'uploading' }])
         try {
-          const result = await directUpload.mutateAsync(file)
+          const result = await fileUpload.mutateAsync(file)
           const current = form.getValues('media') ?? []
           form.setValue(
             'media',
@@ -384,7 +384,7 @@ export function MediaCard({
         }
       }
     },
-    [directUpload, form, t],
+    [fileUpload, form, t],
   )
 
   const handleDrop = useCallback(

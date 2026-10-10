@@ -1,4 +1,9 @@
-export type { RequestOptions, RetryConfig } from '@spree/sdk-core'
+export type {
+  FileUploadCreateParams,
+  RequestOptions,
+  RetryConfig,
+  UploadFileOptions,
+} from '@spree/sdk-core'
 // Request infrastructure (re-exported from sdk-core)
 export {
   compareMoney,

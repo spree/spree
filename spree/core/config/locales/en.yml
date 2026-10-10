@@ -1143,7 +1143,6 @@ en:
     pickup:
       store_pickup: Store Pickup
     po_document_invalid: A purchase order document must be a PDF, image or Word file of %{size} or less.
-    po_document_invalid_signed_id: The purchase order document reference is not valid.
     po_document_missing: This order has no attached purchase order document.
     po_document_too_large: is larger than %{size}.
     po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
@@ -1676,6 +1675,7 @@ en:
       errors:
         already_purchased: This parcel already has an active shipping label
         file_fetch_failed: The label file could not be fetched from the carrier (HTTP %{status})
+        file_renamed: Send the uploaded label's signed id as file_signed_id
         file_required: An uploaded label needs a file
         no_file_url: The carrier did not provide a file for this label
         not_refund_requested: Only a label awaiting the carrier's refund decision can be confirmed refunded
@@ -1795,6 +1795,8 @@ en:
     type: Type
     unable_to_connect_to_gateway: Unable to connect to gateway.
     updated_at: Updated at
+    upload_reference_invalid: A signed reference in this request is invalid or has expired. For a file, upload it again.
+    upload_wrong_visibility: must be uploaded with %{visibility} visibility
     url: URL
     user: User
     validation:

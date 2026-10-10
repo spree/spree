@@ -113,8 +113,10 @@ export interface StoreUpdateParams {
   email_heading_color?: string | null
   /** Customer email font: `inter`, `system`, `helvetica`, `georgia`, `roboto`, `lato` or `merriweather`. */
   email_font?: string | null
-  /** Active Storage signed_id from a direct upload — the logo embedded in transactional emails. */
-  mailer_logo?: string | null
+  /** A `signed_id` from `files.upload()` for the store logo, or `null` to remove it. */
+  logo_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the logo embedded in transactional emails, or `null` to remove it. */
+  mailer_logo_signed_id?: string | null
   /** Where prices come from: a registered provider key, or `internal`. */
   pricing_provider?: string
   /** Where stock levels come from: a registered provider key, or `internal`. */
@@ -146,8 +148,8 @@ export interface OptionValueParams {
   position?: number
   /** Hex color (e.g. `#FF0000`). Only meaningful when the parent option type's `kind` is `color_swatch`. */
   color_code?: string | null
-  /** Active Storage signed_id from a direct upload. */
-  image?: string | null
+  /** A `signed_id` from `files.upload()`, or `null` to remove the image. */
+  image_signed_id?: string | null
 }
 
 export interface OptionTypeCreateParams {
@@ -323,15 +325,15 @@ interface ShippingLabelDetails {
  * refuses it.
  */
 export interface ShippingLabelUploadParams extends ShippingLabelDetails {
-  /** Signed blob id from `directUploads.create()`. Its presence records an uploaded label instead of buying one. */
-  file: string
+  /** A `signed_id` from `files.upload()`. Its presence records an uploaded label instead of buying one. */
+  file_signed_id: string
   /** The number printed on an uploaded label. */
   tracking_number: string
 }
 
 /** Buying through the carrier. The carrier supplies the file and the number. */
 export interface ShippingLabelPurchaseParams extends ShippingLabelDetails {
-  file?: never
+  file_signed_id?: never
   tracking_number?: never
 }
 
@@ -541,10 +543,10 @@ export interface OrderCreateParams {
    */
   po_number?: string
   /**
-   * ActiveStorage signed blob id of the buyer's purchase order, from
-   * `POST /api/v3/admin/direct_uploads` with `private: true`.
+   * The `signed_id` of the buyer's purchase order, from `files.upload()` with
+   * `visibility: 'private'`.
    */
-  po_document?: string
+  po_document_signed_id?: string
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   metadata?: Record<string, unknown>
@@ -574,10 +576,10 @@ export interface OrderUpdateParams {
    */
   po_number?: string
   /**
-   * See {@link OrderCreateParams.po_document}. Null removes the document the
-   * order currently carries.
+   * See {@link OrderCreateParams.po_document_signed_id}. Null removes the
+   * document the order currently carries.
    */
-  po_document?: string | null
+  po_document_signed_id?: string | null
   /**
    * Company ID. See {@link OrderCreateParams.company_id}. Null makes the draft
    * a plain customer order again.
@@ -740,21 +742,6 @@ export interface CustomerStoreCreditUpdateParams {
   memo?: string
 }
 
-export interface DirectUploadCreateParams {
-  blob: {
-    filename: string
-    byte_size: number
-    checksum: string
-    content_type: string
-  }
-  /**
-   * Upload to private storage rather than the public bucket. Needed for files
-   * only ever served through a signed link (digital assets) — attaching a blob
-   * never moves it between services, so this is decided at upload time.
-   */
-  private?: boolean
-}
-
 export type MediaType = 'image' | 'video' | 'external_video'
 
 export interface MediaCreateParams {
@@ -849,7 +836,7 @@ export interface DigitalAssetProvider {
 }
 
 export interface DigitalAssetCreateParams {
-  /** Signed blob id from a `private: true` direct upload. Required for a file
+  /** A `signed_id` from `files.upload()` with `visibility: 'private'`. Required for a file
    *  asset (the default source); omitted for a provider-backed asset. */
   signed_id?: string
   /** Provider shorthand from the `providers` endpoint. Omit for an uploaded file (the default source). */
@@ -1024,10 +1011,10 @@ export interface CategoryCreateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  /** ActiveStorage signed_id of a directly-uploaded landscape image. */
-  image?: string
-  /** ActiveStorage signed_id of a directly-uploaded square image. */
-  square_image?: string
+  /** A `signed_id` from `files.upload()` for the landscape image. */
+  image_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the square image. */
+  square_image_signed_id?: string | null
 }
 
 export interface CategoryUpdateParams {
@@ -1041,10 +1028,10 @@ export interface CategoryUpdateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  /** ActiveStorage signed_id of a directly-uploaded landscape image, or null to remove it. */
-  image?: string | null
-  /** ActiveStorage signed_id of a directly-uploaded square image, or null to remove it. */
-  square_image?: string | null
+  /** A `signed_id` from `files.upload()` for the landscape image, or null to remove it. */
+  image_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the square image, or null to remove it. */
+  square_image_signed_id?: string | null
 }
 
 export interface CategoryRepositionParams {
@@ -1106,10 +1093,10 @@ export interface CollectionCreateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  /** ActiveStorage signed_id of a directly-uploaded landscape image. */
-  image?: string
-  /** ActiveStorage signed_id of a directly-uploaded square image. */
-  square_image?: string
+  /** A `signed_id` from `files.upload()` for the landscape image. */
+  image_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the square image. */
+  square_image_signed_id?: string | null
   /** Default product sort for the storefront listing. Defaults to `manual`. */
   sort_order?: CollectionSortOrder
   /** When true, membership is materialized from `rules` instead of curated by hand. */
@@ -1135,10 +1122,10 @@ export interface CollectionUpdateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  /** ActiveStorage signed_id of a directly-uploaded landscape image, or null to remove it. */
-  image?: string | null
-  /** ActiveStorage signed_id of a directly-uploaded square image, or null to remove it. */
-  square_image?: string | null
+  /** A `signed_id` from `files.upload()` for the landscape image, or null to remove it. */
+  image_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the square image, or null to remove it. */
+  square_image_signed_id?: string | null
   sort_order?: CollectionSortOrder
   automatic?: boolean
   rules_match_policy?: 'all' | 'any'
@@ -1435,10 +1422,10 @@ export interface MeUpdateParams {
   first_name?: string
   last_name?: string
   /**
-   * ActiveStorage direct-upload signed id to set the avatar, or `null` to
+   * A `signed_id` from `files.upload()` to set the avatar, or `null` to
    * remove it. Omit to leave the current photo unchanged.
    */
-  avatar?: string | null
+  avatar_signed_id?: string | null
 }
 
 export interface StockLocationCreateParams {
@@ -1915,12 +1902,12 @@ export interface SellerCreateParams {
   /** Sanitized HTML — the seller's public description. */
   about?: string | null
   /**
-   * Branding attachments. Pass an ActiveStorage signed id to set one, `null`
-   * to remove it, or omit the key to leave it untouched.
+   * Branding images. Pass a `signed_id` from `files.upload()` to set one,
+   * `null` to remove it, or omit the key to leave it untouched.
    */
-  logo?: string | null
-  square_logo?: string | null
-  cover_photo?: string | null
+  logo_signed_id?: string | null
+  square_logo_signed_id?: string | null
+  cover_photo_signed_id?: string | null
   tax_remittance?: 'seller' | 'platform'
   payouts_schedule_interval?: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'manual' | null
   minimum_payout_amount?: string | null
@@ -2504,11 +2491,8 @@ export type ImportType =
 export interface ImportCreateParams {
   /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
   type: ImportType
-  /**
-   * ActiveStorage signed blob id of the uploaded CSV, obtained from
-   * `client.directUploads.create()` (or the `useDirectUpload` hook).
-   */
-  attachment: string
+  /** The `signed_id` of the uploaded CSV, from `files.upload()` with `visibility: 'private'`. */
+  attachment_signed_id: string
   /** CSV column separator. Defaults to a comma on the server. */
   delimiter?: ',' | ';' | '|' | '\t'
   /**
@@ -3066,8 +3050,8 @@ export interface TaxExemptionCertificateParams {
   issued_at?: string | null
   expires_at?: string | null
   issuing_authority?: string | null
-  /** ActiveStorage signed blob id from `directUploads.create()`. */
-  document?: string
+  /** A `signed_id` from `files.upload()` with `visibility: 'private'`. */
+  document_signed_id?: string
   metadata?: Record<string, unknown>
 }
 

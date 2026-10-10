@@ -9,6 +9,7 @@ class Spree::Base < ApplicationRecord
   include Spree::HasNumber
   include Spree::HasIsoGeography
   include Spree::TypedAssociations
+  include Spree::SignedIdAttachments
   include Spree::ValidatesStoreUniqueness
 
   # Extra writable attributes contributed by extensions, appended to the v3

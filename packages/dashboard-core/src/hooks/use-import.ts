@@ -90,12 +90,12 @@ function imports() {
 /** Create-time parameters beyond the ones every import shares. */
 export type ImportCreateExtras = Omit<
   PanelImportCreateParams,
-  'type' | 'attachment' | 'delimiter' | 'results_url'
+  'type' | 'attachment_signed_id' | 'delimiter' | 'results_url'
 >
 
 export interface CreateImportInput {
   type: string
-  /** Signed blob id of the already direct-uploaded CSV (see `FileUploadField`). */
+  /** The `signed_id` of the already uploaded CSV (see `FileUploadField`). */
   signedId: string
   preferredDelimiter?: PanelImportDelimiter
   /**
@@ -111,7 +111,7 @@ export interface CreateImportInput {
 }
 
 /**
- * Creates the import from a direct-uploaded CSV; the response is in the
+ * Creates the import from an uploaded CSV; the response is in the
  * `mapping` state and carries the mapping payload.
  */
 export function useCreateImport() {
@@ -128,7 +128,7 @@ export function useCreateImport() {
       imports().create({
         ...params,
         type,
-        attachment: signedId,
+        attachment_signed_id: signedId,
         delimiter: preferredDelimiter,
         // The import-done email deep-links back to the wizard (`?import=<id>`
         // appended server-side). Only honored when this origin is on the

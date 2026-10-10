@@ -244,7 +244,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     mutationFn: () =>
       sellerClient().requirementSubmissions.create(requirement.id, {
         note: note || undefined,
-        file: file.signedId || undefined,
+        file_signed_id: file.signedId || undefined,
       }),
     onSuccess: () => {
       setNote('')
@@ -349,6 +349,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
               value={file}
               onChange={setFile}
               accept={requirement.accepted_content_types?.join(',')}
+              private
               label={t('onboarding.document_label')}
               help={t('onboarding.document_help')}
             />

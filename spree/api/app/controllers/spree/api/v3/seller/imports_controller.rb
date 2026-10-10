@@ -38,8 +38,8 @@ module Spree
 
           # POST /api/v3/seller/imports
           #
-          # `attachment` is an ActiveStorage signed blob id from
-          # POST /api/v3/seller/direct_uploads. On success the import is
+          # `attachment_signed_id` is a signed id from
+          # POST /api/v3/seller/files. On success the import is
           # already in `mapping`, carrying the auto-assigned columns.
           def create
             @resource = build_resource
@@ -63,12 +63,6 @@ module Spree
             else
               render_errors(@resource.errors)
             end
-          rescue ActiveSupport::MessageVerifier::InvalidSignature
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: 'Invalid attachment signed id',
-              status: :unprocessable_content
-            )
           end
 
           # PATCH /api/v3/seller/imports/:id/complete_mapping
@@ -252,7 +246,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :delimiter, :results_url)
+            params.permit(*model_additional_permitted_attributes, :type, :attachment_signed_id, :delimiter, :results_url)
           end
 
           # The registered Import subclass matching `name`, or nil.

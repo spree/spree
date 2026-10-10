@@ -115,44 +115,97 @@ describe('dashboard', () => {
   })
 })
 
-describe('directUploads', () => {
+describe('files', () => {
+  const fileUpload = {
+    signed_id: 'signed_xyz789',
+    filename: 'logo.png',
+    content_type: 'image/png',
+    byte_size: 4,
+    visibility: 'public',
+    expires_at: '2026-10-11T12:00:00Z',
+  }
+
   describe('create', () => {
-    it('POSTs /direct_uploads and returns the signed upload', async () => {
+    it('POSTs flat metadata to /files', async () => {
       let body: Record<string, unknown> | null = null
       server.use(
-        http.post(`${API_PREFIX}/direct_uploads`, async ({ request }) => {
+        http.post(`${API_PREFIX}/files`, async ({ request }) => {
           body = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json({ ...fileUpload, upload: null }, { status: 201 })
+        }),
+      )
+
+      const params = {
+        filename: 'logo.png',
+        byte_size: 4,
+        checksum: 'abc==',
+        content_type: 'image/png',
+      }
+      const res = await createTestClient().files.create(params)
+
+      expect(body).toEqual(params)
+      expect(res.signed_id).toBe('signed_xyz789')
+    })
+  })
+
+  describe('upload', () => {
+    it('reserves the file, sends its bytes to the storage target and returns the response', async () => {
+      let created: Record<string, unknown> | null = null
+      let stored: string | null = null
+      server.use(
+        http.post(`${API_PREFIX}/files`, async ({ request }) => {
+          created = (await request.json()) as Record<string, unknown>
           return HttpResponse.json(
             {
-              direct_upload: {
+              ...fileUpload,
+              visibility: 'private',
+              upload: {
+                method: 'PUT',
                 url: 'https://uploads.example.com/abc',
-                headers: { 'Content-Type': 'image/png' },
+                headers: { 'Content-MD5': 'x' },
               },
-              signed_id: 'signed_xyz789',
             },
             { status: 201 },
           )
         }),
+        http.put('https://uploads.example.com/abc', async ({ request }) => {
+          stored = await request.text()
+          return new HttpResponse(null, { status: 200 })
+        }),
       )
 
-      const res = await createTestClient().directUploads.create({
-        blob: {
-          filename: 'logo.png',
-          byte_size: 1024,
-          checksum: 'abc==',
-          content_type: 'image/png',
-        },
-      })
+      const file = new File(['logo'], 'logo.png', { type: 'image/png' })
+      const res = await createTestClient().files.upload(file, { visibility: 'private' })
 
-      expect(body).toEqual({
-        blob: {
-          filename: 'logo.png',
-          byte_size: 1024,
-          checksum: 'abc==',
-          content_type: 'image/png',
-        },
+      expect(created).toMatchObject({
+        filename: 'logo.png',
+        content_type: 'image/png',
+        byte_size: 4,
+        checksum: 'ltby5+H3BateWchKbcAJsg==',
+        visibility: 'private',
       })
+      expect(stored).toBe('logo')
       expect(res.signed_id).toBe('signed_xyz789')
+    })
+
+    it('sends a multipart upload in the request itself', async () => {
+      let file: FormDataEntryValue | null = null
+      server.use(
+        http.post(`${API_PREFIX}/files`, async ({ request }) => {
+          file = (await request.formData()).get('file')
+          return HttpResponse.json({ ...fileUpload, upload: null }, { status: 201 })
+        }),
+      )
+
+      const res = await createTestClient().files.upload(
+        new File(['logo'], 'logo.png', { type: 'image/png' }),
+        {
+          method: 'multipart',
+        },
+      )
+
+      expect(file).toBeInstanceOf(File)
+      expect(res.upload).toBeNull()
     })
   })
 })

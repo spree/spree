@@ -107,6 +107,7 @@ module Spree
           rescue_from ActiveRecord::RecordNotSaved, with: :handle_record_not_saved
           rescue_from ArgumentError, with: :handle_argument_error
           rescue_from ActionDispatch::Http::Parameters::ParseError, with: :handle_parse_error
+          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :handle_invalid_signature
         end
 
         protected
@@ -277,6 +278,16 @@ module Spree
           )
         end
 
+        # A `signed_id` that was tampered with, or has expired (they last a
+        # day), is a bad parameter rather than a server fault.
+        def handle_invalid_signature(_exception)
+          render_error(
+            code: ERROR_CODES[:parameter_invalid],
+            message: I18n.t('spree.upload_reference_invalid'),
+            status: :unprocessable_content
+          )
+        end
+
         def handle_parse_error(exception)
           Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           message = exception.respond_to?(:original_message) ? exception.original_message : exception.message
@@ -298,10 +309,14 @@ module Spree
         end
 
         # A setting the API reads and writes under its plain name reports its
-        # errors under that name too, never the `preferred_` one the model uses.
+        # errors under that name too, never the `preferred_` one the model uses;
+        # an attachment slot reports them under the `<slot>_signed_id` it is
+        # written with.
         def wire_error_attribute(errors, attribute)
           record_class = errors.objects.first&.base&.class
-          (record_class.exposed_preference_name(attribute) if record_class.respond_to?(:exposed_preference_name)) || attribute
+          (record_class.exposed_preference_name(attribute) if record_class.respond_to?(:exposed_preference_name)) ||
+            (record_class.signed_id_attribute_for(attribute) if record_class.respond_to?(:signed_id_attribute_for)) ||
+            attribute
         end
 
         # Infer error code from context

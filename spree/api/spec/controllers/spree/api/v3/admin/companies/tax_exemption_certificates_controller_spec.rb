@@ -86,11 +86,11 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it 'attaches a document from a direct upload' do
+    it 'attaches an uploaded document' do
       post :create, params: {
         company_id: company.prefixed_id,
         certificate_number: 'DE-1', reason_code: 'resale',
-        document: pdf_blob.signed_id
+        document_signed_id: pdf_blob.signed_id
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -98,14 +98,27 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       expect(company.tax_exemption_certificates.sole.document).to be_attached
     end
 
-    # Without the rescue this is a 500.
+    it 'reports a document stored with the wrong visibility under the field it was sent as' do
+      public_blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new('%PDF-1.4'), filename: 'resale.pdf',
+                                                           content_type: 'application/pdf', service_name: 'local')
+
+      post :create, params: {
+        company_id: company.prefixed_id,
+        certificate_number: 'DE-1', reason_code: 'resale',
+        document_signed_id: public_blob.signed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']).to have_key('document_signed_id')
+    end
+
     # The URL has to be our own streaming endpoint, not a storage link — that is
     # what makes admin credentials apply to every read of a confidential document.
     it 'points the document at the download endpoint' do
       post :create, params: {
         company_id: company.prefixed_id,
         certificate_number: 'DE-1', reason_code: 'resale',
-        document: pdf_blob.signed_id
+        document_signed_id: pdf_blob.signed_id
       }, as: :json
 
       certificate = company.tax_exemption_certificates.sole
@@ -128,7 +141,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       post :create, params: {
         company_id: company.prefixed_id,
         certificate_number: 'DE-1', reason_code: 'resale',
-        document: 'not-a-real-signed-id'
+        document_signed_id: 'not-a-real-signed-id'
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)

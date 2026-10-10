@@ -3,7 +3,7 @@ import {
   adminClient,
   ImageUploadField,
   MediaPickerSheet,
-  useDirectUpload,
+  useFileUpload,
 } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
 import { LibraryIcon } from '@spree/dashboard-ui/icons'
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { useCreateMediaLibraryFile } from '../../hooks/use-media-library'
 
 /**
- * The form fields backing one image: a freshly direct-uploaded blob
+ * The form fields backing one image: a freshly uploaded file
  * (`<name>_signed_id`), a transient object URL for the just-picked file
  * (`<name>_preview_url`), and a flag marking the persisted attachment for
  * removal (`<name>_cleared`). Together they form the three-state machine the
@@ -73,7 +73,7 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
 }) {
   const { t } = useTranslation()
   const [picking, setPicking] = useState(false)
-  const directUpload = useDirectUpload()
+  const fileUpload = useFileUpload()
   const createLibraryFile = useCreateMediaLibraryFile()
 
   // The adapter only ever touches this one image triple, and always by the
@@ -127,7 +127,7 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
           })
         }
         onUpload={async (file) => {
-          const upload = await directUpload.mutateAsync(file)
+          const upload = await fileUpload.mutateAsync(file)
           return createLibraryFile.mutateAsync({ signed_id: upload.signedId, alt: file.name })
         }}
         // Picking hands over the file's own blob, so this field and the library

@@ -140,7 +140,7 @@ module Spree
           def permitted_params
             normalize_params(
               params.permit(:name, :slug, :contact_email, :billing_email, :about,
-                            :logo, :square_logo, :cover_photo,
+                            :logo_signed_id, :square_logo_signed_id, :cover_photo_signed_id,
                             :tax_remittance, :payouts_schedule_interval, :minimum_payout_amount,
                             :holiday_mode_until,
                             :legal_name, :registration_number,

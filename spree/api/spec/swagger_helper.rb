@@ -169,6 +169,7 @@ RSpec.configure do |config|
         { name: 'Customers', description: 'Customer profiles, addresses, credit cards, and store credits' },
         { name: 'Email Templates', description: 'Customer email templates, the email layout and shared partials: drafts, previews, publishing and history' },
         { name: 'Exports', description: 'Async CSV exports of admin resources' },
+        { name: 'Files', description: 'Uploading the files that product media, imports, logos and documents use' },
         { name: 'Fulfillments', description: 'Order fulfillments — shipments, fulfill, cancel, resume, split' },
         { name: 'Gift Cards', description: 'Gift cards and gift card batches' },
         { name: 'Imports', description: 'Async CSV imports of admin resources, with per-row status and failed-row retry' },
@@ -295,7 +296,7 @@ RSpec.configure do |config|
         { name: 'Profile', description: "The seller's own record — presentation, contact details, addresses, and tax registration" },
         { name: 'Stock Locations', description: 'Where the seller keeps stock, and so where their returns are sent' },
         { name: 'Team', description: 'Who runs this seller, and the invitations nobody has accepted yet' },
-        { name: 'Uploads', description: 'Presigned direct uploads for the documents onboarding asks for' }
+        { name: 'Files', description: 'Uploading the files a profile, a submission or an import uses' }
       ],
       components: {
         securitySchemes: {

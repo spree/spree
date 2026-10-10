@@ -59,7 +59,7 @@ export function FulfillmentLabelUploadDialog({
     try {
       await uploadLabel.mutateAsync({
         fulfillmentId,
-        file: file.signedId,
+        file_signed_id: file.signedId,
         tracking_number: values.tracking_number.trim(),
         carrier: values.carrier.trim() || undefined,
         cost: values.cost.trim() || undefined,

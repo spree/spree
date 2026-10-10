@@ -22,7 +22,7 @@ setApiClient({
   // shared component does not have to know which API it is talking to.
   updateAccount: (params) => adminClient.me.update(params),
   listCountries: () => adminClient.countries.list({ expand: ['states'] }),
-  createDirectUpload: (params) => adminClient.directUploads.create(params),
+  uploadFile: (file, options) => adminClient.files.upload(file, options),
   // Backs the shared CSV import wizard, which both panels render. The
   // operator imports every registered dataset; a seller's client narrows
   // `types` to their own.

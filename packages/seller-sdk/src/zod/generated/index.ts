@@ -15,6 +15,8 @@ export { DeliveryZoneSchema, type DeliveryZone } from './DeliveryZone';
 export { ExchangeSchema, type Exchange } from './Exchange';
 export { ExchangeLineItemSchema, type ExchangeLineItem } from './ExchangeLineItem';
 export { ExportSchema, type Export } from './Export';
+export { FileUploadSchema, type FileUpload } from './FileUpload';
+export { FileUploadTargetSchema, type FileUploadTarget } from './FileUploadTarget';
 export { FulfillmentSchema, type Fulfillment } from './Fulfillment';
 export { FulfillmentItemSchema, type FulfillmentItem } from './FulfillmentItem';
 export { ImportSchema, type Import } from './Import';

@@ -591,6 +591,13 @@ module Spree
         ]
       end
 
+      # Records which store owns every uploaded file, and reports attaching a
+      # file to another store's record (docs/plans/6.0-uploads-and-file-ownership.md).
+      initializer 'spree.active_storage.store_ownership' do
+        ActiveSupport.on_load(:active_storage_blob) { include Spree::Uploads::BlobStoreOwnership }
+        ActiveSupport.on_load(:active_storage_attachment) { include Spree::Uploads::AttachmentStoreCheck }
+      end
+
       initializer 'spree.core.checking_migrations' do |app|
         app.config.after_initialize do
           Migrations.new(config, engine_name).check unless Rails.env.test? || Spree::Config.disable_migration_check

@@ -636,6 +636,7 @@ require 'spree/workflow'
 require 'spree/reporting'
 require 'spree/events'
 require 'spree/store_scope_guard'
+require 'spree/uploads'
 
 # Not autoloaded from app/: the registry keeps registered steps in
 # class-level state, which a reload would discard.

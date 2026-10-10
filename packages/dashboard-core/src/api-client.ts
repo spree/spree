@@ -14,7 +14,7 @@
  * promise the seller panel methods its API does not have.
  */
 
-import type { PermissionRule } from '@spree/admin-sdk'
+import type { PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
 
 /** What a panel may change on the signed-in person's own account. */
 export interface PanelAccountParams {
@@ -23,11 +23,11 @@ export interface PanelAccountParams {
   /** The panel's UI language, as a bundle code the panel ships (e.g. `de`). */
   selected_locale?: string
   /**
-   * ActiveStorage signed id to set the photo, or `null` to remove it. Omit to
+   * A `signed_id` from an upload to set the photo, or `null` to remove it. Omit to
    * leave the current one alone — the only field here where `null` means
    * something the API acts on.
    */
-  avatar?: string | null
+  avatar_signed_id?: string | null
 }
 
 /**
@@ -105,19 +105,15 @@ export interface PanelApiClient {
    * fulfillments, so they retire one by deactivating it.
    */
   /**
-   * Exchanges blob metadata for a presigned upload URL.
+   * Uploads a file through the panel's own `POST /files` and resolves to its
+   * `signed_id`.
    *
    * Registered rather than imported for the same reason as everything else
    * here: the shared upload field would otherwise work only in the
    * operator's panel, and a seller uploading an onboarding document would
    * get a 401 from an API they hold no key for.
    */
-  createDirectUpload?(params: {
-    blob: { filename: string; byte_size: number; checksum: string; content_type: string }
-  }): Promise<{
-    direct_upload: { url: string; headers: Record<string, string> }
-    signed_id: string
-  }>
+  uploadFile?(file: File, options: UploadFileOptions): Promise<{ signed_id: string }>
   /**
    * Writes the signed-in person's own account — their name, photo and the
    * panel's language.
@@ -455,8 +451,8 @@ export interface PanelImportRow {
 
 export interface PanelImportCreateParams {
   type: string
-  /** Signed blob id of the already direct-uploaded CSV. */
-  attachment: string
+  /** The `signed_id` of the already uploaded CSV. */
+  attachment_signed_id: string
   /** CSV column separator — the four both APIs accept. */
   delimiter?: PanelImportDelimiter
   /** The price list a `price_list_prices` import merges into. */

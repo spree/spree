@@ -79,9 +79,9 @@ RSpec.describe 'Seller Profile API', type: :request, swagger_doc: 'api-reference
           about: { type: :string, nullable: true, description: 'Sanitized HTML — the seller\'s public description' },
           legal_name: { type: :string, nullable: true, description: 'The business a commission invoice is made out to' },
           registration_number: { type: :string, nullable: true },
-          logo: { type: :string, nullable: true, description: 'ActiveStorage signed id; `null` removes the attachment' },
-          square_logo: { type: :string, nullable: true },
-          cover_photo: { type: :string, nullable: true },
+          logo_signed_id: { type: :string, nullable: true, description: 'The `signed_id` returned by POST /files; `null` removes the image' },
+          square_logo_signed_id: { type: :string, nullable: true },
+          cover_photo_signed_id: { type: :string, nullable: true },
           accept_terms: { type: :boolean, description: 'Stamps acceptance of the marketplace terms' },
           billing_address: { type: :object, additionalProperties: true },
           custom_fields: {

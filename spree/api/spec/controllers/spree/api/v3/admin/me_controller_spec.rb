@@ -205,7 +205,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
           content_type: 'image/jpeg'
         )
       end
-      let(:params) { { avatar: blob.signed_id } }
+      let(:params) { { avatar_signed_id: blob.signed_id } }
 
       it 'attaches the avatar and returns its url' do
         subject
@@ -223,7 +223,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
           content_type: 'image/svg+xml'
         )
       end
-      let(:params) { { avatar: blob.signed_id } }
+      let(:params) { { avatar_signed_id: blob.signed_id } }
 
       it 'rejects the upload with a validation error' do
         subject
@@ -240,7 +240,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
           content_type: 'image/jpeg'
         )
       end
-      let(:params) { { avatar: nil } }
+      let(:params) { { avatar_signed_id: nil } }
 
       it 'purges the avatar' do
         subject

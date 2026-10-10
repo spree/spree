@@ -1008,7 +1008,7 @@ module Spree
       end
     end
 
-    # An abandoned direct upload leaves the blob row behind without its bytes,
+    # An abandoned presigned upload leaves the blob row behind without its bytes,
     # and the buyer's client may still send back the signed id it was handed.
     describe 'a purchase order document whose upload never completed' do
       let(:orphan_blob) do
@@ -1019,7 +1019,7 @@ module Spree
       end
 
       it 'reports a readable message instead of an exception class name' do
-        result = described_class.call(cart: cart, params: { po_document: orphan_blob.signed_id })
+        result = described_class.call(cart: cart, params: { po_document_signed_id: orphan_blob.signed_id })
 
         expect(result).to be_failure
         expect(result.error.to_s).to include(I18n.t('spree.po_document_upload_incomplete'))

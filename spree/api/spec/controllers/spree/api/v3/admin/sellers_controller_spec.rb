@@ -208,14 +208,14 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(json_response['billing_address']['city']).to eq('London')
     end
 
-    # The dashboard direct-uploads the file, then sends the resulting signed id.
+    # The dashboard uploads the file, then sends the resulting signed id.
     it 'attaches branding from a signed id' do
       blob = ActiveStorage::Blob.create_and_upload!(
         io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
         filename: 'thinking-cat.jpg', content_type: 'image/jpeg'
       )
 
-      patch :update, params: { id: seller.prefixed_id, logo: blob.signed_id }, as: :json
+      patch :update, params: { id: seller.prefixed_id, logo_signed_id: blob.signed_id }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(seller.reload.logo).to be_attached
@@ -228,7 +228,7 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
         filename: 'cover.jpg', content_type: 'image/jpeg'
       )
 
-      patch :update, params: { id: seller.prefixed_id, cover_photo: blob.signed_id }, as: :json
+      patch :update, params: { id: seller.prefixed_id, cover_photo_signed_id: blob.signed_id }, as: :json
 
       expect(seller.reload.cover_photo).to be_attached
       expect(json_response['cover_photo_url']).to be_present
@@ -240,7 +240,7 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
         filename: 'thinking-cat.jpg'
       )
 
-      patch :update, params: { id: seller.prefixed_id, logo: nil }, as: :json
+      patch :update, params: { id: seller.prefixed_id, logo_signed_id: nil }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(seller.reload.logo).not_to be_attached

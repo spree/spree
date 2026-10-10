@@ -119,6 +119,19 @@ module Spree
       # requirement, in bytes. Small on purpose: these are certificates and
       # registrations, and an unbounded upload is a way to fill a disk.
       preference :max_seller_document_upload_size, :integer, default: 20_971_520, env: 'SPREE_MAX_SELLER_DOCUMENT_UPLOAD_SIZE' # 20 MB
+
+      # Largest file the Admin and Seller APIs accept for upload straight to
+      # storage, in bytes. Digital products (courses, archives) can be large.
+      preference :max_upload_size, :integer, default: 5_368_709_120, env: 'SPREE_MAX_UPLOAD_SIZE' # 5 GB
+
+      # Largest file accepted as bytes in the upload request itself, in bytes.
+      # Lower, because those bytes pass through the application.
+      preference :max_multipart_upload_size, :integer, default: 10_485_760, env: 'SPREE_MAX_MULTIPART_UPLOAD_SIZE' # 10 MB
+
+      # Days an uploaded file that was never attached to anything is kept
+      # before the daily purge deletes it. Longer than an upload reference
+      # stays valid (one day), so nothing a client can still attach is lost.
+      preference :unattached_upload_retention_days, :integer, default: 2, env: 'SPREE_UNATTACHED_UPLOAD_RETENTION_DAYS'
       preference :non_expiring_credit_types, :array, default: [], deprecated: 'Nothing reads this in Spree 6 — store credits no longer carry a category, and expiry lives on Spree::GiftCard'
       preference :products_per_page, :integer, default: 12, deprecated: 'Nothing reads this in Spree 6 — pass per_page to the API instead'
       preference :restock_inventory, :boolean, default: true, deprecated: 'Restocking is decided per line item by Spree::ReturnLineItem#resellable'

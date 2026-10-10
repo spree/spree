@@ -5,6 +5,7 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   Subject,
+  signedIdParam,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -86,13 +87,7 @@ function formValuesToApiParams(values: StoreEmailsFormValues): StoreUpdateParams
     email_text_color: values.email_text_color || null,
     email_heading_color: values.email_heading_color || null,
     email_font: values.email_font,
-  }
-  // Three states for the logo: untouched (omit), uploaded (send signed_id),
-  // explicitly cleared (send null). Sending an empty value would be ambiguous.
-  if (values.mailer_logo_signed_id) {
-    params.mailer_logo = values.mailer_logo_signed_id
-  } else if (values.mailer_logo_cleared) {
-    params.mailer_logo = null
+    ...signedIdParam('mailer_logo', values.mailer_logo_signed_id, values.mailer_logo_cleared),
   }
   return params
 }
