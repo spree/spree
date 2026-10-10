@@ -130,7 +130,49 @@ module Spree
           }.compact
         end
 
+        # A summary from what the Admin API returned, rather than from a
+        # record.
+        #
+        # The payload is already the serializer's own output, so there is no
+        # second serialization and no second set of association queries. It
+        # still passes the credential filter: the API may hand an authorised
+        # admin a gift card code, and a model is not an authorised admin.
+        #
+        # @param entry [Spree::AgentTools::ResourceMap::Entry]
+        # @param payload [Hash] one record as the endpoint rendered it
+        # @return [Hash]
+        def from_payload(entry:, payload:)
+          attributes = sanitize(payload.to_h.stringify_keys, entry.key)
+          title = title_from(attributes)
+
+          {
+            id: attributes['id'],
+            resource: entry.key,
+            title: title,
+            subtitle: subtitle_for(attributes, title),
+            status: attributes['status'],
+            image_url: attributes['thumbnail_url'],
+            path: dashboard_path_from(entry, attributes['id'])
+          }.compact
+        end
+
         private
+
+        # The same preference order as a record's title, read from the payload.
+        def title_from(attributes)
+          %w[name number label title email sku].each do |field|
+            value = attributes[field]
+            return value.to_s if value.is_a?(String) && value.present?
+          end
+
+          attributes['id'].to_s
+        end
+
+        def dashboard_path_from(entry, id)
+          return if entry.dashboard_path.blank? || id.blank?
+
+          format(entry.dashboard_path, id: id)
+        end
 
         # Whether a value is itself a credential — a link that authenticates on
         # nothing but the link.

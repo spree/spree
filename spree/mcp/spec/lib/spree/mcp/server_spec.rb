@@ -8,7 +8,15 @@ RSpec.describe Spree::Mcp::Server do
   let(:store) { @default_store }
   let(:api_key) { create(:api_key, :secret, store: store, scopes: scopes) }
   let(:scopes) { ['read_all'] }
-  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key) }
+  # A tool that dispatches authenticates as the caller did, so a context
+  # built by hand carries the credential a real request would have.
+  let(:context) do
+    Spree::AgentTools::Context.new(
+      store: store, api_key: api_key,
+      request_headers: { 'HTTP_X_SPREE_API_KEY' => api_key.plaintext_token,
+                         'HTTP_HOST' => 'www.example.com' }
+    )
+  end
   let(:server) { described_class.for(context) }
 
   def call(method, **params)

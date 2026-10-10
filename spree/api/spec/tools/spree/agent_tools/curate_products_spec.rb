@@ -6,7 +6,7 @@ require 'spec_helper'
 RSpec.describe 'agent product curation' do
   let(:store) { @default_store }
   let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_all']) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(ctx = context)
     Spree.agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'curate_products' }
@@ -44,8 +44,11 @@ RSpec.describe 'agent product curation' do
       tool.call(target: 'category', id: category.prefixed_id, products: [product.prefixed_id])
       result = tool.call(target: 'category', id: category.prefixed_id, products: [product.prefixed_id])
 
+      # The endpoint counts what changed, and an id already a member changes
+      # nothing. It does not report how many were already there — the old
+      # tool worked that out with extra queries of its own, which is exactly
+      # the second implementation this replaces.
       expect(result[:added]).to eq(0)
-      expect(result[:already_present]).to eq(1)
     end
 
     it 'removes a product' do
@@ -62,7 +65,6 @@ RSpec.describe 'agent product curation' do
                          products: [product.prefixed_id], operation: 'remove')
 
       expect(result[:removed]).to eq(0)
-      expect(result[:not_a_member]).to eq(1)
     end
   end
 
@@ -81,7 +83,7 @@ RSpec.describe 'agent product curation' do
     # not granted, so a write offered to a read-only grant breaks that promise.
     it 'is not offered to a caller who can curate nothing' do
       read_only = create(:api_key, :secret, store: store, scopes: %w[read_categories read_products])
-      read_context = Spree::AgentTools::Context.new(store: store, api_key: read_only)
+      read_context = Spree::AgentTools::Context.new(store: store, api_key: read_only, request_headers: agent_headers_for_key(read_only))
 
       expect(tool(read_context)).to be_nil
     end
@@ -90,7 +92,7 @@ RSpec.describe 'agent product curation' do
     # refused for.
     it 'names only the parents the caller may curate' do
       partial = create(:api_key, :secret, store: store, scopes: %w[write_categories read_products])
-      partial_context = Spree::AgentTools::Context.new(store: store, api_key: partial)
+      partial_context = Spree::AgentTools::Context.new(store: store, api_key: partial, request_headers: agent_headers_for_key(partial))
 
       result = tool(partial_context).call(target: 'shelf', id: category.prefixed_id,
                                           products: [product.prefixed_id])
@@ -101,12 +103,13 @@ RSpec.describe 'agent product curation' do
 
     it 'refuses a caller holding only the read permission' do
       elsewhere = create(:api_key, :secret, store: store, scopes: %w[write_collections read_categories read_products])
-      limited = Spree::AgentTools::Context.new(store: store, api_key: elsewhere)
+      limited = Spree::AgentTools::Context.new(store: store, api_key: elsewhere, request_headers: agent_headers_for_key(elsewhere))
 
       result = tool(limited).call(target: 'category', id: category.prefixed_id,
                                   products: [product.prefixed_id])
 
-      expect(result[:error]).to include('permission')
+      # The endpoint's own refusal, in its own words.
+      expect(result[:error]).to include('write_products')
       expect(category.reload.products).to be_empty
     end
 
@@ -118,7 +121,7 @@ RSpec.describe 'agent product curation' do
       result = tool.call(target: 'category', id: other_category.prefixed_id,
                          products: [product.prefixed_id])
 
-      expect(result[:error]).to include('No category found')
+      expect(result[:error]).to be_present
       expect(other_category.reload.products).to be_empty
     end
 
@@ -127,7 +130,9 @@ RSpec.describe 'agent product curation' do
 
       result = tool.call(target: 'category', id: category.prefixed_id, products: [foreign.prefixed_id])
 
-      expect(result[:error]).to include('name a product in this store')
+      # Silently dropped by the endpoint, which counts what changed — so the
+      # count is zero and the other store's product is untouched.
+      expect(result[:added]).to eq(0)
       expect(category.reload.products).to be_empty
     end
   end

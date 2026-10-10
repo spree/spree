@@ -9,7 +9,7 @@ module Spree
     # parent that adopts it later is curated without a new tool.
     module MembershipMap
       Entry = Struct.new(:target, :model_name, :permission, :positioned, :service_namespace,
-                         keyword_init: true) do
+                         :api_path, keyword_init: true) do
         # @return [Class]
         def model_class
           model_name.constantize
@@ -71,10 +71,12 @@ module Spree
           all.map(&:target).sort
         end
 
-        def register(target:, model_name:, permission:, positioned: false, service_namespace: nil)
+        def register(target:, model_name:, permission:, positioned: false, service_namespace: nil,
+                     api_path: nil)
           entries[target.to_s] = Entry.new(target: target.to_s, model_name: model_name,
                                            permission: permission, positioned: positioned,
-                                           service_namespace: service_namespace)
+                                           service_namespace: service_namespace,
+                                           api_path: api_path)
         end
 
         def reset!

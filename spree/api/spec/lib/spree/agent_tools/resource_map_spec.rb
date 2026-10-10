@@ -4,7 +4,8 @@ RSpec.describe Spree::AgentTools::ResourceMap do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
   let(:context) do
-    Spree::AgentTools::Context.new(store: store, user: admin, ability: full_ability)
+    Spree::AgentTools::Context.new(store: store, user: admin, ability: full_ability,
+                                   request_headers: agent_headers_for(admin))
   end
   let(:full_ability) do
     Class.new do

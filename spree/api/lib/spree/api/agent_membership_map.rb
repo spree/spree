@@ -27,7 +27,8 @@ module Spree
               model_name: entry.model_name,
               permission: write_permission_for(entry),
               positioned: controller.method_defined?(:reposition),
-              service_namespace: service_namespace_for(target)
+              service_namespace: service_namespace_for(target),
+              api_path: membership_path_for(controller)
             )
           end
 
@@ -35,6 +36,18 @@ module Spree
         end
 
         private
+
+        # Where this parent's products are added and removed, read from the
+        # routes. The nested path carries the parent's id, which a tool fills
+        # in from the parent it was given.
+        def membership_path_for(controller)
+          route = Spree::Core::Engine.routes.routes.find do |candidate|
+            candidate.defaults[:controller] == controller.controller_path &&
+              candidate.defaults[:action] == 'create'
+          end
+
+          route&.path&.spec.to_s.sub('(.:format)', '').presence
+        end
 
         def curating_controllers
           Rails.application.eager_load! unless Rails.application.config.eager_load

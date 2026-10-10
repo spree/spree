@@ -180,8 +180,45 @@ module Spree
               params[:scope].to_s.split.select { |scope| accepted.include?(scope) }.join(' ')
             end
 
+            # The audiences the grant is bound to.
+            #
+            # A client asking for the MCP endpoint is granted the Admin API
+            # alongside it, because an MCP tool call reaches data by
+            # dispatching to an Admin API operation — as the same grant, with
+            # the same scopes, so the ceiling the merchant approved is the one
+            # that applies. Without it the dispatched call carries a token
+            # bound to a path the Admin API does not serve, and every tool
+            # answers "authentication required".
+            #
+            # This widens the audience, not the authority: the scopes are
+            # unchanged, and a token for the Admin API alone is still refused
+            # at the MCP endpoint. RFC 8707 takes a list for exactly this —
+            # one grant, the surfaces it legitimately needs.
             def requested_resource
-              @pre_auth.resource_indicators&.first
+              requested = @pre_auth.resource_indicators.to_a
+              return requested.first if requested.empty?
+
+              mcp = Spree::Api::Oauth.resources[:mcp]
+              return requested.join(' ') unless requested.any? { |value| path_of(value) == mcp }
+
+              Spree::Api::Oauth.granted_audience(:mcp, origin_of(requested.first))
+            end
+
+            # The scheme and host the client was given — a tunnel, a proxy, a
+            # custom domain — so both audiences name the same origin.
+            def origin_of(indicator)
+              uri = URI.parse(indicator.to_s)
+              return if uri.host.blank?
+
+              "#{uri.scheme}://#{uri.host}#{":#{uri.port}" unless uri.default_port == uri.port}"
+            rescue URI::InvalidURIError
+              nil
+            end
+
+            def path_of(value)
+              URI.parse(value.to_s).path
+            rescue URI::InvalidURIError
+              nil
             end
 
             # Every capability the requested scopes imply, so a merchant sees

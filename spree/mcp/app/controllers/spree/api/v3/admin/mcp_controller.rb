@@ -82,7 +82,12 @@ module Spree
             Spree::AgentTools::Context.new(
               store: current_store,
               user: oauth_resource_owner,
-              granted_scopes: current_oauth_token.scopes.to_a
+              granted_scopes: current_oauth_token.scopes.to_a,
+              # What a dispatched tool call authenticates with: this request's
+              # own credential, repeated. The grant is what bounds the agent,
+              # so the inner request must be the same grant — not a wider one
+              # minted on its behalf.
+              request_headers: request.env.slice(*Spree::AgentTools::ApiDispatch::FORWARDED_HEADERS)
             )
           end
 
