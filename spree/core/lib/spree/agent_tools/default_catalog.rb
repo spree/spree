@@ -54,9 +54,6 @@ module Spree
       # Workflow key => permission, or => {permission:, except:, summary:}.
       WORKFLOWS = {
         # Catalog
-        product_create_workflow: 'write_products',
-        product_update_workflow: 'write_products',
-        product_destroy_workflow: 'write_products',
         product_activate_workflow: 'write_products',
         product_draft_workflow: 'write_products',
         product_archive_workflow: 'write_products',
@@ -64,12 +61,8 @@ module Spree
         product_reject_workflow: 'write_products',
         variant_create_workflow: 'write_products',
         variant_update_workflow: 'write_products',
-        catalog_create_workflow: 'write_products',
-        catalog_update_workflow: 'write_products',
         catalog_activate_workflow: 'write_products',
         catalog_deactivate_workflow: 'write_products',
-        price_list_create_workflow: 'write_products',
-        price_list_update_workflow: 'write_products',
         price_list_activate_workflow: 'write_products',
         price_list_deactivate_workflow: 'write_products',
 
@@ -91,8 +84,6 @@ module Spree
         refund_create_workflow: 'write_refunds',
 
         # Inventory
-        stock_transfer_create_workflow: 'write_stock',
-        stock_transfer_update_workflow: 'write_stock',
         stock_transfer_mark_ready_workflow: 'write_stock',
         stock_transfer_mark_in_transit_workflow: 'write_stock',
         stock_transfer_receive_workflow: 'write_stock',
@@ -101,8 +92,6 @@ module Spree
         stock_transfer_close_workflow: 'write_stock',
 
         # Purchasing
-        purchase_order_create_workflow: 'write_purchasing',
-        purchase_order_update_workflow: 'write_purchasing',
         purchase_order_mark_ordered_workflow: 'write_purchasing',
         purchase_order_receive_workflow: 'write_purchasing',
         purchase_order_cancel_workflow: 'write_purchasing',
@@ -110,7 +99,6 @@ module Spree
         purchase_order_close_workflow: 'write_purchasing',
 
         # Marketplace
-        seller_create_workflow: 'write_sellers',
         seller_invite_workflow: 'write_sellers',
         seller_approve_workflow: 'write_sellers',
         seller_reject_workflow: 'write_sellers',
@@ -135,7 +123,27 @@ module Spree
         'A step of the dashboard\'s email template editor, which drafts and previews against a ' \
         'live rendering. Publishing sends real mail in the merchant\'s name.'.freeze
 
+      # Plain create, update and destroy reach these through the generic write
+      # tools, which dispatch to the controller — and the controller declares
+      # this very workflow, so both paths run the same code. Two tools for one
+      # job only cost a model a choice it has no basis to make.
+      GENERIC_WRITE_REASON =
+        'Ordinary CRUD: the generic create, update and destroy tools dispatch to the controller, ' \
+        'which declares this workflow, so exposing it again would be a second path to the same code.'
+
       EXCLUDED_WORKFLOWS = {
+        product_create_workflow: GENERIC_WRITE_REASON,
+        product_update_workflow: GENERIC_WRITE_REASON,
+        product_destroy_workflow: GENERIC_WRITE_REASON,
+        catalog_create_workflow: GENERIC_WRITE_REASON,
+        catalog_update_workflow: GENERIC_WRITE_REASON,
+        price_list_create_workflow: GENERIC_WRITE_REASON,
+        price_list_update_workflow: GENERIC_WRITE_REASON,
+        stock_transfer_create_workflow: GENERIC_WRITE_REASON,
+        stock_transfer_update_workflow: GENERIC_WRITE_REASON,
+        purchase_order_create_workflow: GENERIC_WRITE_REASON,
+        purchase_order_update_workflow: GENERIC_WRITE_REASON,
+        seller_create_workflow: GENERIC_WRITE_REASON,
         email_template_save_draft_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
         email_template_publish_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
         email_template_discard_draft_workflow: EMAIL_TEMPLATE_EDITOR_REASON,

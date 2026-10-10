@@ -35,6 +35,18 @@ RSpec.describe 'assistant authorization' do
     end
   end
 
+
+  # Reads and edits every product, but may not bring one into existence or
+  # take one out of it — an ordinary shape for a catalog editor, and the one
+  # a write tool that only checked readability would ignore.
+  class NoCreateOrDestroyAbility < Spree::Ability
+    def initialize(user, options = {})
+      super
+      cannot :create, Spree::Product
+      cannot :destroy, Spree::Product
+    end
+  end
+
   before do
     RSpec.current_example.metadata[:hidden_product_id] = hidden.id
     # `Spree.ability_class` is what the controller calls, and it answers a
@@ -118,16 +130,16 @@ RSpec.describe 'assistant authorization' do
       end
 
       it 'creates without demanding permission over the store or the actor' do
-        tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'products_create' }
-        result = tool.call(attributes: { 'name' => "Agent Made #{SecureRandom.hex(3)}" })
+        tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'create_resource' }
+        result = tool.call(resource: 'products', attributes: { 'name' => "Agent Made #{SecureRandom.hex(3)}" })
 
         expect(result[:error]).to be_nil
         expect(result.dig(:record, :title)).to start_with('Agent Made')
       end
 
       it 'names the created record in the summary, not the store' do
-        tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'products_create' }
-        result = tool.call(attributes: { 'name' => 'Summary Subject' })
+        tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'create_resource' }
+        result = tool.call(resource: 'products', attributes: { 'name' => 'Summary Subject' })
 
         expect(result[:summary]).to include('Summary Subject')
         expect(result[:summary]).not_to include(store.name)
@@ -139,25 +151,15 @@ RSpec.describe 'assistant authorization' do
     # before calling the workflow, and the tool has no equivalent unless it
     # authorizes against the class.
     context 'when the admin may edit products but not create one' do
-      let(:ability) do
-        Class.new do
-          include CanCan::Ability
-
-          def initialize(*)
-            can :read, Spree::Product
-            can :update, Spree::Product
-          end
-
-          def permission_keys
-            Spree.permissions.catalog_keys
-          end
-        end.new
+      before do
+        allow(Spree).to receive(:ability_class).and_return(NoCreateOrDestroyAbility)
+        allow(Spree::Dependencies).to receive(:ability_class).and_return('NoCreateOrDestroyAbility')
       end
 
       it 'refuses the create workflow' do
         create_tool = Spree.agent_tools.available_for(context).
-                      find { |candidate| candidate.tool_name == 'products_create' }
-        result = create_tool.call(attributes: { 'name' => 'Should Not Exist' })
+                      find { |candidate| candidate.tool_name == 'create_resource' }
+        result = create_tool.call(resource: 'products', attributes: { 'name' => 'Should Not Exist' })
 
         expect(result[:error]).to be_present
         expect(Spree::Product.for_store(store).where(name: 'Should Not Exist')).not_to exist
@@ -169,25 +171,15 @@ RSpec.describe 'assistant authorization' do
     # without `:destroy` means it. A deletion checked as an update would go
     # straight through.
     context 'when the admin may edit a product but not delete one' do
-      let(:ability) do
-        Class.new do
-          include CanCan::Ability
-
-          def initialize(*)
-            can :read, Spree::Product
-            can :update, Spree::Product
-          end
-
-          def permission_keys
-            Spree.permissions.catalog_keys
-          end
-        end.new
+      before do
+        allow(Spree).to receive(:ability_class).and_return(NoCreateOrDestroyAbility)
+        allow(Spree::Dependencies).to receive(:ability_class).and_return('NoCreateOrDestroyAbility')
       end
 
       it 'refuses the destroy workflow' do
         destroy = Spree.agent_tools.available_for(context).
-                  find { |candidate| candidate.tool_name == 'products_destroy' }
-        result = destroy.call(product: visible.prefixed_id)
+                  find { |candidate| candidate.tool_name == 'delete_resource' }
+        result = destroy.call(resource: 'products', id: visible.prefixed_id)
 
         expect(result[:error]).to be_present
         expect(visible.reload).to be_present
