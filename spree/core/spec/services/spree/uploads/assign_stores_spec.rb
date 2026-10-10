@@ -39,6 +39,17 @@ RSpec.describe Spree::Uploads::AssignStores do
     expect(blob.reload.store_id).to eq(other_store.id)
   end
 
+  it 'gives a preview the store of its original once the original has one' do
+    original = storeless_blob
+    attach_without_check(create(:category, store: other_store), 'image', original)
+    preview = storeless_blob
+    attach_without_check(original, 'preview_image', preview)
+
+    described_class.call
+
+    expect(preview.reload.store_id).to eq(other_store.id)
+  end
+
   it 'reports a file attached in two stores' do
     blob = storeless_blob
     attach_without_check(create(:category, store: store), 'image', blob)

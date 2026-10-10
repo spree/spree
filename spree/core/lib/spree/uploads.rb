@@ -29,6 +29,10 @@ module Spree
       return record.store_id if record.has_attribute?(:store_id)
 
       record.try(:store)&.id
+    rescue Module::DelegationError
+      # An owner whose parent is gone (a digital asset on a deleted variant)
+      # has no store to compare against.
+      nil
     end
 
     module BlobStoreOwnership

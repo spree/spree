@@ -531,7 +531,7 @@ Every parameter that takes a `signed_id` is renamed to `<name>_signed_id`:
 
 The Store API's `POST /carts/:id/po_document` keeps its route but takes the same flat request and returns the same response as `POST /files`.
 
-Uploads that are never attached are now deleted after two days. Schedule the job daily in `server/config/recurring.yml`:
+Uploads that are never attached are now deleted after two days. Only files uploaded to a store are deleted; files from before the upgrade that were never attached are left as they are. Schedule the job daily in `server/config/recurring.yml`:
 
 ```yaml server/config/recurring.yml
 production:

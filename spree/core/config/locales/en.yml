@@ -1795,7 +1795,7 @@ en:
     type: Type
     unable_to_connect_to_gateway: Unable to connect to gateway.
     updated_at: Updated at
-    upload_reference_invalid: The file reference is invalid or has expired. Upload the file again.
+    upload_reference_invalid: A signed reference in this request is invalid or has expired. For a file, upload it again.
     upload_wrong_visibility: must be uploaded with %{visibility} visibility
     url: URL
     user: User

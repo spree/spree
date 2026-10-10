@@ -21,7 +21,9 @@ module Spree
       private
 
       def purge(step)
-        blobs = ActiveStorage::Blob.unattached.
+        # Only files that belong to a store: a host app may keep blobs of its
+        # own outside attachments, and those are not Spree's to delete.
+        blobs = ActiveStorage::Blob.unattached.where.not(store_id: nil).
                 where(created_at: ...Spree::Config.unattached_upload_retention_days.days.ago)
         blobs = blobs.where(ActiveStorage::Blob.arel_table[:id].gt(step.cursor)) if step.cursor
 

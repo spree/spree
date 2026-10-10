@@ -23,7 +23,9 @@ module Spree
           owner_class = record_type.safe_constantize
           next 0 if owner_class.nil?
 
-          if owner_class.column_names.include?('store_id')
+          # Renditions and previews are blobs themselves: a set-based update
+          # would join the table it updates, which MySQL refuses.
+          if owner_class.column_names.include?('store_id') && !record_type.start_with?('ActiveStorage::')
             assign_from_store_column(record_type, owner_class)
           else
             assign_record_by_record(record_type)
@@ -75,10 +77,11 @@ module Spree
       end
 
       def conflicting_blob_ids
-        shared_blob_ids = ActiveStorage::Attachment.group(:blob_id).having('COUNT(*) > 1').pluck(:blob_id)
+        resolvable_types = record_types.select(&:safe_constantize)
+        shared_blob_ids = ActiveStorage::Attachment.where(record_type: resolvable_types).group(:blob_id).having('COUNT(*) > 1').pluck(:blob_id)
 
         shared_blob_ids.each_slice(BATCH_SIZE).flat_map do |blob_ids|
-          ActiveStorage::Attachment.where(blob_id: blob_ids).includes(:record).group_by(&:blob_id).filter_map do |blob_id, blob_attachments|
+          ActiveStorage::Attachment.where(blob_id: blob_ids, record_type: resolvable_types).includes(:record).group_by(&:blob_id).filter_map do |blob_id, blob_attachments|
             store_ids = blob_attachments.filter_map { |attachment| attachment.record && Spree::Uploads.store_id_for(attachment.record) }
             blob_id if store_ids.map(&:to_s).uniq.size > 1
           end
