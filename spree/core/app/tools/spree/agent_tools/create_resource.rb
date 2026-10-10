@@ -1,50 +1,32 @@
 module Spree
   module AgentTools
-    # Creates a record of a resource the Admin API writes directly.
+    # Creates a record, through the Admin API's own create operation.
     class CreateResource < Spree::AgentTools::ResourceWrite
       tool_name 'create_resource'
-      description 'Create a store setup record — a market, channel, delivery method, payment ' \
-                  'method, tax rate and so on. Call describe_resource first for the attributes ' \
-                  'a resource accepts. Catalog and order records are created by their own tools.'
+      description 'Create a record — a market, channel, delivery method, payment method, tax ' \
+                  'rate and so on. Call describe_resource first for the attributes a resource ' \
+                  'accepts. Records with an action of their own (an order, a refund) have a ' \
+                  'tool named for it.'
 
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :attributes, type: :object, description: 'Attributes to set on the new record', required: true
 
       def call(resource:, attributes: {})
-        entry, refusal = writable_entry(resource)
+        entry, refusal = writable_entry(resource, :create)
         return refusal if refusal
 
-        permitted, rejection = permitted_attributes(entry, attributes)
+        body, rejection = body_for(entry, attributes)
         return rejection if rejection
 
-        record = build_record(entry, permitted)
-        return { error: "You do not have permission to create this #{entry.key.singularize}." } unless context.can?(:create, record)
+        response = dispatch.call(method: :post, path: entry.api_path(:create), body: body)
 
-        save_record(entry, record)
+        result_for(response, entry, summary: summary(resource: resource, attributes: attributes))
       end
 
-      protected
+      def summary(arguments)
+        named = arguments[:attributes].to_h.values_at('name', :name, 'number', :number).compact.first
 
-      def preferred_workflow_key(entry)
-        entry.create_workflow_key.presence || entry.update_workflow_key
-      end
-
-      private
-
-      # Built through the store's own association where there is one, so the
-      # record carries its tenancy from where it was built rather than from an
-      # attribute assigned afterwards — the same rule the API's build_resource
-      # follows.
-      def build_record(entry, attributes)
-        association = entry.key.to_sym
-        scope = context.store.respond_to?(association) ? context.store.public_send(association) : entry.model_class
-
-        scope.new(attributes)
-      rescue ActiveModel::UnknownAttributeError => e
-        # A documented create parameter the model does not accept as an
-        # attribute (an STI selector the controller translates, say) is a tool
-        # error naming it, not a protocol failure.
-        raise ArgumentError, "#{entry.key.singularize.humanize} does not accept that attribute: #{e.message}"
+        "Create #{arguments[:resource].to_s.singularize.tr('_', ' ')} #{named}".strip
       end
     end
   end

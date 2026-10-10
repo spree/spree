@@ -1,126 +1,93 @@
 module Spree
   module AgentTools
-    # Shared behaviour for the generic record writes.
+    # Shared by the generic writes, which dispatch to the Admin API's own
+    # create, update and destroy operations.
     #
-    # These exist only for resources whose controller saves the record
-    # directly — store, market, channel, delivery, payment and tax setup. A
-    # resource written through a workflow refuses them and names its workflow
-    # tool instead, so there is exactly one way to write each thing and every
-    # write goes through the same validations, hooks and events the dashboard
-    # fires.
+    # The controller behind each decides everything that matters: which
+    # attributes it accepts, whether it writes through a workflow, what the
+    # refusal reads like. So these three are correct for every resource, and
+    # the rule that a resource with a workflow refuses the generic write is
+    # gone — there was only ever one way to write a record, and now these
+    # take it.
     class ResourceWrite < Spree::AgentTool
+      # Gated per resource in `call`, since each names its own write scope —
+      # so the class declares none.
+      permission nil
       mutating!
 
-      # Ungated at the class level because the gate is per resource: a key with
-      # `write_settings` may update a market but not a seller, and the resource
-      # is not known until the call. {#call} checks the entry's own write
-      # permission, and {#permitted?} offers the tool to anyone holding any
-      # write key at all.
-      permission nil
-
-      # Offered only to a caller who may write something, so a read-only key
-      # is never told these tools exist.
+      # Offered only to a caller who can write something.
       #
-      # @return [Boolean]
+      # The endpoint would refuse anyway, but a tool a credential can never
+      # use should not be named to the model: the server promises that a tool
+      # you cannot see is one the store has not granted.
       def permitted?
-        ResourceMap.all.any? { |entry| writable_for?(entry) }
+        ResourceMap.all.any? do |entry|
+          entry.write_permission.present? && context.permitted?(entry.write_permission)
+        end
       end
 
       protected
 
-      # Resolves the resource and refuses, in the model's own vocabulary, when
-      # it cannot be written generically.
+      def dispatch
+        @dispatch ||= ApiDispatch.new(context)
+      end
+
+      # The entry, or the refusal naming why not.
       #
-      # @param key [String]
-      # @return [Array(ResourceMap::Entry, nil), Array(nil, Hash)]
-      def writable_entry(key)
+      # @return [Array(Entry, nil), Array(nil, Hash)]
+      def writable_entry(key, action)
         entry = ResourceMap.find(key)
         return [nil, unknown_resource(key)] if entry.nil?
 
-        unless entry.generic_writes?
-          return [nil, { error: refusal_for(entry) }]
-        end
+        path = entry.api_path(action)
+        return [nil, { error: not_writable(entry, action) }] if path.blank?
 
-        unless context.permitted?(entry.write_permission)
-          return [nil, { error: "You do not have permission to change #{entry.key}." }]
-        end
+        # The endpoint answers 403 for a scope the credential lacks, in its
+        # own words. This check only avoids offering a tool that cannot work
+        # — a resource the caller cannot even read.
+        return [nil, { error: "You do not have permission to change #{entry.key}." }] unless
+          context.permitted?(entry.permission)
 
         [entry, nil]
       end
 
-      # A resource with a workflow is not written here — the tool that does
-      # it is named, so the model retries correctly instead of giving up.
-      # Which tool depends on what was asked for, so each subclass names its
-      # own.
-      def refusal_for(entry)
-        workflow_key = preferred_workflow_key(entry)
-
-        if workflow_key.blank?
-          return "#{entry.key} cannot be written with this tool — it is managed elsewhere in the dashboard."
-        end
-
-        "#{entry.key} is written through a workflow — use the #{workflow_key.tr('.', '_')} tool instead."
-      end
-
-      # Overridden by CreateResource, which wants the create workflow named.
-      def preferred_workflow_key(entry)
-        entry.update_workflow_key.presence || entry.create_workflow_key
-      end
-
-      # Only the attributes the Admin API itself would accept. Anything else is
-      # named back rather than silently dropped, so a model that guessed a
-      # field name learns the real one from `describe_resource`.
+      # Attributes travel as the request body, so what the controller accepts
+      # is the only list — including the attributes an extension added, which
+      # the hand-written list this replaces could not see.
+      #
+      # An attribute the controller does not permit is dropped silently and
+      # the response is a 200, so a model would report a change that never
+      # happened. Named back instead, the way an unknown filter is.
       #
       # @return [Array(Hash, nil), Array(nil, Hash)]
-      def permitted_attributes(entry, attributes)
-        attributes = (attributes || {}).transform_keys(&:to_s)
-        allowed = entry.writable_attribute_names
-        rejected = attributes.keys - allowed
+      def body_for(entry, attributes)
+        body = (attributes || {}).to_h.deep_transform_keys(&:to_s)
+        accepted = entry.writable_attribute_names
+        return [body, nil] if accepted.blank?
 
-        if rejected.any?
-          return [nil, { error: "#{entry.key} does not accept #{rejected.to_sentence}. " \
-                                "Accepted attributes: #{allowed.to_sentence}." }]
-        end
+        unknown = body.keys - accepted
+        return [body, nil] if unknown.empty?
 
-        [attributes, nil]
+        [nil, { error: "#{entry.key} does not accept #{unknown.to_sentence}.",
+                accepted_attributes: accepted }]
       end
 
-      # Assigns only what the model will actually accept.
-      #
-      # The documented attribute list is the API's create body, and a create
-      # body can carry a parameter the controller translates rather than
-      # assigns — a delivery profile's `kind` picks the STI subclass and is
-      # not a column. Handing that to `assign_attributes` raises
-      # ActiveModel::UnknownAttributeError, which escapes as a protocol
-      # failure instead of something the model can correct.
-      #
-      # @return [Array(Hash, Array<String>)] what was assigned, and what the
-      #   model does not accept
-      def assignable_attributes(record, attributes)
-        attributes.partition { |name, _value| record.respond_to?(:"#{name}=") }.
-          then { |accepted, rejected| [accepted.to_h, rejected.map(&:first)] }
+      def result_for(response, entry, summary:)
+        return { error: response.error_message } unless response.success?
+
+        payload = response.data
+        record = payload.is_a?(Hash) ? RecordSummary.sanitize(payload.stringify_keys, entry.key) : nil
+
+        {
+          summary: summary,
+          record: record && RecordSummary.from_payload(entry: entry, payload: record)
+        }.compact
       end
 
-      # Saves through the model's own validations, and hands their messages
-      # back verbatim when it refuses.
-      def save_record(entry, record)
-        return { error: record.errors.full_messages.to_sentence } unless record.save
+      def not_writable(entry, action)
+        verb = { create: 'created', update: 'updated', destroy: 'deleted' }.fetch(action, 'changed')
 
-        # One serialization: the summary line needs the record's title, which
-        # is what the summary row already carries.
-        row = RecordSummary.call(entry: entry, record: record)
-
-        { summary: summary_for(entry, row[:title]), record: row }
-      end
-
-      def summary_for(entry, label)
-        "#{self.class.tool_name.humanize} #{entry.key.singularize.humanize.downcase} #{label}"
-      end
-
-      private
-
-      def writable_for?(entry)
-        entry.generic_writes? && context.permitted?(entry.write_permission)
+        "#{entry.key} cannot be #{verb} this way — call describe_resource to see what can."
       end
     end
   end

@@ -30,9 +30,12 @@ module Spree
 
       private
 
+      # Every dispatchable resource reports its attributes now: the generic
+      # writes reach the controller, which runs whatever workflow it
+      # declares, so there is no longer a class of resource they refuse.
       def writable_attributes_for(entry)
-        return unless entry.generic_writes?
-        return unless context.permitted?(entry.write_permission)
+        return unless entry.api_path(:update).present? || entry.api_path(:create).present?
+        return unless entry.write_permission.present? && context.permitted?(entry.write_permission)
 
         entry.writable_attribute_names.presence
       end
@@ -46,8 +49,9 @@ module Spree
           # which is what create_resource and update_resource tell it to do.
           # Offered only where the caller could actually write.
           writable_attributes: writable_attributes_for(entry),
-          # Named per operation, because they are different tools: a caller
-          # preparing a creation must not be handed the update tool's name.
+          # The action tool for a record that has one of its own — cancel,
+          # complete, approve. Ordinary attribute changes go through
+          # update_resource whatever the controller does internally.
           created_by_tool: entry.create_workflow_key&.tr('.', '_'),
           updated_by_tool: entry.update_workflow_key&.tr('.', '_'),
           # Named queries answer things no column can — stock levels live

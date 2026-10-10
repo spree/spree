@@ -34,23 +34,28 @@ RSpec.describe 'agent generic record writes' do
     # A resource with a workflow has exactly one way to be written, and the
     # refusal names it so the model retries with the right tool instead of
     # giving up.
-    it 'refuses a resource written through a workflow, naming its tool' do
+    # The old refusal rule is gone. It existed because the generic writes
+    # assigned attributes and saved, which would have been a second way to
+    # write the same record; dispatched, this IS the controller's way, and
+    # the controller runs whatever workflow it declares.
+    it 'writes a resource whose controller declares a workflow' do
       product = create(:product, store: store)
 
       result = tool('update_resource').call(resource: 'products', id: product.prefixed_id,
                                             attributes: { 'name' => 'Renamed' })
 
-      expect(result[:error]).to include('products_update')
-      expect(product.reload.name).not_to eq('Renamed')
+      expect(result[:error]).to be_nil
+      expect(product.reload.name).to eq('Renamed')
     end
 
-    it 'refuses a resource written through a Tier 1 service' do
+    it 'writes a resource whose controller calls a service' do
       order = create(:order, store: store)
 
       result = tool('update_resource').call(resource: 'orders', id: order.prefixed_id,
                                             attributes: { 'email' => 'new@example.com' })
 
-      expect(result[:error]).to be_present
+      expect(result[:error]).to be_nil
+      expect(order.reload.email).to eq('new@example.com')
     end
 
     # Silently dropping an attribute leaves the model believing it set
@@ -60,7 +65,7 @@ RSpec.describe 'agent generic record writes' do
                                             attributes: { 'colour' => 'blue' })
 
       expect(result[:error]).to include('colour')
-      expect(result[:error]).to include('currency')
+      expect(result[:accepted_attributes]).to include('currency')
     end
 
     it 'does not reach another store\'s record' do
@@ -96,10 +101,12 @@ RSpec.describe 'agent generic record writes' do
       expect(Spree::Market.for_store(store).where(name: name)).to exist
     end
 
-    it 'refuses a resource written through a workflow' do
-      result = tool('create_resource').call(resource: 'products', attributes: { 'name' => 'New' })
+    it 'creates a resource whose controller declares a workflow' do
+      result = tool('create_resource').call(resource: 'products',
+                                            attributes: { 'name' => "Dispatched #{SecureRandom.hex(3)}" })
 
-      expect(result[:error]).to include('products_create')
+      expect(result[:error]).to be_nil
+      expect(result[:record][:id]).to be_present
     end
   end
 
@@ -121,31 +128,33 @@ RSpec.describe 'agent generic record writes' do
 
       expect(described[:created_by_tool]).to eq('products_create')
       expect(described[:updated_by_tool]).to eq('products_update')
-      expect(described).not_to have_key(:writable_attributes)
+      # Reported now where it used to be withheld: the generic writes reach
+      # the controller, so a resource with a workflow is writable through
+      # them too and the model needs its attribute list either way.
+      expect(described[:writable_attributes]).to include('name')
     end
   end
 
-  # The documented attribute list is the API's CREATE body, and a create body
-  # can carry a parameter the controller translates rather than assigns — a
-  # delivery profile's `kind` picks the STI subclass and is not a column.
-  # Handing that to assign_attributes raises, which must not escape as a
-  # protocol failure.
-  describe 'an attribute the model does not accept' do
+  # A create body can carry a parameter the controller translates rather than
+  # assigns — a delivery profile's `kind` picks the STI subclass and is not a
+  # column. The old generic write handed it to `assign_attributes` and had to
+  # catch the raise; dispatched, the controller decides what to do with it,
+  # so the whole class of problem belongs to the endpoint.
+  describe 'an attribute the controller translates rather than assigns' do
     let(:profile) { store.delivery_profiles.first || create(:delivery_profile, store: store) }
 
-    it 'refuses instead of raising when nothing assignable is left' do
+    it 'leaves it to the endpoint rather than raising' do
       result = tool('update_resource').call(resource: 'delivery_profiles', id: profile.prefixed_id,
                                             attributes: { 'kind' => 'shipping' })
 
-      expect(result[:error]).to include('kind')
+      expect(result[:error]).to be_nil
     end
 
-    it 'applies what it can and names what it could not' do
+    it 'applies the attributes alongside it' do
       result = tool('update_resource').call(resource: 'delivery_profiles', id: profile.prefixed_id,
                                             attributes: { 'name' => 'Renamed Profile', 'kind' => 'shipping' })
 
       expect(result[:error]).to be_nil
-      expect(result[:unsupported]).to eq(['kind'])
       expect(profile.reload.name).to eq('Renamed Profile')
     end
   end

@@ -1,44 +1,28 @@
 module Spree
   module AgentTools
-    # Removes a record of a resource the Admin API deletes directly.
+    # Removes a record, through the Admin API's own destroy operation —
+    # which soft-deletes, archives or refuses exactly as the dashboard does.
     class DeleteResource < Spree::AgentTools::ResourceWrite
       tool_name 'delete_resource'
-      description 'Delete a store setup record. Catalog and order records are removed by their ' \
-                  'own tools, which run the workflow the dashboard runs.'
+      description 'Delete a record. The endpoint decides what deleting means for it — some ' \
+                  'resources archive, some refuse while they are in use.'
 
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :id, description: 'The record id as shown in search results', required: true
 
       def call(resource:, id:)
-        entry, refusal = writable_entry(resource)
+        entry, refusal = writable_entry(resource, :destroy)
         return refusal if refusal
 
-        record = entry.scope_for(context, :destroy).find_by_prefix_id(id)
-        return { error: "No #{entry.key.singularize} found for #{id.inspect}." } if record.nil?
-        return { error: "You do not have permission to delete this #{entry.key.singularize}." } unless context.can?(:destroy, record)
+        response = dispatch.call(method: :delete, path: entry.api_path(:destroy).sub(':id', id.to_s))
+        return { error: response.error_message } unless response.success?
 
-        label = RecordSummary.call(entry: entry, record: record)[:title]
-
-        if record.destroy
-          { summary: "Delete #{entry.key.singularize.humanize.downcase} #{label}" }
-        else
-          { error: record.errors.full_messages.to_sentence.presence || "#{label} could not be deleted." }
-        end
-      end
-      protected
-
-      # A delete has no workflow key of its own in the map, so naming the
-      # update workflow would send the model to a tool that cannot delete.
-      # The refusal points at the resource's workflow family instead and
-      # lets `describe_resource` list what is actually callable.
-      def refusal_for(entry)
-        family = entry.update_workflow_key.presence || entry.create_workflow_key
-        return super if family.blank?
-
-        "#{entry.key} is written through workflows — call describe_resource to see " \
-          "which #{family.split('.').first}_* tool removes one."
+        { summary: summary(resource: resource, id: id) }
       end
 
+      def summary(arguments)
+        "Delete #{arguments[:resource].to_s.singularize.tr('_', ' ')} #{arguments[:id]}"
+      end
     end
   end
 end
