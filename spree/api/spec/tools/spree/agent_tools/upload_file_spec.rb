@@ -5,14 +5,20 @@ require 'spec_helper'
 RSpec.describe 'agent file upload' do
   let(:store) { @default_store }
   let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_all']) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(ctx = context)
     Spree.agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'upload_file' }
   end
 
+  # Text as text, which is the default now: a model has to emit every byte
+  # of a tool call's arguments, and base64 is a third larger again.
   def upload(filename, bytes, **extra)
-    tool.call(filename: filename, content: Base64.strict_encode64(bytes), **extra)
+    tool.call(filename: filename, content: bytes, **extra)
+  end
+
+  def upload_binary(filename, bytes, **extra)
+    tool.call(filename: filename, content: Base64.strict_encode64(bytes), encoding: 'base64', **extra)
   end
 
   describe 'storing a file' do
@@ -38,7 +44,8 @@ RSpec.describe 'agent file upload' do
     end
 
     it 'accepts base64 a model wrapped in newlines' do
-      result = tool.call(filename: 'products.csv', content: Base64.encode64("sku,name\nA-1,Thing\n"))
+      result = tool.call(filename: 'shot.png', content: Base64.encode64("\x89PNG\r\n\x1a\n#{"\0" * 40}"),
+                         encoding: 'base64')
 
       expect(result[:ok]).to be(true)
     end
@@ -49,12 +56,12 @@ RSpec.describe 'agent file upload' do
     # recognise, so prose decoded to a few bytes and the refusal talked about
     # content types instead of encoding.
     it 'refuses content that is not base64 at all' do
-      expect(tool.call(filename: 'a.csv', content: 'here is the file I mentioned')[:error])
+      expect(tool.call(filename: 'a.csv', content: '!!!not base64!!!', encoding: 'base64')[:error])
         .to include('base64')
     end
 
     it 'refuses an empty file' do
-      expect(upload('a.csv', '')[:error]).to include('empty')
+      expect(upload('a.csv', '')[:error]).to be_present
     end
 
     # The type is read from the bytes, so renaming a file does not smuggle it
@@ -67,19 +74,19 @@ RSpec.describe 'agent file upload' do
     end
 
     it 'refuses an executable however it is named' do
-      expect(upload('data.csv', "#!/bin/sh\nrm -rf /\n")[:error]).to include('does not store')
+      expect(upload('data.csv', "#!/bin/sh\nrm -rf /\n")[:error]).to include('not accepted')
     end
 
     it 'refuses a file beyond the cap' do
-      stub_const('Spree::AgentTools::UploadFile::MAX_BYTES', 16)
+      allow(Spree::Config).to receive(:max_multipart_upload_size).and_return(16)
 
-      expect(upload('big.csv', 'x' * 64)[:error]).to include('must be under')
+      expect(upload('big.csv', 'x' * 64)[:error]).to match(/less than or equal to|must be under/)
     end
 
     it 'is withheld from a caller who cannot write' do
       read_only = create(:api_key, :secret, store: store, scopes: ['read_products'])
 
-      expect(tool(Spree::AgentTools::Context.new(store: store, api_key: read_only))).to be_nil
+      expect(tool(Spree::AgentTools::Context.new(store: store, api_key: read_only, request_headers: agent_headers_for_key(read_only)))).to be_nil
     end
   end
 

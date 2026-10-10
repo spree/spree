@@ -24,6 +24,7 @@ module Spree
         Spree::AgentTools::CreateOrder
         Spree::AgentTools::CreateMedia
         Spree::AgentTools::CreateImport
+        Spree::AgentTools::SetStock
         Spree::AgentTools::QueryReport
         Spree::AgentTools::DescribeReporting
         Spree::AgentTools::CreateExport
@@ -76,7 +77,6 @@ module Spree
         # Orders. `restock_items` is hidden: it is deprecated and ignored, so
         # offering it would invite a model to set something that does nothing.
         order_cancel_workflow: { permission: 'write_orders', except: %i[restock_items] },
-        stock_level_bulk_upsert_workflow: 'write_stock',
         order_complete_workflow: 'write_orders',
 
         # Fulfillment
@@ -154,6 +154,10 @@ module Spree
         seller_payout_complete_workflow:
           'Settles a payout against the payment provider. Belongs to the payouts pipeline, which ' \
           'reconciles against provider state the agent cannot see.',
+        stock_level_bulk_upsert_workflow:
+          'Reached through its endpoint by set_stock, not run in process. The workflow takes ' \
+          'ids it trusts; the endpoint resolves them against the store first, and that is the ' \
+          'check an agent must not be able to skip.',
         import_start_mapping_workflow:
           'Reads the uploaded file and proposes its column mapping. Runs as part of creating ' \
           'an import rather than on its own — a mapping proposal against a file nobody has ' \

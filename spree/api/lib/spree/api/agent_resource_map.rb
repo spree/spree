@@ -43,30 +43,6 @@ module Spree
         'imports' => '/settings/imports'
       }.freeze
 
-      # Resources whose controller writes through a Tier 1 service rather
-      # than a workflow. Order editing, fees, discounts, addresses, stock
-      # levels and store credits reach agents when those paths become
-      # workflows (the 6.1 order-change substrate covers most of them), never
-      # through a generic write that would bypass the orchestration the
-      # service performs. See docs/plans/6.0-mcp-server.md, "What is not
-      # exposed at 6.0".
-      SERVICE_WRITTEN_MODELS = %w[
-        Spree::Order
-        Spree::Return
-        Spree::Exchange
-        Spree::Claim
-        Spree::StockLevel
-        Spree::StoreCredit
-        Spree::Refund
-        Spree::Payment
-        Spree::ShippingLabel
-        Spree::StockMovement
-        Spree::StockReservation
-        Spree::SellerPayout
-        Spree::SellerTransfer
-        Spree::Delivery
-      ].freeze
-
       # Resources withheld whatever their controller says, because their
       # serializer carries a live credential or a bearer instrument. Every
       # tool result reaches a model and, for a hosted client, a third party.
@@ -287,9 +263,20 @@ module Spree
         # at all; and a resource with no documented body is read-only here,
         # because a write tool with no attributes is one an agent can only get
         # wrong.
+        # Writable when the controller documents a body and does not hand out
+        # authority.
+        #
+        # The list of service-written models this used to consult is gone
+        # (2026-10-10). It existed because a generic write assigned
+        # attributes and saved, so reaching a record whose controller
+        # orchestrates — an order, a refund, a stock level — would have
+        # skipped that orchestration. A dispatched write IS the controller,
+        # so there is nothing left to skip, and the list only withheld writes
+        # the API performs correctly.
+        #
+        # A declared workflow no longer withholds it either: the controller
+        # runs its own workflow, which is what the generic write now reaches.
         def write_permission_for(model, scope, create_workflow, update_workflow, writable, controller)
-          return if SERVICE_WRITTEN_MODELS.include?(model.name)
-          return if create_workflow.present? || update_workflow.present?
           return if writable.empty?
           return if hands_out_authority?(controller)
 

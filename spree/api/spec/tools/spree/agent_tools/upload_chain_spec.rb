@@ -7,15 +7,24 @@ RSpec.describe 'agent tools that consume an upload' do
   let(:admin) { create(:admin_user) }
   let(:context) do
     Spree::AgentTools::Context.new(store: store, user: admin,
-                                   granted_scopes: %w[write_products read_products write_media write_customers])
+                                   granted_scopes: %w[write_products read_products write_media write_customers],
+                                   request_headers: agent_headers_for(admin))
   end
 
   def tool(name, ctx = context)
     Spree.agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == name }
   end
 
+  # Text as text. A model emits every byte of its arguments, so base64 is
+  # only asked for where the bytes are not text — said explicitly rather
+  # than sniffed, since some binary happens to be valid UTF-8.
   def upload(filename, bytes, ctx = context)
-    tool('upload_file', ctx).call(filename: filename, content: Base64.strict_encode64(bytes))[:file_id]
+    tool('upload_file', ctx).call(filename: filename, content: bytes)[:file_id]
+  end
+
+  def upload_binary(filename, bytes, ctx = context)
+    tool('upload_file', ctx).
+      call(filename: filename, content: Base64.strict_encode64(bytes), encoding: 'base64')[:file_id]
   end
 
   # One transparent pixel. A real PNG, because the type is read from bytes.
@@ -27,7 +36,7 @@ RSpec.describe 'agent tools that consume an upload' do
     let(:product) { create(:product, store: store) }
 
     it 'places an uploaded file in a product gallery' do
-      result = tool('media_create').call(file_id: upload('shot.png', png),
+      result = tool('media_create').call(file_id: upload_binary('shot.png', png),
                                          product_id: product.prefixed_id, alt: 'Studio shot')
 
       expect(result[:error]).to be_nil
@@ -40,7 +49,7 @@ RSpec.describe 'agent tools that consume an upload' do
 
     # A row with no owner is a library file: uploaded, not yet placed.
     it 'leaves it unplaced when no product is named' do
-      result = tool('media_create').call(file_id: upload('lib.png', png))
+      result = tool('media_create').call(file_id: upload_binary('lib.png', png))
 
       expect(result[:error]).to be_nil
       expect(Spree::Media.find_by_prefix_id(result[:id]).viewable).to be_nil
@@ -53,7 +62,7 @@ RSpec.describe 'agent tools that consume an upload' do
     it 'refuses a product in another store' do
       theirs = create(:product, store: create(:store, code: "other-#{SecureRandom.hex(4)}"))
 
-      expect(tool('media_create').call(file_id: upload('x.png', png), product_id: theirs.prefixed_id)[:error]).
+      expect(tool('media_create').call(file_id: upload_binary('x.png', png), product_id: theirs.prefixed_id)[:error]).
         to include('No product found')
     end
 
@@ -113,7 +122,7 @@ RSpec.describe 'agent tools that consume an upload' do
     end
 
     it 'says so when the file is not CSV at all' do
-      result = tool('create_import').call(resource: 'products', file_id: upload('shot.png', png))
+      result = tool('create_import').call(resource: 'products', file_id: upload_binary('shot.png', png))
 
       expect(result[:error]).to be_present
       expect(result[:ok]).to be_nil

@@ -6,7 +6,7 @@ require 'spec_helper'
 RSpec.describe 'agent workflow tool arguments' do
   let(:store) { @default_store }
   let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_all']) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(name)
     Spree.agent_tools.available_for(context).find { |candidate| candidate.tool_name == name }
@@ -119,7 +119,7 @@ RSpec.describe 'agent workflow tool arguments' do
 
     it 'records an admin user, which the association does accept' do
       admin = create(:admin_user)
-      admin_context = Spree::AgentTools::Context.new(store: store, user: admin)
+      admin_context = Spree::AgentTools::Context.new(store: store, user: admin, request_headers: agent_headers_for(admin))
       admin_tool = Spree.agent_tools.available_for(admin_context).
                    find { |candidate| candidate.tool_name == 'purchase_orders_create' }
 

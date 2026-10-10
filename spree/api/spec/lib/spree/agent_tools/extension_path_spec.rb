@@ -7,7 +7,7 @@ require 'spec_helper'
 RSpec.describe 'the extension path the docs describe' do
   let(:store) { @default_store }
   let(:key) { create(:api_key, :secret, store: store, scopes: ['read_purchasing']) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: key) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: key, request_headers: agent_headers_for_key(key)) }
 
   before do
     stub_const('MyShop', Module.new)
@@ -41,7 +41,7 @@ RSpec.describe 'the extension path the docs describe' do
 
   it 'is hidden from a key without the permission' do
     other = create(:api_key, :secret, store: store, scopes: ['read_products'])
-    ctx = Spree::AgentTools::Context.new(store: store, api_key: other)
+    ctx = Spree::AgentTools::Context.new(store: store, api_key: other, request_headers: agent_headers_for_key(other))
 
     expect(Spree.agent_tools.available_for(ctx).map(&:tool_name)).not_to include('supplier_stock')
   end

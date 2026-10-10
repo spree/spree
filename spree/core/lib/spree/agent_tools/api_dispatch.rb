@@ -56,9 +56,12 @@ module Spree
       end
 
       # @param method [Symbol] :get, :post, :patch, :delete
-      # @param path [String] the operation's path, already interpolated
+      # @param path [String] the operation's full path, already interpolated —
+      #   the resource map's paths are absolute (`/api/v3/admin/products`)
       # @param params [Hash] query parameters for a read
-      # @param body [Hash, nil] the request body for a write
+      # @param body [Hash, nil] the request body for a write. A value that
+      #   responds to `read` makes the request multipart, which is how the
+      #   upload endpoint takes bytes.
       # @return [Response]
       def call(method:, path:, params: {}, body: nil)
         env = build_env(method, path, params, body)
@@ -74,14 +77,26 @@ module Spree
         # helper that yields, it ran before the executor finished unwinding
         # and the outer values were lost again.
         saved = Spree::Current.attributes.to_a
-        Spree::Current.reset
+        # `RequestStore` is per-request too, and the inner request's middleware
+        # clears it on the way out — leaving `RequestStore.store` nil, which
+        # the store scope guard indexes into on the outer request's next
+        # query. Saved unconditionally, including when it is already empty:
+        # restoring an empty hash is what keeps it a hash.
+        saved_request_store = defined?(RequestStore) ? RequestStore.store.to_h.dup : nil
 
         begin
           status, headers, rack_body = Rails.application.call(env)
           Response.new(status: status, headers: headers, body: parse(rack_body))
         ensure
-          Spree::Current.reset
+          # The executor flushes `ActiveSupport::ExecutionContext` as the
+          # inner request unwinds, and that is where `CurrentAttributes` keeps
+          # its per-thread instances — so the outer request's next read of
+          # `Spree::Current` found no registry and raised inside Rails. A
+          # frame has to be pushed back BEFORE the values are written, or the
+          # writes land in a frame that is then replaced and read as nil.
+          ActiveSupport::ExecutionContext.push if defined?(ActiveSupport::ExecutionContext)
           saved.each { |name, value| Spree::Current.public_send(:"#{name}=", value) }
+          RequestStore.store = saved_request_store unless saved_request_store.nil?
         end
       end
 
@@ -89,14 +104,12 @@ module Spree
 
       def build_env(method, path, params, body)
         query = params.present? ? Rack::Utils.build_nested_query(stringify(params)) : nil
-        payload = body.present? ? JSON.generate(body) : nil
 
         env = Rack::MockRequest.env_for(
-          [mount_path, path].join,
+          path,
           method: method.to_s.upcase,
           params: query,
-          input: payload,
-          'CONTENT_TYPE' => ('application/json' if payload)
+          **payload_env(body)
         ).compact
 
         forwarded.each { |name, value| env[name] = value }
@@ -104,15 +117,51 @@ module Spree
         env
       end
 
+      # JSON unless the body carries an IO, in which case the request is
+      # multipart — the shape `POST /files` reads bytes from, and the only
+      # way to hand it a file without a second request from outside.
+      def payload_env(body)
+        return {} if body.blank?
+
+        file = body.find { |_name, value| value.respond_to?(:read) }
+        return { input: JSON.generate(body), 'CONTENT_TYPE' => 'application/json' } if file.nil?
+
+        boundary = "SpreeAgentTools#{SecureRandom.hex(16)}"
+        {
+          input: multipart_body(body, file, boundary),
+          'CONTENT_TYPE' => "multipart/form-data; boundary=#{boundary}"
+        }
+      end
+
+      # Written out rather than taken from `Rack::Test`, which is a test
+      # dependency of neither gem and would be missing from a real install.
+      def multipart_body(body, file, boundary)
+        name, io = file
+        filename = body['filename'].presence || 'file'
+        content_type = body['content_type'].presence || 'application/octet-stream'
+
+        parts = body.except(name).filter_map do |field, value|
+          next if value.nil?
+
+          "--#{boundary}\r\nContent-Disposition: form-data; name=\"#{field}\"\r\n\r\n#{value}\r\n"
+        end
+
+        parts << "--#{boundary}\r\n" \
+                 "Content-Disposition: form-data; name=\"#{name}\"; filename=\"#{filename}\"\r\n" \
+                 "Content-Type: #{content_type}\r\n\r\n"
+
+        # Binary, because the bytes are: joining them into a UTF-8 string
+        # raises on the first image that is not valid UTF-8.
+        parts.join.dup.force_encoding(Encoding::BINARY) +
+          io.read.dup.force_encoding(Encoding::BINARY) +
+          "\r\n--#{boundary}--\r\n".dup.force_encoding(Encoding::BINARY)
+      end
+
       # The credential the caller authenticated with, repeated verbatim. Never
       # an internal header that skips authentication: that would rebuild the
       # second security boundary this class exists to remove.
       def forwarded
         @context.request_headers.slice(*FORWARDED_HEADERS)
-      end
-
-      def mount_path
-        Spree::Api::Oauth.resources[:admin] if defined?(Spree::Api::Oauth)
       end
 
       def parse(rack_body)

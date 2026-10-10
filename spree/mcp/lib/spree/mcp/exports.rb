@@ -14,10 +14,11 @@ module Spree
     module Exports
       URI_SCHEME = 'spree+export'.freeze
 
-      # Beyond this the body is not something a model can usefully read, and
-      # returning it would push out the conversation that asked for it. The
-      # client is told the size, so it can offer the download instead.
-      MAX_INLINE_BYTES = 1_000_000
+      # Set by what a model can read, not by what storage can hold. A CSV is
+      # text, so this is roughly 50,000 tokens — a large but survivable share
+      # of a context window. Beyond it the client is told the size and given
+      # the dashboard link.
+      MAX_INLINE_BYTES = 200_000
 
       class << self
         # @param context [Spree::AgentTools::Context]
