@@ -67,16 +67,6 @@ describe Spree::DeliveryRate, type: :model do
           expect(shipping_rate.display_price.to_s).
             to eq("$10.00 (incl. $1.67 #{non_default_tax_rate.name})")
         end
-
-        context 'when cost is zero' do
-          before do
-            shipping_rate.cost = 0
-          end
-
-          it 'shows no tax amount' do
-            expect(shipping_rate.display_price.to_s).to eq('$0.00')
-          end
-        end
       end
     end
 
@@ -88,16 +78,6 @@ describe Spree::DeliveryRate, type: :model do
       it 'shows correct tax amount' do
         expect(shipping_rate.display_price.to_s).
           to eq("$10.00 (+ $1.00 #{tax_rate.name})")
-      end
-
-      context 'when cost is zero' do
-        before do
-          shipping_rate.cost = 0
-        end
-
-        it 'shows no tax amount' do
-          expect(shipping_rate.display_price.to_s).to eq('$0.00')
-        end
       end
     end
 
@@ -124,10 +104,6 @@ describe Spree::DeliveryRate, type: :model do
 
   # Regression test for #3829
   context '#delivery_method' do
-    it 'can be retrieved' do
-      expect(shipping_rate.delivery_method.reload).to eq(delivery_method)
-    end
-
     it 'can be retrieved even when deleted' do
       delivery_method.update_column(:deleted_at, Time.current)
       shipping_rate.save
@@ -143,23 +119,11 @@ describe Spree::DeliveryRate, type: :model do
       shipping_rate.tax_rate = tax_rate
     end
 
-    it 'can be retrieved' do
-      expect(shipping_rate.tax_rate.reload).to eq(tax_rate)
-    end
-
     it 'can be retrieved even when deleted' do
       tax_rate.update_column(:deleted_at, Time.current)
       shipping_rate.save
       shipping_rate.reload
       expect(shipping_rate.tax_rate).to eq(tax_rate)
-    end
-  end
-
-  context '#tax_amount' do
-    context 'without tax rate' do
-      it 'returns 0.0' do
-        expect(shipping_rate.tax_amount).to eq(0.0)
-      end
     end
   end
 

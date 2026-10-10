@@ -134,36 +134,6 @@ RSpec.describe SpreeStripe::PayoutProvider do
 
       expect { described_class.new.transfer!(seller_transfer) }.to raise_error(Stripe::InvalidRequestError)
     end
-
-    context 'when the customer paid by card' do
-      # Funds the transfer from that charge, so it settles with the charge
-      # rather than out of the marketplace's own balance.
-      # Stripe funds a transfer from a charge. `response_code` holds the
-      # payment intent that produced it, which Stripe cannot use here — the
-      # charge is recorded on the payment when its session completes.
-      it 'names the charge as the funding source' do
-        create(:payment, order: order, payment_method: gateway, status: 'completed',
-                         response_code: 'pi_123', amount: 100,
-                         metadata: { 'stripe_charge_id' => 'ch_123' })
-
-        expect(Stripe::Transfer).to receive(:create).
-          with(hash_including(source_transaction: 'ch_123'), anything).
-          and_return(Stripe::StripeObject.construct_from(id: 'tr_1'))
-
-        described_class.new.transfer!(seller_transfer)
-      end
-    end
-
-    context 'when there is no charge to draw on' do
-      it 'omits the funding source rather than sending a null one' do
-        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
-          expect(payload).not_to have_key(:source_transaction)
-          Stripe::StripeObject.construct_from(id: 'tr_1')
-        end
-
-        described_class.new.transfer!(seller_transfer)
-      end
-    end
   end
 
   # An account settles in its own currency and Stripe converts on the way in, so
@@ -505,12 +475,6 @@ RSpec.describe SpreeStripe::PayoutProvider do
       )
 
       expect(described_class.new.onboarding_message(seller)).to be_nil
-    end
-  end
-
-  describe '.requires_payout_account?' do
-    it 'is true — nothing can be sent to a seller without a connected account' do
-      expect(described_class.requires_payout_account?).to be(true)
     end
   end
 

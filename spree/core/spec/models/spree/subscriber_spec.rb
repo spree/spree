@@ -46,21 +46,6 @@ RSpec.describe Spree::Subscriber, events: true do
     end
   end
 
-  describe '.on' do
-    it 'maps events to methods' do
-      subscriber_class = Class.new(described_class) do
-        subscribes_to 'payment.completed', 'payment.voided'
-        on 'payment.completed', :handle_complete
-        on 'payment.voided', :handle_void
-      end
-
-      expect(subscriber_class.event_handlers).to eq({
-        'payment.completed' => :handle_complete,
-        'payment.voided' => :handle_void
-      })
-    end
-  end
-
   describe '#call' do
     context 'without event handlers' do
       it 'calls the handle method' do

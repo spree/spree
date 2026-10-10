@@ -191,10 +191,7 @@ describe Spree::Authentication::Strategies::EmailPasswordStrategy do
     end
 
     it 'authenticates with admin user class' do
-      admin_user # ensure admin user exists
-      # Mock password validation for admin user
-      allow(admin_user).to receive(:valid_password?).with('admin123').and_return(true)
-      allow(strategy).to receive(:find_user_by_email).with('admin@example.com').and_return(admin_user)
+      admin_user
 
       result = strategy.authenticate
 

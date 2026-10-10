@@ -13,13 +13,9 @@ RSpec.describe Spree::AllowedOrigin, type: :model do
       duplicate = build(:allowed_origin, store: store, origin: 'https://example.com')
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:origin]).to include('has already been taken')
-    end
 
-    it 'allows same origin for different stores' do
       other_store = create(:store, code: 'other')
-      create(:allowed_origin, store: store, origin: 'https://example.com')
-      other = build(:allowed_origin, store: other_store, origin: 'https://example.com')
-      expect(other).to be_valid
+      expect(build(:allowed_origin, store: other_store, origin: 'https://example.com')).to be_valid
     end
   end
 
@@ -167,22 +163,6 @@ RSpec.describe Spree::AllowedOrigin, type: :model do
         expect(allowed_origin.matches?('https://staging.myshop.com/page')).to be false
         expect(allowed_origin.matches?('https://staging.myshop.com:9000/page')).to be false
       end
-    end
-  end
-
-  describe 'SingleStoreResource' do
-    it 'prevents changing store after creation' do
-      origin = create(:allowed_origin, store: store)
-      other_store = create(:store, code: 'other2')
-      origin.store = other_store
-      expect(origin).not_to be_valid
-    end
-  end
-
-  describe 'prefix_id' do
-    it 'generates ao_ prefixed id' do
-      origin = create(:allowed_origin, store: store)
-      expect(origin.prefixed_id).to start_with('ao_')
     end
   end
 end

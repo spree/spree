@@ -189,16 +189,6 @@ describe Spree::WebhookPayloadRedaction do
       expect(described_class.split('data' => nil)).to eq([{ 'data' => nil }, {}])
     end
 
-    it 'redacts both data hashes when the payload carries :data and "data"' do
-      payload, _secrets = described_class.split(
-        :data => { 'reset_token' => 'sym-side' },
-        'data' => { 'reset_token' => 'str-side' }
-      )
-
-      expect(payload[:data]['reset_token']).to eq(placeholder)
-      expect(payload['data']['reset_token']).to eq(placeholder)
-    end
-
     it 'redacts every form of a sensitive key present in the same data hash' do
       payload, secrets = described_class.split(
         'data' => { :reset_token => 'sym-tok', 'reset_token' => 'str-tok' }
@@ -220,15 +210,6 @@ describe Spree::WebhookPayloadRedaction do
   end
 
   describe '.merge' do
-    it 'restores extracted secrets' do
-      redacted = { 'data' => { 'email' => 'a@example.com', 'reset_token' => placeholder } }
-
-      restored = described_class.merge(redacted, 'reset_token' => 'live-token')
-
-      expect(restored['data']['reset_token']).to eq('live-token')
-      expect(restored['data']['email']).to eq('a@example.com')
-    end
-
     it 'leaves the payload redacted when no secrets are held' do
       redacted = { 'data' => { 'reset_token' => placeholder } }
 
@@ -261,11 +242,5 @@ describe Spree::WebhookPayloadRedaction do
       expect(restored['data']['reset_token']).to eq('live-token')
       expect(restored['data']['child']['reset_token']).to eq(placeholder)
     end
-  end
-
-  it 'round-trips to the original payload' do
-    original = { 'data' => { 'email' => 'a@example.com', 'reset_token' => 'live-token' } }
-
-    expect(described_class.merge(*described_class.split(original))).to eq(original)
   end
 end

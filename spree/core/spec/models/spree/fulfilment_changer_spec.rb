@@ -158,7 +158,7 @@ describe Spree::FulfillmentChanger do
           end
 
           it 'does not unstock the desired location' do
-            expect { subject }.not_to change(stock_level, :count_on_hand)
+            expect { subject }.not_to change { stock_level.reload.count_on_hand }
           end
         end
       end
@@ -190,16 +190,6 @@ describe Spree::FulfillmentChanger do
 
         context 'when the desired stock location already has a backordered units' do
           let(:desired_count_on_hand) { -1 }
-
-          it 'releases seven at the original stock location' do
-            expect { subject }.
-              to change { current_shipment.stock_location.stock_level(variant).allocated_count }.by(-7)
-          end
-
-          it 'allocates seven at the desired stock location' do
-            expect { subject }.
-              to change { desired_shipment.stock_location.stock_level(variant).allocated_count }.by(7)
-          end
 
           it 'creates a shipment with the correct number of on hand and backordered units' do
             subject

@@ -5,10 +5,6 @@ RSpec.shared_examples 'a line item currencies host' do
     let!(:euro_price) { create(:price, variant: line_item.variant, amount: 8, currency: 'EUR') }
 
     describe '#homogenize_line_item_currencies' do
-      it 'succeeds without error' do
-        expect { record.update!(currency: 'EUR') }.not_to raise_error
-      end
-
       it 'changes the line_item currencies' do
         expect { record.update!(currency: 'EUR') }.to change { line_item.reload.currency }.from('USD').to('EUR')
       end

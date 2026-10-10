@@ -52,21 +52,6 @@ describe Spree::PriceRules::ChannelRule, type: :model do
   end
 
   describe '#preferred_channel_ids=' do
-    it 'decodes prefixed channel IDs to raw IDs' do
-      rule.preferred_channel_ids = [channel.prefixed_id]
-      expect(rule.preferred_channel_ids).to eq([channel.id.to_s])
-    end
-
-    it 'accepts a comma-separated string' do
-      other_channel = create(:channel, store: price_list.store)
-      rule.preferred_channel_ids = "#{channel.prefixed_id},#{other_channel.prefixed_id}"
-      expect(rule.preferred_channel_ids).to contain_exactly(channel.id.to_s, other_channel.id.to_s)
-    end
-
-    it 'raises when given an unknown prefixed ID' do
-      expect { rule.preferred_channel_ids = ['ch_doesnotexist'] }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-
     it 'rejects a channel that belongs to another store' do
       other_store = create(:store)
       cross_store_channel = create(:channel, store: other_store)

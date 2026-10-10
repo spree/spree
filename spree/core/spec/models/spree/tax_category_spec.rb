@@ -18,7 +18,7 @@ describe Spree::TaxCategory, type: :model do
     end
 
     it 'undefaults the previous default tax category except when updating the existing default tax category' do
-      tax_category.update_column(:description, 'Updated description')
+      tax_category.update!(description: 'Updated description')
 
       tax_category.reload
       expect(tax_category.is_default).to be true
@@ -37,17 +37,11 @@ describe Spree::TaxCategory, type: :model do
       expect(create(:tax_category).store).to eq(@default_store)
     end
 
-    it 'allows the same name in another store' do
-      other_store = create(:store)
-      create(:tax_category, name: 'Standard')
-
-      expect(build(:tax_category, name: 'Standard', store: other_store)).to be_valid
-    end
-
-    it 'rejects a duplicate name within the same store, ignoring case' do
+    it 'rejects a duplicate name within the same store, ignoring case, but allows it in another store' do
       create(:tax_category, name: 'Standard')
 
       expect(build(:tax_category, name: 'standard')).not_to be_valid
+      expect(build(:tax_category, name: 'Standard', store: create(:store))).to be_valid
     end
 
     it 'ignores soft-deleted rows when checking the name' do

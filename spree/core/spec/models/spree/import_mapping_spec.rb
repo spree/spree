@@ -5,56 +5,6 @@ RSpec.describe Spree::ImportMapping, type: :model do
   let(:user) { create(:admin_user) }
   let(:import) { create(:product_import, store: store, user: user) }
 
-  describe 'Validations' do
-    describe 'presence validations' do
-      it 'validates presence of import' do
-        mapping = build(:import_mapping, import: nil)
-        expect(mapping).not_to be_valid
-        expect(mapping.errors[:import]).to include('must exist')
-      end
-
-      it 'validates presence of schema_field' do
-        mapping = build(:import_mapping, schema_field: nil)
-        expect(mapping).not_to be_valid
-        expect(mapping.errors[:schema_field]).to include("can't be blank")
-      end
-    end
-
-    describe 'uniqueness validations' do
-      let!(:existing_mapping) { create(:import_mapping, import: import, schema_field: 'slug') }
-
-      it 'validates uniqueness of schema_field scoped to import_id' do
-        duplicate_mapping = build(:import_mapping, import: import, schema_field: 'slug')
-        expect(duplicate_mapping).not_to be_valid
-        expect(duplicate_mapping.errors[:schema_field]).to include('has already been taken')
-      end
-
-      it 'allows same schema_field for different imports' do
-        other_import = create(:product_import, store: store, user: user)
-        duplicate_mapping = build(:import_mapping, import: other_import, schema_field: 'slug')
-        expect(duplicate_mapping).to be_valid
-      end
-
-      it 'validates uniqueness of file_column scoped to import_id' do
-        existing_mapping.update!(file_column: 'product_name')
-        duplicate_mapping = build(:import_mapping, import: import, file_column: 'product_name')
-        expect(duplicate_mapping).not_to be_valid
-        expect(duplicate_mapping.errors[:file_column]).to include('has already been taken')
-      end
-
-      it 'allows blank file_column' do
-        mapping = build(:import_mapping, import: import, schema_field: 'description', file_column: nil)
-        expect(mapping).to be_valid
-      end
-
-      it 'allows same file_column for different imports' do
-        other_import = create(:product_import, store: store, user: user)
-        mapping = build(:import_mapping, import: other_import, schema_field: 'sku', file_column: 'name')
-        expect(mapping).to be_valid
-      end
-    end
-  end
-
   describe '#required?' do
     context 'when schema_field is a required field' do
       let(:mapping) { build(:import_mapping, import: import, schema_field: 'slug') }

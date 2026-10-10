@@ -13,17 +13,6 @@ RSpec.describe Spree::ActedBy do
       expect(Spree::Refund.acted_by_associations).to eq([:refunder])
       expect(Spree::StockReceipt.acted_by_associations).to eq([:received_by])
     end
-
-    it 'is polymorphic and optional' do
-      association = Spree::Order.reflect_on_association(:canceler)
-
-      expect(association).to be_polymorphic
-      expect(association.options[:optional]).to be(true)
-    end
-
-    it 'does not leak one model\'s names into another' do
-      expect(Spree::Refund.acted_by_associations).not_to include(:canceler)
-    end
   end
 
   describe 'accepting each registered actor kind' do

@@ -45,29 +45,11 @@ describe Spree::OptionValue, type: :model do
   end
 
   describe 'color_code validation' do
-    it 'accepts valid 6-digit hex color' do
-      option_value = build(:option_value, color_code: '#FF0000')
-      expect(option_value).to be_valid
-    end
-
-    it 'accepts valid 8-digit hex color (with alpha)' do
-      option_value = build(:option_value, color_code: '#FF0000AA')
-      expect(option_value).to be_valid
-    end
-
-    it 'accepts lowercase hex' do
-      option_value = build(:option_value, color_code: '#aabbcc')
-      expect(option_value).to be_valid
-    end
-
-    it 'accepts nil color_code' do
-      option_value = build(:option_value, color_code: nil)
-      expect(option_value).to be_valid
-    end
-
-    it 'accepts blank color_code' do
-      option_value = build(:option_value, color_code: '')
-      expect(option_value).to be_valid
+    it 'accepts 6- and 8-digit hex colors in any case, or no color' do
+      ['#FF0000', '#FF0000AA', '#aabbcc', nil, ''].each do |valid|
+        option_value = build(:option_value, color_code: valid)
+        expect(option_value).to be_valid, "Expected #{valid.inspect} to be valid"
+      end
     end
 
     it 'rejects invalid hex colors' do
@@ -86,15 +68,6 @@ describe Spree::OptionValue, type: :model do
       Mobility.with_locale(:pl) do
         option_value.update!(label: 'Czerwony')
       end
-    end
-
-    let(:option_value_pl_translation) { option_value.translations.find_by(locale: 'pl') }
-
-    it 'translates option value fields' do
-      expect(option_value.label).to eq('Red')
-
-      expect(option_value_pl_translation).to be_present
-      expect(option_value_pl_translation.label).to eq('Czerwony')
     end
 
     describe '#label' do

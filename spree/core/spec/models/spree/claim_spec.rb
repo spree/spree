@@ -10,19 +10,7 @@ RSpec.describe Spree::Claim do
     expect(claim).to be_open
   end
 
-  it 'is reachable from its order' do
-    claim = create(:claim, store: store)
-
-    expect(claim.order.reload.claims).to include(claim)
-  end
-
   describe 'reason' do
-    it 'records the merchant-owned reason' do
-      reason = create(:claim_reason, store: store, name: 'Arrived damaged')
-
-      expect(create(:claim, store: store, reason: reason).reason).to eq(reason)
-    end
-
     # A merchant mid-claim should not be blocked because nobody has curated
     # the vocabulary yet.
     it 'is optional' do

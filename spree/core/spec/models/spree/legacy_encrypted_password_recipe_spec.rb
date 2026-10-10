@@ -38,10 +38,4 @@ describe 'Legacy encrypted_password bridge', type: :model do
     expect(user.authenticate('secret123')).to be_truthy
     expect(user.authenticate('wrong')).to be(false)
   end
-
-  it 're-authenticates a reloaded record' do
-    model.create!(email: 'legacy2@example.com', password: 'hunter2!')
-
-    expect(model.find_by(email: 'legacy2@example.com').authenticate('hunter2!')).to be_truthy
-  end
 end

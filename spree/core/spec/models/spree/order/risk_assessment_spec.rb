@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
-  let(:order) { create(:order) }
-
   describe '.is_risky?' do
     context 'Not risky order' do
       let(:order) { FactoryBot.create(:order, payments: [payment]) }

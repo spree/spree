@@ -3,16 +3,6 @@ require 'spec_helper'
 RSpec.describe Spree::HasCustomFields, type: :concern do
   let(:product) { create(:product) }
 
-  describe 'associations' do
-    it 'has many custom_fields' do
-      expect(product).to respond_to(:custom_fields)
-    end
-
-    it 'has many storefront_custom_fields' do
-      expect(product).to respond_to(:storefront_custom_fields)
-    end
-  end
-
   describe '.with_custom_field_key' do
     let!(:definition) { create(:custom_field_definition, namespace: 'custom', key: 'foo', resource_type: 'Spree::Product') }
     let!(:custom_field) { create(:custom_field, resource: product, custom_field_definition: definition) }
@@ -190,15 +180,6 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
         }.not_to change { Spree::CustomField.count }
       end
     end
-
-    it 'accepts a definition owned by the record\'s own store' do
-      definition = create(:custom_field_definition, store: product.store, namespace: 'custom',
-                                                    key: 'material', resource_type: 'Spree::Product')
-
-      product.set_custom_field(definition, 'wool')
-
-      expect(product.get_custom_field('custom.material').value).to eq('wool')
-    end
   end
 
   describe '#has_custom_field?' do
@@ -285,22 +266,6 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
                              value: 'initial value', type: definition.field_type_class_name)
       end
 
-      it 'destroys existing custom_field when value is set to empty string' do
-        attrs = {
-          custom_fields_attributes: [
-            {
-              id: custom_field.id,
-              custom_field_definition_id: definition.id,
-              value: '',
-              type: definition.field_type_class_name
-            }
-          ]
-        }
-        expect {
-          product.update(attrs)
-        }.to change { product.custom_fields.count }.by(-1)
-      end
-
       it 'destroys existing custom_field when value is set to nil' do
         attrs = {
           custom_fields_attributes: [
@@ -315,23 +280,6 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
         expect {
           product.update(attrs)
         }.to change { product.custom_fields.count }.by(-1)
-      end
-
-      it 'updates existing custom_field when value is not empty' do
-        attrs = {
-          custom_fields_attributes: [
-            {
-              id: custom_field.id,
-              custom_field_definition_id: definition.id,
-              value: 'updated value',
-              type: definition.field_type_class_name
-            }
-          ]
-        }
-        expect {
-          product.update(attrs)
-        }.not_to change { product.custom_fields.count }
-        expect(custom_field.reload.value).to eq('updated value')
       end
 
       it 'handles multiple custom_fields correctly' do

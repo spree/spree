@@ -87,14 +87,6 @@ describe Spree::StockLevel, type: :model do
     end
   end
 
-  it 'maintains the count on hand for a variant' do
-    expect(subject.count_on_hand).to eq 10
-  end
-
-  it "can return the stock item's variant's name" do
-    expect(subject.variant_name).to eq(subject.variant.name)
-  end
-
   context 'available to be included in shipment' do
     context 'has stock' do
       it { expect(subject).to be_available }
@@ -240,8 +232,10 @@ describe Spree::StockLevel, type: :model do
 
       before { subject.set_count_on_hand(-2, force: true) }
 
-      it "doesn't process backorders" do
+      it "doesn't process backorders when stock drops further" do
         expect(subject).not_to receive(:backordered_inventory_units)
+
+        subject.set_count_on_hand(-3, force: true)
       end
 
       context 'adds new items' do

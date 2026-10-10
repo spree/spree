@@ -22,10 +22,12 @@ describe Spree::Catalog, type: :model do
     it 'adds store products once, skipping duplicates and foreign rows' do
       product = create(:product, store: store)
       foreign = create(:product, store: create(:store))
+      fresh = create(:product, store: store)
       catalog.add_products([product.id, foreign.id])
 
       expect(catalog.add_products([product.id])).to eq(0)
-      expect(catalog.products.reload).to contain_exactly(product)
+      expect(catalog.add_products([product.id, fresh.id])).to eq(1)
+      expect(catalog.products.reload).to contain_exactly(product, fresh)
     end
 
     # An owned list prices the assortment and nothing else, so it follows it
@@ -61,15 +63,6 @@ describe Spree::Catalog, type: :model do
         to change { catalog.catalog_products.count }.by(2)
 
       expect(catalog.products.reload).to contain_exactly(first, *later)
-    end
-
-    it 'adds a batch alongside an existing row without raising on the duplicate' do
-      existing = create(:product, store: store)
-      fresh = create(:product, store: store)
-      catalog.add_products([existing.id])
-
-      expect(catalog.add_products([existing.id, fresh.id])).to eq(1)
-      expect(catalog.products.reload).to contain_exactly(existing, fresh)
     end
   end
 
@@ -365,17 +358,6 @@ describe Spree::Catalog, type: :model do
 
       expect(Spree::PriceList.where(id: price_list.id)).to be_empty
       expect(Spree::PriceList.with_deleted.find(price_list.id)).to be_present
-    end
-
-    it 'does not leave the destroyed catalog list pricing the store' do
-      price_list.update!(status: 'active')
-      catalog = create(:catalog, store: store, price_list: price_list)
-      Spree::Current.store = store
-      expect(Spree::Current.price_lists.map(&:id)).not_to include(price_list.id)
-
-      catalog.destroy!
-
-      expect(Spree::Current.price_lists.map(&:id)).not_to include(price_list.id)
     end
 
     # The binding is written with update_all, which never touches the

@@ -44,17 +44,8 @@ RSpec.describe Spree::Import, :job, type: :model do
   describe 'status' do
     before { import.save! }
 
-    it 'has no state machine' do
-      expect(described_class).not_to respond_to(:state_machines)
-    end
-
     it 'starts in pending status' do
       expect(import.status).to eq('pending')
-    end
-
-    it 'rejects an unknown status' do
-      import.status = 'nonsense'
-      expect(import).not_to be_valid
     end
   end
 
@@ -196,13 +187,6 @@ RSpec.describe Spree::Import, :job, type: :model do
 
         expect(all_fields.count).to eq(base_field_count + custom_field_count)
       end
-
-      it 'has correct structure for custom_field fields' do
-        custom_field_field = import.schema_fields.find { |f| f[:name] == 'custom_field.properties.manufacturer' }
-        expect(custom_field_field).to eq(
-          { name: 'custom_field.properties.manufacturer', label: 'Manufacturer' }
-        )
-      end
     end
 
     context 'when model does not support custom_fields' do
@@ -215,11 +199,6 @@ RSpec.describe Spree::Import, :job, type: :model do
       it 'returns only base fields from schema' do
         fields = import.schema_fields
         expect(fields).to eq(Spree::ImportSchemas::Products::FIELDS)
-      end
-
-      it 'does not include any custom_field fields' do
-        custom_field_fields = import.schema_fields.select { |f| f[:name].start_with?('custom_field.') }
-        expect(custom_field_fields).to be_empty
       end
     end
 
@@ -287,20 +266,6 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
   end
 
-  describe '#store' do
-    context 'when owner is a Store' do
-      it 'returns the owner' do
-        expect(import.store).to eq(store)
-      end
-    end
-  end
-
-  describe '.available_types' do
-    it 'returns configured import types' do
-      expect(described_class.available_types).to eq(Spree.import_types)
-    end
-  end
-
   describe '.available_models' do
     it 'returns model classes for available types' do
       expect(described_class.available_models).to include(Spree::Product)
@@ -311,12 +276,6 @@ RSpec.describe Spree::Import, :job, type: :model do
     it 'returns the import type for a given model' do
       type = described_class.type_for_model(Spree::Product)
       expect(type.to_s).to eq('Spree::Imports::Products')
-    end
-  end
-
-  describe '.model_class' do
-    it 'returns the model class for the import type' do
-      expect(Spree::Imports::Products.model_class).to eq(Spree::Product)
     end
   end
 

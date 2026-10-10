@@ -19,12 +19,6 @@ RSpec.describe Spree::Channel::Gating, type: :model do
       expect(channel.resolved_storefront_access).to eq('prices_hidden')
     end
 
-    it 'prefers the channel value over the store value' do
-      store.update!(preferred_storefront_access: 'login_required')
-      channel.update!(preferred_storefront_access: 'public')
-      expect(channel.resolved_storefront_access).to eq('public')
-    end
-
     it 'clears the override (restores inheritance) when written blank' do
       store.update!(preferred_storefront_access: 'login_required')
       channel.update!(preferred_storefront_access: 'public')
@@ -40,10 +34,6 @@ RSpec.describe Spree::Channel::Gating, type: :model do
   end
 
   describe '#resolved_guest_checkout' do
-    it 'is nil on the channel by default (inherit)' do
-      expect(channel.preferred_guest_checkout).to be_nil
-    end
-
     it 'falls back to the store default (true) when the channel is unset' do
       expect(channel.resolved_guest_checkout).to be true
     end

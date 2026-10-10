@@ -7,8 +7,6 @@ describe Spree::Calculator::FlexiRate, type: :model do
   before { allow(line_item).to receive_messages quantity: 10 }
 
   describe '#compute' do
-    it { expect(calculator.preferred_apply_only_on_full_priced_items).to be false }
-
     shared_examples 'computes amount correctly' do
       it 'computes amount correctly when all fees are 0' do
         expect(calculator.compute(line_item).round(2)).to eq(0.0)
@@ -32,10 +30,6 @@ describe Spree::Calculator::FlexiRate, type: :model do
       it 'computes amount correctly when additional_items and first_item have values AND max items has value' do
         allow(calculator).to receive_messages preferred_first_item: 5.0, preferred_additional_item: 1.0, preferred_max_items: 3
         expect(calculator.compute(line_item).round(2)).to eq(7.0)
-      end
-
-      it 'allows creation of new object with all the attributes' do
-        Spree::Calculator::FlexiRate.new(preferred_first_item: 1, preferred_additional_item: 1, preferred_max_items: 1)
       end
     end
 

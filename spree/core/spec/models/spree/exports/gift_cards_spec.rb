@@ -29,23 +29,26 @@ RSpec.describe Spree::Exports::GiftCards, type: :model do
   end
 
   describe '#csv_headers' do
+    let(:base_headers) do
+      [
+        'Code',
+        'Amount',
+        'Amount Used',
+        'Amount Remaining',
+        'Currency',
+        'Status',
+        'Expires At',
+        'Customer Email',
+        'Customer First Name',
+        'Customer Last Name',
+        'Created At',
+        'Updated At'
+      ]
+    end
+
     context 'when no custom_fields exist' do
       it 'returns gift card headers' do
-        expected_headers = [
-          'Code',
-          'Amount',
-          'Amount Used',
-          'Amount Remaining',
-          'Currency',
-          'Status',
-          'Expires At',
-          'Customer Email',
-          'Customer First Name',
-          'Customer Last Name',
-          'Created At',
-          'Updated At'
-        ]
-        expect(export.csv_headers).to eq(expected_headers)
+        expect(export.csv_headers).to eq(base_headers)
       end
     end
 
@@ -58,22 +61,7 @@ RSpec.describe Spree::Exports::GiftCards, type: :model do
       end
 
       it 'includes custom_field headers' do
-        expected_headers = [
-          'Code',
-          'Amount',
-          'Amount Used',
-          'Amount Remaining',
-          'Currency',
-          'Status',
-          'Expires At',
-          'Customer Email',
-          'Customer First Name',
-          'Customer Last Name',
-          'Created At',
-          'Updated At',
-          'custom_field.custom.purchase_location'
-        ]
-        expect(export.csv_headers).to eq(expected_headers)
+        expect(export.csv_headers).to eq(base_headers + ['custom_field.custom.purchase_location'])
       end
     end
   end

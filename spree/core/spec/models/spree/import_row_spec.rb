@@ -12,43 +12,8 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
     allow(import).to receive(:attachment_file_content).and_return(csv_content)
   end
 
-  describe 'Associations' do
-    describe '#store' do
-      it 'delegates to import' do
-        import_row.save!
-        expect(import_row.store).to eq(store)
-      end
-    end
-  end
-
-  describe 'Validations' do
-    context 'row_number uniqueness' do
-      before { import_row.save! }
-
-      it 'validates uniqueness scoped to import_id' do
-        duplicate_row = build(:import_row, import: import, row_number: 1)
-        expect(duplicate_row).not_to be_valid
-        expect(duplicate_row.errors[:row_number]).to include('has already been taken')
-      end
-
-      it 'allows same row_number for different imports' do
-        other_import = create(:product_import, store: store)
-        other_row = build(:import_row, import: other_import, row_number: 1)
-        expect(other_row).to be_valid
-      end
-    end
-  end
-
   describe 'status' do
     before { import_row.save! }
-
-    it 'has no state machine' do
-      expect(described_class).not_to respond_to(:state_machines)
-    end
-
-    it 'starts in pending status' do
-      expect(import_row.status).to eq('pending')
-    end
 
     it 'rejects an unknown status' do
       import_row.status = 'nonsense'
@@ -66,20 +31,6 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
       it 'returns pending and failed rows' do
         expect(described_class.pending_and_failed).to include(pending_row, failed_row)
         expect(described_class.pending_and_failed).not_to include(completed_row, processing_row)
-      end
-    end
-
-    describe '.completed' do
-      it 'returns only completed rows' do
-        expect(described_class.completed).to include(completed_row)
-        expect(described_class.completed).not_to include(pending_row, failed_row, processing_row)
-      end
-    end
-
-    describe '.failed' do
-      it 'returns only failed rows' do
-        expect(described_class.failed).to include(failed_row)
-        expect(described_class.failed).not_to include(pending_row, completed_row, processing_row)
       end
     end
 

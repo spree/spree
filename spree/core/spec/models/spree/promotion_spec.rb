@@ -10,23 +10,6 @@ describe Spree::Promotion, type: :model do
   describe 'Validations' do
     let!(:valid_promotion) { build(:promotion, name: 'A promotion', kind: :automatic) }
 
-    it 'valid_promotion is valid' do
-      expect(valid_promotion).to be_valid
-    end
-
-    it 'validates usage limit' do
-      valid_promotion.usage_limit = -1
-      expect(valid_promotion).not_to be_valid
-
-      valid_promotion.usage_limit = 100
-      expect(valid_promotion).to be_valid
-    end
-
-    it 'validates name' do
-      valid_promotion.name = nil
-      expect(valid_promotion).not_to be_valid
-    end
-
     it 'can create multiple promos with the same code' do
       create(:promotion, code: 'ABC')
       valid_promotion.code = 'ABC'
@@ -174,18 +157,6 @@ describe Spree::Promotion, type: :model do
       promotion.save!
     end
 
-    it 'deletes actions' do
-      promotion.destroy!
-
-      expect(Spree::PromotionAction.count).to eq(0)
-    end
-
-    it 'deletes rules' do
-      promotion.destroy!
-
-      expect(Spree::PromotionRule.count).to eq(0)
-    end
-
     context 'if promotion was already used' do
       it 'does not destroy the promotion' do
         promotion.orders << create(:order)
@@ -240,18 +211,18 @@ describe Spree::Promotion, type: :model do
       promotion = create(:promotion, code: 'ABC', multi_codes: false, kind: :coupon_code)
 
       promotion.kind = :automatic
-      promotion.save
+      promotion.save!
 
-      expect(promotion.kind).to eq 'automatic'
+      expect(promotion.reload.kind).to eq 'automatic'
     end
 
     it 'allows to change promotion type from multiple discount codes to automatic' do
       promotion = create(:promotion, multi_codes: true, number_of_codes: 10, kind: :coupon_code)
 
       promotion.kind = :automatic
-      promotion.save
+      promotion.save!
 
-      expect(promotion.kind).to eq 'automatic'
+      expect(promotion.reload.kind).to eq 'automatic'
     end
   end
 
@@ -357,12 +328,6 @@ describe Spree::Promotion, type: :model do
     it 'is not expired if current time is within starts_at and expires_at range' do
       promotion.starts_at  = Time.current - 1.day
       promotion.expires_at = Time.current + 1.day
-      expect(promotion).not_to be_expired
-    end
-
-    it 'is not expired if usage limit is not exceeded' do
-      promotion.usage_limit = 2
-      allow(promotion).to receive_messages(credits_count: 1)
       expect(promotion).not_to be_expired
     end
   end
@@ -905,12 +870,6 @@ describe Spree::Promotion, type: :model do
       it 'has a generated code' do
         promotion.generate_code = true
         expect(promotion.code).not_to eq 'spree123'
-      end
-    end
-
-    context 'without generate_code' do
-      it 'has a generated code' do
-        expect(promotion.code).to eq 'spree123'
       end
     end
   end

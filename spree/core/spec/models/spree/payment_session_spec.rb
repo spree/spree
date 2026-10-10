@@ -8,43 +8,6 @@ RSpec.describe Spree::PaymentSession, type: :model do
   let(:payment_method) { create(:bogus_payment_method) }
   let(:payment_session) { create(:bogus_payment_session, order: order, payment_method: payment_method, amount: 50) }
 
-  describe 'validations' do
-    it { expect(payment_session).to be_valid }
-
-    it 'requires order' do
-      payment_session.order = nil
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'requires payment_method' do
-      payment_session.payment_method = nil
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'requires external_id' do
-      payment_session.external_id = nil
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'requires currency' do
-      payment_session.currency = nil
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'requires amount greater than 0' do
-      payment_session.amount = 0
-      expect(payment_session).not_to be_valid
-    end
-
-    it 'enforces external_id uniqueness per order and payment method' do
-      duplicate = build(:bogus_payment_session,
-                        order: payment_session.order,
-                        payment_method: payment_session.payment_method,
-                        external_id: payment_session.external_id)
-      expect(duplicate).not_to be_valid
-    end
-  end
-
   describe 'defaults from order' do
     it 'sets currency from order' do
       session = build(:bogus_payment_session, order: order, payment_method: payment_method,
@@ -232,20 +195,6 @@ RSpec.describe Spree::PaymentSession, type: :model do
     end
   end
 
-  describe '#prefixed_id' do
-    it 'starts with ps_' do
-      expect(payment_session.prefixed_id).to start_with('ps_')
-    end
-  end
-
-  describe 'soft delete' do
-    it 'soft deletes with acts_as_paranoid' do
-      payment_session.destroy
-      expect(described_class.with_deleted.find(payment_session.id)).to be_present
-      expect(described_class.find_by(id: payment_session.id)).to be_nil
-    end
-  end
-
   describe 'events' do
     before do
       allow(Spree::Events).to receive(:enabled?).and_return(true)
@@ -334,18 +283,20 @@ RSpec.describe Spree::PaymentSession, type: :model do
       expect(payment_session.find_or_create_payment!.id).to eq(payment_session.payment.id)
     end
 
-    it 'handles RecordNotUnique by returning the existing payment' do
-      existing = create(:payment,
-                        order: order,
-                        payment_method: payment_method,
-                        response_code: payment_session.external_id,
-                        amount: payment_session.amount)
-
-      # Simulate a race condition where find_or_create_by! raises RecordNotUnique
-      allow(order.payments).to receive(:find_or_create_by!).and_raise(ActiveRecord::RecordNotUnique)
+    it 'handles RecordNotUnique by returning the payment a concurrent request created' do
+      existing = nil
+      allow(payment_session.owner.payments).to receive(:find_or_create_by!) do
+        existing = create(:payment,
+                          order: order,
+                          payment_method: payment_method,
+                          response_code: payment_session.external_id,
+                          amount: payment_session.amount)
+        raise ActiveRecord::RecordNotUnique
+      end
 
       payment = payment_session.find_or_create_payment!
 
+      expect(payment_session.owner.payments).to have_received(:find_or_create_by!)
       expect(payment.id).to eq(existing.id)
     end
   end

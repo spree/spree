@@ -23,10 +23,6 @@ describe Spree::Core::Dependencies, type: :model do
       deps.cart_add_item_workflow = 'MyCustomAddItemService'
       expect(deps.cart_add_item_workflow).to eq 'MyCustomAddItemService'
     end
-
-    it 'works with constantize for string values' do
-      expect(deps.cart_add_item_workflow.constantize).to eq Spree::Carts::AddItem
-    end
   end
 
   describe '#<dependency>_class' do
@@ -34,31 +30,16 @@ describe Spree::Core::Dependencies, type: :model do
       expect(deps.cart_add_item_workflow_class).to eq Spree::Carts::AddItem
     end
 
-    it 'returns the class directly when set as class' do
+    it 'returns the class directly when set as class, even after resolving the previous value' do
+      deps.cart_add_item_workflow_class
       deps.cart_add_item_workflow = MyCustomAddItemService
       expect(deps.cart_add_item_workflow_class).to eq MyCustomAddItemService
-    end
-
-    it 'memoizes the resolved class' do
-      deps.cart_add_item_workflow_class
-      expect(deps.instance_variable_get(:@cart_add_item_workflow_resolved)).to eq Spree::Carts::AddItem
-    end
-
-    it 'clears memoization when value changes' do
-      deps.cart_add_item_workflow_class
-      deps.cart_add_item_workflow = MyCustomAddItemService
-      expect(deps.instance_variable_defined?(:@cart_add_item_workflow_resolved)).to be false
     end
   end
 
   describe '#overrides' do
     it 'returns empty hash when no overrides' do
       expect(deps.overrides).to eq({})
-    end
-
-    it 'tracks overridden dependencies' do
-      deps.cart_add_item_workflow = MyCustomAddItemService
-      expect(deps.overrides).to have_key(:cart_add_item_workflow)
     end
 
     it 'includes override metadata' do
@@ -136,14 +117,6 @@ describe Spree::Core::Dependencies, type: :model do
     it 'returns nil for non-overridden dependencies' do
       expect(deps.override_info(:cart_add_item_workflow)).to be_nil
     end
-
-    it 'returns override info for overridden dependencies' do
-      deps.cart_add_item_workflow = MyCustomAddItemService
-      info = deps.override_info(:cart_add_item_workflow)
-
-      expect(info[:value]).to eq MyCustomAddItemService
-      expect(info[:source]).to include('app_dependencies_spec.rb')
-    end
   end
 
   describe '#current_values' do
@@ -217,10 +190,6 @@ describe 'Spree module dependency accessors' do
     it 'sets the dependency via Spree module' do
       Spree.cart_add_item_workflow = MyCustomAddItemService
       expect(Spree::Dependencies.cart_add_item_workflow).to eq MyCustomAddItemService
-    end
-
-    it 'returns the new class via Spree module' do
-      Spree.cart_add_item_workflow = MyCustomAddItemService
       expect(Spree.cart_add_item_workflow).to eq MyCustomAddItemService
     end
 

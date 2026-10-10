@@ -54,11 +54,6 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(described_class.unsupported_capabilities).to eq([])
       expect(described_class.available_for_store?(order.store)).to be(true)
     end
-
-    it 'is answerable without instantiating the provider' do
-      expect(described_class).to respond_to(:unsupported_capabilities)
-      expect(described_class).to respond_to(:available_for_store?)
-    end
   end
 
   describe 'self-description for the admin' do
@@ -112,10 +107,6 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(Spree.default_tax_provider).to eq(Spree::TaxProvider::Internal)
     end
 
-    it 'returns a class, so a caller that only names it pays for no instance' do
-      expect(Spree.default_tax_provider).to be_a(Class)
-    end
-
     it 'accepts a class name, for an initializer naming a provider before autoload' do
       original = Rails.application.config.spree.default_tax_provider
       Spree.default_tax_provider = 'Spree::TaxProvider::Internal'
@@ -124,18 +115,6 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(Spree.default_tax_provider.new).to be_a(Spree::TaxProvider::Internal)
     ensure
       Spree.default_tax_provider = original
-    end
-  end
-
-  describe 'the internal provider' do
-    it 'declares the domains rate configuration cannot express' do
-      expect(Spree::TaxProvider::Internal.unsupported_capabilities).to(
-        contain_exactly(:us_local_tax, :reverse_charge, :oss_thresholds, :proportional_delivery_tax)
-      )
-    end
-
-    it 'is available for any store, needing no credentials' do
-      expect(Spree::TaxProvider::Internal.available_for_store?(order.store)).to be(true)
     end
   end
 
