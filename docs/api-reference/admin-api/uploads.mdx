@@ -8,7 +8,7 @@ import { Since } from '/snippets/since.mdx';
 
 <Since version="6.0" />
 
-Endpoints never take a file directly. You upload the file first, get back a `signed_id`, and pass that `signed_id` to the endpoint that uses the file:
+Endpoints that use a file never take its bytes. You upload the file to the files endpoint first, get back a `signed_id`, and pass that `signed_id` to the endpoint that uses the file:
 
 1. Upload the file with `POST /api/v3/admin/files` (or `POST /api/v3/seller/files` in the [Seller API](/api-reference/seller-api/introduction)).
 2. Send the returned `signed_id` to the endpoint that uses it — product [media](/developer/core-concepts/media), an import, a logo, a document.
@@ -123,7 +123,7 @@ Every parameter that takes an upload is named `signed_id` or `<name>_signed_id`,
 
 ## Files that are never used
 
-An uploaded file that is never attached to anything is deleted after two days by `Spree::Uploads::PurgeUnattachedJob`. Schedule it daily (see the [upgrade guide](/developer/upgrades/5.6-to-6.0#file-uploads)). Change the period with `Spree::Config.unattached_upload_retention_days` or `SPREE_UNATTACHED_UPLOAD_RETENTION_DAYS`.
+A file uploaded through the files endpoint that is never attached to anything is deleted after two days by `Spree::Uploads::PurgeUnattachedJob`. Files that belong to no store, such as files from before the 6.0 upgrade that were never attached, are left alone. Schedule it daily (see the [upgrade guide](/developer/upgrades/5.6-to-6.0#file-uploads)). Change the period with `Spree::Config.unattached_upload_retention_days` or `SPREE_UNATTACHED_UPLOAD_RETENTION_DAYS`.
 
 ## Image URLs are opaque too
 

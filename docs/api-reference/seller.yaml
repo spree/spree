@@ -765,7 +765,7 @@ paths:
                   message: Avatar has an invalid content type (authorized content
                     types are PNG, JPG, GIF, WEBP)
                   details:
-                    avatar:
+                    avatar_signed_id:
                     - has an invalid content type (authorized content types are PNG,
                       JPG, GIF, WEBP)
               schema:
@@ -14664,14 +14664,15 @@ paths:
                 registration_number:
                   type: string
                   nullable: true
-                logo:
+                logo_signed_id:
                   type: string
                   nullable: true
-                  description: ActiveStorage signed id; `null` removes the attachment
-                square_logo:
+                  description: The `signed_id` returned by POST /files; `null` removes
+                    the image
+                square_logo_signed_id:
                   type: string
                   nullable: true
-                cover_photo:
+                cover_photo_signed_id:
                   type: string
                   nullable: true
                 accept_terms:
@@ -15425,7 +15426,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--581b07fbe6a181ac466eeaee8afb150a59d10235
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--bb0b6973ee0447f02cdcd29af88cf330e909e39c
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -15433,7 +15434,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--446926d3f1a3d9bd1e0273e2d6746f8b568c2205
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--8107f48df9ba51d19f7688d473fda995d4063f66
                   headers:
                     Content-Type: application/pdf
               schema:

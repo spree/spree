@@ -14,7 +14,12 @@ module Spree
         end
 
         def call(env)
-          if api_request?(env) && content_length_exceeded?(env)
+          if file_upload?(env) && chunked?(env)
+            # A chunked body has no length to check here, and these bytes pass
+            # through the application.
+            body = { error: { code: 'request_too_large', message: 'Send the file with a Content-Length header' } }
+            [411, { 'Content-Type' => 'application/json' }, [body.to_json]]
+          elsif api_request?(env) && content_length_exceeded?(env)
             body = { error: { code: 'request_too_large', message: 'Request body too large' } }
             [413, { 'Content-Type' => 'application/json' }, [body.to_json]]
           else
@@ -37,6 +42,10 @@ module Spree
           return Spree::Config[:max_multipart_upload_size] + MULTIPART_ENVELOPE if file_upload?(env)
 
           @limit || Spree::Api::Config[:max_request_body_size]
+        end
+
+        def chunked?(env)
+          env['CONTENT_LENGTH'].nil? && env['HTTP_TRANSFER_ENCODING'].to_s.include?('chunked')
         end
 
         def file_upload?(env)

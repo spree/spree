@@ -6,7 +6,7 @@ module Spree
     # Owners with a `store_id` column are handled with one set-based update per
     # attachment type; the rest (a variant's digital file, a seller's
     # submission) ask {Spree::Uploads.store_id_for} record by record. Files
-    # attached nowhere keep no store: the daily purge deletes them.
+    # attached nowhere keep no store, and the daily purge leaves them alone.
     #
     # Safe to re-run: only files without a store are touched.
     class AssignStores

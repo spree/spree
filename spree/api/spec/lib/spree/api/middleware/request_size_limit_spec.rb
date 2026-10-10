@@ -60,6 +60,12 @@ RSpec.describe Spree::Api::Middleware::RequestSizeLimit do
         end
       end
 
+      it 'refuses a chunked upload, whose length cannot be checked' do
+        env = { 'PATH_INFO' => '/api/v3/admin/files', 'REQUEST_METHOD' => 'POST', 'HTTP_TRANSFER_ENCODING' => 'chunked' }
+
+        expect(middleware.call(env).first).to eq(411)
+      end
+
       it 'keeps the general limit for the Store API' do
         status, _headers, _body = middleware.call(env_for('/api/v3/store/files', content_length: 1_000_000))
 
