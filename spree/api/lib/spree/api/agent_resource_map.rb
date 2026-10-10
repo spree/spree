@@ -148,6 +148,39 @@ module Spree
         #
         # @param controller [Class]
         # @return [Hash, nil]
+        # Where this controller's operations live, read from the routes rather
+        # than guessed from the key: a nested or renamed resource keeps its
+        # real path, and a controller with no route is not reachable at all.
+        #
+        # The shallowest route wins. A resource reached both at the top level
+        # and under a parent (`/products` and
+        # `/catalogs/:catalog_id/products`) is addressed by the former: a tool
+        # given a product id has no parent id to fill in, and the nested route
+        # would leave `:catalog_id` in the path.
+        #
+        # @return [Hash{Symbol => String}] action => path template
+        # Across colliding controllers, the shallowest path per action.
+        def shallowest_paths(candidates)
+          candidates.flat_map { |entry| Array(entry[:api_paths]).to_a }.
+            group_by(&:first).
+            transform_values { |pairs| pairs.map(&:last).min_by { |path| [path.count(':'), path.length] } }
+        end
+
+        def api_paths_for(controller)
+          candidates = Spree::Core::Engine.routes.routes.filter_map do |route|
+            next unless route.defaults[:controller] == controller.controller_path
+
+            action = route.defaults[:action]&.to_sym
+            next if action.nil?
+
+            [action, route.path.spec.to_s.sub('(.:format)', '')]
+          end
+
+          candidates.group_by(&:first).transform_values do |pairs|
+            pairs.map(&:last).min_by { |path| [path.count(':'), path.length] }
+          end
+        end
+
         def derive(controller)
           instance = controller.allocate
           model = safely(instance, :model_class)
@@ -172,6 +205,7 @@ module Spree
             permission: "read_#{scope}",
             serializer_name: serializer.name,
             dashboard_path: DASHBOARD_PATHS[key],
+            api_paths: api_paths_for(controller),
             write_permission: write_permission_for(model, scope, create_workflow, update_workflow, writable, controller),
             writable_attributes: writable,
             create_workflow_key: create_workflow,
@@ -225,7 +259,13 @@ module Spree
               # One controller refusing DISTINCT is enough: its sort would
               # make Postgres reject the query, and whichever controller
               # happened to sort first is not an answer.
-              distinct: candidates.all? { |entry| entry[:distinct] }
+              distinct: candidates.all? { |entry| entry[:distinct] },
+              # The shallowest route across every controller claiming this
+              # key. `narrowest` is chosen by permission breadth, which says
+              # nothing about depth — so a resource served both at the top
+              # level and under a parent kept whichever won on scope, and a
+              # tool was handed a path with an unfillable `:parent_id` in it.
+              api_paths: shallowest_paths(candidates)
             )
           end
         end
