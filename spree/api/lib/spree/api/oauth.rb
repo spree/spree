@@ -61,6 +61,23 @@ module Spree
           resources.values.map { |path| "#{base}#{path}" }
         end
 
+        # The audiences a grant for one surface is bound to.
+        #
+        # An MCP grant carries the Admin API too, because a tool call reaches
+        # data by dispatching to an Admin API operation — as the same grant,
+        # with the same scopes. Widening the audience is not widening the
+        # authority: a token for the Admin API alone is still refused at the
+        # MCP endpoint.
+        #
+        # @param key [Symbol]
+        # @param origin [String, nil] scheme and host the client used
+        # @return [String] space-separated indicators, as RFC 8707 takes them
+        def granted_audience(key, origin = nil)
+          keys = key.to_sym == :mcp ? %i[mcp admin] : [key.to_sym]
+
+          keys.filter_map { |name| resource_identifier(name, origin) }.uniq.join(' ')
+        end
+
         # @param key [Symbol]
         # @param origin [String, nil] scheme and host the client used
         # @return [String, nil]

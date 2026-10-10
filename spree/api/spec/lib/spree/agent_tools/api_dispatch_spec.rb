@@ -21,7 +21,7 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
     it 'returns what the endpoint rendered' do
       create(:product, store: store, name: 'Dispatched')
 
-      response = dispatcher_for(reader).call(method: :get, path: '/products')
+      response = dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/products')
 
       expect(response).to be_success
       expect(response.data.map { |row| row['name'] }).to include('Dispatched')
@@ -35,7 +35,7 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
       product = create(:product, store: store)
 
       response = dispatcher_for(reader).
-                 call(method: :get, path: '/variants', params: { q: { product_id_eq: product.prefixed_id } })
+                 call(method: :get, path: '/api/v3/admin/variants', params: { q: { product_id_eq: product.prefixed_id } })
 
       expect(response).to be_success
       expect(response.meta['count']).to eq(product.variants.count)
@@ -49,7 +49,7 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
     it 'is what the API authenticates, so a scope it lacks is refused' do
       key = create(:api_key, :secret, store: store, scopes: ['read_products'])
 
-      response = dispatcher_for(key).call(method: :post, path: '/products', body: { name: 'No' })
+      response = dispatcher_for(key).call(method: :post, path: '/api/v3/admin/products', body: { name: 'No' })
 
       expect(response.status).to eq(403)
       expect(response.error_message).to include('write_products')
@@ -57,7 +57,7 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
 
     it 'is required: a call carrying none is unauthorized' do
       response = dispatcher_for(reader, headers: { 'HTTP_HOST' => 'www.example.com' }).
-                 call(method: :get, path: '/products')
+                 call(method: :get, path: '/api/v3/admin/products')
 
       expect(response.status).to eq(401)
     end
@@ -72,7 +72,7 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
       Spree::Current.currency = 'GBP'
       Spree::Current.locale = 'de'
 
-      dispatcher_for(reader).call(method: :get, path: '/products')
+      dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/products')
 
       # Asserted on the stored attributes, not the readers: `currency` falls
       # back to the store's default, which would agree with 'GBP' only by
@@ -86,7 +86,7 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
     it 'restores the outer state even when the call fails' do
       Spree::Current.currency = 'GBP'
 
-      dispatcher_for(reader).call(method: :get, path: '/not_a_real_endpoint')
+      dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/not_a_real_endpoint')
 
       expect(Spree::Current.attributes[:currency]).to eq('GBP')
     end
@@ -96,7 +96,7 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
     it 'does not hand the inner request the outer currency' do
       Spree::Current.currency = 'GBP'
 
-      response = dispatcher_for(reader).call(method: :get, path: '/products')
+      response = dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/products')
 
       expect(response).to be_success
     end
@@ -104,7 +104,7 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
 
   describe 'a failing call' do
     it 'carries the API error rather than raising' do
-      response = dispatcher_for(reader).call(method: :get, path: '/products/prod_nope')
+      response = dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/products/prod_nope')
 
       expect(response).not_to be_success
       expect(response.error_message).to be_present

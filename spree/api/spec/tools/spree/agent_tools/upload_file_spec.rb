@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe 'agent file upload' do
   let(:store) { @default_store }
   let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_all']) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(ctx = context)
     Spree.agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'upload_file' }
@@ -79,7 +79,7 @@ RSpec.describe 'agent file upload' do
     it 'is withheld from a caller who cannot write' do
       read_only = create(:api_key, :secret, store: store, scopes: ['read_products'])
 
-      expect(tool(Spree::AgentTools::Context.new(store: store, api_key: read_only))).to be_nil
+      expect(tool(Spree::AgentTools::Context.new(store: store, api_key: read_only, request_headers: agent_headers_for_key(read_only)))).to be_nil
     end
   end
 

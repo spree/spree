@@ -13,7 +13,10 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       name: 'Probe', redirect_uri: 'https://example.test/callback', confidential: false
     )
   end
-  let(:resource) { Spree::Api::Oauth.resource_identifier(:mcp) }
+  # What consent mints for an MCP client: the MCP endpoint and the Admin API,
+  # because a tool call dispatches to an Admin API operation as the same
+  # grant. A token naming only one surface is exercised below.
+  let(:resource) { Spree::Api::Oauth.granted_audience(:mcp) }
   let(:token) { oauth_token(scopes: scopes) }
 
   before { Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp') }
@@ -143,7 +146,11 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     end
 
     it 'refuses a token issued for another resource' do
-      post_with_token(oauth_token(scopes: 'read_products', audience: "#{resource}/other"))
+      # Built from the identifier, not from the granted pair: that is two
+      # space-separated indicators now, so appending to it would leave the
+      # first one valid and the token would rightly be accepted.
+      post_with_token(oauth_token(scopes: 'read_products',
+                                  audience: "#{Spree::Api::Oauth.resource_identifier(:mcp)}/other"))
 
       expect(response).to have_http_status(:unauthorized)
     end
@@ -185,7 +192,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       )
       raw = Spree::OauthAccessToken.create!(
         application: application, resource_owner: admin, scopes: 'read_products',
-        expires_in: 2.hours.to_i, resource: Spree::Api::Oauth.resource_identifier(:mcp)
+        expires_in: 2.hours.to_i, resource: Spree::Api::Oauth.granted_audience(:mcp)
       ).plaintext_token
 
       body = post_with_token(raw)

@@ -7,25 +7,28 @@ require 'spec_helper'
 RSpec.describe 'assistant authorization' do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability,
+                                   request_headers: agent_headers_for(admin)) }
 
   let!(:visible) { create(:product, store: store, name: 'Visible Product', status: 'active') }
   let!(:hidden) { create(:product, store: store, name: 'Hidden Product', status: 'active') }
 
-  # Stands in for a host app's record-level rule: this admin may see and edit
-  # one product, not the other.
-  let(:ability) do
-    Class.new do
-      include CanCan::Ability
+  # Stands in for a host app's record-level rule. Declared on the real ability
+  # class rather than injected into the context, because a dispatched tool
+  # call builds its own ability from the credential — which is the point: the
+  # rule the dashboard obeys is the rule agents obey, not a copy of it.
+  let(:ability) { full_ability }
+  let(:full_ability) { Spree::Dependencies.ability_class.constantize.new(admin, store: store) }
 
-      def initialize(allowed)
-        can :manage, Spree::Product, id: allowed.id
+  before do
+    narrowed = Class.new(Spree::Ability) do
+      def initialize(user, options = {})
+        super
+        cannot %i[read update destroy], Spree::Product, name: 'Hidden Product'
       end
-
-      def permission_keys
-        Spree.permissions.catalog_keys
-      end
-    end.new(visible)
+    end
+    stub_const('NarrowedTestAbility', narrowed)
+    allow(Spree::Dependencies).to receive(:ability_class).and_return('NarrowedTestAbility')
   end
 
   describe 'reads' do
@@ -38,11 +41,13 @@ RSpec.describe 'assistant authorization' do
     end
 
     it 'counts only what the admin may see' do
-      result = Spree::AgentTools::SearchResources.new(context).call(resource: 'products')
+      result = Spree::AgentTools::SearchResources.new(context).call(resource: 'products', limit: 25)
+      titles = result[:records].map { |record| record[:title] }
 
-      # The assistant states this number out loud, so a leak here is a leak the
-      # merchant reads.
-      expect(result[:total]).to eq(1)
+      # The assistant states this number out loud, so a leak here is a leak
+      # the merchant reads.
+      expect(result[:total]).to eq(titles.size)
+      expect(titles).not_to include('Hidden Product')
     end
 
     it 'cannot fetch an excluded record directly' do

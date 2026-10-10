@@ -5,7 +5,8 @@ RSpec.describe Spree::AgentTools::SearchResources do
 
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability,
+                                   request_headers: agent_headers_for(admin)) }
   let(:ability) { full_ability_for(admin) }
   # A real ability rather than a double: the tools now call `accessible_by`,
   # which needs CanCanCan's actual machinery. `admin` here is a full admin, so
@@ -107,7 +108,8 @@ RSpec.describe Spree::AgentTools::SearchResources, 'filter validation' do
 
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability,
+                                   request_headers: agent_headers_for(admin)) }
   let(:ability) do
     Class.new do
       include CanCan::Ability

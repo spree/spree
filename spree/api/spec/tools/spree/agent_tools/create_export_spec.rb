@@ -5,7 +5,8 @@ RSpec.describe Spree::AgentTools::CreateExport do
 
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability,
+                                   request_headers: agent_headers_for(admin)) }
   let(:ability) do
     Class.new do
       include CanCan::Ability

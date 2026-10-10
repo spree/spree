@@ -6,7 +6,7 @@ require 'spec_helper'
 RSpec.describe 'agent draft order creation' do
   let(:store) { @default_store }
   let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_all']) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
   let(:product) { create(:product, store: store, status: 'active') }
   let(:variant) { product.variants.first || create(:variant, product: product) }
 
@@ -98,7 +98,7 @@ RSpec.describe 'agent draft order creation' do
     it 'is withheld from a caller who may only read orders' do
       read_only = create(:api_key, :secret, store: store, scopes: ['read_orders'])
 
-      expect(tool(Spree::AgentTools::Context.new(store: store, api_key: read_only))).to be_nil
+      expect(tool(Spree::AgentTools::Context.new(store: store, api_key: read_only, request_headers: agent_headers_for_key(read_only)))).to be_nil
     end
 
     # The service's own refusal, in its words — a draft product cannot be sold,

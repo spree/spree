@@ -6,7 +6,7 @@ require 'spec_helper'
 RSpec.describe 'agent generic record writes' do
   let(:store) { @default_store }
   let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_all']) }
-  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(name)
     Spree.agent_tools.available_for(context).find { |candidate| candidate.tool_name == name }
