@@ -17,4 +17,5 @@ export type PurchaseOrderCreateParams = {
   notes?: string | null
   /** Sending the list replaces whatever the order currently holds. */
   items?: PurchaseOrderItemParams[]
+  metadata?: Record<string, unknown> | null
 }

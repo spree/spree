@@ -83,6 +83,13 @@ RSpec.describe Spree::Api::V3::Admin::PurchaseOrdersController, type: :controlle
       expect(on_hand).to eq(0)
     end
 
+    it 'keeps the metadata it is created with, as sent' do
+      post :create, params: params.merge(metadata: { 'erp_id' => 'prod_UkLWZg9DAJ' }), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(Spree::PurchaseOrder.find_by_prefix_id(json_response['id']).metadata).to eq('erp_id' => 'prod_UkLWZg9DAJ')
+    end
+
     it 'accepts a foreign currency' do
       post :create, params: params.merge(currency: 'EUR'), as: :json
 

@@ -41,7 +41,7 @@ module Spree
               item.attribute :variant_id, :id, required: true, example: 'variant_1234567890'
               item.attribute :quantity_shipped, :integer, required: true, example: 10
             end
-            body.attribute :metadata, :hash, nullable: true, only: :update
+            body.attribute :metadata, :hash, nullable: true
           end
 
           request_params 'StockTransferMarkInTransitParams', action: :mark_in_transit do |body|
@@ -170,8 +170,15 @@ module Spree
               items: items_from_params(:quantity_shipped) || [],
               reference: params[:reference],
               notes: params[:notes],
+              metadata: metadata_from_params,
               created_by: try_spree_current_user
             }
+          end
+
+          # Merchant data, stored as sent: never through the prefixed-id decoding
+          # `permitted_params` applies.
+          def metadata_from_params
+            params.permit(*declared_permitted_attributes)[:metadata]&.to_h
           end
 
           def update_workflow_arguments
