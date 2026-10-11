@@ -510,6 +510,7 @@ describe Spree::Preferences::Preferable, type: :model do
       expect { preferable_class.preference :wrong_of, :string, of: :integer }.to raise_error(ArgumentError, /`of:` applies to an :array/)
       expect { preferable_class.preference :id_without_model, :array, of: :id }.to raise_error(ArgumentError, /needs `model:`/)
       expect { preferable_class.preference :unknown_item, :array, of: :thing }.to raise_error(ArgumentError, /Unknown item type/)
+      expect { preferable_class.preference :wrong_currency, :decimal, currency: :currency }.to raise_error(ArgumentError, /`currency:` applies to a :money/)
     end
 
     describe '#assign_preferences' do
@@ -530,6 +531,41 @@ describe Spree::Preferences::Preferable, type: :model do
       it 'refuses an id of another model by its prefix' do
         expect { record.assign_preferences({ 'channel_ids' => ["mkt_#{Spree::PrefixedId::SQIDS.encode([channel.id])}"] }) }
           .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/channel_ids/0})
+      end
+
+      context 'with an amount of money' do
+        before do
+          preferable_class.preference :fee, :money, default: 0
+          preferable_class.preference :currency, :string, default: 'USD'
+        end
+
+        it 'refuses more decimals than the currency has, naming the value' do
+          expect { record.assign_preferences({ 'fee' => '12.505' }) }
+            .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/fee}) { |error| expect(error.failures.first[:message]).to match(/2 decimal places for USD/) }
+          expect { record.assign_preferences({ 'fee' => '12.50' }) }.not_to raise_error
+        end
+
+        it 'reads the currency sent with the amount before the stored one' do
+          expect { record.assign_preferences({ 'fee' => '12.50', 'currency' => 'JPY' }) }
+            .to raise_error(Spree::Preferences::InvalidPreferences, /0 decimal places for JPY/)
+          expect { record.assign_preferences({ 'fee' => '1250', 'currency' => 'JPY' }) }.not_to raise_error
+        end
+
+        it 'takes the currency from the source its declaration names' do
+          preferable_class.preference :surcharge, :money, default: 0, currency: :settlement_currency
+          preferable_class.define_method(:settlement_currency) { 'KWD' }
+
+          expect(record.money_preference_currency(:surcharge)).to eq('KWD')
+          expect { record.assign_preferences({ 'surcharge' => '1.250' }) }.not_to raise_error
+          expect { record.assign_preferences({ 'surcharge' => '1.2505' }) }.to raise_error(Spree::Preferences::InvalidPreferences)
+        end
+      end
+
+      it 'leaves an amount in any currency to the format check' do
+        preferable_class.preference :threshold, :money, default: 0
+
+        expect(record.money_preference_currency(:threshold)).to be_nil
+        expect { record.assign_preferences({ 'threshold' => '12.505' }) }.not_to raise_error
       end
 
       it 'refuses an id outside the declared scope' do

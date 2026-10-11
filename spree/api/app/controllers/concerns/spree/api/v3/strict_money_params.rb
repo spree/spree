@@ -30,6 +30,11 @@ module Spree
         # Values the merchant or a provider owns, stored as sent.
         OPAQUE_KEYS = %w[metadata custom_fields external_data].freeze
 
+        # Preferences are checked against their declared types when assigned
+        # (Spree::Preferences::Preferable#assign_preferences), so a money
+        # preference is recognized by its type rather than its name.
+        TYPED_KEYS = %w[preferences calculator_preferences].freeze
+
         included do
           before_action :refuse_noncanonical_decimals, if: -> { request.post? || request.patch? || request.put? }
         end
@@ -45,7 +50,7 @@ module Spree
           when Hash
             currency = node['currency'].presence || currency
             node.each do |key, value|
-              next if OPAQUE_KEYS.include?(key)
+              next if OPAQUE_KEYS.include?(key) || TYPED_KEYS.include?(key)
 
               if scalar?(value) && MONEY_KEYS.include?(key)
                 check_money(key, value, currency, UNIT_PRICE_KEYS.include?(key) || (key == 'amount' && parent == 'prices'))

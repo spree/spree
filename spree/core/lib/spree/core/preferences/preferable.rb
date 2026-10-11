@@ -99,6 +99,23 @@ module Spree::Preferences::Preferable
     choices.respond_to?(:call) ? choices.call : choices
   end
 
+  # The currency a `:money` preference is in: its declared `currency:` source
+  # (another preference, or a method of the record), else the record's own
+  # `currency` preference. Values about to be assigned win over stored ones,
+  # so a request changing both the amount and its currency is read as one.
+  #
+  # @param name [Symbol, String]
+  # @param pending [Hash{String => Object}] values not yet assigned
+  # @return [String, nil] nil for an amount in any currency
+  def money_preference_currency(name, pending = {})
+    declared = preference_definition(name)[:currency]
+    source = declared || :currency
+    return pending[source.to_s] if pending[source.to_s].present?
+    return get_preference(source).presence if has_preference?(source)
+
+    public_send(source).presence if declared && respond_to?(source)
+  end
+
   def has_preference!(name)
     raise NoMethodError, "#{name} preference not defined" unless has_preference? name
   end
@@ -174,6 +191,7 @@ module Spree::Preferences::Preferable
     values = values.respond_to?(:to_unsafe_h) ? values.to_unsafe_h : values.to_h
     values = values.deep_stringify_keys
     failures = self.class.preference_failures(values)
+    failures += money_precision_failures(values) if failures.empty?
     raise Spree::Preferences::InvalidPreferences.new(failures, prefix: pointer) if failures.any?
 
     values.each do |key, value|
@@ -214,6 +232,24 @@ module Spree::Preferences::Preferable
   end
 
   private
+
+  # A `:money` value with more decimals than its currency has is refused, as
+  # every other amount on the API is. The schema has already checked the
+  # format; it cannot know the currency.
+  def money_precision_failures(values)
+    values.filter_map do |key, value|
+      next unless value.is_a?(String) && has_preference?(key) && preference_type(key) == :money
+
+      currency = money_preference_currency(key, values)
+      amount = BigDecimal(value, exception: false)
+      next if currency.blank? || amount.nil?
+
+      places = Spree::Money::Rounding.precision(currency)
+      next if amount.round(places) == amount
+
+      { pointer: "/#{key}", message: I18n.t('spree.errors.messages.money_preference_too_many_decimals', count: places, currency: currency) }
+    end
+  end
 
   def preference_definition(name)
     has_preference! name

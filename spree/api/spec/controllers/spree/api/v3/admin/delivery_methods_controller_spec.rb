@@ -248,6 +248,26 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.reload.calculator).to eq(calculator)
     end
 
+    # The calculator's preferences are checked by their declared types, so a
+    # money amount is refused for its currency's decimals whatever it is called.
+    it 'refuses a calculator amount with more decimals than its currency has' do
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        calculator: { preferences: { amount: '9.995', currency: 'USD' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_preferences')
+      expect(json_response['error']['details']['/calculator/preferences/amount'].first).to match(/2 decimal places for USD/)
+    end
+
+    it 'refuses a calculator amount sent as a JSON number' do
+      patch :update, params: { id: delivery_method.prefixed_id, calculator: { preferences: { amount: 9.99 } } }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']).to have_key('/calculator/preferences/amount')
+    end
+
     it 'keeps the current calculator when the rest of the update is refused' do
       calculator = delivery_method.calculator
 
