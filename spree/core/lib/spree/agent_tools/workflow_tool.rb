@@ -251,7 +251,14 @@ module Spree
         named = resolved[name.to_sym]
         return named if named.is_a?(ActiveRecord::Base)
 
-        subject.try(name)
+        from_subject = subject.try(name)
+        return from_subject if from_subject
+
+        # A keyword whose name does not match the segment but whose record is
+        # what the segment addresses: a label's `owner:` is the fulfillment in
+        # `/fulfillments/:fulfillment_id`, and the same tool reaches a return
+        # through `/returns/:return_id`.
+        records(resolved).find { |record| record.class.name.demodulize.underscore == name }
       end
 
       # What the operation accepts, under its own names. A record resolved for
@@ -262,6 +269,14 @@ module Spree
         return {} if accepted.empty?
 
         resolved.each_with_object({}) do |(name, value), body|
+          # An `attributes` hash is not a field of the body — it IS the body.
+          # The endpoint documents its keys one by one, so it merges in
+          # rather than travelling under a name of its own.
+          if name.to_s == 'attributes' && value.is_a?(Hash)
+            body.merge!(value.transform_keys(&:to_s))
+            next
+          end
+
           key = body_key_for(name, accepted)
           next if key.nil?
 
@@ -269,17 +284,21 @@ module Spree
         end
       end
 
-      # The endpoint's name for a workflow keyword. Exact first, then the
-      # `_id` form a record takes on the wire, then a prefixed spelling —
-      # `note:` is `cancel_note` where the resource is what the prefix names.
+      # The endpoint's name for a workflow keyword.
+      #
+      # Exact first, then the `_id` form a record takes on the wire. Failing
+      # both, the one accepted key that ENDS in the keyword: a cancellation's
+      # `reason:` is `cancel_reason_id` and its `note:` is `cancel_note`,
+      # qualified by the action rather than the resource. Matched on the
+      # suffix rather than by guessing the qualifier, and only when exactly
+      # one key matches — two would make the choice a coin toss, and a
+      # silently misplaced value is worse than a refusal.
       def body_key_for(name, accepted)
-        candidates = [name.to_s, "#{name}_id", "#{subject_prefix}_#{name}", "#{subject_prefix}_#{name}_id"]
+        exact = [name.to_s, "#{name}_id"].find { |candidate| accepted.include?(candidate) }
+        return exact if exact
 
-        candidates.find { |candidate| accepted.include?(candidate) }
-      end
-
-      def subject_prefix
-        @subject_prefix ||= workflow_class.workflow_key.split('.').first.to_s.singularize
+        suffixed = accepted.select { |key| key.end_with?("_#{name}", "_#{name}_id") }
+        suffixed.first if suffixed.one?
       end
 
       # A record as the endpoint returned it, summarised the way a record read

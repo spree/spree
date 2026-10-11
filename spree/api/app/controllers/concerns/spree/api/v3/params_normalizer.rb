@@ -27,7 +27,9 @@ module Spree
           ActionController::Parameters.new(hash).permit!
         end
 
-        def resolve_prefixed_ids(hash)
+        # @param owner [Class, nil] the model whose associations name these
+        #   keys, so `variant_id` is checked against `Spree::Variant`
+        def resolve_prefixed_ids(hash, owner = (model_class if respond_to?(:model_class, true)))
           hash.each_with_object({}.with_indifferent_access) do |(key, value), result|
             result[key] = case
                           # Preferences declare which of their values are ids
@@ -36,17 +38,47 @@ module Spree
                           when key.to_s == 'preferences'
                             value
                           when key.to_s.end_with?('_id') && prefixed_id?(value)
-                            decode_prefixed_id(value)
+                            decode_prefixed_id(value, key, owner)
                           when key.to_s.end_with?('_ids') && value.is_a?(Array)
-                            value.map { |v| prefixed_id?(v) ? decode_prefixed_id(v) : v }
+                            value.map { |v| prefixed_id?(v) ? decode_prefixed_id(v, key, owner) : v }
                           when value.is_a?(Hash)
-                            resolve_prefixed_ids(value)
+                            resolve_prefixed_ids(value, nested_owner(key, owner))
                           when value.is_a?(Array)
-                            value.map { |v| v.is_a?(Hash) ? resolve_prefixed_ids(v) : v }
+                            nested = nested_owner(key, owner)
+                            value.map { |v| v.is_a?(Hash) ? resolve_prefixed_ids(v, nested) : v }
                           else
                             value
                           end
           end
+        end
+
+        # The model a nested hash or array of hashes describes, so the keys
+        # inside it are checked against the right associations: an order's
+        # `items` are line items, whose `variant_id` is a variant.
+        #
+        # A payload name is a public contract and does not always match the
+        # association — `items` is `line_items` — so a controller whose
+        # names differ declares the mapping in {nested_param_models}.
+        def nested_owner(key, owner)
+          return if owner.nil?
+
+          declared = nested_param_models[key.to_s]
+          return declared if declared
+
+          name = key.to_s
+          reflection = owner.try(:reflect_on_association, name) ||
+                       owner.try(:reflect_on_association, name.singularize)
+          reflection&.klass
+        rescue StandardError
+          nil
+        end
+
+        # Payload key => the model its rows describe, for the keys that do not
+        # name an association of their own.
+        #
+        # @return [Hash{String => Class}]
+        def nested_param_models
+          {}
         end
 
         def normalize_nested_attributes(hash, klass = model_class)
@@ -83,8 +115,41 @@ module Spree
           Spree::PrefixedId.prefixed_id?(value)
         end
 
-        def decode_prefixed_id(prefixed_id_string)
-          Spree::PrefixedId.decode_prefixed_id(prefixed_id_string) || prefixed_id_string
+        # A prefixed id is decoded only when its prefix is the one the column
+        # expects. The sqid alphabet is shared, so `prod_` and `variant_`
+        # decode to the same integers: without this an order asked for a
+        # product answered 201 and held a line item for whatever variant
+        # happened to carry that number.
+        #
+        # An id of the wrong kind is left as it was. The association then
+        # fails to find it, which is a 404 or a validation error naming the
+        # field — the same answer any other unknown id gets, rather than a
+        # quiet write of the wrong record.
+        def decode_prefixed_id(prefixed_id_string, key = nil, owner = nil)
+          target = association_class(key, owner)
+
+          decoded = if target.respond_to?(:decode_own_prefixed_id)
+                      target.decode_own_prefixed_id(prefixed_id_string)
+                    else
+                      Spree::PrefixedId.decode_prefixed_id(prefixed_id_string)
+                    end
+
+          decoded || prefixed_id_string
+        end
+
+        # What `variant_id` points at, read from the owner's own association
+        # rather than guessed from the name — `reason_id` is a different class
+        # on a cancellation than on a refund.
+        def association_class(key, owner)
+          return if key.nil? || owner.nil?
+
+          name = key.to_s.sub(/_ids?\z/, '')
+          reflection = owner.try(:reflect_on_association, name)
+          return if reflection.nil? || reflection.polymorphic?
+
+          reflection.klass
+        rescue StandardError
+          nil
         end
       end
     end

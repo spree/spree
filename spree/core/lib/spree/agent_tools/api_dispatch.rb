@@ -14,7 +14,20 @@ module Spree
     # for nothing.
     class ApiDispatch
       # What a dispatched call answers with.
-      Response = Struct.new(:status, :body, :headers, keyword_init: true) do
+      Response = Struct.new(:status, :body, :headers, :raw, keyword_init: true) do
+        # What the endpoint actually sent, for an operation whose answer is a
+        # file rather than a record.
+        #
+        # @return [String, nil]
+        def content
+          raw
+        end
+
+        # @return [String, nil]
+        def content_type
+          headers.to_h.find { |name, _| name.to_s.casecmp('content-type').zero? }&.last
+        end
+
         # @return [Boolean]
         def success?
           status.between?(200, 299)
@@ -86,7 +99,8 @@ module Spree
 
         begin
           status, headers, rack_body = Rails.application.call(env)
-          Response.new(status: status, headers: headers, body: parse(rack_body))
+          text = read(rack_body)
+          Response.new(status: status, headers: headers, body: parse(text), raw: text)
         ensure
           # The executor flushes `ActiveSupport::ExecutionContext` as the
           # inner request unwinds, and that is where `CurrentAttributes` keeps
@@ -164,10 +178,16 @@ module Spree
         @context.request_headers.slice(*FORWARDED_HEADERS)
       end
 
-      def parse(rack_body)
+      def read(rack_body)
         text = +''
         rack_body.each { |chunk| text << chunk }
         rack_body.close if rack_body.respond_to?(:close)
+        text
+      end
+
+      # A download answers with the file, not a record, so a body that is not
+      # JSON is not an error — it is kept as it came in {Response#content}.
+      def parse(text)
         return if text.blank?
 
         JSON.parse(text)

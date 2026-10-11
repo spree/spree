@@ -76,7 +76,12 @@ module Spree
         # The protocol allows one handler of each kind, so the sources are
         # composed here: each owns which of its records the caller may see,
         # and each answers only for its own URI scheme.
-        SOURCES = [Exports, Attachments].freeze
+        #
+        # Exports are the only files a client fetches. A product's media, an
+        # order's purchase order and an import's own file are things an agent
+        # puts there, not things it reads back — and they are already visible
+        # on the records that carry them.
+        SOURCES = [Exports].freeze
 
         def register_resources(server, context)
           server.resources_list_handler { SOURCES.flat_map { |source| source.list(context) } }

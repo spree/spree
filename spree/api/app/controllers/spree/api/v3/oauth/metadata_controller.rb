@@ -26,7 +26,7 @@ module Spree
             resource = Spree::Api::Oauth.resource_identifier(params[:resource_key], request.base_url)
             return head :not_found if resource.blank?
 
-            render json: {
+            document = Spree::OauthProtectedResource.new(
               resource: resource,
               authorization_servers: [issuer],
               # Exactly what the authorization server will accept.
@@ -37,9 +37,10 @@ module Spree
               # than it accepts turns every connection into "The requested
               # scope is invalid".
               scopes_supported: Spree::Api::Oauth.staff_scope_keys,
-              bearer_methods_supported: ['header'],
               resource_documentation: 'https://spreecommerce.org/docs/developer/agentic/admin-mcp'
-            }
+            )
+
+            render json: Spree.api.admin_oauth_protected_resource_serializer.new(document).to_h
           end
 
           private

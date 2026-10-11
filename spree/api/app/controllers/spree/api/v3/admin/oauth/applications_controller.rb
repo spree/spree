@@ -16,6 +16,17 @@ module Spree
             # a delivery zone.
             scoped_resource :oauth_applications
 
+            # `confidential` is not settable: these are hosted connectors that
+            # cannot keep a secret, which is why PKCE is mandatory. Neither is
+            # `scopes` — what a client may do is granted by the merchant at
+            # consent, not fixed at registration.
+            request_params :oauth_application do |body|
+              body.attribute :name, :string, required: true, example: 'Claude'
+              body.attribute :redirect_uri, :string,
+                description: 'Where the authorization server sends the browser back to.',
+                example: 'https://claude.ai/api/mcp/auth_callback'
+            end
+
             protected
 
             def model_class
@@ -36,13 +47,6 @@ module Spree
               { live_access_tokens: :resource_owner }
             end
 
-            # `confidential` is not writable: these are hosted connectors that
-            # cannot keep a secret, which is why PKCE is mandatory. `scopes`
-            # is not writable either — what a client may do is granted by the
-            # merchant at consent, not fixed at registration.
-            def resource_permitted_attributes
-              %i[name redirect_uri]
-            end
           end
         end
       end

@@ -33,6 +33,12 @@ module Spree
       # Every dispatchable resource reports its attributes now: the generic
       # writes reach the controller, which runs whatever workflow it
       # declares, so there is no longer a class of resource they refuse.
+      def nested_shapes_for(entry)
+        return if writable_attributes_for(entry).blank?
+
+        entry.nested_collection_shapes.presence
+      end
+
       def writable_attributes_for(entry)
         return unless entry.api_path(:update).present? || entry.api_path(:create).present?
         return unless entry.write_permission.present? && context.permitted?(entry.write_permission)
@@ -49,6 +55,14 @@ module Spree
           # which is what create_resource and update_resource tell it to do.
           # Offered only where the caller could actually write.
           writable_attributes: writable_attributes_for(entry),
+          # What goes inside a list-valued attribute. Without it a model sees
+          # `variants` and has no idea a whole variant fits there, so it
+          # creates the product and then adds each variant separately.
+          nested_attributes: nested_shapes_for(entry),
+          # What get_resource can be asked to include. A record arrives
+          # without its associations, so a model that does not know these
+          # names cannot ask for the one it needs.
+          expandable_associations: entry.expandable_associations.presence,
           # The action tool for a record that has one of its own — cancel,
           # complete, approve. Ordinary attribute changes go through
           # update_resource whatever the controller does internally.

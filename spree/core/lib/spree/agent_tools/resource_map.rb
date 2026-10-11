@@ -66,6 +66,63 @@ module Spree
         def writable_attribute_names
           Array(writable_attributes).map(&:to_s).sort
         end
+
+        # The associations the show operation will include when asked, read
+        # from the serializer that renders it.
+        #
+        # A record's associations are left out by default because a full
+        # admin payload is more than a model's context should hold. Without
+        # knowing the names, a model cannot ask for the one it needs — it
+        # fetched a product and saw no variants at all.
+        #
+        # @return [Array<String>]
+        def expandable_associations
+          @expandable_associations ||= begin
+            # Walked up the chain rather than read off one file: a serializer
+            # inherits most of its conditional associations from the Store
+            # API one it extends.
+            classes = Array(serializer_class&.ancestors).select do |ancestor|
+              ancestor.is_a?(Class) && ancestor.name.to_s.include?('Serializer')
+            end
+
+            classes.flat_map { |klass| expand_names_in(klass) }.uniq.sort
+          rescue StandardError
+            []
+          end
+        end
+
+        def expand_names_in(klass)
+          file = Object.const_source_location(klass.name)&.first
+          return [] if file.nil? || !File.exist?(file)
+
+          File.read(file).scan(/expand\?\('([a-z_]+)'\)/).flatten
+        rescue StandardError
+          []
+        end
+
+        # The shape of each attribute that carries a list of records — a
+        # product's `variants`, an order's `items`.
+        #
+        # A model that is only told the key exists sends the records one at a
+        # time to their own endpoints instead, which costs several round trips
+        # and, where the parent reconciles its list, leaves behind whatever
+        # the first write created.
+        #
+        # @return [Hash{String => Array<String>}] attribute => the keys of one row
+        def nested_collection_shapes
+          return {} unless defined?(Spree::Api::AgentWriteSchemas)
+
+          Spree::Api::AgentWriteSchemas.for(key).each_with_object({}) do |(name, schema), shapes|
+            next unless schema.is_a?(Hash) && schema['type'] == 'array'
+
+            # A row's shape is published as a component too, so the array
+            # points at one rather than describing its items inline.
+            row = Spree::Api::AgentWriteSchemas.resolve_schema(schema['items'])&.dig('properties')
+            shapes[name.to_s] = row.keys.sort if row.is_a?(Hash) && row.any?
+          end
+        rescue StandardError
+          {}
+        end
         # Where this record lives in the dashboard, so an answer links to it
         # rather than describing where to look. Store-relative — the panel
         # prefixes the current store segment.

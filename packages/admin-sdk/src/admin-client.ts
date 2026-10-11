@@ -485,8 +485,6 @@ import type {
   MediaUsageReference,
   MeUpdateParams,
   OauthAuthorizationParams,
-  OauthAuthorizationRequest,
-  OauthRedirect,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
   OrderCancelParams,
@@ -658,6 +656,8 @@ import type {
   Market,
   Media,
   OauthApplication,
+  OauthConsentRequest,
+  OauthRedirect,
   OptionType,
   Order,
   OrderCancellationReason,
@@ -5949,8 +5949,8 @@ export class AdminClient {
     authorization: (
       params: OauthAuthorizationParams,
       options?: RequestOptions,
-    ): Promise<OauthAuthorizationRequest> =>
-      this.request<OauthAuthorizationRequest>('GET', '/oauth/authorize', {
+    ): Promise<OauthConsentRequest> =>
+      this.request<OauthConsentRequest>('GET', '/oauth/authorize', {
         ...options,
         // The authorization request is a flat set of strings by construction,
         // so it travels as query params untouched — no Ransack wrapping, and
