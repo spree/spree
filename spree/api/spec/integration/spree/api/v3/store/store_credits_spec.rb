@@ -32,7 +32,7 @@ RSpec.describe 'Cart Store Credits API', type: :request, swagger_doc: 'api-refer
         let(:store_credit) { create(:store_credit, customer: user, store: store, amount: 50) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:body) { { amount: 10 } }
+        let(:body) { { amount: '10.00' } }
 
         before do
           store_credit_payment_method
