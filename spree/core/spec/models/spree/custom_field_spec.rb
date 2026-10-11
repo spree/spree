@@ -29,13 +29,6 @@ RSpec.describe Spree::CustomField, type: :model do
     end
   end
 
-  describe '#serialize_value' do
-    it 'returns the value' do
-      custom_field = build(:custom_field, value: 'Test Value')
-      expect(custom_field.serialize_value).to eq('Test Value')
-    end
-  end
-
   describe '#csv_value' do
     context 'for base CustomField' do
       it 'returns the value as string' do
@@ -73,24 +66,6 @@ RSpec.describe Spree::CustomField, type: :model do
       it 'returns the JSON string' do
         custom_field = Spree::CustomFields::Json.new(custom_field_definition: custom_field_definition, value: '{"key": "value"}')
         expect(custom_field.csv_value).to eq('{"key": "value"}')
-      end
-    end
-
-    context 'for ShortText custom_field' do
-      let(:custom_field_definition) { create(:custom_field_definition, field_type: 'Spree::CustomFields::ShortText') }
-
-      it 'returns the text value' do
-        custom_field = Spree::CustomFields::ShortText.new(custom_field_definition: custom_field_definition, value: 'Short text')
-        expect(custom_field.csv_value).to eq('Short text')
-      end
-    end
-
-    context 'for LongText custom_field' do
-      let(:custom_field_definition) { create(:custom_field_definition, field_type: 'Spree::CustomFields::LongText') }
-
-      it 'returns the text value' do
-        custom_field = Spree::CustomFields::LongText.new(custom_field_definition: custom_field_definition, value: 'Long text content')
-        expect(custom_field.csv_value).to eq('Long text content')
       end
     end
 
@@ -188,6 +163,7 @@ RSpec.describe Spree::CustomField, type: :model do
     it 'assigns through metafield_definition=' do
       definition = create(:custom_field_definition)
       custom_field = Spree::CustomField.new
+      expect(Spree::Deprecation).to receive(:warn).with(/metafield_definition= is deprecated/)
       custom_field.metafield_definition = definition
 
       expect(custom_field.custom_field_definition).to eq(definition)

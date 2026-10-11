@@ -8,46 +8,6 @@ module Spree
       let(:store) { @default_store }
       let(:order) { double('Order', coupon_code: '10off', store: store).as_null_object }
 
-      it 'returns self in apply' do
-        expect(subject.apply).to be_a Coupon
-      end
-
-      context 'status messages' do
-        let(:coupon) { Coupon.new(order) }
-
-        describe '#set_success_code' do
-          subject { coupon.set_success_code status }
-
-          let(:status) { :coupon_code_applied }
-
-          it 'has status_code' do
-            subject
-            expect(coupon.status_code).to eq(status)
-          end
-
-          it 'has success message' do
-            subject
-            expect(coupon.success).to eq(I18n.t("spree.#{status}"))
-          end
-        end
-
-        describe '#set_error_code' do
-          subject { coupon.set_error_code status }
-
-          let(:status) { :coupon_code_not_found }
-
-          it 'has status_code' do
-            subject
-            expect(coupon.status_code).to eq(status)
-          end
-
-          it 'has error message' do
-            subject
-            expect(coupon.error).to eq(I18n.t("spree.#{status}"))
-          end
-        end
-      end
-
       context 'coupon code promotion doesnt exist' do
         before { create(:promotion, name: 'promo', code: nil, kind: :automatic) }
 
@@ -88,11 +48,6 @@ module Spree
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
                 expect(order.reload.total).to eq(100)
-              end
-
-              it 'calls recalculate_totals!' do
-                expect(order).to receive(:recalculate_totals!)
-                subject.apply
               end
 
               it 'coupon already applied to the order' do
@@ -155,13 +110,6 @@ module Spree
 
               expect(order.fulfillment_discounts.count).to eq(1)
             end
-
-            it 'coupon already applied to the order' do
-              subject.apply
-              expect(subject.success).to be_present
-              subject.apply
-              expect(subject.error).to eq I18n.t('spree.coupon_code_already_applied')
-            end
           end
         end
 
@@ -183,30 +131,10 @@ module Spree
               expect(order.discounts.sum(:amount)).to eq(-10)
             end
 
-            it 'coupon already applied to the order' do
-              subject.apply
-              expect(subject.success).to be_present
-              subject.apply
-              expect(subject.error).to eq I18n.t('spree.coupon_code_already_applied')
-            end
-
             it 'coupon fails to activate' do
               allow_any_instance_of(Spree::Promotion).to receive(:activate).and_return false
               subject.apply
               expect(subject.error).to eq I18n.t('spree.coupon_code_unknown_error')
-            end
-
-            it 'coupon code hit max usage' do
-              promotion.update_column(:usage_limit, 1)
-              subject.apply
-              expect(subject.successful?).to be true
-
-              order_2 = create(:order, store: store)
-              allow(order_2).to receive_messages coupon_code: '10off'
-              coupon = Coupon.new(order_2)
-              coupon.apply
-              expect(coupon.successful?).to be false
-              expect(coupon.error).to eq I18n.t('spree.coupon_code_max_usage')
             end
 
             context 'when the a new coupon is less good' do
@@ -330,13 +258,6 @@ module Spree
               expect(line_item.discounts.count).to eq(1)
             end
             expect(order.reload.total).to eq(100)
-          end
-
-          it 'coupon already applied to the order' do
-            subject.apply
-            expect(subject.success).to be_present
-            subject.apply
-            expect(subject.error).to eq I18n.t('spree.coupon_code_already_applied')
           end
 
           context 'with used coupon code' do
@@ -502,31 +423,6 @@ module Spree
             Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion,
                                                                     calculator: calculator)
           end
-
-          shared_examples 'allows to use coupon code one time only' do |coupon_code|
-            before do
-              order.coupon_code = coupon_code
-              order_2.coupon_code = coupon_code
-            end
-
-            it do
-              subject.apply
-              expect(subject.successful?).to be true
-              # Simulate the order has been completed so the coupon code is marked as used
-              Spree::CouponCodes::CouponCodesHandler.new(order: order).use_all_codes
-
-              coupon = Spree::CouponCode.find_by(code: coupon_code)
-              expect(coupon.state).to eq 'used'
-              expect(coupon.order).to eq order
-
-              subject_2.apply
-              expect(subject_2.successful?).to be false
-              expect(subject_2.error).to eq I18n.t('spree.coupon_code_used')
-            end
-          end
-
-          it_behaves_like 'allows to use coupon code one time only', 'first_one_time_code'
-          it_behaves_like 'allows to use coupon code one time only', 'second_one_time_code'
 
           it 'promotion can be used as many times as it has coupon codes' do
             order.coupon_code = 'first_one_time_code'

@@ -243,7 +243,7 @@ module Spree
           line_item.update_column(:price, 25)
           described_class.call(cart: cart)
 
-          gift_card_payment.purchase!
+          Spree.payment_process_workflow.call(payment: gift_card_payment, action: :purchase)
 
           expect(gift_card_payment.reload).to be_completed
         end

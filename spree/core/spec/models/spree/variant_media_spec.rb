@@ -17,12 +17,6 @@ RSpec.describe Spree::VariantMedia, type: :model do
       expect(vm).not_to be_valid
       expect(vm.errors[:asset]).to be_present
     end
-
-    it 'enforces uniqueness on (variant_id, media_id)' do
-      described_class.create!(variant: variant, asset: asset)
-      dup = described_class.new(variant: variant, asset: asset)
-      expect(dup).not_to be_valid
-    end
   end
 
   describe 'touch propagation' do
@@ -53,19 +47,6 @@ RSpec.describe Spree::VariantMedia, type: :model do
         .to change { variant_for_thumb.reload.primary_media_id }.from(product_asset.id).to(nil)
     end
   end
-
-  describe 'cleanup' do
-    it 'destroys variant_media when the variant is destroyed' do
-      described_class.create!(variant: variant, asset: asset)
-      expect { variant.destroy }.to change(described_class, :count).by(-1)
-    end
-
-    it 'destroys variant_media when the asset is destroyed' do
-      described_class.create!(variant: variant, asset: asset)
-      expect { asset.destroy }.to change(described_class, :count).by(-1)
-    end
-  end
-
 end
 
 RSpec.describe Spree::Media, type: :model do

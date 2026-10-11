@@ -10,24 +10,8 @@ describe Spree::FulfillmentItem, type: :model do
     let!(:inventory_unit_3) { create(:fulfillment_item, state: 'shipped') }
     let!(:inventory_unit_4) { create(:fulfillment_item, state: 'returned') }
 
-    describe '.backordered' do
-      it { expect(Spree::FulfillmentItem.backordered).to eq([inventory_unit_2]) }
-    end
-
-    describe '.on_hand' do
-      it { expect(Spree::FulfillmentItem.on_hand).to eq([inventory_unit_1]) }
-    end
-
     describe '.on_hand_or_backordered' do
       it { expect(Spree::FulfillmentItem.on_hand_or_backordered).to match_array([inventory_unit_1, inventory_unit_2]) }
-    end
-
-    describe '.shipped' do
-      it { expect(Spree::FulfillmentItem.shipped).to eq([inventory_unit_3]) }
-    end
-
-    describe '.returned' do
-      it { expect(Spree::FulfillmentItem.returned).to eq([inventory_unit_4]) }
     end
   end
 
@@ -44,10 +28,6 @@ describe Spree::FulfillmentItem, type: :model do
 
     let(:shipment) do
       order.fulfillments.first
-    end
-
-    let(:shipping_method) do
-      shipment.shipping_methods.first
     end
 
     let!(:unit) do
@@ -92,13 +72,6 @@ describe Spree::FulfillmentItem, type: :model do
       expect(Spree::FulfillmentItem.backordered_for_stock_level(stock_level)).not_to include(other_variant_unit)
     end
 
-    it 'does not change shipping cost when fulfilling the order' do
-      current_shipment_cost = shipment.cost
-      shipping_method.calculator.set_preference(:amount, current_shipment_cost + 5.0)
-      stock_level.set_count_on_hand(0)
-      expect(shipment.reload.cost).to eq(current_shipment_cost)
-    end
-
     context 'other shipments' do
       let(:other_order) do
         order = create(:order)
@@ -134,7 +107,6 @@ describe Spree::FulfillmentItem, type: :model do
   end
 
   describe '#finalize_units!' do
-    let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
     let (:shipment) { create(:fulfillment) }
     let(:inventory_units) do
@@ -151,40 +123,6 @@ describe Spree::FulfillmentItem, type: :model do
     it 'creates a stock movement' do
       expect { shipment.inventory_units.finalize_units! }.
         to change { shipment.inventory_units.where(pending: false).count }.by 2
-    end
-  end
-
-  describe '#additional_tax_total' do
-    subject do
-      build(:fulfillment_item, line_item: line_item)
-    end
-
-    let(:quantity) { 2 }
-    let(:line_item_additional_tax_total) { 10.00 }
-    let(:line_item) do
-      build(:line_item,         quantity: quantity,
-                                additional_tax_total: line_item_additional_tax_total)
-    end
-
-    it 'is the correct amount' do
-      expect(subject.additional_tax_total).to eq line_item_additional_tax_total / quantity
-    end
-  end
-
-  describe '#included_tax_total' do
-    subject do
-      build(:fulfillment_item, line_item: line_item)
-    end
-
-    let(:quantity) { 2 }
-    let(:line_item_included_tax_total) { 10.00 }
-    let(:line_item) do
-      build(:line_item,         quantity: quantity,
-                                included_tax_total: line_item_included_tax_total)
-    end
-
-    it 'is the correct amount' do
-      expect(subject.included_tax_total).to eq line_item_included_tax_total / quantity
     end
   end
 

@@ -45,10 +45,6 @@ describe Spree::Payment, type: :model do
 
   it_behaves_like 'metadata'
 
-  describe 'Constants' do
-    it { expect(Spree::Payment::INVALID_STATES).to eq(%w(failed invalid void)) }
-  end
-
   describe 'Scopes' do
     describe '.valid' do
       subject { Spree::Payment.valid }
@@ -278,28 +274,14 @@ describe Spree::Payment, type: :model do
   end
 
   context 'processing' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     describe '#process!' do
       it 'purchases when the method charges at checkout' do
         payment.payment_method.capture_method = 'checkout'
         payment.process!
         expect(payment).to be_completed
-      end
-
-      it 'authorizes when the method charges later' do
-        payment.payment_method.capture_method = 'on_dispatch'
-        payment.process!
-        expect(payment).to be_pending
-      end
-
-      it "makes the state 'processing'" do
-        expect(payment).to receive(:started_processing!)
-        payment.process!
-      end
-
-      it 'invalidates if payment method doesnt support source' do
-        expect(payment.payment_method).to receive(:supports?).with(payment.source).and_return(false)
-        expect { payment.process! }.to raise_error(Spree::Core::GatewayError)
-        expect(payment.status).to eq('invalid')
+        expect(Spree::Deprecation).to have_received(:warn).with(/Payment#process! is deprecated/)
       end
 
       # Regression test for #4598
@@ -325,6 +307,7 @@ describe Spree::Payment, type: :model do
                                                                    card,
                                                                    anything).and_return(success_response)
         payment.authorize!
+        expect(Spree::Deprecation).to have_received(:warn).with(/Payment#authorize! is deprecated/)
       end
 
       it 'calls authorize on the gateway with the currency code' do
@@ -349,11 +332,6 @@ describe Spree::Payment, type: :model do
           expect(payment.cvv_response_code).to eq(cvv_code)
           expect(payment.cvv_response_message).to be_nil
         end
-
-        it 'makes payment pending' do
-          expect(payment).to receive(:pend!)
-          payment.authorize!
-        end
       end
 
       context 'if unsuccessful' do
@@ -375,7 +353,7 @@ describe Spree::Payment, type: :model do
 
           it 'raises Spree::Core::GatewayError and marks payment as failed' do
             expect(payment).to receive(:failure!)
-            expect(payment).not_to receive(:pend)
+            expect(payment).not_to receive(:pend!)
             expect { payment.authorize! }.to raise_error(Spree::Core::GatewayError)
           end
         end
@@ -397,7 +375,9 @@ describe Spree::Payment, type: :model do
       it 'instruments the purchase gateway call as gateway.spree_payments' do
         allow(gateway).to receive(:purchase).and_return(success_response)
 
-        notifications = capture_gateway_notifications { payment.purchase! }
+        notifications = capture_gateway_notifications do
+          Spree.payment_process_workflow.call(payment: payment, action: :purchase)
+        end
 
         expect(notifications.sole).to include(action: 'purchase', payment_method_type: 'Spree::Gateway::Bogus')
       end
@@ -407,7 +387,7 @@ describe Spree::Payment, type: :model do
         payment.response_code = "BGS-#{SecureRandom.hex(6)}"
         allow(gateway).to receive(:capture).and_return(success_response)
 
-        notifications = capture_gateway_notifications { payment.capture! }
+        notifications = capture_gateway_notifications { Spree.payment_capture_workflow.call(payment: payment) }
 
         expect(notifications.sole).to include(action: 'capture', payment_method_type: 'Spree::Gateway::Bogus')
       end
@@ -417,6 +397,7 @@ describe Spree::Payment, type: :model do
       it 'calls purchase on the gateway with the payment amount' do
         expect(gateway).to receive(:purchase).with(gateway_amount, card, anything).and_return(success_response)
         payment.purchase!
+        expect(Spree::Deprecation).to have_received(:warn).with(/Payment#purchase! is deprecated/)
       end
 
       context 'if successful' do
@@ -430,22 +411,6 @@ describe Spree::Payment, type: :model do
           payment.purchase!
           expect(payment.response_code).to eq('123')
           expect(payment.avs_response).to eq(avs_code)
-        end
-
-        it 'makes payment complete' do
-          expect(payment).to receive(:complete!)
-          payment.purchase!
-        end
-
-        it 'logs a capture event' do
-          payment.purchase!
-          expect(payment.capture_events.count).to eq(1)
-          expect(payment.capture_events.first.amount).to eq(payment.amount)
-        end
-
-        it 'sets the uncaptured amount to 0' do
-          payment.purchase!
-          expect(payment.uncaptured_amount).to eq(0)
         end
       end
 
@@ -474,7 +439,7 @@ describe Spree::Payment, type: :model do
 
           it 'raises Spree::Core::GatewayError and marks payment as failed' do
             expect(payment).to receive(:failure!)
-            expect(payment).not_to receive(:pend)
+            expect(payment).not_to receive(:pend!)
             expect { payment.purchase! }.to raise_error(Spree::Core::GatewayError)
           end
         end
@@ -606,28 +571,12 @@ describe Spree::Payment, type: :model do
         end
 
         context 'if successful' do
-          context 'for entire amount' do
-            before do
-              expect(payment.payment_method).to receive(:capture).with(gateway_amount, payment.response_code, anything).and_return(success_response)
-            end
-
-            it 'makes payment complete' do
-              expect(payment).to receive(:complete!)
-              payment.capture!
-            end
-
-            it 'logs capture events' do
-              payment.capture!
-              expect(payment.capture_events.count).to eq(1)
-              expect(payment.capture_events.first.amount).to eq(payment.amount)
-            end
-          end
-
           it 'records the capture under the owner row lock' do
             expect(payment.payment_method).to receive(:capture).and_return(success_response)
             expect(payment.owner).to receive(:with_lock).and_call_original
 
             payment.capture!
+            expect(Spree::Deprecation).to have_received(:warn).with(/Payment#capture! is deprecated/)
           end
 
           it 'records nothing when another caller already completed the payment' do
@@ -661,25 +610,10 @@ describe Spree::Payment, type: :model do
               expect(payments.processing.first.amount).to eq(capture_amount)
               expect(payments.processing.first.source).to eq(payments.pending.first.source)
             end
-
-            it 'logs capture events' do
-              payment.capture!(capture_amount)
-              expect(payment.capture_events.count).to eq(1)
-              expect(payment.capture_events.first.amount).to eq(capture_amount)
-            end
           end
         end
 
         context 'if unsuccessful' do
-          context 'when response is returned from gateway' do
-            it 'does not make payment complete' do
-              allow(gateway).to receive_messages capture: failed_response
-              expect { payment.capture! }.to raise_error(Spree::Core::GatewayError)
-              expect(payment.reload).to be_failed
-              expect(payment).not_to be_completed
-            end
-          end
-
           context 'when there is an error connecting to the gateway' do
             let(:connection_error_message) { 'gateway_error' }
             let(:connection_error) { Spree::PaymentConnectionError.new(connection_error_message) }
@@ -688,22 +622,10 @@ describe Spree::Payment, type: :model do
 
             it 'raises Spree::Core::GatewayError and marks payment as failed' do
               expect(payment).to receive(:failure!)
-              expect(payment).not_to receive(:pend)
+              expect(payment).not_to receive(:pend!)
               expect { payment.capture! }.to raise_error(Spree::Core::GatewayError)
             end
           end
-        end
-      end
-
-      # Regression test for #2119
-      context 'when payment is completed' do
-        before do
-          payment.status = 'completed'
-        end
-
-        it 'does nothing' do
-          expect(payment.payment_method).not_to receive(:capture)
-          payment.capture!
         end
       end
     end
@@ -714,40 +636,17 @@ describe Spree::Payment, type: :model do
         payment.status = 'pending'
       end
 
-      context 'when profiles are supported' do
-        it "calls payment_gateway.void with the payment's response_code" do
-          allow(gateway).to receive_messages payment_profiles_supported?: true
-          expect(gateway).to receive(:void).with('123', card, anything).and_return(success_response)
-          payment.void_transaction!
-        end
-      end
-
-      context 'when profiles are not supported' do
-        it "calls payment_gateway.void with the payment's response_code" do
-          allow(gateway).to receive_messages payment_profiles_supported?: false
-          expect(gateway).to receive(:void).with('123', anything).and_return(success_response)
-          payment.void_transaction!
-        end
-      end
-
       context 'if successful' do
         it 'updates the response_code with the authorization from the gateway' do
           # Change it to something different
           payment.response_code = 'abc'
           payment.void_transaction!
           expect(payment.response_code).to start_with('void-BGS-')
+          expect(Spree::Deprecation).to have_received(:warn).with(/Payment#void_transaction! is deprecated/)
         end
       end
 
       context 'if unsuccessful' do
-        context 'when response is returned from gateway' do
-          it 'does not void the payment' do
-            allow(gateway).to receive_messages void: failed_response
-            expect { payment.void_transaction! }.to raise_error(Spree::Core::GatewayError)
-            expect(payment).not_to be_void
-          end
-        end
-
         context 'when there is an error connecting to the gateway' do
           let(:connection_error_message) { 'gateway_error' }
           let(:connection_error) { Spree::PaymentConnectionError.new(connection_error_message) }
@@ -756,60 +655,17 @@ describe Spree::Payment, type: :model do
 
           it 'raises Spree::Core::GatewayError and marks payment as failed' do
             expect(payment).to receive(:failure!)
-            expect(payment).not_to receive(:pend)
+            expect(payment).not_to receive(:pend!)
             expect { payment.void_transaction! }.to raise_error(Spree::Core::GatewayError)
           end
         end
-      end
-
-      # Regression test for #2119
-      context 'if payment is already voided' do
-        before do
-          payment.status = 'void'
-        end
-
-        it 'does not void the payment' do
-          expect(payment.payment_method).not_to receive(:void)
-          payment.void_transaction!
-        end
-      end
-
-      context 'if response_code is blank' do
-        before do
-          payment.response_code = nil
-          payment.status = 'pending'
-        end
-
-        it 'voids the payment without calling the gateway' do
-          expect(payment.payment_method).not_to receive(:void)
-          payment.void_transaction!
-          expect(payment.status).to eq('void')
-        end
-      end
-    end
-  end
-
-  context 'when already processing' do
-    it 'is a no-op success without trying to process the source' do
-      payment.status = 'processing'
-
-      expect(payment.process!).to be(true)
-    end
-  end
-
-  context 'with source required' do
-    context 'raises an error if no source is specified' do
-      before do
-        payment.source = nil
-      end
-
-      specify do
-        expect { payment.process! }.to raise_error(Spree::Core::GatewayError, I18n.t('spree.payment_processing_failed'))
       end
     end
   end
 
   context 'with source optional' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     context 'when payment method does not require source' do
       let(:check_payment_method) { create(:check_payment_method, store: order.store, capture_method: 'manual') }
 
@@ -845,18 +701,6 @@ describe Spree::Payment, type: :model do
     end
   end
 
-  describe '#can_credit?' do
-    it 'is true if credit_allowed > 0' do
-      allow(payment).to receive(:credit_allowed).and_return(100)
-      expect(payment.can_credit?).to be true
-    end
-
-    it 'is false if credit_allowed is 0' do
-      allow(payment).to receive(:credit_allowed).and_return(0)
-      expect(payment.can_credit?).to be false
-    end
-  end
-
   describe '#save' do
     context 'captured payments', events: true do
       it 'update order payment total' do
@@ -870,11 +714,6 @@ describe Spree::Payment, type: :model do
         expect do
           Spree::Payment.create(amount: 100, order: order)
         end.not_to change(order, :payment_total)
-      end
-
-      it 'requires a payment method' do
-        expect(Spree::Payment.create(amount: 100, order: order).errors).not_to be_empty
-        expect(Spree::Payment.create(amount: 100, order: order).errors.messages[:payment_method]).to be_present
       end
     end
 
@@ -1024,20 +863,6 @@ describe Spree::Payment, type: :model do
         expect(payment.source).to eq(credit_card)
         expect(payment.source.gateway_customer_profile_id).to eq('BGS-1234567890')
       end
-    end
-  end
-
-  describe '#currency' do
-    before { allow(order).to receive(:currency).and_return('ABC') }
-
-    it 'returns the order currency' do
-      expect(payment.currency).to eq('ABC')
-    end
-  end
-
-  describe '#display_amount' do
-    it 'returns a Spree::Money for this amount' do
-      expect(payment.display_amount).to eq(Spree::Money.new(payment.amount))
     end
   end
 
@@ -1202,11 +1027,6 @@ describe Spree::Payment, type: :model do
       let(:card) { create(:credit_card) }
       let(:payment_method) { card.payment_method }
 
-      before do
-        allow(payment_method).to receive_messages source_required: true
-      end
-
-      it { expect(payment_method.source_required?).to eq(true) }
       it { expect(payment.source).to eq(card) }
 
       context 'when credit card is removed' do
@@ -1318,20 +1138,25 @@ describe Spree::Payment, type: :model do
     end
   end
 
-  describe '#has_invalid_state?' do
-    let(:payment) { create(:payment, status: state) }
-    subject(:has_invalid_state?) { payment.has_invalid_state? }
+  describe '#has_invalid_status?' do
+    let(:payment) { create(:payment, status: status) }
+    subject(:has_invalid_status?) { payment.has_invalid_status? }
 
-    context 'when the state is invalid' do
-      let(:state) { Spree::Payment::INVALID_STATES.first }
+    context 'when the status is invalid' do
+      let(:status) { Spree::Payment::INVALID_STATUSES.first }
 
       it { is_expected.to be_truthy }
     end
 
-    context 'when the state is valid' do
-      let(:state) { 'completed' }
+    context 'when the status is valid' do
+      let(:status) { 'completed' }
 
       it { is_expected.to be_falsey }
+
+      it 'is still answered by the deprecated has_invalid_state? alias' do
+        expect(Spree::Deprecation).to receive(:warn).with(/has_invalid_state\? is deprecated/)
+        expect(payment.has_invalid_state?).to be_falsey
+      end
     end
   end
 

@@ -224,7 +224,7 @@ describe Spree::PaymentMethod::StoreCredit do
     end
 
     context "when the store credit isn't credited successfully" do
-      before { allow(Spree::StoreCredit).to receive_messages(credit: false) }
+      before { allow_any_instance_of(Spree::StoreCredit).to receive_messages(credit: false) }
 
       it 'returns an error response' do
         expect(subject.success?).to be false
@@ -245,8 +245,8 @@ describe Spree::PaymentMethod::StoreCredit do
       let(:originator) { double('originator') }
 
       it 'passes the originator' do
-        allow_any_instance_of(Spree::StoreCredit).to receive(:credit).
-          with(anything, anything, anything, action_originator: originator)
+        expect_any_instance_of(Spree::StoreCredit).to receive(:credit).
+          with(anything, anything, anything, action_originator: originator).and_return(true)
         subject
       end
     end
@@ -271,8 +271,8 @@ describe Spree::PaymentMethod::StoreCredit do
 
     context 'store credit event found' do
       it 'creates a store credit for the same amount that was captured' do
-        allow_any_instance_of(Spree::StoreCredit).to receive(:credit).
-          with(captured_amount, auth_code, store_credit.currency)
+        expect_any_instance_of(Spree::StoreCredit).to receive(:credit).
+          with(captured_amount, auth_code, store_credit.currency).and_return(true)
         subject
       end
 

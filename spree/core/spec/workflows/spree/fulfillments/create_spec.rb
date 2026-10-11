@@ -241,7 +241,7 @@ module Spree
       it 'inherits the first non-nil method when draining sources with different carriers' do
         other_method = create(:delivery_method)
         second_source = order.shipments.create!(stock_location: stock_location)
-        second_source.add_shipping_method(other_method, true)
+        second_source.add_delivery_method(other_method, true)
         line_items.last.inventory_units.update_all(shipment_id: second_source.id)
         first_source_method = source_shipment.delivery_method
 
@@ -273,7 +273,7 @@ module Spree
       it 'freezes the given cost instead of the inherited one' do
         expect(execute.success?).to eq(true)
         expect(fulfillment.cost).to eq(BigDecimal('7.42'))
-        expect(order.reload.shipment_total).to eq(BigDecimal('7.42'))
+        expect(order.reload.delivery_total).to eq(BigDecimal('7.42'))
       end
 
       it 'prices the carrier rate at the given cost' do

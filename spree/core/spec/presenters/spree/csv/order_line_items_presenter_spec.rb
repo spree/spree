@@ -24,7 +24,7 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
       expect(subject[5]).to eq money(order.delivery_total)
       expect(subject[6]).to eq money(order.tax_total)
       expect(subject[7]).to eq order.included_tax_total.positive?
-      expect(subject[8]).to eq(order.promo_total.negative? || line_item.promo_total.negative?)
+      expect(subject[8]).to eq(order.discount_total.negative? || line_item.promo_total.negative?)
       expect(subject[9]).to eq order.has_free_shipping?
       expect(subject[10]).to eq money(order.discount_total.abs)
       expect(subject[11]).to eq order.promo_code

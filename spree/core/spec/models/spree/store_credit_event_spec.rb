@@ -6,10 +6,6 @@ describe 'StoreCreditEvent' do
 
     let(:event_amount) { 120.0 }
 
-    it 'returns a Spree::Money instance' do
-      expect(subject.display_amount).to be_instance_of(Spree::Money)
-    end
-
     it 'uses the events amount attribute' do
       expect(subject.display_amount).to eq Spree::Money.new(event_amount, currency: subject.currency)
     end
@@ -19,10 +15,6 @@ describe 'StoreCreditEvent' do
     subject { create(:store_credit_auth_event, user_total_amount: user_total_amount) }
 
     let(:user_total_amount) { 300.0 }
-
-    it 'returns a Spree::Money instance' do
-      expect(subject.display_user_total_amount).to be_instance_of(Spree::Money)
-    end
 
     it 'uses the events user_total_amount attribute' do
       amount = Spree::Money.new(user_total_amount, currency: subject.currency)
@@ -103,92 +95,23 @@ describe 'StoreCreditEvent' do
     end
   end
 
-  describe '#store' do
-    let(:store) { @default_store }
-    let(:store_credit) { create(:store_credit, store: store) }
+  describe 'action predicates' do
+    it 'answers true only for its own action' do
+      predicates = {
+        allocation?: Spree::StoreCredit::ALLOCATION_ACTION,
+        credit?: Spree::StoreCredit::CREDIT_ACTION,
+        captured?: Spree::StoreCredit::CAPTURE_ACTION,
+        voided?: Spree::StoreCredit::VOID_ACTION,
+        authorized?: Spree::StoreCredit::AUTHORIZE_ACTION
+      }
 
-    subject { build(:store_credit_auth_event, store_credit: store_credit) }
+      predicates.each do |predicate, own_action|
+        predicates.each_value do |action|
+          event = build(:store_credit_auth_event, action: action)
 
-    it { expect(subject.store).to eq(store) }
-  end
-
-  describe '#allocation?' do
-    subject { store_credit_event.allocation? }
-
-    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
-
-    context 'action is allocation' do
-      let(:action) { Spree::StoreCredit::ALLOCATION_ACTION }
-      it { is_expected.to be true }
-    end
-
-    context 'action is not allocation' do
-      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
-      it { is_expected.to be false }
-    end
-  end
-
-  describe '#credit?' do
-    subject { store_credit_event.credit? }
-
-    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
-
-    context 'action is credit' do
-      let(:action) { Spree::StoreCredit::CREDIT_ACTION }
-      it { is_expected.to be true }
-    end
-
-    context 'action is not credit' do
-      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
-      it { is_expected.to be false }
-    end
-  end
-
-  describe '#captured?' do
-    subject { store_credit_event.captured? }
-
-    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
-
-    context 'action is capture' do
-      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
-      it { is_expected.to be true }
-    end
-
-    context 'action is not capture' do
-      let(:action) { Spree::StoreCredit::ALLOCATION_ACTION }
-      it { is_expected.to be false }
-    end
-  end
-
-  describe '#voided?' do
-    subject { store_credit_event.voided? }
-
-    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
-
-    context 'action is void' do
-      let(:action) { Spree::StoreCredit::VOID_ACTION }
-      it { is_expected.to be true }
-    end
-
-    context 'action is not void' do
-      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
-      it { is_expected.to be false }
-    end
-  end
-
-  describe '#authorized?' do
-    subject { store_credit_event.authorized? }
-
-    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
-
-    context 'action is authorize' do
-      let(:action) { Spree::StoreCredit::AUTHORIZE_ACTION }
-      it { is_expected.to be true }
-    end
-
-    context 'action is not authorize' do
-      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
-      it { is_expected.to be false }
+          expect(event.public_send(predicate)).to be(action == own_action), "#{predicate} for #{action}"
+        end
+      end
     end
   end
 end

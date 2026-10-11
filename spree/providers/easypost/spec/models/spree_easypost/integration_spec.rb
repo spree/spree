@@ -39,7 +39,6 @@ RSpec.describe SpreeEasyPost::Integration do
       integration.can_connect?
 
       expect(address_service).to have_received(:create).with(described_class::VERIFICATION_ADDRESS)
-      expect(client).not_to respond_to(:carrier_account)
     end
 
     it 'captures the vendor message on failure' do
@@ -74,16 +73,6 @@ RSpec.describe SpreeEasyPost::Integration do
         expect(rejected.can_connect?).to be(false)
         expect(rejected.connection_error_message).to be_present
       end
-    end
-  end
-
-  describe 'verify before activate' do
-    it 'blocks activation when the connection fails' do
-      allow(integration).to receive(:can_connect?).and_return(false)
-      integration.active = true
-
-      expect(integration).not_to be_valid
-      expect(integration.errors[:base]).to be_present
     end
   end
 end

@@ -171,10 +171,6 @@ module Spree
           it_behaves_like 'shipping rate matches'
         end
 
-        context "when the current matches the order's currency" do
-          it_behaves_like 'shipping rate matches'
-        end
-
         context "if the currency is different than the order's currency" do
           let(:currency) { 'GBP' }
 
@@ -210,7 +206,7 @@ module Spree
 
             allow(subject).to receive(:delivery_methods).and_return(shipping_methods)
 
-            subject.delivery_rates(package)
+            expect(subject.delivery_rates(package).map { |rate| [rate.cost, rate.selected] }).to eq [[1.00, true]]
           end
         end
 
@@ -242,7 +238,7 @@ module Spree
               sm.tax_category_id = tax_rate.tax_category_id
               sm.save
             end
-            package.shipping_methods.map(&:reload)
+            package.eligible_delivery_methods.map(&:reload)
           end
 
           it 'links the shipping rate and the tax rate' do

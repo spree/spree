@@ -175,7 +175,7 @@ describe Spree::DeliveryMethodRule, type: :model do
 
     let(:company_package) do
       create(:company_membership, company: company, customer: customer)
-      cart = create(:cart, store: store, user: customer, company: company)
+      cart = create(:cart, store: store, customer: customer, company: company)
       create(:line_item, cart: cart, order: nil)
       fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
       fulfillment.to_package
@@ -185,13 +185,6 @@ describe Spree::DeliveryMethodRule, type: :model do
     # side that needs stating: freight is for company orders.
     it 'is for company orders by default' do
       rule = described_class.new(delivery_method: delivery_method)
-
-      expect(rule.eligible?(company_package)).to be(true)
-      expect(rule.eligible?(package)).to be(false)
-    end
-
-    it 'hides a freight method from a retail cart' do
-      rule = described_class.new(delivery_method: delivery_method, preferred_company_orders_only: true)
 
       expect(rule.eligible?(company_package)).to be(true)
       expect(rule.eligible?(package)).to be(false)

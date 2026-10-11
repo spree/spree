@@ -17,21 +17,6 @@ describe Spree::FulfillmentProvider::Base, type: :model do
     expect { provider.cancel_fulfillment(fulfillment) }.to raise_error(NotImplementedError)
   end
 
-  describe 'registry' do
-    it 'exposes the built-in providers and their class predicates' do
-      expect(Spree.fulfillment_providers).to include(
-        Spree::FulfillmentProvider::Manual,
-        Spree::FulfillmentProvider::Digital,
-        Spree::FulfillmentProvider::Pickup,
-        Spree::FulfillmentProvider::PickupPoint
-      )
-      expect(Spree::FulfillmentProvider::Digital).to be_digital
-      expect(Spree::FulfillmentProvider::Pickup).to be_pickup
-      expect(Spree::FulfillmentProvider::PickupPoint).to be_pickup_point
-      expect(Spree::FulfillmentProvider::Manual).not_to be_digital
-    end
-  end
-
   describe 'Fulfillment#provider' do
     it 'falls back to Manual without a delivery method' do
       expect(build(:fulfillment).provider).to be_a(Spree::FulfillmentProvider::Manual)

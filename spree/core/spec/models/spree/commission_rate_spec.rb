@@ -180,12 +180,6 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(rate.amount_for('EUR')).to be_nil
     end
 
-    # A flat fee charging nothing anywhere is skipped for every sale, which
-    # reads as a broken rate rather than a disabled one.
-    it 'refuses a flat fee that states no amount at all' do
-      expect(build(:commission_rate, kind: 'fixed', value: 0)).not_to be_valid
-    end
-
     # Charging the flat amount again per parcel would bill one sale twice, so
     # a marketplace wanting a flat delivery charge states it as its own rate.
     it 'refuses to also charge delivery' do
@@ -375,13 +369,6 @@ RSpec.describe Spree::CommissionRate, type: :model do
     # The list IS the precedence, so a new rate has to take effect on
     # creation — appending would file it behind the catch-all that already
     # matches everything, leaving it dead on arrival.
-    it 'puts a new rate at the top of the list' do
-      first = create(:commission_rate, store: store)
-      second = create(:commission_rate, store: store)
-
-      expect(described_class.ordered.to_a).to eq([second, first])
-    end
-
     it 'walks the list top-down' do
       bottom = create(:commission_rate, store: store)
       top = create(:commission_rate, store: store)

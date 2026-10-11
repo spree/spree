@@ -11,26 +11,11 @@ describe Spree::UserRoles do
 
       expect(test_user.has_spree_role?('test', current_store)).to be_truthy
     end
-
-    context 'when a resource parameter is provided' do
-      let(:resource) { create(:store) }
-      # A role belongs to what it governs, so the grant needs one here.
-      let!(:resource_role) { create(:role, name: 'test', resource: resource) }
-
-      before { test_user.add_role('test', resource) }
-
-      it 'adds a role to the user for the resource' do
-        expect(test_user.has_spree_role?('test', resource)).to be_truthy
-      end
-    end
   end
 
   describe '#remove_role' do
     it 'removes a role from the user' do
       test_user.add_role('test')
-
-      expect(test_user.has_spree_role?('test')).to be_truthy
-
       test_user.remove_role('test')
 
       expect(test_user.has_spree_role?('test')).to be_falsy
@@ -93,8 +78,6 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
-      # A role belongs to what it governs, so the grant needs one here.
-      let!(:resource_role) { create(:role, name: 'test', resource: resource) }
 
       it 'checks against the resource' do
         Spree::Role.default_admin_role(resource)

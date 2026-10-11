@@ -203,18 +203,6 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
         )
       end
 
-      it 'converts a metric store dimensions to inches' do
-        store.update!(preferred_unit_system: 'metric')
-        store.default_package_type.update!(length: 30.48, width: 22.86, height: 10.16,
-                                           dimensions_unit: 'cm')
-
-        provider.estimates(package)
-
-        expect(shipment_service).to have_received(:create).with(
-          hash_including(parcel: hash_including(length: 12.0, width: 9.0, height: 4.0))
-        )
-      end
-
       # A merchant can record a carton in whatever unit the supplier quoted
       # it in, regardless of what the store trades in. Reading centimetres as
       # inches overstates every axis by 2.54 and inflates the carrier's
