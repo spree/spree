@@ -8,18 +8,23 @@ module Spree
         class DeliveryZonesController < ResourceController
           scoped_resource :settings
 
-          request_params 'DeliveryZoneParams' do
-            string :name, example: 'US North-East'
-            string :description, nullable: true
-            id :delivery_profile_id,
-               description: 'Delivery profile this zone belongs to (`fp_...`); defaults to the store default profile.'
-            id :delivery_origin_group_id, description: 'Origin group this zone belongs to (`og_...`).'
-            object :members, array: true, as: 'DeliveryZoneMemberParams',
-                             description: "Replaces the zone's full member set atomically." do
-              string :member_type, required: true, enum: Spree::DeliveryZoneMember::MEMBER_TYPES
-              country :country_code, example: 'US'
-              string :state_code, description: 'A subdivision code or name. Without `country_code` the country is inferred when only one country matches.'
-              string :postal_code_prefix, :postal_code_from, :postal_code_to
+          request_params 'DeliveryZoneParams' do |body|
+            body.attribute :name, :string, example: 'US North-East'
+            body.attribute :description, :string, nullable: true
+            body.attribute :delivery_profile_id, :id,
+              description: 'Delivery profile this zone belongs to (`fp_...`); defaults to the store default profile.'
+            body.attribute :delivery_origin_group_id, :id,
+              description: 'Origin group this zone belongs to (`og_...`).'
+            body.attribute :members, :array,
+              as: 'DeliveryZoneMemberParams',
+              description: "Replaces the zone's full member set atomically." do |member|
+              member.attribute :member_type, :string, required: true, choices: Spree::DeliveryZoneMember::MEMBER_TYPES
+              member.attribute :country_code, :country, example: 'US'
+              member.attribute :state_code, :string,
+                description: 'A subdivision code or name. Without `country_code` the country is inferred when only one country matches.'
+              member.attribute :postal_code_prefix, :string
+              member.attribute :postal_code_from, :string
+              member.attribute :postal_code_to, :string
             end
           end
 

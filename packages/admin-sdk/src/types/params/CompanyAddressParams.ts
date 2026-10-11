@@ -12,8 +12,6 @@ export type CompanyAddressParams = {
   postal_code?: string
   phone?: string
   label?: string
-  /** Legacy spelling of `postal_code`; send only one of the two. */
-  zipcode?: string
   /** ISO 3166-1 alpha-2 code, such as `US`. */
   country_code?: CountryCode
   /** The state or province abbreviation, such as `NY`. */

@@ -20,9 +20,11 @@ module Spree
           class QuantityRulesController < BaseController
             before_action :authorize_parent_access!
 
-            request_params 'CatalogProductTermsParams', action: :upsert do
-              object :terms, required: true, example: { 'prod_abc123' => { minimum_order_quantity: 48, order_multiple: 24 } },
-                             description: 'Quantity terms keyed by product: `{ minimum_order_quantity, order_multiple }`, each a whole number or null. A product whose pair is both null has its terms cleared; a product not yet in the assortment is added.'
+            request_params 'CatalogProductTermsParams', action: :upsert do |body|
+              body.attribute :terms, :hash,
+                required: true,
+                example: { 'prod_abc123' => { minimum_order_quantity: 48, order_multiple: 24 } },
+                description: 'Quantity terms keyed by product: `{ minimum_order_quantity, order_multiple }`, each a whole number or null. A product whose pair is both null has its terms cleared; a product not yet in the assortment is added.'
             end
 
             # PUT /api/v3/admin/catalogs/:catalog_id/quantity_rules

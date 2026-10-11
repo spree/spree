@@ -7,10 +7,12 @@ module Spree
         class CustomerGroupsController < ResourceController
           scoped_resource :customers
 
-          request_params :customer_group do
-            string :name, required: :create, example: 'Wholesale'
-            string :description, nullable: true, example: 'B2B accounts'
-            id :customer_ids, array: true, example: %w[cus_UkLWZg9DAJ], description: "Replaces the group's members."
+          request_params :customer_group do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Wholesale'
+            body.attribute :description, :string, nullable: true, example: 'B2B accounts'
+            body.attribute :customer_ids, :array, of: :id,
+              example: %w[cus_UkLWZg9DAJ],
+              description: "Replaces the group's members."
           end
 
           protected

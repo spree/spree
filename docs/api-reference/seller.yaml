@@ -28281,8 +28281,8 @@ components:
           enum:
           - public
           - private
-          description: "`public` (the default) for web images, videos and CSV, `private`
-            for any type."
+          description: "`public` (the default) for images, videos and CSV files anyone
+            may fetch, `private` for any type."
         file:
           type: string
           format: binary
@@ -28462,8 +28462,6 @@ components:
         city:
           type: string
         postal_code:
-          type: string
-        zipcode:
           type: string
         company:
           type: string
@@ -28884,9 +28882,6 @@ components:
           type: string
         label:
           type: string
-        zipcode:
-          type: string
-          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           allOf:
           - "$ref": "#/components/schemas/CountryCode"
@@ -29156,8 +29151,6 @@ components:
     StockLevelParams:
       type: object
       properties:
-        id:
-          type: string
         stock_location_id:
           type: string
           description: The location holding the stock (`sloc_...`).

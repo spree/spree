@@ -13,10 +13,13 @@ module Spree
           subclassed_via -> { Spree.promotions.actions },
                          unknown_type_error: 'unknown_promotion_action_type'
 
-          request_params :promotion_action do
-            string :type, required: :create, only: :create, example: 'free_shipping',
-                          description: 'The action kind, from `GET /promotion_actions/types`.'
-            include_fields Spree::Api::V3::Admin::PromotionActionRequestSchema
+          request_params :promotion_action do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              only: :create,
+              example: 'free_shipping',
+              description: 'The action kind, from `GET /promotion_actions/types`.'
+            body.include_attributes Spree::Api::V3::Admin::PromotionActionRequestSchema
           end
 
           def types

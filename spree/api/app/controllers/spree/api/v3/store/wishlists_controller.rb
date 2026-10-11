@@ -5,14 +5,16 @@ module Spree
         class WishlistsController < ResourceController
           prepend_before_action :require_authentication!
 
-          request_params 'CreateWishlistParams', action: :create do
-            string :name, required: true, example: 'Birthday Ideas'
-            boolean :is_private, :is_default
+          request_params 'CreateWishlistParams', action: :create do |body|
+            body.attribute :name, :string, required: true, example: 'Birthday Ideas'
+            body.attribute :is_private, :boolean
+            body.attribute :is_default, :boolean
           end
 
-          request_params 'UpdateWishlistParams', action: :update do
-            string :name, example: 'Updated Name'
-            boolean :is_private, :is_default
+          request_params 'UpdateWishlistParams', action: :update do |body|
+            body.attribute :name, :string, example: 'Updated Name'
+            body.attribute :is_private, :boolean
+            body.attribute :is_default, :boolean
           end
 
           # POST /api/v3/store/wishlists

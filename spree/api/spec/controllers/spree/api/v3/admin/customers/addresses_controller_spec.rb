@@ -46,7 +46,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
         last_name: 'Doe',
         address1: '123 Main St',
         city: 'Brooklyn',
-        zipcode: '11201',
+        postal_code: '11201',
         country_code: country.iso,
         state_code: state.abbr,
         phone: '+15551234567'
@@ -121,7 +121,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
           last_name: address.last_name,
           address1: address.address1,
           city: 'NewCity',
-          zipcode: address.zipcode,
+          postal_code: address.postal_code,
           phone: address.phone,
           country_code: address.country_code,
           state_code: address.state_code

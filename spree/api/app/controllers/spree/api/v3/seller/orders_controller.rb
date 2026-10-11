@@ -21,24 +21,37 @@ module Spree
 
           scoped_resource :orders
 
-          ADDRESS = Spree::Api::V3::RequestSchema.shape('OrderAddressParams') do
-            string :first_name, :last_name, :address1, :city, :postal_code, :zipcode
-            string :company, :address2, :phone, :alternative_phone, :state_code, :state_name, :label, nullable: true
-            country :country_code, example: 'US'
+          ADDRESS = Spree::Api::V3::RequestSchema.shape('OrderAddressParams') do |schema|
+            schema.attribute :first_name, :string
+            schema.attribute :last_name, :string
+            schema.attribute :address1, :string
+            schema.attribute :city, :string
+            schema.attribute :postal_code, :string
+            schema.attribute :company, :string, nullable: true
+            schema.attribute :address2, :string, nullable: true
+            schema.attribute :phone, :string, nullable: true
+            schema.attribute :alternative_phone, :string, nullable: true
+            schema.attribute :state_code, :string, nullable: true
+            schema.attribute :state_name, :string, nullable: true
+            schema.attribute :label, :string, nullable: true
+            schema.attribute :country_code, :country, example: 'US'
           end
 
-          request_params 'OrderCancelParams', action: :cancel do
-            id :cancel_reason_id, nullable: true, description: 'A reason from the order cancellation reasons endpoint.'
-            string :cancel_note, nullable: true, description: 'Free text beside the reason.'
-            boolean :refund_payments, description: "Hand back what the buyer paid for this order's goods."
-            boolean :notify_customer, description: 'Email the customer about the cancellation.'
+          request_params 'OrderCancelParams', action: :cancel do |body|
+            body.attribute :cancel_reason_id, :id,
+              nullable: true,
+              description: 'A reason from the order cancellation reasons endpoint.'
+            body.attribute :cancel_note, :string, nullable: true, description: 'Free text beside the reason.'
+            body.attribute :refund_payments, :boolean,
+              description: "Hand back what the buyer paid for this order's goods."
+            body.attribute :notify_customer, :boolean, description: 'Email the customer about the cancellation.'
           end
 
-          request_params 'OrderAddressCorrectionParams', action: :address do
-            object :shipping_address, shape: ADDRESS,
-                                      description: 'Only the lines that change; the rest of the address is carried over.'
-            object :billing_address, shape: ADDRESS,
-                                     description: 'Only the lines that change; the rest of the address is carried over.'
+          request_params 'OrderAddressCorrectionParams', action: :address do |body|
+            body.attribute :shipping_address, :object, shape: ADDRESS,
+              description: 'Only the lines that change; the rest of the address is carried over.'
+            body.attribute :billing_address, :object, shape: ADDRESS,
+              description: 'Only the lines that change; the rest of the address is carried over.'
           end
 
           before_action :set_resource, only: [:show, :cancel, :address]

@@ -13,16 +13,21 @@ module Spree
 
             # The permit list itself lives in ShippingLabelActions, shared with
             # the seller branch; this declaration documents it.
-            request_params :shipping_label do
-              string :file_signed_id,
-                     description: 'A `signed_id` from `files.upload()`. Its presence records a label bought elsewhere instead of buying one; without it the body is ignored and the label is bought through the carrier.'
-              string :tracking_number, description: 'The number printed on an uploaded label. Required with `file_signed_id`.'
-              string :carrier, description: "Free text; a forwarder's name is as valid as a carrier slug. Detected from the number when omitted."
-              string :service, description: 'Carrier service the label was bought at.'
-              decimal :cost, description: "What the merchant paid the carrier. Accounting data only; it never touches the order's shipping charge."
-              currency :currency, description: 'Currency of the cost.'
-              string :file_format, enum: %w[pdf png zpl], description: 'Taken from the file when omitted.'
-              string :tracking_url, description: 'Tracking page for the consignment the label mints.'
+            request_params :shipping_label do |body|
+              body.attribute :file_signed_id, :string,
+                description: 'A `signed_id` from `files.upload()`. Its presence records a label bought elsewhere instead of buying one; without it the body is ignored and the label is bought through the carrier.'
+              body.attribute :tracking_number, :string,
+                description: 'The number printed on an uploaded label. Required with `file_signed_id`.'
+              body.attribute :carrier, :string,
+                description: "Free text; a forwarder's name is as valid as a carrier slug. Detected from the number when omitted."
+              body.attribute :service, :string, description: 'Carrier service the label was bought at.'
+              body.attribute :cost, :decimal,
+                description: "What the merchant paid the carrier. Accounting data only; it never touches the order's shipping charge."
+              body.attribute :currency, :currency, description: 'Currency of the cost.'
+              body.attribute :file_format, :string,
+                choices: %w[pdf png zpl],
+                description: 'Taken from the file when omitted.'
+              body.attribute :tracking_url, :string, description: 'Tracking page for the consignment the label mints.'
             end
 
             before_action :set_resource, only: [:show, :download, :refund, :destroy]

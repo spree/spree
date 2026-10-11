@@ -19,21 +19,31 @@ module Spree
           # `type` is stripped before assignment by the subclassed-resource
           # flow, so a saved row's kind can never change — which matters
           # because its submissions answered the old one.
-          request_params :seller_requirement do
-            string :type, required: true, only: :create, example: 'document',
-                          description: 'The kind, from the seller requirement types endpoint.'
-            string :name, example: 'Business registration',
-                          description: 'What the seller sees. Required for kinds that can be added more than once, since the wording is the only thing telling them apart. Left blank on the others, the kind names itself.'
-            string :description, example: 'A copy of your certificate of incorporation.', description: 'Instructions shown to the seller.'
-            integer :position, example: 1, description: 'Place in the checklist.'
-            boolean :active, example: true
-            boolean :required, example: true, description: 'Whether this blocks approval. Off means recommended.'
-            object :preferences, example: { accepted_content_types: ['application/pdf'] },
-                                 description: "Configuration for this kind, per its type's `schema`."
-            object :metadata
+          request_params :seller_requirement do |body|
+            body.attribute :type, :string,
+              required: true,
+              only: :create,
+              example: 'document',
+              description: 'The kind, from the seller requirement types endpoint.'
+            body.attribute :name, :string,
+              example: 'Business registration',
+              description: 'What the seller sees. Required for kinds that can be added more than once, since the wording is the only thing telling them apart. Left blank on the others, the kind names itself.'
+            body.attribute :description, :string,
+              example: 'A copy of your certificate of incorporation.',
+              description: 'Instructions shown to the seller.'
+            body.attribute :position, :integer, example: 1, description: 'Place in the checklist.'
+            body.attribute :active, :boolean, example: true
+            body.attribute :required, :boolean,
+              example: true,
+              description: 'Whether this blocks approval. Off means recommended.'
+            body.attribute :preferences, :hash,
+              example: { accepted_content_types: ['application/pdf'] },
+              description: "Configuration for this kind, per its type's `schema`."
+            body.attribute :metadata, :hash
             # Permitted per kind, from the kind's own `additional_permitted_attributes`.
-            id :custom_field_definition_ids, array: true, permit: false,
-                                             description: 'Custom field definitions this requirement asks the seller to fill in (`required_custom_fields` kind).'
+            body.attribute :custom_field_definition_ids, :array, of: :id,
+              permit: false,
+              description: 'Custom field definitions this requirement asks the seller to fill in (`required_custom_fields` kind).'
           end
 
           # GET /api/v3/admin/seller_requirements/types

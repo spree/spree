@@ -10,8 +10,8 @@ module Spree
                            'Any kind is accepted; one with a registered validator is checked by it. ' \
                            'Built-in: `eu_vat`. Extensions may register more.'.freeze
 
-        string :kind, required: true, example: 'eu_vat', description: KIND_DESCRIPTION
-        string :value, required: true, example: 'DE123456789'
+        attribute :kind, :string, required: true, example: 'eu_vat', description: KIND_DESCRIPTION
+        attribute :value, :string, required: true, example: 'DE123456789'
       end
     end
   end

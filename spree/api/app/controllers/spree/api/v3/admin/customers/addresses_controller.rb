@@ -4,11 +4,15 @@ module Spree
       module Admin
         module Customers
           class AddressesController < BaseController
-            request_params 'CustomerAddressParams' do
-              include_fields Spree::Api::V3::Admin::AddressRequestSchema
-              boolean :quick_checkout
-              boolean :is_default_billing, :is_default_shipping, permit: false,
-                                                                 description: "Makes this the customer's default address of that kind."
+            request_params 'CustomerAddressParams' do |body|
+              body.include_attributes Spree::Api::V3::Admin::AddressRequestSchema
+              body.attribute :quick_checkout, :boolean
+              body.attribute :is_default_billing, :boolean,
+                permit: false,
+                description: "Makes this the customer's default address of that kind."
+              body.attribute :is_default_shipping, :boolean,
+                permit: false,
+                description: "Makes this the customer's default address of that kind."
             end
 
             # POST /api/v3/admin/customers/:customer_id/addresses

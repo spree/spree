@@ -10,10 +10,11 @@ module Spree
           # Only `value` is mutable. Switching the linked definition is a
           # delete-and-create: the model rejects it (definition + resource
           # uniqueness) and the type wouldn't match.
-          request_params :custom_field do
-            id :custom_field_definition_id, required: true, only: :create, example: 'cfdef_abc123'
-            any :value, required: true,
-                        description: "A value matching the definition's `field_type`: a scalar for text, number and boolean fields; a list or a hash for JSON fields."
+          request_params :custom_field do |body|
+            body.attribute :custom_field_definition_id, :id, required: true, only: :create, example: 'cfdef_abc123'
+            body.attribute :value, :any,
+              required: true,
+              description: "A value matching the definition's `field_type`: a scalar for text, number and boolean fields; a list or a hash for JSON fields."
           end
 
           # POST /api/v3/admin/<parent>/<parent_id>/custom_fields

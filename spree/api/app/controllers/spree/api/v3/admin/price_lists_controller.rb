@@ -26,24 +26,30 @@ module Spree
           # actions. Wrapping it under a different name keeps both.
           before_action :load_member_resource, only: [:activate, :deactivate]
 
-          request_params :price_list do
-            string :name, required: :create, example: 'EU wholesale'
-            string :description, nullable: true
-            integer :position, example: 1
-            datetime :starts_at, nullable: true, example: '2026-06-01T00:00:00Z',
-                                 description: 'Pair with `ends_at` to schedule the list: activating a list whose start is in the future marks it `scheduled`.'
-            datetime :ends_at, nullable: true, example: '2026-09-01T00:00:00Z'
-            string :match_policy, enum: Spree::PriceList::MATCH_POLICIES, example: 'all',
-                                  description: '`all`: every rule must match. `any`: one matching rule is enough.'
-            decimal :price_adjustment_percentage, nullable: true, example: '-15.0',
-                                                  description: 'Signed: negative discounts off base prices, positive marks up.'
-            boolean :adjust_compare_at
-            object :rules, array: true, shape: Spree::Api::V3::Admin::PriceListRuleRequestSchema,
-                           description: 'The complete rule set: rules are matched by `id` and updated, new ones are built, and rules left out are removed.'
-            object :price_adjustment_tiers, array: true, shape: Spree::Api::V3::Admin::PriceAdjustmentTierRequestSchema,
-                                            description: "Quantity bands on the list's percentage. The payload is the whole ladder: a band left out is removed."
-            object :prices, array: true, shape: Spree::Api::V3::Admin::PriceListPriceRequestSchema,
-                            description: 'Per-variant price overrides. Each row upserts, so the variants it names become part of the list. Curating whole products goes through the nested products endpoint instead.'
+          request_params :price_list do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'EU wholesale'
+            body.attribute :description, :string, nullable: true
+            body.attribute :position, :integer, example: 1
+            body.attribute :starts_at, :datetime,
+              nullable: true,
+              example: '2026-06-01T00:00:00Z',
+              description: 'Pair with `ends_at` to schedule the list: activating a list whose start is in the future marks it `scheduled`.'
+            body.attribute :ends_at, :datetime, nullable: true, example: '2026-09-01T00:00:00Z'
+            body.attribute :match_policy, :string,
+              choices: Spree::PriceList::MATCH_POLICIES,
+              example: 'all',
+              description: '`all`: every rule must match. `any`: one matching rule is enough.'
+            body.attribute :price_adjustment_percentage, :decimal,
+              nullable: true,
+              example: '-15.0',
+              description: 'Signed: negative discounts off base prices, positive marks up.'
+            body.attribute :adjust_compare_at, :boolean
+            body.attribute :rules, :array, of: Spree::Api::V3::Admin::PriceListRuleRequestSchema,
+              description: 'The complete rule set: rules are matched by `id` and updated, new ones are built, and rules left out are removed.'
+            body.attribute :price_adjustment_tiers, :array, of: Spree::Api::V3::Admin::PriceAdjustmentTierRequestSchema,
+              description: "Quantity bands on the list's percentage. The payload is the whole ladder: a band left out is removed."
+            body.attribute :prices, :array, of: Spree::Api::V3::Admin::PriceListPriceRequestSchema,
+              description: 'Per-variant price overrides. Each row upserts, so the variants it names become part of the list. Curating whole products goes through the nested products endpoint instead.'
           end
 
           # GET /api/v3/admin/price_lists/price_rule_types

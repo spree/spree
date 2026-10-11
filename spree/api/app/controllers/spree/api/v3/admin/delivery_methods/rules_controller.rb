@@ -8,13 +8,16 @@ module Spree
           class RulesController < ResourceController
             scoped_resource :delivery_methods
 
-            request_params :delivery_method_rule do
-              string :type, required: true, only: :create, example: 'excluded_products_rule',
-                            description: 'A rule kind from the delivery method rule types endpoint.'
-              boolean :active, description: 'Defaults to true on create.'
-              object :preferences, description: "Values for the rule kind's preference schema."
-              id :product_ids, array: true,
-                               description: 'Products an association-backed rule (`excluded_products_rule`) applies to. An empty list clears them.'
+            request_params :delivery_method_rule do |body|
+              body.attribute :type, :string,
+                required: true,
+                only: :create,
+                example: 'excluded_products_rule',
+                description: 'A rule kind from the delivery method rule types endpoint.'
+              body.attribute :active, :boolean, description: 'Defaults to true on create.'
+              body.attribute :preferences, :hash, description: "Values for the rule kind's preference schema."
+              body.attribute :product_ids, :array, of: :id,
+                description: 'Products an association-backed rule (`excluded_products_rule`) applies to. An empty list clears them.'
             end
 
             def create

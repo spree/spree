@@ -17,11 +17,12 @@ module Spree
           # standing scope would 404 the unauthenticated invitee.
           skip_before_action :set_resource
 
-          request_params 'AcceptCompanyInvitationParams', action: :accept do
-            string :first_name, example: 'Ada'
-            string :last_name, example: 'Lovelace'
-            string :phone
-            string :password, :password_confirmation, example: 'a-strong-password'
+          request_params 'AcceptCompanyInvitationParams', action: :accept do |body|
+            body.attribute :first_name, :string, example: 'Ada'
+            body.attribute :last_name, :string, example: 'Lovelace'
+            body.attribute :phone, :string
+            body.attribute :password, :string, example: 'a-strong-password'
+            body.attribute :password_confirmation, :string, example: 'a-strong-password'
           end
 
           # GET /api/v3/store/company_invitations/:token — what is being

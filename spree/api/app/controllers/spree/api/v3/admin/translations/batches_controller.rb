@@ -25,14 +25,20 @@ module Spree
             # which is stricter than the static check and keeps the audit model.
             skip_scope_check!
 
-            request_params 'TranslationBatchParams' do
-              object :translations, array: true, required: true, as: 'TranslationBatchEntryParams',
-                                    description: 'At least one entry. All entries are saved, or none are.' do
-                string :resource_type, required: true, example: 'option_type',
-                                       description: 'Translatable resource type token, e.g. `option_type`.'
-                id :resource_id, required: true, example: 'opt_abc123'
-                object :values, required: true, example: { de: { label: 'Größe' } },
-                                description: 'Translated fields keyed by locale code, then by field name.'
+            request_params 'TranslationBatchParams' do |body|
+              body.attribute :translations, :array,
+                required: true,
+                as: 'TranslationBatchEntryParams',
+                description: 'At least one entry. All entries are saved, or none are.' do |translation|
+                translation.attribute :resource_type, :string,
+                  required: true,
+                  example: 'option_type',
+                  description: 'Translatable resource type token, e.g. `option_type`.'
+                translation.attribute :resource_id, :id, required: true, example: 'opt_abc123'
+                translation.attribute :values, :hash,
+                  required: true,
+                  example: { de: { label: 'Größe' } },
+                  description: 'Translated fields keyed by locale code, then by field name.'
               end
             end
 

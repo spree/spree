@@ -9,10 +9,12 @@ module Spree
 
             before_action :find_cart!
 
-            request_params 'UpdateFulfillmentParams', action: :update do
-              id :selected_delivery_rate_id, example: 'dr_abc123', description: 'The delivery rate to select.'
-              string :pickup_point_external_id,
-                     description: "For a pickup point delivery method: the provider's id of the point to collect from."
+            request_params 'UpdateFulfillmentParams', action: :update do |body|
+              body.attribute :selected_delivery_rate_id, :id,
+                example: 'dr_abc123',
+                description: 'The delivery rate to select.'
+              body.attribute :pickup_point_external_id, :string,
+                description: "For a pickup point delivery method: the provider's id of the point to collect from."
             end
 
             # PATCH /api/v3/store/carts/:cart_id/fulfillments/:id

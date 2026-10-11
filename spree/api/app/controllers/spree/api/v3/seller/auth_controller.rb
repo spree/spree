@@ -35,10 +35,12 @@ module Spree
           skip_before_action :set_current_seller_context, only: [:create, :refresh, :logout, :providers]
           skip_before_action :authenticate_seller!, only: [:create, :refresh, :logout, :providers]
 
-          request_params 'LoginParams' do
-            string :provider, enum: %w[email], description: 'The authentication method. Defaults to `email`.'
-            string :email, required: true, example: 'seller@example.com'
-            string :password, required: true, example: 'password123'
+          request_params 'LoginParams' do |body|
+            body.attribute :provider, :string,
+              choices: %w[email],
+              description: 'The authentication method. Defaults to `email`.'
+            body.attribute :email, :string, required: true, example: 'seller@example.com'
+            body.attribute :password, :string, required: true, example: 'password123'
           end
 
           # POST /api/v3/seller/auth/login

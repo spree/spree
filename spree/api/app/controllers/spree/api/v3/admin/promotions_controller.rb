@@ -5,36 +5,48 @@ module Spree
         class PromotionsController < ResourceController
           scoped_resource :promotions
 
-          request_params :promotion do
-            string :name, required: :create
-            string :description, nullable: true
-            string :code, nullable: true,
-                          description: 'Required for single-code coupon promotions. Ignored when `multi_codes` is true.'
-            string :path, nullable: true
-            datetime :starts_at, :expires_at, nullable: true
-            integer :usage_limit, nullable: true
-            string :match_policy, enum: Spree::Promotion::MATCH_POLICIES
-            string :kind, enum: Spree::Promotion.kinds.keys,
-                          description: '`coupon_code` needs a code (or `multi_codes`); `automatic` applies without one.'
-            boolean :multi_codes, description: 'Generates `number_of_codes` codes starting with `code_prefix`.'
-            integer :number_of_codes, nullable: true
-            string :code_prefix, nullable: true
-            id :promotion_category_id, nullable: true
+          request_params :promotion do |body|
+            body.attribute :name, :string, required: true, on: :create
+            body.attribute :description, :string, nullable: true
+            body.attribute :code, :string,
+              nullable: true,
+              description: 'Required for single-code coupon promotions. Ignored when `multi_codes` is true.'
+            body.attribute :path, :string, nullable: true
+            body.attribute :starts_at, :datetime, nullable: true
+            body.attribute :expires_at, :datetime, nullable: true
+            body.attribute :usage_limit, :integer, nullable: true
+            body.attribute :match_policy, :string, choices: Spree::Promotion::MATCH_POLICIES
+            body.attribute :kind, :string,
+              choices: Spree::Promotion.kinds.keys,
+              description: '`coupon_code` needs a code (or `multi_codes`); `automatic` applies without one.'
+            body.attribute :multi_codes, :boolean,
+              description: 'Generates `number_of_codes` codes starting with `code_prefix`.'
+            body.attribute :number_of_codes, :integer, nullable: true
+            body.attribute :code_prefix, :string, nullable: true
+            body.attribute :promotion_category_id, :id, nullable: true
             # Rules and actions are permitted below, with the keys each
             # registered kind adds.
-            object :rules, array: true, permit: false, as: 'PromotionRuleDraftParams',
-                           description: 'The rules the promotion should have: entries with `id` update, entries without are created, and rules left out are removed.' do
-              id :id
-              string :type, required: true, example: 'currency',
-                            description: 'The rule kind, from `GET /promotion_rules/types`.'
-              include_fields Spree::Api::V3::Admin::PromotionRuleRequestSchema
+            body.attribute :rules, :array,
+              permit: false,
+              as: 'PromotionRuleDraftParams',
+              description: 'The rules the promotion should have: entries with `id` update, entries without are created, and rules left out are removed.' do |rule|
+              rule.attribute :id, :id
+              rule.attribute :type, :string,
+                required: true,
+                example: 'currency',
+                description: 'The rule kind, from `GET /promotion_rules/types`.'
+              rule.include_attributes Spree::Api::V3::Admin::PromotionRuleRequestSchema
             end
-            object :actions, array: true, permit: false, as: 'PromotionActionDraftParams',
-                             description: 'The actions the promotion should have, matched the same way as `rules`.' do
-              id :id
-              string :type, required: true, example: 'free_shipping',
-                            description: 'The action kind, from `GET /promotion_actions/types`.'
-              include_fields Spree::Api::V3::Admin::PromotionActionRequestSchema
+            body.attribute :actions, :array,
+              permit: false,
+              as: 'PromotionActionDraftParams',
+              description: 'The actions the promotion should have, matched the same way as `rules`.' do |action|
+              action.attribute :id, :id
+              action.attribute :type, :string,
+                required: true,
+                example: 'free_shipping',
+                description: 'The action kind, from `GET /promotion_actions/types`.'
+              action.include_attributes Spree::Api::V3::Admin::PromotionActionRequestSchema
             end
           end
 

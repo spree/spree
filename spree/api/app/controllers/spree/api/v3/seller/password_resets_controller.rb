@@ -25,11 +25,14 @@ module Spree
                      store: Rails.cache,
                      with: RATE_LIMIT_RESPONSE
 
-          request_params :password_reset do
-            string :email, required: true, only: :create, example: 'seller@acme.test'
-            string :redirect_url, only: :create, example: 'https://sellers.your-store.com/reset-password',
-                                  description: 'Must match an allowed origin of the store; ignored otherwise.'
-            string :password, :password_confirmation, required: true, only: :update, example: 'new-password-123'
+          request_params :password_reset do |body|
+            body.attribute :email, :string, required: true, only: :create, example: 'seller@acme.test'
+            body.attribute :redirect_url, :string,
+              only: :create,
+              example: 'https://sellers.your-store.com/reset-password',
+              description: 'Must match an allowed origin of the store; ignored otherwise.'
+            body.attribute :password, :string, required: true, only: :update, example: 'new-password-123'
+            body.attribute :password_confirmation, :string, required: true, only: :update, example: 'new-password-123'
           end
 
           # POST /api/v3/seller/auth/password_resets

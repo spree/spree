@@ -9,17 +9,23 @@ module Spree
           class TaxExemptionCertificatesController < BaseController
             include ActiveStorage::SetCurrent
 
-            request_params 'TaxExemptionCertificateParams' do
-              string :certificate_number, example: 'DE-RESALE-7', description: 'Required when creating.'
-              string :reason_code, example: 'resale',
-                                   description: "Becomes the tax provider's entity use code. Required when creating."
-              string :issuing_authority, nullable: true, example: 'Finanzamt Berlin'
-              datetime :issued_at, :expires_at, nullable: true
-              country :country_code, nullable: true, description: 'Where the certificate holds. Omit it and `state_code` for one valid everywhere.'
-              string :state_code, nullable: true
-              string :document_signed_id,
-                     description: "A `signed_id` from `files.upload()` with `visibility: 'private'`."
-              object :metadata
+            request_params 'TaxExemptionCertificateParams' do |body|
+              body.attribute :certificate_number, :string,
+                example: 'DE-RESALE-7',
+                description: 'Required when creating.'
+              body.attribute :reason_code, :string,
+                example: 'resale',
+                description: "Becomes the tax provider's entity use code. Required when creating."
+              body.attribute :issuing_authority, :string, nullable: true, example: 'Finanzamt Berlin'
+              body.attribute :issued_at, :datetime, nullable: true
+              body.attribute :expires_at, :datetime, nullable: true
+              body.attribute :country_code, :country,
+                nullable: true,
+                description: 'Where the certificate holds. Omit it and `state_code` for one valid everywhere.'
+              body.attribute :state_code, :string, nullable: true
+              body.attribute :document_signed_id, :string,
+                description: "A `signed_id` from `files.upload()` with `visibility: 'private'`."
+              body.attribute :metadata, :hash
             end
 
             before_action :authorize_parent_access!

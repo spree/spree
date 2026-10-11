@@ -22,17 +22,21 @@ module Spree
           # their own packaging, so every field on the shared form is theirs
           # to set. `seller_id` is deliberately absent: ownership comes from
           # the authenticated seller, never the payload.
-          request_params 'PackageTypeParams' do
-            string :name
-            string :kind, enum: Spree::PackageType::KINDS
-            number :length, :width, :height, nullable: true
-            string :dimensions_unit, nullable: true, enum: Spree::Variant::DIMENSION_UNITS
-            number :weight, nullable: true, description: "The empty package's own weight, added to every quote."
-            number :max_weight, nullable: true
-            string :weight_unit, nullable: true, enum: Spree::Variant::WEIGHT_UNITS
-            boolean :default,
-                    description: "Makes this the box this seller's parcels are quoted with. One default per seller, so it never displaces the marketplace's."
-            object :metadata, nullable: true
+          request_params 'PackageTypeParams' do |body|
+            body.attribute :name, :string
+            body.attribute :kind, :string, choices: Spree::PackageType::KINDS
+            body.attribute :length, :number, nullable: true
+            body.attribute :width, :number, nullable: true
+            body.attribute :height, :number, nullable: true
+            body.attribute :dimensions_unit, :string, nullable: true, choices: Spree::Variant::DIMENSION_UNITS
+            body.attribute :weight, :number,
+              nullable: true,
+              description: "The empty package's own weight, added to every quote."
+            body.attribute :max_weight, :number, nullable: true
+            body.attribute :weight_unit, :string, nullable: true, choices: Spree::Variant::WEIGHT_UNITS
+            body.attribute :default, :boolean,
+              description: "Makes this the box this seller's parcels are quoted with. One default per seller, so it never displaces the marketplace's."
+            body.attribute :metadata, :hash, nullable: true
           end
 
           protected

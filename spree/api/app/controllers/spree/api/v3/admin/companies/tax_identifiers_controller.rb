@@ -12,10 +12,8 @@ module Spree
           class TaxIdentifiersController < BaseController
             include Spree::Api::V3::TaxIdentifierValidation
 
-            request_params 'TaxIdentifierParams' do
-              string :kind, example: 'gb_vat',
-                            description: "#{Spree::Api::V3::TaxIdentifierRequestSchema::KIND_DESCRIPTION} Required when creating."
-              string :value, example: 'GB123456789', description: 'Required when creating.'
+            request_params 'TaxIdentifierParams' do |body|
+              body.include_attributes Spree::Api::V3::Admin::TaxIdentifierRequestSchema
             end
 
             before_action :authorize_parent_access!

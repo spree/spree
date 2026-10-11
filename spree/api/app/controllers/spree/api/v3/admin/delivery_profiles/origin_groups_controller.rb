@@ -10,11 +10,11 @@ module Spree
           class OriginGroupsController < ResourceController
             scoped_resource :settings
 
-            request_params 'DeliveryOriginGroupParams' do
-              string :name, nullable: true, example: 'EU warehouse'
-              integer :position
-              id :stock_location_ids, array: true,
-                                      description: 'Prefixed stock location IDs (`sloc_...`); replaces the full set. Empty means every store location.'
+            request_params 'DeliveryOriginGroupParams' do |body|
+              body.attribute :name, :string, nullable: true, example: 'EU warehouse'
+              body.attribute :position, :integer
+              body.attribute :stock_location_ids, :array, of: :id,
+                description: 'Prefixed stock location IDs (`sloc_...`); replaces the full set. Empty means every store location.'
             end
 
             def create

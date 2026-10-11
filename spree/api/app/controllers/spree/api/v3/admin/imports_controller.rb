@@ -17,25 +17,36 @@ module Spree
           # writable ones instead of gating on a single scope.
           skip_scope_check! only: :index
 
-          request_params :import do
-            string :type, required: :create, example: 'products',
-                          description: 'Which dataset to import, as its shorthand: `products`, `customers`, `product_translations`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
-            string :attachment_signed_id, required: :create,
-                                          description: 'The `signed_id` of the uploaded CSV, from `files.upload()` with `visibility: "private"`.'
-            string :delimiter, enum: [',', ';', '|', "\t"], example: ',',
-                               description: 'CSV column separator. Defaults to a comma.'
-            string :results_url, example: 'https://admin.example.com/store_abc/settings/imports',
-                                 description: "Absolute URL of your admin imports view; the import-done email links back to it with `?import=<id>` appended. Only honored when it matches one of the store's allowed origins."
-            id :price_list_id, description: 'For `price_list_prices` imports: the price list the rows are merged into. Must belong to the current store; other types ignore it.'
+          request_params :import do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              example: 'products',
+              description: 'Which dataset to import, as its shorthand: `products`, `customers`, `product_translations`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
+            body.attribute :attachment_signed_id, :string,
+              required: true, on: :create,
+              description: 'The `signed_id` of the uploaded CSV, from `files.upload()` with `visibility: "private"`.'
+            body.attribute :delimiter, :string,
+              choices: [',', ';', '|', "\t"],
+              example: ',',
+              description: 'CSV column separator. Defaults to a comma.'
+            body.attribute :results_url, :string,
+              example: 'https://admin.example.com/store_abc/settings/imports',
+              description: "Absolute URL of your admin imports view; the import-done email links back to it with `?import=<id>` appended. Only honored when it matches one of the store's allowed origins."
+            body.attribute :price_list_id, :id,
+              description: 'For `price_list_prices` imports: the price list the rows are merged into. Must belong to the current store; other types ignore it.'
           end
 
-          request_params 'ImportCompleteMappingParams', action: :complete_mapping do
-            object :mappings, array: true,
-                              description: 'Column assignments to apply before processing starts. Omit to accept the ones assigned on create.' do
-              string :schema_field, required: true, example: 'slug',
-                                    description: "A schema field name from the import's `schema_fields`."
-              string :file_column, nullable: true, example: 'Product Handle',
-                                   description: 'The CSV header to read the field from; null unmaps the field.'
+          request_params 'ImportCompleteMappingParams', action: :complete_mapping do |body|
+            body.attribute :mappings, :array,
+              description: 'Column assignments to apply before processing starts. Omit to accept the ones assigned on create.' do |mapping|
+              mapping.attribute :schema_field, :string,
+                required: true,
+                example: 'slug',
+                description: "A schema field name from the import's `schema_fields`."
+              mapping.attribute :file_column, :string,
+                nullable: true,
+                example: 'Product Handle',
+                description: 'The CSV header to read the field from; null unmaps the field.'
             end
           end
 

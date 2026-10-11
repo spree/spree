@@ -6,9 +6,10 @@ module Spree
         # Each controller declares it as `BulkTagsParams` with only these fields,
         # so the published component is the same wherever it is used.
         class BulkTagsRequestSchema < Spree::Api::V3::RequestSchema
-          id :ids, array: true, required: true,
-                   description: 'The records to change. Records the caller cannot update are skipped; an empty list changes nothing.'
-          string :tags, array: true, required: true, example: %w[vip wholesale]
+          attribute :ids, :array, of: :id,
+            required: true,
+            description: 'The records to change. Records the caller cannot update are skipped; an empty list changes nothing.'
+          attribute :tags, :array, of: :string, required: true, example: %w[vip wholesale]
         end
       end
     end

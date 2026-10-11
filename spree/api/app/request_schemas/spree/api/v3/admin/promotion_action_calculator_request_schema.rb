@@ -6,9 +6,11 @@ module Spree
         class PromotionActionCalculatorRequestSchema < Spree::Api::V3::RequestSchema
           publishes 'PromotionActionCalculatorParams'
 
-          string :type, example: 'flat_percent_item_total',
-                        description: 'The calculator kind, from `GET /promotion_actions/calculators`. Changing it swaps the calculator.'
-          object :preferences, description: "Values for the calculator's settings, such as `amount` or `flat_percent`."
+          attribute :type, :string,
+            example: 'flat_percent_item_total',
+            description: 'The calculator kind, from `GET /promotion_actions/calculators`. Changing it swaps the calculator.'
+          attribute :preferences, :hash,
+            description: "Values for the calculator's settings, such as `amount` or `flat_percent`."
         end
       end
     end

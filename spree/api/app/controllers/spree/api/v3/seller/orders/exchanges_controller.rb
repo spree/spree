@@ -17,32 +17,37 @@ module Spree
 
             before_action :set_resource, only: [:show, :approve, :receive, :fulfill, :cancel]
 
-            request_params :exchange do
-              object :items, array: true, required: true do
-                id :fulfillment_item_id, required: true
-                id :new_variant_id, required: true, description: "One of this seller's own variants."
-                integer :quantity, required: true
+            request_params :exchange do |body|
+              body.attribute :items, :array, required: true do |item|
+                item.attribute :fulfillment_item_id, :id, required: true
+                item.attribute :new_variant_id, :id, required: true, description: "One of this seller's own variants."
+                item.attribute :quantity, :integer, required: true
               end
-              id :reason_id, nullable: true
-              id :stock_location_id, nullable: true, description: "One of this seller's own stock locations, where the goods are restocked."
-              string :memo, nullable: true
+              body.attribute :reason_id, :id, nullable: true
+              body.attribute :stock_location_id, :id,
+                nullable: true,
+                description: "One of this seller's own stock locations, where the goods are restocked."
+              body.attribute :memo, :string, nullable: true
             end
 
-            request_params 'ExchangeReceiveParams', action: :receive do
-              object :items, array: true,
-                             description: 'What actually arrived. Omit to receive everything as requested and resellable.' do
-                id :exchange_line_item_id, required: true
-                integer :quantity, required: true
-                boolean :resellable, description: 'Goods that cannot be resold are received but never restocked. Defaults to true.'
+            request_params 'ExchangeReceiveParams', action: :receive do |body|
+              body.attribute :items, :array,
+                description: 'What actually arrived. Omit to receive everything as requested and resellable.' do |item|
+                item.attribute :exchange_line_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+                item.attribute :resellable, :boolean,
+                  description: 'Goods that cannot be resold are received but never restocked. Defaults to true.'
               end
             end
 
-            request_params 'ExchangeCancelParams', action: :cancel do
-              string :reason, description: 'A note on why the exchange was canceled.'
+            request_params 'ExchangeCancelParams', action: :cancel do |body|
+              body.attribute :reason, :string, description: 'A note on why the exchange was canceled.'
             end
 
-            request_params 'ExchangeFulfillParams', action: :fulfill do
-              string :refund_method, enum: %w[original_payment store_credit], description: 'Defaults to `store_credit`.'
+            request_params 'ExchangeFulfillParams', action: :fulfill do |body|
+              body.attribute :refund_method, :string,
+                choices: %w[original_payment store_credit],
+                description: 'Defaults to `store_credit`.'
             end
 
             protected

@@ -54071,6 +54071,247 @@ components:
       properties:
         iso:
           type: string
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BL
+          - BM
+          - BN
+          - BO
+          - BQ
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CC
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CW
+          - CX
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - ID
+          - IE
+          - IL
+          - IM
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MF
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NF
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PM
+          - PN
+          - PR
+          - PS
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SJ
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SX
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TK
+          - TL
+          - TM
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WF
+          - WS
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
         iso3:
           type: string
         name:
@@ -68272,9 +68513,6 @@ components:
           type: string
         label:
           type: string
-        zipcode:
-          type: string
-          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           allOf:
           - "$ref": "#/components/schemas/CountryCode"
@@ -69211,9 +69449,6 @@ components:
           type: string
         label:
           type: string
-        zipcode:
-          type: string
-          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           allOf:
           - "$ref": "#/components/schemas/CountryCode"
@@ -69406,9 +69641,6 @@ components:
           type: string
         label:
           type: string
-        zipcode:
-          type: string
-          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           allOf:
           - "$ref": "#/components/schemas/CountryCode"
@@ -70337,13 +70569,13 @@ components:
       properties:
         filename:
           type: string
-          example: products.csv
+          example: registration.pdf
         content_type:
           type: string
-          example: text/csv
+          example: application/pdf
         byte_size:
           type: integer
-          example: 48213
+          example: 51234
         checksum:
           type: string
           description: Base64-encoded MD5 digest of the file; the storage service
@@ -70354,8 +70586,8 @@ components:
           enum:
           - public
           - private
-          description: "`public` (the default) for images and videos customers see,
-            `private` for anything else."
+          description: "`public` (the default) for images, videos and CSV files anyone
+            may fetch, `private` for any type."
         file:
           type: string
           format: binary
@@ -71039,18 +71271,6 @@ components:
           type: string
           description: The file itself, sent as multipart form data. JSON clients
             upload first and send `signed_id`.
-        url:
-          type: string
-          description: 'Fetch an image from this URL, in the background. Images only:
-            an external video uses `external_video_url`.'
-        signed_id:
-          type: string
-          description: A `signed_id` from `files.upload()` for the media file itself.
-        source_media_id:
-          type: string
-          description: Place a file that is already in the library. The new row shares
-            the source file rather than copying it, and takes its own alt, position
-            and variant links from here.
         variant_ids:
           type: array
           items:
@@ -71102,18 +71322,6 @@ components:
           type: string
           description: The file itself, sent as multipart form data. JSON clients
             upload first and send `signed_id`.
-        url:
-          type: string
-          description: 'Fetch an image from this URL, in the background. Images only:
-            an external video uses `external_video_url`.'
-        signed_id:
-          type: string
-          description: A `signed_id` from `files.upload()` for the media file itself.
-        source_media_id:
-          type: string
-          description: Place a file that is already in the library. The new row shares
-            the source file rather than copying it, and takes its own alt, position
-            and variant links from here.
         variant_ids:
           type: array
           items:
@@ -73386,9 +73594,6 @@ components:
           type: string
         label:
           type: string
-        zipcode:
-          type: string
-          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           allOf:
           - "$ref": "#/components/schemas/CountryCode"
@@ -73859,8 +74064,6 @@ components:
     StockLevelParams:
       type: object
       properties:
-        id:
-          type: string
         stock_location_id:
           type: string
           description: The location holding the stock (`sloc_...`).

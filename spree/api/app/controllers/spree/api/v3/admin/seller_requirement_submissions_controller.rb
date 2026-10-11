@@ -12,15 +12,18 @@ module Spree
         class SellerRequirementSubmissionsController < ResourceController
           scoped_resource :sellers
 
-          request_params 'SellerRequirementWaiveParams', action: :create do
-            id :requirement_id, required: true, example: 'selreq_UkLWZg9DAJ',
-                                description: 'The requirement the seller is excused from.'
-            string :review_note, description: 'Why the seller is excused. Kept with the decision.'
+          request_params 'SellerRequirementWaiveParams', action: :create do |body|
+            body.attribute :requirement_id, :id,
+              required: true,
+              example: 'selreq_UkLWZg9DAJ',
+              description: 'The requirement the seller is excused from.'
+            body.attribute :review_note, :string, description: 'Why the seller is excused. Kept with the decision.'
           end
 
           %i[accept reject].each do |action|
-            request_params('SellerRequirementReviewParams', action: action) do
-              string :review_note, description: 'Kept with the decision. On a rejection it is the reason sent back to the seller.'
+            request_params('SellerRequirementReviewParams', action: action) do |body|
+              body.attribute :review_note, :string,
+                description: 'Kept with the decision. On a rejection it is the reason sent back to the seller.'
             end
           end
 

@@ -10,19 +10,24 @@ module Spree
         class CustomFieldDefinitionsController < ResourceController
           scoped_resource :settings
 
-          request_params :custom_field_definition do
-            string :namespace, description: 'Defaults to `custom`.'
-            string :key, required: :create
-            string :label, description: 'Human-readable name; defaults to the titleized `key`.'
-            string :field_type, required: :create, example: 'short_text',
-                                description: 'Custom field type token (`short_text`, `long_text`, `rich_text`, `number`, …). An extension type that has no token is named by its registered class instead.'
-            string :resource_type, required: :create, example: 'product',
-                                   description: 'Shorthand of the resource the field attaches to, from the resource types endpoint.'
-            boolean :storefront_visible, description: 'When false, the definition is admin-only and never exposed in the Store API.'
-            boolean :searchable,
-                    description: 'Include values in storefront product text search. Supported for `short_text`, `long_text` and `number` fields; other types are refused.'
-            boolean :sortable,
-                    description: 'Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`). Supported for `short_text` and `number` fields; other types are refused.'
+          request_params :custom_field_definition do |body|
+            body.attribute :namespace, :string, description: 'Defaults to `custom`.'
+            body.attribute :key, :string, required: true, on: :create
+            body.attribute :label, :string, description: 'Human-readable name; defaults to the titleized `key`.'
+            body.attribute :field_type, :string,
+              required: true, on: :create,
+              example: 'short_text',
+              description: 'Custom field type token (`short_text`, `long_text`, `rich_text`, `number`, …). An extension type that has no token is named by its registered class instead.'
+            body.attribute :resource_type, :string,
+              required: true, on: :create,
+              example: 'product',
+              description: 'Shorthand of the resource the field attaches to, from the resource types endpoint.'
+            body.attribute :storefront_visible, :boolean,
+              description: 'When false, the definition is admin-only and never exposed in the Store API.'
+            body.attribute :searchable, :boolean,
+              description: 'Include values in storefront product text search. Supported for `short_text`, `long_text` and `number` fields; other types are refused.'
+            body.attribute :sortable, :boolean,
+              description: 'Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`). Supported for `short_text` and `number` fields; other types are refused.'
           end
 
           # GET /api/v3/admin/custom_field_definitions/resource_types

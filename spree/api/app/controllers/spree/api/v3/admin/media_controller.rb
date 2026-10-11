@@ -7,16 +7,23 @@ module Spree
 
           # The media file, a URL to fetch one from, and the library row to copy
           # are transport, not attributes (+media_attributes+ drops them).
-          request_params :media do
-            external_references
-            include_fields Spree::Api::V3::MediaRequestSchema
-            string :attachment, description: 'The file itself, sent as multipart form data. JSON clients upload first and send `signed_id`.'
-            string :url, description: 'Fetch an image from this URL, in the background. Images only: an external video uses `external_video_url`.'
-            string :signed_id, description: 'A `signed_id` from `files.upload()` for the media file itself.'
-            id :source_media_id,
-               description: 'Place a file that is already in the library. The new row shares the source file rather than copying it, and takes its own alt, position and variant links from here.'
-            id :variant_ids, array: true,
-                             description: 'Variants to link this product-level media to. Variants of other products are dropped.'
+          request_params :media do |body|
+            body.external_references
+            body.include_attributes Spree::Api::V3::MediaRequestSchema
+            body.attribute :attachment, :string,
+              description: 'The file itself, sent as multipart form data. JSON clients upload first and send `signed_id`.'
+            # How the file arrives, so creating only: an update keeps its file.
+            body.attribute :url, :string,
+              only: :create,
+              description: 'Fetch an image from this URL, in the background. Images only: an external video uses `external_video_url`.'
+            body.attribute :signed_id, :string,
+              only: :create,
+              description: 'A `signed_id` from `files.upload()` for the media file itself.'
+            body.attribute :source_media_id, :id,
+              only: :create,
+              description: 'Place a file that is already in the library. The new row shares the source file rather than copying it, and takes its own alt, position and variant links from here.'
+            body.attribute :variant_ids, :array, of: :id,
+              description: 'Variants to link this product-level media to. Variants of other products are dropped.'
           end
 
           def create

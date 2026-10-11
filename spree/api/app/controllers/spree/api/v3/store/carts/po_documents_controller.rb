@@ -21,11 +21,13 @@ module Spree
 
             before_action :find_cart!
 
-            request_params 'CreatePoDocumentParams', action: :create do
-              string :filename, :content_type, required: true
-              integer :byte_size, required: true
-              string :checksum, required: true,
-                                description: 'Base64-encoded MD5 digest of the file; the storage service checks the bytes against it.'
+            request_params 'CreatePoDocumentParams', action: :create do |body|
+              body.attribute :filename, :string, required: true
+              body.attribute :content_type, :string, required: true
+              body.attribute :byte_size, :integer, required: true
+              body.attribute :checksum, :string,
+                required: true,
+                description: 'Base64-encoded MD5 digest of the file; the storage service checks the bytes against it.'
             end
 
             # POST /api/v3/store/carts/:cart_id/po_document

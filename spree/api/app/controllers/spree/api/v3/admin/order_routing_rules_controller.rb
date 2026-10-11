@@ -13,12 +13,16 @@ module Spree
           subclassed_via -> { Spree.order_routing.rules },
                          unknown_type_error: 'unknown_order_routing_rule_type'
 
-          request_params :order_routing_rule do
-            string :type, required: true, only: :create, example: 'preferred_location',
-                          description: 'Wire shorthand for the rule kind, from the order routing rule types endpoint.'
-            boolean :active
-            integer :position, description: "1-based priority in the channel's rule list. Omitted on create, the rule goes last; a new position reorders the rest of the list around it."
-            object :preferences, description: "Values for the rule kind's preference schema."
+          request_params :order_routing_rule do |body|
+            body.attribute :type, :string,
+              required: true,
+              only: :create,
+              example: 'preferred_location',
+              description: 'Wire shorthand for the rule kind, from the order routing rule types endpoint.'
+            body.attribute :active, :boolean
+            body.attribute :position, :integer,
+              description: "1-based priority in the channel's rule list. Omitted on create, the rule goes last; a new position reorders the rest of the list around it."
+            body.attribute :preferences, :hash, description: "Values for the rule kind's preference schema."
           end
 
           def types

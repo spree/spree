@@ -17,33 +17,39 @@ module Spree
 
             before_action :set_resource, only: [:show, :approve, :resolve, :deny, :cancel]
 
-            request_params :claim do
-              object :items, array: true, required: true do
-                id :line_item_id, required: true
-                integer :quantity, required: true
-                string :description, nullable: true
-                boolean :send_replacement
-                id :replacement_variant_id, nullable: true, description: "One of this seller's own variants."
-                decimal :refund_amount, nullable: true
+            request_params :claim do |body|
+              body.attribute :items, :array, required: true do |item|
+                item.attribute :line_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+                item.attribute :description, :string, nullable: true
+                item.attribute :send_replacement, :boolean
+                item.attribute :replacement_variant_id, :id,
+                  nullable: true,
+                  description: "One of this seller's own variants."
+                item.attribute :refund_amount, :decimal, nullable: true
               end
-              id :reason_id, nullable: true
-              string :memo, nullable: true
+              body.attribute :reason_id, :id, nullable: true
+              body.attribute :memo, :string, nullable: true
             end
 
-            request_params 'ClaimResolveParams', action: :resolve do
-              string :resolution, required: true, enum: %w[refund replacement refund_and_replacement]
-              string :refund_method, enum: %w[original_payment store_credit], description: 'Defaults to `store_credit`.'
-              decimal :amount, nullable: true
-              id :replacement_line_item_ids, array: true,
-                                             description: 'Which claimed lines to replace. Omit to keep the lines the claim was opened with.'
+            request_params 'ClaimResolveParams', action: :resolve do |body|
+              body.attribute :resolution, :string,
+                required: true,
+                choices: %w[refund replacement refund_and_replacement]
+              body.attribute :refund_method, :string,
+                choices: %w[original_payment store_credit],
+                description: 'Defaults to `store_credit`.'
+              body.attribute :amount, :decimal, nullable: true
+              body.attribute :replacement_line_item_ids, :array, of: :id,
+                description: 'Which claimed lines to replace. Omit to keep the lines the claim was opened with.'
             end
 
-            request_params 'ClaimDenyParams', action: :deny do
-              string :reason, description: 'Recorded on the claim for the customer.'
+            request_params 'ClaimDenyParams', action: :deny do |body|
+              body.attribute :reason, :string, description: 'Recorded on the claim for the customer.'
             end
 
-            request_params 'ClaimCancelParams', action: :cancel do
-              string :reason, description: 'A note on why the claim was canceled.'
+            request_params 'ClaimCancelParams', action: :cancel do |body|
+              body.attribute :reason, :string, description: 'A note on why the claim was canceled.'
             end
 
             protected

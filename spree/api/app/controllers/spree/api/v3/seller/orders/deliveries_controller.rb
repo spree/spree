@@ -18,11 +18,14 @@ module Spree
 
             # The permit list itself lives in DeliveryActions, shared with the
             # operator's branch; this declaration documents it.
-            request_params :delivery do
-              string :tracking_number, required: :create,
-                                       description: 'A carrier tracking number, a freight PRO or container number, or a full tracking link. A corrected number resets the carrier status to `pending`.'
-              string :carrier, description: "Free text; detected from the number's format when omitted."
-              string :service, :tracking_url
+            request_params :delivery do |body|
+              body.attribute :tracking_number, :string,
+                required: true, on: :create,
+                description: 'A carrier tracking number, a freight PRO or container number, or a full tracking link. A corrected number resets the carrier status to `pending`.'
+              body.attribute :carrier, :string,
+                description: "Free text; detected from the number's format when omitted."
+              body.attribute :service, :string
+              body.attribute :tracking_url, :string
             end
 
             before_action :set_resource, only: [:show, :update, :destroy]

@@ -22,21 +22,34 @@ module Spree
 
           # Enumerated rather than borrowing the legacy global list, which
           # permits :id, :user_id and :deleted_at.
-          request_params 'ProfileUpdateParams' do
-            string :name, example: 'Acme Supplies'
-            string :contact_email, :billing_email, nullable: true, format: :email
-            string :about, nullable: true, description: "Sanitized HTML: the seller's public description."
-            string :legal_name, nullable: true, description: 'The business a commission invoice is made out to.'
-            string :registration_number, nullable: true
-            string :logo_signed_id, :square_logo_signed_id, :cover_photo_signed_id, nullable: true,
-                   description: 'A `signed_id` from `POST /files`; `null` removes the image.'
-            object :billing_address, as: 'SellerAddressParams' do
-              include_fields Spree::Api::V3::AddressRequestSchema
+          request_params 'ProfileUpdateParams' do |body|
+            body.attribute :name, :string, example: 'Acme Supplies'
+            body.attribute :contact_email, :string, nullable: true, format: :email
+            body.attribute :billing_email, :string, nullable: true, format: :email
+            body.attribute :about, :string,
+              nullable: true,
+              description: "Sanitized HTML: the seller's public description."
+            body.attribute :legal_name, :string,
+              nullable: true,
+              description: 'The business a commission invoice is made out to.'
+            body.attribute :registration_number, :string, nullable: true
+            body.attribute :logo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `POST /files`; `null` removes the image.'
+            body.attribute :square_logo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `POST /files`; `null` removes the image.'
+            body.attribute :cover_photo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `POST /files`; `null` removes the image.'
+            body.attribute :billing_address, :object, as: 'SellerAddressParams' do |billing_address|
+              billing_address.include_attributes Spree::Api::V3::AddressRequestSchema
             end
-            object :custom_fields, array: true, shape: Spree::Api::V3::CustomFieldValueRequestSchema,
-                                   description: "Answers to the custom fields this marketplace's onboarding asks for. A field nothing asked for is ignored rather than written."
-            boolean :accept_terms, permit: false,
-                                   description: "Stamps the moment the seller accepted the marketplace's terms. One-way: sending `false` does not unmake the stamp."
+            body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
+              description: "Answers to the custom fields this marketplace's onboarding asks for. A field nothing asked for is ignored rather than written."
+            body.attribute :accept_terms, :boolean,
+              permit: false,
+              description: "Stamps the moment the seller accepted the marketplace's terms. One-way: sending `false` does not unmake the stamp."
           end
 
           def show

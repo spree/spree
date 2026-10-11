@@ -14,26 +14,40 @@ module Spree
           # Category-half attributes only. The collection-bound fields
           # (automatic, sort_order, rules) belong to Spree::Collection, and
           # taxonomy_id is gone with Taxonomy.
-          request_params :category do
-            external_references
-            string :name, required: :create, example: 'Shirts'
+          request_params :category do |body|
+            body.external_references
+            body.attribute :name, :string, required: true, on: :create, example: 'Shirts'
             # Resolved within scope by +permitted_params+, so a parent from
             # another store or an automatic taxon can't be targeted.
-            id :parent_id, nullable: true, permit: false, example: 'ctg_abc123',
-                           description: 'The parent category. Omitted or null, a new category goes to the top level and an existing one keeps its parent: moving one to the top level is the reposition endpoint.'
-            string :description, description: 'Rich text HTML. Reads come back as this (plain text) plus `description_html`.'
-            string :permalink, :meta_title, :meta_description, :meta_keywords
-            string :image_signed_id, nullable: true,
-                                     description: 'A `signed_id` from `files.upload()` for the landscape image, or null to remove it.'
-            string :square_image_signed_id, nullable: true,
-                                            description: 'A `signed_id` from `files.upload()` for the square image, or null to remove it.'
-            object :custom_fields, array: true, shape: Spree::Api::V3::CustomFieldValueRequestSchema,
-                                   description: 'Custom field values, each validated against its definition.'
+            body.attribute :parent_id, :id,
+              nullable: true,
+              permit: false,
+              example: 'ctg_abc123',
+              description: 'The parent category. Omitted or null, a new category goes to the top level and an existing one keeps its parent: moving one to the top level is the reposition endpoint.'
+            body.attribute :description, :string,
+              description: 'Rich text HTML. Reads come back as this (plain text) plus `description_html`.'
+            body.attribute :permalink, :string
+            body.attribute :meta_title, :string
+            body.attribute :meta_description, :string
+            body.attribute :meta_keywords, :string
+            body.attribute :image_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `files.upload()` for the landscape image, or null to remove it.'
+            body.attribute :square_image_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `files.upload()` for the square image, or null to remove it.'
+            body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
+              description: 'Custom field values, each validated against its definition.'
           end
 
-          request_params 'CategoryRepositionParams', action: :reposition do
-            id :new_parent_id, nullable: true, description: 'The new parent. Omit or null to move the category to the top level.'
-            integer :new_position, required: true, example: 0, description: "0-based index among the new parent's children."
+          request_params 'CategoryRepositionParams', action: :reposition do |body|
+            body.attribute :new_parent_id, :id,
+              nullable: true,
+              description: 'The new parent. Omit or null to move the category to the top level.'
+            body.attribute :new_position, :integer,
+              required: true,
+              example: 0,
+              description: "0-based index among the new parent's children."
           end
 
           # PATCH /api/v3/admin/categories/:id/reposition

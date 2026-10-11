@@ -10,9 +10,12 @@ module Spree
           skip_scope_check!
           skip_before_action :authenticate_admin!, only: [:lookup, :accept]
 
-          request_params 'InvitationAcceptParams', action: :accept do
-            string :password, description: 'Required when the invitee has no account yet: it creates one. An existing account signs in without it.'
-            string :password_confirmation, :first_name, :last_name
+          request_params 'InvitationAcceptParams', action: :accept do |body|
+            body.attribute :password, :string,
+              description: 'Required when the invitee has no account yet: it creates one. An existing account signs in without it.'
+            body.attribute :password_confirmation, :string
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
           end
 
           rate_limit to: Spree::Api::Config[:rate_limit_login],

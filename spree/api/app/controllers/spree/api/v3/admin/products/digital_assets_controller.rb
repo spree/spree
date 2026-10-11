@@ -6,21 +6,30 @@ module Spree
           class DigitalAssetsController < ResourceController
             scoped_resource :products
 
-            request_params :digital_asset do
+            request_params :digital_asset do |body|
               # Names a blob rather than a column, so it is attached
               # separately (+attach_uploaded_file+).
-              string :signed_id, permit: false,
-                                 description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. Required for an uploaded file, omitted for a provider-backed asset. On update it replaces the file for everyone who already bought it."
+              body.attribute :signed_id, :string,
+                permit: false,
+                description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. Required for an uploaded file, omitted for a provider-backed asset. On update it replaces the file for everyone who already bought it."
               # Resolved through the parent rather than assigned, so an asset
               # can't be pointed at a variant of another product or store.
-              id :variant_id, permit: false, description: "Defaults to the product's default variant when omitted."
+              body.attribute :variant_id, :id,
+                permit: false,
+                description: "Defaults to the product's default variant when omitted."
               # The model validates it names a registered provider.
-              string :provider_type, description: 'A provider shorthand from the providers endpoint. Omit for an uploaded file.'
+              body.attribute :provider_type, :string,
+                description: 'A provider shorthand from the providers endpoint. Omit for an uploaded file.'
               # Its keys are declared by the provider, so it lands verbatim
               # under one key in the asset's metadata.
-              object :provider_settings, description: "Values for the provider's settings schema, keyed by field name."
-              integer :authorized_clicks, :authorized_days, nullable: true,
-                                                            description: "Null means the store's download settings apply."
+              body.attribute :provider_settings, :hash,
+                description: "Values for the provider's settings schema, keyed by field name."
+              body.attribute :authorized_clicks, :integer,
+                nullable: true,
+                description: "Null means the store's download settings apply."
+              body.attribute :authorized_days, :integer,
+                nullable: true,
+                description: "Null means the store's download settings apply."
             end
 
             # PATCH /api/v3/admin/products/:product_id/digital_assets/:id

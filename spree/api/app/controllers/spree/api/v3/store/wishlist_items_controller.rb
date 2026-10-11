@@ -7,14 +7,14 @@ module Spree
 
           prepend_before_action :require_authentication!
 
-          request_params 'CreateWishlistItemParams', action: :create do
-            id :variant_id, required: true, example: 'variant_abc123'
-            integer :quantity, example: 1
+          request_params 'CreateWishlistItemParams', action: :create do |body|
+            body.attribute :variant_id, :id, required: true, example: 'variant_abc123'
+            body.attribute :quantity, :integer, example: 1
           end
 
-          request_params 'UpdateWishlistItemParams', action: :update do
-            id :variant_id, description: 'Moves the item to another variant.'
-            integer :quantity, example: 2
+          request_params 'UpdateWishlistItemParams', action: :update do |body|
+            body.attribute :variant_id, :id, description: 'Moves the item to another variant.'
+            body.attribute :quantity, :integer, example: 2
           end
 
           protected

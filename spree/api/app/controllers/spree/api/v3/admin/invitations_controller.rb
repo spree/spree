@@ -13,9 +13,11 @@ module Spree
           # grantable separately from store configuration (6.0-admin-rbac.md).
           scoped_resource :staff
 
-          request_params :invitation do
-            string :email, required: :create
-            id :role_id, required: :create, description: 'The role (`role_...`) the invitee gets on accepting.'
+          request_params :invitation do |body|
+            body.attribute :email, :string, required: true, on: :create
+            body.attribute :role_id, :id,
+              required: true, on: :create,
+              description: 'The role (`role_...`) the invitee gets on accepting.'
           end
 
           # POST /api/v3/admin/invitations

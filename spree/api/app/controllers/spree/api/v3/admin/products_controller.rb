@@ -10,61 +10,77 @@ module Spree
 
           # Product is purely a catalog grouping in API v3: every purchasable
           # attribute lives on variants (docs/plans/6.0-remove-master-variant.md).
-          request_params :product do
-            external_references
-            string :name, required: :create, example: 'Premium T-Shirt'
-            string :description, description: 'Rich text HTML. Reads come back as this (plain text) plus `description_html`.'
-            string :slug
-            string :status, enum: Spree::Product::STATUSES, open: true
-            string :meta_title, :meta_description, :meta_keywords
-            id :tax_category_id
-            id :product_type_id, nullable: true,
-                                 description: 'The product type this product is created from (`pt_...`). Its option types and categories seed onto the product and its custom field definitions drive the product form. Editing the type later never rewrites existing products.'
-            id :delivery_profile_id, nullable: true,
-                                     description: 'The delivery profile deciding how this product ships (`fp_...`); null falls back to the store default.'
-            boolean :promotionable
-            string :tags, array: true, example: %w[eco sale]
-            id :category_ids, array: true
+          request_params :product do |body|
+            body.external_references
+            body.attribute :name, :string, required: true, on: :create, example: 'Premium T-Shirt'
+            body.attribute :description, :string,
+              description: 'Rich text HTML. Reads come back as this (plain text) plus `description_html`.'
+            body.attribute :slug, :string
+            body.attribute :status, :string, choices: Spree::Product::STATUSES, open: true
+            body.attribute :meta_title, :string
+            body.attribute :meta_description, :string
+            body.attribute :meta_keywords, :string
+            body.attribute :tax_category_id, :id
+            body.attribute :product_type_id, :id,
+              nullable: true,
+              description: 'The product type this product is created from (`pt_...`). Its option types and categories seed onto the product and its custom field definitions drive the product form. Editing the type later never rewrites existing products.'
+            body.attribute :delivery_profile_id, :id,
+              nullable: true,
+              description: 'The delivery profile deciding how this product ships (`fp_...`); null falls back to the store default.'
+            body.attribute :promotionable, :boolean
+            body.attribute :tags, :array, of: :string, example: %w[eco sale]
+            body.attribute :category_ids, :array, of: :id
             # Reachable with `write_products` rather than `write_collections`:
             # filing a product into its groupings is part of maintaining it.
-            id :collection_ids, array: true,
-                                description: 'Manual collections this product belongs to. Automatic collections are kept as they are, since their rules decide membership.'
-            object :metadata
-            object :prices, array: true, shape: Spree::Api::V3::PriceRequestSchema,
-                            description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant. For products with options, set prices per variant under `variants` instead. Don't pass both."
-            object :custom_fields, array: true, shape: Spree::Api::V3::CustomFieldValueRequestSchema,
-                                   description: 'Custom field values, each validated against its definition.'
+            body.attribute :collection_ids, :array, of: :id,
+              description: 'Manual collections this product belongs to. Automatic collections are kept as they are, since their rules decide membership.'
+            body.attribute :metadata, :hash
+            body.attribute :prices, :array, of: Spree::Api::V3::PriceRequestSchema,
+              description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant. For products with options, set prices per variant under `variants` instead. Don't pass both."
+            body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
+              description: 'Custom field values, each validated against its definition.'
             # `external_url` is left out on purpose: it makes the server fetch
             # a URL the caller chose, so it belongs to trusted importers.
-            object :media, array: true, as: 'ProductMediaParams',
-                           description: 'Media written with the product. Entries with `id` update an existing asset; entries with `signed_id` attach a fresh upload; an external video needs only its URL.' do
-              id :id
-              string :signed_id, description: 'A `signed_id` from `files.upload()`.'
-              id :source_media_id, description: 'Copies an asset from the media library.'
-              include_fields Spree::Api::V3::MediaRequestSchema
-              id :variant_ids, array: true, description: 'Replaces the variants this media is linked to. An empty list clears them.'
+            body.attribute :media, :array,
+              as: 'ProductMediaParams',
+              description: 'Media written with the product. Entries with `id` update an existing asset; entries with `signed_id` attach a fresh upload; an external video needs only its URL.' do |media_item|
+              media_item.attribute :id, :id
+              media_item.attribute :signed_id, :string, description: 'A `signed_id` from `files.upload()`.'
+              media_item.attribute :source_media_id, :id, description: 'Copies an asset from the media library.'
+              media_item.include_attributes Spree::Api::V3::MediaRequestSchema
+              media_item.attribute :variant_ids, :array, of: :id,
+                description: 'Replaces the variants this media is linked to. An empty list clears them.'
             end
-            object :digital_assets, array: true, as: 'ProductDigitalAssetParams',
-                                    description: 'Downloadable files written with the product. Each entry carries a `signed_id` (an upload to private storage) or a `provider_type` (a provider-backed asset), and attaches to the default variant unless `variant_id` is given. An `id` updates that asset in place, so replaying the list does not duplicate it; removal uses the nested digital assets endpoint.' do
-              id :id
-              string :signed_id
-              id :variant_id
-              string :provider_type, description: 'A provider shorthand from the digital asset providers endpoint.'
-              object :provider_settings, description: "Values for the provider's settings schema, keyed by field name."
-              integer :authorized_clicks, :authorized_days, nullable: true,
-                                                            description: "Null means the store's download settings apply."
+            body.attribute :digital_assets, :array,
+              as: 'ProductDigitalAssetParams',
+              description: 'Downloadable files written with the product. Each entry carries a `signed_id` (an upload to private storage) or a `provider_type` (a provider-backed asset), and attaches to the default variant unless `variant_id` is given. An `id` updates that asset in place, so replaying the list does not duplicate it; removal uses the nested digital assets endpoint.' do |digital_asset|
+              digital_asset.attribute :id, :id
+              digital_asset.attribute :signed_id, :string
+              digital_asset.attribute :variant_id, :id
+              digital_asset.attribute :provider_type, :string,
+                description: 'A provider shorthand from the digital asset providers endpoint.'
+              digital_asset.attribute :provider_settings, :hash,
+                description: "Values for the provider's settings schema, keyed by field name."
+              digital_asset.attribute :authorized_clicks, :integer,
+                nullable: true,
+                description: "Null means the store's download settings apply."
+              digital_asset.attribute :authorized_days, :integer,
+                nullable: true,
+                description: "Null means the store's download settings apply."
             end
-            object :product_publications, array: true, as: 'ProductPublicationParams' do
-              id :id
-              id :channel_id
-              datetime :published_at, :unpublished_at, nullable: true
+            body.attribute :product_publications, :array, as: 'ProductPublicationParams' do |product_publication|
+              product_publication.attribute :id, :id
+              product_publication.attribute :channel_id, :id
+              product_publication.attribute :published_at, :datetime, nullable: true
+              product_publication.attribute :unpublished_at, :datetime, nullable: true
             end
-            object :variants, array: true, as: 'ProductVariantParams',
-                              description: 'Every purchasable attribute (sku, prices, stock, weight, dimensions) lives on variants. An entry without `options` upserts onto the default variant of a simple product; pass `id` to update an existing variant.' do
-              id :id
-              include_fields Spree::Api::V3::VariantRequestSchema
-              object :options, array: true, shape: Spree::Api::V3::VariantOptionRequestSchema,
-                               description: 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing.'
+            body.attribute :variants, :array,
+              as: 'ProductVariantParams',
+              description: 'Every purchasable attribute (sku, prices, stock, weight, dimensions) lives on variants. An entry without `options` upserts onto the default variant of a simple product; pass `id` to update an existing variant.' do |variant|
+              variant.attribute :id, :id
+              variant.include_attributes Spree::Api::V3::VariantRequestSchema
+              variant.attribute :options, :array, of: Spree::Api::V3::VariantOptionRequestSchema,
+                description: 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing.'
             end
           end
 
@@ -79,14 +95,17 @@ module Spree
             :bulk_destroy
           ]
 
-          request_params 'ProductRejectParams', action: :reject do
-            string :reason, description: 'Why the submission was turned down. Sent back to the seller.'
+          request_params 'ProductRejectParams', action: :reject do |body|
+            body.attribute :reason, :string,
+              description: 'Why the submission was turned down. Sent back to the seller.'
           end
 
-          request_params 'ProductBulkStatusParams', action: :bulk_status_update do
-            id :ids, array: true, required: true, example: ['prod_UkLWZg9DAJ']
-            string :status, required: true, enum: Spree::Product::STATUSES,
-                            description: 'Products in review are skipped and counted in `skipped_in_review_count`.'
+          request_params 'ProductBulkStatusParams', action: :bulk_status_update do |body|
+            body.attribute :ids, :array, of: :id, required: true, example: ['prod_UkLWZg9DAJ']
+            body.attribute :status, :string,
+              required: true,
+              choices: Spree::Product::STATUSES,
+              description: 'Products in review are skipped and counted in `skipped_in_review_count`.'
           end
 
           {
@@ -95,19 +114,21 @@ module Spree
             'ProductBulkChannelsParams' => [:channel_ids, %i[bulk_add_to_channels bulk_remove_from_channels]]
           }.each do |name, (field, actions)|
             actions.each do |action|
-              request_params(name, action: action) do
-                id :ids, array: true, required: true
-                id field, array: true, required: true
+              request_params(name, action: action) do |body|
+                body.attribute :ids, :array, of: :id, required: true
+                body.attribute field, :array, of: :id, required: true
               end
             end
           end
 
           %i[bulk_add_tags bulk_remove_tags].each do |action|
-            request_params('BulkTagsParams', action: action) { include_fields Spree::Api::V3::Admin::BulkTagsRequestSchema }
+            request_params('BulkTagsParams', action: action) { |body| body.include_attributes Spree::Api::V3::Admin::BulkTagsRequestSchema }
           end
 
-          request_params 'ProductBulkDestroyParams', action: :bulk_destroy do
-            id :ids, array: true, required: true, description: 'Products the caller cannot delete are skipped.'
+          request_params 'ProductBulkDestroyParams', action: :bulk_destroy do |body|
+            body.attribute :ids, :array, of: :id,
+              required: true,
+              description: 'Products the caller cannot delete are skipped.'
           end
 
           # POST /api/v3/admin/products/:id/clone

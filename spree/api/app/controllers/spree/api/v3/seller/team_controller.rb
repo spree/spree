@@ -16,8 +16,8 @@ module Spree
 
           before_action :set_member, only: [:destroy]
 
-          request_params :team_member do
-            string :email, required: true, example: 'colleague@acme.test'
+          request_params :team_member do |body|
+            body.attribute :email, :string, required: true, example: 'colleague@acme.test'
           end
 
           def index

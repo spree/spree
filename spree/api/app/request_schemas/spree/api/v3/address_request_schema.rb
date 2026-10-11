@@ -1,15 +1,26 @@
 module Spree
   module Api
     module V3
-      # The writable attributes of an address (Spree::Api::V3::AddressParams).
-      # Not published on its own: each endpoint includes these fields into
-      # its own type, beside what it adds (default flags, a label).
+      # The writable attributes of an address, wherever it hangs. One list
+      # rather than one per endpoint: an address is the same record on every
+      # write path, so a column added on one but missed on another would be
+      # dropped silently. Not published on its own: each endpoint includes
+      # these attributes into its own type, beside what it adds.
       class AddressRequestSchema < Spree::Api::V3::RequestSchema
-        string(*(AddressParams::ADDRESS_KEYS - %i[country_code state_code state_name zipcode]))
-        string :zipcode, description: 'Legacy spelling of `postal_code`; send only one of the two.'
-        country :country_code, example: 'US', description: 'ISO 3166-1 alpha-2 code, such as `US`.'
-        string :state_code, example: 'NY', description: 'The state or province abbreviation, such as `NY`.'
-        string :state_name, description: 'For countries without states in the database.'
+        attribute :first_name, :string
+        attribute :last_name, :string
+        attribute :company, :string
+        attribute :address1, :string
+        attribute :address2, :string
+        attribute :city, :string
+        attribute :postal_code, :string
+        attribute :phone, :string
+        attribute :label, :string
+        attribute :country_code, :country, example: 'US', description: 'ISO 3166-1 alpha-2 code, such as `US`.'
+        attribute :state_code, :string,
+          example: 'NY',
+          description: 'The state or province abbreviation, such as `NY`.'
+        attribute :state_name, :string, description: 'For countries without states in the database.'
       end
     end
   end

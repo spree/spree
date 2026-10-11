@@ -5,9 +5,8 @@ module Spree
         class ReturnReasonsController < ResourceController
           scoped_resource :settings
 
-          request_params :reason do
-            string :name, required: :create
-            boolean :active, description: 'Whether the reason is offered on new records.'
+          request_params :reason do |body|
+            body.include_attributes Spree::Api::V3::Admin::ReasonRequestSchema
           end
 
           protected

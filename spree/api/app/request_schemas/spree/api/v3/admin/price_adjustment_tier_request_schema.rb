@@ -6,9 +6,14 @@ module Spree
         class PriceAdjustmentTierRequestSchema < Spree::Api::V3::RequestSchema
           publishes 'PriceAdjustmentTierParams'
 
-          integer :min_quantity, required: true, example: 10,
-                                 description: "Above 1; quantity 1 is the list's own `price_adjustment_percentage`."
-          decimal :percentage, required: true, example: '-10.0', description: 'Signed: negative discounts, positive marks up.'
+          attribute :min_quantity, :integer,
+            required: true,
+            example: 10,
+            description: "Above 1; quantity 1 is the list's own `price_adjustment_percentage`."
+          attribute :percentage, :decimal,
+            required: true,
+            example: '-10.0',
+            description: 'Signed: negative discounts, positive marks up.'
         end
       end
     end

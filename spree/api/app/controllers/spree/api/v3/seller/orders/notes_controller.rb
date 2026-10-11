@@ -17,10 +17,11 @@ module Spree
             # there is no member record to fetch.
             skip_before_action :set_resource, raise: false
 
-            request_params 'OrderNotesParams' do
-              string :customer_note, nullable: true, description: 'What the buyer asked for.'
-              string :internal_note, nullable: true,
-                                     description: "The seller's own working note, as HTML. Sanitized on save; `internal_note_html` reads it back."
+            request_params 'OrderNotesParams' do |body|
+              body.attribute :customer_note, :string, nullable: true, description: 'What the buyer asked for.'
+              body.attribute :internal_note, :string,
+                nullable: true,
+                description: "The seller's own working note, as HTML. Sanitized on save; `internal_note_html` reads it back."
             end
 
             # GET /api/v3/seller/orders/:order_id/notes

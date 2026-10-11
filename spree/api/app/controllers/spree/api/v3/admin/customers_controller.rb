@@ -7,30 +7,38 @@ module Spree
 
           scoped_resource :customers
 
-          request_params :customer do
-            string :email, required: :create, example: 'new@example.com'
-            string :first_name, :last_name, :phone
-            string :password, :password_confirmation,
-                   description: 'Optional: a customer created without one claims the account through a password reset.'
-            string :selected_locale
-            string :avatar_signed_id, description: 'A `signed_id` from `files.upload()`.'
-            boolean :accepts_email_marketing
-            string :internal_note, description: 'Rich text HTML. Reads come back as this plus `internal_note_html`.'
-            object :metadata
-            string :tags, array: true
-            id :customer_group_ids, array: true, description: "Replaces the customer's group membership."
+          request_params :customer do |body|
+            body.attribute :email, :string, required: true, on: :create, example: 'new@example.com'
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+            body.attribute :phone, :string
+            body.attribute :password, :string,
+              description: 'Optional: a customer created without one claims the account through a password reset.'
+            body.attribute :password_confirmation, :string,
+              description: 'Optional: a customer created without one claims the account through a password reset.'
+            body.attribute :selected_locale, :string
+            body.attribute :avatar_signed_id, :string, description: 'A `signed_id` from `files.upload()`.'
+            body.attribute :accepts_email_marketing, :boolean
+            body.attribute :internal_note, :string,
+              description: 'Rich text HTML. Reads come back as this plus `internal_note_html`.'
+            body.attribute :metadata, :hash
+            body.attribute :tags, :array, of: :string
+            body.attribute :customer_group_ids, :array, of: :id,
+              description: "Replaces the customer's group membership."
           end
 
           %i[bulk_add_to_groups bulk_remove_from_groups].each do |action|
-            request_params 'CustomerBulkGroupsParams', action: action do
-              id :ids, array: true, required: true, example: %w[cus_UkLWZg9DAJ cus_QrLWXg9CAJ]
-              id :customer_group_ids, array: true, required: true, example: %w[cg_UkLWZg9DAJ],
-                                      description: 'Groups from other stores are ignored.'
+            request_params 'CustomerBulkGroupsParams', action: action do |body|
+              body.attribute :ids, :array, of: :id, required: true, example: %w[cus_UkLWZg9DAJ cus_QrLWXg9CAJ]
+              body.attribute :customer_group_ids, :array, of: :id,
+                required: true,
+                example: %w[cg_UkLWZg9DAJ],
+                description: 'Groups from other stores are ignored.'
             end
           end
 
           %i[bulk_add_tags bulk_remove_tags].each do |action|
-            request_params('BulkTagsParams', action: action) { include_fields Spree::Api::V3::Admin::BulkTagsRequestSchema }
+            request_params('BulkTagsParams', action: action) { |body| body.include_attributes Spree::Api::V3::Admin::BulkTagsRequestSchema }
           end
 
           # Re-declaring a `before_action` for the same method REPLACES the

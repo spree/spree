@@ -14,21 +14,33 @@ module Spree
           skip_scope_check!
           skip_before_action :authenticate_admin!, only: [:show, :countries, :create]
 
-          request_params 'SetupParams', action: :create do
-            string :setup_token, required: true, permit: false, description: 'The one-time token from the install output.'
-            string :email, required: true, format: :email, example: 'owner@example.com'
-            string :password, required: true
-            string :password_confirmation
-            string :first_name, example: 'Olivia'
-            string :last_name, example: 'Owner'
-            string :store_name, permit: false, example: 'My Store'
-            country :country_code, required: true, permit: false, example: 'US',
-                                  description: 'ISO 3166-1 alpha-2 country the store sells from. It determines the default market, the warehouse, the delivery zones and the currency.'
-            string :locale, permit: false, example: 'en', description: "Storefront locale. Defaults to the country's own language."
-            currency :currency, permit: false, example: 'USD',
-                              description: "ISO 4217 currency. Defaults to the country's own currency: pass one only when the store prices in something else."
-            boolean :sample_data, permit: false,
-                                  description: 'Load the demo catalog, customers and orders in the background once the admin account exists. The load takes minutes, so the response does not wait for it.'
+          request_params 'SetupParams', action: :create do |body|
+            body.attribute :setup_token, :string,
+              required: true,
+              permit: false,
+              description: 'The one-time token from the install output.'
+            body.attribute :email, :string, required: true, format: :email, example: 'owner@example.com'
+            body.attribute :password, :string, required: true
+            body.attribute :password_confirmation, :string
+            body.attribute :first_name, :string, example: 'Olivia'
+            body.attribute :last_name, :string, example: 'Owner'
+            body.attribute :store_name, :string, permit: false, example: 'My Store'
+            body.attribute :country_code, :country,
+              required: true,
+              permit: false,
+              example: 'US',
+              description: 'ISO 3166-1 alpha-2 country the store sells from. It determines the default market, the warehouse, the delivery zones and the currency.'
+            body.attribute :locale, :string,
+              permit: false,
+              example: 'en',
+              description: "Storefront locale. Defaults to the country's own language."
+            body.attribute :currency, :currency,
+              permit: false,
+              example: 'USD',
+              description: "ISO 4217 currency. Defaults to the country's own currency: pass one only when the store prices in something else."
+            body.attribute :sample_data, :boolean,
+              permit: false,
+              description: 'Load the demo catalog, customers and orders in the background once the admin account exists. The load takes minutes, so the response does not wait for it.'
           end
 
           # Only create checks the setup token, so only create needs the strict

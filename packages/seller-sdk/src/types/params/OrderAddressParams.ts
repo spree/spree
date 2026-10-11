@@ -8,7 +8,6 @@ export type OrderAddressParams = {
   address1?: string
   city?: string
   postal_code?: string
-  zipcode?: string
   company?: string | null
   address2?: string | null
   phone?: string | null

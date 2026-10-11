@@ -25,16 +25,21 @@ module Spree
 
           scoped_resource :exports
 
-          request_params 'SellerExportCreateParams' do
-            string :type, required: true, enum: ALLOWED_TYPES, description: 'Which dataset to export.'
-            string :record_selection, enum: %w[filtered all],
-                                      description: '`filtered` (default) keeps `search_params`; `all` exports everything this seller owns.'
+          request_params 'SellerExportCreateParams' do |body|
+            body.attribute :type, :string,
+              required: true,
+              choices: ALLOWED_TYPES,
+              description: 'Which dataset to export.'
+            body.attribute :record_selection, :string,
+              choices: %w[filtered all],
+              description: '`filtered` (default) keeps `search_params`; `all` exports everything this seller owns.'
             # Read from the raw params: an arbitrary Ransack hash with nested
             # groupings, which `permit(k: {})` rejects.
-            object :search_params, permit: false,
-                                   description: 'Ransack predicates, the same shape the list endpoints take. Ignored when `record_selection` is `all`.'
-            string :results_url,
-                   description: "Panel URL the export-done email links back to. Honored only when it matches one of the store's allowed origins."
+            body.attribute :search_params, :hash,
+              permit: false,
+              description: 'Ransack predicates, the same shape the list endpoints take. Ignored when `record_selection` is `all`.'
+            body.attribute :results_url, :string,
+              description: "Panel URL the export-done email links back to. Honored only when it matches one of the store's allowed origins."
           end
 
           # POST /api/v3/seller/exports

@@ -6,10 +6,12 @@ module Spree
         class PriceListRuleRequestSchema < Spree::Api::V3::RequestSchema
           publishes 'PriceListRuleParams'
 
-          id :id, nullable: true, description: 'Present for existing rules. Omit to create a new one.'
-          string :type, required: true, example: 'volume_rule',
-                        description: 'Wire shorthand for the rule kind, from the price rule types endpoint.'
-          object :preferences, description: "The rule kind's settings, keyed by preference name."
+          attribute :id, :id, nullable: true, description: 'Present for existing rules. Omit to create a new one.'
+          attribute :type, :string,
+            required: true,
+            example: 'volume_rule',
+            description: 'Wire shorthand for the rule kind, from the price rule types endpoint.'
+          attribute :preferences, :hash, description: "The rule kind's settings, keyed by preference name."
         end
       end
     end

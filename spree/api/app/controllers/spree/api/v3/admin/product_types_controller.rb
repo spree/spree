@@ -13,18 +13,25 @@ module Spree
 
           # The associations are a template for products created with this type:
           # replace-sets that never change the products already carrying it.
-          request_params :product_type do
-            string :name, required: :create, example: 'Hoodie'
-            id :delivery_profile_id, nullable: true, example: 'fp_86Rf07xd4z',
-                                     description: 'Delivery profile stamped onto products created with this type. Null leaves new products on the store default profile.'
-            id :option_type_ids, array: true,
-                                 description: 'Option types seeded onto products that get this type. Use apply to products to backfill existing ones.'
-            id :category_ids, array: true, description: 'Categories seeded onto products that get this type. Categories from other stores are ignored.'
-            object :custom_field_definitions, array: true, as: 'ProductTypeCustomFieldDefinitionParams',
-                                              description: 'The custom field definitions the product form shows. Definitions not listed are removed from the type.' do
-              id :id, required: true, example: 'cfdef_abc123', description: 'The custom field definition.'
-              boolean :required
-              integer :sort_order
+          request_params :product_type do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Hoodie'
+            body.attribute :delivery_profile_id, :id,
+              nullable: true,
+              example: 'fp_86Rf07xd4z',
+              description: 'Delivery profile stamped onto products created with this type. Null leaves new products on the store default profile.'
+            body.attribute :option_type_ids, :array, of: :id,
+              description: 'Option types seeded onto products that get this type. Use apply to products to backfill existing ones.'
+            body.attribute :category_ids, :array, of: :id,
+              description: 'Categories seeded onto products that get this type. Categories from other stores are ignored.'
+            body.attribute :custom_field_definitions, :array,
+              as: 'ProductTypeCustomFieldDefinitionParams',
+              description: 'The custom field definitions the product form shows. Definitions not listed are removed from the type.' do |custom_field_definition|
+              custom_field_definition.attribute :id, :id,
+                required: true,
+                example: 'cfdef_abc123',
+                description: 'The custom field definition.'
+              custom_field_definition.attribute :required, :boolean
+              custom_field_definition.attribute :sort_order, :integer
             end
           end
 

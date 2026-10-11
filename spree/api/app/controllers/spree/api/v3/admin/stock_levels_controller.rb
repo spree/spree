@@ -13,28 +13,37 @@ module Spree
           # Stock levels are auto-created against a (variant, stock_location)
           # pair and never re-pointed, so update only touches the count and
           # backorder flag, not the variant or location.
-          request_params :stock_level do
-            external_references
-            integer :count_on_hand,
-                    description: 'The count the shelf should end at: a whole number of zero or more. The API records the difference as an `adjusted` movement, so the correction appears in the stock history.'
-            integer :adjustment,
-                    description: 'A signed change to the shelf instead of a target count, applied to the count the API holds at that moment and recorded the same way. Cannot be sent together with `count_on_hand`.'
-            boolean :backorderable, description: 'Whether this location sells the variant beyond what it holds.'
+          request_params :stock_level do |body|
+            body.external_references
+            body.attribute :count_on_hand, :integer,
+              description: 'The count the shelf should end at: a whole number of zero or more. The API records the difference as an `adjusted` movement, so the correction appears in the stock history.'
+            body.attribute :adjustment, :integer,
+              description: 'A signed change to the shelf instead of a target count, applied to the count the API holds at that moment and recorded the same way. Cannot be sent together with `count_on_hand`.'
+            body.attribute :backorderable, :boolean,
+              description: 'Whether this location sells the variant beyond what it holds.'
             # Optional so an audit requirement never turns an existing
             # endpoint into a 422.
-            string :reason, description: 'Labels the correction in the stock history. Defaults to "Manual adjustment".'
-            object :metadata
+            body.attribute :reason, :string,
+              description: 'Labels the correction in the stock history. Defaults to "Manual adjustment".'
+            body.attribute :metadata, :hash
           end
 
-          request_params 'StockLevelBulkUpsertParams', action: :bulk_upsert do
-            object :stock_levels, array: true, required: true, as: 'StockLevelBulkUpsertRowParams',
-                                  description: 'Send an empty list to change nothing.' do
-              id :variant_id, required: true, example: 'variant_xY9'
-              id :stock_location_id, required: true, example: 'sloc_aBc'
-              integer :count_on_hand, nullable: true, example: 42, description: 'The absolute level the external system reports.'
-              integer :adjustment, nullable: true, example: -3,
-                                   description: 'A relative change, for feeds that report movements rather than levels. Each row needs `count_on_hand` or `adjustment`.'
-              boolean :backorderable, nullable: true
+          request_params 'StockLevelBulkUpsertParams', action: :bulk_upsert do |body|
+            body.attribute :stock_levels, :array,
+              required: true,
+              as: 'StockLevelBulkUpsertRowParams',
+              description: 'Send an empty list to change nothing.' do |stock_level|
+              stock_level.attribute :variant_id, :id, required: true, example: 'variant_xY9'
+              stock_level.attribute :stock_location_id, :id, required: true, example: 'sloc_aBc'
+              stock_level.attribute :count_on_hand, :integer,
+                nullable: true,
+                example: 42,
+                description: 'The absolute level the external system reports.'
+              stock_level.attribute :adjustment, :integer,
+                nullable: true,
+                example: -3,
+                description: 'A relative change, for feeds that report movements rather than levels. Each row needs `count_on_hand` or `adjustment`.'
+              stock_level.attribute :backorderable, :boolean, nullable: true
             end
           end
 

@@ -11,15 +11,23 @@ module Spree
         class GiftCardBatchesController < ResourceController
           scoped_resource :gift_cards
 
-          request_params :gift_card_batch do
-            string :prefix, required: :create, example: 'WELCOME',
-                            description: 'Lowercased and prepended to every generated code.'
-            decimal :amount, required: :create, example: '25.00',
-                             description: 'The amount of each card, greater than zero.'
-            integer :codes_count, required: :create, example: 100,
-                                  description: 'How many cards to generate. Capped at `gift_card_batch_limit`; batches over `gift_card_batch_web_limit` generate in the background.'
-            currency :currency, example: 'USD', description: 'ISO 4217 currency code. Defaults to the store currency.'
-            date :expires_at, nullable: true, example: '2030-12-31'
+          request_params :gift_card_batch do |body|
+            body.attribute :prefix, :string,
+              required: true, on: :create,
+              example: 'WELCOME',
+              description: 'Lowercased and prepended to every generated code.'
+            body.attribute :amount, :decimal,
+              required: true, on: :create,
+              example: '25.00',
+              description: 'The amount of each card, greater than zero.'
+            body.attribute :codes_count, :integer,
+              required: true, on: :create,
+              example: 100,
+              description: 'How many cards to generate. Capped at `gift_card_batch_limit`; batches over `gift_card_batch_web_limit` generate in the background.'
+            body.attribute :currency, :currency,
+              example: 'USD',
+              description: 'ISO 4217 currency code. Defaults to the store currency.'
+            body.attribute :expires_at, :date, nullable: true, example: '2030-12-31'
           end
 
           protected

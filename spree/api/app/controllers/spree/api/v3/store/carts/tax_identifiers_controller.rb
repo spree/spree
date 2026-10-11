@@ -25,8 +25,8 @@ module Spree
             # frozen onto the order at completion.
             before_action :require_kind_and_value!, only: :update
 
-            request_params('TaxIdentifierParams', action: :update) do
-              include_fields Spree::Api::V3::TaxIdentifierRequestSchema
+            request_params('TaxIdentifierParams', action: :update) do |body|
+              body.include_attributes Spree::Api::V3::TaxIdentifierRequestSchema
             end
 
             # GET /api/v3/store/carts/:cart_id/tax_identifier

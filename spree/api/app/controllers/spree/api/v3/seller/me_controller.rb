@@ -16,12 +16,15 @@ module Spree
           skip_before_action :set_current_seller_context
           before_action :require_current_user!
 
-          request_params 'AccountUpdateParams' do
-            string :first_name, example: 'Ada'
-            string :last_name, example: 'Lovelace'
-            string :selected_locale, example: 'de', description: "The panel's display language, as a code the panel ships."
-            string :avatar_signed_id, nullable: true,
-                                      description: 'A `signed_id` from `POST /files` to set the photo, or `null` to remove it. Omit to leave the current one alone.'
+          request_params 'AccountUpdateParams' do |body|
+            body.attribute :first_name, :string, example: 'Ada'
+            body.attribute :last_name, :string, example: 'Lovelace'
+            body.attribute :selected_locale, :string,
+              example: 'de',
+              description: "The panel's display language, as a code the panel ships."
+            body.attribute :avatar_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `POST /files` to set the photo, or `null` to remove it. Omit to leave the current one alone.'
           end
 
           def show

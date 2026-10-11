@@ -5,10 +5,11 @@ module Spree
         class TaxCategoriesController < ResourceController
           scoped_resource :settings
 
-          request_params :tax_category do
-            string :name, required: :create
-            string :tax_code, :description, nullable: true
-            boolean :is_default
+          request_params :tax_category do |body|
+            body.attribute :name, :string, required: true, on: :create
+            body.attribute :tax_code, :string, nullable: true
+            body.attribute :description, :string, nullable: true
+            body.attribute :is_default, :boolean
           end
 
           protected

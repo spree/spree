@@ -5,9 +5,11 @@ module Spree
         class AllowedOriginsController < ResourceController
           scoped_resource :settings
 
-          request_params :allowed_origin do
-            string :origin, required: :create, example: 'https://admin.example.com',
-                            description: 'Origin to allow in admin CORS preflight checks: a bare `scheme://host[:port]` (no path, query or fragment) using `http` or `https`.'
+          request_params :allowed_origin do |body|
+            body.attribute :origin, :string,
+              required: true, on: :create,
+              example: 'https://admin.example.com',
+              description: 'Origin to allow in admin CORS preflight checks: a bare `scheme://host[:port]` (no path, query or fragment) using `http` or `https`.'
           end
 
           protected

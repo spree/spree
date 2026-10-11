@@ -8,10 +8,12 @@ module Spree
         class PoliciesController < ResourceController
           scoped_resource :settings
 
-          request_params :policy do
-            string :name, required: :create, example: 'Wholesale Policy'
-            string :slug, example: 'wholesale-policy'
-            string :body, nullable: true, example: '<p>Trade orders ship within five working days.</p>'
+          request_params :policy do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Wholesale Policy'
+            body.attribute :slug, :string, example: 'wholesale-policy'
+            body.attribute :body, :string,
+              nullable: true,
+              example: '<p>Trade orders ship within five working days.</p>'
           end
 
           protected

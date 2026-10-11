@@ -363,6 +363,7 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 | Removed from the Admin and Seller APIs | Use |
 |---|---|
 | Address `country_iso`, `state_abbr` (read and write) | `country_code`, `state_code` |
+| Address `zipcode` (write) | `postal_code` |
 | Admin cart `number` | `id` |
 | Admin market `country_isos` | `country_codes` |
 | Import `owner_type`, `owner_id` | `store_id`, `seller_id` |
@@ -1172,6 +1173,7 @@ These Store API fields keep working in 6.0 and are marked `@deprecated` in the S
 |---|---|
 | Address `country_iso`, read and written | `country_code` |
 | Address `state_abbr`, read and written | `state_code` |
+| Company address `zipcode`, written | `postal_code` |
 | Cart `number` | `id` |
 | Market `country_isos` | `country_codes` |
 

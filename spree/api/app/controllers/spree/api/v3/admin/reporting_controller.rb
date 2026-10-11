@@ -14,33 +14,38 @@ module Spree
 
           QUERY_KEYS = %w[metrics dimensions filters metric_filters time_range compare sort limit currency].freeze
 
-          request_params 'ReportingQueryParams', action: :query do
-            string :metrics, array: true, required: true,
-                             description: 'Registered metric names, from the reporting schema endpoint.'
-            any :dimensions, array: true, description: <<~TEXT.squish
+          request_params 'ReportingQueryParams', action: :query do |body|
+            body.attribute :metrics, :array, of: :string,
+              required: true,
+              description: 'Registered metric names, from the reporting schema endpoint.'
+            body.attribute :dimensions, :array, of: :any, permit: false, description: <<~TEXT.squish
               Up to #{Spree::Reporting::Query::MAX_DIMENSIONS} dimensions to break the metrics down by. Each is a dimension
               name, or `{ name, grain, include_empty }`: `grain` (`hour`, `day`, `week`, `month`) buckets a time
               dimension, and `include_empty` lists members with no matching rows where the schema entry supports it.
             TEXT
-            object :filters, array: true, description: 'Narrows the rows by dimension value.' do
-              string :dimension, required: true
-              string :op, required: true, enum: Spree::Reporting::Query::FILTER_OPS
-              any :value, required: true, description: 'One value for `eq`, a list for `in`.'
+            body.attribute :filters, :array, description: 'Narrows the rows by dimension value.' do |filter|
+              filter.attribute :dimension, :string, required: true
+              filter.attribute :op, :string, required: true, choices: Spree::Reporting::Query::FILTER_OPS
+              filter.attribute :value, :any, required: true, description: 'One value for `eq`, a list for `in`.'
             end
-            object :metric_filters, array: true,
-                                    description: "Filters on an aggregate, such as `units_sold = 0`. Narrows the rows only; the totals stay the period's real figure. The metric must also appear in `metrics`, and cannot be a derived one." do
-              string :metric, required: true
-              string :op, required: true, enum: Spree::Reporting::Query::METRIC_FILTER_OPS
-              number :value, required: true
+            body.attribute :metric_filters, :array,
+              description: "Filters on an aggregate, such as `units_sold = 0`. Narrows the rows only; the totals stay the period's real figure. The metric must also appear in `metrics`, and cannot be a derived one." do |metric_filter|
+              metric_filter.attribute :metric, :string, required: true
+              metric_filter.attribute :op, :string,
+                required: true,
+                choices: Spree::Reporting::Query::METRIC_FILTER_OPS
+              metric_filter.attribute :value, :number, required: true
             end
-            object :time_range,
-                   description: "A named preset (`last_month`, `week_to_date`, any `last_<n>_<days|weeks|months>`), or ISO 8601 dates or times in `since` and `until` (a bare date covers the store's whole day). Defaults to the last 30 days, in the store's time zone." do
-              string :preset, :since, :until
+            body.attribute :time_range, :object,
+              description: "A named preset (`last_month`, `week_to_date`, any `last_<n>_<days|weeks|months>`), or ISO 8601 dates or times in `since` and `until` (a bare date covers the store's whole day). Defaults to the last 30 days, in the store's time zone." do |time_range|
+              time_range.attribute :preset, :string
+              time_range.attribute :since, :string
+              time_range.attribute :until, :string
             end
-            string :compare, enum: Spree::Reporting::Query::COMPARE_MODES
-            string :sort, description: 'A metric name; prefix it with `-` to sort descending.'
-            integer :limit, description: "At most #{Spree::Reporting::Query::MAX_LIMIT}."
-            currency :currency
+            body.attribute :compare, :string, choices: Spree::Reporting::Query::COMPARE_MODES
+            body.attribute :sort, :string, description: 'A metric name; prefix it with `-` to sort descending.'
+            body.attribute :limit, :integer, description: "At most #{Spree::Reporting::Query::MAX_LIMIT}."
+            body.attribute :currency, :currency
           end
 
           # POST /api/v3/admin/reporting/query

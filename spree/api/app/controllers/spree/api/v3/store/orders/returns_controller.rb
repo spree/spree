@@ -17,13 +17,13 @@ module Spree
             # standard actions are listed alongside the label download.
             before_action :set_resource, only: [:show, :update, :destroy, :label]
 
-            request_params 'CreateReturnParams', action: :create do
-              object :items, array: true, required: true do
-                id :fulfillment_item_id, required: true, description: 'The shipped unit coming back.'
-                integer :quantity, required: true
+            request_params 'CreateReturnParams', action: :create do |body|
+              body.attribute :items, :array, required: true do |item|
+                item.attribute :fulfillment_item_id, :id, required: true, description: 'The shipped unit coming back.'
+                item.attribute :quantity, :integer, required: true
               end
-              id :reason_id, description: "One of the store's return reasons."
-              string :memo
+              body.attribute :reason_id, :id, description: "One of the store's return reasons."
+              body.attribute :memo, :string
             end
 
             # GET /api/v3/store/orders/:order_id/returns/:id/label

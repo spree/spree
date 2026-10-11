@@ -16,12 +16,14 @@ module Spree
 
           skip_before_action :authenticate_user, only: [:create, :refresh, :logout]
 
-          request_params 'RefreshTokenParams', action: :refresh do
-            string :refresh_token, required: true, description: 'The refresh token from the login response.'
+          request_params 'RefreshTokenParams', action: :refresh do |body|
+            body.attribute :refresh_token, :string,
+              required: true,
+              description: 'The refresh token from the login response.'
           end
 
-          request_params 'LogoutParams', action: :logout do
-            string :refresh_token, description: 'The refresh token to revoke.'
+          request_params 'LogoutParams', action: :logout do |body|
+            body.attribute :refresh_token, :string, description: 'The refresh token to revoke.'
           end
 
           # POST  /api/v3/store/auth/login

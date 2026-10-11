@@ -10,8 +10,8 @@ module Spree
           # orders are frozen; their discounts change only through manual rows
           # (see DiscountsController).
           class DiscountCodesController < BaseController
-            request_params 'DiscountCodeApplyParams' do
-              string :code, required: true
+            request_params 'DiscountCodeApplyParams' do |body|
+              body.attribute :code, :string, required: true
             end
 
             skip_before_action :set_resource, raise: false

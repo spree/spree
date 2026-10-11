@@ -16,17 +16,24 @@ module Spree
           # readable ones instead of gating on a single scope.
           skip_scope_check! only: :index
 
-          request_params :export do
-            string :type, required: :create, example: 'products',
-                          description: 'Which dataset to export, as its shorthand: `products`, `orders`, `customers`, `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
-            string :record_selection, enum: %w[filtered all], example: 'filtered',
-                                      description: '`filtered` (the default) keeps `search_params`; `all` ignores them and exports every record in scope.'
-            string :results_url, example: 'https://admin.example.com/store_abc/exports',
-                                 description: "Absolute URL of your admin exports view; the export-done email uses it as the download button target. Only honored when it matches one of the store's allowed origins."
+          request_params :export do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              example: 'products',
+              description: 'Which dataset to export, as its shorthand: `products`, `orders`, `customers`, `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
+            body.attribute :record_selection, :string,
+              choices: %w[filtered all],
+              example: 'filtered',
+              description: '`filtered` (the default) keeps `search_params`; `all` ignores them and exports every record in scope.'
+            body.attribute :results_url, :string,
+              example: 'https://admin.example.com/store_abc/exports',
+              description: "Absolute URL of your admin exports view; the export-done email uses it as the download button target. Only honored when it matches one of the store's allowed origins."
             # Read from the raw params: a Ransack hash nests groupings, which
             # `permit(search_params: {})` rejects.
-            object :search_params, permit: false, example: { name_cont: 'shirt' },
-                                   description: 'A Ransack query, with the predicates the list endpoint accepts. A `price_list_prices` export requires `price_list_id_eq` naming a price list of the current store, and refuses `record_selection: "all"`.'
+            body.attribute :search_params, :hash,
+              permit: false,
+              example: { name_cont: 'shirt' },
+              description: 'A Ransack query, with the predicates the list endpoint accepts. A `price_list_prices` export requires `price_list_id_eq` naming a price list of the current store, and refuses `record_selection: "all"`.'
           end
 
           # We stream the CSV inline rather than redirecting to ActiveStorage's

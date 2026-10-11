@@ -15,11 +15,16 @@ module Spree
           subclassed_via -> { Spree::Integration.registered_classes },
                          unknown_type_error: 'unknown_integration_type'
 
-          request_params :integration do
-            string :type, required: true, only: :create, example: 'carrier',
-                          description: 'Wire shorthand from the integration types endpoint.'
-            boolean :active, description: 'Activating runs the connection check, and a failed check is a 422.'
-            object :preferences, description: 'Credential values. Secret preferences come back masked, and sending a masked value back keeps the stored secret.'
+          request_params :integration do |body|
+            body.attribute :type, :string,
+              required: true,
+              only: :create,
+              example: 'carrier',
+              description: 'Wire shorthand from the integration types endpoint.'
+            body.attribute :active, :boolean,
+              description: 'Activating runs the connection check, and a failed check is a 422.'
+            body.attribute :preferences, :hash,
+              description: 'Credential values. Secret preferences come back masked, and sending a masked value back keeps the stored secret.'
           end
 
           # GET /api/v3/admin/integrations/types

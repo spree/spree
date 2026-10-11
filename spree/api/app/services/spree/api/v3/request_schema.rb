@@ -5,27 +5,26 @@ module Spree
       # from it, the API reference documents it, and the SDK request types are
       # generated from the reference, so the three cannot disagree.
       #
-      #   request_params :product do
-      #     string :name, required: :create
-      #     string :status, enum: %w[draft active archived]
-      #     id :category_ids, array: true
-      #     object :metadata
-      #     object :prices, array: true, shape: Spree::Api::V3::PriceRequestSchema
-      #     object :options, array: true do
-      #       string :name, :value, required: true
+      #   request_params :product do |body|
+      #     body.attribute :name, :string, required: true, on: :create
+      #     body.attribute :status, :string, choices: Spree::Product::STATUSES, open: true
+      #     body.attribute :category_ids, :array, of: :id
+      #     body.attribute :metadata, :hash
+      #     body.attribute :prices, :array, of: Spree::Api::V3::PriceRequestSchema
+      #     body.attribute :options, :array do |option|
+      #       option.attribute :name, :string, required: true
       #     end
       #   end
       #
-      # `required: :create` is required when creating and optional when
-      # updating; `required: true` is required in both. `only: :create` (or
-      # `:update`) accepts a field on one of the two actions alone.
-      # `permit: false` documents a field the controller reads from the raw
-      # params itself (external references, uploads), so it is left out of
-      # the permit list. `format:` documents a string's format (`email`, `uri`).
-      # `open: true` marks an `enum:` list extensions may extend (statuses,
-      # fee kinds), matching how the serializers publish the same field.
-      # `deprecated: 'Use country_code. Removed in 6.1.'` keeps a field
-      # working while the API reference and the SDK types flag it.
+      # The vocabulary is the `preference` one: a type symbol, `of:` for what
+      # an `:array` holds, `choices:` for a closed list (`open: true` when
+      # extensions may extend it), `:hash` for any keys. `required: true` is
+      # required on both actions; add `on: :create` to require it when
+      # creating only. `only: :create` (or `:update`) accepts the field on one
+      # action alone. `permit: false` documents a field the controller reads
+      # from the raw params itself. `format:` documents a string's format
+      # (`email`, `uri`). `deprecated: 'Use country_code. Removed in 6.1.'`
+      # keeps a field working while the API reference and the SDK types flag it.
       class RequestSchema
         KINDS = {
           string: { type: :string },
@@ -109,6 +108,11 @@ module Spree
 
         attr_reader :name, :fields
 
+        # The types an attribute takes: the scalars above, plus `:hash` (any
+        # keys), `:object` (a block or a `shape:`) and `:array` (`of:` a type
+        # or a shape, or a block of fields).
+        TYPES = (KINDS.keys + %i[hash object array]).freeze
+
         # A shape shared between several endpoints (a price, an address),
         # published as its own component so each SDK has one type for it.
         #
@@ -121,21 +125,23 @@ module Spree
         end
 
         # A shape several endpoints share is a class in app/request_schemas,
-        # declared the way a serializer is:
+        # declared the way a model declares its attributes:
         #
         #   class Spree::Api::V3::PriceRequestSchema < Spree::Api::V3::RequestSchema
         #     publishes 'PriceParams'
-        #     string :currency, required: true
+        #
+        #     attribute :currency, :currency, required: true
         #   end
         #
-        # A subclass starts from its parent's fields, so the Admin API's
+        # A subclass starts from its parent's attributes, so the Admin API's
         # address extends the shared one. Without `publishes` the class is a
-        # field set other declarations include rather than a type of its own.
+        # set of attributes other declarations include rather than a type of
+        # its own.
         class << self
           # @param name [String] the component name, ending in `Params`
           def publishes(name)
             raise ArgumentError, "a shape's name ends in Params (#{name})" unless name.to_s.end_with?('Params')
-            raise ArgumentError, "#{self.name}: `publishes` goes before the fields" if @definition
+            raise ArgumentError, "#{self.name}: `publishes` goes before the attributes" if @definition
 
             @published_name = name.to_s
           end
@@ -143,7 +149,7 @@ module Spree
           # @return [RequestSchema] what the class declares
           def definition
             @definition ||= new(@published_name).tap do |schema|
-              schema.include_fields(superclass) if superclass < RequestSchema
+              schema.include_attributes(superclass) if superclass < RequestSchema
             end
           end
 
@@ -153,7 +159,7 @@ module Spree
             value.is_a?(Class) ? value.definition : value
           end
 
-          (KINDS.keys + %i[object include_fields external_references]).each do |method|
+          %i[attribute include_attributes external_references].each do |method|
             define_method(method) { |*args, **options, &block| definition.public_send(method, *args, **options, &block) }
           end
         end
@@ -161,38 +167,48 @@ module Spree
         # @param name [String, Symbol, nil] the resource, `product` publishing
         #   `ProductCreateParams` and `ProductUpdateParams`; or a name ending
         #   in `Params`, published as given for every action
-        def initialize(name = nil, &block)
+        # @yieldparam schema [RequestSchema] the schema, to declare attributes on
+        def initialize(name = nil)
           @name = name&.to_s
           @fields = {}
-          instance_eval(&block) if block
+          yield self if block_given?
         end
 
-        KINDS.each_key do |kind|
-          # @param names [Array<Symbol>] one or more fields of this kind
-          define_method(kind) do |*names, **options|
-            names.each { |field_name| add(Field.new(field_name, kind, **options)) }
-          end
-        end
-
-        # A nested hash. Without a block or `shape:` it takes any keys.
+        # Declares one attribute of the body.
         #
         # @param name [Symbol]
-        # @param shape [RequestSchema, Class, nil] a shared shape
-        # @param as [String, nil] publishes the block's fields as a component
-        #   of this name, for a nested type clients want to name
-        def object(name, shape: nil, as: nil, **options, &block)
-          schema = RequestSchema.resolve(shape) || (block && (as ? RequestSchema.shape(as, &block) : RequestSchema.new(&block)))
-          if options[:array] && schema.nil?
-            raise ArgumentError, "#{name}: an array of objects needs a shape, since any-key hashes cannot be permitted in a list"
-          end
+        # @param type [Symbol] one of TYPES
+        # @param of [Symbol, Class, RequestSchema, nil] what an `:array` holds:
+        #   a scalar type, or a shared shape
+        # @param shape [Class, RequestSchema, nil] what an `:object` holds
+        # @param as [String, nil] publishes a block's object (or the objects
+        #   of an `:array`) as a component of this name
+        # @param choices [Array, nil] the values the attribute takes
+        # @param required [Boolean]
+        # @param on [Symbol, nil] `:create` to require it only when creating
+        # @yieldparam schema [RequestSchema] a nested object's attributes
+        def attribute(name, type, of: nil, shape: nil, as: nil, choices: nil, required: false, on: nil, **options, &block)
+          raise ArgumentError, "#{name}: unknown type #{type.inspect}; use one of #{TYPES.join(', ')}" unless TYPES.include?(type)
+          raise ArgumentError, "#{name}: `on:` scopes `required: true` and is `:create`" if on && (!required || on != :create)
 
-          add(Field.new(name, :object, schema: schema, **options))
+          options = options.merge(required: on || required, enum: choices)
+          nested = nested_schema(type, of: of, shape: shape, as: as, &block)
+
+          case type
+          when :array then add_array(name, of, nested, options)
+          when :object
+            raise ArgumentError, "#{name}: an :object needs a block or `shape:`; use :hash for any keys" unless nested
+
+            add(Field.new(name, :object, schema: nested, **options))
+          when :hash then add(Field.new(name, :object, **options))
+          else add(Field.new(name, type, **options))
+          end
         end
 
         # The identities a record has in external systems, which the Admin API
         # reads from the raw params (Admin::Concerns::ExternalReferences).
         def external_references
-          object :external_references, permit: false, description: <<~TEXT.squish
+          attribute :external_references, :hash, permit: false, description: <<~TEXT.squish
             Identities the record has in external systems, keyed by system: the same
             `{ system: external_id }` map the Admin API renders, so what you read can be
             sent straight back. Systems you do not name keep the reference they have.
@@ -200,11 +216,11 @@ module Spree
           TEXT
         end
 
-        # Adds the fields of another schema, for endpoints that extend a
+        # Adds the attributes of another schema, for endpoints that extend a
         # shared set.
         #
         # @param other [RequestSchema, Class]
-        def include_fields(other)
+        def include_attributes(other)
           RequestSchema.resolve(other).fields.each_value { |field| add(field) }
         end
 
@@ -273,6 +289,28 @@ module Spree
         end
 
         private
+
+        def nested_schema(type, of:, shape:, as:, &block)
+          return RequestSchema.resolve(shape) if shape
+          return RequestSchema.resolve(of) if of.is_a?(Class) || of.is_a?(RequestSchema)
+          return unless block
+
+          as ? RequestSchema.shape(as, &block) : RequestSchema.new(&block)
+        end
+
+        def add_array(name, of, nested, options)
+          return add(Field.new(name, :object, schema: nested, array: true, **options)) if nested
+
+          unless of.is_a?(Symbol) && KINDS.key?(of)
+            raise ArgumentError, "#{name}: an :array needs `of:` a scalar type or a shape, or a block of attributes"
+          end
+          # Rails permits a list of scalars, never a list of any-key hashes.
+          if of == :any && options.fetch(:permit, true)
+            raise ArgumentError, "#{name}: a list of :any values cannot be permitted; declare its items or use `permit: false`"
+          end
+
+          add(Field.new(name, of, array: true, **options))
+        end
 
         def add(field)
           raise ArgumentError, "#{field.name} is declared twice" if fields.key?(field.name)

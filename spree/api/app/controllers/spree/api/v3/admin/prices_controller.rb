@@ -15,32 +15,43 @@ module Spree
 
           # variant_id and price_list_id resolve through the current store's
           # scopes (+permitted_params+), so a foreign or unknown id 404s.
-          request_params :price do
-            id :variant_id, required: :create, example: 'variant_xY9'
-            currency :currency, required: :create, example: 'USD'
-            integer :min_quantity,
-                    description: 'The quantity a line must reach for this price to apply. Omit for the bottom rung of the ladder. Anything above 1 requires a `price_list_id`.'
-            decimal :amount, :compare_at_amount, nullable: true, example: '19.99'
-            id :price_list_id, nullable: true, example: 'pl_aBc123',
-                               description: 'Omit or null for a base price; a price list for a list override.'
+          request_params :price do |body|
+            body.attribute :variant_id, :id, required: true, on: :create, example: 'variant_xY9'
+            body.attribute :currency, :currency, required: true, on: :create, example: 'USD'
+            body.attribute :min_quantity, :integer,
+              description: 'The quantity a line must reach for this price to apply. Omit for the bottom rung of the ladder. Anything above 1 requires a `price_list_id`.'
+            body.attribute :amount, :decimal, nullable: true, example: '19.99'
+            body.attribute :compare_at_amount, :decimal, nullable: true, example: '19.99'
+            body.attribute :price_list_id, :id,
+              nullable: true,
+              example: 'pl_aBc123',
+              description: 'Omit or null for a base price; a price list for a list override.'
           end
 
-          request_params 'PriceBulkUpsertParams', action: :bulk_upsert do
-            object :prices, array: true, required: true, as: 'PriceBulkUpsertRowParams',
-                            description: 'Send an empty list to change nothing.' do
-              id :id, nullable: true, example: 'price_aBc123',
-                      description: 'Present: updates that row. Absent: upserts on `(variant_id, currency, price_list_id, min_quantity)`.'
-              id :variant_id, required: true, example: 'variant_xY9'
-              currency :currency, required: true, example: 'USD'
-              id :price_list_id, nullable: true, example: 'pl_aBc123', description: 'Omit or null for a base price.'
-              integer :min_quantity,
-                      description: "The rung of the variant's ladder. Omit for the bottom rung; anything above 1 requires a `price_list_id`. A variant carries at most ten rungs on one list per currency."
-              decimal :amount, :compare_at_amount, nullable: true, example: '19.99'
+          request_params 'PriceBulkUpsertParams', action: :bulk_upsert do |body|
+            body.attribute :prices, :array,
+              required: true,
+              as: 'PriceBulkUpsertRowParams',
+              description: 'Send an empty list to change nothing.' do |price|
+              price.attribute :id, :id,
+                nullable: true,
+                example: 'price_aBc123',
+                description: 'Present: updates that row. Absent: upserts on `(variant_id, currency, price_list_id, min_quantity)`.'
+              price.attribute :variant_id, :id, required: true, example: 'variant_xY9'
+              price.attribute :currency, :currency, required: true, example: 'USD'
+              price.attribute :price_list_id, :id,
+                nullable: true,
+                example: 'pl_aBc123',
+                description: 'Omit or null for a base price.'
+              price.attribute :min_quantity, :integer,
+                description: "The rung of the variant's ladder. Omit for the bottom rung; anything above 1 requires a `price_list_id`. A variant carries at most ten rungs on one list per currency."
+              price.attribute :amount, :decimal, nullable: true, example: '19.99'
+              price.attribute :compare_at_amount, :decimal, nullable: true, example: '19.99'
             end
           end
 
-          request_params 'PriceBulkDestroyParams', action: :bulk_destroy do
-            id :ids, array: true, required: true, example: %w[price_aBc123]
+          request_params 'PriceBulkDestroyParams', action: :bulk_destroy do |body|
+            body.attribute :ids, :array, of: :id, required: true, example: %w[price_aBc123]
           end
 
           # Bulk-upserts prices on the unique key

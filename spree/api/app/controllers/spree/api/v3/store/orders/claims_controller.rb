@@ -10,14 +10,14 @@ module Spree
           # Whether a customer may file a claim is store policy and belongs in
           # a `claims.create.validate` hook rather than here.
           class ClaimsController < Store::ResourceController
-            request_params 'CreateClaimParams', action: :create do
-              object :items, array: true, required: true do
-                id :line_item_id, required: true
-                integer :quantity, required: true
-                string :description, description: 'What is wrong with the item.'
+            request_params 'CreateClaimParams', action: :create do |body|
+              body.attribute :items, :array, required: true do |item|
+                item.attribute :line_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+                item.attribute :description, :string, description: 'What is wrong with the item.'
               end
-              id :reason_id, description: "One of the store's claim reasons."
-              string :memo
+              body.attribute :reason_id, :id, description: "One of the store's claim reasons."
+              body.attribute :memo, :string
             end
 
             def create

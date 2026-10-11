@@ -23,26 +23,35 @@ module Spree
           # permitting them would let a write fail validation for a choice the
           # seller was never offered. No markup either — that prices a
           # carrier's quote, and a seller has no carrier.
-          request_params 'DeliveryMethodParams' do
-            string :name
-            string :admin_name, :code, nullable: true
-            id :delivery_profile_id, description: "One of the marketplace's delivery profiles."
-            id :delivery_zone_id, nullable: true, description: 'Narrows where the method ships; null serves everywhere the profile reaches.'
-            boolean :storefront_visible
-            string :tracking_url, nullable: true
-            integer :estimated_transit_business_days_min, :estimated_transit_business_days_max, nullable: true
-            object :calculator, description: "How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type's `schema`." do
-              string :type, example: 'flat_rate'
-              object :preferences, example: { amount: '12.5' }
+          request_params 'DeliveryMethodParams' do |body|
+            body.attribute :name, :string
+            body.attribute :admin_name, :string, nullable: true
+            body.attribute :code, :string, nullable: true
+            body.attribute :delivery_profile_id, :id, description: "One of the marketplace's delivery profiles."
+            body.attribute :delivery_zone_id, :id,
+              nullable: true,
+              description: 'Narrows where the method ships; null serves everywhere the profile reaches.'
+            body.attribute :storefront_visible, :boolean
+            body.attribute :tracking_url, :string, nullable: true
+            body.attribute :estimated_transit_business_days_min, :integer, nullable: true
+            body.attribute :estimated_transit_business_days_max, :integer, nullable: true
+            body.attribute :calculator, :object,
+              description: "How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type's `schema`." do |calculator|
+              calculator.attribute :type, :string, example: 'flat_rate'
+              calculator.attribute :preferences, :hash, example: { amount: '12.5' }
             end
             # Permitted in `permitted_params`, together with the attributes
             # the seller's rule kinds declare on their own classes.
-            object :rules, array: true, permit: false, as: 'DeliveryMethodRuleParams',
-                           description: 'Replaces the whole set: a rule dropped here is deleted, so re-send surviving rules with their `id`. An empty list clears every condition.' do
-              id :id
-              string :type, required: true, description: 'A type from `/delivery_methods/rule_types`.'
-              boolean :active
-              object :preferences
+            body.attribute :rules, :array,
+              permit: false,
+              as: 'DeliveryMethodRuleParams',
+              description: 'Replaces the whole set: a rule dropped here is deleted, so re-send surviving rules with their `id`. An empty list clears every condition.' do |rule|
+              rule.attribute :id, :id
+              rule.attribute :type, :string,
+                required: true,
+                description: 'A type from `/delivery_methods/rule_types`.'
+              rule.attribute :active, :boolean
+              rule.attribute :preferences, :hash
             end
           end
 

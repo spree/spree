@@ -6,10 +6,10 @@ module Spree
           class RefundsController < BaseController
             scoped_resource :refunds
 
-            request_params :refund do
-              id :payment_id, required: :create
-              decimal :amount, required: :create
-              id :refund_reason_id, description: "Defaults to the store's first refund reason."
+            request_params :refund do |body|
+              body.attribute :payment_id, :id, required: true, on: :create
+              body.attribute :amount, :decimal, required: true, on: :create
+              body.attribute :refund_reason_id, :id, description: "Defaults to the store's first refund reason."
             end
 
             # POST /api/v3/admin/orders/:order_id/refunds

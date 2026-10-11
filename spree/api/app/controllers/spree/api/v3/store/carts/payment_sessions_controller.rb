@@ -10,20 +10,22 @@ module Spree
             before_action :find_cart!
             before_action :set_payment_session, only: [:show, :update, :complete]
 
-            request_params 'CreatePaymentSessionParams', action: :create do
-              id :payment_method_id, required: true, example: 'pm_abc123'
-              decimal :amount, example: '99.99', description: 'Defaults to the order total minus store credits.'
-              object :external_data, description: 'Provider-specific data passed to the gateway.'
+            request_params 'CreatePaymentSessionParams', action: :create do |body|
+              body.attribute :payment_method_id, :id, required: true, example: 'pm_abc123'
+              body.attribute :amount, :decimal,
+                example: '99.99',
+                description: 'Defaults to the order total minus store credits.'
+              body.attribute :external_data, :hash, description: 'Provider-specific data passed to the gateway.'
             end
 
-            request_params 'UpdatePaymentSessionParams', action: :update do
-              decimal :amount, example: '50.00'
-              object :external_data, description: 'Provider-specific data to update.'
+            request_params 'UpdatePaymentSessionParams', action: :update do |body|
+              body.attribute :amount, :decimal, example: '50.00'
+              body.attribute :external_data, :hash, description: 'Provider-specific data to update.'
             end
 
-            request_params 'CompletePaymentSessionParams', action: :complete do
-              string :session_result, description: 'Provider-specific session result token.'
-              object :external_data, description: 'Provider-specific completion data.'
+            request_params 'CompletePaymentSessionParams', action: :complete do |body|
+              body.attribute :session_result, :string, description: 'Provider-specific session result token.'
+              body.attribute :external_data, :hash, description: 'Provider-specific completion data.'
             end
 
             # POST /api/v3/store/carts/:cart_id/payment_sessions

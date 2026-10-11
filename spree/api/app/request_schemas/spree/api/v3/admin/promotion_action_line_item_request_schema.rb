@@ -6,8 +6,8 @@ module Spree
         class PromotionActionLineItemRequestSchema < Spree::Api::V3::RequestSchema
           publishes 'PromotionActionLineItemParams'
 
-          id :variant_id, required: true
-          integer :quantity, required: true
+          attribute :variant_id, :id, required: true
+          attribute :quantity, :integer, required: true
         end
       end
     end

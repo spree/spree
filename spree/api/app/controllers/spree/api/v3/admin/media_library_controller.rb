@@ -20,8 +20,8 @@ module Spree
           # product the caller can already see.
           scoped_resource :media
 
-          request_params :media_library do
-            include_fields MediaController.request_params_schema
+          request_params :media_library do |body|
+            body.include_attributes MediaController.request_params_schema
           end
           # Restates the base class's member actions with `usage` added — a
           # second `before_action :set_resource` would replace that filter

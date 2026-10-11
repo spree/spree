@@ -13,20 +13,34 @@ module Spree
         class MarketsController < ResourceController
           scoped_resource :settings
 
-          request_params :market do
-            string :name, required: :create, example: 'Europe', description: 'Display name, unique within the store.'
-            currency :currency, required: :create, example: 'EUR', description: 'ISO 4217 currency code.'
-            string :default_locale, required: :create, example: 'de',
-                                    description: 'Locale used as the market default. Always part of `supported_locales`.'
-            boolean :tax_inclusive, description: 'Display prices with tax included.'
-            string :tax_provider, nullable: true, example: 'internal',
-                                  description: 'Shorthand of the tax engine that prices this market, from the tax providers endpoint. Null uses the installation default.'
-            boolean :default, description: 'Setting true demotes the previous default market of the store.'
-            integer :position, description: 'Sort order within the store; lower comes first.'
-            string :supported_locales, array: true, example: %w[de en],
-                                       description: 'Locales available in this market. The default locale is always included.'
-            country :country_codes, array: true, required: :create, example: %w[DE FR],
-                                   description: 'ISO 3166-1 alpha-2 codes of the countries in this market. At least one is required.'
+          request_params :market do |body|
+            body.attribute :name, :string,
+              required: true, on: :create,
+              example: 'Europe',
+              description: 'Display name, unique within the store.'
+            body.attribute :currency, :currency,
+              required: true, on: :create,
+              example: 'EUR',
+              description: 'ISO 4217 currency code.'
+            body.attribute :default_locale, :string,
+              required: true, on: :create,
+              example: 'de',
+              description: 'Locale used as the market default. Always part of `supported_locales`.'
+            body.attribute :tax_inclusive, :boolean, description: 'Display prices with tax included.'
+            body.attribute :tax_provider, :string,
+              nullable: true,
+              example: 'internal',
+              description: 'Shorthand of the tax engine that prices this market, from the tax providers endpoint. Null uses the installation default.'
+            body.attribute :default, :boolean,
+              description: 'Setting true demotes the previous default market of the store.'
+            body.attribute :position, :integer, description: 'Sort order within the store; lower comes first.'
+            body.attribute :supported_locales, :array, of: :string,
+              example: %w[de en],
+              description: 'Locales available in this market. The default locale is always included.'
+            body.attribute :country_codes, :array, of: :country,
+              required: true, on: :create,
+              example: %w[DE FR],
+              description: 'ISO 3166-1 alpha-2 codes of the countries in this market. At least one is required.'
           end
 
           protected

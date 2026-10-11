@@ -16,13 +16,16 @@ module Spree
 
           # `key_type`, `scopes` and `channel_id` are create-only (immutability
           # lives on Spree::ApiKey), so a rename returns 200 rather than 422.
-          request_params :api_key do
-            string :name, required: true
-            string :key_type, required: true, only: :create, enum: Spree::ApiKey::KEY_TYPES
-            string :scopes, array: true, only: :create, example: %w[read_orders write_products],
-                            description: 'Required for secret keys. You can only grant scopes you hold yourself. Fixed once created: to change them, create a new key and revoke the old one.'
-            id :channel_id, only: :create,
-                            description: 'Binds a publishable key to one channel of the store (`ch_...`), so it rejects requests for other channels. Fixed once created; omit it for a store-wide key.'
+          request_params :api_key do |body|
+            body.attribute :name, :string, required: true
+            body.attribute :key_type, :string, required: true, only: :create, choices: Spree::ApiKey::KEY_TYPES
+            body.attribute :scopes, :array, of: :string,
+              only: :create,
+              example: %w[read_orders write_products],
+              description: 'Required for secret keys. You can only grant scopes you hold yourself. Fixed once created: to change them, create a new key and revoke the old one.'
+            body.attribute :channel_id, :id,
+              only: :create,
+              description: 'Binds a publishable key to one channel of the store (`ch_...`), so it rejects requests for other channels. Fixed once created; omit it for a store-wide key.'
           end
 
           # POST /api/v3/admin/api_keys

@@ -13,10 +13,13 @@ module Spree
           subclassed_via -> { Spree.promotions.rules },
                          unknown_type_error: 'unknown_promotion_rule_type'
 
-          request_params :promotion_rule do
-            string :type, required: :create, only: :create, example: 'currency',
-                          description: 'The rule kind, from `GET /promotion_rules/types`.'
-            include_fields Spree::Api::V3::Admin::PromotionRuleRequestSchema
+          request_params :promotion_rule do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              only: :create,
+              example: 'currency',
+              description: 'The rule kind, from `GET /promotion_rules/types`.'
+            body.include_attributes Spree::Api::V3::Admin::PromotionRuleRequestSchema
           end
 
           def types

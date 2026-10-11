@@ -11,12 +11,16 @@ module Spree
         class PoliciesController < Seller::ResourceController
           scoped_resource :seller_profile
 
-          request_params :policy do
-            string :name, required: :create, example: 'Shipping Policy',
-                          description: 'When the marketplace requires a named policy, use that exact name: the onboarding check matches on it.'
-            string :slug, example: 'shipping-policy'
-            string :body, nullable: true, example: '<p>Orders leave the workshop within two working days.</p>',
-                          description: 'HTML, sanitized before it is stored. `body_html` on the response is the rendering of what was stored.'
+          request_params :policy do |body|
+            body.attribute :name, :string,
+              required: true, on: :create,
+              example: 'Shipping Policy',
+              description: 'When the marketplace requires a named policy, use that exact name: the onboarding check matches on it.'
+            body.attribute :slug, :string, example: 'shipping-policy'
+            body.attribute :body, :string,
+              nullable: true,
+              example: '<p>Orders leave the workshop within two working days.</p>',
+              description: 'HTML, sanitized before it is stored. `body_html` on the response is the rendering of what was stored.'
           end
 
           protected

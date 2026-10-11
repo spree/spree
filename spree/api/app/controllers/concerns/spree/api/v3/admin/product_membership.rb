@@ -35,9 +35,11 @@ module Spree
 
             # Adding (create) and removing (destroy) take the same body.
             [nil, :destroy].each do |action|
-              request_params 'ProductMembershipParams', action: action do
-                id :product_ids, array: true, required: true, example: %w[prod_abc123],
-                                 description: 'Products from other stores, or ones the caller cannot see, are ignored.'
+              request_params 'ProductMembershipParams', action: action do |body|
+                body.attribute :product_ids, :array, of: :id,
+                  required: true,
+                  example: %w[prod_abc123],
+                  description: 'Products from other stores, or ones the caller cannot see, are ignored.'
               end
             end
           end

@@ -163,11 +163,11 @@ module Spree
         class ReviewsController < ResourceController
           scoped_resource :reviews
 
-          request_params :review do
-            id :product_id, required: :create
-            integer :rating, required: :create
-            string :body
-            boolean :approved
+          request_params :review do |body|
+            body.attribute :product_id, :id, required: true, on: :create
+            body.attribute :rating, :integer, required: true, on: :create
+            body.attribute :body, :string
+            body.attribute :approved, :boolean
           end
 
           protected

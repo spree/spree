@@ -11,16 +11,8 @@ module Spree
 
           scoped_resource :seller_profile
 
-          # Documented only: the shared FileUploads concern does the permitting.
-          request_params 'FileUploadCreateParams', action: :create do
-            string :filename, required: true, permit: false, example: 'registration.pdf'
-            string :content_type, required: true, permit: false, example: 'application/pdf'
-            integer :byte_size, permit: false, example: 51_234
-            string :checksum, permit: false, example: 'rL0Y20zC+Fzt72VPzMSk2A==',
-                              description: 'Base64-encoded MD5 digest of the file; the storage service checks the bytes against it.'
-            string :visibility, permit: false, enum: Spree::FileUpload::VISIBILITIES,
-                                description: '`public` (the default) for web images, videos and CSV, `private` for any type.'
-            string :file, permit: false, format: :binary, description: 'The bytes, for a multipart upload.'
+          request_params 'FileUploadCreateParams', action: :create do |body|
+            body.include_attributes Spree::Api::V3::FileUploadRequestSchema
           end
 
           private

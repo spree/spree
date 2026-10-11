@@ -12,16 +12,20 @@ module Spree
         class CompaniesController < ResourceController
           scoped_resource :customers
 
-          request_params 'CompanyParams' do
-            external_references
-            string :name, example: 'Globex Corporation', description: 'Required when creating.'
-            string :kind, enum: Spree::Company::KINDS, example: 'company',
-                          description: '`company` is a legal entity (may hold tax registrations), `division` an organizational unit. Roots must be `company`.'
-            id :parent_id, nullable: true, example: 'comp_86Rf07xd4z',
-                           description: 'The parent node. Omit or null for a root.'
-            boolean :po_number_required,
-                    description: "Whether this buyer's own procurement process demands a PO reference on every order: checkout asks for one and refuses to complete without it."
-            object :metadata
+          request_params 'CompanyParams' do |body|
+            body.external_references
+            body.attribute :name, :string, example: 'Globex Corporation', description: 'Required when creating.'
+            body.attribute :kind, :string,
+              choices: Spree::Company::KINDS,
+              example: 'company',
+              description: '`company` is a legal entity (may hold tax registrations), `division` an organizational unit. Roots must be `company`.'
+            body.attribute :parent_id, :id,
+              nullable: true,
+              example: 'comp_86Rf07xd4z',
+              description: 'The parent node. Omit or null for a root.'
+            body.attribute :po_number_required, :boolean,
+              description: "Whether this buyer's own procurement process demands a PO reference on every order: checkout asks for one and refuses to complete without it."
+            body.attribute :metadata, :hash
           end
 
           protected

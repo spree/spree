@@ -12,14 +12,14 @@ export type CompanyAddressParams = {
   postal_code?: string
   phone?: string
   label?: string
-  /** Legacy spelling of `postal_code`; send only one of the two. */
-  zipcode?: string
   /** ISO 3166-1 alpha-2 code, such as `US`. */
   country_code?: CountryCode
   /** The state or province abbreviation, such as `NY`. */
   state_code?: string
   /** For countries without states in the database. */
   state_name?: string
+  /** @deprecated Use `postal_code`. Removed in 6.1. */
+  zipcode?: string
   /**
    * True makes this the node's default billing address, false gives that up, and leaving it out
    * changes nothing.

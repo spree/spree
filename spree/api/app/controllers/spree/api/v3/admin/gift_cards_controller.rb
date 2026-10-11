@@ -13,14 +13,22 @@ module Spree
         class GiftCardsController < ResourceController
           scoped_resource :gift_cards
 
-          request_params :gift_card do
-            decimal :amount, required: :create, example: '25.00', description: 'Greater than zero.'
-            currency :currency, example: 'USD', description: 'ISO 4217 currency code. Defaults to the store currency.'
-            string :code, example: 'WELCOME50', description: 'Generated when omitted.'
-            date :expires_at, nullable: true, example: '2030-12-31'
+          request_params :gift_card do |body|
+            body.attribute :amount, :decimal,
+              required: true, on: :create,
+              example: '25.00',
+              description: 'Greater than zero.'
+            body.attribute :currency, :currency,
+              example: 'USD',
+              description: 'ISO 4217 currency code. Defaults to the store currency.'
+            body.attribute :code, :string, example: 'WELCOME50', description: 'Generated when omitted.'
+            body.attribute :expires_at, :date, nullable: true, example: '2030-12-31'
             # Resolved through the caller's ability by `resolve_customer`.
-            id :customer_id, nullable: true, permit: false, example: 'cus_UkLWZg9DAJ',
-                             description: 'The customer the card belongs to. Needs the `read_customers` permission; null detaches it.'
+            body.attribute :customer_id, :id,
+              nullable: true,
+              permit: false,
+              example: 'cus_UkLWZg9DAJ',
+              description: 'The customer the card belongs to. Needs the `read_customers` permission; null detaches it.'
           end
 
           before_action :resolve_customer, only: [:create, :update]

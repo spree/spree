@@ -9,8 +9,11 @@ module Spree
 
             before_action :find_cart!
 
-            request_params 'ApplyDiscountCodeParams', action: :create do
-              string :code, required: true, example: 'SAVE10', description: 'The promotion code to apply.'
+            request_params 'ApplyDiscountCodeParams', action: :create do |body|
+              body.attribute :code, :string,
+                required: true,
+                example: 'SAVE10',
+                description: 'The promotion code to apply.'
             end
 
             # POST  /api/v3/store/carts/:cart_id/discount_codes

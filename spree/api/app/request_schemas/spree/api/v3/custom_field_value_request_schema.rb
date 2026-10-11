@@ -5,9 +5,10 @@ module Spree
       class CustomFieldValueRequestSchema < Spree::Api::V3::RequestSchema
         publishes 'CustomFieldValueParams'
 
-        id :id
-        id :custom_field_definition_id
-        any :value, description: 'A scalar for text, number and boolean fields; a list or a hash for JSON fields.'
+        attribute :id, :id
+        attribute :custom_field_definition_id, :id
+        attribute :value, :any,
+          description: 'A scalar for text, number and boolean fields; a list or a hash for JSON fields.'
       end
     end
   end

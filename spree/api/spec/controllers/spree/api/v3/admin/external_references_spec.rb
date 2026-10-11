@@ -158,7 +158,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, 'upsert by external id',
       post :create, params: {
         email: 'buyer@example.com',
         shipping_address: { first_name: 'Ada', last_name: 'Lovelace', address1: '1 Main St',
-                            city: 'New York', zipcode: '10001', phone: '555-0100',
+                            city: 'New York', postal_code: '10001', phone: '555-0100',
                             country_code: 'US', state_code: 'NY' },
         external_references: [{ system: 'erp', external_id: 'SO-1' }]
       }, as: :json

@@ -6,8 +6,10 @@ module Spree
           class GiftCardsController < BaseController
             skip_before_action :set_resource, raise: false
 
-            request_params 'GiftCardApplyParams' do
-              string :code, required: true, description: 'The gift card code; matched case-insensitively.'
+            request_params 'GiftCardApplyParams' do |body|
+              body.attribute :code, :string,
+                required: true,
+                description: 'The gift card code; matched case-insensitively.'
             end
 
             # POST /api/v3/admin/orders/:order_id/gift_cards

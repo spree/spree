@@ -6,8 +6,10 @@ module Spree
         # params (Admin::EmailTemplateLookup), so never permitted. Not
         # published on its own.
         class EmailTemplateLanguageRequestSchema < Spree::Api::V3::RequestSchema
-          string :language, permit: false, example: 'any',
-                            description: 'A language code, or `any` (the default) for the version every language uses.'
+          attribute :language, :string,
+            permit: false,
+            example: 'any',
+            description: 'A language code, or `any` (the default) for the version every language uses.'
         end
       end
     end

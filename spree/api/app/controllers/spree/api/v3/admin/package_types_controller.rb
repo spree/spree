@@ -14,18 +14,34 @@ module Spree
         class PackageTypesController < ResourceController
           scoped_resource :package_types
 
-          request_params :package_type do
-            string :name, required: :create, example: 'Euro pallet', description: 'Unique within the store.'
-            string :kind, required: :create, enum: Spree::PackageType::KINDS, example: 'pallet',
-                          description: 'What this packaging is: the box parcels ship in, or the carton, pallet or container a wholesale order leaves on.'
-            number :length, :width, :height, nullable: true
-            string :dimensions_unit, nullable: true, enum: Spree::Variant::DIMENSION_UNITS, example: 'cm',
-                                     description: "Unit the three dimensions are in; falls back to the store's unit system."
-            number :weight, nullable: true, description: "The empty package's own weight, added to content weight on every quote."
-            number :max_weight, nullable: true, description: 'What the package can hold, not the same as its own weight.'
-            string :weight_unit, nullable: true, enum: Spree::Variant::WEIGHT_UNITS, example: 'kg'
-            boolean :default, description: 'The box every parcel quote is built on. Setting this demotes whichever row held it.'
-            object :metadata
+          request_params :package_type do |body|
+            body.attribute :name, :string,
+              required: true, on: :create,
+              example: 'Euro pallet',
+              description: 'Unique within the store.'
+            body.attribute :kind, :string,
+              required: true, on: :create,
+              choices: Spree::PackageType::KINDS,
+              example: 'pallet',
+              description: 'What this packaging is: the box parcels ship in, or the carton, pallet or container a wholesale order leaves on.'
+            body.attribute :length, :number, nullable: true
+            body.attribute :width, :number, nullable: true
+            body.attribute :height, :number, nullable: true
+            body.attribute :dimensions_unit, :string,
+              nullable: true,
+              choices: Spree::Variant::DIMENSION_UNITS,
+              example: 'cm',
+              description: "Unit the three dimensions are in; falls back to the store's unit system."
+            body.attribute :weight, :number,
+              nullable: true,
+              description: "The empty package's own weight, added to content weight on every quote."
+            body.attribute :max_weight, :number,
+              nullable: true,
+              description: 'What the package can hold, not the same as its own weight.'
+            body.attribute :weight_unit, :string, nullable: true, choices: Spree::Variant::WEIGHT_UNITS, example: 'kg'
+            body.attribute :default, :boolean,
+              description: 'The box every parcel quote is built on. Setting this demotes whichever row held it.'
+            body.attribute :metadata, :hash
           end
 
           protected

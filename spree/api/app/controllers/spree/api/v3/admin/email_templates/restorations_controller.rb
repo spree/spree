@@ -6,10 +6,12 @@ module Spree
           class RestorationsController < Admin::BaseController
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
-            request_params 'EmailTemplateRestoreParams' do
-              include_fields Spree::Api::V3::Admin::EmailTemplateLanguageRequestSchema
-              integer :lock_version, nullable: true, permit: false,
-                                     description: "The open draft's `lock_version`, or null when there is none; checked as when saving."
+            request_params 'EmailTemplateRestoreParams' do |body|
+              body.include_attributes Spree::Api::V3::Admin::EmailTemplateLanguageRequestSchema
+              body.attribute :lock_version, :integer,
+                nullable: true,
+                permit: false,
+                description: "The open draft's `lock_version`, or null when there is none; checked as when saving."
             end
 
             # POST /api/v3/admin/email_templates/:email_template_id/revisions/:revision_id/restoration

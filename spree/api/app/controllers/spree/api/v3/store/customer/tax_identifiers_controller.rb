@@ -18,8 +18,8 @@ module Spree
             # the buyer never named and could not predict.
             before_action :require_kind!, only: %i[show update destroy]
 
-            request_params('TaxIdentifierParams', action: :update) do
-              include_fields Spree::Api::V3::TaxIdentifierRequestSchema
+            request_params('TaxIdentifierParams', action: :update) do |body|
+              body.include_attributes Spree::Api::V3::TaxIdentifierRequestSchema
             end
 
             # GET /api/v3/store/customers/me/tax_identifiers

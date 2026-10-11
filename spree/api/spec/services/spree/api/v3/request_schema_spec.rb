@@ -2,28 +2,29 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::RequestSchema do
   let(:price) do
-    described_class.shape('TestPriceParams') do
-      string :currency, required: true
-      decimal :amount, required: true
+    described_class.shape('TestPriceParams') do |schema|
+      schema.attribute :currency, :string, required: true
+      schema.attribute :amount, :decimal, required: true
     end
   end
 
   let(:schema) do
     price_shape = price
-    described_class.new(:widget) do
-      string :name, required: :create, description: 'The name.'
-      string :code, required: true
-      string :kind, enum: %w[small large], only: :create
-      string :tags, array: true
-      id :tax_category_id, nullable: true
-      object :metadata
-      object :prices, array: true, shape: price_shape
-      object :main_price, shape: price_shape, description: 'The main price.'
-      object :options, array: true do
-        string :name, :value, required: true
+    described_class.new(:widget) do |schema|
+      schema.attribute :name, :string, required: true, on: :create, description: 'The name.'
+      schema.attribute :code, :string, required: true
+      schema.attribute :kind, :string, choices: %w[small large], only: :create
+      schema.attribute :tags, :array, of: :string
+      schema.attribute :tax_category_id, :id, nullable: true
+      schema.attribute :metadata, :hash
+      schema.attribute :prices, :array, of: price_shape
+      schema.attribute :main_price, :object, shape: price_shape, description: 'The main price.'
+      schema.attribute :options, :array do |option|
+        option.attribute :name, :string, required: true
+        option.attribute :value, :string, required: true
       end
-      any :value
-      object :external_references, permit: false
+      schema.attribute :value, :any
+      schema.attribute :external_references, :hash, permit: false
     end
   end
 
@@ -97,7 +98,9 @@ RSpec.describe Spree::Api::V3::RequestSchema do
     end
 
     it 'flags a deprecated field and says what replaces it' do
-      schema = described_class.new { string :country_iso, description: 'The old name.', deprecated: 'Use `country_code`.' }
+      schema = described_class.new { |schema| schema.attribute :country_iso, :string,
+                                       description: 'The old name.',
+                                       deprecated: 'Use `country_code`.' }
 
       expect(schema.json_schema[:properties][:country_iso]).to eq(
         type: :string, deprecated: true, description: 'The old name. Deprecated: Use `country_code`.'
@@ -106,9 +109,9 @@ RSpec.describe Spree::Api::V3::RequestSchema do
     end
 
     it 'references the shared ISO code lists and publishes them' do
-      schema = described_class.new do
-        country :country_code
-        currency :currencies, array: true
+      schema = described_class.new do |schema|
+        schema.attribute :country_code, :country
+        schema.attribute :currencies, :array, of: :currency
       end
 
       expect(schema.json_schema[:properties]).to eq(
@@ -147,13 +150,13 @@ RSpec.describe Spree::Api::V3::RequestSchema do
     let(:base) do
       Class.new(described_class) do
         publishes 'TestAddressParams'
-        string :city, required: true
+        attribute :city, :string, required: true
       end
     end
 
     let(:extended) do
       parent = base
-      Class.new(parent) { string :alternative_phone }
+      Class.new(parent) { attribute :alternative_phone, :string }
     end
 
     it 'publishes the class fields under its name' do
@@ -168,9 +171,9 @@ RSpec.describe Spree::Api::V3::RequestSchema do
 
     it 'can be used as a shape or included by its class' do
       shape = base
-      schema = described_class.new(:widget) do
-        object :address, shape: shape
-        include_fields shape
+      schema = described_class.new(:widget) do |schema|
+        schema.attribute :address, :object, shape: shape
+        schema.include_attributes shape
       end
 
       expect(schema.shapes.map(&:name)).to eq(['TestAddressParams'])
@@ -178,20 +181,46 @@ RSpec.describe Spree::Api::V3::RequestSchema do
     end
 
     it 'refuses publishes after the fields' do
-      expect { Class.new(described_class) { string :city; publishes 'LateParams' } }.to raise_error(ArgumentError, /before the fields/)
+      expect { Class.new(described_class) { attribute :city, :string; publishes 'LateParams' } }.to raise_error(ArgumentError, /before the attributes/)
     end
   end
 
   it 'refuses a deprecation that names no replacement' do
-    expect { described_class.new { string :old, deprecated: true } }.to raise_error(ArgumentError, /instead/)
+    expect { described_class.new { |schema| schema.attribute :old, :string, deprecated: true } }.to raise_error(ArgumentError, /instead/)
   end
 
-  it 'rejects a field declared twice' do
-    expect { described_class.new { string :name, :name } }.to raise_error(ArgumentError, /declared twice/)
-  end
+  describe 'declaring an attribute' do
+    def declare(&block)
+      described_class.new(&block)
+    end
 
-  it 'rejects an array of any-key hashes, which Rails cannot permit' do
-    expect { described_class.new { object :rows, array: true } }.to raise_error(ArgumentError, /needs a shape/)
+    it 'rejects an attribute declared twice' do
+      expect do
+        declare do |schema|
+          schema.attribute :name, :string
+          schema.attribute :name, :string
+        end
+      end.to raise_error(ArgumentError, /declared twice/)
+    end
+
+    it 'rejects an unknown type' do
+      expect { declare { |schema| schema.attribute :name, :text } }.to raise_error(ArgumentError, /unknown type :text/)
+    end
+
+    it 'takes `on:` only to scope `required: true` to creating' do
+      expect { declare { |schema| schema.attribute :name, :string, on: :create } }.to raise_error(ArgumentError, /on:/)
+      expect { declare { |schema| schema.attribute :name, :string, required: true, on: :update } }.to raise_error(ArgumentError, /on:/)
+    end
+
+    it 'rejects a list of any-key hashes, which Rails cannot permit' do
+      expect { declare { |schema| schema.attribute :rows, :array, of: :hash } }.to raise_error(ArgumentError, /needs `of:`/)
+      expect { declare { |schema| schema.attribute :rows, :array, of: :any } }.to raise_error(ArgumentError, /cannot be permitted/)
+      expect { declare { |schema| schema.attribute :rows, :array, of: :any, permit: false } }.not_to raise_error
+    end
+
+    it 'rejects an :object without a shape' do
+      expect { declare { |schema| schema.attribute :address, :object } }.to raise_error(ArgumentError, /use :hash/)
+    end
   end
 
   describe 'controller declarations' do
@@ -202,7 +231,7 @@ RSpec.describe Spree::Api::V3::RequestSchema do
       expect(controller.send(:resource_permitted_attributes)).to include(
         :name, :status, :promotionable,
         { metadata: {} },
-        { variants: a_collection_including(:sku, :preorder_ships_at, { stock_levels: [:id, :stock_location_id, :count_on_hand, :backorderable] }) }
+        { variants: a_collection_including(:sku, :preorder_ships_at, { stock_levels: %i[stock_location_id count_on_hand backorderable] }) }
       )
     end
   end
@@ -233,6 +262,48 @@ RSpec.describe Spree::Api::V3::RequestSchema do
 
       expect(missing.uniq(&:split)).to be_empty,
                                        "add `request_body_for` to an integration spec of:\n#{missing.uniq { |line| line.split(' (').first }.join("\n")}"
+    end
+  end
+
+  # A body the base create/update assigns straight onto the record must name
+  # only what the model can take, or the request raises instead of saving.
+  # Bodies a workflow or a custom action reads are the action's business.
+  describe 'every attribute a model-backed write accepts' do
+    it 'is writable on the model' do
+      Rails.application.eager_load!
+      routed = Spree::Core::Engine.routes.routes.to_set { |route| ["#{route.defaults[:controller]}_controller".camelize, route.defaults[:action].to_s] }
+      base_actions = [Spree::Api::V3::ResourceController, Spree::Api::V3::Admin::ResourceController,
+                      Spree::Api::V3::Seller::ResourceController, Spree::Api::V3::Store::ResourceController]
+
+      unwritable = Spree::Api::V3::ResourceController.descendants.filter_map(&:name).sort.flat_map do |name|
+        controller = name.constantize
+        schema = controller.request_params_schemas[:resource]
+        next [] unless schema
+
+        instance = controller.new
+        model = begin
+          instance.send(:model_class)
+        rescue NotImplementedError, NoMethodError # no model, or one picked per request
+          nil
+        end
+        next [] unless model.is_a?(Class)
+
+        %i[create update].flat_map do |action|
+          next [] unless routed.include?([name, action.to_s])
+          next [] unless base_actions.include?(controller.instance_method(action).owner)
+          next [] if instance.send(:"#{action}_workflow")
+
+          record = model.new
+          schema.fields.each_value.filter_map do |field|
+            next unless field.permit && field.accepted_on?(action)
+            next if record.respond_to?("#{field.name}=")
+
+            "#{name}##{action}: #{model.name} has no #{field.name}="
+          end
+        end
+      end
+
+      expect(unwritable).to be_empty, "declare these `only:` the other action, `permit: false`, or fix the name:\n#{unwritable.join("\n")}"
     end
   end
 end

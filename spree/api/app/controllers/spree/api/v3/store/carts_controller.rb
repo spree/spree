@@ -11,50 +11,59 @@ module Spree
           skip_before_action :set_resource
           prepend_before_action :require_authentication!, only: [:index, :associate]
 
-          CART_ADDRESS = Spree::Api::V3::RequestSchema.shape('CartAddressParams') do
-            id :id, description: 'An existing address of the customer to use. The other fields are then ignored.'
-            include_fields Spree::Api::V3::Store::AddressRequestSchema
-            boolean :quick_checkout, description: 'Relaxes validation (name, phone, postal code, street), for express checkouts that share a partial address.'
+          CART_ADDRESS = Spree::Api::V3::RequestSchema.shape('CartAddressParams') do |schema|
+            schema.attribute :id, :id,
+              description: 'An existing address of the customer to use. The other fields are then ignored.'
+            schema.include_attributes Spree::Api::V3::Store::AddressRequestSchema
+            schema.attribute :quick_checkout, :boolean,
+              description: 'Relaxes validation (name, phone, postal code, street), for express checkouts that share a partial address.'
           end
 
           # Creating and updating a cart accept the same fields.
-          CART_FIELDS = Spree::Api::V3::RequestSchema.new do
-            string :email, format: :email, example: 'customer@example.com'
-            string :customer_note, example: 'Leave at door'
-            id :market_id
-            currency :currency
-            string :locale
-            id :shipping_address_id, description: 'An existing address to ship to.', example: 'addr_abc123'
-            id :billing_address_id, description: 'An existing address to bill.', example: 'addr_def456'
-            id :preferred_stock_location_id
-            id :company_id, nullable: true, description: <<~TEXT.squish
+          CART_FIELDS = Spree::Api::V3::RequestSchema.new do |schema|
+            schema.attribute :email, :string, format: :email, example: 'customer@example.com'
+            schema.attribute :customer_note, :string, example: 'Leave at door'
+            schema.attribute :market_id, :id
+            schema.attribute :currency, :currency
+            schema.attribute :locale, :string
+            schema.attribute :shipping_address_id, :id,
+              description: 'An existing address to ship to.',
+              example: 'addr_abc123'
+            schema.attribute :billing_address_id, :id,
+              description: 'An existing address to bill.',
+              example: 'addr_def456'
+            schema.attribute :preferred_stock_location_id, :id
+            schema.attribute :company_id, :id, nullable: true, description: <<~TEXT.squish
               The company node this purchase is for. The buyer must have standing over it: a membership
               on that node or one of its ancestors. Null clears it, and with it the company's catalog,
               pricing and tax anchoring.
             TEXT
-            string :po_number, nullable: true, description: <<~TEXT.squish
+            schema.attribute :po_number, :string, nullable: true, description: <<~TEXT.squish
               The buyer's own purchase-order reference. Their accounting reconciles the order, the
               invoice and the payment against it. Blank clears it.
             TEXT
-            string :po_document_signed_id, nullable: true, description: <<~TEXT.squish
+            schema.attribute :po_document_signed_id, :string, nullable: true, description: <<~TEXT.squish
               The `signed_id` of the buyer's purchase order, from `POST /store/carts/:id/po_document`.
               Blank detaches the document.
             TEXT
-            boolean :use_shipping, description: 'When true, copies the shipping address to the billing address.'
-            object :shipping_address, shape: CART_ADDRESS, description: 'A new shipping address.'
-            object :billing_address, shape: CART_ADDRESS, description: 'A new billing address.'
-            object :metadata, description: 'Write-only key-value metadata, merged with what the cart has.'
-            object :items, array: true, as: 'LineItemInputParams',
-                           description: 'Items to upsert: sets the quantity of a variant already in the cart, adds the others.' do
-              id :variant_id, required: true, example: 'variant_abc123'
-              integer :quantity, example: 2, description: 'Defaults to 1.'
-              object :metadata, description: 'Key-value metadata, merged with what the line item has.'
-              object :options
+            schema.attribute :use_shipping, :boolean,
+              description: 'When true, copies the shipping address to the billing address.'
+            schema.attribute :shipping_address, :object, shape: CART_ADDRESS, description: 'A new shipping address.'
+            schema.attribute :billing_address, :object, shape: CART_ADDRESS, description: 'A new billing address.'
+            schema.attribute :metadata, :hash,
+              description: 'Write-only key-value metadata, merged with what the cart has.'
+            schema.attribute :items, :array,
+              as: 'LineItemInputParams',
+              description: 'Items to upsert: sets the quantity of a variant already in the cart, adds the others.' do |item|
+              item.attribute :variant_id, :id, required: true, example: 'variant_abc123'
+              item.attribute :quantity, :integer, example: 2, description: 'Defaults to 1.'
+              item.attribute :metadata, :hash, description: 'Key-value metadata, merged with what the line item has.'
+              item.attribute :options, :hash
             end
           end
 
-          request_params('CreateCartParams', action: :create) { include_fields CART_FIELDS }
-          request_params('UpdateCartParams', action: :update) { include_fields CART_FIELDS }
+          request_params('CreateCartParams', action: :create) { |body| body.include_attributes CART_FIELDS }
+          request_params('UpdateCartParams', action: :update) { |body| body.include_attributes CART_FIELDS }
 
           # GET /api/v3/store/carts/:id
           # Returns cart by prefixed ID

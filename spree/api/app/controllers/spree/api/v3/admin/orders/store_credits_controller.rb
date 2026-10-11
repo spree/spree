@@ -6,8 +6,9 @@ module Spree
           class StoreCreditsController < BaseController
             skip_before_action :set_resource, raise: false
 
-            request_params 'StoreCreditApplyParams' do
-              decimal :amount, description: "Defaults to the customer's available store credit, up to the order total."
+            request_params 'StoreCreditApplyParams' do |body|
+              body.attribute :amount, :decimal,
+                description: "Defaults to the customer's available store credit, up to the order total."
             end
 
             # POST /api/v3/admin/orders/:order_id/store_credits

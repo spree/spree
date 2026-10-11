@@ -8,18 +8,26 @@ module Spree
         class WebhookEndpointsController < ResourceController
           scoped_resource :webhooks
 
-          request_params :webhook_endpoint do
-            string :name, nullable: true, example: 'Order pipeline', description: 'A label shown in the dashboard list.'
-            string :url, required: :create, example: 'https://example.com/webhooks/orders',
-                         description: 'HTTPS destination URL. It cannot resolve to a private IP address outside development.'
-            boolean :active, description: 'Defaults to true on create. Prefer the disable and enable endpoints to pause one.'
-            string :subscriptions, array: true, example: %w[order.placed order.canceled],
-                                   description: 'Event names this endpoint receives. An empty list or `["*"]` subscribes to every event; otherwise list exact names (`order.completed`) or patterns (`order.*`).'
+          request_params :webhook_endpoint do |body|
+            body.attribute :name, :string,
+              nullable: true,
+              example: 'Order pipeline',
+              description: 'A label shown in the dashboard list.'
+            body.attribute :url, :string,
+              required: true, on: :create,
+              example: 'https://example.com/webhooks/orders',
+              description: 'HTTPS destination URL. It cannot resolve to a private IP address outside development.'
+            body.attribute :active, :boolean,
+              description: 'Defaults to true on create. Prefer the disable and enable endpoints to pause one.'
+            body.attribute :subscriptions, :array, of: :string,
+              example: %w[order.placed order.canceled],
+              description: 'Event names this endpoint receives. An empty list or `["*"]` subscribes to every event; otherwise list exact names (`order.completed`) or patterns (`order.*`).'
           end
 
-          request_params 'WebhookEndpointDisableParams', action: :disable do
-            string :reason, example: 'Investigating elevated 5xx rate',
-                            description: 'Shown next to the disabled indicator. Defaults to "Manually disabled".'
+          request_params 'WebhookEndpointDisableParams', action: :disable do |body|
+            body.attribute :reason, :string,
+              example: 'Investigating elevated 5xx rate',
+              description: 'Shown next to the disabled indicator. Defaults to "Manually disabled".'
           end
 
           before_action :reject_unauthorized_credential_subscription!, only: [:create, :update]

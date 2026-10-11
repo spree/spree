@@ -9,10 +9,10 @@ module Spree
             # broad customer access.
             scoped_resource :store_credits
 
-            request_params :customer_store_credit do
-              decimal :amount, required: :create, example: '50.00'
-              currency :currency, required: :create, only: :create, example: 'USD'
-              string :memo
+            request_params :customer_store_credit do |body|
+              body.attribute :amount, :decimal, required: true, on: :create, example: '50.00'
+              body.attribute :currency, :currency, required: true, on: :create, only: :create, example: 'USD'
+              body.attribute :memo, :string
             end
 
             # POST /api/v3/admin/customers/:customer_id/store_credits

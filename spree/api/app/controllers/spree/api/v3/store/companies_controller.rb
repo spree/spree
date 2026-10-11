@@ -10,8 +10,8 @@ module Spree
         class CompaniesController < ResourceController
           prepend_before_action :require_authentication!
 
-          request_params 'UpdateCompanyParams', action: :update do
-            string :name, example: 'Acme Industrial Group'
+          request_params 'UpdateCompanyParams', action: :update do |body|
+            body.attribute :name, :string, example: 'Acme Industrial Group'
           end
 
           # PATCH /api/v3/store/companies/:id

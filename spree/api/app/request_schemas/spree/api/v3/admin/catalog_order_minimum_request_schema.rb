@@ -6,8 +6,10 @@ module Spree
         class CatalogOrderMinimumRequestSchema < Spree::Api::V3::RequestSchema
           publishes 'CatalogOrderMinimumParams'
 
-          currency :currency, example: 'USD', description: 'ISO 4217 code. Required on create; one minimum per currency.'
-          decimal :amount, example: '500.00'
+          attribute :currency, :currency,
+            example: 'USD',
+            description: 'ISO 4217 code. Required on create; one minimum per currency.'
+          attribute :amount, :decimal, example: '500.00'
         end
       end
     end

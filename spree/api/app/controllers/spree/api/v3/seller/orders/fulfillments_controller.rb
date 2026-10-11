@@ -23,26 +23,31 @@ module Spree
 
             before_action :set_resource, only: [:show, :update, :fulfill, :cancel, :split]
 
-            request_params :fulfillment do
-              string :tracking, :tracking_carrier, nullable: true
-              id :stock_location_id, description: "One of this seller's own stock locations; the rates requote from there."
-              id :selected_delivery_rate_id, description: 'One of the rates quoted for this parcel from its current origin.'
+            request_params :fulfillment do |body|
+              body.attribute :tracking, :string, nullable: true
+              body.attribute :tracking_carrier, :string, nullable: true
+              body.attribute :stock_location_id, :id,
+                description: "One of this seller's own stock locations; the rates requote from there."
+              body.attribute :selected_delivery_rate_id, :id,
+                description: 'One of the rates quoted for this parcel from its current origin.'
             end
 
-            request_params 'FulfillmentFulfillParams', action: :fulfill do
-              string :tracking, description: 'Carrier tracking number.'
-              string :tracking_carrier, description: 'Carrier name.'
-              boolean :notify_customer, description: 'Send the dispatch email (default true).'
-              object :items, array: true, description: 'Ship only these lines; the rest split onto a new fulfillment.' do
-                id :item_id, required: true, description: 'Prefixed line item ID.'
-                integer :quantity, required: true
+            request_params 'FulfillmentFulfillParams', action: :fulfill do |body|
+              body.attribute :tracking, :string, description: 'Carrier tracking number.'
+              body.attribute :tracking_carrier, :string, description: 'Carrier name.'
+              body.attribute :notify_customer, :boolean, description: 'Send the dispatch email (default true).'
+              body.attribute :items, :array,
+                description: 'Ship only these lines; the rest split onto a new fulfillment.' do |item|
+                item.attribute :item_id, :id, required: true, description: 'Prefixed line item ID.'
+                item.attribute :quantity, :integer, required: true
               end
             end
 
-            request_params 'FulfillmentSplitParams', action: :split do
-              id :variant_id, required: true, description: 'The variant being moved out.'
-              integer :quantity, required: true
-              id :stock_location_id, description: "One of this seller's own stock locations. Defaults to the source fulfillment's location."
+            request_params 'FulfillmentSplitParams', action: :split do |body|
+              body.attribute :variant_id, :id, required: true, description: 'The variant being moved out.'
+              body.attribute :quantity, :integer, required: true
+              body.attribute :stock_location_id, :id,
+                description: "One of this seller's own stock locations. Defaults to the source fulfillment's location."
             end
 
             protected

@@ -11,11 +11,12 @@ module Spree
           class SavedReportsController < ResourceController
             scoped_resource :reports
 
-            request_params :saved_report do
-              string :name, required: :create
-              string :description, nullable: true
-              object :query, required: :create,
-                             description: 'A reporting query, validated against the reporting registry on save.'
+            request_params :saved_report do |body|
+              body.attribute :name, :string, required: true, on: :create
+              body.attribute :description, :string, nullable: true
+              body.attribute :query, :hash,
+                required: true, on: :create,
+                description: 'A reporting query, validated against the reporting registry on save.'
             end
 
             protected

@@ -5,8 +5,8 @@ module Spree
       class VariantOptionRequestSchema < Spree::Api::V3::RequestSchema
         publishes 'VariantOptionParams'
 
-        string :name, required: true, example: 'size'
-        string :value, required: true, example: 'Small'
+        attribute :name, :string, required: true, example: 'size'
+        attribute :value, :string, required: true, example: 'Small'
       end
     end
   end

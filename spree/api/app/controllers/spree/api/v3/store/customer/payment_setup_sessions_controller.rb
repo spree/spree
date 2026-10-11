@@ -9,13 +9,13 @@ module Spree
             skip_before_action :set_resource
             before_action :set_payment_setup_session, only: [:show, :complete]
 
-            request_params 'CreatePaymentSetupSessionParams', action: :create do
-              id :payment_method_id, required: true, example: 'pm_abc123'
-              object :external_data, description: 'Provider-specific data passed to the gateway.'
+            request_params 'CreatePaymentSetupSessionParams', action: :create do |body|
+              body.attribute :payment_method_id, :id, required: true, example: 'pm_abc123'
+              body.attribute :external_data, :hash, description: 'Provider-specific data passed to the gateway.'
             end
 
-            request_params 'CompletePaymentSetupSessionParams', action: :complete do
-              object :external_data, description: 'Provider-specific completion data.'
+            request_params 'CompletePaymentSetupSessionParams', action: :complete do |body|
+              body.attribute :external_data, :hash, description: 'Provider-specific completion data.'
             end
 
             # POST /api/v3/store/customer/payment_setup_sessions

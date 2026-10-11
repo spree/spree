@@ -9,8 +9,11 @@ module Spree
 
             before_action :find_cart!
 
-            request_params 'ApplyGiftCardParams', action: :create do
-              string :code, required: true, example: 'GC-ABCD-1234', description: 'The gift card code to apply.'
+            request_params 'ApplyGiftCardParams', action: :create do |body|
+              body.attribute :code, :string,
+                required: true,
+                example: 'GC-ABCD-1234',
+                description: 'The gift card code to apply.'
             end
 
             # POST /api/v3/store/carts/:cart_id/gift_cards

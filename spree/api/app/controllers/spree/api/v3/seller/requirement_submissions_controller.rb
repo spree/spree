@@ -14,10 +14,12 @@ module Spree
 
           # `file_signed_id` comes from POST /files, so the bytes are already in
           # storage by the time this runs.
-          request_params 'RequirementSubmissionParams' do
-            string :note, description: 'Anything the seller wants to say alongside the submission.'
-            string :reference, description: 'A reference number or external identifier, for requirements that ask for one.'
-            string :file_signed_id, description: 'A `signed_id` from `POST /files`, for requirements that ask for a document.'
+          request_params 'RequirementSubmissionParams' do |body|
+            body.attribute :note, :string, description: 'Anything the seller wants to say alongside the submission.'
+            body.attribute :reference, :string,
+              description: 'A reference number or external identifier, for requirements that ask for one.'
+            body.attribute :file_signed_id, :string,
+              description: 'A `signed_id` from `POST /files`, for requirements that ask for a document.'
           end
 
           before_action :set_requirement, only: [:create]

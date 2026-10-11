@@ -27,18 +27,6 @@ export type MediaUpdateParams = {
    * The file itself, sent as multipart form data. JSON clients upload first and send `signed_id`.
    */
   attachment?: string
-  /**
-   * Fetch an image from this URL, in the background. Images only: an external video uses
-   * `external_video_url`.
-   */
-  url?: string
-  /** A `signed_id` from `files.upload()` for the media file itself. */
-  signed_id?: string
-  /**
-   * Place a file that is already in the library. The new row shares the source file rather than
-   * copying it, and takes its own alt, position and variant links from here.
-   */
-  source_media_id?: string
   /** Variants to link this product-level media to. Variants of other products are dropped. */
   variant_ids?: string[]
 }

@@ -7,11 +7,13 @@ module Spree
 
           skip_scope_check!
 
-          request_params :me do
-            string :selected_locale, example: 'de', description: 'The dashboard display language.'
-            string :first_name, :last_name
-            string :avatar_signed_id, nullable: true,
-                                      description: 'A `signed_id` from `files.upload()` to set the avatar, or null to remove it. Omit it to keep the current photo.'
+          request_params :me do |body|
+            body.attribute :selected_locale, :string, example: 'de', description: 'The dashboard display language.'
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+            body.attribute :avatar_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `files.upload()` to set the avatar, or null to remove it. Omit it to keep the current photo.'
           end
 
           before_action :require_current_user!

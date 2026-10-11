@@ -10,18 +10,26 @@ module Spree
           subclassed_via -> { Spree::PaymentMethod.providers },
                          unknown_type_error: 'unknown_payment_method_type'
 
-          request_params :payment_method do
-            string :type, required: true, only: :create, permit: false, example: 'check',
-                          description: 'Wire shorthand from the payment method types endpoint.'
-            string :name, required: :create
-            string :description, nullable: true
-            boolean :active
-            boolean :storefront_visible, description: 'False keeps the method to the dashboard; true also offers it on the storefront.'
-            string :capture_method, nullable: true, enum: Spree::CaptureMethod::CAPTURE_METHODS,
-                                    description: 'When customers are charged for this method. Null inherits the store setting.'
-            integer :position
-            object :metadata
-            object :preferences, description: "Values for the provider's preference schema, from the payment method types endpoint."
+          request_params :payment_method do |body|
+            body.attribute :type, :string,
+              required: true,
+              only: :create,
+              permit: false,
+              example: 'check',
+              description: 'Wire shorthand from the payment method types endpoint.'
+            body.attribute :name, :string, required: true, on: :create
+            body.attribute :description, :string, nullable: true
+            body.attribute :active, :boolean
+            body.attribute :storefront_visible, :boolean,
+              description: 'False keeps the method to the dashboard; true also offers it on the storefront.'
+            body.attribute :capture_method, :string,
+              nullable: true,
+              choices: Spree::CaptureMethod::CAPTURE_METHODS,
+              description: 'When customers are charged for this method. Null inherits the store setting.'
+            body.attribute :position, :integer
+            body.attribute :metadata, :hash
+            body.attribute :preferences, :hash,
+              description: "Values for the provider's preference schema, from the payment method types endpoint."
           end
 
           # Lists available payment provider subclasses for the create form.

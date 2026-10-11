@@ -15,9 +15,9 @@ module Spree
 
             prepend_before_action :require_authentication!
 
-            request_params 'CreateDataRequestParams', action: :create do
-              string :kind, enum: Spree::DataRequest::KINDS, description: 'Defaults to `access`.'
-              string :current_password, description: 'Required for `erasure`.'
+            request_params 'CreateDataRequestParams', action: :create do |body|
+              body.attribute :kind, :string, choices: Spree::DataRequest::KINDS, description: 'Defaults to `access`.'
+              body.attribute :current_password, :string, description: 'Required for `erasure`.'
             end
 
             # POST /api/v3/store/customers/me/data_requests

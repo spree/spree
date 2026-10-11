@@ -7,10 +7,10 @@ module Spree
             prepend_before_action :require_authentication!
             before_action :set_resource, only: [:show, :update, :destroy]
 
-            request_params 'AddressParams' do
-              include_fields Spree::Api::V3::Store::AddressRequestSchema
-              boolean :is_default_billing, description: 'Makes this the default billing address.'
-              boolean :is_default_shipping, description: 'Makes this the default shipping address.'
+            request_params 'AddressParams' do |body|
+              body.include_attributes Spree::Api::V3::Store::AddressRequestSchema
+              body.attribute :is_default_billing, :boolean, description: 'Makes this the default billing address.'
+              body.attribute :is_default_shipping, :boolean, description: 'Makes this the default shipping address.'
             end
 
             # POST /api/v3/store/customers/me/addresses

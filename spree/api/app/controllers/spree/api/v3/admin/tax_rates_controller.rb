@@ -7,16 +7,24 @@ module Spree
         class TaxRatesController < ResourceController
           scoped_resource :settings
 
-          request_params 'TaxRateParams' do
-            string :name, example: 'VAT', description: 'Customer-facing rate name.'
-            decimal :rate, example: '0.19', description: 'The rate as a fraction. Send this or `rate_percent`.'
-            decimal :rate_percent, example: '19', description: 'The rate as a percentage.'
-            boolean :included_in_price, :show_rate_in_label
-            id :tax_category_id
-            country :country_code, nullable: true, example: 'DE',
-                                  description: 'ISO country code. A rate naming no country taxes everywhere.'
-            string :state_code, nullable: true, example: 'CA', description: 'State abbreviation within that country.'
-            object :metadata
+          request_params 'TaxRateParams' do |body|
+            body.attribute :name, :string, example: 'VAT', description: 'Customer-facing rate name.'
+            body.attribute :rate, :decimal,
+              example: '0.19',
+              description: 'The rate as a fraction. Send this or `rate_percent`.'
+            body.attribute :rate_percent, :decimal, example: '19', description: 'The rate as a percentage.'
+            body.attribute :included_in_price, :boolean
+            body.attribute :show_rate_in_label, :boolean
+            body.attribute :tax_category_id, :id
+            body.attribute :country_code, :country,
+              nullable: true,
+              example: 'DE',
+              description: 'ISO country code. A rate naming no country taxes everywhere.'
+            body.attribute :state_code, :string,
+              nullable: true,
+              example: 'CA',
+              description: 'State abbreviation within that country.'
+            body.attribute :metadata, :hash
           end
 
           protected

@@ -42,8 +42,8 @@ module Spree
         protected
 
         # The current action's declaration. An action without its own (a
-        # custom one writing through +permitted_params+) accepts what create
-        # and update do.
+        # custom one writing through +permitted_params+) accepts what update
+        # does.
         #
         # @return [Spree::Api::V3::RequestSchema, nil]
         def request_params_schema
@@ -55,7 +55,9 @@ module Spree
         # @return [Array<Symbol, Hash>]
         def declared_permitted_attributes
           action = action_name.to_s
-          request_params_schema.permit_list(RESOURCE_ACTIONS.include?(action) ? action : nil)
+          # A member action with no body of its own changes an existing
+          # record, so it takes what update takes — never a create-only field.
+          request_params_schema.permit_list(RESOURCE_ACTIONS.include?(action) ? action : :update)
         end
       end
     end

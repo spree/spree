@@ -8,13 +8,17 @@ module Spree
           class DraftsController < Admin::BaseController
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
-            request_params 'EmailTemplateDraftParams' do
-              include_fields Spree::Api::V3::Admin::EmailTemplateLanguageRequestSchema
-              string :subject, nullable: true, example: 'Your order {{ order.number }} is confirmed'
-              string :body, example: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>'
-              integer :lock_version, nullable: true, example: 0,
-                                     description: 'The `lock_version` the draft was loaded with, or null when there was no draft; a save from an older copy is refused with 409. Omit it to save without checking.'
-              boolean :rebase, description: "Marks the draft as based on Spree's current default, after reviewing what changed in it."
+            request_params 'EmailTemplateDraftParams' do |body|
+              body.include_attributes Spree::Api::V3::Admin::EmailTemplateLanguageRequestSchema
+              body.attribute :subject, :string, nullable: true, example: 'Your order {{ order.number }} is confirmed'
+              body.attribute :body, :string,
+                example: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>'
+              body.attribute :lock_version, :integer,
+                nullable: true,
+                example: 0,
+                description: 'The `lock_version` the draft was loaded with, or null when there was no draft; a save from an older copy is refused with 409. Omit it to save without checking.'
+              body.attribute :rebase, :boolean,
+                description: "Marks the draft as based on Spree's current default, after reviewing what changed in it."
             end
 
             # PUT /api/v3/admin/email_templates/:email_template_id/draft

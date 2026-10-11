@@ -5,30 +5,42 @@ module Spree
         class ChannelsController < ResourceController
           scoped_resource :settings
 
-          request_params :channel do
-            string :name, required: :create, example: 'Point of Sale'
-            string :code, example: 'pos', description: 'URL-safe slug, derived from `name` when blank (`Point of Sale` becomes `point-of-sale`).'
-            boolean :active, :default
-            string :order_routing_strategy, nullable: true,
-                                            description: 'Order routing strategy shorthand (built-in: `rules`). Null inherits the store setting.'
-            string :storefront_access, nullable: true, enum: Spree::Channel::Gating::STOREFRONT_ACCESS,
-                                       description: 'What anonymous visitors can see. Null inherits the store setting.'
-            boolean :guest_checkout, nullable: true,
-                                     description: 'Whether guests can check out without an account. Null inherits the store setting.'
-            id :default_catalog_id, nullable: true,
-                                    description: 'Catalog (`cat_...`) shown to shoppers no company or customer group catalog covers. Null means every product published on the channel.'
-            id :stock_location_ids, array: true,
-                                    description: 'Stock locations (`sloc_...`) that fulfill this channel. Replaces the whole set; an empty list means every location of the store.'
+          request_params :channel do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Point of Sale'
+            body.attribute :code, :string,
+              example: 'pos',
+              description: 'URL-safe slug, derived from `name` when blank (`Point of Sale` becomes `point-of-sale`).'
+            body.attribute :active, :boolean
+            body.attribute :default, :boolean
+            body.attribute :order_routing_strategy, :string,
+              nullable: true,
+              description: 'Order routing strategy shorthand (built-in: `rules`). Null inherits the store setting.'
+            body.attribute :storefront_access, :string,
+              nullable: true,
+              choices: Spree::Channel::Gating::STOREFRONT_ACCESS,
+              description: 'What anonymous visitors can see. Null inherits the store setting.'
+            body.attribute :guest_checkout, :boolean,
+              nullable: true,
+              description: 'Whether guests can check out without an account. Null inherits the store setting.'
+            body.attribute :default_catalog_id, :id,
+              nullable: true,
+              description: 'Catalog (`cat_...`) shown to shoppers no company or customer group catalog covers. Null means every product published on the channel.'
+            body.attribute :stock_location_ids, :array, of: :id,
+              description: 'Stock locations (`sloc_...`) that fulfill this channel. Replaces the whole set; an empty list means every location of the store.'
           end
 
-          request_params 'ChannelAddProductsParams', action: :add_products do
-            id :product_ids, array: true, required: true
-            datetime :published_at, nullable: true, description: 'When the publications go live. Null means immediately.'
-            datetime :unpublished_at, nullable: true, description: 'When the publications come down. Null means never.'
+          request_params 'ChannelAddProductsParams', action: :add_products do |body|
+            body.attribute :product_ids, :array, of: :id, required: true
+            body.attribute :published_at, :datetime,
+              nullable: true,
+              description: 'When the publications go live. Null means immediately.'
+            body.attribute :unpublished_at, :datetime,
+              nullable: true,
+              description: 'When the publications come down. Null means never.'
           end
 
-          request_params 'ChannelRemoveProductsParams', action: :remove_products do
-            id :product_ids, array: true, required: true
+          request_params 'ChannelRemoveProductsParams', action: :remove_products do |body|
+            body.attribute :product_ids, :array, of: :id, required: true
           end
 
           # POST /api/v3/admin/channels/:id/add_products

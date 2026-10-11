@@ -43,82 +43,111 @@ module Spree
 
           # The operator's price shape, except `currency` may be left out: the
           # store's currency is assumed (see `default_price_currencies`).
-          PRICE = Spree::Api::V3::RequestSchema.new do
-            currency :currency, example: 'USD',
-                              description: "Omit to price in the store's currency. A seller has no currency of their own."
-            decimal :amount, required: true, example: '24.00',
-                             description: 'A canonical decimal string (`"1234.56"`: period decimal, no grouping). The API does not parse localized input.'
-            decimal :compare_at_amount, nullable: true, example: '30.00'
+          PRICE = Spree::Api::V3::RequestSchema.new do |schema|
+            schema.attribute :currency, :currency,
+              example: 'USD',
+              description: "Omit to price in the store's currency. A seller has no currency of their own."
+            schema.attribute :amount, :decimal,
+              required: true,
+              example: '24.00',
+              description: 'A canonical decimal string (`"1234.56"`: period decimal, no grouping). The API does not parse localized input.'
+            schema.attribute :compare_at_amount, :decimal, nullable: true, example: '30.00'
           end
 
           scoped_resource :products
 
-          request_params 'ProductParams' do
-            string :name, example: 'Hand-thrown mug'
-            string :description
-            string :slug, example: 'hand-thrown-mug'
-            string :meta_title, :meta_description, :meta_keywords
-            object :metadata
-            id :product_type_id, nullable: true,
-                                 description: "The marketplace's product type this product is listed against, from the product types endpoint. Null detaches it. Saving with a type seeds its option types onto the product."
-            id :delivery_profile_id,
-               description: "Which of the marketplace's delivery profiles the product ships under. A new product sent without one lands on the profile marked default."
-            object :prices, array: true, shape: PRICE,
-                            description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant."
+          request_params 'ProductParams' do |body|
+            body.attribute :name, :string, example: 'Hand-thrown mug'
+            body.attribute :description, :string
+            body.attribute :slug, :string, example: 'hand-thrown-mug'
+            body.attribute :meta_title, :string
+            body.attribute :meta_description, :string
+            body.attribute :meta_keywords, :string
+            body.attribute :metadata, :hash
+            body.attribute :product_type_id, :id,
+              nullable: true,
+              description: "The marketplace's product type this product is listed against, from the product types endpoint. Null detaches it. Saving with a type seeds its option types onto the product."
+            body.attribute :delivery_profile_id, :id,
+              description: "Which of the marketplace's delivery profiles the product ships under. A new product sent without one lands on the profile marked default."
+            body.attribute :prices, :array, of: PRICE,
+              description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant."
             # `external_url` stays out for the same reason it does on the
             # operator's endpoint: it would make the server fetch a URL the
             # caller chose.
-            object :media, array: true, as: 'SellerProductMediaParams',
-                           description: 'The gallery, as a whole: a file absent from the list is removed. `signed_id` attaches a fresh upload; `id` updates one already there.' do
-              id :id
-              string :signed_id, description: 'A `signed_id` from `POST /files`.'
-              include_fields Spree::Api::V3::MediaRequestSchema
-              id :variant_ids, array: true, description: 'Replaces the variants this media is linked to. An empty list clears them.'
+            body.attribute :media, :array,
+              as: 'SellerProductMediaParams',
+              description: 'The gallery, as a whole: a file absent from the list is removed. `signed_id` attaches a fresh upload; `id` updates one already there.' do |media_item|
+              media_item.attribute :id, :id
+              media_item.attribute :signed_id, :string, description: 'A `signed_id` from `POST /files`.'
+              media_item.include_attributes Spree::Api::V3::MediaRequestSchema
+              media_item.attribute :variant_ids, :array, of: :id,
+                description: 'Replaces the variants this media is linked to. An empty list clears them.'
             end
             # Narrower than the operator's variant set: `seller_id` would let a
             # payload hand a variant to somebody else, and
             # `tax_category_id`/`delivery_profile_id` are marketplace
             # configuration.
-            object :variants, array: true, as: 'SellerProductVariantParams',
-                              description: 'The variants, as a whole: one absent from the list is removed. Pass `id` to update an existing variant.' do
-              id :id
-              string :sku, :barcode
-              decimal :cost_price, nullable: true
-              currency :cost_currency
-              number :weight, :height, :width, :depth, nullable: true
-              string :weight_unit, enum: Spree::Variant::WEIGHT_UNITS
-              string :dimensions_unit, enum: Spree::Variant::DIMENSION_UNITS
-              string :hs_code, :customs_description
-              country :country_of_origin
-              integer :minimum_order_quantity, :order_multiple, nullable: true
-              string :purchase_unit
-              integer :units_per_carton, nullable: true, description: 'How many units fill one carton.'
-              id :carton_package_type_id, nullable: true, description: 'The carton this variant is packed into: a package type of kind `carton`.'
-              number :carton_weight, nullable: true, description: "What one packed carton weighs, in the variant's weight unit."
-              integer :cartons_per_pallet, nullable: true, description: 'How many cartons stack on one pallet.'
-              boolean :track_inventory, :preorderable
-              datetime :preorder_ships_at, nullable: true,
-                                           description: 'The "ships by" date shown to customers while the variant is a pre-order. Null clears it.'
-              integer :backorder_limit, nullable: true,
-                                        description: 'Maximum units sellable beyond available stock, capping backorders and pre-orders. Null is unlimited.'
-              integer :position
-              object :options, array: true, shape: Spree::Api::V3::VariantOptionRequestSchema,
-                               description: 'One pair per option type the variant takes part in (size, color).'
-              object :prices, array: true, shape: PRICE, description: 'Per-currency prices. Upserted by currency.'
-              object :stock_levels, array: true, shape: Spree::Api::V3::StockLevelRequestSchema,
-                                    description: "Stock per location, at this seller's own locations only: a location belonging to anyone else is ignored."
+            body.attribute :variants, :array,
+              as: 'SellerProductVariantParams',
+              description: 'The variants, as a whole: one absent from the list is removed. Pass `id` to update an existing variant.' do |variant|
+              variant.attribute :id, :id
+              variant.attribute :sku, :string
+              variant.attribute :barcode, :string
+              variant.attribute :cost_price, :decimal, nullable: true
+              variant.attribute :cost_currency, :currency
+              variant.attribute :weight, :number, nullable: true
+              variant.attribute :height, :number, nullable: true
+              variant.attribute :width, :number, nullable: true
+              variant.attribute :depth, :number, nullable: true
+              variant.attribute :weight_unit, :string, choices: Spree::Variant::WEIGHT_UNITS
+              variant.attribute :dimensions_unit, :string, choices: Spree::Variant::DIMENSION_UNITS
+              variant.attribute :hs_code, :string
+              variant.attribute :customs_description, :string
+              variant.attribute :country_of_origin, :country
+              variant.attribute :minimum_order_quantity, :integer, nullable: true
+              variant.attribute :order_multiple, :integer, nullable: true
+              variant.attribute :purchase_unit, :string
+              variant.attribute :units_per_carton, :integer,
+                nullable: true,
+                description: 'How many units fill one carton.'
+              variant.attribute :carton_package_type_id, :id,
+                nullable: true,
+                description: 'The carton this variant is packed into: a package type of kind `carton`.'
+              variant.attribute :carton_weight, :number,
+                nullable: true,
+                description: "What one packed carton weighs, in the variant's weight unit."
+              variant.attribute :cartons_per_pallet, :integer,
+                nullable: true,
+                description: 'How many cartons stack on one pallet.'
+              variant.attribute :track_inventory, :boolean
+              variant.attribute :preorderable, :boolean
+              variant.attribute :preorder_ships_at, :datetime,
+                nullable: true,
+                description: 'The "ships by" date shown to customers while the variant is a pre-order. Null clears it.'
+              variant.attribute :backorder_limit, :integer,
+                nullable: true,
+                description: 'Maximum units sellable beyond available stock, capping backorders and pre-orders. Null is unlimited.'
+              variant.attribute :position, :integer
+              variant.attribute :options, :array, of: Spree::Api::V3::VariantOptionRequestSchema,
+                description: 'One pair per option type the variant takes part in (size, color).'
+              variant.attribute :prices, :array, of: PRICE, description: 'Per-currency prices. Upserted by currency.'
+              variant.attribute :stock_levels, :array, of: Spree::Api::V3::StockLevelRequestSchema,
+                description: "Stock per location, at this seller's own locations only: a location belonging to anyone else is ignored."
             end
           end
 
-          request_params 'ProductBulkSubmitParams', action: :bulk_submit do
-            id :ids, array: true, required: true,
-                     description: 'Only drafts and rejected listings are submitted; the rest are counted in `skipped_count`.'
+          request_params 'ProductBulkSubmitParams', action: :bulk_submit do |body|
+            body.attribute :ids, :array, of: :id,
+              required: true,
+              description: 'Only drafts and rejected listings are submitted; the rest are counted in `skipped_count`.'
           end
 
-          request_params 'ProductBulkStatusParams', action: :bulk_status_update do
-            id :ids, array: true, required: true, example: ['prod_UkLWZg9DAJ']
-            string :status, required: true, enum: SELLER_BULK_STATUS_WORKFLOWS.keys,
-                            description: 'A listing goes on sale only when the marketplace approves it, so there is no bulk route onto `active`.'
+          request_params 'ProductBulkStatusParams', action: :bulk_status_update do |body|
+            body.attribute :ids, :array, of: :id, required: true, example: ['prod_UkLWZg9DAJ']
+            body.attribute :status, :string,
+              required: true,
+              choices: SELLER_BULK_STATUS_WORKFLOWS.keys,
+              description: 'A listing goes on sale only when the marketplace approves it, so there is no bulk route onto `active`.'
           end
 
           before_action :set_status_resource, only: [:submit, :draft, :archive]
