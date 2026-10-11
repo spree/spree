@@ -1463,6 +1463,7 @@
         "seeded_report_read_only": "Ce rapport est intégré et ne peut pas être modifié. Enregistrez plutôt une copie.",
         "taken": "est déjà utilisé",
         "too_long": "est trop long ({{count}} caractères maximum)",
+        "too_many_decimals": "a plus de {{count}} décimales",
         "too_short": "est trop court ({{count}} caractères minimum)",
         "wrong_length": "n'a pas la bonne longueur ({{count}} caractères attendus)"
       },
@@ -1479,7 +1480,8 @@
       "passwords_dont_match": "Les mots de passe ne correspondent pas",
       "positive_number": "{{field}} doit être supérieur à 0",
       "required": "{{field}} est obligatoire",
-      "store_name_required": "Le nom de la boutique est requis"
+      "store_name_required": "Le nom de la boutique est requis",
+      "too_many_decimals": "{{field}} peut avoir au plus {{count}} décimales"
     },
     "products": {
       "autocomplete": {

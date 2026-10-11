@@ -16,11 +16,15 @@ import type {
   CategoryListParams,
   Channel,
   Claim,
+  ClaimFilters,
+  ClaimSort,
   Collection,
   CollectionListParams,
   Company,
   CompanyAddressParams,
   CompanyInvitation,
+  CompanyInvitationFilters,
+  CompanyInvitationSort,
   CompanyMembership,
   CompletePaymentSessionParams,
   CompletePaymentSetupSessionParams,
@@ -34,6 +38,8 @@ import type {
   Customer,
   DeliveryMethod,
   DigitalLink,
+  DigitalLinkFilters,
+  DigitalLinkSort,
   GiftCard,
   Locale,
   LoginCredentials,
@@ -54,6 +60,8 @@ import type {
   RequestPasswordResetParams,
   ResetPasswordParams,
   Return,
+  ReturnFilters,
+  ReturnSort,
   Seller,
   StockLocation,
   StoreCredit,
@@ -63,6 +71,24 @@ import type {
   Wishlist,
   WishlistItem,
 } from './types'
+import type {
+  AddressFilters,
+  AddressSort,
+  CompanyMembershipFilters,
+  CompanyMembershipSort,
+  CreditCardFilters,
+  CreditCardSort,
+  GiftCardFilters,
+  GiftCardSort,
+  OrderFilters,
+  OrderSort,
+  SellerFilters,
+  SellerSort,
+  StoreCreditFilters,
+  StoreCreditSort,
+  WishlistFilters,
+  WishlistSort,
+} from './types/filters.generated'
 
 export class StoreClient {
   /**
@@ -202,7 +228,7 @@ export class StoreClient {
      * onboarding, suspended, or away on holiday is omitted.
      */
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerFilters, SellerSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Seller>> =>
       this.request<PaginatedResponse<Seller>>('GET', '/sellers', {
@@ -761,7 +787,7 @@ export class StoreClient {
     returns: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ReturnFilters, ReturnSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Return>> =>
         this.request<PaginatedResponse<Return>>('GET', `/orders/${orderId}/returns`, {
@@ -818,7 +844,7 @@ export class StoreClient {
     claims: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ClaimFilters, ClaimSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Claim>> =>
         this.request<PaginatedResponse<Claim>>('GET', `/orders/${orderId}/claims`, {
@@ -965,7 +991,10 @@ export class StoreClient {
       /**
        * List customer addresses
        */
-      list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<Address>> =>
+      list: (
+        params?: ListParams<AddressFilters, AddressSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Address>> =>
         this.request<PaginatedResponse<Address>>('GET', '/customers/me/addresses', {
           ...options,
           params: transformListParams({ ...params }),
@@ -1014,7 +1043,7 @@ export class StoreClient {
        * List customer credit cards
        */
       list: (
-        params?: ListParams,
+        params?: ListParams<CreditCardFilters, CreditCardSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CreditCard>> =>
         this.request<PaginatedResponse<CreditCard>>('GET', '/customers/me/credit_cards', {
@@ -1043,7 +1072,10 @@ export class StoreClient {
        * List customer gift cards
        * Returns gift cards associated with the current user, ordered by newest first
        */
-      list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<GiftCard>> =>
+      list: (
+        params?: ListParams<GiftCardFilters, GiftCardSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<GiftCard>> =>
         this.request<PaginatedResponse<GiftCard>>('GET', '/customers/me/gift_cards', {
           ...options,
           params: transformListParams({ ...params }),
@@ -1066,7 +1098,7 @@ export class StoreClient {
        * Supports Ransack filtering (e.g. `q[amount_remaining_gt]: 0`).
        */
       list: (
-        params?: ListParams,
+        params?: ListParams<StoreCreditFilters, StoreCreditSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<StoreCredit>> =>
         this.request<PaginatedResponse<StoreCredit>>('GET', '/customers/me/store_credits', {
@@ -1092,7 +1124,7 @@ export class StoreClient {
        * List the customer's downloads, newest first.
        */
       list: (
-        params?: ListParams,
+        params?: ListParams<DigitalLinkFilters, DigitalLinkSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<DigitalLink>> =>
         this.request<PaginatedResponse<DigitalLink>>('GET', '/customers/me/digital_links', {
@@ -1238,7 +1270,7 @@ export class StoreClient {
     addresses: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<AddressFilters, AddressSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Address>> =>
         this.request<PaginatedResponse<Address>>('GET', `/companies/${companyId}/addresses`, {
@@ -1274,7 +1306,7 @@ export class StoreClient {
     members: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<CompanyMembershipFilters, CompanyMembershipSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CompanyMembership>> =>
         this.request<PaginatedResponse<CompanyMembership>>(
@@ -1309,7 +1341,7 @@ export class StoreClient {
     invitations: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<CompanyInvitationFilters, CompanyInvitationSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CompanyInvitation>> =>
         this.request<PaginatedResponse<CompanyInvitation>>(
@@ -1327,7 +1359,7 @@ export class StoreClient {
     orders: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<OrderFilters, OrderSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Order>> =>
         this.request<PaginatedResponse<Order>>('GET', `/companies/${companyId}/orders`, {
@@ -1387,7 +1419,10 @@ export class StoreClient {
     /**
      * List wishlists
      */
-    list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<Wishlist>> =>
+    list: (
+      params?: ListParams<WishlistFilters, WishlistSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Wishlist>> =>
       this.request<PaginatedResponse<Wishlist>>('GET', '/wishlists', {
         ...options,
         params: transformListParams({ ...params }),

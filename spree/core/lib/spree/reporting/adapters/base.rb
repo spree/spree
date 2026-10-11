@@ -22,24 +22,25 @@ module Spree
 
         def cast_value(metric, raw)
           case metric.format
-          when :money, :decimal, :percent then raw.to_f.round(2)
+          when :money then BigDecimal((raw || 0).to_s)
+          when :decimal, :percent then BigDecimal((raw || 0).to_s).round(2)
           else raw.to_i
           end
         end
 
         def zero_for(metric)
-          metric.format == :integer ? 0 : 0.0
+          metric.format == :integer ? 0 : BigDecimal(0)
         end
 
         # Computes requested ratio metrics from their aggregated components.
         def apply_derived(metrics)
           query.metrics.select(&:derived?).each do |metric|
             numerator, denominator = metric.ratio.map { |name| metrics[name] || 0 }
-            ratio = denominator.to_f.zero? ? 0.0 : numerator / denominator.to_f
+            ratio = denominator.zero? ? BigDecimal(0) : BigDecimal(numerator.to_s) / BigDecimal(denominator.to_s)
             # A percent metric carries the number a merchant reads (42.5), not
             # the fraction, so clients never have to know to multiply.
             ratio *= 100 if metric.format == :percent
-            metrics[metric.name] = ratio.round(2)
+            metrics[metric.name] = metric.money? ? ratio : ratio.round(2)
           end
         end
 
@@ -58,12 +59,12 @@ module Spree
         def growth_rate(current, previous)
           return nil if previous.nil?
           if previous.zero?
-            return 0.0 if current.zero?
+            return BigDecimal(0) if current.zero?
 
             return nil
           end
 
-          (((current - previous) / previous.to_f) * 100).round(1)
+          ((BigDecimal(current.to_s) - BigDecimal(previous.to_s)) / BigDecimal(previous.to_s) * 100).round(1)
         end
       end
     end

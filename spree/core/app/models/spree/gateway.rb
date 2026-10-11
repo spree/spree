@@ -1,6 +1,6 @@
 module Spree
   class Gateway < PaymentMethod
-    FROM_DOLLAR_TO_CENT_RATE = 100.0
+    FROM_DOLLAR_TO_CENT_RATE = 100
 
     delegate :authorize, :purchase, :capture, :void, :credit, to: :provider
 

@@ -1,4 +1,5 @@
 import type { Supplier } from '@spree/admin-sdk'
+import { isDecimalString } from '@spree/admin-sdk'
 import {
   CurrencySelect,
   PageHeader,
@@ -106,11 +107,10 @@ export function PurchaseOrderForm({
   const [pickerOpen, setPickerOpen] = useState(false)
 
   // A cleared cost input is not zero — it is nothing, which the server rejects
-  // field-by-field. `Number('')` is 0 and finite, so the emptiness has to be
-  // checked before the number is.
+  // field-by-field.
   const hasCost = (value?: string) => {
     const trimmed = value?.trim()
-    return !!trimmed && Number.isFinite(Number(trimmed)) && Number(trimmed) >= 0
+    return isDecimalString(trimmed) && !trimmed.startsWith('-')
   }
 
   const canSubmit =

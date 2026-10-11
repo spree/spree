@@ -6,6 +6,8 @@ module Spree
         # Full product data including admin-only fields
         # Extends the store serializer with additional attributes
         class ProductSerializer < V3::ProductSerializer
+          without_formatted_money
+
           include Concerns::ExternalReferencesAttribute
 
           include Spree::Api::V3::Admin::Translatable

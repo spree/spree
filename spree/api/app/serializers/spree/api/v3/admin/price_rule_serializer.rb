@@ -8,8 +8,7 @@ module Spree
         class PriceRuleSerializer < V3::BaseSerializer
           typelize type: [:string, comment: 'Rule type. Built-in: channel_rule, customer_group_rule, market_rule, user_rule, volume_rule, zone_rule. Extensions may register more.'],
                    price_list_id: :string,
-                   preferences: 'Record<string, unknown>',
-                   preference_schema: 'Array<{ key: string; type: string; default: unknown }>'
+                   preferences: 'Record<string, unknown>'
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
@@ -20,7 +19,6 @@ module Spree
           prefixed_id_attributes :price_list
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
 
           # Embeds skip rules that don't carry the association (e.g.
           # VolumeRule has no markets/customers — the keys are omitted).

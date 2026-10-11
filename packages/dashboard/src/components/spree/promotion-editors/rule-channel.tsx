@@ -7,19 +7,17 @@ import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 
 /**
- * Multi-select channel picker for the promotion Channel rule. Seeds from
- * `draft.channels` (the serializer embed, prefixed `ch_…` IDs) because
- * `preferences.channel_ids` holds raw integer IDs server-side. Writes the
- * selected ids back to `preferences.channel_ids` and the resolved records to
- * `draft.channels` for the rule summary.
+ * Multi-select channel picker for the promotion Channel rule. Reads and
+ * writes the prefixed ids in `preferences.channel_ids`, and keeps the resolved
+ * records in `draft.channels` for the rule summary.
  */
 export function ChannelRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
   const { t } = useTranslation()
   // Preload the full channel list so the picker surfaces options on open
   // without the merchant having to type — the list is small and cached.
   const { data: channelsData } = useChannels()
-  const [channelIds, setChannelIds] = useState<string[]>(() =>
-    (draft.channels ?? []).map((c) => c.id),
+  const [channelIds, setChannelIds] = useState<string[]>(
+    () => (draft.preferences?.channel_ids ?? []) as string[],
   )
   const [channels, setChannels] = useState<Channel[]>(draft.channels ?? [])
 

@@ -12,7 +12,6 @@ export const PriceRuleSchema = z.object({
   type: z.string(),
   price_list_id: z.string(),
   preferences: z.record(z.string(), z.unknown()),
-  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown() })),
   get markets() { return z.array(MarketSchema).optional(); },
   get customer_groups() { return z.array(CustomerGroupSchema).optional(); },
   channels: z.array(ChannelSchema).optional(),

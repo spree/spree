@@ -60,7 +60,7 @@ module Spree
               render_error(
                 code: ErrorHandler::ERROR_CODES[:channel_mismatch],
                 message: I18n.t('spree.api.errors.channel_mismatch'),
-                status: :unprocessable_entity
+                status: :unprocessable_content
               )
               return
             end

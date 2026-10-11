@@ -42,13 +42,13 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
       it 'computes totals with money display strings and nil growth without baseline' do
         subject
         totals = json_response['totals']
-        expected_gross = (order1.total + order2.total).to_f.round(2)
+        expected_gross = order1.total + order2.total
 
-        expect(totals['total_sales']['value']).to eq(expected_gross)
+        expect(totals['total_sales']['value']).to eq(Spree::Money::Rounding.format(expected_gross, 'USD'))
         expect(totals['total_sales']['display']).to include('$')
         expect(totals['total_sales']['growth']).to be_nil
         expect(totals['orders']['value']).to eq(2)
-        expect(totals['average_order_value']['value']).to eq((expected_gross / 2).round(2))
+        expect(totals['average_order_value']['value']).to eq(Spree::Money::Rounding.format(expected_gross / 2, 'USD'))
       end
 
       it 'hydrates product rows with prefixed ids, labels and meta' do
@@ -63,7 +63,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         expect(row['dimensions']['product']['id']).to start_with('prod_')
         expect(row['dimensions']['product']['label']).to be_present
         expect(row['dimensions']['product']['meta']).to include('slug', 'thumbnail_url')
-        expect(row['metrics']['net_sales']['value']).to be > 0
+        expect(row['metrics']['net_sales']['value'].to_d).to be > 0
       end
 
       it 'hydrates customer rows and ranks by revenue' do

@@ -23,6 +23,7 @@ RSpec.describe 'Admin Order Routing Rules API', type: :request, swagger_doc: 'ap
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'rules found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -158,7 +159,7 @@ RSpec.describe 'Admin Order Routing Rules API', type: :request, swagger_doc: 'ap
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.map { |t| t['type'] }).to contain_exactly('preferred_location', 'minimize_splits', 'default_location')
-          expect(data.first).to include('label', 'description', 'preference_schema')
+          expect(data.first).to include('label', 'description', 'schema')
         end
       end
     end

@@ -13,17 +13,24 @@ module Spree
                    delivery_origin_group_id: [:string, nullable: true],
                    delivery_zone_id: [:string, nullable: true],
                    stock_location_ids: [:string, multi: true],
-                   calculator_type: [:string, nullable: true],
-                   calculator_preferences: ['Record<string, unknown>', nullable: true],
+                   calculator: 'TypedDeliveryCalculator | null',
                    markup_flat: [:string, nullable: true],
                    markup_percent: [:string, nullable: true],
                    available_to_sellers: :boolean,
                    seller_id: [:string, nullable: true],
                    seller_name: [:string, nullable: true]
 
-          attributes :admin_name, :storefront_visible, :tracking_url,
-                     :markup_flat, :markup_percent, :available_to_sellers,
+          attributes :admin_name, :storefront_visible, :tracking_url, :available_to_sellers,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
+
+          # The flat markup is charged in whatever currency the rate is quoted
+          # in, so it is shown as stored rather than rounded to one currency:
+          # a rounded figure would be saved back.
+          attribute :markup_flat do |record|
+            Spree::Money::Rounding.format(record.markup_flat, (current_store || Spree::Current.store)&.default_currency, unit_price: true)
+          end
+
+          rate_attributes :markup_percent
 
           # Which seller runs this method, so the operator's list can say
           # whose it is. Null is the marketplace's own
@@ -48,12 +55,9 @@ module Spree
 
           api_type_attributes :fulfillment_provider, :pickup_point_provider, :rate_provider
 
-          attribute :calculator_type do |record|
-            record.calculator&.class&.api_type
-          end
-
-          attribute :calculator_preferences do |record|
-            record.calculator.respond_to?(:serialized_preferences) ? record.calculator.serialized_preferences : record.calculator&.preferences
+          attribute :calculator do |record|
+            calculator = record.calculator
+            { type: calculator.class.api_type, preferences: calculator.serialized_preferences } if calculator
           end
         end
       end

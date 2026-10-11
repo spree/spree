@@ -6,7 +6,8 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        Spree::Emails::Branding.attribute_names.each { |name| preference :"email_#{name}", :string }
+        Spree::Emails::Branding::COLORS.each { |name| preference :"email_#{name}", :string, format: :color }
+        preference :email_font, :string, choices: -> { Spree::Emails::Branding::FONTS.keys }
 
         validate :email_branding_valid
       end

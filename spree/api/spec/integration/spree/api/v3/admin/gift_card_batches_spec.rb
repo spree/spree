@@ -28,8 +28,7 @@ RSpec.describe 'Admin Gift Card Batches API', type: :request, swagger_doc: 'api-
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page'
-      parameter name: :'q[prefix_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by prefix (contains)'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending.'
 

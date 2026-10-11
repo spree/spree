@@ -38,6 +38,7 @@ module Spree
     # Private, and served only through the admin and seller branches: these
     # are business registrations and identity documents.
     has_one_attached :file, service: Spree.private_storage_service_name
+    signed_id_attachments :file
 
     #
     # Validations

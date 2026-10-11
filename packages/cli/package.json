@@ -1,6 +1,6 @@
 {
   "name": "@spree/cli",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "CLI for managing Spree Commerce projects",
   "type": "module",
   "bin": {
@@ -56,6 +56,7 @@
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@spree/admin-sdk": "workspace:^",
+    "@spree/sdk-core": "workspace:*",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",

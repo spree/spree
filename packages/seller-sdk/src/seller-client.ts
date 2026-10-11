@@ -1,5 +1,13 @@
-import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
-import { transformListParams } from '@spree/sdk-core'
+import type {
+  FileUploadCreateParams,
+  ListParams,
+  PaginatedResponse,
+  PreferenceSchema,
+  RequestFn,
+  RequestOptions,
+  UploadFileOptions,
+} from '@spree/sdk-core'
+import { transformListParams, uploadFile } from '@spree/sdk-core'
 import type {
   Account,
   AuthTokens,
@@ -11,9 +19,14 @@ import type {
   DeliveryZone,
   Exchange,
   Export,
+  FileUpload,
   Fulfillment,
   Import,
+  ImportFilters,
   ImportRow,
+  ImportRowFilters,
+  ImportRowSort,
+  ImportSort,
   Invitation,
   InvitationAcceptanceLink,
   Order,
@@ -34,6 +47,28 @@ import type {
   TeamMember,
   Transfer,
 } from './types'
+import type {
+  DeliveryMethodFilters,
+  DeliveryMethodSort,
+  DeliveryProfileFilters,
+  DeliveryProfileSort,
+  OrderFilters,
+  OrderSort,
+  PackageTypeFilters,
+  PackageTypeSort,
+  PolicyFilters,
+  PolicySort,
+  ProductFilters,
+  ProductSort,
+  ProductTypeFilters,
+  ProductTypeSort,
+  SellerPayoutFilters,
+  SellerPayoutSort,
+  SellerTransferFilters,
+  SellerTransferSort,
+  StockLocationFilters,
+  StockLocationSort,
+} from './types/filters.generated'
 
 /**
  * Resource methods for the Spree Seller API — the marketplace seller panel.
@@ -328,7 +363,7 @@ export class SellerClient {
    */
   readonly products = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ProductFilters, ProductSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Product>> =>
       this.request<PaginatedResponse<Product>>('GET', '/products', {
@@ -411,7 +446,7 @@ export class SellerClient {
    */
   readonly orders = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<OrderFilters, OrderSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Order>> =>
       this.request<PaginatedResponse<Order>>('GET', '/orders', {
@@ -649,8 +684,8 @@ export class SellerClient {
        * elsewhere and print it back; buying and refunding need the operator's
        * carrier account, so neither is offered here.
        *
-       * Upload the file with `directUploads.create()` and pass the returned
-       * `signed_id` as `file`.
+       * Upload the file with `files.upload()` and pass the returned
+       * `signed_id` as `file_signed_id`.
        */
       labels: {
         list: (
@@ -680,7 +715,7 @@ export class SellerClient {
           orderId: string,
           fulfillmentId: string,
           params: {
-            file: string
+            file_signed_id: string
             tracking_number: string
             carrier?: string
             service?: string
@@ -970,20 +1005,30 @@ export class SellerClient {
   }
 
   /**
-   * Presigning for the documents onboarding asks for. Exchange the blob's
-   * metadata for an upload URL, PUT the file to it, then post the returned
-   * `signed_id` as a submission's `file`.
+   * Uploading the files a profile, a requirement submission or an import
+   * uses. Each upload returns a `signed_id`: pass it unchanged as the
+   * submission's `file_signed_id`, the profile's `logo_signed_id`, and so on,
+   * within a day, after which it expires.
    */
-  readonly directUploads = {
+  readonly files = {
+    /**
+     * Creates an upload. JSON metadata returns `upload`, the storage target to
+     * send the bytes to; a `FormData` body with a `file` part stores the bytes
+     * directly and returns `upload: null`. `upload()` does both steps for you.
+     */
     create: (
-      params: {
-        blob: { filename: string; byte_size: number; checksum: string; content_type: string }
-      },
+      params: FileUploadCreateParams | FormData,
       options?: RequestOptions,
-    ): Promise<{
-      direct_upload: { url: string; headers: Record<string, string> }
-      signed_id: string
-    }> => this.request('POST', '/direct_uploads', { ...options, body: params }),
+    ): Promise<FileUpload> =>
+      this.request<FileUpload>('POST', '/files', { ...options, body: params }),
+
+    /** Uploads a file and resolves to the response, whose `signed_id` the endpoint using the file takes. */
+    upload: (
+      file: Blob,
+      options: UploadFileOptions = {},
+      requestOptions?: RequestOptions,
+    ): Promise<FileUpload> =>
+      uploadFile((body) => this.files.create(body, requestOptions), file, options),
   }
 
   /**
@@ -1011,7 +1056,7 @@ export class SellerClient {
    */
   readonly productTypes = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ProductTypeFilters, ProductTypeSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ProductType>> =>
       this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
@@ -1030,7 +1075,7 @@ export class SellerClient {
    */
   readonly deliveryProfiles = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<DeliveryProfileFilters, DeliveryProfileSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<DeliveryProfile>> =>
       this.request<PaginatedResponse<DeliveryProfile>>('GET', '/delivery_profiles', {
@@ -1079,7 +1124,7 @@ export class SellerClient {
    */
   readonly deliveryMethods = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<DeliveryMethodFilters, DeliveryMethodSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<DeliveryMethod>> =>
       this.request<PaginatedResponse<DeliveryMethod>>('GET', '/delivery_methods', {
@@ -1131,7 +1176,7 @@ export class SellerClient {
    */
   readonly stockLocations = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockLocationFilters, StockLocationSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockLocation>> =>
       this.request<PaginatedResponse<StockLocation>>('GET', '/stock_locations', {
@@ -1168,7 +1213,7 @@ export class SellerClient {
    */
   readonly packageTypes = {
     list: (
-      params?: ListParams & { owner?: 'mine' } & Record<string, unknown>,
+      params?: ListParams<PackageTypeFilters, PackageTypeSort> & { owner?: 'mine' },
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PackageType>> => {
       // `owner` is a plain query param the controller reads directly, so it
@@ -1224,7 +1269,7 @@ export class SellerClient {
    */
   readonly transfers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerTransferFilters, SellerTransferSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Transfer>> =>
       this.request<PaginatedResponse<Transfer>>('GET', '/transfers', {
@@ -1243,7 +1288,7 @@ export class SellerClient {
    */
   readonly payouts = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerPayoutFilters, SellerPayoutSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Payout>> =>
       this.request<PaginatedResponse<Payout>>('GET', '/payouts', {
@@ -1263,7 +1308,7 @@ export class SellerClient {
    */
   readonly policies = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PolicyFilters, PolicySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Policy>> =>
       this.request<PaginatedResponse<Policy>>('GET', '/policies', {
@@ -1291,7 +1336,7 @@ export class SellerClient {
   /**
    * Bulk-listing this seller's catalog from a CSV.
    *
-   * The flow is the operator's: upload the file with `directUploads.create()`,
+   * The flow is the operator's: upload the file with `files.upload()`,
    * `create()` the import from the returned `signed_id`, and the response
    * comes back in the `mapping` state carrying `schema_fields`, `csv_headers`,
    * a `sample_row` and the auto-assigned `mappings`. Adjust those and call
@@ -1306,7 +1351,7 @@ export class SellerClient {
    */
   readonly imports = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ImportFilters, ImportSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Import>> =>
       this.request<PaginatedResponse<Import>>('GET', '/imports', {
@@ -1339,7 +1384,7 @@ export class SellerClient {
     rows: {
       list: (
         importId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ImportRowFilters, ImportRowSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<ImportRow>> =>
         this.request<PaginatedResponse<ImportRow>>('GET', `/imports/${importId}/rows`, {
@@ -1382,12 +1427,12 @@ export type SellerImportType = 'products'
 export interface ImportCreateParams {
   type: SellerImportType
   /**
-   * ActiveStorage signed blob id of the uploaded CSV, from
-   * `directUploads.create()`.
+   * The `signed_id` of the uploaded CSV, from `files.upload()` with
+   * `visibility: 'private'`.
    */
-  attachment: string
+  attachment_signed_id: string
   /** CSV column separator. Defaults to a comma on the server. */
-  preferred_delimiter?: ',' | ';' | '|' | '\t'
+  delimiter?: ',' | ';' | '|' | '\t'
   /**
    * Absolute URL of the panel's imports view; the import-done email links back
    * to it with `?import=<id>` appended. Honored only when it matches one of
@@ -1435,8 +1480,12 @@ export interface DeliveryMethodParams {
   tracking_url?: string | null
   estimated_transit_business_days_min?: number | null
   estimated_transit_business_days_max?: number | null
-  calculator_type?: string
-  calculator_preferences?: Record<string, unknown>
+  /**
+   * How the method prices a shipment: the calculator's `type` (see
+   * `deliveryMethods.calculators()`) and its preferences, which must match the
+   * `schema` that list carries.
+   */
+  calculator?: { type?: string; preferences?: Record<string, unknown> }
   /** Replaces the whole set; an empty array clears every condition. */
   rules?: DeliveryMethodRuleParams[]
 }
@@ -1447,22 +1496,12 @@ export interface DeliveryZoneListParams extends ListParams {
   [key: string]: unknown
 }
 
-/**
- * One field on a calculator's or rule's configuration form, as the server
- * describes it. The same shape the generated `DeliveryMethodRule` type
- * carries, so a schema from either endpoint renders through one form.
- */
-export interface DeliveryPreferenceField {
-  key: string
-  type: string
-  default: unknown
-}
-
 /** One way a delivery method can be priced. */
 export interface DeliveryCalculatorType {
   type: string
   name: string
-  preference_schema: DeliveryPreferenceField[]
+  /** JSON Schema of the calculator's `preferences`. */
+  schema: PreferenceSchema
 }
 
 /** One condition a seller may put on their own method. */
@@ -1470,7 +1509,8 @@ export interface DeliveryMethodRuleType {
   type: string
   name: string
   description: string
-  preference_schema: DeliveryPreferenceField[]
+  /** JSON Schema of the rule's `preferences`. */
+  schema: PreferenceSchema
 }
 
 /**
@@ -1580,8 +1620,8 @@ export interface OnboardingResponse {
 export interface RequirementSubmissionParams {
   note?: string
   reference?: string
-  /** A direct-upload signed blob id, for kinds that ask for a document. */
-  file?: string
+  /** A `signed_id` from `files.upload()`, for kinds that ask for a document. */
+  file_signed_id?: string
 }
 
 /** The fields a seller may set on their own product. */
@@ -1737,10 +1777,10 @@ export interface AccountUpdateParams {
   /** The panel's UI language, as a bundle code the panel ships (e.g. `de`). */
   selected_locale?: string
   /**
-   * ActiveStorage signed id to set the photo, or `null` to remove it. Omit to
-   * leave the current one alone.
+   * A `signed_id` from `files.upload()` to set the photo, or `null` to remove
+   * it. Omit to leave the current one alone.
    */
-  avatar?: string | null
+  avatar_signed_id?: string | null
 }
 
 /** The fields a seller may change on their own record. */
@@ -1750,10 +1790,10 @@ export interface ProfileUpdateParams {
   billing_email?: string | null
   /** Sanitized HTML — the seller's public description. */
   about?: string | null
-  /** ActiveStorage signed ids; `null` removes the attachment. */
-  logo?: string | null
-  square_logo?: string | null
-  cover_photo?: string | null
+  /** `signed_id`s from `files.upload()`; `null` removes the image. */
+  logo_signed_id?: string | null
+  square_logo_signed_id?: string | null
+  cover_photo_signed_id?: string | null
   /** The business a commission invoice is made out to. */
   legal_name?: string | null
   registration_number?: string | null

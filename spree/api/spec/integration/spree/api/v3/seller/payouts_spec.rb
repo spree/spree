@@ -35,8 +35,7 @@ RSpec.describe 'Seller Payouts API', type: :request, swagger_doc: 'api-reference
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
-      parameter name: :'q[status_eq]', in: :query, required: false,
-                schema: { type: :string, enum: %w[pending processing completed failed unresolved] }
+      filter_parameters_for
 
       response '200', 'payouts listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -76,7 +75,7 @@ RSpec.describe 'Seller Payouts API', type: :request, swagger_doc: 'api-reference
         schema '$ref' => '#/components/schemas/Payout'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['display_amount']).to eq('$120.00')
+          expect(JSON.parse(response.body)['amount']).to eq('120.00')
         end
       end
 

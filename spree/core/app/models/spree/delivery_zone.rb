@@ -33,7 +33,7 @@ module Spree
     validate :origin_group_must_belong_to_profile,
              if: -> { delivery_origin_group_id_changed? || delivery_profile_id_changed? }
 
-    self.whitelisted_ransackable_attributes = %w[name]
+    self.whitelisted_ransackable_attributes = %w[name delivery_profile_id]
 
     # @param address [Spree::Address, nil]
     # @return [Boolean] whether any member of this zone matches the address

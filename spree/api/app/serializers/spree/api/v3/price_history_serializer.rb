@@ -4,13 +4,13 @@ module Spree
   module Api
     module V3
       class PriceHistorySerializer < BaseSerializer
-        typelize amount: :string,
-                 amount_in_cents: :number,
-                 display_amount: :string,
+        typelize display_amount: :string,
                  currency: :string,
                  recorded_at: :string
 
-        attributes :amount, :amount_in_cents, :currency
+        attributes :currency
+
+        money_attributes :amount, unit_price: true
 
         attributes :display_amount
 

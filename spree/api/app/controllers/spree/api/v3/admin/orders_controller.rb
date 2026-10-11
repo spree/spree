@@ -7,11 +7,8 @@ module Spree
 
           scoped_resource :orders
 
-          # The order accepts a `po_document` signed blob id and streams it back.
+          # The order accepts a `po_document_signed_id` and streams it back.
           include ActiveStorage::SetCurrent
-
-          # A tampered signed id would otherwise surface as a 500.
-          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
 
           skip_before_action :set_resource, only: [:index, :create]
           before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
@@ -244,14 +241,6 @@ module Spree
 
           private
 
-          def render_invalid_po_document
-            render_error(
-              code: ERROR_CODES[:validation_error],
-              message: I18n.t('spree.po_document_invalid_signed_id'),
-              status: :unprocessable_content
-            )
-          end
-
           def resolve_customer
             customer_param = params[:customer_id].presence
             return unless customer_param
@@ -279,7 +268,7 @@ module Spree
                 # The buyer's own purchase-order reference, and the signed blob
                 # id of the document behind it — a PO arriving by email and
                 # keyed in is the draft-order flow plus these two fields.
-                :po_number, :po_document,
+                :po_number, :po_document_signed_id,
                 :shipping_address_id, :billing_address_id,
                 :preferred_stock_location_id, :company_id,
                 :coupon_code,
@@ -298,7 +287,7 @@ module Spree
               params.permit(
                 :email, :customer_id,
                 :customer_note, :internal_note,
-                :po_number, :po_document,
+                :po_number, :po_document_signed_id,
                 :currency, :locale, :market_id, :channel_id,
                 :preferred_stock_location_id, :company_id,
                 metadata: {},

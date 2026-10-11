@@ -38,6 +38,7 @@ import { useTranslation } from 'react-i18next'
 import { Bar, CartesianGrid, ComposedChart, Line, XAxis } from 'recharts'
 import { entityDimension, metaString, rawDimension } from '../../../hooks/use-reporting'
 import { GrowthBadge } from './growth-badge'
+import { formatMetricNumber, metricNumberForChart } from './metric-numbers'
 import { inferViz, queryDimension } from './report-draft'
 
 interface ReportViewProps {
@@ -174,7 +175,7 @@ export function formatMetric(
   // a null total rather than a misleading store-wide one.
   if (!value || value.value == null) return '—'
   if (value.display) return value.display
-  const formatted = value.value.toLocaleString(locale, {
+  const formatted = formatMetricNumber(value.value, locale, {
     maximumFractionDigits: metric.format === 'integer' ? 0 : 2,
   })
   // The server sends the number a merchant reads (42.5), so only the sign is missing.
@@ -333,8 +334,8 @@ export function TimeSeriesChart({
     () =>
       result.rows.map((row) => ({
         bucket: rawDimension(row, dimension),
-        current: row.metrics[active.name]?.value ?? 0,
-        previous: row.metrics[active.name]?.previous ?? 0,
+        current: metricNumberForChart(row.metrics[active.name]?.value),
+        previous: metricNumberForChart(row.metrics[active.name]?.previous),
       })),
     [result.rows, dimension, active.name],
   )
@@ -466,7 +467,7 @@ function ResultTable({
   // The first metric doubles as the share bar on a ranking, like the home rankings.
   const shareMetric = ranked ? metrics[0] : undefined
   const maxShare = shareMetric
-    ? Math.max(...rows.map((row) => row.metrics[shareMetric.name]?.value ?? 0), 0)
+    ? Math.max(...rows.map((row) => metricNumberForChart(row.metrics[shareMetric.name]?.value)), 0)
     : 0
 
   return (
@@ -489,7 +490,9 @@ function ResultTable({
           </TableHeader>
           <TableBody>
             {rows.map((row, index) => {
-              const share = shareMetric ? (row.metrics[shareMetric.name]?.value ?? 0) : 0
+              const share = shareMetric
+                ? metricNumberForChart(row.metrics[shareMetric.name]?.value)
+                : 0
               return (
                 <TableRow key={JSON.stringify(row.dimensions)}>
                   {ranked && (

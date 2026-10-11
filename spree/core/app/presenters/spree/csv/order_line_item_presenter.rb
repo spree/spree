@@ -96,16 +96,16 @@ module Spree
           index.zero? ? order.email : nil,
           index.zero? ? order.status : nil,
           index.zero? ? order.currency : nil,
-          index.zero? ? order.item_total.to_f : nil,
-          index.zero? ? order.delivery_total.to_f : nil,
-          index.zero? ? order.tax_total.to_f : nil,
+          index.zero? ? money(order.item_total) : nil,
+          index.zero? ? money(order.delivery_total) : nil,
+          index.zero? ? money(order.tax_total) : nil,
           index.zero? ? order.included_tax_total.positive? : nil,
           index.zero? ? (order.discount_total.negative? || line_item.discount_total.negative?) : nil,
           index.zero? ? order.has_free_shipping? : nil,
-          index.zero? ? order.discount_total.abs : nil,
+          index.zero? ? money(order.discount_total.abs) : nil,
           index.zero? ? order.promo_code : nil,
-          index.zero? ? order.payments.store_credits.sum(:amount).abs : nil,
-          index.zero? ? order.total.to_f : nil,
+          index.zero? ? money(order.payments.store_credits.sum(:amount).abs) : nil,
+          index.zero? ? money(order.total) : nil,
           index.zero? ? order.delivery_method&.name : nil,
           index.zero? ? order.total_weight.to_f : nil,
           index.zero? ? order.payments.valid&.first&.display_source_name : nil,
@@ -159,6 +159,10 @@ module Spree
       end
 
       private
+
+      def money(amount)
+        Spree::Money::Rounding.format(amount, order.currency)
+      end
 
       # Drops the cells whose headers were omitted, matching each value to its
       # header by position so the row and the header list stay aligned.

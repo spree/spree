@@ -30,6 +30,7 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
       description "Goods swapped for different ones on one of this seller's orders."
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'exchanges listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

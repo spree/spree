@@ -11,7 +11,6 @@ module Spree
                    position: :number,
                    metadata: 'Record<string, unknown>',
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
                    logo_url: [:string, nullable: true],
                    docs_url: [:string, nullable: true],
                    third_party: :boolean
@@ -24,7 +23,6 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
           attribute(:logo_url) { |payment_method| payment_method.class.logo_url }
           attribute(:docs_url) { |payment_method| payment_method.class.docs_url }
           attribute(:third_party) { |payment_method| payment_method.class.third_party? }

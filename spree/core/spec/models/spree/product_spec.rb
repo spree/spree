@@ -198,12 +198,6 @@ describe Spree::Product, type: :model do
     end
 
     describe '#price_in' do
-      # Regression test for #1173
-      it 'strips non-price characters' do
-        product.default_variant.set_price('USD', '$10')
-        expect(product.price_in('USD').amount).to eq(10.0)
-      end
-
       it 'shows the amount' do
         product.default_variant.set_price('USD', 10.55)
         expect(product.price_in('USD').display_amount.to_s).to eq('$10.55')
@@ -232,7 +226,7 @@ describe Spree::Product, type: :model do
       end
 
       it 'is not available when available_on is in the future' do
-        product.available_on = 1.day.from_now
+        product[:available_on] = 1.day.from_now
 
         expect(product).not_to be_available
       end
@@ -282,7 +276,7 @@ describe Spree::Product, type: :model do
       before { product.make_active_at = Date.today }
 
       context 'make_active_at is a date earlier than discontinue_on' do
-        before { product.discontinue_on = 5.days.from_now }
+        before { product[:discontinue_on] = 5.days.from_now }
 
         it 'is valid' do
           expect(product).to be_valid
@@ -290,7 +284,7 @@ describe Spree::Product, type: :model do
       end
 
       context 'make_active_at is a date earlier than discontinue_on' do
-        before { product.discontinue_on = 5.days.ago }
+        before { product[:discontinue_on] = 5.days.ago }
 
         context 'is not valid' do
           before { product.valid? }
@@ -302,7 +296,7 @@ describe Spree::Product, type: :model do
 
       context 'make_active_at and discontinue_on are nil' do
         before do
-          product.discontinue_on = nil
+          product[:discontinue_on] = nil
           product.make_active_at = nil
         end
 
@@ -685,6 +679,25 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe 'the price filter' do
+    let!(:cheap) { create(:product, price: 5) }
+    let!(:pricey) { create(:product, price: 500) }
+
+    before { Spree::Current.currency = cheap.store.default_currency }
+
+    it "filters on the default variant's base price in the current currency" do
+      expect(described_class.ransack(price_gt: 100).result).to include(pricey)
+      expect(described_class.ransack(price_gt: 100).result).not_to include(cheap)
+    end
+
+    it 'ignores price list prices' do
+      price_list = create(:price_list, store: cheap.store)
+      create(:price, variant: cheap.default_variant, price_list: price_list, amount: 900, currency: cheap.store.default_currency)
+
+      expect(described_class.ransack(price_gt: 100).result).not_to include(cheap)
+    end
+  end
+
   describe '#total_on_hand' do
     let(:product) { create(:product) }
 
@@ -744,7 +757,7 @@ describe Spree::Product, type: :model do
 
   describe '#discontinued?' do
     let(:product_live) { build(:product, sku: 'a-sku') }
-    let(:product_discontinued) { build(:product, sku: 'a-sku', discontinue_on: Time.now - 1.day) }
+    let(:product_discontinued) { build(:product, sku: 'a-sku', unpublished_at: Time.now - 1.day) }
 
     it 'is false' do
       expect(product_live.discontinued?).to be(false)
@@ -1407,14 +1420,14 @@ describe Spree::Product, type: :model do
 
         expect(eur_default_variant[slug_idx]).to eq product.slug
         expect(eur_default_variant[sku_idx]).to eq product.default_variant.sku
-        expect(eur_default_variant[price_idx]).to eq 10.99
+        expect(eur_default_variant[price_idx]).to eq '10.99'
         expect(eur_default_variant[currency_idx]).to eq 'EUR'
         expect(eur_default_variant[name_idx]).to be_nil
 
         expect(eur_variant[slug_idx]).to eq product.slug
         expect(eur_variant[sku_idx]).to eq variant1.sku
-        expect(eur_variant[price_idx]).to eq 52.99
-        expect(eur_variant[compare_idx]).to eq 62.99
+        expect(eur_variant[price_idx]).to eq '52.99'
+        expect(eur_variant[compare_idx]).to eq '62.99'
         expect(eur_variant[currency_idx]).to eq 'EUR'
         expect(eur_variant[name_idx]).to be_nil
       end
@@ -1739,7 +1752,7 @@ describe Spree::Product, type: :model do
   describe 'scopes' do
     describe '.not_discontinued' do
       let(:product) { create(:product) }
-      let(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
+      let(:discontinued_product) { create(:product, unpublished_at: Time.current - 1.day) }
 
       context 'when nothing is passed as an argument' do
         it 'returns only not discontinued products' do
@@ -1759,9 +1772,9 @@ describe Spree::Product, type: :model do
     end
 
     describe '.available' do
-      let!(:discontinued_product) { create(:product, discontinue_on: 1.day.ago) }
-      let!(:future_product) { create(:product, available_on: 1.day.from_now, status: 'active') }
-      let!(:active_product) { create(:product, available_on: 1.day.ago, status: 'active') }
+      let!(:discontinued_product) { create(:product, unpublished_at: 1.day.ago) }
+      let!(:future_product) { create(:product, published_at: 1.day.from_now, status: 'active') }
+      let!(:active_product) { create(:product, published_at: 1.day.ago, status: 'active') }
 
       before do
         active_product.default_variant.set_price('USD', 10)
@@ -1772,7 +1785,7 @@ describe Spree::Product, type: :model do
       context 'when available_on is specified' do
         subject(:available_products) { described_class.available(Time.current) }
 
-        let!(:draft_product) { create(:product, available_on: 1.day.ago, status: 'draft') }
+        let!(:draft_product) { create(:product, published_at: 1.day.ago, status: 'draft') }
 
         before do
           draft_product.default_variant.set_price('USD', 10)

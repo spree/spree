@@ -29,6 +29,14 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       expect(types).to eq(['product'])
     end
 
+    it 'filters by field_type shorthand via Ransack' do
+      get :index, params: { q: { field_type_in: %w[short_text] } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']).not_to be_empty
+      expect(json_response['data'].map { |d| d['field_type'] }.uniq).to eq(['short_text'])
+    end
+
     it 'exposes computed fields with their API names' do
       get :index, params: { q: { key_eq: 'fabric' } }, as: :json
 

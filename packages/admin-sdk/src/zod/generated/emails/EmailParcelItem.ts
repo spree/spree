@@ -9,6 +9,8 @@ export const EmailParcelItemSchema = z.object({
   quantity: z.number(),
   sku: z.string().nullable(),
   options_text: z.string().nullable(),
+  price: z.string(),
+  amount: z.string(),
   display_price: z.string(),
   display_amount: z.string(),
 });

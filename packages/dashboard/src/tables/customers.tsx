@@ -1,4 +1,4 @@
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, RelativeTime, TagList } from '@spree/dashboard-ui'
 import { UsersIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -62,7 +62,7 @@ defineTable('customers', {
       label: i18n.t('admin.customers.columns.total_spent'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (c) => c.display_total_spent ?? '—',
+      render: (c) => <Money amount={c.total_spent} />,
     },
     {
       key: 'last_order_completed_at',

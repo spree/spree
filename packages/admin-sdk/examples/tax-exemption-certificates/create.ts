@@ -5,22 +5,17 @@ const client = createAdminClient({
   secretKey: 'sk_xxx',
 })
 
-// region:example
-// Upload the document first, then pass the signed id.
-const { signed_id } = await client.directUploads.create({
-  blob: {
-    filename: 'resale.pdf',
-    byte_size: 18_345,
-    checksum: 'Base64EncodedMD5==',
-    content_type: 'application/pdf',
-  },
-})
+declare const certificatePdf: Blob // the certificate PDF, e.g. from a file input or `fs.openAsBlob()`
 
+const { signed_id } = await client.files.upload(certificatePdf, { visibility: 'private' })
+
+// region:example
+// `signed_id` comes from `client.files.upload(file, { visibility: 'private' })`.
 const certificate = await client.companies.taxExemptionCertificates.create('comp_UkLWZg9DAJ', {
   certificate_number: 'DE-RESALE-7',
   reason_code: 'resale',
   country_code: 'DE',
-  document: signed_id,
+  document_signed_id: signed_id,
 })
 
 // endregion:example

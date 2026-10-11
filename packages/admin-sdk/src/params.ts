@@ -1,7 +1,7 @@
 // Request parameter types for Admin API endpoints
 // Based on the Admin API OpenAPI specification
 
-import type { PaginationMeta } from '@spree/sdk-core'
+import type { PaginationMeta, PreferenceSchema } from '@spree/sdk-core'
 import type { ReportingQuery } from './admin-client'
 import type { SellerRequirementStatus, StoreCredit } from './types'
 
@@ -23,7 +23,7 @@ export interface StoreDataSourceProvider {
  * sellers to hold an account with it.
  */
 export interface StorePayoutProvider {
-  /** The provider's shorthand (`system`, `stripe`) — what `preferred_payout_provider` takes. */
+  /** The provider's shorthand (`system`, `stripe`) — what `payout_provider` takes. */
   id: string
   name: string
   /** False when the store has not connected what this provider needs. */
@@ -42,61 +42,57 @@ export interface StoreDataSources {
 
 export interface StoreUpdateParams {
   name?: string
-  preferred_admin_locale?: string
-  preferred_timezone?: string
-  preferred_weight_unit?: string
-  preferred_unit_system?: string
+  admin_locale?: string
+  timezone?: string
+  weight_unit?: string
+  unit_system?: string
   /**
    * Store-wide default storefront posture: `public`, `prices_hidden`, or
    * `login_required`. Channels fall back to this when they don't set their own.
    */
-  preferred_storefront_access?: string
+  storefront_access?: string
   /** The storefront's public URL — base for customer-email links; saving it also completes the storefront setup task. */
-  preferred_storefront_url?: string | null
+  storefront_url?: string | null
   /** Store-wide default for guest checkout. Channels fall back to this. */
-  preferred_guest_checkout?: boolean
+  guest_checkout?: boolean
   /** Always advertise a confirmation step in checkout, even when no payment method requires one. */
-  preferred_always_include_confirm_step?: boolean
+  always_include_confirm_step?: boolean
   /** Shows a company field on address forms. */
-  preferred_company_field_enabled?: boolean
+  company_field_enabled?: boolean
   /** Makes a phone number mandatory on customer addresses. */
-  preferred_address_requires_phone?: boolean
+  address_requires_phone?: boolean
   /** Store-wide default for when a customer is charged rather than only authorized. A payment method's own setting wins when set. */
-  preferred_capture_method?: 'checkout' | 'on_dispatch' | 'manual'
-  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
-  preferred_auto_capture?: boolean
-  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
-  preferred_auto_capture_on_dispatch?: boolean
+  capture_method?: 'checkout' | 'on_dispatch' | 'manual'
   /** Calculates tax from the shipping address. When false, calculates tax from the billing address. */
-  preferred_tax_using_ship_address?: boolean
+  tax_using_ship_address?: boolean
   /** Counts on-hand quantities. Off means everything is treated as always available. */
-  preferred_track_inventory_levels?: boolean
+  track_inventory_levels?: boolean
   /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */
-  preferred_stock_reservations_enabled?: boolean
+  stock_reservations_enabled?: boolean
   /** On-hand units at or below which a tracked variant counts as low stock on the home screen; 0 turns the warning off. */
-  preferred_low_stock_threshold?: number
+  low_stock_threshold?: number
   /** Records price changes for the EU Omnibus lowest-price-in-30-days display. */
-  preferred_track_price_history?: boolean
+  track_price_history?: boolean
   /** Whether products with no price in the shopper's currency still appear in listings. */
-  preferred_show_products_without_price?: boolean
+  show_products_without_price?: boolean
   /** Lets more than one variant share the same SKU. */
-  preferred_disable_sku_validation?: boolean
+  disable_sku_validation?: boolean
   /** How document numbers are produced: `sequential` or `random`. Applies to every numbered document. */
-  preferred_document_number_format?: string
+  document_number_format?: string
   /** Leads every order number, e.g. `R`. Uppercase letters, digits, dashes and # only. */
-  preferred_order_number_prefix?: string
+  order_number_prefix?: string
   /** Ends every order number. Uppercase letters, digits, dashes and # only. */
-  preferred_order_number_suffix?: string
+  order_number_suffix?: string
   /** First sequential order number. Only applies before the store's first order. */
-  preferred_order_number_sequence_start?: number
+  order_number_sequence_start?: number
   /** When false, buyers can download their files as often as they like. */
-  preferred_limit_digital_download_count?: boolean
+  limit_digital_download_count?: boolean
   /** Downloads allowed per purchased file, unless the file overrides it. */
-  preferred_digital_asset_authorized_clicks?: number
+  digital_asset_authorized_clicks?: number
   /** When false, download links never expire. */
-  preferred_limit_digital_download_days?: boolean
+  limit_digital_download_days?: boolean
   /** Days a download link stays valid, unless the file overrides it. */
-  preferred_digital_asset_authorized_days?: number
+  digital_asset_authorized_days?: number
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */
@@ -104,41 +100,44 @@ export interface StoreUpdateParams {
   /** Recipient of "new order placed" admin notifications. */
   new_order_notifications_email?: string | null
   /** When false, transactional consumer emails (order confirmation, etc.) are suppressed. */
-  preferred_send_consumer_transactional_emails?: boolean
+  send_consumer_transactional_emails?: boolean
   /** Customer email buttons and links, as `#RRGGBB`. Blank keeps the outlined buttons emails ship with. */
-  preferred_email_accent_color?: string | null
+  email_accent_color?: string | null
   /** Customer email page background, as `#RRGGBB`. */
-  preferred_email_background_color?: string | null
+  email_background_color?: string | null
   /** Customer email card behind the content, as `#RRGGBB`. */
-  preferred_email_card_color?: string | null
+  email_card_color?: string | null
   /** Customer email body text, as `#RRGGBB`. */
-  preferred_email_text_color?: string | null
+  email_text_color?: string | null
   /** Customer email headings and emphasized text, as `#RRGGBB`. */
-  preferred_email_heading_color?: string | null
+  email_heading_color?: string | null
   /** Customer email font: `inter`, `system`, `helvetica`, `georgia`, `roboto`, `lato` or `merriweather`. */
-  preferred_email_font?: string | null
-  /** Active Storage signed_id from a direct upload — the logo embedded in transactional emails. */
-  mailer_logo?: string | null
+  email_font?: string | null
+  /** A `signed_id` from `files.upload()` for the store logo, or `null` to remove it. */
+  logo_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the logo embedded in transactional emails, or `null` to remove it. */
+  mailer_logo_signed_id?: string | null
   /** Where prices come from: a registered provider key, or `internal`. */
-  preferred_pricing_provider?: string
+  pricing_provider?: string
   /** Where stock levels come from: a registered provider key, or `internal`. */
-  preferred_inventory_provider?: string
+  inventory_provider?: string
   /** `strict` refuses to price when the provider cannot answer; `fallback` uses the catalog. */
-  preferred_pricing_provider_failure_policy?: 'strict' | 'fallback'
+  pricing_provider_failure_policy?: 'strict' | 'fallback'
   /** `fallback` sells on the local snapshot when the provider cannot answer; `strict` refuses. */
-  preferred_inventory_provider_failure_policy?: 'strict' | 'fallback'
+  inventory_provider_failure_policy?: 'strict' | 'fallback'
   /** Blank means the built-in provider: the marketplace settles by hand. */
-  preferred_payout_provider?: string
-  preferred_default_payouts_schedule_interval?: string
-  preferred_default_minimum_payout_amount?: number
+  payout_provider?: string
+  default_payouts_schedule_interval?: string
+  /** A decimal string in the store's currency, e.g. `"50.00"`. */
+  default_minimum_payout_amount?: string
   /** Admits a seller as soon as they finish onboarding, with no operator review. */
-  preferred_auto_approve_sellers?: boolean
+  auto_approve_sellers?: boolean
   /** Puts a seller's product on sale the moment they submit it, with no review. */
-  preferred_auto_approve_seller_products?: boolean
+  auto_approve_seller_products?: boolean
   /** When false, transactional seller emails (approval, payouts, etc.) are suppressed. */
-  preferred_send_seller_transactional_emails?: boolean
-  /** Tax charged on commission as a fraction (0.23 is 23%), when neither the rate nor the tax provider names one. */
-  preferred_default_commission_tax_rate?: number
+  send_seller_transactional_emails?: boolean
+  /** Tax charged on commission as a fraction (`"0.23"` is 23%), when neither the rate nor the tax provider names one. */
+  default_commission_tax_rate?: string
 }
 
 export interface OptionValueParams {
@@ -149,8 +148,8 @@ export interface OptionValueParams {
   position?: number
   /** Hex color (e.g. `#FF0000`). Only meaningful when the parent option type's `kind` is `color_swatch`. */
   color_code?: string | null
-  /** Active Storage signed_id from a direct upload. */
-  image?: string | null
+  /** A `signed_id` from `files.upload()`, or `null` to remove the image. */
+  image_signed_id?: string | null
 }
 
 export interface OptionTypeCreateParams {
@@ -201,20 +200,17 @@ export interface LineItemUpdateParams {
 export interface PaymentCreateParams {
   payment_method_id: string
   /**
-   * Decimal amount. Accept `string` so callers can ship the merchant's
-   * raw input verbatim — `Spree::LocalizedNumber.parse` handles
-   * locale-aware decoding (comma decimals, grouped digits, etc.) on the
-   * backend; `Number()`-coercing on the frontend would mangle inputs
-   * like `"1.234,56"` into `NaN`.
+   * Decimal amount as a canonical string (`"1234.56"`: period decimal, no
+   * grouping). The API does not parse localized input; normalize it first.
    */
-  amount?: string | number
+  amount?: string
   source_id?: string
 }
 
 export interface RefundCreateParams {
   payment_id: string
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  amount: string | number
+  amount: string
   /** Refund reason ID (`rr_…`). Omitted → the store's first refund reason. */
   refund_reason_id?: string
 }
@@ -249,7 +245,7 @@ export interface FulfillmentCreateParams {
    * `status: 'shipped'`; pending fulfillments are re-priced by the rate
    * engine.
    */
-  cost?: string | number
+  cost?: string
   /** Pass 'shipped' to register an already-shipped external fulfillment */
   status?: 'shipped'
   /** Line item quantities to fulfill; omit to fulfill every not-yet-shipped unit */
@@ -314,7 +310,7 @@ interface ShippingLabelDetails {
   /** Carrier service the label was bought at. */
   service?: string
   /** What the merchant paid the carrier. Admin-only accounting data; it never touches the order's shipping charge. */
-  cost?: string | number
+  cost?: string
   /** Currency of the cost. */
   currency?: string
   /** `pdf`, `png` or `zpl`; taken from the file when omitted. */
@@ -329,15 +325,15 @@ interface ShippingLabelDetails {
  * refuses it.
  */
 export interface ShippingLabelUploadParams extends ShippingLabelDetails {
-  /** Signed blob id from `directUploads.create()`. Its presence records an uploaded label instead of buying one. */
-  file: string
+  /** A `signed_id` from `files.upload()`. Its presence records an uploaded label instead of buying one. */
+  file_signed_id: string
   /** The number printed on an uploaded label. */
   tracking_number: string
 }
 
 /** Buying through the carrier. The carrier supplies the file and the number. */
 export interface ShippingLabelPurchaseParams extends ShippingLabelDetails {
-  file?: never
+  file_signed_id?: never
   tracking_number?: never
 }
 
@@ -467,7 +463,7 @@ export interface ClaimCreateParams {
     description?: string
     send_replacement?: boolean
     replacement_variant_id?: string
-    refund_amount?: string | number
+    refund_amount?: string
   }>
   reason_id?: string
   memo?: string
@@ -484,7 +480,7 @@ export interface ClaimResolveParams {
   resolution: 'refund' | 'replacement' | 'refund_and_replacement'
   refund_method?: 'original_payment' | 'store_credit'
   /** Decimal amount; defaults to the claim total */
-  amount?: string | number
+  amount?: string
   /**
    * Which claim lines to send a replacement for. Omit to keep whatever the
    * claim was opened with — the merchant usually decides what to send when
@@ -498,7 +494,7 @@ export interface ReturnRefundParams {
    * Decimal amount; see `PaymentCreateParams.amount` for the string
    * rationale. Defaults to the value of what was actually received.
    */
-  amount?: string | number
+  amount?: string
   /**
    * `store_credit` issues credit immediately; `original_payment` refunds
    * through the gateway that took the money.
@@ -547,10 +543,10 @@ export interface OrderCreateParams {
    */
   po_number?: string
   /**
-   * ActiveStorage signed blob id of the buyer's purchase order, from
-   * `POST /api/v3/admin/direct_uploads` with `private: true`.
+   * The `signed_id` of the buyer's purchase order, from `files.upload()` with
+   * `visibility: 'private'`.
    */
-  po_document?: string
+  po_document_signed_id?: string
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   metadata?: Record<string, unknown>
@@ -580,10 +576,10 @@ export interface OrderUpdateParams {
    */
   po_number?: string
   /**
-   * See {@link OrderCreateParams.po_document}. Null removes the document the
-   * order currently carries.
+   * See {@link OrderCreateParams.po_document_signed_id}. Null removes the
+   * document the order currently carries.
    */
-  po_document?: string | null
+  po_document_signed_id?: string | null
   /**
    * Company ID. See {@link OrderCreateParams.company_id}. Null makes the draft
    * a plain customer order again.
@@ -638,7 +634,7 @@ export interface OrderCancelParams {
    * ordinary order, where the gateway returns the payment in full.
    * Decimal amount; see `PaymentCreateParams.amount` for the string rationale.
    */
-  refund_amount?: string | number
+  refund_amount?: string
   notify_customer?: boolean
 }
 
@@ -652,7 +648,7 @@ export interface GiftCardApplyParams {
  * `customer_id` (customer prefixed ID) attaches the card to a specific customer.
  */
 export interface GiftCardCreateParams {
-  amount: string | number
+  amount: string
   currency?: string
   code?: string
   expires_at?: string | null
@@ -660,7 +656,7 @@ export interface GiftCardCreateParams {
 }
 
 export interface GiftCardUpdateParams {
-  amount?: string | number
+  amount?: string
   expires_at?: string | null
   customer_id?: string | null
 }
@@ -673,7 +669,7 @@ export interface GiftCardUpdateParams {
  */
 export interface GiftCardBatchCreateParams {
   prefix: string
-  amount: string | number
+  amount: string
   codes_count: number
   currency?: string
   expires_at?: string | null
@@ -681,7 +677,7 @@ export interface GiftCardBatchCreateParams {
 
 export interface StoreCreditApplyParams {
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  amount?: string | number
+  amount?: string
 }
 
 export interface CustomerCreateParams {
@@ -735,30 +731,15 @@ export interface CustomerAddressParams {
 
 export interface CustomerStoreCreditCreateParams {
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  amount: string | number
+  amount: string
   currency: string
   memo?: string
 }
 
 export interface CustomerStoreCreditUpdateParams {
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  amount?: string | number
+  amount?: string
   memo?: string
-}
-
-export interface DirectUploadCreateParams {
-  blob: {
-    filename: string
-    byte_size: number
-    checksum: string
-    content_type: string
-  }
-  /**
-   * Upload to private storage rather than the public bucket. Needed for files
-   * only ever served through a signed link (digital assets) — attaching a blob
-   * never moves it between services, so this is decided at upload time.
-   */
-  private?: boolean
 }
 
 export type MediaType = 'image' | 'video' | 'external_video'
@@ -855,7 +836,7 @@ export interface DigitalAssetProvider {
 }
 
 export interface DigitalAssetCreateParams {
-  /** Signed blob id from a `private: true` direct upload. Required for a file
+  /** A `signed_id` from `files.upload()` with `visibility: 'private'`. Required for a file
    *  asset (the default source); omitted for a provider-backed asset. */
   signed_id?: string
   /** Provider shorthand from the `providers` endpoint. Omit for an uploaded file (the default source). */
@@ -978,7 +959,7 @@ export interface ProductUpdateParams {
 export interface ProductVariantInput {
   id?: string
   sku?: string
-  cost_price?: string | number
+  cost_price?: string
   cost_currency?: string
   weight?: number
   height?: number
@@ -1030,10 +1011,10 @@ export interface CategoryCreateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  /** ActiveStorage signed_id of a directly-uploaded landscape image. */
-  image?: string
-  /** ActiveStorage signed_id of a directly-uploaded square image. */
-  square_image?: string
+  /** A `signed_id` from `files.upload()` for the landscape image. */
+  image_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the square image. */
+  square_image_signed_id?: string | null
 }
 
 export interface CategoryUpdateParams {
@@ -1047,10 +1028,10 @@ export interface CategoryUpdateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  /** ActiveStorage signed_id of a directly-uploaded landscape image, or null to remove it. */
-  image?: string | null
-  /** ActiveStorage signed_id of a directly-uploaded square image, or null to remove it. */
-  square_image?: string | null
+  /** A `signed_id` from `files.upload()` for the landscape image, or null to remove it. */
+  image_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the square image, or null to remove it. */
+  square_image_signed_id?: string | null
 }
 
 export interface CategoryRepositionParams {
@@ -1112,10 +1093,10 @@ export interface CollectionCreateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  /** ActiveStorage signed_id of a directly-uploaded landscape image. */
-  image?: string
-  /** ActiveStorage signed_id of a directly-uploaded square image. */
-  square_image?: string
+  /** A `signed_id` from `files.upload()` for the landscape image. */
+  image_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the square image. */
+  square_image_signed_id?: string | null
   /** Default product sort for the storefront listing. Defaults to `manual`. */
   sort_order?: CollectionSortOrder
   /** When true, membership is materialized from `rules` instead of curated by hand. */
@@ -1141,10 +1122,10 @@ export interface CollectionUpdateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  /** ActiveStorage signed_id of a directly-uploaded landscape image, or null to remove it. */
-  image?: string | null
-  /** ActiveStorage signed_id of a directly-uploaded square image, or null to remove it. */
-  square_image?: string | null
+  /** A `signed_id` from `files.upload()` for the landscape image, or null to remove it. */
+  image_signed_id?: string | null
+  /** A `signed_id` from `files.upload()` for the square image, or null to remove it. */
+  square_image_signed_id?: string | null
   sort_order?: CollectionSortOrder
   automatic?: boolean
   rules_match_policy?: 'all' | 'any'
@@ -1164,14 +1145,11 @@ export interface VariantOptionPair {
 export interface VariantPrice {
   currency: string
   /**
-   * Decimal amount. Accept `string` so callers ship the merchant's raw
-   * input verbatim — `Spree::LocalizedNumber.parse` on the backend
-   * handles locale-aware decoding (comma decimals, grouped digits, etc.);
-   * `Number()`-coercing in the frontend mangles inputs like `"1.234,56"`
-   * into `NaN`.
+   * Decimal amount as a canonical string (`"1234.56"`: period decimal, no
+   * grouping). The API does not parse localized input; normalize it first.
    */
-  amount: string | number
-  compare_at_amount?: string | number | null
+  amount: string
+  compare_at_amount?: string | null
 }
 
 /** Stock for one variant at one location. */
@@ -1193,7 +1171,7 @@ export interface VariantCreateParams {
   external_references?: ExternalReferencesParams
   sku?: string
   /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
-  cost_price?: string | number
+  cost_price?: string
   cost_currency?: string
   weight?: number
   height?: number
@@ -1234,7 +1212,7 @@ export interface VariantUpdateParams {
   external_references?: ExternalReferencesParams
   sku?: string
   /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
-  cost_price?: string | number
+  cost_price?: string
   cost_currency?: string
   weight?: number
   height?: number
@@ -1444,10 +1422,10 @@ export interface MeUpdateParams {
   first_name?: string
   last_name?: string
   /**
-   * ActiveStorage direct-upload signed id to set the avatar, or `null` to
+   * A `signed_id` from `files.upload()` to set the avatar, or `null` to
    * remove it. Omit to leave the current photo unchanged.
    */
-  avatar?: string | null
+  avatar_signed_id?: string | null
 }
 
 export interface StockLocationCreateParams {
@@ -1859,17 +1837,17 @@ export interface ChannelCreateParams {
    * Order routing strategy shorthand (built-in: `rules`), or `null` to
    * inherit the store-level preference.
    */
-  preferred_order_routing_strategy?: string | null
+  order_routing_strategy?: string | null
   /**
    * Storefront access posture: `public`, `prices_hidden`, or `login_required`.
    * `null` (or an empty string) inherits the store-level preference.
    */
-  preferred_storefront_access?: string | null
+  storefront_access?: string | null
   /**
    * Whether guest checkout is allowed on this channel. `null` inherits the
    * store-level preference.
    */
-  preferred_guest_checkout?: boolean | null
+  guest_checkout?: boolean | null
   /**
    * Catalog (cat_...) shown to shoppers not covered by a company or customer
    * group catalog. `null` means every product published on the channel.
@@ -1884,17 +1862,17 @@ export interface ChannelUpdateParams {
   code?: string
   active?: boolean
   default?: boolean
-  preferred_order_routing_strategy?: string | null
+  order_routing_strategy?: string | null
   /**
    * Storefront access posture: `public`, `prices_hidden`, or `login_required`.
    * `null` (or an empty string) inherits the store-level preference.
    */
-  preferred_storefront_access?: string | null
+  storefront_access?: string | null
   /**
    * Whether guest checkout is allowed on this channel. `null` inherits the
    * store-level preference.
    */
-  preferred_guest_checkout?: boolean | null
+  guest_checkout?: boolean | null
   /**
    * Catalog (cat_...) shown to shoppers not covered by a company or customer
    * group catalog. `null` means every product published on the channel.
@@ -1924,15 +1902,15 @@ export interface SellerCreateParams {
   /** Sanitized HTML — the seller's public description. */
   about?: string | null
   /**
-   * Branding attachments. Pass an ActiveStorage signed id to set one, `null`
-   * to remove it, or omit the key to leave it untouched.
+   * Branding images. Pass a `signed_id` from `files.upload()` to set one,
+   * `null` to remove it, or omit the key to leave it untouched.
    */
-  logo?: string | null
-  square_logo?: string | null
-  cover_photo?: string | null
+  logo_signed_id?: string | null
+  square_logo_signed_id?: string | null
+  cover_photo_signed_id?: string | null
   tax_remittance?: 'seller' | 'platform'
   payouts_schedule_interval?: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'manual' | null
-  minimum_payout_amount?: string | number | null
+  minimum_payout_amount?: string | null
   /** Set while the seller is away: the catalog stays but stops selling. */
   holiday_mode_until?: string | null
   /**
@@ -2045,7 +2023,8 @@ export interface SellerRequirementType {
   accepted_content_types: string[]
   /** Association-backed config this kind takes beyond its preferences. */
   association_fields: string[]
-  preference_schema: Array<Record<string, unknown>>
+  /** JSON Schema of the kind's `preferences`. */
+  schema: PreferenceSchema
 }
 
 /** Excusing one seller from one requirement. */
@@ -2109,14 +2088,14 @@ export interface CommissionRateCreateParams {
   /** `percentage` charges a share of the sale; `fixed` charges a flat fee. */
   kind: 'percentage' | 'fixed'
   /** A percentage (e.g. `10` for 10%) or a flat amount, per `kind`. */
-  value: number
+  value: string
   /**
    * What a flat fee charges, keyed by currency: `{ USD: '5.00', GBP: '4.00' }`.
    * A rate is skipped for a currency it states no amount in, so that sale
    * falls through to the next matching rate rather than being charged a
    * converted figure nobody set. Replaces the whole set on write.
    */
-  amounts?: Record<string, string | number>
+  amounts?: Record<string, string>
   /**
    * Charge on the item's gross price rather than its net one. Off by default:
    * in the EU the fee is a separate supply from the sale, so it is charged on
@@ -2135,38 +2114,18 @@ export interface CommissionRateCreateParams {
    * than against a converted figure nobody set. Replaces the whole set on
    * write, and never disturbs `amounts`.
    */
-  bounds?: Record<string, { min_amount?: number | null; max_amount?: number | null }>
+  bounds?: Record<string, { min_amount?: string | null; max_amount?: string | null }>
   /**
    * VAT on the commission itself, as a fraction (e.g. `0.21`). Leave null to
    * let the store's tax engine answer for the seller's own jurisdiction.
    */
-  commission_tax_rate?: number | null
+  commission_tax_rate?: string | null
   /** The rate's full targeting; the server replaces what it holds with this. */
   rules?: CommissionRuleDraft[]
   metadata?: Record<string, unknown>
 }
 
 export type CommissionRateUpdateParams = Partial<CommissionRateCreateParams>
-
-/**
- * One entry in `preference_schema`, describing a single tunable knob on
- * a STI subclass (payment provider, promotion action, promotion rule).
- *
- * The `type` mirrors Spree's preference type system — `string`, `text`,
- * `integer`, `decimal`, `boolean`, `array`, `password` — so admin UIs
- * can switch on it to render the right input widget.
- */
-export interface PreferenceField {
-  key: string
-  type: string
-  default: unknown
-  /**
-   * The fixed set this value must come from, when the preference declares
-   * one. Present only for constrained preferences; an admin form renders a
-   * picker for these rather than a free-text box.
-   */
-  choices?: string[]
-}
 
 /**
  * Mask token the server applies to `:password`-typed preferences before
@@ -2190,12 +2149,12 @@ export function isMaskedSecret(value: unknown): value is string {
 
 /**
  * The shape returned by `/<resource>/types` endpoints — one entry per
- * registered subclass with its preference schema. Used to build "Add
+ * registered subclass with the JSON Schema of its preferences. Used to build "Add
  * provider / action / rule" pickers and render generic preferences forms.
  */
 /**
  * One rule kind a commission rate can be narrowed by, as the marketplace
- * reports it. `preference_schema` describes the configuration the kind takes,
+ * reports it. `schema` describes the configuration the kind takes,
  * and `association_fields` names any catalog-scale reference it keeps outside
  * that — so a client can render the right editor without knowing the kind.
  */
@@ -2203,7 +2162,8 @@ export interface CommissionRuleType {
   type: string
   name: string
   description: string | null
-  preference_schema: PreferenceField[]
+  /** JSON Schema of the type's `preferences`. */
+  schema: PreferenceSchema
   association_fields: string[]
 }
 
@@ -2211,7 +2171,8 @@ export interface ResourceTypeDefinition {
   type: string
   label: string
   description: string | null
-  preference_schema: PreferenceField[]
+  /** JSON Schema of the type's `preferences`. */
+  schema: PreferenceSchema
   /**
    * Present (true) only on kinds a better mechanism has replaced: existing
    * records keep working and rendering, but pickers must stop offering the
@@ -2311,8 +2272,8 @@ export interface PriceListPriceOverrideParams {
   currency: string
   /** The rung of the variant's ladder. Omit for the bottom rung. */
   min_quantity?: number
-  amount?: string | number | null
-  compare_at_amount?: string | number | null
+  amount?: string | null
+  compare_at_amount?: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -2332,8 +2293,8 @@ export interface PriceCreateParams {
    * ladder's bottom rung. Anything above 1 requires a `price_list_id`.
    */
   min_quantity?: number
-  amount: string | number | null
-  compare_at_amount?: string | number | null
+  amount: string | null
+  compare_at_amount?: string | null
   /** Omit / null for a base price; prefixed `pl_…` for a list override. */
   price_list_id?: string | null
 }
@@ -2343,8 +2304,8 @@ export interface PriceUpdateParams {
    *  `(variant_id, currency, price_list_id, min_quantity)` index — not
    *  supported. Move a rung by deleting it and creating the new one. */
   // variant_id, currency, price_list_id, min_quantity intentionally omitted.
-  amount?: string | number | null
-  compare_at_amount?: string | number | null
+  amount?: string | null
+  compare_at_amount?: string | null
 }
 
 /**
@@ -2376,8 +2337,8 @@ export interface PriceBulkUpsertRow {
    * ten rungs on one list per currency.
    */
   min_quantity?: number
-  amount?: string | number | null
-  compare_at_amount?: string | number | null
+  amount?: string | null
+  compare_at_amount?: string | null
 }
 
 export interface PaymentMethodCreateParams {
@@ -2429,6 +2390,8 @@ export interface PaymentMethodType extends ResourceTypeDefinition {
   docs_url: string | null
   /** Backed by an external payment provider rather than handled by the store itself. */
   third_party: boolean
+  /** The store already has a payment method of this type; leave it out of a create picker. */
+  installed: boolean
 }
 
 /**
@@ -2452,7 +2415,8 @@ export interface IntegrationTypeDefinition {
   logo_url: string | null
   /** Absolute URL of the integration's setup guide. */
   docs_url: string | null
-  preference_schema: { key: string; type: string; default: unknown }[]
+  /** JSON Schema of the type's `preferences`. */
+  schema: PreferenceSchema
 }
 
 export interface IntegrationCreateParams {
@@ -2527,13 +2491,10 @@ export type ImportType =
 export interface ImportCreateParams {
   /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
   type: ImportType
-  /**
-   * ActiveStorage signed blob id of the uploaded CSV, obtained from
-   * `client.directUploads.create()` (or the `useDirectUpload` hook).
-   */
-  attachment: string
+  /** The `signed_id` of the uploaded CSV, from `files.upload()` with `visibility: 'private'`. */
+  attachment_signed_id: string
   /** CSV column separator. Defaults to a comma on the server. */
-  preferred_delimiter?: ',' | ';' | '|' | '\t'
+  delimiter?: ',' | ';' | '|' | '\t'
   /**
    * For `price_list_prices` imports: the price list the rows are merged
    * into. Must belong to the current store (404 otherwise); ignored by
@@ -2698,7 +2659,8 @@ export interface PromotionActionLineItemParams {
 export interface PromotionActionCalculator {
   type: string
   label: string
-  preference_schema: PreferenceField[]
+  /** JSON Schema of the type's `preferences`. */
+  schema: PreferenceSchema
 }
 
 export interface PromotionActionCreateParams {
@@ -2809,18 +2771,21 @@ export interface DeliveryMethodParams {
   estimated_transit_business_days_max?: number | null
   /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
   tax_category_id?: string | null
-  /** Wire shorthand for the calculator, e.g. `'flat_rate'` (see `deliveryMethods.calculators()`). */
-  calculator_type?: string
-  calculator_preferences?: Record<string, unknown>
+  /**
+   * How the method prices a shipment: the calculator's wire shorthand, e.g.
+   * `'flat_rate'` (see `deliveryMethods.calculators()`), and its preferences,
+   * which must match the `schema` that list carries.
+   */
+  calculator?: { type?: string; preferences?: Record<string, unknown> }
   /** Prefixed delivery zone ID (`dz_...`) narrowing destinations, or null for no restriction. Must belong to the method's profile. */
   delivery_zone_id?: string | null
   /**
    * Method-level percentage handling fee added on top of provider-quoted
    * rates. Ignored for calculator-priced methods.
    */
-  markup_percent?: number | string | null
+  markup_percent?: string | null
   /** Method-level flat handling fee added on top of provider-quoted rates. */
-  markup_flat?: number | string | null
+  markup_flat?: string | null
   /**
    * Carrier service rows: which provider services this method offers, each
    * with an optional display label and markup override. Replaces the full
@@ -2841,9 +2806,9 @@ export interface DeliveryMethodServiceParams {
   /** Display label shown to customers instead of the carrier-derived name. */
   label?: string | null
   /** Overrides the method-level flat markup for this service. */
-  markup_flat?: number | string | null
+  markup_flat?: string | null
   /** Overrides the method-level percentage markup for this service. */
-  markup_percent?: number | string | null
+  markup_percent?: string | null
   position?: number
 }
 
@@ -3039,7 +3004,7 @@ export interface CatalogQuantityRuleParams {
 export interface CatalogOrderMinimumParams {
   /** ISO 4217 code. Required on create; unique per catalog. */
   currency?: string
-  amount?: string | number
+  amount?: string
 }
 
 /**
@@ -3085,14 +3050,17 @@ export interface TaxExemptionCertificateParams {
   issued_at?: string | null
   expires_at?: string | null
   issuing_authority?: string | null
-  /** ActiveStorage signed blob id from `directUploads.create()`. */
-  document?: string
+  /** A `signed_id` from `files.upload()` with `visibility: 'private'`. */
+  document_signed_id?: string
   metadata?: Record<string, unknown>
 }
 
 export interface TaxRateParams {
   name?: string
-  amount?: number | string
+  /** The rate as a fraction in a decimal string, e.g. `"0.23"`. Send this or `rate_percent`. */
+  rate?: string
+  /** The rate as a percentage in a decimal string, e.g. `"23"`. */
+  rate_percent?: string
   /** Where the rate applies. A rate naming no country taxes everywhere. */
   country_code?: string | null
   state_code?: string | null
@@ -3117,8 +3085,8 @@ export type SavedReportUpdateParams = Partial<SavedReportCreateParams>
 
 /**
  * The outstanding balance for one currency, summed over the filter the list
- * request used. Amounts are canonical decimal strings; the `display_*` twins
- * are pre-formatted in that currency.
+ * request used. Amounts are decimal strings written with the currency's
+ * decimals; format them for display on the client.
  */
 export interface StoreCreditCurrencyTotal {
   currency: string
@@ -3130,10 +3098,6 @@ export interface StoreCreditCurrencyTotal {
   amount_authorized: string
   /** What the store still owes: issued minus used minus authorized. */
   amount_remaining: string
-  display_amount: string
-  display_amount_used: string
-  display_amount_authorized: string
-  display_amount_remaining: string
 }
 
 export interface StoreCreditListMeta extends PaginationMeta {
@@ -3178,7 +3142,7 @@ export interface EmailTemplatePreviewParams extends EmailTemplateLanguageParams 
   record_id?: string
   /** For the layout or a partial, the email to show it in. */
   email_key?: string
-  /** Unsaved colors and font to preview, named like the store's `preferred_email_*` settings without the prefix. */
+  /** Unsaved colors and font to preview, named like the store's `email_*` settings. */
   branding?: {
     accent_color?: string | null
     background_color?: string | null

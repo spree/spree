@@ -11,12 +11,16 @@ module Spree
 
     include Spree::VatPriceCalculation
     include Spree::StorePreferences
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount, :compare_at_amount, places: Spree::Money::Rounding::UNIT_PRICE_DECIMALS
 
     publishes_lifecycle_events
 
     acts_as_paranoid
 
-    MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
+    # The largest amount decimal(19,4) holds.
+    MAXIMUM_AMOUNT = BigDecimal('999_999_999_999_999.9999')
 
     # How many breaks one variant may carry on one list in one currency. A UI
     # sanity bound rather than a technical one — but enforced here so no
@@ -102,10 +106,6 @@ module Spree
       Spree::Money.new(amount || 0, currency: currency.upcase)
     end
 
-    def amount=(amount)
-      self[:amount] = amount.blank? ? nil : Spree::LocalizedNumber.parse(amount)
-    end
-
     # Returns the amount in cents
     # @return [Integer]
     def amount_in_cents
@@ -114,12 +114,6 @@ module Spree
 
     def compare_at_money
       Spree::Money.new(compare_at_amount || 0, currency: currency)
-    end
-
-    def compare_at_amount=(value)
-      calculated_value = Spree::LocalizedNumber.parse(value) if value.present?
-
-      self[:compare_at_amount] = calculated_value
     end
 
     # Returns the compare at amount for display
@@ -139,9 +133,7 @@ module Spree
     end
 
     alias_attribute :price, :amount
-    alias_method :price=, :amount=
     alias_attribute :compare_at_price, :compare_at_amount
-    alias_method :compare_at_price=, :compare_at_amount=
 
     # Whether this figure is the merchant's answer for the buyer's geography
     # already. A price list narrowed by market or country states its prices for

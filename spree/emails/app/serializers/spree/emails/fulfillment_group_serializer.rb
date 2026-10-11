@@ -7,6 +7,13 @@ module Spree
 
       attributes :name
 
+      # A freight parcel awaiting its forwarder's quote has no cost yet.
+      attribute :unpriced, &:unpriced?
+
+      attribute :cost do |group|
+        Spree::Money::Rounding.format(group.cost, group.currency)
+      end
+
       attribute :display_cost do |group|
         group.display_cost.to_s
       end

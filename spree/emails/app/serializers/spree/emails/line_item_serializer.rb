@@ -5,12 +5,16 @@ module Spree
 
       many :option_values, resource: Spree::Emails::OptionValueSerializer
 
-      typelize sku: [:string, nullable: true], display_amount: :string,
+      typelize sku: [:string, nullable: true], amount: :string, display_amount: :string,
                url: [:string, nullable: true], image_url: [:string, nullable: true]
 
       attributes :sku
 
       # Price times quantity, before discounts — what the line cost.
+      attribute :amount do |line_item|
+        Spree::Money::Rounding.format(line_item.amount, line_item.currency)
+      end
+
       attribute :display_amount do |line_item|
         line_item.display_amount.to_s
       end

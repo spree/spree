@@ -36,6 +36,9 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasListPosition
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :value, places: 5
     include Spree::TypedAssociations
 
     KINDS = %w[percentage fixed].freeze
@@ -103,6 +106,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[name code kind enabled position value
                                                  tax_inclusive include_shipping]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[commission_rules]
 
     # @return [Boolean]
@@ -244,7 +248,7 @@ module Spree
     # shape a price list's rules use.
     #
     # Ids inside a rule's preferences are scope-checked against this rate's own
-    # store as they are written (see normalize_id_preference), so a rule can
+    # store as they are written (see `of: :id, scope:`), so a rule can
     # never be pointed at another marketplace's records.
     #
     # @param rows [Array<Hash>, nil]

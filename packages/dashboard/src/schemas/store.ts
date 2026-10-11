@@ -41,52 +41,52 @@ export const INTERNAL_PROVIDER_KEY = 'internal'
 
 export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
-  preferred_admin_locale: z.string().nullable().optional(),
-  preferred_timezone: z.string().min(1, { error: requiredMessage('store.preferred_timezone') }),
-  preferred_unit_system: z.enum(['metric', 'imperial']),
-  preferred_weight_unit: z.enum(ALL_WEIGHT_UNITS),
-  preferred_storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
-  preferred_guest_checkout: z.boolean(),
-  preferred_always_include_confirm_step: z.boolean(),
-  preferred_company_field_enabled: z.boolean(),
-  preferred_address_requires_phone: z.boolean(),
-  preferred_capture_method: z.enum(CAPTURE_METHODS),
-  preferred_pricing_provider: z.string(),
-  preferred_inventory_provider: z.string(),
-  preferred_pricing_provider_failure_policy: z.enum(PROVIDER_FAILURE_POLICIES),
-  preferred_inventory_provider_failure_policy: z.enum(PROVIDER_FAILURE_POLICIES),
-  preferred_tax_using_ship_address: z.boolean(),
-  preferred_track_inventory_levels: z.boolean(),
-  preferred_stock_reservations_enabled: z.boolean(),
-  preferred_low_stock_threshold: z.coerce
+  admin_locale: z.string().nullable().optional(),
+  timezone: z.string().min(1, { error: requiredMessage('store.timezone') }),
+  unit_system: z.enum(['metric', 'imperial']),
+  weight_unit: z.enum(ALL_WEIGHT_UNITS),
+  storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
+  guest_checkout: z.boolean(),
+  always_include_confirm_step: z.boolean(),
+  company_field_enabled: z.boolean(),
+  address_requires_phone: z.boolean(),
+  capture_method: z.enum(CAPTURE_METHODS),
+  pricing_provider: z.string(),
+  inventory_provider: z.string(),
+  pricing_provider_failure_policy: z.enum(PROVIDER_FAILURE_POLICIES),
+  inventory_provider_failure_policy: z.enum(PROVIDER_FAILURE_POLICIES),
+  tax_using_ship_address: z.boolean(),
+  track_inventory_levels: z.boolean(),
+  stock_reservations_enabled: z.boolean(),
+  low_stock_threshold: z.coerce
     .number()
     .int()
-    .min(0, { error: requiredMessage('store.preferred_low_stock_threshold') }),
-  preferred_track_price_history: z.boolean(),
-  preferred_show_products_without_price: z.boolean(),
-  preferred_disable_sku_validation: z.boolean(),
-  preferred_document_number_format: z.enum(DOCUMENT_NUMBER_FORMATS),
-  preferred_order_number_prefix: z
+    .min(0, { error: requiredMessage('store.low_stock_threshold') }),
+  track_price_history: z.boolean(),
+  show_products_without_price: z.boolean(),
+  disable_sku_validation: z.boolean(),
+  document_number_format: z.enum(DOCUMENT_NUMBER_FORMATS),
+  order_number_prefix: z
     .string()
     .max(10)
     .regex(NUMBER_AFFIX_PATTERN, { error: 'admin.fields.store.order_number_prefix.invalid' }),
-  preferred_order_number_suffix: z
+  order_number_suffix: z
     .string()
     .max(10)
     .regex(NUMBER_AFFIX_PATTERN, { error: 'admin.fields.store.order_number_suffix.invalid' }),
-  preferred_order_number_sequence_start: z.coerce.number().int().min(1),
+  order_number_sequence_start: z.coerce.number().int().min(1),
   // Store-wide download allowances. Individual files can override the numbers;
   // switching a limit off here removes it for the whole store.
-  preferred_limit_digital_download_count: z.boolean(),
-  preferred_digital_asset_authorized_clicks: z.coerce
+  limit_digital_download_count: z.boolean(),
+  digital_asset_authorized_clicks: z.coerce
     .number()
     .int()
-    .min(1, { error: requiredMessage('store.preferred_digital_asset_authorized_clicks') }),
-  preferred_limit_digital_download_days: z.boolean(),
-  preferred_digital_asset_authorized_days: z.coerce
+    .min(1, { error: requiredMessage('store.digital_asset_authorized_clicks') }),
+  limit_digital_download_days: z.boolean(),
+  digital_asset_authorized_days: z.coerce
     .number()
     .int()
-    .min(1, { error: requiredMessage('store.preferred_digital_asset_authorized_days') }),
+    .min(1, { error: requiredMessage('store.digital_asset_authorized_days') }),
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>

@@ -14,7 +14,6 @@ export const ClaimSchema = z.object({
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
   refund_total: z.string(),
-  display_refund_total: z.string(),
   approved_at: z.string().nullable(),
   resolved_at: z.string().nullable(),
   denied_at: z.string().nullable(),

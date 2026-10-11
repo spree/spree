@@ -328,7 +328,7 @@ module Spree
           retail = create(:channel, store: @default_store, name: "Retail #{SecureRandom.hex(3)}")
 
           wholesale_rate = create(:delivery_method, store: @default_store, name: 'Wholesale Rate')
-          wholesale_rate.rules = [{ type: 'channel_rule', preferences: { channel_ids: [wholesale.id] } }]
+          wholesale_rate.rules = [{ type: 'channel_rule', preferences: { channel_ids: [wholesale.prefixed_id] } }]
           wholesale_rate.save!
 
           wholesale_order = create(:order_with_line_items, store: @default_store, channel: wholesale)

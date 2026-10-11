@@ -61,6 +61,7 @@ module Spree
     #
     has_one_attached :image, service: Spree.public_storage_service_name
     has_one_attached :square_image, service: Spree.public_storage_service_name
+    signed_id_attachments :image, :square_image
     # The slots double as media-library placements, so an upload here is
     # visible and reusable there (Spree::HasLibraryMedia).
     has_library_media :image, :square_image
@@ -133,8 +134,9 @@ module Spree
     #  Ransack
     #
     self.whitelisted_ransackable_associations = %w[parent]
-    self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
+    self.whitelisted_ransackable_attributes = %w[name permalink automatic depth children_count
                                                  products_count pretty_name parent_id]
+    search_by :name, :pretty_name
 
     #
     # Translations

@@ -28,14 +28,14 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[9]).to eq product.meta_keywords
       expect(subject[10]).to eq product.tag_list.to_s
       expect(subject[11]).to eq product.label_list.to_s
-      expect(subject[12]).to eq variant.amount_in(store.default_currency).to_f
-      expect(subject[13]).to eq variant.compare_at_amount_in(store.default_currency).to_f
+      expect(subject[12]).to eq '19.99'
+      expect(subject[13]).to eq '0.00'
       expect(subject[14]).to eq store.default_currency
-      expect(subject[15]).to eq variant.width
-      expect(subject[16]).to eq variant.height
-      expect(subject[17]).to eq variant.depth
+      expect(subject[15]).to eq Spree::Money::Rounding.format_decimal(variant.width)
+      expect(subject[16]).to eq Spree::Money::Rounding.format_decimal(variant.height)
+      expect(subject[17]).to eq Spree::Money::Rounding.format_decimal(variant.depth)
       expect(subject[18]).to eq 'in'
-      expect(subject[19]).to eq variant.weight
+      expect(subject[19]).to eq Spree::Money::Rounding.format_decimal(variant.weight)
       expect(subject[20]).to eq 'lb'
       expect(subject[21]).to eq default_publication.published_at&.strftime('%Y-%m-%d %H:%M:%S')
       expect(subject[22]).to eq(
@@ -159,7 +159,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
         it 'returns variant specific fields' do
           expect(subject[1]).to eq variant.sku
-          expect(subject[12]).to eq variant.amount_in(store.default_currency).to_f
+          expect(subject[12]).to eq '19.99'
           expect(subject[23]).to eq false
           expect(subject[32]).to eq 'Color'
           expect(subject[33]).to eq 'Red'
@@ -269,8 +269,8 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       # Price fields populated
       expect(result[described_class::CSV_HEADERS.index('slug')]).to eq product.slug
       expect(result[described_class::CSV_HEADERS.index('sku')]).to eq variant.sku
-      expect(result[described_class::CSV_HEADERS.index('price')]).to eq 58.99
-      expect(result[described_class::CSV_HEADERS.index('compare_at_price')]).to eq 69.99
+      expect(result[described_class::CSV_HEADERS.index('price')]).to eq '58.99'
+      expect(result[described_class::CSV_HEADERS.index('compare_at_price')]).to eq '69.99'
       expect(result[described_class::CSV_HEADERS.index('currency')]).to eq 'EUR'
 
       # Everything else nil

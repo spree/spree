@@ -251,6 +251,7 @@ en:
         must_belong_to_same_store: must belong to the same store
         not_registered: is not a registered provider
         spree_content_type_not_allowed: is not a file type we accept
+        too_many_decimals: has more than %{count} decimal places
       models:
         spree/allowed_origin:
           attributes:
@@ -381,6 +382,7 @@ en:
             base:
               duplicate_quantity: each quantity break must have its own quantity
               invalid_quantity: each quantity break must start at a whole number of units
+              malformed_price: a price must be a number like 16.50
               negative_price: a price cannot be below zero
               nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
               price_rises_with_quantity: a quantity break cannot cost more than the price a buyer pays below it
@@ -894,6 +896,7 @@ en:
         stock_level_immutable: cannot be changed after the hold is taken — release the hold and take it again
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
+        unknown_calculator_type: "%{type} is not a calculator offered here"
         unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
         unknown_scopes: 'contains unknown scopes: %{scopes}'
         unregistered_actor: is not a registered actor class
@@ -956,6 +959,7 @@ en:
     image: Image
     import: Import
     import_has_no_failed_rows: This import has no failed rows to retry.
+    import_invalid_number: "%{column} must be a number like 16.50, got %{value}."
     import_mailer:
       greeting: Hi %{user_name},
       import_done:
@@ -1139,7 +1143,6 @@ en:
     pickup:
       store_pickup: Store Pickup
     po_document_invalid: A purchase order document must be a PDF, image or Word file of %{size} or less.
-    po_document_invalid_signed_id: The purchase order document reference is not valid.
     po_document_missing: This order has no attached purchase order document.
     po_document_too_large: is larger than %{size}.
     po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
@@ -1672,6 +1675,7 @@ en:
       errors:
         already_purchased: This parcel already has an active shipping label
         file_fetch_failed: The label file could not be fetched from the carrier (HTTP %{status})
+        file_renamed: Send the uploaded label's signed id as file_signed_id
         file_required: An uploaded label needs a file
         no_file_url: The carrier did not provide a file for this label
         not_refund_requested: Only a label awaiting the carrier's refund decision can be confirmed refunded
@@ -1791,6 +1795,8 @@ en:
     type: Type
     unable_to_connect_to_gateway: Unable to connect to gateway.
     updated_at: Updated at
+    upload_reference_invalid: A signed reference in this request is invalid or has expired. For a file, upload it again.
+    upload_wrong_visibility: must be uploaded with %{visibility} visibility
     url: URL
     user: User
     validation:

@@ -28,6 +28,16 @@ pre-commit:
         pnpm generate:zod
         git add packages/sdk/src/zod/generated/ packages/admin-sdk/src/zod/generated/ packages/seller-sdk/src/zod/generated/
 
+    filters:
+      # The API reference carries the filter tables; regenerating it, or
+      # changing the generator, needs fresh SDK filter types.
+      glob:
+        - "docs/api-reference/{store,admin,seller}.yaml"
+        - "packages/sdk-core/scripts/generate-filters.ts"
+      run: |
+        pnpm generate:filters
+        git add packages/sdk/src/types/filters.generated.ts packages/admin-sdk/src/types/filters.generated.ts packages/seller-sdk/src/types/filters.generated.ts
+
 pre-push:
   commands:
     biome-ci:

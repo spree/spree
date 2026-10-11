@@ -5,7 +5,7 @@ description: Add your own structured, typed data to products, orders and other r
 
 ## Overview
 
-Sooner or later you need to store something Spree doesn't have a field for. A fabric composition. A care instruction. A gift message. An ID from the system you sync with.
+Sooner or later you need to store something Spree doesn't have a field for. A fabric composition. A care instruction. A gift message.
 
 Custom fields are how you do that without changing the database. You declare a field once — its name, its type, who can see it — and from then on it can be set on any record of that kind, edited in the dashboard, returned by the API, and searched or filtered like any built-in field.
 
@@ -219,11 +219,12 @@ Spree has two ways to store your own data, and they are not competing — they s
 | **Visibility** | Configurable per field | Never read by the Store API |
 | **Searchable** | Yes, opt in | Not through the product search |
 
-Put it simply: **custom fields are for people, metadata is for machines.** If a merchant should type it, define a custom field. If it is a sync token or an external ID that only your integration reads, use metadata.
+Put it simply: **custom fields are for people, metadata is for machines.** If a merchant should type it, define a custom field. If it is a sync token that only your integration reads, use metadata. If it is the key another system knows the record by, use an [external reference](/developer/core-concepts/external-references).
 
 ## Related
 
 - [Metadata](/developer/customization/metadata) — the machine-readable alternative
+- [External References](/developer/core-concepts/external-references) — keys from your ERP, PIM or CRM
 - [Products](/developer/core-concepts/products) — the most common place for custom fields
 - [Search & Filtering](/developer/core-concepts/search-filtering) — how filters and search work
 - [Admin SDK](/developer/sdk/admin/resources) — managing definitions and values in TypeScript

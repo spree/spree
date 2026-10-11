@@ -122,6 +122,7 @@ module Spree
     # needed. `seller_id` is what the operator's list filters by to see one
     # seller's methods, or (blank) the marketplace's own.
     self.whitelisted_ransackable_attributes = %w[storefront_visible available_to_sellers seller_id]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[seller]
 
     validates :name, presence: true
@@ -227,7 +228,11 @@ module Spree
     end
 
     def ensure_calculator
-      self.calculator ||= Spree::Calculator::Shipping::FlatRate.new(preferred_amount: 0)
+      self.calculator ||= default_calculator
+    end
+
+    def default_calculator
+      Spree::Calculator::Shipping::FlatRate.new(preferred_amount: 0)
     end
 
     def assign_default_delivery_profile

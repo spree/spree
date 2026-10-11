@@ -27,7 +27,7 @@ describe Spree::Payment, type: :model do
     payment
   end
 
-  let(:amount_in_cents) { (payment.amount * 100).round }
+  let(:gateway_amount) { Spree::Money.new(payment.amount, currency: payment.currency) }
 
   let!(:success_response) do
     Spree::PaymentResponse.new(true, '', {},       authorization: '123',
@@ -321,7 +321,7 @@ describe Spree::Payment, type: :model do
 
     describe '#authorize!' do
       it 'calls authorize on the gateway with the payment amount' do
-        expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
+        expect(payment.payment_method).to receive(:authorize).with(gateway_amount,
                                                                    card,
                                                                    anything).and_return(success_response)
         payment.authorize!
@@ -329,7 +329,7 @@ describe Spree::Payment, type: :model do
 
       it 'calls authorize on the gateway with the currency code' do
         allow(payment).to receive_messages currency: 'GBP'
-        expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
+        expect(payment.payment_method).to receive(:authorize).with(gateway_amount,
                                                                    card,
                                                                    hash_including(currency: 'GBP')).and_return(success_response)
         payment.authorize!
@@ -337,7 +337,7 @@ describe Spree::Payment, type: :model do
 
       context 'if successful' do
         before do
-          expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
+          expect(payment.payment_method).to receive(:authorize).with(gateway_amount,
                                                                      card,
                                                                      anything).and_return(success_response)
         end
@@ -415,13 +415,13 @@ describe Spree::Payment, type: :model do
 
     describe '#purchase!' do
       it 'calls purchase on the gateway with the payment amount' do
-        expect(gateway).to receive(:purchase).with(amount_in_cents, card, anything).and_return(success_response)
+        expect(gateway).to receive(:purchase).with(gateway_amount, card, anything).and_return(success_response)
         payment.purchase!
       end
 
       context 'if successful' do
         before do
-          expect(payment.payment_method).to receive(:purchase).with(amount_in_cents,
+          expect(payment.payment_method).to receive(:purchase).with(gateway_amount,
                                                                     card,
                                                                     anything).and_return(success_response)
         end
@@ -608,7 +608,7 @@ describe Spree::Payment, type: :model do
         context 'if successful' do
           context 'for entire amount' do
             before do
-              expect(payment.payment_method).to receive(:capture).with(payment.display_amount.amount_in_cents, payment.response_code, anything).and_return(success_response)
+              expect(payment.payment_method).to receive(:capture).with(gateway_amount, payment.response_code, anything).and_return(success_response)
             end
 
             it 'makes payment complete' do
@@ -640,12 +640,13 @@ describe Spree::Payment, type: :model do
           end
 
           context 'for partial amount' do
-            let(:original_amount) { payment.money.amount_in_cents }
-            let(:capture_amount) { original_amount - 100 }
+            let(:capture_amount) { payment.amount - 1 }
 
             before do
               allow_any_instance_of(Spree::Payment).to receive(:payment_method_available_for_order).and_return(nil)
-              expect(payment.payment_method).to receive(:capture).with(capture_amount, payment.response_code, anything).and_return(success_response)
+              expect(payment.payment_method).to receive(:capture)
+                .with(Spree::Money.new(capture_amount, currency: payment.currency), payment.response_code, anything)
+                .and_return(success_response)
             end
 
             it 'makes payment complete & create pending payment for remaining amount' do
@@ -657,14 +658,14 @@ describe Spree::Payment, type: :model do
               expect(payments.size).to eq 2
               expect(payments.pending.first.amount).to eq 1
               # Payment stays processing for spec because of receive(:complete!) stub.
-              expect(payments.processing.first.amount).to eq(capture_amount / 100)
+              expect(payments.processing.first.amount).to eq(capture_amount)
               expect(payments.processing.first.source).to eq(payments.pending.first.source)
             end
 
             it 'logs capture events' do
               payment.capture!(capture_amount)
               expect(payment.capture_events.count).to eq(1)
-              expect(payment.capture_events.first.amount).to eq(capture_amount / 100)
+              expect(payment.capture_events.first.amount).to eq(capture_amount)
             end
           end
         end
@@ -1079,22 +1080,6 @@ describe Spree::Payment, type: :model do
         end
       end
 
-      context 'amount contains a dollar sign' do
-        let(:amount) { '$2.99' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
-      end
-
-      context 'amount contains a comma' do
-        let(:amount) { '$2,999.99' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2999.99'))
-        end
-      end
-
       context 'amount contains a negative sign' do
         let(:amount) { '-2.99' }
 
@@ -1103,13 +1088,11 @@ describe Spree::Payment, type: :model do
         end
       end
 
-      context 'amount is invalid' do
-        let(:amount) { 'invalid' }
+      context 'amount is not a number' do
+        let(:amount) { nil }
 
-        # this is a strange default for ActiveRecord
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('0'))
+        it 'is refused instead of being read as zero' do
+          expect { subject.amount = 'invalid' }.to raise_error(Spree::Money::InvalidFormat)
         end
       end
 
@@ -1130,53 +1113,12 @@ describe Spree::Payment, type: :model do
       end
     end
 
-    context 'when the locale uses a coma as a decimal separator' do
-      before do
-        I18n.backend.store_translations(:fr, number: { currency: { format: { delimiter: ' ', separator: ',' } } })
-        allow(I18n).to receive(:locale).and_return(:fr)
-        allow(I18n.config).to receive(:locale).and_return(:fr)
+    context 'when the locale writes a comma decimal' do
+      let(:amount) { '49.50' }
 
-        subject.amount = amount
-      end
-
-      context 'amount is a decimal' do
-        let(:amount) { '2,99' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
-      end
-
-      context 'amount contains a $ sign' do
-        let(:amount) { '2,99 $' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
-      end
-
-      context 'amount is a number' do
-        let(:amount) { 2.99 }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
-      end
-
-      context 'amount contains a negative sign' do
-        let(:amount) { '-2,99 $' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('-2.99'))
-        end
-      end
-
-      context 'amount uses a dot as a decimal separator' do
-        let(:amount) { '2.99' }
-
-        it '#amount' do
-          expect(subject.amount).to eql(BigDecimal('2.99'))
-        end
+      it 'stores a canonical decimal exactly' do
+        I18n.with_locale(:nl) { subject.amount = amount }
+        expect(subject.amount).to eql(BigDecimal('49.50'))
       end
     end
   end

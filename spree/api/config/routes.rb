@@ -299,8 +299,8 @@ Spree::Core::Engine.add_routes do
         resources :roles, only: [:index, :show, :create, :update, :destroy]
         resources :permissions, only: [:index]
 
-        # Direct Uploads (Active Storage)
-        resources :direct_uploads, only: [:create]
+        # File uploads — see docs/plans/6.0-uploads-and-file-ownership.md
+        resources :files, only: [:create]
 
         # CSV Exports — see docs/plans/5.5-admin-spa-csv-export.md
         resources :exports, only: [:index, :show, :create, :destroy] do
@@ -961,7 +961,7 @@ Spree::Core::Engine.add_routes do
         # Registry data — which carriers a tracking number can be pinned to.
         resources :tracking_carriers, only: [:index]
 
-        resources :direct_uploads, only: [:create]
+        resources :files, only: [:create]
 
         # CSV of what this seller sold, or of their catalogue. Created, polled
         # and downloaded — no index, since a seller has no history page to

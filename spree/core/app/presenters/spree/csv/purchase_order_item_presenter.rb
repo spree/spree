@@ -41,9 +41,7 @@ module Spree
       private
 
       def amount_string(amount, currency)
-        return nil if amount.nil?
-
-        format("%.#{Spree::Money::Rounding.precision(currency)}f", amount)
+        Spree::Money::Rounding.format(amount, currency, unit_price: true)
       end
     end
   end

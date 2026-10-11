@@ -67,6 +67,7 @@ export const EmailOrderSchema = z.object({
   gift_card: EmailGiftCardSchema.nullable(),
   market: EmailMarketSchema.nullable(),
   customer_name: z.string(),
+  total_minus_store_credits: z.string(),
   display_total_minus_store_credits: z.string(),
   promotion_discounts: z.array(EmailAmountLineSchema),
   manual_discounts: z.array(EmailAmountLineSchema),

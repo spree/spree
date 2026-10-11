@@ -11,8 +11,8 @@ module Spree
                  preferred_stock_location_id: [:string, nullable: true], company_id: [:string, nullable: true],
                  company_name: [:string, nullable: true], po_number: [:string, nullable: true],
                  po_number_required: :boolean, po_document_filename: [:string, nullable: true],
-                 po_document_byte_size: ['number | null'], order_minimum: ['number | null'],
-                 order_minimum_shortfall: ['number | null'], below_order_minimum: ['boolean | null'],
+                 po_document_byte_size: ['number | null'], order_minimum: [:string, nullable: true],
+                 order_minimum_shortfall: [:string, nullable: true], below_order_minimum: ['boolean | null'],
                  freight_summary: [:FreightSummary, nullable: true],
                  requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  store_credit_total: [:string, nullable: true], display_store_credit_total: [:string, nullable: true],
@@ -70,7 +70,7 @@ module Spree
                          :fee_total, :display_fee_total
 
         attribute :store_credit_total do |order|
-          order.total_applied_store_credit.to_s unless params[:hide_prices]
+          Spree::Money::Rounding.format(order.total_applied_store_credit, order.currency) unless params[:hide_prices]
         end
 
         attribute :display_store_credit_total do |order|
@@ -106,11 +106,11 @@ module Spree
         # shortfall are amounts, and a storefront that hides prices from
         # guests must not hand them "$180 short of $500" instead.
         attribute :order_minimum do |order|
-          order.order_minimum_amount&.to_f unless params[:hide_prices]
+          Spree::Money::Rounding.format(order.order_minimum_amount, order.currency) unless params[:hide_prices]
         end
 
         attribute :order_minimum_shortfall do |order|
-          order.order_minimum_shortfall&.to_f unless params[:hide_prices]
+          Spree::Money::Rounding.format(order.order_minimum_shortfall, order.currency) unless params[:hide_prices]
         end
 
         attribute :below_order_minimum do |order|

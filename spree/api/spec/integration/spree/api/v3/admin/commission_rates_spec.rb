@@ -37,10 +37,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of records per page'
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name (contains)'
-      parameter name: :'q[enabled_eq]', in: :query, type: :boolean, required: false,
-                description: 'Filter by whether the rate is in use'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-position`).'
 
@@ -145,7 +142,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
                 type: { type: :string, example: 'seller_rule',
                         description: 'A kind from /commission_rates/rule_types.' },
                 preferences: { type: :object, example: { seller_ids: ['sel_a1b2c3'] },
-                               description: "Configuration for the kind, per its preference_schema." },
+                               description: "Configuration for the kind, per its type's `schema`." },
                 product_ids: { type: :array, items: { type: :string },
                                description: 'For kinds that name products, which are kept outside preferences.' }
               }
@@ -156,7 +153,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
 
       response '201', 'commission rate created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: 'Audio sellers', kind: 'percentage', value: 12.5 } }
+        let(:body) { { name: 'Audio sellers', kind: 'percentage', value: '12.5' } }
 
         schema '$ref' => '#/components/schemas/CommissionRate'
 
@@ -169,7 +166,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       response '422', 'validation failed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         # A flat fee means nothing without a currency to charge it in.
-        let(:body) { { name: 'Flat fee', kind: 'fixed', value: 2 } }
+        let(:body) { { name: 'Flat fee', kind: 'fixed', value: '2' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -209,7 +206,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
                        type: { type: :string, example: 'seller_rule' },
                        name: { type: :string, example: 'Seller' },
                        description: { type: :string, nullable: true },
-                       preference_schema: { type: :array, items: { type: :object } },
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' },
                        association_fields: { type: :array, items: { type: :string } }
                      }
                    }
@@ -298,12 +295,12 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       response '200', 'commission rate updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { commission_rate.prefixed_id }
-        let(:body) { { value: 15 } }
+        let(:body) { { value: '15' } }
 
         schema '$ref' => '#/components/schemas/CommissionRate'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['value']).to eq('15.0')
+          expect(JSON.parse(response.body)['value']).to eq('15')
         end
       end
     end

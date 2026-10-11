@@ -1463,6 +1463,7 @@
         "seeded_report_read_only": "Dies ist ein integrierter Bericht und kann nicht geändert werden. Speichern Sie stattdessen eine Kopie.",
         "taken": "ist bereits vergeben",
         "too_long": "ist zu lang (maximal {{count}} Zeichen)",
+        "too_many_decimals": "hat mehr als {{count}} Nachkommastellen",
         "too_short": "ist zu kurz (mindestens {{count}} Zeichen)",
         "wrong_length": "hat die falsche Länge (sollte {{count}} Zeichen haben)"
       },
@@ -1479,7 +1480,8 @@
       "passwords_dont_match": "Die Passwörter stimmen nicht überein",
       "positive_number": "{{field}} muss größer als 0 sein",
       "required": "{{field}} ist erforderlich",
-      "store_name_required": "Shopname ist erforderlich"
+      "store_name_required": "Shopname ist erforderlich",
+      "too_many_decimals": "{{field}} darf höchstens {{count}} Nachkommastellen haben"
     },
     "products": {
       "autocomplete": {

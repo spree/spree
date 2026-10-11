@@ -11,4 +11,6 @@ export default defineConfig({
   clean: true,
   treeshake: true,
   minify: false,
+  // Inlined so the SDKs that bundle sdk-core ship no extra dependency.
+  noExternal: ['spark-md5'],
 })

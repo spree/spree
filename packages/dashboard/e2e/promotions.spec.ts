@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_PROMO_COUNTRY,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -241,6 +242,38 @@ test.describe('promotions', () => {
     await submitCreate(page, name)
   })
 
+  // Both rules keep prefixed ids in their preferences; reloading proves they
+  // were saved and read back as the records they name.
+  test('creates a promotion with Channel and Market rules', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Channel Market Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^channel\(s\)/i)
+    await expect(page.getByRole('heading', { name: /^channel\(s\)$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await pickAutocompleteOption(page, /search sales channels/i, FIXTURE_BULK_CHANNEL_NAME)
+    await saveEditor(page)
+
+    await pickRule(page, /^market\(s\)/i)
+    await expect(page.getByRole('heading', { name: /^market\(s\)$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await pickAutocompleteOption(page, /search markets/i, 'Europe')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+
+    await page.reload()
+    await expect(page.getByText(FIXTURE_BULK_CHANNEL_NAME).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('Europe', { exact: true }).first()).toBeVisible()
+  })
+
   test('creates a promotion with a Product rule', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
@@ -410,6 +443,72 @@ test.describe('promotions', () => {
     await expect(page.getByText(/^create whole-order adjustment$/i).first()).toBeVisible()
 
     await submitCreate(page, name)
+  })
+
+  // Money goes to the API as an exact decimal string; each value must read
+  // back as typed after the promotion is saved and reloaded.
+  test('keeps a flat rate amount and an item total minimum exactly', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Money Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^item total\b/i)
+    await page.getByRole('dialog').locator('#preference-amount_min').fill('50.25')
+    await saveEditor(page)
+
+    await pickAction(page, /^create whole-order adjustment\b/i)
+    const calculatorSelect = page.locator('#calculator-type')
+    await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+    await calculatorSelect.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await page.getByRole('dialog').locator('#preference-amount').fill('12.50')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+
+    await openAdjustmentAction(page, /flat rate/i)
+    // A money preference is written to its calculator's currency, so the
+    // amount keeps its cents.
+    await expect(page.getByRole('dialog').locator('#preference-amount')).toHaveValue('12.50')
+    await cancelEditor(page)
+
+    await page
+      .locator('div.items-stretch')
+      .filter({ hasText: /^item total/i })
+      .first()
+      .getByRole('button')
+      .first()
+      .click()
+    await expect(page.getByRole('dialog').locator('#preference-amount_min')).toHaveValue('50.25', {
+      timeout: 5_000,
+    })
+  })
+
+  test('keeps a flat percent discount exactly', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Percent Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickAction(page, /^create whole-order adjustment\b/i)
+    const calculatorSelect = page.locator('#calculator-type')
+    await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+    await calculatorSelect.click()
+    await page.getByRole('option', { name: /^flat percent$/i }).click()
+    await page.getByRole('dialog').locator('#preference-flat_percent').fill('7.5')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+
+    await openAdjustmentAction(page, /flat percent/i)
+    await expect(page.getByRole('dialog').locator('#preference-flat_percent')).toHaveValue('7.5')
   })
 
   test('saves the tiers of a tiered calculator, lowest threshold first', async ({ page }) => {

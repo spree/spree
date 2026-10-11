@@ -32,6 +32,8 @@ export { ExchangeSchema, type Exchange } from './Exchange';
 export { ExchangeLineItemSchema, type ExchangeLineItem } from './ExchangeLineItem';
 export { ExportSchema, type Export } from './Export';
 export { FeeSchema, type Fee } from './Fee';
+export { FileUploadSchema, type FileUpload } from './FileUpload';
+export { FileUploadTargetSchema, type FileUploadTarget } from './FileUploadTarget';
 export { FreightSummarySchema, type FreightSummary } from './FreightSummary';
 export { FulfillmentSchema, type Fulfillment } from './Fulfillment';
 export { GiftCardSchema, type GiftCard } from './GiftCard';

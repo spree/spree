@@ -470,6 +470,7 @@
       "packing_slip_title": "Lieferschein — Bestellung {{number}}",
       "print_label": "Etikett drucken",
       "print_packing_slip": "Lieferschein drucken",
+      "quoted_after_review": "Preis nach Prüfung",
       "ship_to": "Lieferung an",
       "ships_from_label": "Versand ab",
       "split": "Teilen",

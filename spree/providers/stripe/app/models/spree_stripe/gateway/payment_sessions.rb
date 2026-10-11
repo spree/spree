@@ -48,9 +48,9 @@ module SpreeStripe
       #   paid, or an earlier one could not be canceled
       def create_payment_session(order:, amount: nil, external_data: {})
         total = amount.presence || order.total_minus_store_credits
-        amount_in_cents = Spree::Money.new(total, currency: order.currency).cents
+        stripe_amount = SpreeStripe::Units.to_stripe(total, order.currency)
 
-        raise Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.zero_amount') if amount_in_cents.zero?
+        raise Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.zero_amount') if stripe_amount.zero?
 
         stripe_payment_method_id = external_data[:stripe_payment_method_id] || external_data['stripe_payment_method_id']
 
@@ -59,7 +59,7 @@ module SpreeStripe
         gateway_customer = fetch_or_create_customer(order: order)
 
         response = create_payment_intent(
-          amount_in_cents, order,
+          stripe_amount, order,
           payment_method_id: stripe_payment_method_id,
           customer_profile_id: gateway_customer&.profile_id
         )
@@ -85,18 +85,18 @@ module SpreeStripe
 
       def update_payment_session(payment_session:, amount: nil, external_data: {})
         attrs = {}
-        amount_in_cents = nil
+        stripe_amount = nil
 
         if amount.present?
           attrs[:amount] = amount
-          amount_in_cents = Spree::Money.new(amount, currency: payment_session.currency).cents
+          stripe_amount = SpreeStripe::Units.to_stripe(amount, payment_session.currency)
         end
 
         stripe_payment_method_id = external_data[:stripe_payment_method_id] || external_data['stripe_payment_method_id']
 
         update_payment_intent(
           payment_session.external_id,
-          amount_in_cents || payment_session.amount_in_cents,
+          stripe_amount || SpreeStripe::Units.to_stripe(payment_session.amount, payment_session.currency),
           payment_session.owner,
           stripe_payment_method_id
         )
@@ -165,8 +165,8 @@ module SpreeStripe
         send_request { |opts| Stripe::PaymentIntent.confirm(payment_intent_id, {}, opts) }
       end
 
-      def capture_payment_intent(payment_intent_id, amount_in_cents)
-        send_request { |opts| Stripe::PaymentIntent.capture(payment_intent_id, { amount_to_capture: amount_in_cents }, opts) }
+      def capture_payment_intent(payment_intent_id, stripe_amount)
+        send_request { |opts| Stripe::PaymentIntent.capture(payment_intent_id, { amount_to_capture: stripe_amount }, opts) }
       end
 
       def cancel_payment_intent(payment_intent_id)
@@ -273,9 +273,9 @@ module SpreeStripe
 
       # @param order [Spree::Cart, Spree::Order]
       # @return [Spree::PaymentResponse]
-      def create_payment_intent(amount_in_cents, order, payment_method_id: nil, customer_profile_id: nil)
+      def create_payment_intent(stripe_amount, order, payment_method_id: nil, customer_profile_id: nil)
         payload = {
-          amount: amount_in_cents,
+          amount: stripe_amount,
           currency: order.currency,
           customer: customer_profile_id,
           payment_method: payment_method_id,
@@ -304,10 +304,10 @@ module SpreeStripe
       end
 
       # Only the fields that can legitimately change while a session is pending.
-      def update_payment_intent(payment_intent_id, amount_in_cents, order, payment_method_id = nil)
+      def update_payment_intent(payment_intent_id, stripe_amount, order, payment_method_id = nil)
         protect_from_error do
           payload = {
-            amount: amount_in_cents,
+            amount: stripe_amount,
             currency: order.currency,
             customer: fetch_or_create_customer(order: order)&.profile_id,
             payment_method: payment_method_id,

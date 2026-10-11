@@ -165,6 +165,35 @@ test.describe('companies', () => {
     await expect(addressBook.getByText('400 Dock Rd')).toBeVisible({ timeout: 15_000 })
   })
 
+  // The document goes to private storage: a PDF is refused by the public
+  // allowlist, so this fails if the field ever uploads publicly again.
+  test('adds a tax exemption certificate with a PDF document', async ({ page }) => {
+    const creds = await login(page)
+    await createCompany(page, creds.store_id, `E2E Exempt ${Date.now()}`)
+
+    const certificates = card(page, /exemption certificates/i)
+    await certificates.getByRole('button', { name: /add certificate/i }).click()
+    const sheet = page.getByRole('dialog')
+    await expect(sheet.getByText(/add exemption certificate/i)).toBeVisible()
+
+    const certificateNumber = `RESALE-${Date.now()}`
+    await sheet.locator('#certificate_number').fill(certificateNumber)
+    await sheet.locator('#reason_code').click()
+    await page.getByRole('option', { name: /^resale$/i }).click()
+    await sheet.locator('input[type="file"]').setInputFiles({
+      name: 'certificate.pdf',
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('%PDF-1.4\n%%EOF\n'),
+    })
+
+    // Creating mid-upload would save the certificate without its document.
+    await expect(sheet.getByText(/attached file/i)).toBeVisible({ timeout: 30_000 })
+    await sheet.getByRole('button', { name: /^create$/i }).click()
+
+    await expect(certificates.getByText(certificateNumber)).toBeVisible({ timeout: 15_000 })
+    await expect(certificates.getByRole('button', { name: /certificate\.pdf/i })).toBeVisible()
+  })
+
   test('deletes a company from the list', async ({ page }) => {
     const creds = await login(page)
     const name = `E2E Dissolved ${Date.now()}`

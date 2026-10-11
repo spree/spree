@@ -32,6 +32,7 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      filter_parameters_for
 
       response '200', 'seller requirements found' do
         let!(:requirement) { create(:accept_terms_requirement, store: store) }
@@ -88,7 +89,7 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
           active: { type: :boolean, example: true },
           position: { type: :integer, example: 1, description: 'Place in the checklist.' },
           preferences: { type: :object, example: { accepted_content_types: ['application/pdf'] },
-                         description: 'Configuration for this kind, per its `preference_schema`.' }
+                         description: 'Configuration for this kind, per its type\'s `schema`.' }
         }
       }
 
@@ -152,7 +153,7 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
                                   description: 'Whether the operator may add one now. The uniqueness ' \
                                                'rule is the server\'s, so clients filter on this rather ' \
                                                'than deriving it.' },
-                       preference_schema: { type: :array, items: { type: :object } }
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' }
                      }
                    }
                  }

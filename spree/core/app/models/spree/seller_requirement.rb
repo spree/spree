@@ -21,6 +21,7 @@ module Spree
     self.type_labels_scope = 'spree.seller_requirement_types'
 
     has_prefix_id :selreq
+    search_by :name
 
     acts_as_list scope: :store
 

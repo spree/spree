@@ -1,6 +1,10 @@
 module Spree
   module SearchProvider
     class Base
+      # Sort keys a provider accepts beyond the product's sortable
+      # attributes. `price` also sorts descending as `-price`.
+      SORT_FIELDS = %w[price best_selling manual].freeze
+
       attr_reader :store
 
       # Whether this provider requires background indexing jobs.

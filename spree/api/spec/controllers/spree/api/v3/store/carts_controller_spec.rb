@@ -710,7 +710,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
           service_name: Spree.private_storage_service_name
         )
 
-        patch :update, params: { id: order.prefixed_id, po_document: blob.signed_id }
+        patch :update, params: { id: order.prefixed_id, po_document_signed_id: blob.signed_id }
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.po_document).to be_attached
@@ -719,7 +719,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       # A tampered id must not surface as a 500.
       it 'refuses a tampered signed id' do
-        patch :update, params: { id: order.prefixed_id, po_document: 'not-a-signed-id' }
+        patch :update, params: { id: order.prefixed_id, po_document_signed_id: 'not-a-signed-id' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(order.reload.po_document).not_to be_attached

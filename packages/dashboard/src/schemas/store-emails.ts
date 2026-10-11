@@ -39,19 +39,19 @@ export const storeEmailsFormSchema = z.object({
     .email(),
   customer_support_email: optionalEmail,
   new_order_notifications_email: optionalEmail,
-  preferred_send_consumer_transactional_emails: z.boolean(),
-  preferred_email_accent_color: optionalColor,
-  preferred_email_background_color: optionalColor,
-  preferred_email_card_color: optionalColor,
-  preferred_email_text_color: optionalColor,
-  preferred_email_heading_color: optionalColor,
-  preferred_email_font: z.enum(EMAIL_FONTS),
+  send_consumer_transactional_emails: z.boolean(),
+  email_accent_color: optionalColor,
+  email_background_color: optionalColor,
+  email_card_color: optionalColor,
+  email_text_color: optionalColor,
+  email_heading_color: optionalColor,
+  email_font: z.enum(EMAIL_FONTS),
 
-  // Active Storage signed_id from a fresh direct upload. Frontend-only state.
+  // signed_id from a fresh upload. Frontend-only state.
   mailer_logo_signed_id: z.string().nullable().optional(),
   // Local blob URL for the just-picked file so the preview updates before save.
   mailer_logo_preview_url: z.string().nullable().optional(),
-  // Tracks the user clicking "Remove logo" — collapses to `mailer_logo: null`.
+  // Tracks the user clicking "Remove logo" — collapses to `mailer_logo_signed_id: null`.
   mailer_logo_cleared: z.boolean().optional(),
 })
 

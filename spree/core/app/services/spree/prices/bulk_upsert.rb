@@ -44,9 +44,12 @@ module Spree
       #   (docs/plans/6.0-volume-pricing.md).
       def call(rows:)
         rows = Array(rows).map { |r| r.with_indifferent_access }
-        # Amounts are parsed once, here; everything below reads numbers.
         keyed = rows.select { |r| r[:variant_id].present? && r[:currency].present? }
-                    .map { |r| r.merge(amount: parse_amount(r[:amount]), compare_at_amount: parse_amount(r[:compare_at_amount])) }
+        unreadable = rows_with_malformed_amount(keyed)
+        return failure(nil, malformed_amounts: unreadable) if unreadable.any?
+
+        # Amounts are parsed once, here; everything below reads numbers.
+        keyed = keyed.map { |r| r.merge(amount: Spree::Money::Rounding.parse_decimal(r[:amount]), compare_at_amount: Spree::Money::Rounding.parse_decimal(r[:compare_at_amount])) }
         # Checked before anything is deduped: `row_key` coerces the quantity,
         # so two malformed rows would collapse into one and the batch would be
         # judged on a shape the caller never sent.
@@ -166,6 +169,18 @@ module Spree
         return raw if raw.is_a?(Integer)
 
         Integer(raw.to_s.strip, 10, exception: false)
+      end
+
+      # Rows whose amount is not a number or plain decimal text ("1,599.99",
+      # `false`), refused before a malformed value can read as "clear".
+      def rows_with_malformed_amount(rows)
+        rows.each_with_index.filter_map do |row, index|
+          Spree::Money::Rounding.parse_decimal(row[:amount])
+          Spree::Money::Rounding.parse_decimal(row[:compare_at_amount])
+          nil
+        rescue Spree::Money::InvalidFormat
+          { index: index }
+        end
       end
 
       # Rows pricing below zero. This path runs no model validations, so the
@@ -369,15 +384,6 @@ module Spree
       # A ladder is one variant's rungs, in one currency, on one list.
       def ladder_key(row)
         [row[:variant_id].to_s, row[:currency], row[:price_list_id].to_s]
-      end
-
-      # Parses locale-aware decimal input ("1.234,56" in DE, "1,234.56"
-      # in en-US). Numeric values pass through; blank values become nil.
-      def parse_amount(value)
-        return nil if value.blank?
-        return value if value.is_a?(Numeric)
-
-        Spree::LocalizedNumber.parse(value)
       end
 
       def sweep(affected_keys, clear_rows)

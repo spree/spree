@@ -701,6 +701,7 @@
                           "developer/core-concepts/translations",
                           "developer/core-concepts/slugs",
                           "developer/core-concepts/metafields",
+                          "developer/core-concepts/external-references",
                           "developer/core-concepts/imports-exports",
                           "developer/core-concepts/reporting"
                         ]
@@ -1067,6 +1068,7 @@
                       "api-reference/admin-api/errors",
                       "api-reference/admin-api/querying",
                       "api-reference/admin-api/monetary-amounts",
+                      "api-reference/admin-api/uploads",
                       "api-reference/admin-api/endpoints"
                     ]
                   },
@@ -1822,6 +1824,7 @@
                       "api-reference/admin-api/errors",
                       "api-reference/admin-api/querying",
                       "api-reference/admin-api/monetary-amounts",
+                      "api-reference/admin-api/uploads",
                       "api-reference/admin-api/endpoints"
                     ]
                   },
@@ -2164,6 +2167,7 @@
                   "developer/core-concepts/translations",
                   "developer/core-concepts/slugs",
                   "developer/core-concepts/metafields",
+                  "developer/core-concepts/external-references",
                   "developer/core-concepts/imports-exports",
                   "developer/core-concepts/reporting"
                 ]
@@ -2617,6 +2621,7 @@
                   "api-reference/admin-api/errors",
                   "api-reference/admin-api/querying",
                   "api-reference/admin-api/monetary-amounts",
+                  "api-reference/admin-api/uploads",
                   "api-reference/admin-api/endpoints"
                 ]
               },

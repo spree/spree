@@ -34,6 +34,7 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
       parameter name: :sort, in: :query, type: :string, required: false, description: 'Sort field; prefix with `-` for descending'
+      filter_parameters_for
 
       response '200', 'orders listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -319,6 +320,7 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'reasons listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

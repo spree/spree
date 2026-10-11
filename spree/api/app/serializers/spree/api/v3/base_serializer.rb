@@ -16,16 +16,56 @@ module Spree
           object.prefixed_id
         end
 
-        # Declares money/display attributes that render +null+ for gated
-        # (prices_hidden) guests, keyed off the same +hide_prices+ flag the
-        # +price_for+/+price_in+ helpers use — so the whole price surface
-        # (product prices AND cart/order/line-item totals) is gated from one
-        # place instead of per-attribute opt-in.
-        def self.money_attributes(*names)
+        # Display strings that are labels, not formatted money.
+        FORMATTED_LABELS = %i[display_name display_description display_code display_action].freeze
+
+        # Back-office serializers leave formatting money to the client, which
+        # shows it in the admin's own language (docs/plans/6.0-money-correctness.md,
+        # PR E): inherited display_* attributes are dropped, and nested prices
+        # are written with the admin price serializers, which carry none.
+        #
+        # @param surface [Symbol] :admin or :seller, whose price serializers to use
+        def self.without_formatted_money(surface = :admin)
+          _attributes.delete_if { |key, _| key.to_s.start_with?('display_') && !FORMATTED_LABELS.include?(key.to_sym) }
+          define_method(:price_serializer) { Spree.api.public_send(:"#{surface}_price_serializer") }
+          define_method(:price_history_serializer) { Spree.api.public_send(:"#{surface}_price_history_serializer") }
+        end
+
+        # Declares money attributes, written as decimal strings with exactly
+        # the currency's decimal places ("10.00", "1.500", "100"), or up to
+        # four for unit prices ("0.0125"). +display_*+ names pass through as
+        # formatted. All render +null+ for gated (prices_hidden) guests, keyed
+        # off the same +hide_prices+ flag the +price_for+/+price_in+ helpers
+        # use, so the whole price surface is gated from one place.
+        #
+        # @param currency [Symbol, Proc] the record's reader for its currency,
+        #   or a block taking the record
+        # @param unit_price [Boolean]
+        def self.money_attributes(*names, currency: :currency, unit_price: false)
           typelize(**names.index_with { [:string, nullable: true] })
 
           names.each do |name|
-            attribute(name) { |object| object.public_send(name) unless params[:hide_prices] }
+            attribute(name) do |object|
+              next if params[:hide_prices]
+
+              value = object.public_send(name)
+              next value if name.to_s.start_with?('display_') || value.nil?
+
+              code = currency.is_a?(Proc) ? currency.call(object) : object.public_send(currency)
+              Spree::Money::Rounding.format(value, code, unit_price: unit_price)
+            end
+          end
+        end
+
+        # Declares rates and percentages, written as decimal strings without
+        # trailing zeros ("0.23", "7.25", "10"). A name ending +_percent+ or
+        # +_percentage+ holds 0-100; +rate+ or a name ending +_rate+ holds a
+        # fraction.
+        def self.rate_attributes(*names)
+          typelize(**names.index_with { [:string, nullable: true] })
+
+          names.each do |name|
+            attribute(name) { |object| Spree::Money::Rounding.format_decimal(object.public_send(name)) }
           end
         end
 
@@ -46,6 +86,39 @@ module Spree
             attribute(name) { |object| Spree::ApiTyped.api_type_for(object.public_send(name)) }
           end
         end
+
+        # Declares a model's settings under their plain names (see
+        # `exposes_preferences`) — every exposed one unless named — typed from
+        # their declarations so the generated SDK types never drift from the
+        # model. Each reads the stored setting, never a reader the model
+        # overrides with a fallback.
+        #
+        #   preference_attributes Spree::Store, except: %i[payout_provider]
+        def self.preference_attributes(model, *names, except: [])
+          names = model.exposed_preference_names.to_a - except if names.empty?
+          definitions = model.preference_definitions
+          names.each do |name|
+            typelize name => preference_type_hint(Spree::PreferenceSchema::JsonSchema.property_schema(definitions.fetch(name)))
+            reader = :"preferred_#{name}"
+            attribute(name) do |object|
+              value = object.public_send(reader)
+              value.is_a?(BigDecimal) ? value.to_s('F') : value
+            end
+          end
+        end
+
+        TYPELIZER_TYPES = { 'string' => :string, 'integer' => :number, 'number' => :number, 'boolean' => :boolean }.freeze
+        private_constant :TYPELIZER_TYPES
+
+        def self.preference_type_hint(schema)
+          types = Array(schema['type'])
+          hint = TYPELIZER_TYPES.fetch((types - ['null']).first, :unknown)
+          options = {}
+          options[:nullable] = true if types.include?('null')
+          options[:enum] = schema['enum'].compact if schema['enum']
+          options.empty? ? hint : [hint, options]
+        end
+        private_class_method :preference_type_hint
 
         # Declares the wire form of an `acted_by` association: the actor's
         # prefixed id, the kind of actor it is, and the expansion. Both
@@ -142,6 +215,10 @@ module Spree
         def featured_variant(product)
           product.featured_variant(currency: current_currency)
         end
+
+        def price_serializer = Spree.api.price_serializer
+
+        def price_history_serializer = Spree.api.price_history_serializer
 
         # Returns price for a variant using full Price List resolution
         # This may return a price from a price list if applicable

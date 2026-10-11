@@ -25,9 +25,9 @@ const { data: providers } = await adminClient.payoutProviders.list()
 // find the row with id 'stripe' — `available` says whether this store can use it
 
 await adminClient.store.update({
-  preferred_payout_provider: 'stripe',
-  preferred_default_payouts_schedule_interval: 'weekly',
-  preferred_default_minimum_payout_amount: 50,
+  payout_provider: 'stripe',
+  default_payouts_schedule_interval: 'weekly',
+  default_minimum_payout_amount: '50.00',
 })
 ```
 
@@ -35,7 +35,7 @@ await adminClient.store.update({
 curl -X PATCH https://your-store.com/api/v3/admin/store \
   -H "X-Spree-API-Key: sk_xxx" \
   -H "Content-Type: application/json" \
-  -d '{"preferred_payout_provider": "stripe", "preferred_default_payouts_schedule_interval": "weekly", "preferred_default_minimum_payout_amount": 50}'
+  -d '{"payout_provider": "stripe", "default_payouts_schedule_interval": "weekly", "default_minimum_payout_amount": "50.00"}'
 ```
 
 </CodeGroup>

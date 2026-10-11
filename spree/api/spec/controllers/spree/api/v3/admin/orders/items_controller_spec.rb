@@ -100,13 +100,13 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
 
     context 'with an unusable price' do
       subject do
-        post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1, price: 'NaN' }, as: :json
+        post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1, price: '-1' }, as: :json
       end
 
       it 'refuses with the invalid_price code' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('invalid_price')
       end
     end
@@ -121,19 +121,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       it 'refuses with the price_override_not_allowed code' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('price_override_not_allowed')
       end
 
-      context 'with a non-numeric price' do
+      context 'with an unusable price' do
         subject do
-          post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1, price: 'NaN' }, as: :json
+          post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1, price: '-1' }, as: :json
         end
 
         it 'still refuses with price_override_not_allowed' do
           subject
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(json_response['error']['code']).to eq('price_override_not_allowed')
         end
       end
@@ -199,33 +199,33 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       it 'refuses with 422 and an actionable message' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('price_override_not_allowed')
         expect(response.body).to include('placed order')
         expect(line_item.reload.price_source).to be_nil
       end
 
-      context 'with a non-numeric price' do
-        subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: 'NaN' }, as: :json }
+      context 'with an unusable price' do
+        subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: '-1' }, as: :json }
 
         it 'still refuses with price_override_not_allowed' do
           subject
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(json_response['error']['code']).to eq('price_override_not_allowed')
         end
       end
     end
 
-    context 'with an unusable price' do
+    context 'with a non-numeric price' do
       subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: 'NaN' }, as: :json }
 
       it 'refuses with 422 and an actionable message' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(json_response['error']['code']).to eq('invalid_price')
-        expect(response.body).to include('non-negative number')
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_money_format')
+        expect(json_response['error']['details']).to eq('price' => ['must be a decimal string like "19.99"'])
         expect(line_item.reload.price_source).to be_nil
       end
     end
@@ -236,7 +236,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       it 'refuses with the invalid_price code' do
         subject
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('invalid_price')
       end
     end

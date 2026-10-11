@@ -46,7 +46,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
           expect(data['id']).to start_with('or_')
           expect(data['number']).to eq(completed_order.number)
           expect(data['fees'].map { |fee| fee['kind'] }).to eq(['duty'])
-          expect(data['fee_total']).to eq('12.0')
+          expect(data['fee_total']).to eq('12.00')
           expect(data['completed_at']).to be_present
           expect(data).not_to have_key('token')
           expect(data).not_to have_key('checkout_steps')

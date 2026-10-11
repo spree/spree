@@ -55,7 +55,7 @@ module Spree
                 render_error(
                   code: ERROR_CODES[:validation_error],
                   message: I18n.t('spree.errors.messages.no_pickup_point_provider'),
-                  status: :unprocessable_entity
+                  status: :unprocessable_content
                 )
                 return false
               end

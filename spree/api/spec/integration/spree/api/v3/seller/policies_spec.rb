@@ -31,6 +31,7 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
 
       response '200', 'policies listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

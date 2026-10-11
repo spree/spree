@@ -135,12 +135,31 @@ export function accountFormToParams(values: {
     first_name: values.first_name ?? undefined,
     last_name: values.last_name ?? undefined,
     selected_locale: blankToUndefined(values.selected_locale),
-    ...avatarParam(values.avatar_signed_id, values.avatar_cleared),
+    ...signedIdParam('avatar', values.avatar_signed_id, values.avatar_cleared),
   }
 }
 
-function avatarParam(signedId: string | null, cleared: boolean) {
-  if (signedId) return { avatar: signedId }
-  if (cleared) return { avatar: null }
+/**
+ * The write for one attachment slot, under the API's `<slot>_signed_id` name:
+ * a fresh upload sends its signed id, an explicit clear sends `null` to remove
+ * the file, and an untouched field is left out entirely.
+ */
+export function signedIdParam<Slot extends string>(
+  slot: Slot,
+  signedId: string | null | undefined,
+): Partial<Record<`${Slot}_signed_id`, string>>
+export function signedIdParam<Slot extends string>(
+  slot: Slot,
+  signedId: string | null | undefined,
+  cleared: boolean | undefined,
+): Partial<Record<`${Slot}_signed_id`, string | null>>
+export function signedIdParam<Slot extends string>(
+  slot: Slot,
+  signedId: string | null | undefined,
+  cleared?: boolean,
+): Partial<Record<`${Slot}_signed_id`, string | null>> {
+  const key = `${slot}_signed_id` as `${Slot}_signed_id`
+  if (signedId) return { [key]: signedId } as Record<`${Slot}_signed_id`, string>
+  if (cleared) return { [key]: null } as Record<`${Slot}_signed_id`, null>
   return {}
 }

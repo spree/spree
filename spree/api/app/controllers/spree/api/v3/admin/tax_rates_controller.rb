@@ -22,7 +22,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :amount, :amount_percentage, :included_in_price,
+            params.permit(*model_additional_permitted_attributes, :name, :rate, :rate_percent, :included_in_price,
                           :show_rate_in_label, :tax_category_id,
                           :country_code, :state_code, metadata: {})
           end

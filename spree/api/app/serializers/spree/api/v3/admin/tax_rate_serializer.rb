@@ -6,8 +6,6 @@ module Spree
         # customer-facing. What the customer sees is the label on a tax line.
         class TaxRateSerializer < V3::BaseSerializer
           typelize name: :string,
-                   amount: :string,
-                   amount_percentage: [:number, nullable: true],
                    included_in_price: :boolean,
                    show_rate_in_label: :boolean,
                    tax_category_id: [:string, nullable: true],
@@ -20,15 +18,7 @@ module Spree
           attributes :name, :included_in_price, :show_rate_in_label, :metadata,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
 
-          attribute :amount do |tax_rate|
-            tax_rate.amount&.to_s
-          end
-
-          # A real number, unlike the money-style `amount` string — this is a
-          # percentage for display, not an amount to round-trip exactly.
-          attribute :amount_percentage do |tax_rate|
-            tax_rate.amount_percentage&.to_f
-          end
+          rate_attributes :rate, :rate_percent
 
           prefixed_id_attributes :tax_category, :store
 

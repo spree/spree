@@ -14,7 +14,7 @@
  * promise the seller panel methods its API does not have.
  */
 
-import type { PermissionRule } from '@spree/admin-sdk'
+import type { PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
 
 /** What a panel may change on the signed-in person's own account. */
 export interface PanelAccountParams {
@@ -23,11 +23,11 @@ export interface PanelAccountParams {
   /** The panel's UI language, as a bundle code the panel ships (e.g. `de`). */
   selected_locale?: string
   /**
-   * ActiveStorage signed id to set the photo, or `null` to remove it. Omit to
+   * A `signed_id` from an upload to set the photo, or `null` to remove it. Omit to
    * leave the current one alone — the only field here where `null` means
    * something the API acts on.
    */
-  avatar?: string | null
+  avatar_signed_id?: string | null
 }
 
 /**
@@ -105,19 +105,15 @@ export interface PanelApiClient {
    * fulfillments, so they retire one by deactivating it.
    */
   /**
-   * Exchanges blob metadata for a presigned upload URL.
+   * Uploads a file through the panel's own `POST /files` and resolves to its
+   * `signed_id`.
    *
    * Registered rather than imported for the same reason as everything else
    * here: the shared upload field would otherwise work only in the
    * operator's panel, and a seller uploading an onboarding document would
    * get a 401 from an API they hold no key for.
    */
-  createDirectUpload?(params: {
-    blob: { filename: string; byte_size: number; checksum: string; content_type: string }
-  }): Promise<{
-    direct_upload: { url: string; headers: Record<string, string> }
-    signed_id: string
-  }>
+  uploadFile?(file: File, options: UploadFileOptions): Promise<{ signed_id: string }>
   /**
    * Writes the signed-in person's own account — their name, photo and the
    * panel's language.
@@ -304,16 +300,6 @@ export interface PanelApiClient {
   tags?: {
     list(params?: Record<string, unknown>): Promise<{ data: Array<{ name: string }> }>
   }
-  /**
-   * Currency-to-locale pairs, which is what tells a money field whether
-   * `34,56` is thirty-four and a half or three thousand. The operator's
-   * markets answer it; a panel that registers none falls back to the UI
-   * language, the same answer the operator's hook gives for an unmatched
-   * currency.
-   */
-  markets?: {
-    list(params?: Record<string, unknown>): Promise<{ data: PanelMarket[] }>
-  }
 }
 
 export interface PanelDeliveryProfile extends PanelNamedRecord {
@@ -427,7 +413,7 @@ export interface PanelImport {
   completed_rows_count: number
   failed_rows_count: number
   processing_errors?: string | null
-  preferred_delimiter?: string
+  delimiter?: string
   schema_fields: Array<{ name: string; label: string; required: boolean }>
   csv_headers: string[]
   sample_row: Record<string, string | null>
@@ -465,10 +451,10 @@ export interface PanelImportRow {
 
 export interface PanelImportCreateParams {
   type: string
-  /** Signed blob id of the already direct-uploaded CSV. */
-  attachment: string
+  /** The `signed_id` of the already uploaded CSV. */
+  attachment_signed_id: string
   /** CSV column separator — the four both APIs accept. */
-  preferred_delimiter?: PanelImportDelimiter
+  delimiter?: PanelImportDelimiter
   /** The price list a `price_list_prices` import merges into. */
   price_list_id?: string
   results_url?: string
@@ -479,13 +465,6 @@ export type PanelImportDelimiter = ',' | ';' | '|' | '\t'
 
 export interface PanelImportCompleteMappingParams {
   mappings?: Array<{ schema_field: string; file_column: string | null }>
-}
-
-/** A market, as the money fields read it. */
-export interface PanelMarket {
-  id: string
-  currency?: string | null
-  default_locale?: string | null
 }
 
 /**
@@ -683,4 +662,14 @@ export function getApiClient(): PanelApiClient {
 /** Whether a client has been registered. For tests and conditional boot paths. */
 export function hasApiClient(): boolean {
   return registered !== null
+}
+
+/**
+ * Hands filters built at runtime to a typed SDK list method. A table builds
+ * its filters from its column definitions, and a page shared by both panels
+ * sends the same keys to two APIs with different filter types, so neither can
+ * be checked by the compiler; the API validates them instead.
+ */
+export function runtimeListParams<P>(params?: Record<string, unknown>): P {
+  return params as P
 }

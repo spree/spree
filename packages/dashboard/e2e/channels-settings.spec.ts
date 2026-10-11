@@ -82,7 +82,7 @@ test.describe('settings / channels', () => {
 
     // Pick the routing strategy by its human label — the dropdown must surface
     // readable option labels, never the raw strategy class name.
-    await page.locator('#preferred_order_routing_strategy').click()
+    await page.locator('#order_routing_strategy').click()
     await page.getByRole('option', { name: /^rules \(ordered\)$/i }).click()
 
     await page.getByRole('button', { name: /^save$/i }).click()
@@ -92,9 +92,53 @@ test.describe('settings / channels', () => {
     // Reopening reads the saved strategy back into the same readable option.
     await rowButton(page, updated).click()
     await expect(page.getByRole('heading', { name: updated })).toBeVisible({ timeout: 15_000 })
-    await expect(page.locator('#preferred_order_routing_strategy')).toContainText(
-      /^rules \(ordered\)$/i,
-    )
+    await expect(page.locator('#order_routing_strategy')).toContainText(/^rules \(ordered\)$/i)
+  })
+
+  // A channel's storefront access and guest checkout override the store's
+  // until cleared back to "inherit", which must store nothing rather than a
+  // blank that reads as an override.
+  test('overrides store settings per channel and clears them back to inherit', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)
+
+    const name = `E2E Channel Overrides ${Date.now()}`
+    await createChannel(page, { name })
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    const access = page.locator('#storefront_access')
+    const guestCheckout = page.locator('#guest_checkout')
+    const save = page.getByRole('button', { name: /^save$/i })
+
+    async function reopen() {
+      await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+      await rowButton(page, name).click()
+      await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+    }
+
+    await rowButton(page, name).click()
+    await expect(access).toContainText(/^inherit from store$/i, { timeout: 15_000 })
+    await expect(guestCheckout).toContainText(/^inherit from store$/i)
+
+    await access.click()
+    await page.getByRole('option', { name: /^login required/i }).click()
+    await guestCheckout.click()
+    await page.getByRole('option', { name: /^not allowed$/i }).click()
+    await save.click()
+
+    await reopen()
+    await expect(access).toContainText(/^login required/i)
+    await expect(guestCheckout).toContainText(/^not allowed$/i)
+
+    await access.click()
+    await page.getByRole('option', { name: /^inherit from store$/i }).click()
+    await guestCheckout.click()
+    await page.getByRole('option', { name: /^inherit from store$/i }).click()
+    await save.click()
+
+    await reopen()
+    await expect(access).toContainText(/^inherit from store$/i)
+    await expect(guestCheckout).toContainText(/^inherit from store$/i)
   })
 
   test('names the default catalog picker for assistive technology', async ({ page }) => {
@@ -137,7 +181,7 @@ test.describe('settings / channels', () => {
     // Wait for the select popup to fully close after the pick so a lingering
     // overlay can't intercept the next click. (No Escape here — the popup
     // closes on selection, and a stray Escape would close the sheet instead.)
-    await page.locator('#preferred_order_routing_strategy').click()
+    await page.locator('#order_routing_strategy').click()
     await page.getByRole('option', { name: /^rules \(ordered\)$/i }).click()
     await expect(page.getByRole('listbox')).toBeHidden()
     await expect(ruleRow(/preferred location/i)).toBeVisible()

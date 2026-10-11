@@ -49,7 +49,7 @@ RSpec.describe 'Seller Balances API', type: :request, swagger_doc: 'api-referenc
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
-          expect(data.first).to include('currency' => 'USD', 'balance' => '25.0')
+          expect(data.first).to include('currency' => 'USD', 'balance' => '25.00')
         end
       end
     end

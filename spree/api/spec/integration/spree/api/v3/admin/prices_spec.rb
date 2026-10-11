@@ -35,10 +35,7 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
-      parameter name: :'q[price_list_id_eq]', in: :query, type: :string, required: false
-      parameter name: :'q[price_list_id_null]', in: :query, type: :boolean, required: false
-      parameter name: :'q[currency_eq]', in: :query, type: :string, required: false
-      parameter name: :'q[variant_id_eq]', in: :query, type: :string, required: false
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Comma-separated sort keys. Supports e.g. `variant_product_name,variant_id`.'
       parameter name: :expand, in: :query, type: :string, required: false,

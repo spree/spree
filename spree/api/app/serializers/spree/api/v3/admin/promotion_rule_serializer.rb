@@ -11,7 +11,6 @@ module Spree
           typelize type: [:string, comment: 'Rule type. Built-in: currency, country, channel, market, item_total, product, customer, customer_group, first_order, customer_logged_in, one_use_per_user, category, option_value. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
                    product_ids: 'Array<string> | null',
                    category_ids: 'Array<string> | null',
                    customer_ids: 'Array<string> | null',
@@ -26,7 +25,6 @@ module Spree
           prefixed_id_attributes :promotion
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
 
           # Association IDs for rules that wire products/taxons/users through
           # join tables. Returned as prefixed IDs to match the rest of the

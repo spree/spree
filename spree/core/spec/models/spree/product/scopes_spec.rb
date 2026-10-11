@@ -12,7 +12,7 @@ describe 'Product scopes', type: :model do
     end
 
     context 'when not discontinued' do
-      let!(:product_2) { create(:product, discontinue_on: Time.current + 1.day) }
+      let!(:product_2) { create(:product, unpublished_at: Time.current + 1.day) }
 
       it { expect(Spree::Product.available).to include(product_2) }
     end
@@ -57,6 +57,11 @@ describe 'Product scopes', type: :model do
 
     it 'calling Product.in_taxon should not return duplicate records' do
       expect(Spree::Product.in_taxon(@parent_category).to_a.size).to eq(1)
+    end
+
+    it 'calling Product.in_taxon with a prefixed ID, as a filter does' do
+      expect(Spree::Product.in_taxon(@parent_category.prefixed_id)).to include(product)
+      expect(Spree::Product.in_taxon('ctg_unknown')).to be_empty
     end
 
     context 'returns correct products for category' do

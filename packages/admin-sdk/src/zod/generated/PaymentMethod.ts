@@ -18,7 +18,6 @@ export const PaymentMethodSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   preferences: z.record(z.string(), z.unknown()),
-  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown(), choices: z.array(z.string()).optional() })),
   logo_url: z.string().nullable(),
   docs_url: z.string().nullable(),
   third_party: z.boolean(),

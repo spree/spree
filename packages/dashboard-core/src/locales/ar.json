@@ -1463,6 +1463,7 @@
         "seeded_report_read_only": "هذا تقرير مدمج ولا يمكن تغييره. احفظ نسخة بدلاً من ذلك.",
         "taken": "مستخدم بالفعل",
         "too_long": "طويل جدًا (الحد الأقصى {{count}} حرفًا)",
+        "too_many_decimals": "يحتوي على أكثر من {{count}} منازل عشرية",
         "too_short": "قصير جدًا (الحد الأدنى {{count}} حرفًا)",
         "wrong_length": "الطول غير صحيح (يجب أن يكون {{count}} حرفًا)"
       },
@@ -1479,7 +1480,8 @@
       "passwords_dont_match": "كلمتا المرور غير متطابقتين",
       "positive_number": "يجب أن يكون {{field}} أكبر من 0",
       "required": "{{field}} مطلوب",
-      "store_name_required": "اسم المتجر مطلوب"
+      "store_name_required": "اسم المتجر مطلوب",
+      "too_many_decimals": "يمكن أن يحتوي {{field}} على {{count}} منازل عشرية كحد أقصى"
     },
     "products": {
       "autocomplete": {

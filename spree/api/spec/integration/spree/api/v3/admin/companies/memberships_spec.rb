@@ -25,6 +25,8 @@ RSpec.describe 'Admin Company Memberships API', type: :request, swagger_doc: 'ap
 
       admin_sdk_example 'companies/memberships/list'
 
+      filter_parameters_for
+
       response '200', 'members found' do
         let!(:membership) { create(:company_membership, company: company) }
 

@@ -41,7 +41,7 @@ module Spree
             params.permit(
               :name, :description, :permalink, :position,
               :meta_title, :meta_description, :meta_keywords,
-              :image, :square_image,
+              :image_signed_id, :square_image_signed_id,
               :automatic, :rules_match_policy, :sort_order,
               rules: [:id, :type, :value, :match_policy],
               # Inline custom field values keyed by definition id (see

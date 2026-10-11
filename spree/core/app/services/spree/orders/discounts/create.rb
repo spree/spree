@@ -17,8 +17,8 @@ module Spree
         # @param line_item [Spree::LineItem, nil] nil distributes order-level
         # @return [Spree::ServiceModule::Result] value is the created rows
         def call(order:, label:, value:, value_type: 'flat', line_item: nil)
-          value = BigDecimal(value.to_s)
-          return failure(nil, I18n.t('spree.errors.messages.discount_value_must_be_positive')) unless value.positive?
+          value = Spree::Money::Rounding.parse_decimal(value)
+          return failure(nil, I18n.t('spree.errors.messages.discount_value_must_be_positive')) unless value&.positive?
           return failure(nil, I18n.t('spree.errors.messages.discount_value_type_invalid')) unless %w[flat percent].include?(value_type)
 
           rows = order.with_lock do
@@ -39,7 +39,7 @@ module Spree
 
         def line_item_row(order, line_item, label, value, value_type)
           base = discountable_base(line_item)
-          amount = -[amount_for(base, value, value_type), base].min
+          amount = -[amount_for(base, value, value_type, order.currency), base].min
           return if amount.zero?
 
           create_row(order, line_item, label, amount, value, value_type)
@@ -51,19 +51,19 @@ module Spree
           bases_sum = bases.sum
           return [] if bases_sum <= 0
 
-          total = [amount_for(bases_sum, value, value_type), bases_sum].min
-          shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares((total * 100).round, bases)
+          total = [amount_for(bases_sum, value, value_type, order.currency), bases_sum].min
+          shares = Spree::Adjusters::LargestRemainder.apportion(total, bases, order.currency)
 
           line_items.each_with_index.filter_map do |line_item, index|
-            amount = -BigDecimal(shares[index]) / 100
+            amount = -shares[index]
             next if amount.zero?
 
             create_row(order, line_item, label, amount, value, value_type)
           end
         end
 
-        def amount_for(base, value, value_type)
-          value_type == 'percent' ? (base * value / 100).round(2) : value
+        def amount_for(base, value, value_type, currency)
+          Spree::Money::Rounding.to_currency(value_type == 'percent' ? base * value / 100 : value, currency)
         end
 
         # Remaining discountable base: amount net of already-applied discounts.

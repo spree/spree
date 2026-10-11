@@ -8,7 +8,7 @@ defineTable<PanelPackageType>('package-types', {
   docsPath: 'settings/package-types',
   description: i18n.t('admin.package_types.description'),
   title: i18n.t('admin.package_types.table_title'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.package_types.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <PackageIcon className="size-8 text-muted-foreground" />,

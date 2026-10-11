@@ -68,7 +68,9 @@ test.describe('payment methods', () => {
     await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
   })
 
-  test('creates a new payment method (Bogus provider)', async ({ page }) => {
+  test('creates a payment method with provider settings, keeping its secret on edit', async ({
+    page,
+  }) => {
     const creds = await login(page)
     await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
 
@@ -79,9 +81,40 @@ test.describe('payment methods', () => {
 
     await selectProvider(page, 'Bogus')
     await page.locator('#name').fill(name)
+    await page.locator('#preference-dummy_key').fill('E2EPUBLIC')
+    await page.locator('#preference-dummy_secret_key').fill('e2e-secret-9876')
     await page.getByRole('button', { name: /create payment method/i }).click()
 
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    // The installed provider's settings come back on edit: the plain one as
+    // typed, the secret only as a mask of its last characters.
+    await rowButton(page, name).click()
+    await expect(page.locator('#preference-dummy_key')).toHaveValue('E2EPUBLIC', {
+      timeout: 15_000,
+    })
+    const secret = page.locator('#preference-dummy_secret_key')
+    await expect(secret).toHaveText(/^•+9876$/)
+
+    // Saving without touching the secret keeps it.
+    const updated = `${name} (updated)`
+    await page.locator('#name').fill(updated)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await rowButton(page, updated).click()
+    await expect(page.locator('#preference-dummy_key')).toHaveValue('E2EPUBLIC', {
+      timeout: 15_000,
+    })
+    await expect(secret).toHaveText(/^•+9876$/)
+    await page.keyboard.press('Escape')
+
+    // A provider is installed once per store, so the picker stops offering it.
+    await page.getByRole('button', { name: /add payment method/i }).click()
+    await page.locator('#type').click()
+    await expect(page.getByRole('option', { name: 'Check' })).toBeVisible()
+    await expect(page.getByRole('option', { name: 'Bogus' })).toHaveCount(0)
   })
 
   test('edits a payment method', async ({ page }) => {

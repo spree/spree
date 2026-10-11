@@ -260,7 +260,7 @@ module Spree
           calculator = delivery_method.calculator
           next unless calculator.respond_to?(:preferred_currency)
           next if calculator.preferred_currency == currency
-          next unless calculator.preferences[:amount].to_f.zero?
+          next unless Spree::Money::Rounding.blank_or_zero?(calculator.preferences[:amount])
 
           calculator.update!(preferences: calculator.preferences.merge(currency: currency))
         end

@@ -27,9 +27,9 @@ export const channelFormSchema = z.object({
     .optional(),
   active: z.boolean(),
   default: z.boolean(),
-  preferred_order_routing_strategy: z.string(),
-  preferred_storefront_access: z.string(),
-  preferred_guest_checkout: z.string(),
+  order_routing_strategy: z.string(),
+  storefront_access: z.string(),
+  guest_checkout: z.string(),
   // Empty means shoppers outside any assigned catalog see every product
   // published on the channel.
   default_catalog_id: z.string(),
@@ -45,9 +45,9 @@ export const CHANNEL_DEFAULTS: ChannelFormValues = {
   code: '',
   active: true,
   default: false,
-  preferred_order_routing_strategy: '',
-  preferred_storefront_access: '',
-  preferred_guest_checkout: '',
+  order_routing_strategy: '',
+  storefront_access: '',
+  guest_checkout: '',
   default_catalog_id: '',
   stock_location_ids: [],
 }
@@ -65,11 +65,10 @@ export function channelValuesToParams(
     ...(v.code ? { code: v.code } : {}),
     active: v.active,
     default: v.default,
-    preferred_order_routing_strategy: v.preferred_order_routing_strategy || null,
-    preferred_storefront_access: v.preferred_storefront_access || null,
+    order_routing_strategy: v.order_routing_strategy || null,
+    storefront_access: v.storefront_access || null,
     // '' → inherit (null); otherwise an explicit boolean.
-    preferred_guest_checkout:
-      v.preferred_guest_checkout === '' ? null : v.preferred_guest_checkout === 'true',
+    guest_checkout: v.guest_checkout === '' ? null : v.guest_checkout === 'true',
     // '' → no default catalog: shoppers outside any assigned catalog see
     // every product published on the channel.
     default_catalog_id: v.default_catalog_id || null,

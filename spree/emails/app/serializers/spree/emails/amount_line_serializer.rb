@@ -10,7 +10,7 @@ module Spree
       end
 
       attribute :amount do |line|
-        line.amount.to_s
+        Spree::Money::Rounding.format(line.amount, line.currency)
       end
     end
   end

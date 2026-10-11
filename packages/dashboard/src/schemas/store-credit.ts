@@ -7,9 +7,9 @@ const amountPositive = () =>
     field: i18n.t('admin.fields.store_credit.amount.label'),
   })
 
-// Amount stays a string end-to-end (form Input value and wire payload). The
-// backend's LocalizedNumber.parse decodes it, so we never Number()-coerce —
-// that would mangle localized input like "1.234,56" to NaN. We only assert the
+// Amount stays a string end-to-end (form Input value and wire payload) and is
+// normalized from the admin's number format on submit, so we never
+// Number()-coerce — that would turn "1.234,56" into NaN. We only assert the
 // shape here: at least one non-zero digit (so "0"/"0.00" are rejected as not
 // strictly positive), no leading minus, digits/separators/spaces only.
 // Authoritative parsing happens server-side.

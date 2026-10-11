@@ -3,7 +3,9 @@ module Spree
     module V3
       module Admin
         class TaxLineSerializer < V3::TaxLineSerializer
-          typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false],
+          without_formatted_money
+
+          typelize amount: [:string, nullable: false],
                    provider_id: [:string, nullable: true], metadata: ['Record<string, unknown>', nullable: true],
                    taxability_reason: [:string, nullable: true], country_code: [:string, nullable: true],
                    state_code: [:string, nullable: true], data: ['Record<string, unknown>', nullable: true],

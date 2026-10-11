@@ -4,8 +4,8 @@ import { z } from 'zod';
 export const ProductFilterPriceRangeSchema = z.object({
   id: z.string(),
   type: z.literal('price_range'),
-  min: z.number(),
-  max: z.number(),
+  min: z.string(),
+  max: z.string(),
   currency: z.string(),
 });
 

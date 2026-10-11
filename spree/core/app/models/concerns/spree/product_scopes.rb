@@ -20,7 +20,8 @@ module Spree
                             .group("#{Variant.table_name}.product_id")
                             .to_sql
 
-        price_expr = Arel.sql('COALESCE(price_agg.agg_price, 999999999)')
+        # Above any price decimal(19,4) holds, so an unpriced product sorts last.
+        price_expr = Arel.sql('COALESCE(price_agg.agg_price, 1000000000000000)')
 
         joins("LEFT JOIN (#{price_agg_sql}) AS price_agg ON price_agg.product_id = #{Product.table_name}.id").
           select("#{Product.table_name}.*").
@@ -109,6 +110,9 @@ module Spree
       #
       #   Spree::Product.in_taxon(taxon).count(distinct: true)
       scope :in_taxon, ->(taxon) {
+        taxon = Spree::Category.find_by_prefix_id(taxon) if taxon.is_a?(String)
+        next none if taxon.nil?
+
         joins(:product_categories).
           where("#{Spree::ProductCategory.table_name}.category_id" => taxon.cached_self_and_descendants_ids).distinct
       }

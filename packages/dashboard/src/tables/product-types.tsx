@@ -8,7 +8,7 @@ defineTable<ProductType>('product-types', {
   docsPath: 'settings/product-types',
   title: i18n.t('admin.settings_nav.items.product_types'),
   description: i18n.t('admin.table_descriptions.product_types'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.product_types.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <ShapesIcon className="size-8 text-muted-foreground" />,

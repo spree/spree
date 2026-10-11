@@ -17,9 +17,9 @@ module Spree
                    products_count: :number,
                    default_currency: :string,
                    supported_currencies: [:string, multi: true],
-                   preferred_timezone: [:string, nullable: true]
+                   timezone: [:string, nullable: true]
 
-          attributes :preferred_timezone,
+          attributes :timezone,
                      :status, :legal_name, :registration_number,
                      :contact_email, :billing_email,
                      :tax_remittance, :payouts_schedule_interval,
@@ -28,7 +28,7 @@ module Spree
                      created_at: :iso8601
 
           attribute :minimum_payout_amount do |seller|
-            seller.minimum_payout_amount&.to_s
+            Spree::Money::Rounding.format(seller.minimum_payout_amount, seller.store&.default_currency, unit_price: true)
           end
 
           # Rebound from the inherited store declaration to this branch's own

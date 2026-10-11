@@ -1,8 +1,24 @@
 // Main client
 
-export type { RequestOptions, RetryConfig, ValidationErrorDetail } from '@spree/sdk-core'
+export type {
+  FileUploadCreateParams,
+  RequestOptions,
+  RetryConfig,
+  UploadFileOptions,
+  ValidationErrorDetail,
+} from '@spree/sdk-core'
 // Request infrastructure (re-export from sdk-core)
-export { SpreeError } from '@spree/sdk-core'
+export {
+  compareMoney,
+  decimalPlaces,
+  isDecimalString,
+  isZeroMoney,
+  multiplyMoney,
+  negateMoney,
+  SpreeError,
+  subtractMoney,
+  sumMoney,
+} from '@spree/sdk-core'
 export type {
   AuthProvider,
   AuthProvidersResponse,

@@ -47,16 +47,16 @@ module Spree
           # What this seller is owed for the goods, and what the buyer paid for
           # them. Deliberately not the whole money surface: gift cards, store
           # credit and the payment breakdown belong to the marketplace.
-          money_attributes :item_total, :display_item_total,
-                           :delivery_total, :display_delivery_total,
-                           :discount_total, :display_discount_total,
-                           :adjustment_total, :display_adjustment_total,
-                           :included_tax_total, :display_included_tax_total,
-                           :additional_tax_total, :display_additional_tax_total,
-                           :tax_total, :display_tax_total,
-                           :total, :display_total,
-                           :payment_total, :display_payment_total,
-                           :amount_due, :display_amount_due
+          money_attributes :item_total,
+                           :delivery_total,
+                           :discount_total,
+                           :adjustment_total,
+                           :included_tax_total,
+                           :additional_tax_total,
+                           :tax_total,
+                           :total,
+                           :payment_total,
+                           :amount_due
 
           # What the marketplace charged the seller on this sale, and the tax
           # on that charge. The ledger remains where a seller sees what they
@@ -64,9 +64,9 @@ module Spree
           # commission is a B2B supply from the platform, so this is the
           # seller's input tax to reclaim, and it has to be attributable to
           # the sale that produced it.
-          money_attributes :commission_amount_total, :display_commission_amount_total,
-                           :commission_tax_total, :display_commission_tax_total,
-                           :commission_total, :display_commission_total
+          money_attributes :commission_amount_total,
+                           :commission_tax_total,
+                           :commission_total
 
           # Why the sale was called off, when it was. The reason is the
           # marketplace's vocabulary, so it is rendered as a name rather than

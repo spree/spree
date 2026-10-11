@@ -1,4 +1,10 @@
-import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
+import {
+  isDecimalString,
+  type LineItem,
+  multiplyMoney,
+  type OrderUpdateParams,
+  sumMoney,
+} from '@spree/admin-sdk'
 import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
@@ -96,8 +102,8 @@ export const orderEditItemSchema = z
     name: z.string(),
     options_text: z.string(),
     thumbnail_url: z.string().nullable(),
-    display_price: z.string(),
-    display_total: z.string(),
+    /** The line's saved total; null for a line added in this edit. */
+    total: z.string().nullable(),
   })
   .superRefine((item, ctx) => {
     // Neither case sends a price, so refusing the form over one would block a
@@ -151,8 +157,7 @@ export function lineItemToEditRow(item: LineItem, fulfilledQuantity = 0): OrderE
     name: item.name,
     options_text: item.options_text ?? '',
     thumbnail_url: item.thumbnail_url,
-    display_price: item.display_price,
-    display_total: item.display_total,
+    total: item.total,
   }
 }
 
@@ -165,37 +170,26 @@ export function orderToEditForm(
   return { items: items.map((item) => lineItemToEditRow(item, fulfilled.get(item.id) ?? 0)) }
 }
 
-/** Formats a client-computed preview amount; server money arrives as `display_*`. */
-export function formatAmount(amount: number, currency: string): string {
-  return new Intl.NumberFormat(i18n.language, { style: 'currency', currency }).format(amount)
-}
-
 /** The price a row lands on once saved, or null when it cannot be known. */
-export function projectedPrice(item: OrderEditItemValues): number | null {
+export function projectedPrice(item: OrderEditItemValues): string | null {
   const source = item.revert_price ? item.catalog_price : item.price
-  if (source == null || source === '') return null
-
-  const parsed = Number(source)
-  return Number.isFinite(parsed) ? parsed : null
+  return isDecimalString(source) ? source : null
 }
 
 /** What the line costs after saving; null propagates so a total is never partial. */
-export function projectedLineTotal(item: OrderEditItemValues): number | null {
-  if (item.removed) return 0
+export function projectedLineTotal(item: OrderEditItemValues): string | null {
+  if (item.removed) return '0'
 
   const price = projectedPrice(item)
-  return price === null ? null : price * item.quantity
+  return price === null || !Number.isInteger(item.quantity)
+    ? null
+    : multiplyMoney(price, item.quantity)
 }
 
 /** Projected item subtotal; null if any row is unprojectable. */
-export function projectedSubtotal(items: OrderEditItemValues[]): number | null {
-  let sum = 0
-  for (const item of items) {
-    const total = projectedLineTotal(item)
-    if (total === null) return null
-    sum += total
-  }
-  return sum
+export function projectedSubtotal(items: OrderEditItemValues[]): string | null {
+  const totals = items.map(projectedLineTotal)
+  return totals.includes(null) ? null : sumMoney(totals)
 }
 
 export type OrderItemsPayload = NonNullable<OrderUpdateParams['items']>

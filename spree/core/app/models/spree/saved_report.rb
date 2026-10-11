@@ -23,6 +23,7 @@ module Spree
     scope :seeded, -> { where(seeded: true) }
 
     self.whitelisted_ransackable_attributes = %w[name seeded created_at updated_at]
+    search_by :name
 
     def event_serializer_class
       'Spree::Api::V3::SavedReportEventSerializer'.safe_constantize

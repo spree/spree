@@ -226,7 +226,7 @@ describe Spree::DeliveryMethodRule, type: :model do
   describe 'Spree::DeliveryMethod#rules=' do
     it 'creates rules alongside a new method in one save' do
       method = Spree::DeliveryMethod.new(name: 'Express', store: store)
-      method.rules = [{ type: 'item_total_rule', preferences: { minimum_amount: 50 } }]
+      method.rules = [{ type: 'item_total_rule', preferences: { minimum_amount: '50' } }]
       method.save!
 
       expect(method.delivery_method_rules.reload.sole.preferred_minimum_amount).to eq(50)
@@ -238,8 +238,8 @@ describe Spree::DeliveryMethodRule, type: :model do
       )
 
       delivery_method.rules = [
-        { id: existing.prefixed_id, type: 'item_total_rule', preferences: { minimum_amount: 99 } },
-        { type: 'weight_rule', preferences: { maximum_weight: 5 } }
+        { id: existing.prefixed_id, type: 'item_total_rule', preferences: { minimum_amount: '99' } },
+        { type: 'weight_rule', preferences: { maximum_weight: '5' } }
       ]
       delivery_method.save!
 

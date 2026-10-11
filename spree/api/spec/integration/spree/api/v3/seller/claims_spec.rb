@@ -26,6 +26,7 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
       description "Problems reported on one of this seller's orders."
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'claims listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -207,6 +208,7 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'reasons listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

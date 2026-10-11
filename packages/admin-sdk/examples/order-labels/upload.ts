@@ -9,7 +9,7 @@ const client = createAdminClient({
 // Postage bought elsewhere: upload the file first, then record it with the
 // tracking number printed on it.
 const label = await client.orders.fulfillments.labels.create('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
-  file: 'signed_blob_id',
+  file_signed_id: 'signed_id_from_files_upload',
   tracking_number: '1Z879E930346834440',
   cost: '6.50',
   currency: 'USD',

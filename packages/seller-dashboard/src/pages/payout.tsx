@@ -1,4 +1,11 @@
-import { formatStoreDateTime, PageHeader, Slot } from '@spree/dashboard-core'
+import {
+  formatMoney,
+  formatStoreDateTime,
+  Money,
+  PageHeader,
+  Slot,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import {
   Card,
   CardHeader,
@@ -32,6 +39,7 @@ import { useStoreTimezone } from '../hooks/use-store-timezone'
  */
 export function PayoutPage() {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
   const { sellerId, payoutId } = useParams({ from: '/_authenticated/$sellerId/payouts/$payoutId' })
 
   const timezone = useStoreTimezone()
@@ -54,7 +62,7 @@ export function PayoutPage() {
     <ResourceLayout
       header={
         <PageHeader
-          title={payout.display_amount}
+          title={formatMoney(payout.amount, payout.currency, locale)}
           subtitle={formatStoreDateTime(payout.created_at, timezone)}
           backTo="payouts"
           badges={
@@ -121,7 +129,7 @@ export function PayoutPage() {
                       {t(`earnings.kinds.${transfer.kind}`, { defaultValue: transfer.kind })}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {transfer.display_amount}
+                      <Money amount={transfer.amount} currency={transfer.currency} />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -140,7 +148,9 @@ export function PayoutPage() {
               <CardTitle>{t('payouts.detail.settlement')}</CardTitle>
             </CardHeader>
             <div className="flex flex-col gap-3 px-6 pb-6">
-              <ReadRow label={t('payouts.columns.amount')}>{payout.display_amount}</ReadRow>
+              <ReadRow label={t('payouts.columns.amount')}>
+                <Money amount={payout.amount} currency={payout.currency} />
+              </ReadRow>
               <ReadRow label={t('payouts.columns.reference')}>{payout.reference}</ReadRow>
               <ReadRow label={t('payouts.detail.period')}>
                 {payout.period_start && payout.period_end

@@ -6,6 +6,7 @@ import {
   mapSpreeErrorsToForm,
   normalizeMoneyInput,
   ResourceCombobox,
+  useMoneyLocale,
   useStore,
 } from '@spree/dashboard-core'
 import {
@@ -30,7 +31,6 @@ import {
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useCurrencyLocale } from '../../../hooks/use-currency-locale'
 import { useCreateCustomerStoreCredit } from '../../../hooks/use-customer-store-credits'
 import { customerAutocompleteProps } from '../../../hooks/use-customers'
 import {
@@ -72,9 +72,9 @@ export function IssueStoreCreditDialog({
   const { errors } = form.formState
 
   const mutation = useCreateCustomerStoreCredit()
-  const localeForCurrency = useCurrencyLocale()
+  const moneyLocale = useMoneyLocale()
   const selectedCurrency = form.watch('currency')
-  const { symbol } = currencyParts(selectedCurrency, localeForCurrency(selectedCurrency) || 'en')
+  const { symbol } = currencyParts(selectedCurrency, moneyLocale)
 
   // Clear any prior submission state when the dialog re-opens so a fresh form
   // is presented (otherwise stale "Issue $20" values linger across opens).
@@ -83,33 +83,13 @@ export function IssueStoreCreditDialog({
     if (open) form.reset(emptyValues)
   }, [open, form, defaultCurrency, customerId])
 
-  // Switching currency re-displays the amount in the new currency's locale
-  // format, so the value the merchant sees always matches the locale it will be
-  // normalized under on submit. Without this, `25.00` typed under USD would be
-  // re-read under EUR's `de` locale (where `.` groups thousands) and persist as
-  // 2500. Canonicalize from the old locale, then swap to the new locale's
-  // decimal separator.
-  function handleCurrencyChange(
-    next: string,
-    field: { value: string; onChange: (v: string) => void },
-  ) {
-    const prev = field.value
-    field.onChange(next)
-    const raw = form.getValues('amount')?.trim()
-    if (!raw) return
-    const canonical = normalizeMoneyInput(raw, localeForCurrency(prev) || 'en')
-    const { decimal } = currencyParts(next, localeForCurrency(next) || 'en')
-    form.setValue('amount', decimal === '.' ? canonical : canonical.replace('.', decimal))
-  }
-
   async function onSubmit(values: IssueStoreCreditFormValues) {
     try {
       const credit = await mutation.mutateAsync({
         customerId: values.customer_id,
-        // Normalize the merchant's localized input (entered under the selected
-        // currency's market locale) to the canonical `"1234.56"` the API
-        // expects. The server never parses comma-vs-period.
-        amount: normalizeMoneyInput(values.amount, localeForCurrency(values.currency) || 'en'),
+        // The API takes canonical "1234.56"; the amount was typed in the
+        // person's own number format.
+        amount: normalizeMoneyInput(values.amount, moneyLocale),
         currency: values.currency,
         memo: values.memo || undefined,
       })
@@ -190,7 +170,7 @@ export function IssueStoreCreditDialog({
                       <CurrencySelect
                         id="sc-currency"
                         value={field.value || ''}
-                        onChange={(next) => handleCurrencyChange(next, field)}
+                        onChange={field.onChange}
                         required
                       />
                     )}

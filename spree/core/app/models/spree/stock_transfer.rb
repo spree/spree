@@ -66,7 +66,9 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[number status reference source_location_id
                                                  destination_location_id shipped_at received_at
                                                  closed_short_at created_at]
+    search_by :number, :reference
     self.whitelisted_ransackable_scopes = %w[open closed]
+    self.ransackable_scope_types = %w[open closed].index_with('boolean')
     self.whitelisted_ransackable_associations = %w[source_location destination_location items]
 
     # Whether the merchant may still edit the lines. Once the box is sealed and

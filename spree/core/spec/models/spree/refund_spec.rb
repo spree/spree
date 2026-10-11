@@ -12,15 +12,18 @@ describe Spree::Refund, type: :model do
 
   describe '#amount=' do
     let(:refund) { build(:refund) }
-    let(:amount) { '1,599,99' }
 
-    before do
-      allow_any_instance_of(Spree::Refund).to receive(:amount_is_less_than_or_equal_to_allowed_amount)
-      refund.amount = amount
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
+      I18n.with_locale(:nl) { refund.amount = '49.50' }
+      expect(refund.amount).to eq(BigDecimal('49.50'))
     end
 
-    it 'is expected to equal to localized number' do
-      expect(refund.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    # The column keeps four decimals; a refund keeps its currency's two.
+    it 'refuses a fraction of a cent' do
+      refund.amount = '10.0049'
+
+      expect(refund).not_to be_valid
+      expect(refund.errors.details[:amount]).to include(error: :too_many_decimals, count: 2)
     end
   end
 
@@ -30,7 +33,7 @@ describe Spree::Refund, type: :model do
     let(:refund) { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
     let(:amount) { 100.0 }
-    let(:amount_in_cents) { amount * 100 }
+    let(:gateway_amount) { Spree::Money.new(BigDecimal(amount.to_s), currency: payment.currency) }
 
     let(:authorization) { generate(:refund_transaction_id) }
 
@@ -56,8 +59,18 @@ describe Spree::Refund, type: :model do
     before do
       allow(payment.payment_method).
         to receive(:credit).
-        with(amount_in_cents, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+        with(gateway_amount, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
         and_return(gateway_response)
+    end
+
+    context 'with an amount a float cannot hold exactly' do
+      let(:amount) { BigDecimal('1.15') }
+
+      it 'credits the exact amount at the gateway' do
+        subject
+
+        expect(payment.payment_method).to have_received(:credit).with(Spree::Money.new(BigDecimal('1.15'), currency: 'USD'), any_args)
+      end
     end
 
     it 'is never attempted by creation alone' do
@@ -133,7 +146,7 @@ describe Spree::Refund, type: :model do
       it 'does not supply the payment source' do
         expect(payment.payment_method).
           to receive(:credit).
-          with(amount * 100, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+          with(gateway_amount, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
           and_return(gateway_response)
 
         subject
@@ -148,7 +161,7 @@ describe Spree::Refund, type: :model do
       it 'supplies the payment source' do
         expect(payment.payment_method).
           to receive(:credit).
-          with(amount_in_cents, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+          with(gateway_amount, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
           and_return(gateway_response)
 
         subject
@@ -158,7 +171,7 @@ describe Spree::Refund, type: :model do
     context 'with a gateway connection error' do
       before do
         expect(payment.payment_method).to receive(:credit).with(
-          amount_in_cents,
+          gateway_amount,
           payment.source,
           payment.transaction_id,
           originator: an_instance_of(Spree::Refund)

@@ -24,6 +24,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      filter_parameters_for
 
       response '200', 'tax lines found' do
         before { create(:tax_line, order: order, line_item: line_item, amount: 1.5, rate: 0.15, label: 'VAT 15%') }
@@ -49,6 +50,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      filter_parameters_for
 
       response '200', 'discounts found' do
         before { create(:discount, order: order, line_item: line_item, amount: -2, label: 'Loyalty', kind: 'manual') }
@@ -77,7 +79,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
         type: :object,
         properties: {
           label: { type: :string, example: 'Customer appeasement' },
-          value: { type: :number, example: 10 },
+          value: { type: :string, example: '10.00' },
           value_type: { type: :string, enum: %w[flat percent], example: 'flat' },
           line_item_id: { type: :string, nullable: true, example: 'item_abc123', description: 'Target line item; omit to distribute order-level' }
         },
@@ -85,11 +87,11 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       }
 
       response '201', 'discount created' do
-        let(:body) { { label: 'Appeasement', value: 3, value_type: 'flat', line_item_id: line_item.prefixed_id } }
+        let(:body) { { label: 'Appeasement', value: '3.00', value_type: 'flat', line_item_id: line_item.prefixed_id } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['data'].first['amount']).to eq('-3.0')
+          expect(data['data'].first['amount']).to eq('-3.00')
         end
       end
 
@@ -102,6 +104,30 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
   end
 
   path '/api/v3/admin/orders/{order_id}/fees' do
+    get 'List fees' do
+      tags 'Orders'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description "Returns the order's fees, such as surcharges, handling and gift wrap, on the whole order or on one item or delivery."
+      admin_scope :read, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      filter_parameters_for
+
+      response '200', 'fees found' do
+        let!(:fee) { create(:fee, order: order, label: 'Gift wrap', kind: 'gift_wrap', amount: '4.00') }
+
+        schema SwaggerSchemaHelpers.paginated('Fee')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(fee.prefixed_id)
+        end
+      end
+    end
+
     post 'Create fee' do
       tags 'Orders'
       consumes 'application/json'
@@ -119,7 +145,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
         type: :object,
         properties: {
           label: { type: :string, example: 'Gift wrap' },
-          amount: { type: :number, example: 4 },
+          amount: { type: :string, example: '4.00' },
           kind: { type: :string, enum: Spree::Fee::KINDS, example: 'gift_wrap', description: "Defaults to 'surcharge'" },
           line_item_id: { type: :string, nullable: true },
           fulfillment_id: { type: :string, nullable: true }
@@ -128,17 +154,17 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       }
 
       response '201', 'fee created' do
-        let(:body) { { label: 'Gift wrap', amount: 4, kind: 'gift_wrap' } }
+        let(:body) { { label: 'Gift wrap', amount: '4.00', kind: 'gift_wrap' } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['label']).to eq('Gift wrap')
-          expect(data['amount']).to eq('4.0')
+          expect(data['amount']).to eq('4.00')
         end
       end
 
       response '422', 'invalid fee' do
-        let(:body) { { label: 'Mystery', amount: 4, kind: 'nonsense' } }
+        let(:body) { { label: 'Mystery', amount: '4.00', kind: 'nonsense' } }
 
         run_test!
       end

@@ -29,6 +29,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
                 description: 'Comma-separated associations to expand (e.g., images, prices, stock_levels, option_values). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., sku,price,stock). id is always included.'
+      filter_parameters_for
 
       response '200', 'variants found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -288,6 +289,34 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
         let(:id) { variant.prefixed_id }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/variants' do
+    get 'List variants' do
+      tags 'Variants'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns every variant in the store across all products, for pickers and stock views that are not tied to one product.'
+      admin_scope :read, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
+      filter_parameters_for
+
+      response '200', 'variants found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        schema SwaggerSchemaHelpers.paginated('Variant')
+
+        run_test! do |response|
+          ids = JSON.parse(response.body)['data'].map { |record| record['id'] }
+          expect(ids).to include(variant.prefixed_id)
+        end
       end
     end
   end

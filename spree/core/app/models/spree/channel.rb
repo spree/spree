@@ -16,6 +16,7 @@ module Spree
     # Empty -> falls back to the Store-level preference.
     preference :order_routing_strategy, :string, default: nil,
                                                  parse_on_set: ->(value) { Spree::ApiTyped.class_name_for(Spree.order_routing.strategies, value) }
+    exposes_preferences :order_routing_strategy
 
 
     has_many :orders, class_name: 'Spree::Order', inverse_of: :channel, dependent: :nullify
@@ -59,6 +60,7 @@ module Spree
     scope :default, -> { where(default: true) }
 
     self.whitelisted_ransackable_attributes = %w[name code active default store_id]
+    search_by :name
 
     # Publishes the given products on this channel by creating/upserting ProductPublications.
     # Optionally sets the publication window; if not given, the products will be published immediately

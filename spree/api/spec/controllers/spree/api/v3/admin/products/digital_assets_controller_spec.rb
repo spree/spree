@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
     it 'rejects a file with no attachment' do
       post :create, params: { product_id: product.prefixed_id }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     # Dev and test collapse both storage services onto one, so the distinction
@@ -116,7 +116,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
         authorized_clicks: 0
       }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

@@ -10,6 +10,7 @@ import {
   resourceSearchSchema,
   StoreDatePicker,
   Subject,
+  useMoneyLocale,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -36,7 +37,6 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import i18n from 'i18next'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -61,6 +61,7 @@ import {
   giftCardSingleValuesToParams,
 } from '../../../../schemas/gift-card'
 import '../../../../tables/gift-cards'
+import { Money } from '@spree/dashboard-core'
 
 const giftCardsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
@@ -179,9 +180,8 @@ function CreateGiftCardSheet({
     resolver: zodResolver(giftCardCreateFormSchema) as any,
     defaultValues: {
       code: '',
-      // Empty so the input shows its placeholder; the form's `amount` is
-      // a STRING — the backend's `Spree::LocalizedNumber.parse` handles
-      // locale-aware decoding so the SPA never coerces here.
+      // Empty so the input shows its placeholder; the form's `amount` is a
+      // STRING, never coerced to a number.
       amount: '',
       currency: defaultCurrency,
       expires_at: '',
@@ -294,10 +294,8 @@ function EditGiftCardSheet({
       prevGiftCardIdRef.current = giftCard.id
       form.reset({
         code: giftCard.code,
-        // Keep amount as the canonical decimal string the API returns.
-        // The merchant's edits flow straight through to the backend; only
-        // `Spree::LocalizedNumber.parse` knows how to interpret locale-
-        // specific input.
+        // Keep amount as the canonical decimal string the API returns; the
+        // number input hands edits back canonical too.
         amount: giftCard.amount != null ? String(giftCard.amount) : '',
         currency: giftCard.currency,
         expires_at: giftCard.expires_at ?? '',
@@ -427,9 +425,10 @@ function AmountCurrencyRow<T extends GiftCardCreateFormValues | GiftCardEditForm
 }) {
   const { t } = useTranslation()
   const errors = form.formState.errors as Record<string, { message?: string } | undefined>
+  const moneyLocale = useMoneyLocale()
   const { symbol: currencySymbol } = currencyParts(
     (form.watch('currency' as never) as unknown as string) || 'USD',
-    i18n.language,
+    moneyLocale,
   )
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -442,7 +441,7 @@ function AmountCurrencyRow<T extends GiftCardCreateFormValues | GiftCardEditForm
           <InputGroupInput
             id="amount"
             type="number"
-            step="0.01"
+            step="any"
             min={0}
             disabled={readOnly}
             aria-invalid={!!errors.amount || undefined}
@@ -606,14 +605,16 @@ function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
       <div className="mb-2 font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
       <div className="grid grid-cols-2 gap-1 text-muted-foreground">
         <span>{t('admin.fields.amount.label')}</span>
-        <span className="text-right text-foreground tabular-nums">{giftCard.display_amount}</span>
+        <span className="text-right text-foreground tabular-nums">
+          <Money amount={giftCard.amount} currency={giftCard.currency} />
+        </span>
         <span>{t('admin.pages.promotions.gift_cards.usage.used')}</span>
         <span className="text-right text-foreground tabular-nums">
-          {giftCard.display_amount_used}
+          <Money amount={giftCard.amount_used} currency={giftCard.currency} />
         </span>
         <span>{t('admin.pages.promotions.gift_cards.usage.remaining')}</span>
         <span className="text-right text-foreground tabular-nums">
-          {giftCard.display_amount_remaining}
+          <Money amount={giftCard.amount_remaining} currency={giftCard.currency} />
         </span>
         {giftCard.created_by && (
           <>

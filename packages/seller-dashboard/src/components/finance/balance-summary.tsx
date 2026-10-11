@@ -1,3 +1,4 @@
+import { formatMoney, useMoneyLocale } from '@spree/dashboard-core'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@spree/dashboard-ui'
 import type { Balance } from '@spree/seller-sdk'
 import { useTranslation } from 'react-i18next'
@@ -16,6 +17,7 @@ import { useTranslation } from 'react-i18next'
  */
 export function BalanceSummary({ balances }: { balances: Balance[] }) {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
 
   if (balances.length === 0) {
     return (
@@ -30,31 +32,37 @@ export function BalanceSummary({ balances }: { balances: Balance[] }) {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {balances.map((balance) => (
-        <Card key={`${balance.currency}-${balance.settlement_currency}`}>
-          <CardHeader>
-            <CardTitle>
-              {t('earnings.balance.owed', { currency: balance.settlement_currency })}
-            </CardTitle>
-            {balance.converted && (
-              <CardDescription>
-                {t('earnings.balance.converted', { currency: balance.currency })}
-              </CardDescription>
-            )}
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            <span className="text-2xl font-semibold tabular-nums">{balance.display_balance}</span>
-            <dl className="flex flex-col gap-1 text-sm">
-              <Figure label={t('earnings.balance.earned')} value={balance.display_earned} />
+      {balances.map((balance) => {
+        // Earned and pending are what the sales were worth; the rest is what
+        // the account holds, in the currency it settles in.
+        const sold = (amount: string) => formatMoney(amount, balance.currency, locale)
+        const held = (amount: string) => formatMoney(amount, balance.settlement_currency, locale)
+        return (
+          <Card key={`${balance.currency}-${balance.settlement_currency}`}>
+            <CardHeader>
+              <CardTitle>
+                {t('earnings.balance.owed', { currency: balance.settlement_currency })}
+              </CardTitle>
               {balance.converted && (
-                <Figure label={t('earnings.balance.payable')} value={balance.display_payable} />
+                <CardDescription>
+                  {t('earnings.balance.converted', { currency: balance.currency })}
+                </CardDescription>
               )}
-              <Figure label={t('earnings.balance.paid')} value={balance.display_paid} />
-              <Figure label={t('earnings.balance.pending')} value={balance.display_pending} />
-            </dl>
-          </CardContent>
-        </Card>
-      ))}
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <span className="text-2xl font-semibold tabular-nums">{held(balance.balance)}</span>
+              <dl className="flex flex-col gap-1 text-sm">
+                <Figure label={t('earnings.balance.earned')} value={sold(balance.earned)} />
+                {balance.converted && (
+                  <Figure label={t('earnings.balance.payable')} value={held(balance.payable)} />
+                )}
+                <Figure label={t('earnings.balance.paid')} value={held(balance.paid)} />
+                <Figure label={t('earnings.balance.pending')} value={sold(balance.pending)} />
+              </dl>
+            </CardContent>
+          </Card>
+        )
+      })}
     </div>
   )
 }

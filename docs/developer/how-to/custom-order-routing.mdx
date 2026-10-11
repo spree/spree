@@ -247,7 +247,7 @@ Activate on the whole store:
 
 ```ruby
 Spree::Store.default.update!(
-  preferred_order_routing_strategy: 'Acme::Oms::Strategy'
+  order_routing_strategy: 'Acme::Oms::Strategy'
 )
 ```
 
@@ -256,11 +256,11 @@ Override on one channel only:
 ```ruby
 store = Spree::Store.default
 store.channels.find_by(code: 'pos').update!(
-  preferred_order_routing_strategy: 'Acme::Oms::Strategy'
+  order_routing_strategy: 'Acme::Oms::Strategy'
 )
 ```
 
-Resolution order: `channel.preferred_order_routing_strategy` → `store.preferred_order_routing_strategy` → the default `Strategy::Rules`. Only a value pointing to a **registered** `Strategy::Base` subclass is used; anything unset, unregistered, or invalid is skipped, so a misconfiguration (or a strategy you've since unregistered) falls back to the default instead of breaking checkout.
+Resolution order: the channel's `order_routing_strategy` → the store's `order_routing_strategy` → the default `Strategy::Rules`. Only a value pointing to a **registered** `Strategy::Base` subclass is used; anything unset, unregistered, or invalid is skipped, so a misconfiguration (or a strategy you've since unregistered) falls back to the default instead of breaking checkout.
 
 ### Step 3: Test the Strategy
 

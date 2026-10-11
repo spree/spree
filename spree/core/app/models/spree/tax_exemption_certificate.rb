@@ -27,6 +27,7 @@ module Spree
     # Confidential, so the private service rather than the public one that
     # serves product images.
     has_one_attached :document, service: Spree.private_storage_service_name
+    signed_id_attachments :document
 
     validates :certificate_number, :reason_code, presence: true
     # Certificates exist only on legal-entity nodes — a division's purchases

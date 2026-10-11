@@ -89,7 +89,7 @@ module Spree
         cart.use_shipping = params[:use_shipping] if params.key?(:use_shipping)
         assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
         assign_company if params.key?(:company_id)
-        assign_po_document if params.key?(:po_document)
+        assign_po_document if params.key?(:po_document_signed_id)
       end
 
       # The buyer's purchase order as an ActiveStorage signed blob id — the
@@ -97,12 +97,12 @@ module Spree
       # value detaches, so a buyer can withdraw a document they attached in
       # error.
       #
-      # An abandoned direct upload leaves the blob row behind without its
+      # An abandoned presigned upload leaves the blob row behind without its
       # bytes, and the buyer's client may still send back the signed id it was
       # handed. ActiveStorage raises a message-less FileNotFoundError for that,
       # which would otherwise reach the storefront as a bare class name.
       def assign_po_document
-        value = params[:po_document]
+        value = params[:po_document_signed_id]
 
         if value.blank?
           cart.po_document.detach

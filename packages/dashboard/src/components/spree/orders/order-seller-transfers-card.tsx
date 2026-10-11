@@ -1,5 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
-import { formatStoreDateTime, useStore } from '@spree/dashboard-core'
+import { formatStoreDateTime, Money, useStore } from '@spree/dashboard-core'
 import {
   Card,
   CardHeader,
@@ -84,7 +84,9 @@ export function SellerTransfersCard({ order }: { order: Order }) {
                   </span>
                 )}
               </TableCell>
-              <TableCell className="text-right tabular-nums">{transfer.display_amount}</TableCell>
+              <TableCell className="text-right tabular-nums">
+                <Money amount={transfer.amount} currency={transfer.currency} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 2.3.0
+
+### Minor Changes
+
+- [#14847](https://github.com/spree/spree/pull/14847) [`7d9bc01`](https://github.com/spree/spree/commit/7d9bc01dd82ba12938453caf76aa04e1b0c2637f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added the `--seller-dashboard` option, which includes the Seller Panel without asking. Together with `--no-start` and `--no-storefront` it lets scripts and CI create a project with no prompts.
+
 ## 2.2.0
 
 ### Minor Changes

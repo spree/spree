@@ -1608,6 +1608,7 @@
         "seeded_report_read_only": "Este es un reporte incorporado y no se puede modificar. Guardá una copia.",
         "taken": "ya está en uso",
         "too_long": "es demasiado largo (máximo {{count}} caracteres)",
+        "too_many_decimals": "tiene más de {{count}} decimales",
         "too_short": "es demasiado corto (mínimo {{count}} caracteres)",
         "wrong_length": "tiene un largo incorrecto (debería ser {{count}} caracteres)"
       },
@@ -1624,7 +1625,8 @@
       "passwords_dont_match": "Las contraseñas no coinciden",
       "positive_number": "{{field}} debe ser mayor que 0",
       "required": "{{field}} es obligatorio",
-      "store_name_required": "El nombre de la tienda es obligatorio"
+      "store_name_required": "El nombre de la tienda es obligatorio",
+      "too_many_decimals": "{{field}} puede tener como máximo {{count}} decimales"
     },
     "common": {
       "active": "Activo",

@@ -45,6 +45,7 @@
   ],
   "scripts": {
     "generate:zod": "tsx ../sdk-core/scripts/generate-zod.ts",
+    "generate:filters": "tsx ../sdk-core/scripts/generate-filters.ts seller",
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",

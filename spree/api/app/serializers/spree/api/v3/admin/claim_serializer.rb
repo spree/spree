@@ -5,6 +5,11 @@ module Spree
     module V3
       module Admin
         class ClaimSerializer < V3::ClaimSerializer
+          without_formatted_money
+
+          # No guest price gating here, so the inherited money fields are always present.
+          typelize refund_total: [:string, nullable: false]
+
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    created_by_id: [:string, nullable: true],

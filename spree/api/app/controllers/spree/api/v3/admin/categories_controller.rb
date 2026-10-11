@@ -70,7 +70,7 @@ module Spree
               *model_additional_permitted_attributes,
               :name, :description, :permalink,
               :meta_title, :meta_description, :meta_keywords,
-              :image, :square_image,
+              :image_signed_id, :square_image_signed_id,
               # Inline custom field values keyed by definition id. The model
               # setter (Spree::HasCustomFields#custom_fields=) validates each entry
               # against its definition. `value` is permitted as a scalar AND as

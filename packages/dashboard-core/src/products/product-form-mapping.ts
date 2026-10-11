@@ -50,10 +50,9 @@ export function variantToFormValues(variant: PanelVariant, position: number): Va
       .filter((p) => p.currency != null && p.price_list_id == null)
       .map((p) => ({
         currency: p.currency as string,
-        // Keep amounts as the canonical decimal strings the API returns.
-        // The bulk price editor displays them with the locale's decimal
-        // separator and ships the raw user input unchanged on submit;
-        // `Spree::LocalizedNumber.parse` handles locale-aware parsing.
+        // Keep amounts as the canonical decimal strings the API returns; the
+        // price editor shows them in the admin's number format and normalizes
+        // edits back before they reach the form.
         amount: p.amount != null ? String(p.amount) : '',
         compare_at_amount: p.compare_at_amount != null ? String(p.compare_at_amount) : null,
       })),

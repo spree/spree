@@ -49,7 +49,7 @@ module Spree
                 # Config a kind takes beyond its preferences — a reference
                 # list gets its own picker, not a text box.
                 association_fields: association_fields_for(klass),
-                preference_schema: klass.serialized_preference_schema
+                schema: klass.preference_json_schema
               }
             end
 

@@ -39,6 +39,7 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
                 description: "Narrows the list to the seller's own packaging, leaving out the marketplace's shared rows"
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
 
       response '200', 'package types listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

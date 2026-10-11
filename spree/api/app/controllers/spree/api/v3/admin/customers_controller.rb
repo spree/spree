@@ -262,7 +262,7 @@ module Spree
               *model_additional_permitted_attributes,
               :email, :first_name, :last_name, :phone,
               :password, :password_confirmation, :selected_locale,
-              :avatar, :accepts_email_marketing, :internal_note,
+              :avatar_signed_id, :accepts_email_marketing, :internal_note,
               metadata: {}, tags: [], customer_group_ids: []
             )
           end

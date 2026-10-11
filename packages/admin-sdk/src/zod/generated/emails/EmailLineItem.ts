@@ -35,6 +35,7 @@ export const EmailLineItemSchema = z.object({
   url: z.string().nullable(),
   image_url: z.string().nullable(),
   sku: z.string().nullable(),
+  amount: z.string(),
   display_amount: z.string(),
 });
 

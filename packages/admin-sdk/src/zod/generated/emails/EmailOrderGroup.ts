@@ -20,6 +20,7 @@ export const EmailOrderGroupSchema = z.object({
   billing_address: EmailAddressSchema.nullable(),
   shipping_address: EmailAddressSchema.nullable(),
   customer_name: z.string(),
+  total_minus_store_credits: z.string(),
   display_total_minus_store_credits: z.string(),
   items: z.array(EmailLineItemSchema),
   promotion_discounts: z.array(EmailAmountLineSchema),

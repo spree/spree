@@ -33,8 +33,7 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[name_or_contact_name_or_email_cont]', in: :query, type: :string, required: false,
-                description: 'Search by name, contact name or email'
+      filter_parameters_for
 
       response '200', 'suppliers found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

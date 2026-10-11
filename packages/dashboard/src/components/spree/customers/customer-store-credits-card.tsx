@@ -1,4 +1,5 @@
 import type { Customer, StoreCredit } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -72,13 +73,13 @@ export function CustomerStoreCreditsCard({ customer }: { customer: Customer }) {
                 {credits.map((sc: StoreCredit) => (
                   <TableRow key={sc.id}>
                     <TableCell className="font-medium tabular-nums">
-                      {sc.display_amount ?? sc.amount}
+                      <Money amount={sc.amount} currency={sc.currency} />
                     </TableCell>
                     <TableCell className="tabular-nums">
-                      {sc.display_amount_used ?? sc.amount_used}
+                      <Money amount={sc.amount_used} currency={sc.currency} />
                     </TableCell>
                     <TableCell className="tabular-nums">
-                      {sc.display_amount_remaining ?? sc.amount_remaining}
+                      <Money amount={sc.amount_remaining} currency={sc.currency} />
                     </TableCell>
                     <TableCell className="text-muted-foreground">{sc.memo ?? '—'}</TableCell>
                     <TableCell className="text-right">

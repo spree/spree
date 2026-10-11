@@ -12,22 +12,21 @@ RSpec.describe Spree::Api::V3::PriceSerializer do
 
     it 'includes amount fields' do
       expect(subject).to include(
-        'amount' => '19.99'.to_d,
-        'amount_in_cents' => 1999,
+        'amount' => '19.99',
         'display_amount' => '$19.99',
         'currency' => 'USD'
       )
     end
 
     it 'includes nil compare_at fields when not set' do
-      expect(subject.values_at('compare_at_amount', 'compare_at_amount_in_cents', 'display_compare_at_amount')).to all(be_nil)
+      expect(subject.values_at('compare_at_amount', 'display_compare_at_amount')).to all(be_nil)
+      expect(subject).not_to include('amount_in_cents', 'compare_at_amount_in_cents')
     end
 
     it 'includes compare_at fields when set' do
       price.update!(compare_at_amount: 29.99)
       expect(subject).to include(
-        'compare_at_amount' => '29.99'.to_d,
-        'compare_at_amount_in_cents' => 2999,
+        'compare_at_amount' => '29.99',
         'display_compare_at_amount' => '$29.99'
       )
     end

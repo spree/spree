@@ -45,7 +45,7 @@ module Spree
       rescue ActiveRecord::RecordInvalid => e
         failure(e.record, e.record.errors.full_messages.to_sentence)
       rescue ActiveStorage::FileNotFoundError
-        # An abandoned direct upload leaves the blob row without its bytes.
+        # An abandoned presigned upload leaves the blob row without its bytes.
         # ActiveStorage raises a message-less error for that, which would
         # otherwise be an unhandled 500 on the Admin API.
         order ||= @store.orders.new
@@ -71,8 +71,8 @@ module Spree
         }
 
         # The buyer's purchase order, when it arrived with the paperwork. A
-        # signed blob id, so it assigns like any other attribute.
-        attrs[:po_document] = @params[:po_document] if @params[:po_document].present?
+        # signed id, so it assigns like any other attribute.
+        attrs[:po_document_signed_id] = @params[:po_document_signed_id] if @params[:po_document_signed_id].present?
 
         attrs[:market] = resolve_market if @params[:market_id].present?
         attrs[:channel] = resolve_channel if @params[:channel_id].present?

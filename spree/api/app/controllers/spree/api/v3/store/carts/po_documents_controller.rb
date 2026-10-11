@@ -12,7 +12,7 @@ module Spree
           # unconditional presigner would let anyone holding one mint blobs in
           # the merchant's bucket. Reaching this action means holding the cart.
           #
-          # Blobs are minted on private storage, because attaching a signed id
+          # Files are minted on private storage, because attaching a signed id
           # never moves a blob between services and a purchase order carries the
           # buyer's prices, terms and internal cost codes.
           class PoDocumentsController < Store::BaseController
@@ -23,8 +23,9 @@ module Spree
 
             # POST /api/v3/store/carts/:cart_id/po_document
             #
-            # Exchanges blob metadata for an upload URL. The returned signed id
-            # is then sent back as `po_document` on a cart update, which is what
+            # Takes the same flat request as the Admin API's `POST /files` and
+            # answers with the same shape. The returned signed id is then sent
+            # back as `po_document_signed_id` on a cart update, which is what
             # actually attaches it.
             #
             # The declared size and type are checked here, before any URL is
@@ -34,20 +35,20 @@ module Spree
             # only runs once the bytes are already stored. It is a gate on the
             # cheap lie, not a substitute: the attach-time check still reads
             # the stored object, which is what catches an under-declared size.
+            # Bytes in the request itself are not accepted here: a publishable
+            # key is public.
             def create
-              return render_po_document_invalid unless acceptable_upload?
-
-              blob = ActiveStorage::Blob.create_before_direct_upload!(
-                service_name: Spree.private_storage_service_name, **blob_params
+              file_upload = Spree::FileUpload.new(
+                store: current_store,
+                visibility: 'private',
+                max_byte_size: Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE,
+                allowed_content_types: Spree::Purchase::PurchaseOrder::PO_DOCUMENT_CONTENT_TYPES,
+                **params.permit(:filename, :content_type, :byte_size, :checksum).to_h.symbolize_keys
               )
 
-              render json: {
-                direct_upload: {
-                  url: blob.service_url_for_direct_upload,
-                  headers: blob.service_headers_for_direct_upload
-                },
-                signed_id: blob.signed_id
-              }, status: :created
+              return render_po_document_invalid unless file_upload.save
+
+              render json: Spree.api.file_upload_serializer.new(file_upload, params: serializer_params).to_h, status: :created
             end
 
             # GET /api/v3/store/carts/:cart_id/po_document
@@ -78,18 +79,6 @@ module Spree
             end
 
             private
-
-            def blob_params
-              params.require(:blob).permit(:filename, :byte_size, :checksum, :content_type).to_h.symbolize_keys
-            end
-
-            def acceptable_upload?
-              declared_size = Integer(blob_params[:byte_size].to_s, exception: false)
-
-              declared_size&.positive? &&
-                declared_size <= Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE &&
-                Spree::Purchase::PurchaseOrder::PO_DOCUMENT_CONTENT_TYPES.include?(blob_params[:content_type])
-            end
 
             def render_po_document_invalid
               render_error(

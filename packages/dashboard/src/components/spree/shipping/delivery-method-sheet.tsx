@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { DeliveryProfile, DeliveryZone } from '@spree/admin-sdk'
+import { isDecimalString, isZeroMoney } from '@spree/admin-sdk'
 import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
@@ -31,7 +32,7 @@ import { DeliveryMethodFormCards } from './delivery-method-form'
 /** API decimals arrive as strings ("0.0"); show blank instead of a noisy zero. */
 function decimalToForm(value: string | null | undefined) {
   if (value === null || value === undefined || value === '') return ''
-  return Number(value) === 0 ? '' : String(value)
+  return isDecimalString(value) && isZeroMoney(value) ? '' : String(value)
 }
 
 /** Whether a rule kind is configured with a product list rather than preferences. */
@@ -131,8 +132,10 @@ export function DeliveryMethodSheet({
       estimated_transit_business_days_max:
         method.estimated_transit_business_days_max?.toString() ?? '',
       tax_category_id: method.tax_category_id ?? '',
-      calculator_type: method.calculator_type ?? '',
-      calculator_preferences: (method.calculator_preferences as Record<string, unknown>) ?? {},
+      calculator: {
+        type: method.calculator?.type ?? '',
+        preferences: method.calculator?.preferences ?? {},
+      },
       delivery_zone_id: method.delivery_zone_id ?? '',
       stock_location_ids: method.stock_location_ids ?? [],
       markup_flat: decimalToForm(method.markup_flat),

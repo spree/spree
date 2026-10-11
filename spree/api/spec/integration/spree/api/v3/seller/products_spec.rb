@@ -24,6 +24,7 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
       parameter name: :sort, in: :query, type: :string, required: false, description: 'Sort field; prefix with `-` for descending'
+      filter_parameters_for
 
       response '200', 'products listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

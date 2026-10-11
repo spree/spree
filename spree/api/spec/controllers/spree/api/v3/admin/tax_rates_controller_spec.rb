@@ -30,8 +30,9 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(tax_rate.prefixed_id)
-      expect(json_response['amount']).to eq('0.19')
-      expect(json_response['amount_percentage']).to eq(19.0)
+      expect(json_response['rate']).to eq('0.19')
+      expect(json_response['rate_percent']).to eq('19')
+      expect(json_response).not_to have_key('amount')
       expect(json_response['included_in_price']).to be(true)
       expect(json_response['tax_category_id']).to eq(tax_category.prefixed_id)
       expect(json_response['country_code']).to eq('DE')
@@ -43,7 +44,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
 
   describe 'POST #create' do
     let(:create_params) do
-      { name: 'German VAT', amount: 0.19, included_in_price: true,
+      { name: 'German VAT', rate: '0.19', included_in_price: true,
         tax_category_id: tax_category.prefixed_id, country_code: 'DE' }
     end
 
@@ -56,7 +57,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
     end
 
     it 'accepts a percentage instead of a decimal' do
-      post :create, params: create_params.merge(amount: nil, amount_percentage: 7), as: :json
+      post :create, params: create_params.except(:rate).merge(rate_percent: '7'), as: :json
 
       expect(response).to have_http_status(:created)
       expect(Spree::TaxRate.last.amount).to eq(0.07)
@@ -87,7 +88,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
 
   describe 'PATCH #update' do
     it 'updates the rate' do
-      patch :update, params: { id: tax_rate.prefixed_id, amount: 0 }, as: :json
+      patch :update, params: { id: tax_rate.prefixed_id, rate: '0' }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(tax_rate.reload.amount).to eq(0)

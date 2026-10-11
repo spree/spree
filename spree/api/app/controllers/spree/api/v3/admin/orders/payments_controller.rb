@@ -52,7 +52,10 @@ module Spree
             # to prevent. Both flows are idempotent on replay — an
             # already-captured or already-void payment returns success.
             def capture
-              amount = params[:amount] ? (params[:amount].to_f * 100).round : nil
+              amount = money_param(:amount, @resource.currency)
+              unless amount.nil? || amount.positive?
+                raise Spree::Money::InvalidFormat.new('must be greater than 0', field: :amount)
+              end
 
               result = Spree.payment_capture_workflow.call(payment: @resource, amount: amount)
 

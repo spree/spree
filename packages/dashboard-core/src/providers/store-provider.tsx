@@ -64,7 +64,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   // that path already owns the locale via `switchAdminLocale`, and re-applying
   // would race that PATCH and could reload before it lands. Tracking the
   // storeId it last ran for re-arms it per store, so a multi-store admin still
-  // inherits each store's preferred_admin_locale.
+  // inherits each store's admin_locale.
   const localeFallbackStoreRef = useRef<string | null>(null)
 
   const query = useQuery({
@@ -83,7 +83,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
 
     localeFallbackStoreRef.current = storeId
     reconcileStoreDefaultLocale(
-      store.preferred_admin_locale,
+      store.admin_locale,
       storeId,
       accountLocaleRef.current,
       coreLocaleCodes(),
@@ -99,7 +99,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   // A store's zone preference defaults to the host app's `Time.zone.name`,
   // which may be a Rails name ("Eastern Time (US & Canada)") that Intl and
   // date-fns-tz reject — falling back keeps every date control working.
-  const timezone = resolveTimezone(store?.preferred_timezone)
+  const timezone = resolveTimezone(store?.timezone)
 
   return (
     <StoreContext.Provider

@@ -1,3 +1,56 @@
+## 2026-10-10: One upload endpoint, store-owned blobs, and `<slot>_signed_id` everywhere
+
+**Context:** Files reached Spree through `/direct_uploads`, which copied Active Storage's nested request and minted references that never expired, and nothing recorded which store a blob belonged to. Endpoints that took those references named them seven different ways.
+
+**Decision:** `POST /api/v3/admin/files` and `POST /api/v3/seller/files` replace `/direct_uploads` with no alias: a flat request, `visibility` (`public`/`private`), presigned or multipart bytes, and one response carrying an opaque `signed_id` that expires after a day. Blobs gain a nullable `store_id`, set on every creation and backfilled by the 6.0 upgrade; attaching a blob from another store is logged in 6.0 and refused in 6.1. Every parameter that takes an upload reference is `signed_id` or `<slot>_signed_id` (`avatar_signed_id`, `logo_signed_id`, `po_document_signed_id`, …). Public uploads are allowlisted (web images, videos, CSV); private uploads accept any type. A daily job purges blobs never attached, after `Spree::Config.unattached_upload_retention_days`. The Store API purchase-order presigner keeps its cart-nested route but adopts the same contract. In 6.1 blobs also record who uploaded them.
+
+**Consequences:** A new endpoint that takes a file uses `<slot>_signed_id`, never `file`, `document` or `attachment`. A blob Spree creates must belong to a store: pass `store_id`, or create it where `Spree::Current.store` is set. API responses never contain a blob id, storage key or Rails blob URL; a response offering an existing file for reuse mints a fresh expiring `signed_id`. Supersedes `6.0-digital-assets.md`'s "never multipart through the API request": multipart is allowed for small files through `/files`.
+
+**Plan:** `6.0-uploads-and-file-ownership.md`.
+
+## 2026-10-09: Typed filters keep sellers association-free, take arrays for `_in`, and ship no 5.x warning
+
+**Context:** List filters are being generated into OpenAPI and the SDKs from the Ransack allowlists, and PR C will reject unknown filters. Three choices fix what the published contract says before that happens.
+
+**Decision:** The Seller API reaches no associations through filters, as today; related-data filters for sellers are scopes. `_in` and `_not_in` accept arrays only, never comma-separated strings. There is no 5.x deprecation release: the upgrade guide covers the change, and PR C adds a `Spree.api.strict_filters` setting (default on) that a store can turn off for one release.
+
+The published predicate set also gains `i_cont` for text and `not_eq`/`in`/`not_in` for true/false attributes, which the dashboard's filters already send.
+
+**Consequences:** Seller SDK filter types stay attribute-only. A client sending `q[status_in]=a,b` gets a 400 once enforcement lands, which is the same empty result it already gets, made visible. Self-hosted stores learn of undeclared filters from the upgrade guide and the escape hatch, not from a warning in production.
+
+Every searchable list gets a `q[search]` filter declared with `search_by`, which the dashboard's search boxes use; the API reference documents filters as a generated table per endpoint rather than as thousands of expanded parameters.
+
+An app's own filters, which the published SDK types cannot know, are sent unchecked in `q`, generated into declarations with `spree filters types`, or declared by hand on `…FilterExtensions`.
+
+**Plan:** `6.0-typed-filters.md`.
+
+## 2026-10-09: Spree stops parsing numbers by locale
+
+**Context:** Price, variant, payment, refund, store credit, gift card and adjustment setters re-parsed every string with `Spree::LocalizedNumber` under the request's locale, for the legacy Rails admin. That admin is gone. In a store whose language writes a comma decimal (nl, de, fr) the setters read the dashboard's canonical `"49.50"` as 4950, and an untouched `"99.0"` grew tenfold on every save.
+
+**Decision:** The locale-parsing setters are replaced by strict ones: a number or canonical decimal text is stored exactly, and any other text raises `Spree::Money::InvalidFormat` rather than being silently misread. `Spree::LocalizedNumber.parse` is deprecated with a warning and removed in 6.1. Clients normalize localized input before sending (5.5 plan). The dashboard shows and reads money in the admin's own dashboard language, whatever the currency or market (as Shopify does), instead of the currency's market locale, which was ambiguous when markets share a currency.
+
+**Consequences:** A localized string sent to a model (`"1.234,56"`) is refused with `invalid_money_format`; the Admin API never accepted it by contract. Supersedes the 5.5 plan's "`LocalizedNumber.parse` is NOT removed". See `6.0-money-correctness.md`.
+
+## 2026-10-08: Money is BigDecimal end to end, gateways get amount plus currency, strict canonical strings on the wire, and decimal(19,4) in the database
+
+**Context:** Money columns were already decimal, but several money paths went through floats (Ruby `.to_f`, dashboard `parseFloat`). A few serializers emitted JSON numbers while the rest emitted unnormalized strings (`"10.0"`). Every gateway call was made in hundredths of the currency while Stripe sessions used ISO minor units, so yen captures recorded 100× the amount and dinar captures a tenth, and Stripe's own units differ from both for ISK, HUF and TWD. `decimal(10,2)` could hold neither a dinar's third decimal, a sub-cent unit price, nor a large dong order.
+
+**Decision:** No float on a money path in Ruby or TypeScript, stated as a rule in `CLAUDE.md` (a lint cop was tried and dropped on 2026-10-09); `@spree/sdk-core` gets a string-based decimal helper. Currency exponents are ISO 4217 from one Spree-owned file, registered over the Money gem, imported by sdk-core and exposed as `decimal_places` on currencies. Gateways receive a `Spree::Money` and each adapter converts to its provider's unit; gateways that have not opted in keep receiving hundredths with a deprecation warning until 6.1. Every money field in every v3 serializer is a decimal string: exactly the exponent for totals and money that changes hands, up to four decimals for unit prices. Rates and percentages are decimal strings with trailing zeros stripped; `_percent` means 0–100, `rate` means a fraction, and no rate is named like money. Admin and Seller writes reject JSON numbers, non-canonical strings and over-precise strings with 422 `invalid_money_format`. Money columns become `decimal(19,4)` in one idempotent migration with a documented online path. Rounding happens only when persisting, in a gateway adapter, or when serializing, with the mode a parameter and tax providers owning theirs. Existing wrong capture events are reported, never rewritten. The migration changes all of a table's money columns in one `ALTER TABLE` and does not restate `null`/`default` (which PostgreSQL and MySQL keep through a type change), so each table is rewritten once; it is marked safe for apps using strong_migrations.
+
+**Consequences:** Breaking for API clients sending numbers or comparing money strings, for clients reading the removed `*_in_cents` fields or the renamed tax rate fields, and (from 6.1) for gateways that never opt in. HUF stops rounding to whole forints. Open carts in zero- and three-decimal currencies change on their next recalculation; completed orders do not. Integer minor units are rejected as an API contract. Ships as four PRs: floats out, gateway amounts, wire contract, precision.
+
+**Plans amended:** `5.5-client-side-money-normalization.md` (its "lenient now" open question is settled as strict). See `6.0-money-correctness.md`.
+## 2026-10-09: Preferences are typed on the wire, and the `preferred_` prefix leaves the API
+
+**Context:** Preferences reached the v3 APIs as the Ruby DSL rather than a contract. Store, channel and import settings were exposed as `preferred_*` fields, and every configurable subtype (promotion rules and actions, calculators, payment methods, integrations, rules of every kind) sent an untyped `preferences` object next to a `preference_schema` written in Ruby type names, repeated on every row. The real rules (prefixed-ID decoding, country normalization, rejecting unknown keys) lived in code no client could read.
+
+**Decision:** The preference declarations stay the single source and become complete (`of:`, `keys:`/`values:`, `money:`, `choices:`, `format:`, `prefix:`). They compile to JSON Schema, which feeds the OpenAPI components, the SDK unions (one member per built-in subtype plus a fallback for plugins), the `/…/types` endpoints (`schema` replaces `preference_schema`, which leaves resource rows) and the validation of every preferences write (422 `invalid_preferences` with a JSON pointer per failure). `preferred_*` fields are renamed to plain names through `exposes_preferences` on the model; `order.preferred_stock_location_id` is an association and stays. The store's `storefront_url` setting takes the plain name; the model's reader keeps the fallback to the first allowed origin and the store URL, while the API returns the stored setting and `url` carries the effective address. Old `preferred_*` keys are accepted on write until 6.1 with a deprecation warning. `exposes_preferences` grants no write access; each API keeps its own permitted list. Incomplete declarations in plugins warn and get a permissive schema in 6.0, and raise in 6.1. Delivery methods move to the nested `calculator: { type, preferences }` shape. All three phases ship in one pull request.
+
+**Consequences:** A new preference declares its full type and never uses `:any`; an ID list is `of: :id, prefix:`, never a decoding lambda; no serializer or permitted list gains a `preferred_*` name or a `preference_schema`; a new configurable family publishes a `/…/types` endpoint and a typed union with a fallback member. The Store API is unaffected; the Admin and Seller APIs break, and every rename is listed in the upgrade guide.
+
+**Plan:** `6.0-typed-preferences.md`.
+
 ## 2026-10-07: Translations move into core, and `Spree.t` is deprecated for `I18n.t`
 
 **Context:** `Spree.t` ran through Rails' view translation helper, so it needed Action View and returned `<span class="translation_missing">` markup for a missing key, which leaked into JSON errors and dashboard notifications. Every language but English lived in `spree_i18n`: 6.5 MB of locale files, about 60% for the removed admin and storefront, plus `kaminari-i18n` (which requires the full `rails` gem), `i18n_data` (which swaps the global `I18n.backend`) and `spree_extension`.

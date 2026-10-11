@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: definitions } = await client.customFieldDefinitions.list({
-  q: { resource_type_eq: 'product' },
+  resource_type_eq: 'product',
 })
 
 // endregion:example

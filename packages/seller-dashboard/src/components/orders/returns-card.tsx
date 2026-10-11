@@ -1,4 +1,11 @@
-import { currencyParts } from '@spree/dashboard-core'
+import {
+  currencyParts,
+  formatMoney,
+  isPositiveMoney,
+  returnOwesNothing,
+  returnRefundSummary,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -14,8 +21,6 @@ import {
   DropdownMenuTrigger,
   ReturnReceiveDialog,
   ReturnRefundDialog,
-  returnOwesNothing,
-  returnRefundSummary,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -138,7 +143,7 @@ export function ReturnsCard({ order }: { order: Order }) {
                 {returnRecord.return_line_items?.map((line) => (
                   <ReturnLineRow key={line.id} line={line} />
                 ))}
-                <RefundSummary returnRecord={returnRecord} />
+                <RefundSummary returnRecord={returnRecord} currency={order.currency} />
               </CardContent>
             </Card>
           ))
@@ -165,9 +170,10 @@ export function ReturnsCard({ order }: { order: Order }) {
   )
 }
 
-function RefundSummary({ returnRecord }: { returnRecord: Return }) {
+function RefundSummary({ returnRecord, currency }: { returnRecord: Return; currency: string }) {
   const { t } = useTranslation()
-  const summary = returnRefundSummary(returnRecord)
+  const locale = useMoneyLocale()
+  const summary = returnRefundSummary(returnRecord, currency, locale)
 
   return (
     <p className="text-muted-foreground text-sm">
@@ -260,9 +266,10 @@ function RefundDialog({
   return (
     <ReturnRefundDialog
       refundableTotal={returnRecord.refundable_total}
+      owesNothing={returnOwesNothing(returnRecord.refundable_total)}
       refundTaxTotal={
-        Number(returnRecord.refund_tax_total) > 0
-          ? returnRecord.display_refund_tax_total
+        isPositiveMoney(returnRecord.refund_tax_total)
+          ? formatMoney(returnRecord.refund_tax_total, order.currency, i18n.language)
           : undefined
       }
       currencySymbol={currencySymbol}

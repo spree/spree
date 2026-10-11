@@ -17,7 +17,6 @@ module Spree
                    settled_amount: 'string | null',
                    settled_currency: 'string | null',
                    converted: :boolean,
-                   display_amount: :string,
                    reference: 'string | null',
                    order_id: 'string | null',
                    order_number: 'string | null',
@@ -27,13 +26,13 @@ module Spree
           attributes :kind, :status, :currency, :reference,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # A string, so the figure a seller is paid round-trips exactly.
-          attribute(:amount) { |transfer| transfer.amount&.to_s }
-          attribute(:display_amount) { |transfer| transfer.display_amount.to_s }
+          attribute(:amount) { |transfer| Spree::Money::Rounding.format(transfer.amount, transfer.currency) }
 
           # What this seller's account received, when the provider converted
           # on the way in. Null when it settled in the currency of the sale.
-          attribute(:settled_amount) { |transfer| transfer.settled_amount&.to_s }
+          attribute(:settled_amount) do |transfer|
+            Spree::Money::Rounding.format(transfer.settled_amount, transfer.settled_currency || transfer.currency)
+          end
           attribute(:settled_currency) { |transfer| transfer.settled_currency }
           attribute(:converted) { |transfer| transfer.converted? }
 

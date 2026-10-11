@@ -36,6 +36,7 @@ module Spree
         # internal cost codes, and is served only through an authenticated
         # download action.
         has_one_attached :po_document, service: Spree.private_storage_service_name
+        signed_id_attachments :po_document
 
         validates :po_document,
                   size: { less_than_or_equal_to: MAX_PO_DOCUMENT_SIZE },

@@ -2,6 +2,23 @@ import { transformListParams } from '@spree/sdk-core'
 import { describe, expect, it } from 'vitest'
 
 describe('transformListParams', () => {
+  it('sends the entries of q as filters', () => {
+    const result = transformListParams({
+      name_cont: 'shirt',
+      q: { erp_id_eq: 'ERP-1', tags_in: ['a', 'b'] },
+    })
+    expect(result).toEqual({
+      'q[erp_id_eq]': 'ERP-1',
+      'q[tags_in][]': ['a', 'b'],
+      'q[name_cont]': 'shirt',
+    })
+  })
+
+  it('prefers a typed filter over the same key in q', () => {
+    const result = transformListParams({ name_cont: 'typed', q: { name_cont: 'raw' } })
+    expect(result).toEqual({ 'q[name_cont]': 'typed' })
+  })
+
   it('passes through pagination params unchanged', () => {
     const result = transformListParams({ page: 2, limit: 10 })
     expect(result).toEqual({ page: 2, limit: 10 })

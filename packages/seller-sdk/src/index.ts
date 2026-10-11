@@ -1,6 +1,21 @@
-export type { RequestOptions, RetryConfig } from '@spree/sdk-core'
+export type {
+  FileUploadCreateParams,
+  RequestOptions,
+  RetryConfig,
+  UploadFileOptions,
+} from '@spree/sdk-core'
 // Request infrastructure (re-exported from sdk-core)
-export { SpreeError } from '@spree/sdk-core'
+export {
+  compareMoney,
+  decimalPlaces,
+  isDecimalString,
+  isZeroMoney,
+  multiplyMoney,
+  negateMoney,
+  SpreeError,
+  subtractMoney,
+  sumMoney,
+} from '@spree/sdk-core'
 // `Client` is the whole configured client (auth + resources + token/seller
 // setters); `SellerClient` below is just the resource group. Exported under
 // both names so hosts can say what they mean.
@@ -13,7 +28,6 @@ export type {
   DeliveryMethodParams,
   DeliveryMethodRuleParams,
   DeliveryMethodRuleType,
-  DeliveryPreferenceField,
   DeliveryZoneListParams,
   MeResource,
   MeResponse,

@@ -48,8 +48,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: "Filter by status ('draft', 'ordered', 'partially_received', 'received', 'over_received', 'canceled')"
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed: items, supplier, destination_location'
 
@@ -63,7 +62,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
           row = data['data'].find { |po| po['id'] == order_record.prefixed_id }
           expect(row['status']).to eq('draft')
           expect(row['quantity_ordered_total']).to eq(100)
-          expect(row['subtotal']).to eq('1250.0')
+          expect(row['subtotal']).to eq('1250.00')
         end
       end
 
@@ -186,7 +185,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['items'].first['unit_cost']).to eq('12.5')
+          expect(data['items'].first['unit_cost']).to eq('12.50')
           expect(data['supplier']['name']).to eq('Acme Wholesale')
         end
       end
@@ -250,6 +249,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
+      filter_parameters_for
 
       response '200', 'deliveries found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

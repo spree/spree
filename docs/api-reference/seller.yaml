@@ -94,7 +94,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 1
+                  name: Seller 2
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -161,7 +161,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 3
+                  name: Seller 4
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -306,7 +306,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 44
+                  name: Seller 50
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -423,7 +423,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 81
+                  name: Seller 87
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -493,8 +493,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 54
-                  slug: seller-54
+                  name: Seller 60
+                  slug: seller-60
                   status: approved
                 permissions:
                 - allow: true
@@ -727,7 +727,7 @@ paths:
         `X-Spree-Seller-Id`, because the account is the same whichever seller
         they are acting for.
 
-        `avatar` takes an ActiveStorage direct-upload signed id to set the
+        `avatar_signed_id` takes the `signed_id` from `POST /files` to set the
         photo, or `null` to remove it; omit it to leave the current one alone.
         `email` is identity-bound and cannot be changed here.
       parameters: []
@@ -748,8 +748,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 56
-                  slug: seller-56
+                  name: Seller 62
+                  slug: seller-62
                   status: approved
                 permissions: []
                 permission_keys: []
@@ -765,7 +765,7 @@ paths:
                   message: Avatar has an invalid content type (authorized content
                     types are PNG, JPG, GIF, WEBP)
                   details:
-                    avatar:
+                    avatar_signed_id:
                     - has an invalid content type (authorized content types are PNG,
                       JPG, GIF, WEBP)
               schema:
@@ -796,10 +796,11 @@ paths:
                   type: string
                   example: de
                   description: Panel display language, as a code the panel ships.
-                avatar:
+                avatar_signed_id:
                   type: string
                   nullable: true
-                  description: Direct-upload signed id, or `null` to remove the photo.
+                  description: The `signed_id` returned by POST /files, or `null`
+                    to remove the photo.
   "/api/v3/seller/countries":
     get:
       summary: List countries
@@ -12405,6 +12406,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -12417,6 +12424,43 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `available_to_sellers` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `storefront_visible` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `available_to_sellers`, `created_at`, `id`, `name`, `seller_id`, `storefront_visible`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: DeliveryMethod
+        sortable:
+        - available_to_sellers
+        - created_at
+        - id
+        - name
+        - seller_id
+        - storefront_visible
+        - updated_at
       responses:
         '200':
           description: delivery methods listed
@@ -12426,7 +12470,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND_73
+                  code: UPS_GROUND_85
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12441,14 +12485,15 @@ paths:
                   editable: true
                   delivery_profile_id: fp_UkLWZg9DAJ
                   delivery_zone_id:
-                  calculator_type: flat_rate
-                  calculator_preferences:
-                    amounts: {}
-                    amount: '10.0'
-                    currency: USD
+                  calculator:
+                    type: flat_rate
+                    preferences:
+                      amounts: {}
+                      amount: '10.00'
+                      currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND_74
+                  code: UPS_GROUND_86
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12463,11 +12508,12 @@ paths:
                   editable: false
                   delivery_profile_id: fp_UkLWZg9DAJ
                   delivery_zone_id:
-                  calculator_type: flat_rate
-                  calculator_preferences:
-                    amounts: {}
-                    amount: '10.0'
-                    currency: USD
+                  calculator:
+                    type: flat_rate
+                    preferences:
+                      amounts: {}
+                      amount: '10.00'
+                      currency: USD
                 meta:
                   page: 1
                   limit: 25
@@ -12532,11 +12578,12 @@ paths:
                 editable: true
                 delivery_profile_id: fp_gbHJdmfrXB
                 delivery_zone_id:
-                calculator_type: flat_rate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '9.99'
-                  currency: USD
+                calculator:
+                  type: flat_rate
+                  preferences:
+                    amounts: {}
+                    amount: '9.99'
+                    currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
         '422':
@@ -12584,10 +12631,18 @@ paths:
                 estimated_transit_business_days_max:
                   type: integer
                   nullable: true
-                calculator_type:
-                  type: string
-                calculator_preferences:
+                calculator:
                   type: object
+                  description: 'How the method is priced: a type from `/delivery_methods/calculators`
+                    and its preferences, per that type''s `schema`.'
+                  properties:
+                    type:
+                      type: string
+                      example: flat_rate
+                    preferences:
+                      type: object
+                      example:
+                        amount: '12.5'
                 rules:
                   type: array
                   description: Conditions on the method, from `/delivery_methods/rule_types`
@@ -12627,7 +12682,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND_79
+                code: UPS_GROUND_91
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12642,11 +12697,12 @@ paths:
                 editable: true
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_zone_id:
-                calculator_type: flat_rate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '10.0'
-                  currency: USD
+                calculator:
+                  type: flat_rate
+                  preferences:
+                    amounts: {}
+                    amount: '10.00'
+                    currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
     patch:
@@ -12666,7 +12722,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND_81
+                code: UPS_GROUND_93
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12681,11 +12737,12 @@ paths:
                 editable: true
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_zone_id:
-                calculator_type: flat_rate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '10.0'
-                  currency: USD
+                calculator:
+                  type: flat_rate
+                  preferences:
+                    amounts: {}
+                    amount: '10.00'
+                    currency: USD
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
       requestBody:
@@ -12720,10 +12777,18 @@ paths:
                 estimated_transit_business_days_max:
                   type: integer
                   nullable: true
-                calculator_type:
-                  type: string
-                calculator_preferences:
+                calculator:
                   type: object
+                  description: 'How the method is priced: a type from `/delivery_methods/calculators`
+                    and its preferences, per that type''s `schema`.'
+                  properties:
+                    type:
+                      type: string
+                      example: flat_rate
+                    preferences:
+                      type: object
+                      example:
+                        amount: '12.5'
                 rules:
                   type: array
                   description: Replaces the whole set — a rule dropped here is deleted,
@@ -12772,43 +12837,69 @@ paths:
                   name: Item total
                   description: Limits the delivery method to carts within an item
                     total range
-                  preference_schema:
-                  - key: minimum_amount
-                    type: decimal
-                    default:
-                  - key: maximum_amount
-                    type: decimal
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      minimum_amount:
+                        type:
+                        - string
+                        - 'null'
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                      maximum_amount:
+                        type:
+                        - string
+                        - 'null'
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                    additionalProperties: false
                 - type: weight_rule
                   name: Weight
                   description: Limits the delivery method to packages within a weight
                     range
-                  preference_schema:
-                  - key: minimum_weight
-                    type: decimal
-                    default:
-                  - key: maximum_weight
-                    type: decimal
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      minimum_weight:
+                        type:
+                        - string
+                        - 'null'
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                      maximum_weight:
+                        type:
+                        - string
+                        - 'null'
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                    additionalProperties: false
                 - type: volume_rule
                   name: Volume
                   description: Limits the delivery method to shipments within a volume
                     range, in cubic meters
-                  preference_schema:
-                  - key: minimum_volume
-                    type: decimal
-                    default:
-                  - key: maximum_volume
-                    type: decimal
-                    default:
+                  schema:
+                    type: object
+                    properties:
+                      minimum_volume:
+                        type:
+                        - string
+                        - 'null'
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                      maximum_volume:
+                        type:
+                        - string
+                        - 'null'
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                    additionalProperties: false
                 - type: company_rule
                   name: Company
                   description: Offers the delivery method only to orders placed for
                     a company, or only to orders that are not
-                  preference_schema:
-                  - key: company_orders_only
-                    type: boolean
-                    default: true
+                  schema:
+                    type: object
+                    properties:
+                      company_orders_only:
+                        type: boolean
+                        default: true
+                    additionalProperties: false
               schema:
                 type: object
                 properties:
@@ -12823,10 +12914,9 @@ paths:
                           type: string
                         description:
                           type: string
-                        preference_schema:
-                          type: array
-                          items:
-                            type: object
+                        schema:
+                          type: object
+                          description: JSON Schema of the type's `preferences`
                 required:
                 - data
   "/api/v3/seller/delivery_methods/calculators":
@@ -12851,76 +12941,140 @@ paths:
                 data:
                 - type: flat_percent_item_total
                   name: Flat Percent
-                  preference_schema:
-                  - key: flat_percent
-                    type: decimal
-                    default: 0
+                  schema:
+                    type: object
+                    properties:
+                      flat_percent:
+                        type: string
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                    additionalProperties: false
                 - type: flat_rate
                   name: Flat rate
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: flexi_rate
                   name: Flexible Rate per package item
-                  preference_schema:
-                  - key: first_item
-                    type: decimal
-                    default: 0.0
-                  - key: additional_item
-                    type: decimal
-                    default: 0.0
-                  - key: max_items
-                    type: integer
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      first_item:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      additional_item:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      max_items:
+                        type: integer
+                        default: 0
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: per_item
                   name: Flat rate per package item
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: price_sack
                   name: Price sack
-                  preference_schema:
-                  - key: minimal_amount
-                    type: decimal
-                    default: 0
-                  - key: normal_amount
-                    type: decimal
-                    default: 0
-                  - key: discount_amount
-                    type: decimal
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      minimal_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      normal_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      discount_amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
                 - type: digital_delivery
                   name: Digital Delivery
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
+                  schema:
+                    type: object
+                    properties:
+                      amounts:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      amount:
+                        type: string
+                        format: money
+                        pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: '0'
+                      currency:
+                        type: string
+                        format: currency
+                        pattern: "^[A-Z]{3}$"
+                    additionalProperties: false
               schema:
                 type: object
                 properties:
@@ -12933,10 +13087,9 @@ paths:
                           type: string
                         name:
                           type: string
-                        preference_schema:
-                          type: array
-                          items:
-                            type: object
+                        schema:
+                          type: object
+                          description: JSON Schema of the type's `preferences`
                 required:
                 - data
   "/api/v3/seller/delivery_profiles":
@@ -12960,6 +13113,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -12972,6 +13131,39 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: DeliveryProfile
+        sortable:
+        - created_at
+        - id
+        - name
+        - position
+        - updated_at
       responses:
         '200':
           description: delivery profiles listed
@@ -13047,6 +13239,39 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `delivery_profile_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `delivery_profile_id`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: DeliveryZone
+        sortable:
+        - created_at
+        - delivery_profile_id
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: delivery zones listed
@@ -13197,8 +13422,8 @@ paths:
         needs to correct something submits again rather than editing, and the
         latest one counts.
 
-        `file` is **not** a multipart upload — it is the `signed_id` returned by
-        `POST /api/v3/seller/direct_uploads`, so the bytes are already in storage
+        `file_signed_id` is the `signed_id` returned by
+        `POST /api/v3/seller/files`, so the bytes are already in storage
         by the time this runs.
 
         An attestation is accepted on the spot; a requirement the operator
@@ -13250,10 +13475,10 @@ paths:
                   type: string
                   description: A reference number or external identifier, for requirements
                     that ask for one
-                file:
+                file_signed_id:
                   type: string
-                  description: A direct-upload `signed_id`, for requirements that
-                    ask for a document
+                  description: The `signed_id` returned by POST /files, for requirements
+                    that ask for a document
   "/api/v3/seller/requirement_submissions/{id}/download":
     parameters:
     - name: id
@@ -13312,6 +13537,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -13324,6 +13555,41 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `owner_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `owner_type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `owner_id`, `owner_type`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Policy
+        sortable:
+        - created_at
+        - id
+        - name
+        - owner_id
+        - owner_type
+        - updated_at
       responses:
         '200':
           description: policies listed
@@ -13532,6 +13798,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -13544,6 +13816,37 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ProductType
+        sortable:
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: product types listed
@@ -13625,6 +13928,105 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches product name or variant SKU (partial, case-insensitive),
+          and the store's searchable custom fields.
+      - name: q[ascend_by_price]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `ascend_by_price`.
+      - name: q[descend_by_price]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `descend_by_price`.
+      - name: q[in_categories][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        description: Applies `in_categories` to the given value.
+      - name: q[in_category]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_category` to the given value.
+      - name: q[in_collection]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_collection` to the given value.
+      - name: q[in_stock]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `in_stock`.
+      - name: q[in_taxon]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `in_taxon` to the given value.
+      - name: q[not_discontinued]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `not_discontinued`.
+      - name: q[out_of_stock]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `out_of_stock`.
+      - name: q[price_between][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+        description: Applies `price_between` to the given value.
+      - name: q[price_gte]
+        in: query
+        required: false
+        schema:
+          type: number
+        description: Applies `price_gte` to the given value.
+      - name: q[price_lte]
+        in: query
+        required: false
+        schema:
+          type: number
+        description: Applies `price_lte` to the given value.
+      - name: q[search_by_name]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `search_by_name` to the given value.
+      - name: q[with_option_value_ids][]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        description: Applies `with_option_value_ids` to the given value.
       - name: page
         in: query
         required: false
@@ -13643,6 +14045,51 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `available_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `description` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `draft`, `active`, `archived`, `proposed`, `rejected` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Product
+        sortable:
+        - available_on
+        - created_at
+        - description
+        - discontinue_on
+        - id
+        - name
+        - price
+        - seller_id
+        - slug
+        - status
+        - updated_at
       responses:
         '200':
           description: products listed
@@ -13651,8 +14098,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2053250
-                  slug: product-2053250
+                  name: Product 2233250
+                  slug: product-2233250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13687,13 +14134,9 @@ paths:
                   tags: []
                   price:
                     id: price_UkLWZg9DAJ
-                    amount: '19.99'
-                    amount_in_cents: 1999
-                    compare_at_amount:
-                    compare_at_amount_in_cents:
                     currency: USD
-                    display_amount: "$19.99"
-                    display_compare_at_amount:
+                    amount: '19.99'
+                    compare_at_amount:
                     price_list_id:
                   original_price:
                   seller_id: sel_UkLWZg9DAJ
@@ -13774,13 +14217,9 @@ paths:
                 tags: []
                 price:
                   id: price_gbHJdmfrXB
-                  amount: '24.0'
-                  amount_in_cents: 2400
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
-                  display_amount: "$24.00"
-                  display_compare_at_amount:
+                  amount: '24.00'
+                  compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -13895,8 +14334,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2086710
-                slug: product-2086710
+                name: Product 2266710
+                slug: product-2266710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13926,13 +14365,9 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
+                  amount: '19.99'
+                  compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -13975,7 +14410,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2118212
+                slug: product-2298212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14001,13 +14436,9 @@ paths:
                 tags: []
                 price:
                   id: price_UkLWZg9DAJ
-                  amount: '19.99'
-                  amount_in_cents: 1999
-                  compare_at_amount:
-                  compare_at_amount_in_cents:
                   currency: USD
-                  display_amount: "$19.99"
-                  display_compare_at_amount:
+                  amount: '19.99'
+                  compare_at_amount:
                   price_list_id:
                 original_price:
                 seller_id: sel_UkLWZg9DAJ
@@ -14088,14 +14519,14 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 101
-                slug: seller-101
+                name: Seller 107
+                slug: seller-107
                 about: ''
                 about_html: ''
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
-                preferred_timezone: UTC
+                timezone: UTC
                 status: approved
                 legal_name:
                 registration_number:
@@ -14162,13 +14593,13 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-103
+                slug: seller-109
                 about: ''
                 about_html: ''
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
-                preferred_timezone: UTC
+                timezone: UTC
                 status: approved
                 legal_name:
                 registration_number:
@@ -14233,14 +14664,15 @@ paths:
                 registration_number:
                   type: string
                   nullable: true
-                logo:
+                logo_signed_id:
                   type: string
                   nullable: true
-                  description: ActiveStorage signed id; `null` removes the attachment
-                square_logo:
+                  description: The `signed_id` returned by POST /files; `null` removes
+                    the image
+                square_logo_signed_id:
                   type: string
                   nullable: true
-                cover_photo:
+                cover_photo_signed_id:
                   type: string
                   nullable: true
                 accept_terms:
@@ -14277,6 +14709,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -14295,6 +14733,53 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `pickup_enabled` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `returns_enabled` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `state_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: StockLocation
+        sortable:
+        - active
+        - country_code
+        - created_at
+        - default
+        - id
+        - kind
+        - name
+        - pickup_enabled
+        - returns_enabled
+        - seller_id
+        - state_code
+        - updated_at
       responses:
         '200':
           description: stock locations listed
@@ -14907,27 +15392,28 @@ paths:
                   message: Admin user not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/seller/direct_uploads":
+  "/api/v3/seller/files":
     post:
-      summary: Create a direct upload
+      summary: Upload a file
       tags:
-      - Uploads
+      - Files
       security:
       - bearer_auth: []
       description: |
-        Presigns an upload target for a file the seller is about to send.
+        Accepts a file and returns a `signed_id` to send wherever the file
+        belongs — as a requirement submission's `file_signed_id`, or as
+        `logo_signed_id`, `square_logo_signed_id` or `cover_photo_signed_id` on
+        the profile. The file is attached to nothing at this point; the
+        endpoint that takes the `signed_id` is the one that checks ownership.
 
-        Three steps: post the file's metadata here, `PUT` the bytes to the
-        returned `direct_upload.url` with the headers it names, then send the
-        returned `signed_id` wherever the file belongs — as a requirement
-        submission's `file`, or as `logo`, `square_logo` or `cover_photo` on the
-        profile.
+        Send the file's metadata as JSON, then `PUT` the bytes to `upload.url`
+        with exactly `upload.headers`; or send small files (10 MB by default)
+        as a multipart `file` part, in which case `upload` is null.
 
-        The blob is attached to nothing at this point. The endpoint that consumes
-        the `signed_id` is the one that checks ownership.
-
-        `checksum` is the file's MD5 digest, base64-encoded — the storage service
-        verifies the upload against it.
+        `signed_id` is opaque and expires at `expires_at`, one day after the
+        upload. `visibility` is `public` (the default, web images, videos and
+        CSV only) or `private` (any type). `checksum` is the file's MD5
+        digest, base64-encoded.
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14940,42 +15426,81 @@ paths:
           content:
             application/json:
               example:
-                direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--484d46dd60be3523918976c0cc622ec8eb33a9be
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--bb0b6973ee0447f02cdcd29af88cf330e909e39c
+                filename: registration.pdf
+                content_type: application/pdf
+                byte_size: 51234
+                visibility: private
+                expires_at: '2026-01-16T12:00:00.000Z'
+                upload:
+                  method: PUT
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--8107f48df9ba51d19f7688d473fda995d4063f66
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc
               schema:
-                "$ref": "#/components/schemas/DirectUploadResponse"
+                "$ref": "#/components/schemas/FileUpload"
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                blob:
-                  type: object
-                  properties:
-                    filename:
-                      type: string
-                      example: registration.pdf
-                    byte_size:
-                      type: integer
-                      example: 51234
-                    checksum:
-                      type: string
-                      description: Base64-encoded MD5 digest of the file
-                      example: rL0Y20zC+Fzt72VPzMSk2A==
-                    content_type:
-                      type: string
-                      example: application/pdf
-                  required:
-                  - filename
-                  - byte_size
-                  - checksum
-                  - content_type
+                filename:
+                  type: string
+                  example: registration.pdf
+                content_type:
+                  type: string
+                  example: application/pdf
+                byte_size:
+                  type: integer
+                  example: 51234
+                checksum:
+                  type: string
+                  description: Base64-encoded MD5 digest of the file
+                  example: rL0Y20zC+Fzt72VPzMSk2A==
+                visibility:
+                  type: string
+                  enum:
+                  - public
+                  - private
+                  default: public
+                file:
+                  type: string
+                  format: binary
+                  description: The bytes, for a multipart upload
               required:
-              - blob
+              - filename
+              - content_type
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  example: registration.pdf
+                content_type:
+                  type: string
+                  example: application/pdf
+                byte_size:
+                  type: integer
+                  example: 51234
+                checksum:
+                  type: string
+                  description: Base64-encoded MD5 digest of the file
+                  example: rL0Y20zC+Fzt72VPzMSk2A==
+                visibility:
+                  type: string
+                  enum:
+                  - public
+                  - private
+                  default: public
+                file:
+                  type: string
+                  format: binary
+                  description: The bytes, for a multipart upload
+              required:
+              - filename
+              - content_type
   "/api/v3/seller/balances":
     get:
       summary: List balances
@@ -15008,16 +15533,11 @@ paths:
                 - currency: USD
                   settlement_currency: USD
                   converted: false
-                  earned: '40.0'
-                  display_earned: "$40.00"
-                  payable: '40.0'
-                  display_payable: "$40.00"
-                  paid: '15.0'
-                  display_paid: "$15.00"
-                  balance: '25.0'
-                  display_balance: "$25.00"
-                  pending: '0.0'
-                  display_pending: "$0.00"
+                  earned: '40.00'
+                  pending: '0.00'
+                  payable: '40.00'
+                  paid: '15.00'
+                  balance: '25.00'
               schema:
                 type: object
                 properties:
@@ -15048,6 +15568,45 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `open`, `approved`, `resolved`, `denied`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Claim
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: claims listed
@@ -15061,8 +15620,7 @@ paths:
                   resolution:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
-                  refund_total: '0.0'
-                  display_refund_total: "$0.00"
+                  refund_total: '0.00'
                   approved_at:
                   resolved_at:
                   denied_at:
@@ -15117,8 +15675,7 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.0'
-                display_refund_total: "$0.00"
+                refund_total: '0.00'
                 approved_at:
                 resolved_at:
                 denied_at:
@@ -15200,8 +15757,7 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.0'
-                display_refund_total: "$0.00"
+                refund_total: '0.00'
                 approved_at: '2026-01-15T12:00:00Z'
                 resolved_at:
                 denied_at:
@@ -15250,8 +15806,7 @@ paths:
                 resolution: refund
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.0'
-                display_refund_total: "$0.00"
+                refund_total: '0.00'
                 approved_at: '2026-01-15T12:00:00Z'
                 resolved_at: '2026-01-15T12:00:00Z'
                 denied_at:
@@ -15322,8 +15877,7 @@ paths:
                 resolution:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '0.0'
-                display_refund_total: "$0.00"
+                refund_total: '0.00'
                 approved_at:
                 resolved_at:
                 denied_at: '2026-01-15T12:00:00Z'
@@ -15348,6 +15902,39 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ClaimReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -15398,6 +15985,45 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `fulfilled`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Exchange
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: exchanges listed
@@ -15411,7 +16037,6 @@ paths:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   price_difference: '9.99'
-                  display_price_difference: "$9.99"
                   approved_at:
                   received_at:
                   fulfilled_at:
@@ -15467,7 +16092,6 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
-                display_price_difference: "$9.99"
                 approved_at:
                 received_at:
                 fulfilled_at:
@@ -15547,7 +16171,6 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
-                display_price_difference: "$9.99"
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 fulfilled_at: '2026-01-15T12:00:00Z'
@@ -15775,6 +16398,37 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Fulfillment
+        sortable:
+        - created_at
+        - id
+        - number
+        - updated_at
       responses:
         '200':
           description: fulfillments listed
@@ -15792,7 +16446,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 81
+                  delivery_method_name: UPS Ground 93
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -15800,21 +16454,20 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1869315
-                    sku: SKU-252
+                    name: Product 2029315
+                    sku: SKU-273
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 81
+                    name: UPS Ground 93
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -15899,7 +16552,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 82
+                delivery_method_name: UPS Ground 94
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15907,21 +16560,20 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 187961
-                  sku: SKU-253
+                  name: Product 203961
+                  sku: SKU-274
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 82
+                  name: UPS Ground 94
                   selected: true
-                  cost: '10.0'
-                  total: '10.0'
+                  cost: '10.00'
+                  total: '10.00'
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
+                  unpriced: false
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-1
@@ -16013,7 +16665,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 83
+                delivery_method_name: UPS Ground 95
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -16021,21 +16673,20 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1883170
-                  sku: SKU-254
+                  name: Product 2043170
+                  sku: SKU-275
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 83
+                  name: UPS Ground 95
                   selected: true
-                  cost: '10.0'
-                  total: '10.0'
+                  cost: '10.00'
+                  total: '10.00'
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
+                  unpriced: false
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-2
@@ -16107,7 +16758,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 84
+                delivery_method_name: UPS Ground 96
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -16115,21 +16766,20 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1897276
-                  sku: SKU-255
+                  name: Product 2057276
+                  sku: SKU-276
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 84
+                  name: UPS Ground 96
                   selected: true
-                  cost: '10.0'
-                  total: '10.0'
+                  cost: '10.00'
+                  total: '10.00'
                   carrier:
                   service_level:
                   estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
+                  unpriced: false
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: U10000
@@ -16146,6 +16796,248 @@ paths:
                 labels: []
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
+  "/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: fulfillment_id
+      in: path
+      description: Prefixed fulfillment ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List deliveries
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: The consignments of one of this seller's parcels, one per tracking
+        number, with each carrier status.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[carrier_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `carrier` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `pre_transit`, `in_transit`, `out_for_delivery`, `available_for_pickup`, `delivered`, `return_to_sender`, `failure`, `unknown` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `tracking_number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `carrier`, `created_at`, `id`, `status`, `tracking_number`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Delivery
+        sortable:
+        - carrier
+        - created_at
+        - id
+        - status
+        - tracking_number
+        - updated_at
+      responses:
+        '200':
+          description: deliveries listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Delivery"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: fulfillment_id
+      in: path
+      description: Prefixed fulfillment ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List shipping labels
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: Every label bought or uploaded for one of this seller's parcels,
+        refunded ones included.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[carrier_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `carrier` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `source` | One of `purchased`, `uploaded` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `purchased`, `refund_requested`, `refunded` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `tracking_number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `carrier`, `created_at`, `id`, `source`, `status`, `tracking_number`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ShippingLabel
+        sortable:
+        - carrier
+        - created_at
+        - id
+        - source
+        - status
+        - tracking_number
+        - updated_at
+      responses:
+        '200':
+          description: labels listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: lbl_UkLWZg9DAJ
+                  source: purchased
+                  status: purchased
+                  carrier: ups
+                  carrier_name: UPS
+                  service: Ground
+                  tracking_number: 1Z879E930346830007
+                  currency: USD
+                  format: pdf
+                  external_id: shp_4
+                  metadata: {}
+                  refunded_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  owner_id: ful_UkLWZg9DAJ
+                  owner_type: fulfillment
+                  cost: '7.25'
+                  integration_id:
+                  file_pending: false
+                  download_url:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ShippingLabel"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/seller/tracking_carriers":
     get:
       summary: List tracking carriers
@@ -16218,6 +17110,372 @@ paths:
                       - name
                 required:
                 - data
+  "/api/v3/seller/imports":
+    get:
+      summary: List imports
+      tags:
+      - Imports
+      security:
+      - bearer_auth: []
+      description: This seller's product CSV imports, queued or finished. Another
+        seller's imports are never listed.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `mapping`, `completed_mapping`, `processing`, `completed`, `failed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `seller_id`, `status`, `type`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Import
+        sortable:
+        - created_at
+        - id
+        - number
+        - seller_id
+        - status
+        - type
+        - updated_at
+      responses:
+        '200':
+          description: imports listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: imp_UkLWZg9DAJ
+                  number: IM1001
+                  rows_count: 0
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  type: products
+                  status: pending
+                  store_id: store_UkLWZg9DAJ
+                  seller_id: sel_UkLWZg9DAJ
+                  owner_type: seller
+                  owner_id: sel_UkLWZg9DAJ
+                  user_id: adm_UkLWZg9DAJ
+                  processing_errors:
+                  delimiter: ","
+                  original_filename: products_import.csv
+                  original_byte_size: 3627
+                  original_file_url: "/api/v3/seller/imports/imp_UkLWZg9DAJ/download"
+                  completed_rows_count: 0
+                  failed_rows_count: 0
+                  schema_fields:
+                  - name: slug
+                    label: Slug
+                    required: true
+                  - name: sku
+                    label: SKU
+                    required: true
+                  - name: name
+                    label: Name
+                    required: true
+                  - name: price
+                    label: Price
+                    required: true
+                  - name: status
+                    label: Status
+                    required: false
+                  - name: description
+                    label: Description
+                    required: false
+                  - name: meta_title
+                    label: Meta Title
+                    required: false
+                  - name: meta_description
+                    label: Meta Description
+                    required: false
+                  - name: meta_keywords
+                    label: Meta Keywords
+                    required: false
+                  - name: tags
+                    label: Tags
+                    required: false
+                  - name: compare_at_price
+                    label: Compare at Price
+                    required: false
+                  - name: currency
+                    label: Currency
+                    required: false
+                  - name: width
+                    label: Width
+                    required: false
+                  - name: height
+                    label: Height
+                    required: false
+                  - name: depth
+                    label: Depth
+                    required: false
+                  - name: dimensions_unit
+                    label: Dimensions Unit
+                    required: false
+                  - name: weight
+                    label: Weight
+                    required: false
+                  - name: weight_unit
+                    label: Weight Unit
+                    required: false
+                  - name: available_on
+                    label: Available On
+                    required: false
+                  - name: discontinue_on
+                    label: Discontinue On
+                    required: false
+                  - name: track_inventory
+                    label: Track Inventory
+                    required: false
+                  - name: inventory_count
+                    label: Inventory Count
+                    required: false
+                  - name: inventory_backorderable
+                    label: Inventory Backorderable
+                    required: false
+                  - name: stock_location
+                    label: Stock Location
+                    required: false
+                  - name: tax_category
+                    label: Tax Category
+                    required: false
+                  - name: product_type
+                    label: Product Type
+                    required: false
+                  - name: hs_code
+                    label: HS Code
+                    required: false
+                  - name: country_of_origin
+                    label: Country of Origin
+                    required: false
+                  - name: customs_description
+                    label: Customs Description
+                    required: false
+                  - name: carton
+                    label: Carton
+                    required: false
+                  - name: units_per_carton
+                    label: Units per Carton
+                    required: false
+                  - name: carton_weight
+                    label: Carton Weight
+                    required: false
+                  - name: cartons_per_pallet
+                    label: Cartons per Pallet
+                    required: false
+                  - name: image1_src
+                    label: Image 1 URL
+                    required: false
+                  - name: image2_src
+                    label: Image 2 URL
+                    required: false
+                  - name: image3_src
+                    label: Image 3 URL
+                    required: false
+                  - name: option1_name
+                    label: Option 1 Name
+                    required: false
+                  - name: option1_value
+                    label: Option 1 Value
+                    required: false
+                  - name: option2_name
+                    label: Option 2 Name
+                    required: false
+                  - name: option2_value
+                    label: Option 2 Value
+                    required: false
+                  - name: option3_name
+                    label: Option 3 Name
+                    required: false
+                  - name: option3_value
+                    label: Option 3 Value
+                    required: false
+                  - name: category1
+                    label: Category 1
+                    required: false
+                  - name: category2
+                    label: Category 2
+                    required: false
+                  - name: category3
+                    label: Category 3
+                    required: false
+                  csv_headers: []
+                  sample_row: {}
+                  mappings: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Import"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/imports/{import_id}/rows":
+    parameters:
+    - name: import_id
+      in: path
+      required: true
+      description: Import prefixed ID
+      schema:
+        type: string
+    get:
+      summary: List import rows
+      tags:
+      - Imports
+      security:
+      - bearer_auth: []
+      description: The rows of one of this seller's imports, each with its status
+        and any validation errors.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `row_number` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `status` | One of `pending`, `processing`, `completed`, `failed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `row_number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ImportRow
+        sortable:
+        - created_at
+        - id
+        - row_number
+        - status
+        - updated_at
+      responses:
+        '200':
+          description: rows listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: imrow_UkLWZg9DAJ
+                  row_number: 1
+                  status: pending
+                  validation_errors:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  import_id: imp_UkLWZg9DAJ
+                  item_type:
+                  item_id:
+                  data:
+                    slug: test-product
+                    name: Test Product
+                    price: '10.00'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ImportRow"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/seller/orders":
     get:
       summary: List orders
@@ -16241,6 +17499,30 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[complete]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `complete`.
+      - name: q[incomplete]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `incomplete`.
+      - name: q[partially_refunded]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `partially_refunded`.
+      - name: q[refunded]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `refunded`.
       - name: page
         in: query
         required: false
@@ -16259,6 +17541,67 @@ paths:
         description: Sort field; prefix with `-` for descending
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `channel_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `completed_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `po_number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `draft`, `placed`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `total_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Order
+        sortable:
+        - channel_id
+        - completed_at
+        - created_at
+        - currency
+        - customer_id
+        - delivery_total
+        - fulfillment_status
+        - id
+        - item_total
+        - number
+        - order_group_id
+        - payment_state
+        - payment_status
+        - po_number
+        - seller_id
+        - shipment_state
+        - status
+        - total
+        - total_quantity
+        - updated_at
       responses:
         '200':
           description: orders listed
@@ -16279,50 +17622,34 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   internal_note:
                   internal_note_html:
-                  item_total: '10.0'
-                  display_item_total: "$10.00"
-                  delivery_total: '100.0'
-                  display_delivery_total: "$100.00"
-                  discount_total: '0.0'
-                  display_discount_total: "$0.00"
-                  adjustment_total: '0.0'
-                  display_adjustment_total: "$0.00"
-                  included_tax_total: '0.0'
-                  display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.0'
-                  display_additional_tax_total: "$0.00"
-                  tax_total: '0.0'
-                  display_tax_total: "$0.00"
-                  total: '110.0'
-                  display_total: "$110.00"
-                  payment_total: '0.0'
-                  display_payment_total: "$0.00"
-                  amount_due: '110.0'
-                  display_amount_due: "$110.00"
-                  commission_amount_total: '0.0'
-                  display_commission_amount_total: "$0.00"
-                  commission_tax_total: '0.0'
-                  display_commission_tax_total: "$0.00"
-                  commission_total: '0.0'
-                  display_commission_total: "$0.00"
+                  item_total: '10.00'
+                  delivery_total: '100.00'
+                  discount_total: '0.00'
+                  adjustment_total: '0.00'
+                  included_tax_total: '0.00'
+                  additional_tax_total: '0.00'
+                  tax_total: '0.00'
+                  total: '110.00'
+                  payment_total: '0.00'
+                  amount_due: '110.00'
+                  commission_amount_total: '0.00'
+                  commission_tax_total: '0.00'
+                  commission_total: '0.00'
                   canceled_at:
                   cancel_reason_name:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 19195
+                    name: Product 20995
                     options_text: ''
                     quantity: 1
                     currency: USD
-                    price: '10.0'
-                    display_price: "$10.00"
-                    discounted_amount: '10.0'
-                    display_discounted_amount: "$10.00"
-                    additional_tax_total: '0.0'
-                    total: '10.0'
-                    display_total: "$10.00"
+                    price: '10.00'
+                    discounted_amount: '10.00'
+                    additional_tax_total: '0.00'
+                    total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-257
+                    sku: SKU-280
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -16335,7 +17662,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 86
+                    delivery_method_name: UPS Ground 100
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -16343,21 +17670,20 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 19195
-                      sku: SKU-257
+                      name: Product 20995
+                      sku: SKU-280
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 86
+                      name: UPS Ground 100
                       selected: true
-                      cost: '10.0'
-                      total: '10.0'
+                      cost: '10.00'
+                      total: '10.00'
                       carrier:
                       service_level:
                       estimated_delivery_date:
-                      display_cost: "$10.00"
-                      display_total: "$10.00"
+                      unpriced: false
                     deliveries:
                     - id: dlv_UkLWZg9DAJ
                       tracking_number: U10000
@@ -16378,7 +17704,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 167 Lovely Street
+                    address1: 196 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16400,7 +17726,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 166 Lovely Street
+                    address1: 195 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16483,50 +17809,34 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
+                item_total: '10.00'
+                delivery_total: '100.00'
+                discount_total: '0.00'
+                adjustment_total: '0.00'
+                included_tax_total: '0.00'
+                additional_tax_total: '0.00'
+                tax_total: '0.00'
+                total: '110.00'
+                payment_total: '0.00'
+                amount_due: '110.00'
+                commission_amount_total: '0.00'
+                commission_tax_total: '0.00'
+                commission_total: '0.00'
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1929755
+                  name: Product 2109755
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
-                  display_price: "$10.00"
-                  discounted_amount: '10.0'
-                  display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
-                  display_total: "$10.00"
+                  price: '10.00'
+                  discounted_amount: '10.00'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-258
+                  sku: SKU-281
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16539,7 +17849,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 87
+                  delivery_method_name: UPS Ground 101
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16547,21 +17857,20 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1929755
-                    sku: SKU-258
+                    name: Product 2109755
+                    sku: SKU-281
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 87
+                    name: UPS Ground 101
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -16582,7 +17891,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 169 Lovely Street
+                  address1: 198 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16604,7 +17913,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 168 Lovely Street
+                  address1: 197 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16683,50 +17992,34 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: "-0.0"
-                display_amount_due: "$0.00"
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
+                item_total: '10.00'
+                delivery_total: '100.00'
+                discount_total: '0.00'
+                adjustment_total: '0.00'
+                included_tax_total: '0.00'
+                additional_tax_total: '0.00'
+                tax_total: '0.00'
+                total: '110.00'
+                payment_total: '0.00'
+                amount_due: '0.00'
+                commission_amount_total: '0.00'
+                commission_tax_total: '0.00'
+                commission_total: '0.00'
                 canceled_at: '2026-01-15T12:00:00Z'
                 cancel_reason_name:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1956554
+                  name: Product 2136554
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
-                  display_price: "$10.00"
-                  discounted_amount: '10.0'
-                  display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
-                  display_total: "$10.00"
+                  price: '10.00'
+                  discounted_amount: '10.00'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-261
+                  sku: SKU-284
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16739,7 +18032,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 90
+                  delivery_method_name: UPS Ground 104
                   stock_location_name: Ricky Kutch
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16747,21 +18040,20 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1956554
-                    sku: SKU-261
+                    name: Product 2136554
+                    sku: SKU-284
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 90
+                    name: UPS Ground 104
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -16782,7 +18074,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 175 Lovely Street
+                  address1: 204 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16804,7 +18096,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 174 Lovely Street
+                  address1: 203 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16890,50 +18182,34 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
+                item_total: '10.00'
+                delivery_total: '100.00'
+                discount_total: '0.00'
+                adjustment_total: '0.00'
+                included_tax_total: '0.00'
+                additional_tax_total: '0.00'
+                tax_total: '0.00'
+                total: '110.00'
+                payment_total: '0.00'
+                amount_due: '110.00'
+                commission_amount_total: '0.00'
+                commission_tax_total: '0.00'
+                commission_total: '0.00'
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1965038
+                  name: Product 2145038
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
-                  display_price: "$10.00"
-                  discounted_amount: '10.0'
-                  display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
-                  display_total: "$10.00"
+                  price: '10.00'
+                  discounted_amount: '10.00'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-262
+                  sku: SKU-285
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16946,7 +18222,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 91
+                  delivery_method_name: UPS Ground 105
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16954,21 +18230,20 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1965038
-                    sku: SKU-262
+                    name: Product 2145038
+                    sku: SKU-285
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 91
+                    name: UPS Ground 105
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17011,7 +18286,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 176 Lovely Street
+                  address1: 205 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17160,50 +18435,34 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note:
                 internal_note_html:
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
+                item_total: '10.00'
+                delivery_total: '100.00'
+                discount_total: '0.00'
+                adjustment_total: '0.00'
+                included_tax_total: '0.00'
+                additional_tax_total: '0.00'
+                tax_total: '0.00'
+                total: '110.00'
+                payment_total: '0.00'
+                amount_due: '110.00'
+                commission_amount_total: '0.00'
+                commission_tax_total: '0.00'
+                commission_total: '0.00'
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1983962
+                  name: Product 2163962
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
-                  display_price: "$10.00"
-                  discounted_amount: '10.0'
-                  display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
-                  display_total: "$10.00"
+                  price: '10.00'
+                  discounted_amount: '10.00'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-264
+                  sku: SKU-287
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17216,7 +18475,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 93
+                  delivery_method_name: UPS Ground 107
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17224,21 +18483,20 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1983962
-                    sku: SKU-264
+                    name: Product 2163962
+                    sku: SKU-287
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 93
+                    name: UPS Ground 107
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17259,7 +18517,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 181 Lovely Street
+                  address1: 210 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17281,7 +18539,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 180 Lovely Street
+                  address1: 209 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17336,50 +18594,34 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 internal_note: Packed with the fragile insert.
                 internal_note_html: "<p>Packed with the fragile insert.</p>"
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                commission_amount_total: '0.0'
-                display_commission_amount_total: "$0.00"
-                commission_tax_total: '0.0'
-                display_commission_tax_total: "$0.00"
-                commission_total: '0.0'
-                display_commission_total: "$0.00"
+                item_total: '10.00'
+                delivery_total: '100.00'
+                discount_total: '0.00'
+                adjustment_total: '0.00'
+                included_tax_total: '0.00'
+                additional_tax_total: '0.00'
+                tax_total: '0.00'
+                total: '110.00'
+                payment_total: '0.00'
+                amount_due: '110.00'
+                commission_amount_total: '0.00'
+                commission_tax_total: '0.00'
+                commission_total: '0.00'
                 canceled_at:
                 cancel_reason_name:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1995749
+                  name: Product 2175749
                   options_text: ''
                   quantity: 1
                   currency: USD
-                  price: '10.0'
-                  display_price: "$10.00"
-                  discounted_amount: '10.0'
-                  display_discounted_amount: "$10.00"
-                  additional_tax_total: '0.0'
-                  total: '10.0'
-                  display_total: "$10.00"
+                  price: '10.00'
+                  discounted_amount: '10.00'
+                  additional_tax_total: '0.00'
+                  total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-265
+                  sku: SKU-288
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17392,7 +18634,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 94
+                  delivery_method_name: UPS Ground 108
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17400,21 +18642,20 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1995749
-                    sku: SKU-265
+                    name: Product 2175749
+                    sku: SKU-288
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 94
+                    name: UPS Ground 108
                     selected: true
-                    cost: '10.0'
-                    total: '10.0'
+                    cost: '10.00'
+                    total: '10.00'
                     carrier:
                     service_level:
                     estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
+                    unpriced: false
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -17435,7 +18676,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 183 Lovely Street
+                  address1: 212 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17457,7 +18698,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 182 Lovely Street
+                  address1: 211 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17519,6 +18760,39 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: OrderCancellationReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -17573,6 +18847,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name (partial, case-insensitive).
       - name: owner
         in: query
         required: false
@@ -17594,6 +18874,43 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `box`, `envelope`, `carton`, `pallet`, `container` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `default`, `id`, `kind`, `name`, `seller_id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: PackageType
+        sortable:
+        - created_at
+        - default
+        - id
+        - kind
+        - name
+        - seller_id
+        - updated_at
       responses:
         '200':
           description: package types listed
@@ -17936,6 +19253,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of reference (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -17948,17 +19271,51 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
-      - name: q[status_eq]
+      - name: q
         in: query
         required: false
+        style: deepObject
+        explode: true
         schema:
-          type: string
-          enum:
-          - pending
-          - processing
-          - completed
-          - failed
-          - unresolved
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `period_end` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `period_start` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `provider` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `reference` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `processing`, `completed`, `failed`, `unresolved` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `amount`, `created_at`, `currency`, `id`, `period_end`, `period_start`, `provider`, `reference`, `seller_id`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: SellerPayout
+        sortable:
+        - amount
+        - created_at
+        - currency
+        - id
+        - period_end
+        - period_start
+        - provider
+        - reference
+        - seller_id
+        - status
+        - updated_at
       responses:
         '200':
           description: payouts listed
@@ -17974,8 +19331,7 @@ paths:
                   period_end:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '120.0'
-                  display_amount: "$120.00"
+                  amount: '120.00'
                   transfers_count: 1
                   provider: system
                 meta:
@@ -18036,8 +19392,7 @@ paths:
                 period_end:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '120.0'
-                display_amount: "$120.00"
+                amount: '120.00'
                 transfers_count: 1
                 provider: system
               schema:
@@ -18078,6 +19433,45 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `refunded`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Return
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
       responses:
         '200':
           description: returns listed
@@ -18090,19 +19484,16 @@ paths:
                   status: requested
                   order_id: or_UkLWZg9DAJ
                   reason_id:
-                  refund_total: '10.0'
-                  display_refund_total: "$10.00"
-                  refund_tax_total: '0.0'
-                  display_refund_tax_total: "$0.00"
+                  refund_total: '10.00'
+                  refund_tax_total: '0.00'
                   approved_at:
                   received_at:
                   refunded_at:
                   canceled_at:
                   memo:
                   stock_location_id: sloc_UkLWZg9DAJ
-                  refunded_total: '0.0'
-                  refundable_total: '10.0'
-                  display_refunded_total: "$0.00"
+                  refunded_total: '0.00'
+                  refundable_total: '10.00'
                 meta:
                   page: 1
                   limit: 25
@@ -18152,19 +19543,16 @@ paths:
                 status: requested
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
-                display_refund_tax_total: "$0.00"
+                refund_total: '10.00'
+                refund_tax_total: '0.00'
                 approved_at:
                 received_at:
                 refunded_at:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
-                display_refunded_total: "$0.00"
+                refunded_total: '0.00'
+                refundable_total: '10.00'
               schema:
                 "$ref": "#/components/schemas/Return"
         '422':
@@ -18174,7 +19562,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 2157120 can be returned
+                  message: Only 1 of Product 2337120 can be returned
       requestBody:
         content:
           application/json:
@@ -18240,19 +19628,16 @@ paths:
                 status: approved
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
-                display_refund_tax_total: "$0.00"
+                refund_total: '10.00'
+                refund_tax_total: '0.00'
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at:
                 refunded_at:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
-                display_refunded_total: "$0.00"
+                refunded_total: '0.00'
+                refundable_total: '10.00'
               schema:
                 "$ref": "#/components/schemas/Return"
   "/api/v3/seller/orders/{order_id}/returns/{id}/receive":
@@ -18294,19 +19679,16 @@ paths:
                 status: received
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
-                display_refund_tax_total: "$0.00"
+                refund_total: '10.00'
+                refund_tax_total: '0.00'
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at:
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
-                display_refunded_total: "$0.00"
+                refunded_total: '0.00'
+                refundable_total: '10.00'
               schema:
                 "$ref": "#/components/schemas/Return"
       requestBody:
@@ -18371,19 +19753,16 @@ paths:
                 status: refunded
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
-                display_refund_tax_total: "$0.00"
+                refund_total: '10.00'
+                refund_tax_total: '0.00'
                 approved_at: '2026-01-15T12:00:00Z'
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at: '2026-01-15T12:00:00Z'
                 canceled_at:
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '10.0'
-                refundable_total: '0.0'
-                display_refunded_total: "$10.00"
+                refunded_total: '10.00'
+                refundable_total: '0.00'
               schema:
                 "$ref": "#/components/schemas/Return"
         '422':
@@ -18444,19 +19823,16 @@ paths:
                 status: canceled
                 order_id: or_UkLWZg9DAJ
                 reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                refund_tax_total: '0.0'
-                display_refund_tax_total: "$0.00"
+                refund_total: '10.00'
+                refund_tax_total: '0.00'
                 approved_at:
                 received_at:
                 refunded_at:
                 canceled_at: '2026-01-15T12:00:00Z'
                 memo:
                 stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
-                display_refunded_total: "$0.00"
+                refunded_total: '0.00'
+                refundable_total: '10.00'
               schema:
                 "$ref": "#/components/schemas/Return"
   "/api/v3/seller/return_reasons":
@@ -18477,6 +19853,39 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: ReturnReason
+        sortable:
+        - active
+        - created_at
+        - id
+        - name
+        - updated_at
       responses:
         '200':
           description: reasons listed
@@ -18527,6 +19936,35 @@ paths:
         required: true
         schema:
           type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: TaxIdentifier
+        sortable:
+        - created_at
+        - id
+        - updated_at
       responses:
         '200':
           description: registrations returned
@@ -18722,6 +20160,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of reference (partial, case-insensitive).
       - name: page
         in: query
         required: false
@@ -18734,37 +20178,53 @@ paths:
         description: Records per page (max 100)
         schema:
           type: integer
-      - name: q[order_id_eq]
+      - name: q
         in: query
         required: false
-        description: Only the rows for this order
+        style: deepObject
+        explode: true
         schema:
-          type: string
-      - name: q[payout_id_eq]
-        in: query
-        required: false
-        description: Only the rows this settlement covers
-        schema:
-          type: string
-      - name: q[status_eq]
-        in: query
-        required: false
-        schema:
-          type: string
-          enum:
-          - pending
-          - processing
-          - completed
-          - failed
-          - unresolved
-      - name: q[kind_eq]
-        in: query
-        required: false
-        schema:
-          type: string
-          enum:
-          - earning
-          - refund_reversal
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `earning`, `refund_reversal` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `payout_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `provider` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `reference` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `processing`, `completed`, `failed`, `unresolved` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `amount`, `created_at`, `currency`, `id`, `kind`, `order_id`, `payout_id`, `provider`, `reference`, `seller_id`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: SellerTransfer
+        sortable:
+        - amount
+        - created_at
+        - currency
+        - id
+        - kind
+        - order_id
+        - payout_id
+        - provider
+        - reference
+        - seller_id
+        - status
+        - updated_at
       responses:
         '200':
           description: transfers listed
@@ -18779,9 +20239,8 @@ paths:
                   reference:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '42.0'
-                  display_amount: "$42.00"
-                  settled_amount: '42.0'
+                  amount: '42.00'
+                  settled_amount: '42.00'
                   settled_currency: USD
                   converted: false
                   order_id: or_UkLWZg9DAJ
@@ -18846,9 +20305,8 @@ paths:
                 reference:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                amount: '42.0'
-                display_amount: "$42.00"
-                settled_amount: '42.0'
+                amount: '42.00'
+                settled_amount: '42.00'
                 settled_currency: USD
                 converted: false
                 order_id: or_UkLWZg9DAJ
@@ -18906,8 +20364,8 @@ tags:
   description: Where the seller keeps stock, and so where their returns are sent
 - name: Team
   description: Who runs this seller, and the invitations nobody has accepted yet
-- name: Uploads
-  description: Presigned direct uploads for the documents onboarding asks for
+- name: Files
+  description: Uploading the files a profile, a submission or an import uses
 components:
   securitySchemes:
     bearer_auth:
@@ -19170,50 +20628,21 @@ components:
       - id
       - name
       - code
-    PreferenceField:
+    PreferenceSchema:
       type: object
-      description: A single configurable preference on a payment method, promotion
-        rule/action, or calculator. The frontend uses `type` + `default` to render
-        a sensible input.
-      properties:
-        key:
-          type: string
-          example: amount_min
-        type:
-          type: string
-          example: decimal
-          description: string | text | password | integer | decimal | boolean | array
-            | hash
-        default:
-          description: Default value (any JSON type), null when there is no default
-          nullable: true
-      required:
-      - key
-      - type
-    PromotionActionCalculator:
-      type: object
-      description: The action's nested calculator (when the action carries one — null
-        for actions like `free_shipping`)
-      properties:
-        type:
-          type: string
-          example: flat_rate
-          description: Wire shorthand for the calculator subclass
-        label:
-          type: string
-          example: Flat Rate
-        preferences:
-          type: object
-          additionalProperties: true
-        preference_schema:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PreferenceField"
-      required:
-      - type
-      - label
-      - preferences
-      - preference_schema
+      description: 'The JSON Schema (draft 2020-12) of a type''s `preferences`: one
+        property per setting, with `format` (`money`, `currency`, `iso-country`, `prefixed-id`,
+        …), `enum`, `default`, `x-spree-secret` for a secret and `x-spree-prefix`
+        for an id list. Unknown keys are refused.'
+      additionalProperties: true
+      example:
+        type: object
+        properties:
+          amount:
+            type: string
+            format: money
+            default: '0.0'
+        additionalProperties: false
     PromotionActionLineItem:
       type: object
       description: One row in a `create_line_items` action — the variant added to
@@ -19374,31 +20803,6 @@ components:
       - iso
       - iso3
       - name
-    DirectUploadResponse:
-      type: object
-      description: A presigned upload target. PUT the file to `direct_upload.url`
-        with the given headers, then send `signed_id` as the submission's `file`.
-      properties:
-        signed_id:
-          type: string
-          description: Send this as a submission's `file`
-          example: eyJfcmFpbHMiOnsibWVzc2FnZSI6...
-        direct_upload:
-          type: object
-          properties:
-            url:
-              type: string
-              example: https://storage.example.com/uploads/abc123
-            headers:
-              type: object
-              additionalProperties:
-                type: string
-          required:
-          - url
-          - headers
-      required:
-      - signed_id
-      - direct_upload
     AuthProvidersResponse:
       type: object
       description: Sign-in methods this marketplace offers sellers, for the login
@@ -19586,8 +20990,7 @@ components:
           - json
         key:
           type: string
-        value:
-          type: object
+        value: {}
       required:
       - id
       - label
@@ -19653,69 +21056,6 @@ components:
       - option_type_label
       - image_url
       x-typelizer: true
-    PriceHistory:
-      type: object
-      properties:
-        id:
-          type: string
-        amount:
-          type: string
-        amount_in_cents:
-          type: number
-        currency:
-          type: string
-        display_amount:
-          type: string
-        recorded_at:
-          type: string
-      required:
-      - id
-      - amount
-      - amount_in_cents
-      - currency
-      - display_amount
-      - recorded_at
-      x-typelizer: true
-    Price:
-      type: object
-      properties:
-        id:
-          type: string
-        amount:
-          type: string
-          nullable: true
-        amount_in_cents:
-          type: number
-          nullable: true
-        compare_at_amount:
-          type: string
-          nullable: true
-        compare_at_amount_in_cents:
-          type: number
-          nullable: true
-        currency:
-          type: string
-          nullable: true
-        display_amount:
-          type: string
-          nullable: true
-        display_compare_at_amount:
-          type: string
-          nullable: true
-        price_list_id:
-          type: string
-          nullable: true
-      required:
-      - id
-      - amount
-      - amount_in_cents
-      - compare_at_amount
-      - compare_at_amount_in_cents
-      - currency
-      - display_amount
-      - display_compare_at_amount
-      - price_list_id
-      x-typelizer: true
     Account:
       type: object
       properties:
@@ -19761,38 +21101,23 @@ components:
           type: boolean
         earned:
           type: string
-        display_earned:
+        pending:
           type: string
         payable:
           type: string
-        display_payable:
-          type: string
         paid:
           type: string
-        display_paid:
-          type: string
         balance:
-          type: string
-        display_balance:
-          type: string
-        pending:
-          type: string
-        display_pending:
           type: string
       required:
       - currency
       - settlement_currency
       - converted
       - earned
-      - display_earned
-      - payable
-      - display_payable
-      - paid
-      - display_paid
-      - balance
-      - display_balance
       - pending
-      - display_pending
+      - payable
+      - paid
+      - balance
       x-typelizer: true
     ClaimLineItem:
       type: object
@@ -19817,8 +21142,6 @@ components:
         additional_tax_total:
           type: string
         tax_total:
-          type: string
-        display_refund_amount:
           type: string
         variant_id:
           type: string
@@ -19845,7 +21168,6 @@ components:
       - included_tax_total
       - additional_tax_total
       - tax_total
-      - display_refund_amount
       - variant_id
       - replacement_variant_id
       - line_item_id
@@ -19881,8 +21203,6 @@ components:
           nullable: true
         refund_total:
           type: string
-        display_refund_total:
-          type: string
         approved_at:
           type: string
           nullable: true
@@ -19912,7 +21232,6 @@ components:
       - order_id
       - reason_id
       - refund_total
-      - display_refund_total
       - approved_at
       - resolved_at
       - denied_at
@@ -19931,15 +21250,12 @@ components:
           description: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule,
             channel_rule, volume_rule, company_rule. Extensions may register more.'
         preferences:
-          type: object
-        preference_schema:
-          type: object
+          "$ref": "#/components/schemas/DeliveryMethodRulePreferences"
       required:
       - id
       - active
       - type
       - preferences
-      - preference_schema
       x-typelizer: true
     DeliveryMethod:
       type: object
@@ -19987,11 +21303,9 @@ components:
         delivery_zone_id:
           type: string
           nullable: true
-        calculator_type:
-          type: string
-          nullable: true
-        calculator_preferences:
-          type: object
+        calculator:
+          allOf:
+          - "$ref": "#/components/schemas/DeliveryMethodCalculator"
           nullable: true
       required:
       - id
@@ -20011,8 +21325,7 @@ components:
       - editable
       - delivery_profile_id
       - delivery_zone_id
-      - calculator_type
-      - calculator_preferences
+      - calculator
       x-typelizer: true
     DeliveryProfile:
       type: object
@@ -20053,10 +21366,8 @@ components:
         estimated_delivery_date:
           type: string
           nullable: true
-        display_cost:
-          type: string
-        display_total:
-          type: string
+        unpriced:
+          type: boolean
       required:
       - id
       - name
@@ -20066,8 +21377,7 @@ components:
       - carrier
       - service_level
       - estimated_delivery_date
-      - display_cost
-      - display_total
+      - unpriced
       x-typelizer: true
     Delivery:
       type: object
@@ -20232,8 +21542,6 @@ components:
           nullable: true
         price_difference:
           type: string
-        display_price_difference:
-          type: string
         approved_at:
           type: string
           nullable: true
@@ -20265,7 +21573,6 @@ components:
       - order_id
       - reason_id
       - price_difference
-      - display_price_difference
       - approved_at
       - received_at
       - fulfilled_at
@@ -20316,6 +21623,51 @@ components:
       - filename
       - byte_size
       - download_url
+      x-typelizer: true
+    FileUpload:
+      type: object
+      properties:
+        signed_id:
+          type: string
+        filename:
+          type: string
+        content_type:
+          type: string
+        byte_size:
+          type: number
+        visibility:
+          type: string
+          enum:
+          - public
+          - private
+        expires_at:
+          type: string
+        upload:
+          allOf:
+          - "$ref": "#/components/schemas/FileUploadTarget"
+          nullable: true
+      required:
+      - signed_id
+      - filename
+      - content_type
+      - byte_size
+      - visibility
+      - expires_at
+      - upload
+      x-typelizer: true
+    FileUploadTarget:
+      type: object
+      properties:
+        method:
+          type: string
+        url:
+          type: string
+        headers:
+          type: object
+      required:
+      - method
+      - url
+      - headers
       x-typelizer: true
     FulfillmentItem:
       type: object
@@ -20548,7 +21900,7 @@ components:
         processing_errors:
           type: string
           nullable: true
-        preferred_delimiter:
+        delimiter:
           type: string
         original_filename:
           type: string
@@ -20591,7 +21943,7 @@ components:
       - owner_id
       - user_id
       - processing_errors
-      - preferred_delimiter
+      - delimiter
       - original_filename
       - original_byte_size
       - original_file_url
@@ -20755,22 +22107,13 @@ components:
         price:
           type: string
           nullable: true
-        display_price:
-          type: string
-          nullable: true
         discounted_amount:
-          type: string
-          nullable: true
-        display_discounted_amount:
           type: string
           nullable: true
         additional_tax_total:
           type: string
           nullable: true
         total:
-          type: string
-          nullable: true
-        display_total:
           type: string
           nullable: true
         variant_id:
@@ -20789,12 +22132,9 @@ components:
       - quantity
       - currency
       - price
-      - display_price
       - discounted_amount
-      - display_discounted_amount
       - additional_tax_total
       - total
-      - display_total
       - variant_id
       - sku
       - thumbnail_url
@@ -20859,79 +22199,40 @@ components:
         item_total:
           type: string
           nullable: true
-        display_item_total:
-          type: string
-          nullable: true
         delivery_total:
-          type: string
-          nullable: true
-        display_delivery_total:
           type: string
           nullable: true
         discount_total:
           type: string
           nullable: true
-        display_discount_total:
-          type: string
-          nullable: true
         adjustment_total:
-          type: string
-          nullable: true
-        display_adjustment_total:
           type: string
           nullable: true
         included_tax_total:
           type: string
           nullable: true
-        display_included_tax_total:
-          type: string
-          nullable: true
         additional_tax_total:
-          type: string
-          nullable: true
-        display_additional_tax_total:
           type: string
           nullable: true
         tax_total:
           type: string
           nullable: true
-        display_tax_total:
-          type: string
-          nullable: true
         total:
-          type: string
-          nullable: true
-        display_total:
           type: string
           nullable: true
         payment_total:
           type: string
           nullable: true
-        display_payment_total:
-          type: string
-          nullable: true
         amount_due:
-          type: string
-          nullable: true
-        display_amount_due:
           type: string
           nullable: true
         commission_amount_total:
           type: string
           nullable: true
-        display_commission_amount_total:
-          type: string
-          nullable: true
         commission_tax_total:
           type: string
           nullable: true
-        display_commission_tax_total:
-          type: string
-          nullable: true
         commission_total:
-          type: string
-          nullable: true
-        display_commission_total:
           type: string
           nullable: true
         canceled_at:
@@ -20974,31 +22275,18 @@ components:
       - internal_note
       - internal_note_html
       - item_total
-      - display_item_total
       - delivery_total
-      - display_delivery_total
       - discount_total
-      - display_discount_total
       - adjustment_total
-      - display_adjustment_total
       - included_tax_total
-      - display_included_tax_total
       - additional_tax_total
-      - display_additional_tax_total
       - tax_total
-      - display_tax_total
       - total
-      - display_total
       - payment_total
-      - display_payment_total
       - amount_due
-      - display_amount_due
       - commission_amount_total
-      - display_commission_amount_total
       - commission_tax_total
-      - display_commission_tax_total
       - commission_total
-      - display_commission_total
       - canceled_at
       - cancel_reason_name
       - cancel_note
@@ -21094,44 +22382,26 @@ components:
           type: string
         authorized_amount:
           type: string
-        display_authorized_amount:
-          type: string
         captured_amount:
-          type: string
-        display_captured_amount:
           type: string
         refunded_amount:
           type: string
-        display_refunded_amount:
-          type: string
         claimed_amount:
-          type: string
-        display_claimed_amount:
           type: string
         net_captured_amount:
           type: string
-        display_net_captured_amount:
-          type: string
         refundable_amount:
-          type: string
-        display_refundable_amount:
           type: string
       required:
       - id
       - currency
       - created_at
       - authorized_amount
-      - display_authorized_amount
       - captured_amount
-      - display_captured_amount
       - refunded_amount
-      - display_refunded_amount
       - claimed_amount
-      - display_claimed_amount
       - net_captured_amount
-      - display_net_captured_amount
       - refundable_amount
-      - display_refundable_amount
       x-typelizer: true
     Payout:
       type: object
@@ -21157,8 +22427,6 @@ components:
           type: string
         amount:
           type: string
-        display_amount:
-          type: string
         transfers_count:
           type: number
         provider:
@@ -21175,7 +22443,6 @@ components:
       - created_at
       - updated_at
       - amount
-      - display_amount
       - transfers_count
       - provider
       x-typelizer: true
@@ -21206,6 +22473,48 @@ components:
       - body_html
       - updated_at
       - created_at
+      x-typelizer: true
+    PriceHistory:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+        amount:
+          type: string
+          nullable: true
+        recorded_at:
+          type: string
+      required:
+      - id
+      - currency
+      - amount
+      - recorded_at
+      x-typelizer: true
+    Price:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+          nullable: true
+        amount:
+          type: string
+          nullable: true
+        compare_at_amount:
+          type: string
+          nullable: true
+        price_list_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - currency
+      - amount
+      - compare_at_amount
+      - price_list_id
       x-typelizer: true
     Product:
       type: object
@@ -21435,7 +22744,7 @@ components:
         cover_photo_url:
           type: string
           nullable: true
-        preferred_timezone:
+        timezone:
           type: string
           nullable: true
         status:
@@ -21510,7 +22819,7 @@ components:
       - logo_url
       - square_logo_url
       - cover_photo_url
-      - preferred_timezone
+      - timezone
       - status
       - legal_name
       - registration_number
@@ -21560,8 +22869,7 @@ components:
           - number
           - boolean
           - json
-        value:
-          type: object
+        value: {}
       required:
       - id
       - key
@@ -21704,19 +23012,13 @@ components:
           type: boolean
         pre_tax_amount:
           type: string
-        display_pre_tax_amount:
-          type: string
         included_tax_total:
           type: string
         additional_tax_total:
           type: string
         tax_total:
           type: string
-        display_tax_total:
-          type: string
         refund_amount:
-          type: string
-        display_refund_amount:
           type: string
         variant_id:
           type: string
@@ -21738,13 +23040,10 @@ components:
       - received_quantity
       - resellable
       - pre_tax_amount
-      - display_pre_tax_amount
       - included_tax_total
       - additional_tax_total
       - tax_total
-      - display_tax_total
       - refund_amount
-      - display_refund_amount
       - variant_id
       - line_item_id
       - fulfillment_item_id
@@ -21777,11 +23076,7 @@ components:
           nullable: true
         refund_total:
           type: string
-        display_refund_total:
-          type: string
         refund_tax_total:
-          type: string
-        display_refund_tax_total:
           type: string
         approved_at:
           type: string
@@ -21811,8 +23106,6 @@ components:
           type: string
         refundable_total:
           type: string
-        display_refunded_total:
-          type: string
       required:
       - id
       - number
@@ -21820,9 +23113,7 @@ components:
       - order_id
       - reason_id
       - refund_total
-      - display_refund_total
       - refund_tax_total
-      - display_refund_tax_total
       - approved_at
       - received_at
       - refunded_at
@@ -21831,7 +23122,6 @@ components:
       - stock_location_id
       - refunded_total
       - refundable_total
-      - display_refunded_total
       x-typelizer: true
     ShippingLabel:
       type: object
@@ -21892,8 +23182,6 @@ components:
           - return
         cost:
           type: string
-        display_cost:
-          type: string
         integration_id:
           type: string
           nullable: true
@@ -21920,7 +23208,6 @@ components:
       - owner_id
       - owner_type
       - cost
-      - display_cost
       - integration_id
       - file_pending
       - download_url
@@ -22130,8 +23417,6 @@ components:
           type: string
         amount:
           type: string
-        display_amount:
-          type: string
         settled_amount:
           type: string
           nullable: true
@@ -22165,7 +23450,6 @@ components:
       - created_at
       - updated_at
       - amount
-      - display_amount
       - settled_amount
       - settled_currency
       - converted
@@ -22279,9 +23563,6 @@ components:
           type: object
         position:
           type: number
-        cost_price:
-          type: string
-          nullable: true
         cost_currency:
           type: string
           nullable: true
@@ -22304,6 +23585,9 @@ components:
           type: string
         updated_at:
           type: string
+        cost_price:
+          type: string
+          nullable: true
         preorderable:
           type: boolean
         available_stock:
@@ -22349,7 +23633,6 @@ components:
       - option_values
       - metadata
       - position
-      - cost_price
       - cost_currency
       - barcode
       - backorder_limit
@@ -22358,6 +23641,7 @@ components:
       - customs_description
       - created_at
       - updated_at
+      - cost_price
       - preorderable
       - available_stock
       - total_on_hand
@@ -22398,3 +23682,743 @@ components:
       - square_logo_url
       - cover_photo_url
       x-typelizer: true
+    DeliveryCalculatorDigitalDeliveryPreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorFlatPercentItemTotalPreferences:
+      type: object
+      properties:
+        flat_percent:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+      additionalProperties: false
+    DeliveryCalculatorFlatRatePreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorFlexiRatePreferences:
+      type: object
+      properties:
+        first_item:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        additional_item:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        max_items:
+          type: integer
+          default: 0
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPerItemPreferences:
+      type: object
+      properties:
+        amounts:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPriceSackPreferences:
+      type: object
+      properties:
+        minimal_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        normal_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        discount_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          default: '0'
+        currency:
+          type: string
+          format: currency
+          pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    DeliveryCalculatorPreferences:
+      description: Settings of a delivery calculator, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/DeliveryCalculatorDigitalDeliveryPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlatPercentItemTotalPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlatRatePreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorFlexiRatePreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorPerItemPreferences"
+      - "$ref": "#/components/schemas/DeliveryCalculatorPriceSackPreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        digital_delivery: "#/components/schemas/DeliveryCalculatorDigitalDeliveryPreferences"
+        flat_percent_item_total: "#/components/schemas/DeliveryCalculatorFlatPercentItemTotalPreferences"
+        flat_rate: "#/components/schemas/DeliveryCalculatorFlatRatePreferences"
+        flexi_rate: "#/components/schemas/DeliveryCalculatorFlexiRatePreferences"
+        per_item: "#/components/schemas/DeliveryCalculatorPerItemPreferences"
+        price_sack: "#/components/schemas/DeliveryCalculatorPriceSackPreferences"
+    DeliveryMethodRuleChannelRulePreferences:
+      type: object
+      properties:
+        channel_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^ch_[A-Za-z0-9]+$"
+            x-spree-prefix: ch
+          default: []
+      additionalProperties: false
+    DeliveryMethodRuleCompanyRulePreferences:
+      type: object
+      properties:
+        company_orders_only:
+          type: boolean
+          default: true
+      additionalProperties: false
+    DeliveryMethodRuleExcludedProductsRulePreferences:
+      type: object
+      properties: {}
+      additionalProperties: false
+    DeliveryMethodRuleItemTotalRulePreferences:
+      type: object
+      properties:
+        minimum_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_amount:
+          type: string
+          format: money
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRuleVolumeRulePreferences:
+      type: object
+      properties:
+        minimum_volume:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_volume:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRuleWeightRulePreferences:
+      type: object
+      properties:
+        minimum_weight:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        maximum_weight:
+          type: string
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+      additionalProperties: false
+    DeliveryMethodRulePreferences:
+      description: Settings of a delivery method rule, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/DeliveryMethodRuleChannelRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleCompanyRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleExcludedProductsRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleItemTotalRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleVolumeRulePreferences"
+      - "$ref": "#/components/schemas/DeliveryMethodRuleWeightRulePreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        channel_rule: "#/components/schemas/DeliveryMethodRuleChannelRulePreferences"
+        company_rule: "#/components/schemas/DeliveryMethodRuleCompanyRulePreferences"
+        excluded_products_rule: "#/components/schemas/DeliveryMethodRuleExcludedProductsRulePreferences"
+        item_total_rule: "#/components/schemas/DeliveryMethodRuleItemTotalRulePreferences"
+        volume_rule: "#/components/schemas/DeliveryMethodRuleVolumeRulePreferences"
+        weight_rule: "#/components/schemas/DeliveryMethodRuleWeightRulePreferences"
+    DeliveryMethodCalculator:
+      type: object
+      description: How the delivery method prices a shipment
+      properties:
+        type:
+          type: string
+          example: flat_rate
+          description: Wire shorthand for the calculator subclass
+        preferences:
+          "$ref": "#/components/schemas/DeliveryCalculatorPreferences"
+      required:
+      - type
+      - preferences
+  x-spree-filter-tables:
+    Claim:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - open
+          - approved
+          - resolved
+          - denied
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    ClaimReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Delivery:
+      attributes:
+        carrier: text
+        created_at: datetime
+        id: id
+        status:
+          enum:
+          - pending
+          - pre_transit
+          - in_transit
+          - out_for_delivery
+          - available_for_pickup
+          - delivered
+          - return_to_sender
+          - failure
+          - unknown
+        tracking_number: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    DeliveryMethod:
+      attributes:
+        available_to_sellers: boolean
+        created_at: datetime
+        id: id
+        name: text
+        seller_id: id
+        storefront_visible: boolean
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    DeliveryProfile:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        position: integer
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    DeliveryZone:
+      attributes:
+        created_at: datetime
+        delivery_profile_id: id
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Exchange:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - fulfilled
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    Fulfillment:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Import:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        seller_id: id
+        status:
+          enum:
+          - pending
+          - mapping
+          - completed_mapping
+          - processing
+          - completed
+          - failed
+        type: type
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    ImportRow:
+      attributes:
+        created_at: datetime
+        id: id
+        row_number: integer
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    Order:
+      attributes:
+        channel_id: id
+        completed_at: datetime
+        created_at: datetime
+        currency: text
+        customer_id: id
+        delivery_total: decimal
+        fulfillment_status:
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
+        id: id
+        item_total: decimal
+        number: text
+        order_group_id: id
+        payment_state:
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
+          - balance_due
+          - credit_owed
+          - failed
+          - void
+        payment_status:
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
+          - balance_due
+          - credit_owed
+          - failed
+          - void
+        po_number: text
+        seller_id: id
+        shipment_state:
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
+        status:
+          enum:
+          - draft
+          - placed
+          - canceled
+        total: decimal
+        total_quantity: integer
+        updated_at: datetime
+      associations: {}
+      scopes:
+        complete: boolean
+        incomplete: boolean
+        partially_refunded: boolean
+        refunded: boolean
+    OrderCancellationReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    PackageType:
+      attributes:
+        created_at: datetime
+        default: boolean
+        id: id
+        kind:
+          enum:
+          - box
+          - envelope
+          - carton
+          - pallet
+          - container
+        name: text
+        seller_id: id
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    Policy:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        owner_id: id
+        owner_type: type
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    Product:
+      attributes:
+        available_on: datetime
+        created_at: datetime
+        description: text
+        discontinue_on: datetime
+        id: id
+        name: text
+        price: decimal
+        seller_id: id
+        slug: text
+        status:
+          enum:
+          - draft
+          - active
+          - archived
+          - proposed
+          - rejected
+        updated_at: datetime
+      associations: {}
+      scopes:
+        ascend_by_price: boolean
+        descend_by_price: boolean
+        in_categories:
+          list: id
+        in_category: id
+        in_collection: id
+        in_stock: boolean
+        in_taxon: id
+        not_discontinued: boolean
+        out_of_stock: boolean
+        price_between:
+        - decimal
+        - decimal
+        price_gte: decimal
+        price_lte: decimal
+        search: text
+        search_by_name: text
+        with_option_value_ids:
+          list: id
+    ProductType:
+      attributes:
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    Return:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - refunded
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    ReturnReason:
+      attributes:
+        active: boolean
+        created_at: datetime
+        id: id
+        name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    SellerPayout:
+      attributes:
+        amount: decimal
+        created_at: datetime
+        currency: text
+        id: id
+        period_end: datetime
+        period_start: datetime
+        provider: text
+        reference: text
+        seller_id: id
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    SellerTransfer:
+      attributes:
+        amount: decimal
+        created_at: datetime
+        currency: text
+        id: id
+        kind:
+          enum:
+          - earning
+          - refund_reversal
+        order_id: id
+        payout_id: id
+        provider: text
+        reference: text
+        seller_id: id
+        status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    ShippingLabel:
+      attributes:
+        carrier: text
+        created_at: datetime
+        id: id
+        source:
+          enum:
+          - purchased
+          - uploaded
+        status:
+          enum:
+          - purchased
+          - refund_requested
+          - refunded
+        tracking_number: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    StockLocation:
+      attributes:
+        active: boolean
+        country_code: text
+        created_at: datetime
+        default: boolean
+        id: id
+        kind: text
+        name: text
+        pickup_enabled: boolean
+        returns_enabled: boolean
+        seller_id: id
+        state_code: text
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+    TaxIdentifier:
+      attributes:
+        created_at: datetime
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+  x-spree-filter-predicates:
+    text:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - cont
+    - i_cont
+    - not_cont
+    - start
+    - end
+    - 'null'
+    - not_null
+    - present
+    - blank
+    decimal:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    integer:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    date:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    datetime:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - lt
+    - lteq
+    - gt
+    - gteq
+    - 'null'
+    - not_null
+    enum:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    id:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    type:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'null'
+    - not_null
+    boolean:
+    - eq
+    - not_eq
+    - in
+    - not_in
+    - 'true'
+    - 'false'
+    - 'null'

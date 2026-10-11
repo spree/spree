@@ -7,6 +7,9 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasListPosition
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :price_adjustment_percentage, places: 3
 
     MATCH_POLICIES = %w[all any].freeze
 
@@ -94,6 +97,7 @@ module Spree
     # `catalog_id` is queryable so a picker can offer the lists that are
     # actually available — unowned, plus the one the catalog already holds.
     self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at catalog_id]
+    search_by :name
 
     scope :by_position, -> { ordered }
     scope :for_store, ->(store) { where(store: store) }
@@ -389,9 +393,8 @@ module Spree
 
         current = current_values[price_id]
 
-        # Parse amounts using LocalizedNumber for proper decimal handling
-        amount = attrs[:amount].present? ? Spree::LocalizedNumber.parse(attrs[:amount]) : nil
-        compare_at_amount = attrs[:compare_at_amount].present? ? Spree::LocalizedNumber.parse(attrs[:compare_at_amount]) : nil
+        amount = Spree::Money::Rounding.parse_decimal(attrs[:amount])
+        compare_at_amount = Spree::Money::Rounding.parse_decimal(attrs[:compare_at_amount])
 
         # Clear compare_at_amount if it equals amount
         compare_at_amount = nil if compare_at_amount == amount

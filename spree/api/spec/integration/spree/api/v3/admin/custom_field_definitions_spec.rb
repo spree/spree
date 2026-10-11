@@ -29,6 +29,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
                 description: 'Comma-separated associations to expand. Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., key,label,field_type). id is always included.'
+      filter_parameters_for
 
       response '200', 'definitions returned' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

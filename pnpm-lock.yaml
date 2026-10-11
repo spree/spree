@@ -105,6 +105,9 @@ importers:
       '@spree/admin-sdk':
         specifier: workspace:^
         version: link:../admin-sdk
+      '@spree/sdk-core':
+        specifier: workspace:*
+        version: link:../sdk-core
       '@types/node':
         specifier: ^25.6.0
         version: 25.9.9
@@ -253,9 +256,6 @@ importers:
       recharts:
         specifier: 3.10.1
         version: 3.10.1(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react-is@19.2.5)(react@19.3.0)(redux@5.0.1)
-      spark-md5:
-        specifier: ^3.0.2
-        version: 3.0.2
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.7.0
@@ -281,9 +281,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.3.0(@types/react@19.3.0)
-      '@types/spark-md5':
-        specifier: ^3.0.5
-        version: 3.0.5
       '@vitejs/plugin-react':
         specifier: ^6.0.1
         version: 6.1.2(vite@8.3.3(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
@@ -335,9 +332,6 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-      '@types/spark-md5':
-        specifier: ^3.0.5
-        version: 3.0.5
       date-fns:
         specifier: ^4.1.0
         version: 4.4.0
@@ -362,9 +356,6 @@ importers:
       react-i18next:
         specifier: ^17.0.8
         version: 17.0.16(i18next@26.4.2(typescript@6.0.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
-      spark-md5:
-        specifier: ^3.0.2
-        version: 3.0.2
       zod:
         specifier: ^4.4.3
         version: 4.6.5
@@ -687,12 +678,21 @@ importers:
 
   packages/sdk-core:
     devDependencies:
+      '@types/spark-md5':
+        specifier: ^3.0.5
+        version: 3.0.5
+      spark-md5:
+        specifier: ^3.0.2
+        version: 3.0.2
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.29)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
+      yaml:
+        specifier: ^2.9.1
+        version: 2.9.1
 
   packages/seller-dashboard:
     dependencies:
@@ -778,6 +778,9 @@ importers:
 
   packages/seller-dashboard-starter:
     dependencies:
+      '@spree/admin-sdk':
+        specifier: workspace:^
+        version: link:../admin-sdk
       '@spree/dashboard-core':
         specifier: workspace:^
         version: link:../dashboard-core

@@ -10,6 +10,8 @@ module Spree
         # those are marketplace configuration and the seller cannot write them,
         # so showing them would invite an edit that silently does nothing.
         class VariantSerializer < V3::VariantSerializer
+          without_formatted_money(:seller)
+
           typelize position: :number,
                    cost_price: [:string, nullable: true],
                    cost_currency: [:string, nullable: true],
@@ -26,11 +28,13 @@ module Spree
                    purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS],
                    metadata: 'Record<string, unknown>'
 
-          attributes :metadata, :position, :cost_price, :cost_currency,
+          attributes :metadata, :position, :cost_currency,
                      :barcode, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      preorder_ships_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          money_attributes :cost_price, currency: :cost_currency, unit_price: true
 
           # The variant's own stored rules, not a buyer's resolved ones — a
           # seller edits the row.
@@ -58,7 +62,7 @@ module Spree
                if: proc { expand?('media') }
 
           many :prices,
-               resource: proc { Spree.api.price_serializer },
+               resource: proc { Spree.api.seller_price_serializer },
                if: proc { expand?('prices') }
 
           many :stock_levels,

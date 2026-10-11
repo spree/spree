@@ -24,6 +24,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
                 description: 'Comma-separated associations to expand. Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,type,active). id is always included.'
+      filter_parameters_for
 
       response '200', 'payment methods found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -41,7 +42,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns the registered Spree::PaymentMethod subclasses that can be used to create new payment methods. Useful for populating a "Provider" dropdown in admin UIs.'
+      description 'Returns every registered payment provider with the JSON Schema of its `preferences`. `installed` marks a provider the store already has, which a "Provider" picker leaves out.'
       admin_scope :read, :settings
 
       admin_sdk_example 'payment-methods/types'
@@ -53,10 +54,9 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         before do
-          # Install StoreCredit in the store so we can verify the picker
-          # filters out providers that are already configured. (Check is
-          # also installed via the let!(:payment_method), but other tests
-          # in this file delete it, so it's order-dependent.)
+          # Install StoreCredit in the store so the entry is marked installed.
+          # (Check is also installed via the let!(:payment_method), but other
+          # tests in this file delete it, so it's order-dependent.)
           store.payment_methods.create!(type: 'Spree::PaymentMethod::StoreCredit', name: 'Store Credit')
         end
 
@@ -64,10 +64,8 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)
           expect(data).to all(include('type', 'label'))
-          # StoreCredit was just installed → must be filtered out.
-          expect(data.map { |t| t['type'] }).not_to include('store_credit')
-          # Bogus is registered but not installed → must show up.
-          expect(data.map { |t| t['type'] }).to include('bogus')
+          installed = data.to_h { |entry| [entry['type'], entry['installed']] }
+          expect(installed).to include('store_credit' => true, 'bogus' => false)
         end
       end
     end

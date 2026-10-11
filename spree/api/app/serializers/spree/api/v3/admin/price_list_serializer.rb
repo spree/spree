@@ -27,11 +27,7 @@ module Spree
                      starts_at: :iso8601, ends_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # A decimal as a string, like every other money-shaped value on the
-          # wire — a float would round the merchant's own figure.
-          attribute :price_adjustment_percentage do |price_list|
-            price_list.price_adjustment_percentage&.to_s
-          end
+          rate_attributes :price_adjustment_percentage
 
           attribute :automatic_pricing, &:automatic_pricing?
 

@@ -12,7 +12,6 @@ export const SellerPayoutSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   amount: z.string(),
-  display_amount: z.string(),
   seller_id: z.string(),
   seller_name: z.string().nullable(),
   transfers_count: z.number(),

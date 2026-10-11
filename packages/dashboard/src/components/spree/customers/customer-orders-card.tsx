@@ -1,4 +1,5 @@
 import type { Customer, Order } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Badge,
   Card,
@@ -106,7 +107,7 @@ export function CustomerOrdersCard({
                     </span>
                   </TableCell>
                   <TableCell className="text-right font-medium tabular-nums">
-                    {order.display_total}
+                    <Money amount={order.total} currency={order.currency} />
                   </TableCell>
                 </TableRow>
               ))}

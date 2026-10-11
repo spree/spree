@@ -20,6 +20,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'catalogs found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -137,6 +138,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated. `catalog_price` adds the resolved price to every row.',
                 example: 'catalog_price'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -165,7 +167,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         run_test! do |response|
           price = JSON.parse(response.body)['data'].first['catalog_variants'].first
           expect(price['source']).to eq('automatic')
-          expect(price['amount']).to eq('80.0')
+          expect(price['amount']).to eq('80.00')
         end
       end
     end
@@ -242,6 +244,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'order minimums found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -320,7 +323,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         let(:body) { { amount: '750.00' } }
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['amount']).to eq('750.0')
+          expect(JSON.parse(response.body)['amount']).to eq('750.00')
         end
       end
     end

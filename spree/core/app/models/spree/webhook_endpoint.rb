@@ -30,6 +30,7 @@ module Spree
     before_save :clear_disabled_state_when_reactivated
 
     self.whitelisted_ransackable_attributes = %w[name url active]
+    search_by :url
 
     scope :active, -> { where(active: true) }
     scope :inactive, -> { where(active: false) }

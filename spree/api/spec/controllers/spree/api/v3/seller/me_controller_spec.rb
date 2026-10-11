@@ -129,7 +129,7 @@ RSpec.describe Spree::Api::V3::Seller::MeController, type: :controller do
 
     context 'with an avatar signed id' do
       let(:blob) { ActiveStorage::Blob.create_and_upload!(**image_attributes) }
-      let(:params) { { avatar: blob.signed_id } }
+      let(:params) { { avatar_signed_id: blob.signed_id } }
 
       it 'attaches the avatar and returns its url' do
         subject
@@ -148,7 +148,7 @@ RSpec.describe Spree::Api::V3::Seller::MeController, type: :controller do
           content_type: 'image/svg+xml'
         )
       end
-      let(:params) { { avatar: blob.signed_id } }
+      let(:params) { { avatar_signed_id: blob.signed_id } }
 
       it 'rejects the upload with a validation error' do
         subject
@@ -160,7 +160,7 @@ RSpec.describe Spree::Api::V3::Seller::MeController, type: :controller do
 
     context 'clearing the avatar' do
       before { seller_user.avatar.attach(**image_attributes) }
-      let(:params) { { avatar: nil } }
+      let(:params) { { avatar_signed_id: nil } }
 
       it 'purges the avatar' do
         subject

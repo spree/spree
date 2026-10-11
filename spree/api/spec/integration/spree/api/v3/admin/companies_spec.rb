@@ -23,6 +23,7 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'companies found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

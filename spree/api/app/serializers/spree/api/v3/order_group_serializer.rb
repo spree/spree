@@ -9,8 +9,6 @@ module Spree
       # inside it, each carrying its own items, delivery and tracking.
       class OrderGroupSerializer < BaseSerializer
         typelize number: :string, email: [:string, nullable: true], currency: :string,
-                 total: [:string, nullable: true], display_total: [:string, nullable: true],
-                 item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
                  payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
                  completed_at: [:string, nullable: true],
@@ -18,7 +16,8 @@ module Spree
 
         attributes :number, :email, :currency
 
-        attributes total: :string, display_total: :string, item_total: :string, display_item_total: :string
+        money_attributes :total, :display_total, :item_total, :display_item_total
+
         # Rolled up across the children rather than stored, so it can never
         # disagree with the orders it describes.
         attributes :fulfillment_status, :payment_status

@@ -20,6 +20,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'delivery methods found' do
         before { create(:delivery_method, name: 'UPS Ground') }
@@ -56,8 +57,14 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           estimated_transit_business_days_min: { type: :integer, nullable: true },
           estimated_transit_business_days_max: { type: :integer, nullable: true },
           tax_category_id: { type: :string, nullable: true },
-          calculator_type: { type: :string, example: 'flat_rate' },
-          calculator_preferences: { type: :object, example: { amount: 12.5 } },
+          calculator: {
+            type: :object,
+            description: 'How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type\'s `schema`.',
+            properties: {
+              type: { type: :string, example: 'flat_rate' },
+              preferences: { type: :object, example: { amount: '12.5' } }
+            }
+          },
           delivery_zone_id: { type: :string, nullable: true }
         },
         required: %w[name]
@@ -68,15 +75,14 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           {
             name: 'Express',
             storefront_visible: true,
-            calculator_type: 'flat_rate',
-            calculator_preferences: { amount: 12.5 }
+            calculator: { type: 'flat_rate', preferences: { amount: '12.5' } }
           }
         end
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['name']).to eq('Express')
-          expect(data['calculator_type']).to eq('flat_rate')
+          expect(data['calculator']['type']).to eq('flat_rate')
         end
       end
     end
@@ -105,6 +111,29 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
   end
 
   path '/api/v3/admin/delivery_zones' do
+    get 'List delivery zones' do
+      tags 'Delivery'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns the areas delivery methods ship to, each made of countries, states or postal code ranges.'
+      admin_scope :read, :settings
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'delivery zones found' do
+        let!(:delivery_zone) { create(:delivery_zone, store: store, name: 'US North-East') }
+
+        schema SwaggerSchemaHelpers.paginated('DeliveryZone')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(delivery_zone.prefixed_id)
+        end
+      end
+    end
+
     post 'Create delivery zone' do
       tags 'Delivery'
       consumes 'application/json'
@@ -160,6 +189,37 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['members'].length).to eq(2)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/delivery_methods/{delivery_method_id}/rules' do
+    let(:delivery_method) { create(:delivery_method) }
+    let(:delivery_method_id) { delivery_method.prefixed_id }
+
+    get 'List delivery method rules' do
+      tags 'Delivery'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns the conditions a delivery method must meet to be offered at checkout, such as an order total or weight range.'
+      admin_scope :read, :settings
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :delivery_method_id, in: :path, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'rules found' do
+        let!(:rule) do
+          Spree::DeliveryMethodRules::ItemTotalRule.create!(delivery_method: delivery_method, preferred_minimum_amount: '25')
+        end
+
+        schema SwaggerSchemaHelpers.paginated('DeliveryMethodRule')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(rule.prefixed_id)
         end
       end
     end

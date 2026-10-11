@@ -17,6 +17,7 @@ require 'awesome_nested_set'
 require 'cancan'
 require 'countries/global'
 require 'friendly_id'
+require 'json_schemer'
 require 'jwt'
 require 'liquid'
 require 'spree/core/emails/escaped_output'
@@ -251,7 +252,7 @@ module Spree
   # Example:
   #
   #   Spree.dependencies do |dependency|
-  #     dependency.cart_add_item_service = MyCustomAddToCart
+  #     dependency.cart_add_item_workflow = MyCustomAddToCart
   #   end
   #
   # This method is defined within the core gem on purpose.
@@ -542,10 +543,10 @@ module Spree
     # Dynamic methods for core dependencies
     #
     # @example Getting a dependency (returns resolved class)
-    #   Spree.cart_add_item_service.call(order: order, variant: variant)
+    #   Spree.cart_add_item_workflow.call(cart: cart, variant: variant)
     #
     # @example Setting a dependency
-    #   Spree.cart_add_item_service = MyApp::CartAddItem
+    #   Spree.cart_add_item_workflow = MyApp::CartAddItem
     def method_missing(method_name, *args, &block)
       base_name = method_name.to_s.chomp('=').to_sym
 
@@ -635,6 +636,7 @@ require 'spree/workflow'
 require 'spree/reporting'
 require 'spree/events'
 require 'spree/store_scope_guard'
+require 'spree/uploads'
 
 # Not autoloaded from app/: the registry keeps registered steps in
 # class-level state, which a reload would discard.
@@ -649,6 +651,7 @@ require 'spree/core/controller_helpers/store'
 
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/masking'
+require 'spree/core/preferences/invalid_preferences'
 require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'

@@ -818,12 +818,11 @@ function RuleSummary({
 
   // Fall back to the generic preferences dump for everything else
   // (Volume Rule's min_quantity, etc.). Skip keys already covered above.
-  for (const field of draft.preference_schema ?? []) {
-    if (PREFS_SHOWN_VIA_EMBED.has(field.key)) continue
-    const value = draft.preferences?.[field.key]
+  for (const [key, value] of Object.entries(draft.preferences ?? {})) {
+    if (PREFS_SHOWN_VIA_EMBED.has(key)) continue
     if (value === null || value === undefined || value === '') continue
     if (Array.isArray(value) && value.length === 0) continue
-    parts.push(`${humanize(field.key)}: ${formatPreferenceValue(value, t)}`)
+    parts.push(`${humanize(key)}: ${formatPreferenceValue(value, t)}`)
   }
 
   if (parts.length === 0) {
@@ -977,7 +976,9 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
     setValues(draft.preferences ?? {})
   }, [draft])
 
-  const hasPreferences = !!draft.preference_schema?.length
+  const { data: typesData } = usePriceRuleTypes()
+  const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
+  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -992,7 +993,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
       saveDisabled={!hasPreferences && draft.preferences == null}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
         <p className="text-sm text-muted-foreground">
           {t('admin.pages.products.price_lists.rule_no_options')}

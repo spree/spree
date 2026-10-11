@@ -27,6 +27,7 @@ RSpec.describe 'Admin Deliveries API', type: :request, swagger_doc: 'api-referen
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order ID'
       parameter name: :fulfillment_id, in: :path, type: :string, required: true, description: 'Fulfillment ID'
+      filter_parameters_for
 
       response '200', 'deliveries found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

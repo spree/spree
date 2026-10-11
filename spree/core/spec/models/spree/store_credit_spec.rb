@@ -280,12 +280,9 @@ describe Spree::StoreCredit, type: :model do
   end
 
   describe '#amount=' do
-    let(:amount) { '1,599,99' }
-
-    before { store_credit.amount = amount }
-
-    it 'is expected to equal to localized number' do
-      expect(store_credit.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
+      I18n.with_locale(:nl) { store_credit.amount = '49.50' }
+      expect(store_credit.amount).to eq(BigDecimal('49.50'))
     end
   end
 

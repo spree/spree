@@ -846,14 +846,10 @@ You attach assets to a variant from the product's **Digital files** card in the 
 <CodeGroup>
 
 ```typescript Admin SDK
-// 1. Ask for a private-storage upload slot, then PUT the file to the returned URL.
-const { direct_upload, signed_id } = await adminClient.directUploads.create({
-  private: true, // digital files are only ever served through a signed link
-  blob: { filename: 'guide.pdf', byte_size: file.size, checksum, content_type: 'application/pdf' },
-})
-await fetch(direct_upload.url, { method: 'PUT', headers: direct_upload.headers, body: file })
+// 1. Upload the file to private storage — digital files are only ever served through a signed link.
+const { signed_id } = await adminClient.files.upload(file, { visibility: 'private' })
 
-// 2. Attach the uploaded blob to the product's default variant.
+// 2. Attach it to the product's default variant.
 await adminClient.products.digitalAssets.create('prod_86Rf07xd4z', {
   signed_id,
   authorized_clicks: 5, // optional — omit to inherit the store default
@@ -871,7 +867,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/digi
 </CodeGroup>
 
 <Warning>
-Digital files must be uploaded to **private storage**. The Admin API refuses a blob that landed on the public service — attaching never moves a file between services, so a public upload would stay publicly readable while looking attached. Request the direct upload with `private: true`.
+Digital files must be uploaded to **private storage**. The Admin API refuses a blob that landed on the public service — attaching never moves a file between services, so a public upload would stay publicly readable while looking attached. Upload it with `visibility: 'private'` (see [Uploads](/api-reference/admin-api/uploads)).
 </Warning>
 
 Replacing an asset's file keeps every download link that was already issued working: links resolve through the asset, not the underlying blob, so a merchant can swap a corrected file mid‑sale without breaking anyone's access.

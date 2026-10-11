@@ -20,6 +20,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'promotions found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -127,7 +128,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
               { type: 'currency', preferences: { currency: 'USD' } },
               {
                 type: 'item_total',
-                preferences: { amount_min: 100, operator_min: 'gte' }
+                preferences: { amount_min: '100', operator_min: 'gte' }
               },
               {
                 type: 'product',
@@ -140,7 +141,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
                 type: 'create_item_adjustments',
                 calculator: {
                   type: 'percent_on_line_item',
-                  preferences: { percent: 25 }
+                  preferences: { percent: '25' }
                 }
               },
               { type: 'free_shipping' }
@@ -305,7 +306,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
               # Add a new rule
               {
                 type: 'item_total',
-                preferences: { amount_min: 50, operator_min: 'gte' }
+                preferences: { amount_min: '50', operator_min: 'gte' }
               }
               # `dropped_rule` (FirstOrder) omitted — should be destroyed
             ],
@@ -316,7 +317,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
                 type: 'create_item_adjustments',
                 calculator: {
                   type: 'percent_on_line_item',
-                  preferences: { percent: 15 }
+                  preferences: { percent: '15' }
                 }
               }
             ]
@@ -395,7 +396,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)
-          expect(data).to all(include('type', 'label', 'preference_schema'))
+          expect(data).to all(include('type', 'label', 'schema'))
         end
       end
     end
@@ -420,7 +421,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)
-          expect(data).to all(include('type', 'label', 'preference_schema'))
+          expect(data).to all(include('type', 'label', 'schema'))
         end
       end
     end

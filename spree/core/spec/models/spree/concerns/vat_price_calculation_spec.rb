@@ -8,6 +8,10 @@ module Spree
         def total
           10.0
         end
+
+        def currency
+          'USD'
+        end
       end
     end
 

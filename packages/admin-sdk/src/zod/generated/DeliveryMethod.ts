@@ -15,12 +15,12 @@ export const DeliveryMethodSchema = z.object({
   admin_name: z.string().nullable(),
   storefront_visible: z.boolean(),
   tracking_url: z.string().nullable(),
-  markup_flat: z.string().nullable(),
-  markup_percent: z.string().nullable(),
   available_to_sellers: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
   deleted_at: z.string(),
+  markup_flat: z.string().nullable(),
+  markup_percent: z.string().nullable(),
   seller_id: z.string().nullable(),
   seller_name: z.string().nullable(),
   services: z.array(DeliveryMethodServiceSchema),
@@ -33,8 +33,7 @@ export const DeliveryMethodSchema = z.object({
   fulfillment_provider: z.string(),
   pickup_point_provider: z.string().nullable(),
   rate_provider: z.string().nullable(),
-  calculator_type: z.string().nullable(),
-  calculator_preferences: z.record(z.string(), z.unknown()).nullable(),
+  calculator: z.any().nullable(),
 });
 
 export type DeliveryMethod = z.infer<typeof DeliveryMethodSchema>;

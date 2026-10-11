@@ -109,7 +109,7 @@ export async function addOptionToVariants(
  * Title matches are exact to avoid catching "Categorization" when the caller
  * asked for "Categories" or similar prefix collisions.
  */
-function card(page: Page, title: RegExp): Locator {
+export function card(page: Page, title: RegExp): Locator {
   return page
     .locator('[data-slot="card"]')
     .filter({ has: page.locator('[data-slot="card-title"]', { hasText: title }) })

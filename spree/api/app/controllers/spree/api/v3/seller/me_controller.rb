@@ -27,8 +27,8 @@ module Spree
           # seller they are acting for.
           #
           # Distinct from PATCH /profile, which writes the seller business.
-          # `avatar` accepts an ActiveStorage direct-upload signed id to set
-          # the photo, or `null` to remove it.
+          # `avatar_signed_id` takes a signed id from POST /files to set the
+          # photo, or `null` to remove it.
           def update
             if current_user.update(permitted_params)
               render json: me_response
@@ -40,7 +40,7 @@ module Spree
           private
 
           def permitted_params
-            params.permit(:selected_locale, :first_name, :last_name, :avatar)
+            params.permit(:selected_locale, :first_name, :last_name, :avatar_signed_id)
           end
 
           def me_response

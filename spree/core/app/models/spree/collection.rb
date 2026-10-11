@@ -72,6 +72,7 @@ module Spree
     #
     has_one_attached :image, service: Spree.public_storage_service_name
     has_one_attached :square_image, service: Spree.public_storage_service_name
+    signed_id_attachments :image, :square_image
     # The slots double as media-library placements, so an upload here is
     # visible and reusable there (Spree::HasLibraryMedia).
     has_library_media :image, :square_image
@@ -101,6 +102,7 @@ module Spree
     # Ransack
     #
     self.whitelisted_ransackable_attributes = %w[permalink automatic sort_order products_count]
+    search_by :name
 
     #
     # Automatic (rule-based) membership

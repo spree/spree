@@ -56,6 +56,7 @@ import {
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { runtimeListParams } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
 import { useVisualViewportOffset } from '../hooks/use-visual-viewport-offset'
 import { filtersToRansack } from '../lib/filters-to-ransack'
@@ -176,8 +177,11 @@ interface ResourceTableProps<T> {
    * `[webhookDeliveriesTableKey(endpointId)]`).
    */
   queryKey: string | readonly unknown[]
-  /** Function that calls the SDK to fetch data */
-  queryFn: (params: Record<string, unknown>) => Promise<{ data: T[]; meta: PaginationMeta }>
+  /**
+   * Function that calls the SDK to fetch data. Its params are built at runtime
+   * from the table's columns and filters, so any typed SDK list method fits.
+   */
+  queryFn: (params: never) => Promise<{ data: T[]; meta: PaginationMeta }>
   /** Current search params from the route */
   searchParams: ResourceSearch
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
@@ -401,7 +405,7 @@ export function ResourceTable<T extends Record<string, any>>({
 
       Object.assign(params, filtersToRansack(filters as FilterRule[], allColumns))
 
-      return queryFn(params)
+      return queryFn(runtimeListParams(params))
     },
     enabled: !!token,
   })

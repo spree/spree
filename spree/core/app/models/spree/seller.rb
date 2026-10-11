@@ -41,6 +41,12 @@ module Spree
     has_status :pending, :invited, :canceled, :onboarding, :ready_for_review,
                :approved, :rejected, :suspended, default: :pending
 
+    # The storefront lists approved sellers only, and a seller's contact
+    # address is back-office data.
+    self.whitelisted_ransackable_attributes = %w[status contact_email]
+    search_by :name
+    self.private_ransackable_attributes = { store: %w[status contact_email], seller: %w[status contact_email] }
+
     # Who remits consumer tax on this seller's sales. `seller` means they are
     # merchant of record; `platform` is the marketplace-facilitator case, and
     # only Enterprise decides a seller belongs there — core just reads it.
@@ -196,6 +202,7 @@ module Spree
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :square_logo, service: Spree.public_storage_service_name
     has_one_attached :cover_photo, service: Spree.public_storage_service_name
+    signed_id_attachments :logo, :square_logo, :cover_photo
 
     #
     # Validations
@@ -340,7 +347,7 @@ module Spree
     # A seller keeps no clock of their own: a date means whatever the
     # marketplace says it means, so their panel reads timestamps in the
     # store's zone rather than in whichever one their browser sits in.
-    delegate :preferred_timezone, to: :store, allow_nil: true
+    delegate :preferred_timezone, :timezone, to: :store, allow_nil: true
 
     # Sellers holding an account with one provider, for the reverse lookup a
     # provider webhook does — it knows the account, not the seller.

@@ -23,8 +23,7 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
-      parameter name: 'q[search]', in: :query, type: :string, required: false,
-                description: 'Email + name full-text-ish search'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (e.g., addresses, store_credits). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,

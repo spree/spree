@@ -62,9 +62,9 @@ RSpec.describe 'v3 Store serializer price gating' do
       it 'states the threshold and shortfall when not gated' do
         hash = serialize(described_class, cart.reload, hide: false)
 
-        expect(hash['order_minimum']).to eq(500.0)
+        expect(hash['order_minimum']).to eq('500.00')
         # What is left to add, so the cart's own items count against it.
-        expect(hash['order_minimum_shortfall']).to eq(500.0 - cart.item_total.to_f)
+        expect(hash['order_minimum_shortfall']).to eq(Spree::Money::Rounding.format(500 - cart.item_total, 'USD'))
         expect(hash['below_order_minimum']).to be(true)
         expect(hash['requirements'].map { |r| r['code'] }).to include('order_minimum_not_met')
       end
@@ -182,8 +182,9 @@ RSpec.describe 'v3 Store serializer price gating' do
       # The record is a lightweight applied-promotion presenter responding to
       # the money methods; a struct keeps the gating assertion factory-free.
       let(:applied_promotion) do
-        Struct.new(:name, :description, :code, :amount, :display_amount, :promotion, keyword_init: true).new(
-          name: 'Promo', description: nil, code: 'SAVE10', amount: '5.0', display_amount: '$5.00', promotion: nil
+        Struct.new(:name, :description, :code, :amount, :display_amount, :promotion, :currency, keyword_init: true).new(
+          name: 'Promo', description: nil, code: 'SAVE10', amount: '5.0', display_amount: '$5.00', promotion: nil,
+          currency: 'USD'
         )
       end
 
@@ -202,9 +203,9 @@ RSpec.describe 'v3 Store serializer price gating' do
     describe Spree::Api::V3::DiscountSerializer do
       let(:discount) do
         Struct.new(:label, :kind, :code, :value, :value_type, :amount, :display_amount,
-                   :promotion, :line_item, :fulfillment, keyword_init: true).new(
+                   :promotion, :line_item, :fulfillment, :currency, keyword_init: true).new(
           label: 'Promo', kind: 'promotion', code: 'SAVE10', value: '10.0', value_type: 'flat',
-          amount: '-5.0', display_amount: '-$5.00', promotion: nil, line_item: nil, fulfillment: nil
+          amount: '-5.0', display_amount: '-$5.00', promotion: nil, line_item: nil, fulfillment: nil, currency: 'USD'
         )
       end
 

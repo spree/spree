@@ -15,7 +15,7 @@ const sampleImport = {
   owner_id: 'store_1',
   user_id: 'usr_admin',
   processing_errors: null,
-  preferred_delimiter: ',',
+  delimiter: ',',
   schema_fields: [
     { name: 'slug', label: 'Slug', required: true },
     { name: 'price', label: 'Price', required: true },
@@ -95,13 +95,13 @@ describe('imports', () => {
       const res = await client.imports.create({
         type: 'products',
         attachment: 'signed-blob-id',
-        preferred_delimiter: ';',
+        delimiter: ';',
       })
 
       expect(body).toEqual({
         type: 'products',
         attachment: 'signed-blob-id',
-        preferred_delimiter: ';',
+        delimiter: ';',
       })
       expect(res.status).toBe('mapping')
       expect(res.mappings).toHaveLength(2)

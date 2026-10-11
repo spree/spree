@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { documentedPaths, flattenVariables } from './email-template-variables'
+import {
+  documentedPaths,
+  flattenVariables,
+  insertionFor,
+  templateVariables,
+} from './email-template-variables'
 
 describe('flattenVariables', () => {
   it('lists dotted paths with samples, reading a list through its first item', () => {
@@ -35,5 +40,17 @@ describe('documentedPaths', () => {
     expect(paths).toContain('order.payments.payment_method.name')
     // Email data is serialized with Store API shapes, never admin-only fields.
     expect(paths).not.toContain('order.billing_address.metadata')
+  })
+})
+
+describe('insertionFor', () => {
+  it('inserts an amount through the money filter and anything else as it is', () => {
+    const order = templateVariables('spree.order_mailer.confirm_email').find(
+      (variable) => variable.name === 'order',
+    )
+    if (!order) throw new Error('order variable missing')
+
+    expect(insertionFor(order, 'total')).toBe('{{ order.total | money }}')
+    expect(insertionFor(order, 'number')).toBe('{{ order.number }}')
   })
 })

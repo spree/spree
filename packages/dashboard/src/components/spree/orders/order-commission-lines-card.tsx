@@ -1,4 +1,5 @@
 import type { CommissionLine, Order } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -88,9 +89,15 @@ export function CommissionLinesCard({ order }: { order: Order }) {
               <TableCell className="text-muted-foreground">
                 {commissionRateLabel(line, order, t)}
               </TableCell>
-              <TableCell className="text-right tabular-nums">{line.display_amount}</TableCell>
-              <TableCell className="text-right tabular-nums">{line.display_tax_amount}</TableCell>
-              <TableCell className="text-right tabular-nums">{line.display_total}</TableCell>
+              <TableCell className="text-right tabular-nums">
+                <Money amount={line.amount} currency={line.currency} />
+              </TableCell>
+              <TableCell className="text-right tabular-nums">
+                <Money amount={line.tax_amount} currency={line.currency} />
+              </TableCell>
+              <TableCell className="text-right tabular-nums">
+                <Money amount={line.total} currency={line.currency} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

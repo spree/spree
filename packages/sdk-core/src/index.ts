@@ -1,8 +1,32 @@
 // Request infrastructure
 
+export type { FilterSpec } from './filter-types'
+export { renderAppFilterTypes, renderFilterTypes } from './filter-types'
+export type {
+  BooleanFilters,
+  CustomFieldValueFilters,
+  EnumFilters,
+  IdFilters,
+  OrFilters,
+  Prefixed,
+  RangeFilters,
+  SortKey,
+  TextFilters,
+} from './filters'
 export type { ResolvedRetryConfig } from './helpers'
 // Helpers
 export { getParams, resolveRetryConfig } from './helpers'
+// Money
+export {
+  compareMoney,
+  decimalPlaces,
+  isDecimalString,
+  isZeroMoney,
+  multiplyMoney,
+  negateMoney,
+  subtractMoney,
+  sumMoney,
+} from './money'
 // Params
 export { transformListParams } from './params'
 export type {
@@ -25,6 +49,10 @@ export type {
   LoginCredentials,
   PaginatedResponse,
   PaginationMeta,
+  PreferencePropertySchema,
+  PreferenceSchema,
   ProviderLogin,
   ValidationErrorDetail,
 } from './types'
+export type { FileUploadCreateParams, FileUploadResponse, UploadFileOptions } from './uploads'
+export { computeChecksum, uploadFile } from './uploads'

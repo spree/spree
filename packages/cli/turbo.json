@@ -1,0 +1,19 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/docs/api-reference/admin.yaml",
+        "$TURBO_ROOT$/scripts/sync-starter.mjs",
+        "$TURBO_ROOT$/biome.json",
+        "$TURBO_ROOT$/packages/*/package.json",
+        "$TURBO_ROOT$/packages/dashboard-starter/**",
+        "$TURBO_ROOT$/packages/seller-dashboard-starter/**",
+        "!$TURBO_ROOT$/packages/*-starter/{node_modules,dist,.turbo,.tanstack}/**",
+        "!$TURBO_ROOT$/packages/*-starter/.env.local"
+      ]
+    }
+  }
+}

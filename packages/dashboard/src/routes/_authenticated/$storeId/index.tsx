@@ -56,6 +56,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ALL_CHANNELS, ChannelSelect } from '../../../components/spree/channel-select'
 import { GrowthBadge } from '../../../components/spree/reporting/growth-badge'
+import { metricNumberForChart } from '../../../components/spree/reporting/metric-numbers'
 import {
   DimensionLabel,
   ReportSkeleton,
@@ -391,7 +392,7 @@ function CounterRow({
   // stays a translation.
   const description = t(`admin.pages.home.operations.counters.${counter.key}.description`, {
     defaultValue: '',
-    count: store?.preferred_low_stock_threshold ?? 0,
+    count: store?.low_stock_threshold ?? 0,
   })
   const content = (
     <>
@@ -549,7 +550,7 @@ function RankingsCard({
     return {
       key: dimension.id ?? dimension.label,
       dimension,
-      amount: amount?.value ?? 0,
+      amount: metricNumberForChart(amount?.value),
       display: amount?.display ?? String(amount?.value ?? 0),
       // Named after the metric being counted, not the tab: companies count
       // orders and sellers count units, so a tab-based ternary mislabels one

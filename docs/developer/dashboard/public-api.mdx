@@ -90,7 +90,7 @@ import {
   useGlobalSearch,    // global search query state
   useCountries,
   useCustomFields,
-  useDirectUpload,    // ActiveStorage direct uploads
+  useFileUpload,      // uploads a file through POST /files, resolves to its signed_id
   useExport,          // CSV export job lifecycle
   useResourceKey,     // store-scoped query key — use it for every custom query
   useResourceMutation, // useMutation wrapper with 422 handling
@@ -105,6 +105,7 @@ import {
 import {
   filtersToRansack,     // converts table filter state → Ransack params
   mapSpreeErrorsToForm, // 422 response → form.setError
+  signedIdParam,        // image/document field → `<name>_signed_id` (set, `null` to remove, or omitted)
   // formatters
   formatPrice,          // Price object → display string
   formatStoreDateTime,  // ISO string → wall-clock in the store's timezone

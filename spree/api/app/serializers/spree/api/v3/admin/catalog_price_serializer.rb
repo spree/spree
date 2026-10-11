@@ -17,7 +17,6 @@ module Spree
           _attributes.delete(:id)
 
           typelize id: 'string | null', label: 'string | null', sku: 'string | null',
-                   amount: :string, display_amount: :string,
                    currency: :string, source: [:string, enum: Spree::CatalogPrice::SOURCES], break_count: :number
 
           # The variant this prices, so a row can name what it is showing —
@@ -33,9 +32,9 @@ module Spree
           # though it were the only one.
           attributes :currency, :source, :break_count
 
-          attribute :amount, &:display_value
+          money_attributes :amount, unit_price: true
+          typelize amount: [:string, nullable: false]
 
-          attributes :display_amount
 
           # The ladder itself, so the agreement page can show what a buyer
           # pays at each threshold without opening the price sheet

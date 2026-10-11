@@ -40,6 +40,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'integrations found' do
         before { SpreeCarrier::Integration.create!(store: store, preferences: { api_key: 'sk-secret', account_number: '42' }) }
@@ -104,7 +105,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
         run_test! do |response|
           data = JSON.parse(response.body)
           entry = data['data'].find { |row| row['type'] == 'carrier' }
-          expect(entry['preference_schema']).to be_an(Array)
+          expect(entry['schema']).to include('type' => 'object')
         end
       end
     end

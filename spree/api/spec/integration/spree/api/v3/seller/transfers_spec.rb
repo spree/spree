@@ -30,11 +30,7 @@ RSpec.describe 'Seller Transfers API', type: :request, swagger_doc: 'api-referen
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
-      parameter name: :'q[order_id_eq]', in: :query, type: :string, required: false, description: 'Only the rows for this order'
-      parameter name: :'q[payout_id_eq]', in: :query, type: :string, required: false, description: 'Only the rows this settlement covers'
-      parameter name: :'q[status_eq]', in: :query, required: false,
-                schema: { type: :string, enum: %w[pending processing completed failed unresolved] }
-      parameter name: :'q[kind_eq]', in: :query, required: false, schema: { type: :string, enum: Spree::SellerTransfer::KINDS }
+      filter_parameters_for
 
       response '200', 'transfers listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

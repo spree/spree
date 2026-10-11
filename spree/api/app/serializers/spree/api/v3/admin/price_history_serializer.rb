@@ -5,9 +5,10 @@ module Spree
     module V3
       module Admin
         class PriceHistorySerializer < V3::PriceHistorySerializer
+          without_formatted_money
+
           typelize variant_id: :string,
                    price_id: :string,
-                   compare_at_amount: [:string, nullable: true],
                    created_at: :string
 
           attribute :variant_id do |price_history|
@@ -18,7 +19,9 @@ module Spree
             price_history.price.prefixed_id
           end
 
-          attributes :compare_at_amount, created_at: :iso8601
+          money_attributes :compare_at_amount, unit_price: true
+
+          attributes created_at: :iso8601
         end
       end
     end

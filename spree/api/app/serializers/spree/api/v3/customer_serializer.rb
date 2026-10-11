@@ -28,7 +28,7 @@ module Spree
         attribute :available_store_credit_total do |user, params|
           store = params&.dig(:store) || Spree::Current.store
           currency = params&.dig(:currency) || Spree::Current.currency || store&.default_currency
-          user.total_available_store_credit(currency, store).to_s
+          Spree::Money::Rounding.format(user.total_available_store_credit(currency, store), currency)
         end
 
         attribute :display_available_store_credit_total do |user, params|

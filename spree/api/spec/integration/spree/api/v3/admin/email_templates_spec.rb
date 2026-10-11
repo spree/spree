@@ -309,7 +309,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
           email_key: { type: :string, example: 'spree.order_mailer.confirm_email', description: 'For the layout or a partial, the email to show it in' },
           branding: {
             type: :object,
-            description: "Unsaved colors and font to preview, named like the store's `preferred_email_*` settings without the prefix",
+            description: "Unsaved colors and font to preview, named like the store's `email_*` settings",
             properties: {
               accent_color: { type: :string, example: '#FF5500' },
               background_color: { type: :string },
@@ -430,6 +430,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (`published_by`)'
+      filter_parameters_for
 
       response '200', 'revisions found' do
         before do

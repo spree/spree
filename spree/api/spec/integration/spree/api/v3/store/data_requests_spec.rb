@@ -16,6 +16,7 @@ RSpec.describe 'Data Requests API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      filter_parameters_for
 
       response '200', 'data requests found' do
         let(:'x-spree-api-key') { api_key.token }

@@ -8,6 +8,7 @@ module Spree
     include Spree::MemoizedData
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
     include Spree::HasExternalReferences
     include Spree::Searchable
     include Spree::StorePreferences
@@ -289,14 +290,9 @@ module Spree
       relation.where(conditions.reduce(:or)).distinct
     end
 
-    # FIXME: cost price should be represented with DisplayMoney class
-    LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
-
-    LOCALIZED_NUMBERS.each do |m|
-      define_method("#{m}=") do |argument|
-        self[m] = Spree::LocalizedNumber.parse(argument) if argument.present?
-      end
-    end
+    # A blank value leaves these as they were rather than clearing them.
+    canonical_decimals :cost_price, places: Spree::Money::Rounding::UNIT_PRICE_DECIMALS, ignore_blank: true
+    canonical_decimals :weight, :depth, :width, :height, places: nil, ignore_blank: true
 
     accepts_nested_attributes_for(
       :stock_levels,
@@ -331,6 +327,7 @@ module Spree
                                                  carton_package_type_id carton_weight cartons_per_pallet]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
                                              available_at_stock_location)
+    self.ransackable_scope_types = { 'available_at_stock_location' => 'id' }
     self.private_ransackable_attributes = { store: %w[cost_price cost_currency deleted_at] }
 
     def self.product_name_or_sku_cont(query)

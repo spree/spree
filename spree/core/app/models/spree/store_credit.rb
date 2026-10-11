@@ -5,6 +5,9 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
 
     publishes_lifecycle_events
 
@@ -105,13 +108,11 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :amount, :amount_used, :amount_remaining, :amount_authorized
 
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
-
     self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo]
+    search_by :memo
     self.whitelisted_ransackable_associations = %w[customer created_by]
     self.whitelisted_ransackable_scopes = %w[outstanding from_gift_card]
+    self.ransackable_scope_types = %w[outstanding from_gift_card].index_with('boolean')
     # Staff notes and who issued the credit are back-office data.
     self.private_ransackable_attributes = { store: %w[memo created_by_id] }
 

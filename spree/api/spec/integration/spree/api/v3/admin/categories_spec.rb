@@ -24,6 +24,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (e.g., children, parent, ancestors).'
+      filter_parameters_for
 
       response '200', 'categories found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -228,6 +229,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :category_id, in: :path, type: :string, required: true, description: 'Category ID'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

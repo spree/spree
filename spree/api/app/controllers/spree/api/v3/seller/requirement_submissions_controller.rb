@@ -24,7 +24,7 @@ module Spree
               requirement: @requirement,
               note: attributes[:note],
               reference: attributes[:reference],
-              file: attributes[:file],
+              file: attributes[:file_signed_id],
               submitted_by: try_spree_current_user
             )
 
@@ -57,11 +57,11 @@ module Spree
 
           protected
 
-          # What a seller may say about a requirement. `file` is a direct-upload
-          # signed id, so it is a string like the rest — the bytes are already
-          # in storage by the time this runs.
+          # What a seller may say about a requirement. `file_signed_id` comes
+          # from POST /files, so the bytes are already in storage by the time
+          # this runs.
           def permitted_params
-            params.permit(:note, :reference, :file)
+            params.permit(:note, :reference, :file_signed_id)
           end
 
           def read_actions
