@@ -2,9 +2,6 @@
 
 export type DiscountUpdateParams = {
   label?: string
-  /**
-   * On create, an older spelling of `value`, read when `value` is absent. On update, the new amount
-   * of the row.
-   */
+  /** The new amount of the row, in the order currency. */
   amount?: string
 }

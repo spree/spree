@@ -368,6 +368,7 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 | Admin market `country_isos` | `country_codes` |
 | Import `owner_type`, `owner_id` | `store_id`, `seller_id` |
 | Payment method `auto_capture` (read and write) | `capture_method` |
+| Order discount `amount` on create | `value`, with `value_type` (`amount` stays the field an update edits) |
 | Store settings `preferred_auto_capture`, `preferred_auto_capture_on_dispatch` | `capture_method` |
 | Settings sent under their `preferred_<name>` key | `<name>` |
 | Delivery method `calculator_type`, `calculator_preferences` | `calculator: { type, preferences }` |
