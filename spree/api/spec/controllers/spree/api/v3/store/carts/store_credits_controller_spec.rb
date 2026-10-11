@@ -23,6 +23,29 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
       expect(order.reload.payments.store_credits.count).to eq(1)
     end
 
+    context 'with an amount' do
+      it 'applies a decimal string exactly' do
+        post :create, params: { cart_id: order.prefixed_id, amount: '5.05' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.payments.store_credits.sum(:amount)).to eq(BigDecimal('5.05'))
+      end
+
+      it 'still reads a JSON number, exactly rather than as a float' do
+        post :create, params: { cart_id: order.prefixed_id, amount: 5.05 }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.payments.store_credits.sum(:amount)).to eq(BigDecimal('5.05'))
+      end
+
+      it 'refuses a localized amount' do
+        post :create, params: { cart_id: order.prefixed_id, amount: '10,10' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_money_format')
+      end
+    end
+
     context 'without available store credit' do
       let(:user_without_credit) { create(:user) }
       let!(:order_without_credit) { create(:cart_with_line_items, customer: user_without_credit, store: store) }

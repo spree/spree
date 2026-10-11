@@ -13,7 +13,7 @@ module Spree
             request_params 'ApplyStoreCreditParams', action: :create do |body|
               body.attribute :amount, :decimal,
                 example: '10.00',
-                description: 'Defaults to as much as the cart can use.'
+                description: 'Defaults to as much as the cart can use. A JSON number is still read, exactly, but send a decimal string.'
             end
 
             # POST /api/v3/store/carts/:cart_id/store_credits
@@ -21,7 +21,7 @@ module Spree
               with_order_lock do
                 result = Spree.store_credit_apply_service.call(
                   order: @cart,
-                  amount: params[:amount].try(:to_f)
+                  amount: money_param(:amount, @cart.currency, allow_number: true)
                 )
 
                 if result.success?

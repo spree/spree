@@ -162,7 +162,7 @@ describe('carts', () => {
 
   describe('storeCredits', () => {
     it('applies store credit', async () => {
-      const result = await client.carts.storeCredits.apply('cart_1', 10, opts)
+      const result = await client.carts.storeCredits.apply('cart_1', '10.00', opts)
       expect(result.id).toBe('cart_1')
     })
 

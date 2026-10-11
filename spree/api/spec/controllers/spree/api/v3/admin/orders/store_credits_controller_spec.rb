@@ -30,6 +30,15 @@ RSpec.describe Spree::Api::V3::Admin::Orders::StoreCreditsController, type: :con
       end
     end
 
+    context 'with an amount in cents' do
+      it 'applies it exactly' do
+        post :create, params: { order_id: order.prefixed_id, amount: '12.34' }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(order.reload.payments.store_credits.sum(:amount)).to eq(BigDecimal('12.34'))
+      end
+    end
+
     context 'when explicit amount exceeds available balance' do
       it 'caps at the available store credit balance' do
         post :create, params: { order_id: order.prefixed_id, amount: '9999.99' }, as: :json

@@ -16,10 +16,15 @@ module Spree
         # @param name [Symbol] the request parameter
         # @param currency [String] the currency the amount is in
         # @param unit_price [Boolean] allows up to four decimals
+        # @param allow_number [Boolean] also reads a JSON number, for a Store
+        #   API field clients already send as one. It is read through its
+        #   decimal text, never as a float, so `12.5` is exactly 12.50.
         # @return [BigDecimal, nil] nil when the parameter is absent
         # @raise [Spree::Money::InvalidFormat]
-        def money_param(name, currency, unit_price: false)
-          Spree::Money::Rounding.parse_canonical(params[name], currency, unit_price: unit_price)
+        def money_param(name, currency, unit_price: false, allow_number: false)
+          value = params[name]
+          value = value.to_s if allow_number && value.is_a?(Numeric)
+          Spree::Money::Rounding.parse_canonical(value, currency, unit_price: unit_price)
         rescue Spree::Money::InvalidFormat => error
           raise Spree::Money::InvalidFormat.new(error.message, field: name)
         end
