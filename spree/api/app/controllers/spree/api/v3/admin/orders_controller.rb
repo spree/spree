@@ -11,15 +11,7 @@ module Spree
           include ActiveStorage::SetCurrent
 
           ADDRESS = Spree::Api::V3::RequestSchema.shape('AddressInputParams') do
-            string :first_name, :last_name
-            string :firstname, :lastname, description: 'Legacy spelling of `first_name` / `last_name`; send only one of the two.'
-            string :address1, :address2, :city
-            string :postal_code
-            string :zipcode, description: 'Legacy spelling of `postal_code`; send only one of the two.'
-            string :country_code, example: 'US'
-            string :state_code, example: 'NY'
-            string :state_name, description: 'For countries without states in the database.'
-            string :phone, :alternative_phone, :company, :label
+            include_fields Spree::Api::V3::Admin::AddressRequestSchema
           end
 
           request_params :order do

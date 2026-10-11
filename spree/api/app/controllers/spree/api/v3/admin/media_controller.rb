@@ -9,13 +9,7 @@ module Spree
           # are transport, not attributes (+media_attributes+ drops them).
           request_params :media do
             external_references
-            string :alt, nullable: true, example: 'Front view'
-            integer :position, example: 1
-            string :media_type, enum: Spree::Media::MEDIA_TYPES, example: 'image',
-                                description: 'Defaults to `image`. `video` needs a `signed_id`; `external_video` needs an `external_video_url`.'
-            string :external_video_url, nullable: true, description: 'YouTube or Vimeo link. Required when `media_type` is `external_video`.'
-            string :poster_signed_id, description: "A `signed_id` from `files.upload()` for a video's poster frame."
-            number :focal_point_x, :focal_point_y, nullable: true
+            include_fields Spree::Api::V3::MediaRequestSchema
             string :attachment, description: 'The file itself, sent as multipart form data. JSON clients upload first and send `signed_id`.'
             string :url, description: 'Fetch an image from this URL, in the background. Images only: an external video uses `external_video_url`.'
             string :signed_id, description: 'A `signed_id` from `files.upload()` for the media file itself.'

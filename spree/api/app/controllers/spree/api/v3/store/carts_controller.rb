@@ -13,7 +13,7 @@ module Spree
 
           CART_ADDRESS = Spree::Api::V3::RequestSchema.shape('CartAddressParams') do
             id :id, description: 'An existing address of the customer to use. The other fields are then ignored.'
-            include_fields Spree::Api::V3::RequestShapes::STORE_ADDRESS_FIELDS
+            include_fields Spree::Api::V3::Store::AddressRequestSchema
             boolean :quick_checkout, description: 'Relaxes validation (name, phone, postal code, street), for express checkouts that share a partial address.'
           end
 

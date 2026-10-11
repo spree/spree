@@ -72,12 +72,7 @@ module Spree
                            description: 'The gallery, as a whole: a file absent from the list is removed. `signed_id` attaches a fresh upload; `id` updates one already there.' do
               id :id
               string :signed_id, description: 'A `signed_id` from `POST /files`.'
-              string :alt, nullable: true
-              integer :position
-              string :media_type, enum: Spree::Media::MEDIA_TYPES
-              string :external_video_url, nullable: true
-              string :poster_signed_id
-              number :focal_point_x, :focal_point_y, nullable: true
+              include_fields Spree::Api::V3::MediaRequestSchema
               id :variant_ids, array: true, description: 'Replaces the variants this media is linked to. An empty list clears them.'
             end
             # Narrower than the operator's variant set: `seller_id` would let a
@@ -106,10 +101,10 @@ module Spree
               integer :backorder_limit, nullable: true,
                                         description: 'Maximum units sellable beyond available stock, capping backorders and pre-orders. Null is unlimited.'
               integer :position
-              object :options, array: true, shape: Spree::Api::V3::RequestShapes::VARIANT_OPTION,
+              object :options, array: true, shape: Spree::Api::V3::VariantOptionRequestSchema,
                                description: 'One pair per option type the variant takes part in (size, color).'
               object :prices, array: true, shape: PRICE, description: 'Per-currency prices. Upserted by currency.'
-              object :stock_levels, array: true, shape: Spree::Api::V3::RequestShapes::STOCK_LEVEL,
+              object :stock_levels, array: true, shape: Spree::Api::V3::StockLevelRequestSchema,
                                     description: "Stock per location, at this seller's own locations only: a location belonging to anyone else is ignored."
             end
           end

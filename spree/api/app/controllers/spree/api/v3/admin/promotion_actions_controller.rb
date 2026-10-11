@@ -16,7 +16,7 @@ module Spree
           request_params :promotion_action do
             string :type, required: :create, only: :create, example: 'free_shipping',
                           description: 'The action kind, from `GET /promotion_actions/types`.'
-            include_fields Spree::Api::V3::RequestShapes::PROMOTION_ACTION_FIELDS
+            include_fields Spree::Api::V3::Admin::PromotionActionRequestSchema
           end
 
           def types

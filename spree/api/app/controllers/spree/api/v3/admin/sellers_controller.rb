@@ -49,20 +49,9 @@ module Spree
             object :metadata
             object :billing_address, as: 'SellerAddressParams',
                                      description: "The seller's own billing address, written inline. There is no `billing_address_id`: an address belongs to whoever it was created for, so it is never referenced by id." do
-              string :first_name, example: 'Ada'
-              string :last_name, example: 'Lovelace'
-              string :company, example: 'Sparks Audio Ltd'
-              string :address1, example: '1 Seller Way'
-              string :address2, example: 'Unit 4'
-              string :city, example: 'London'
-              string :postal_code, example: 'EC1A 1BB'
-              string :zipcode
-              string :phone, example: '+44 20 7946 0000'
-              string :country_code, example: 'GB'
-              string :state_code, :state_name
-              string :label, example: 'Head office'
+              include_fields Spree::Api::V3::AddressRequestSchema
             end
-            object :custom_fields, array: true, shape: Spree::Api::V3::RequestShapes::CUSTOM_FIELD_VALUE,
+            object :custom_fields, array: true, shape: Spree::Api::V3::CustomFieldValueRequestSchema,
                                    description: 'Custom field values, each validated against its definition.'
           end
 

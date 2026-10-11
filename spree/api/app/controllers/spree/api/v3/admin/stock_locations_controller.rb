@@ -11,8 +11,8 @@ module Spree
             string :admin_name, nullable: true, description: 'Internal name shown only in the admin.'
             boolean :active
             boolean :default, description: 'Setting to true demotes the previous default.'
-            string :kind, example: 'warehouse',
-                          description: "Categorizes the location. Built-in values: #{Spree::StockLocation::KINDS.map { |kind| "`#{kind}`" }.join(', ')}; extensions may add their own."
+            string :kind, enum: Spree::StockLocation::KINDS, open: true, example: 'warehouse',
+                          description: 'Categorizes the location.'
             boolean :propagate_all_variants, :backorderable_default
             string :address1, :address2, :city, :zipcode, :phone, :company, nullable: true
             string :country_code, nullable: true, example: 'US', description: 'ISO-3166 alpha-2 country code.'

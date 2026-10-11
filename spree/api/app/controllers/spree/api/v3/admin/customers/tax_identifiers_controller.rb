@@ -10,7 +10,7 @@ module Spree
 
             request_params 'TaxIdentifierParams' do
               string :kind, example: 'gb_vat',
-                            description: "#{Spree::Api::V3::RequestShapes::TAX_IDENTIFIER_KIND} Required when creating."
+                            description: "#{Spree::Api::V3::TaxIdentifierRequestSchema::KIND_DESCRIPTION} Required when creating."
               string :value, example: 'GB123456789', description: 'Required when creating.'
             end
 

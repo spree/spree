@@ -118,6 +118,45 @@ RSpec.describe Spree::Api::V3::RequestSchema do
     end
   end
 
+  describe 'declared as a class' do
+    let(:base) do
+      Class.new(described_class) do
+        publishes 'TestAddressParams'
+        string :city, required: true
+      end
+    end
+
+    let(:extended) do
+      parent = base
+      Class.new(parent) { string :alternative_phone }
+    end
+
+    it 'publishes the class fields under its name' do
+      expect(base.definition.name).to eq('TestAddressParams')
+      expect(base.definition.permit_list).to eq([:city])
+    end
+
+    it "starts a subclass from its parent's fields" do
+      expect(extended.definition.permit_list).to eq(%i[city alternative_phone])
+      expect(base.definition.permit_list).to eq([:city])
+    end
+
+    it 'can be used as a shape or included by its class' do
+      shape = base
+      schema = described_class.new(:widget) do
+        object :address, shape: shape
+        include_fields shape
+      end
+
+      expect(schema.shapes.map(&:name)).to eq(['TestAddressParams'])
+      expect(schema.permit_list).to eq([:city, { address: [:city] }])
+    end
+
+    it 'refuses publishes after the fields' do
+      expect { Class.new(described_class) { string :city; publishes 'LateParams' } }.to raise_error(ArgumentError, /before the fields/)
+    end
+  end
+
   it 'rejects a field declared twice' do
     expect { described_class.new { string :name, :name } }.to raise_error(ArgumentError, /declared twice/)
   end

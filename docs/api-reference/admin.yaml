@@ -61032,14 +61032,8 @@ components:
           type: string
         last_name:
           type: string
-        firstname:
+        company:
           type: string
-          description: Legacy spelling of `first_name` / `last_name`; send only one
-            of the two.
-        lastname:
-          type: string
-          description: Legacy spelling of `first_name` / `last_name`; send only one
-            of the two.
         address1:
           type: string
         address2:
@@ -61048,25 +61042,25 @@ components:
           type: string
         postal_code:
           type: string
+        phone:
+          type: string
+        label:
+          type: string
         zipcode:
           type: string
           description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           type: string
+          description: ISO 3166-1 alpha-2 code, such as `US`.
           example: US
         state_code:
           type: string
+          description: The state or province abbreviation, such as `NY`.
           example: NY
         state_name:
           type: string
           description: For countries without states in the database.
-        phone:
-          type: string
         alternative_phone:
-          type: string
-        company:
-          type: string
-        label:
           type: string
     AdminUserUpdateParams:
       type: object
@@ -61985,20 +61979,24 @@ components:
           type: string
         postal_code:
           type: string
-        zipcode:
-          type: string
         phone:
-          type: string
-        state_name:
           type: string
         label:
           type: string
+        zipcode:
+          type: string
+          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           type: string
           description: ISO 3166-1 alpha-2 code, such as `US`.
+          example: US
         state_code:
           type: string
           description: The state or province abbreviation, such as `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: For countries without states in the database.
         default_billing:
           type: boolean
           description: True makes this the default address of that kind, false gives
@@ -62175,26 +62173,24 @@ components:
           type: string
         postal_code:
           type: string
-        zipcode:
-          type: string
         phone:
-          type: string
-        state_name:
           type: string
         label:
           type: string
+        zipcode:
+          type: string
+          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           type: string
           description: ISO 3166-1 alpha-2 code, such as `US`.
+          example: US
         state_code:
           type: string
           description: The state or province abbreviation, such as `NY`.
-        firstname:
+          example: NY
+        state_name:
           type: string
-          description: Older spellings of `first_name` and `last_name`.
-        lastname:
-          type: string
-          description: Older spellings of `first_name` and `last_name`.
+          description: For countries without states in the database.
         alternative_phone:
           type: string
         quick_checkout:
@@ -63051,16 +63047,19 @@ components:
           pattern: "^-?\\d+(\\.\\d+)?$"
           example: '4.00'
         kind:
-          type: string
-          enum:
-          - surcharge
-          - handling
-          - gift_wrap
-          - cod
-          - payment
-          - duty
-          - exchange
-          description: Defaults to `surcharge`.
+          anyOf:
+          - type: string
+            enum:
+            - surcharge
+            - handling
+            - gift_wrap
+            - cod
+            - payment
+            - duty
+            - exchange
+          - type: string
+          description: Defaults to `surcharge`. The values listed are the built-in
+            ones; extensions may add more.
           example: gift_wrap
         line_item_id:
           type: string
@@ -63087,16 +63086,19 @@ components:
           pattern: "^-?\\d+(\\.\\d+)?$"
           example: '4.00'
         kind:
-          type: string
-          enum:
-          - surcharge
-          - handling
-          - gift_wrap
-          - cod
-          - payment
-          - duty
-          - exchange
-          description: Defaults to `surcharge`.
+          anyOf:
+          - type: string
+            enum:
+            - surcharge
+            - handling
+            - gift_wrap
+            - cod
+            - payment
+            - duty
+            - exchange
+          - type: string
+          description: Defaults to `surcharge`. The values listed are the built-in
+            ones; extensions may add more.
           example: gift_wrap
     FileUploadCreateParams:
       type: object
@@ -63664,9 +63666,11 @@ components:
           description: A `signed_id` from `files.upload()` for a video's poster frame.
         focal_point_x:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         focal_point_y:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         attachment:
           type: string
@@ -63725,9 +63729,11 @@ components:
           description: A `signed_id` from `files.upload()` for a video's poster frame.
         focal_point_x:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         focal_point_y:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         attachment:
           type: string
@@ -63786,9 +63792,11 @@ components:
           description: A `signed_id` from `files.upload()` for a video's poster frame.
         focal_point_x:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         focal_point_y:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         attachment:
           type: string
@@ -63847,9 +63855,11 @@ components:
           description: A `signed_id` from `files.upload()` for a video's poster frame.
         focal_point_x:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         focal_point_y:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         attachment:
           type: string
@@ -64917,11 +64927,15 @@ components:
         slug:
           type: string
         status:
-          type: string
-          enum:
-          - draft
-          - active
-          - archived
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - active
+            - archived
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         meta_title:
           type: string
         meta_description:
@@ -65043,25 +65057,34 @@ components:
           description: Copies an asset from the media library.
         alt:
           type: string
+          example: Front view
           nullable: true
         position:
           type: integer
+          example: 1
         media_type:
           type: string
           enum:
           - image
           - video
           - external_video
+          description: Defaults to `image`. `video` needs a `signed_id`; `external_video`
+            needs an `external_video_url`.
+          example: image
         external_video_url:
           type: string
+          description: YouTube or Vimeo link. Required when `media_type` is `external_video`.
           nullable: true
         poster_signed_id:
           type: string
+          description: A `signed_id` from `files.upload()` for a video's poster frame.
         focal_point_x:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         focal_point_y:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         variant_ids:
           type: array
@@ -65206,11 +65229,15 @@ components:
         slug:
           type: string
         status:
-          type: string
-          enum:
-          - draft
-          - active
-          - archived
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - active
+            - archived
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         meta_title:
           type: string
         meta_description:
@@ -66105,40 +66132,36 @@ components:
       properties:
         first_name:
           type: string
-          example: Ada
         last_name:
           type: string
-          example: Lovelace
         company:
           type: string
-          example: Sparks Audio Ltd
         address1:
           type: string
-          example: 1 Seller Way
         address2:
           type: string
-          example: Unit 4
         city:
           type: string
-          example: London
         postal_code:
-          type: string
-          example: EC1A 1BB
-        zipcode:
           type: string
         phone:
           type: string
-          example: "+44 20 7946 0000"
-        country_code:
-          type: string
-          example: GB
-        state_code:
-          type: string
-        state_name:
-          type: string
         label:
           type: string
-          example: Head office
+        zipcode:
+          type: string
+          description: Legacy spelling of `postal_code`; send only one of the two.
+        country_code:
+          type: string
+          description: ISO 3166-1 alpha-2 code, such as `US`.
+          example: US
+        state_code:
+          type: string
+          description: The state or province abbreviation, such as `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: For countries without states in the database.
     SellerApproveParams:
       type: object
       properties:
@@ -66664,9 +66687,15 @@ components:
           type: boolean
           description: Setting to true demotes the previous default.
         kind:
-          type: string
-          description: 'Categorizes the location. Built-in values: `warehouse`, `store`,
-            `fulfillment_center`; extensions may add their own.'
+          anyOf:
+          - type: string
+            enum:
+            - warehouse
+            - store
+            - fulfillment_center
+          - type: string
+          description: Categorizes the location. The values listed are the built-in
+            ones; extensions may add more.
           example: warehouse
         propagate_all_variants:
           type: boolean
@@ -66748,9 +66777,15 @@ components:
           type: boolean
           description: Setting to true demotes the previous default.
         kind:
-          type: string
-          description: 'Categorizes the location. Built-in values: `warehouse`, `store`,
-            `fulfillment_center`; extensions may add their own.'
+          anyOf:
+          - type: string
+            enum:
+            - warehouse
+            - store
+            - fulfillment_center
+          - type: string
+          description: Categorizes the location. The values listed are the built-in
+            ones; extensions may add more.
           example: warehouse
         propagate_all_variants:
           type: boolean

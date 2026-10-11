@@ -8,7 +8,7 @@ module Spree
             before_action :set_resource, only: [:show, :update, :destroy]
 
             request_params 'AddressParams' do
-              include_fields Spree::Api::V3::RequestShapes::STORE_ADDRESS_FIELDS
+              include_fields Spree::Api::V3::Store::AddressRequestSchema
               boolean :is_default_billing, description: 'Makes this the default billing address.'
               boolean :is_default_shipping, description: 'Makes this the default shipping address.'
             end

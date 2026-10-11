@@ -156,8 +156,10 @@ module Spree
             Spree.api.admin_store_serializer
           end
 
+          # Extensions' fields too: the store settings page saves the fields
+          # plugins add to it with the rest of the form.
           def permitted_params
-            params.permit(*declared_permitted_attributes)
+            params.permit(*declared_permitted_attributes, *Array(Spree::Store.additional_permitted_attributes))
           end
         end
       end

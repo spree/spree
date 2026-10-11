@@ -929,6 +929,13 @@ describe Spree::Store, type: :model, without_global_store: true do
       expect(store.errors[:preferred_unit_system]).to be_present
       expect(store.errors[:preferred_weight_unit]).to be_present
     end
+
+    it 'accepts a store saved with no unit before the check existed' do
+      store.preferred_unit_system = nil
+      store.preferred_weight_unit = ''
+
+      expect(store).to be_valid
+    end
   end
 
   describe 'capture method' do

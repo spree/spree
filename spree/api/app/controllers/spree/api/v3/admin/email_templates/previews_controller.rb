@@ -7,7 +7,7 @@ module Spree
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
             request_params 'EmailTemplatePreviewParams' do
-              include_fields Spree::Api::V3::RequestShapes::EMAIL_TEMPLATE_PREVIEW
+              include_fields Spree::Api::V3::Admin::EmailTemplatePreviewRequestSchema
             end
 
             before_action :authorize_sample_data!

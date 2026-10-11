@@ -8,10 +8,14 @@ export type SellerAddressParams = {
   address2?: string
   city?: string
   postal_code?: string
-  zipcode?: string
   phone?: string
-  country_code?: string
-  state_code?: string
-  state_name?: string
   label?: string
+  /** Legacy spelling of `postal_code`; send only one of the two. */
+  zipcode?: string
+  /** ISO 3166-1 alpha-2 code, such as `US`. */
+  country_code?: string
+  /** The state or province abbreviation, such as `NY`. */
+  state_code?: string
+  /** For countries without states in the database. */
+  state_name?: string
 }

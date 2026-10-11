@@ -433,7 +433,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           email: 'test@example.com',
           items: [{ variant_id: variant.prefixed_id, quantity: 2 }],
           shipping_address: {
-            firstname: 'Jane', lastname: 'Doe',
+            first_name: 'Jane', last_name: 'Doe',
             address1: '350 Fifth Avenue', city: 'New York',
             zipcode: '10118', phone: '555-555-0199',
             country_code: country.iso, state_code: state.abbr
@@ -539,7 +539,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           preferred_stock_location_id: preferred_location.prefixed_id,
           items: [{ variant_id: variant.prefixed_id, quantity: 2 }],
           shipping_address: {
-            firstname: 'Jane', lastname: 'Doe',
+            first_name: 'Jane', last_name: 'Doe',
             address1: '350 Fifth Avenue', city: 'New York',
             zipcode: '10118', phone: '555-555-0199',
             country_code: country.iso, state_code: state.abbr

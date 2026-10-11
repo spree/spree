@@ -9,7 +9,7 @@ module Spree
           class OrderMinimumsController < BaseController
             before_action :authorize_parent_access!
 
-            request_params('CatalogOrderMinimumParams') { include_fields Spree::Api::V3::RequestShapes::CATALOG_ORDER_MINIMUM }
+            request_params('CatalogOrderMinimumParams') { include_fields Spree::Api::V3::Admin::CatalogOrderMinimumRequestSchema }
 
             protected
 

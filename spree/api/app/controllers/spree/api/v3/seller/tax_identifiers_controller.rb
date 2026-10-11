@@ -26,7 +26,7 @@ module Spree
 
           request_params 'SellerTaxIdentifierParams' do
             string :kind, example: 'eu_vat',
-                          description: "#{Spree::Api::V3::RequestShapes::TAX_IDENTIFIER_KIND} One registration per kind."
+                          description: "#{Spree::Api::V3::TaxIdentifierRequestSchema::KIND_DESCRIPTION} One registration per kind."
             string :value, example: 'DE100000008',
                            description: 'A number the validator for its kind refuses is rejected rather than stored.'
           end

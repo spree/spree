@@ -214,6 +214,18 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with an attribute an extension opened' do
+      let(:params) { { seo_title: 'Extension Title' } }
+
+      before { allow(Spree::Store).to receive(:additional_permitted_attributes).and_return([:seo_title]) }
+
+      it 'saves it' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(store.reload.seo_title).to eq('Extension Title')
+      end
+    end
+
     context 'with the digital download limits' do
       let(:params) do
         { limit_digital_download_count: false, digital_asset_authorized_clicks: 9,

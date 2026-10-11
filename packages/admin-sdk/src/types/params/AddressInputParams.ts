@@ -3,22 +3,20 @@
 export type AddressInputParams = {
   first_name?: string
   last_name?: string
-  /** Legacy spelling of `first_name` / `last_name`; send only one of the two. */
-  firstname?: string
-  /** Legacy spelling of `first_name` / `last_name`; send only one of the two. */
-  lastname?: string
+  company?: string
   address1?: string
   address2?: string
   city?: string
   postal_code?: string
+  phone?: string
+  label?: string
   /** Legacy spelling of `postal_code`; send only one of the two. */
   zipcode?: string
+  /** ISO 3166-1 alpha-2 code, such as `US`. */
   country_code?: string
+  /** The state or province abbreviation, such as `NY`. */
   state_code?: string
   /** For countries without states in the database. */
   state_name?: string
-  phone?: string
   alternative_phone?: string
-  company?: string
-  label?: string
 }

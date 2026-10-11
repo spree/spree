@@ -38,11 +38,11 @@ module Spree
             decimal :price_adjustment_percentage, nullable: true, example: '-15.0',
                                                   description: 'Signed: negative discounts off base prices, positive marks up.'
             boolean :adjust_compare_at
-            object :rules, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_LIST_RULE,
+            object :rules, array: true, shape: Spree::Api::V3::Admin::PriceListRuleRequestSchema,
                            description: 'The complete rule set: rules are matched by `id` and updated, new ones are built, and rules left out are removed.'
-            object :price_adjustment_tiers, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_ADJUSTMENT_TIER,
+            object :price_adjustment_tiers, array: true, shape: Spree::Api::V3::Admin::PriceAdjustmentTierRequestSchema,
                                             description: "Quantity bands on the list's percentage. The payload is the whole ladder: a band left out is removed."
-            object :prices, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_LIST_PRICE,
+            object :prices, array: true, shape: Spree::Api::V3::Admin::PriceListPriceRequestSchema,
                             description: 'Per-variant price overrides. Each row upserts, so the variants it names become part of the list. Curating whole products goes through the nested products endpoint instead.'
           end
 

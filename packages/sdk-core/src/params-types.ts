@@ -17,6 +17,7 @@ export interface ParamsSchema {
   additionalProperties?: boolean | ParamsSchema
   items?: ParamsSchema
   allOf?: ParamsSchema[]
+  anyOf?: ParamsSchema[]
   $ref?: string
 }
 
@@ -81,6 +82,12 @@ function valueType(schema: ParamsSchema, indent: string): string {
     type = refName(schema.$ref)
   } else if (schema.allOf) {
     type = schema.allOf.map((part) => valueType(part, indent)).join(' & ')
+  } else if (schema.anyOf) {
+    // An open list: the built-in values, plus any other string an extension
+    // adds, which `(string & {})` accepts without swallowing autocompletion.
+    type = schema.anyOf
+      .map((part) => (part.enum ? valueType(part, indent) : `(${valueType(part, indent)} & {})`))
+      .join(' | ')
   } else if (schema.enum) {
     type = schema.enum.map(literal).join(' | ')
   } else if (schema.type === 'array') {

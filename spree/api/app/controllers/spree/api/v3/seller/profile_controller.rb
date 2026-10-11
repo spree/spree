@@ -31,9 +31,9 @@ module Spree
             string :logo_signed_id, :square_logo_signed_id, :cover_photo_signed_id, nullable: true,
                    description: 'A `signed_id` from `POST /files`; `null` removes the image.'
             object :billing_address, as: 'SellerAddressParams' do
-              include_fields Spree::Api::V3::RequestShapes::ADDRESS_FIELDS
+              include_fields Spree::Api::V3::AddressRequestSchema
             end
-            object :custom_fields, array: true, shape: Spree::Api::V3::RequestShapes::CUSTOM_FIELD_VALUE,
+            object :custom_fields, array: true, shape: Spree::Api::V3::CustomFieldValueRequestSchema,
                                    description: "Answers to the custom fields this marketplace's onboarding asks for. A field nothing asked for is ignored rather than written."
             boolean :accept_terms, permit: false,
                                    description: "Stamps the moment the seller accepted the marketplace's terms. One-way: sending `false` does not unmake the stamp."

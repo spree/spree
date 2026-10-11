@@ -25270,20 +25270,24 @@ components:
           type: string
         postal_code:
           type: string
-        zipcode:
-          type: string
         phone:
-          type: string
-        state_name:
           type: string
         label:
           type: string
+        zipcode:
+          type: string
+          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           type: string
           description: ISO 3166-1 alpha-2 code, such as `US`.
+          example: US
         state_code:
           type: string
           description: The state or province abbreviation, such as `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: For countries without states in the database.
     SellerExportCreateParams:
       type: object
       properties:
@@ -25321,25 +25325,34 @@ components:
           description: A `signed_id` from `POST /files`.
         alt:
           type: string
+          example: Front view
           nullable: true
         position:
           type: integer
+          example: 1
         media_type:
           type: string
           enum:
           - image
           - video
           - external_video
+          description: Defaults to `image`. `video` needs a `signed_id`; `external_video`
+            needs an `external_video_url`.
+          example: image
         external_video_url:
           type: string
+          description: YouTube or Vimeo link. Required when `media_type` is `external_video`.
           nullable: true
         poster_signed_id:
           type: string
+          description: A `signed_id` from `files.upload()` for a video's poster frame.
         focal_point_x:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         focal_point_y:
           type: number
+          description: Where the image is anchored when cropped, from 0 to 1.
           nullable: true
         variant_ids:
           type: array
@@ -25562,9 +25575,15 @@ components:
         default:
           type: boolean
         kind:
-          type: string
-          description: 'Categorizes the location. Built-in values: `warehouse`, `store`,
-            `fulfillment_center`; extensions may add their own.'
+          anyOf:
+          - type: string
+            enum:
+            - warehouse
+            - store
+            - fulfillment_center
+          - type: string
+          description: Categorizes the location. The values listed are the built-in
+            ones; extensions may add more.
           example: warehouse
         propagate_all_variants:
           type: boolean

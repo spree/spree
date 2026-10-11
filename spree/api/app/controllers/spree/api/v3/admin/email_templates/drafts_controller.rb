@@ -9,7 +9,7 @@ module Spree
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
             request_params 'EmailTemplateDraftParams' do
-              include_fields Spree::Api::V3::RequestShapes::EMAIL_TEMPLATE_LANGUAGE
+              include_fields Spree::Api::V3::Admin::EmailTemplateLanguageRequestSchema
               string :subject, nullable: true, example: 'Your order {{ order.number }} is confirmed'
               string :body, example: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>'
               integer :lock_version, nullable: true, example: 0,

@@ -8,18 +8,16 @@ export type CustomerAddressParams = {
   address2?: string
   city?: string
   postal_code?: string
-  zipcode?: string
   phone?: string
-  state_name?: string
   label?: string
+  /** Legacy spelling of `postal_code`; send only one of the two. */
+  zipcode?: string
   /** ISO 3166-1 alpha-2 code, such as `US`. */
   country_code?: string
   /** The state or province abbreviation, such as `NY`. */
   state_code?: string
-  /** Older spellings of `first_name` and `last_name`. */
-  firstname?: string
-  /** Older spellings of `first_name` and `last_name`. */
-  lastname?: string
+  /** For countries without states in the database. */
+  state_name?: string
   alternative_phone?: string
   quick_checkout?: boolean
   /** Makes this the customer's default address of that kind. */

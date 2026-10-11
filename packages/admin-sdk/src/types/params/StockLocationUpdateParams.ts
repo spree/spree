@@ -14,11 +14,8 @@ export type StockLocationUpdateParams = {
   active?: boolean
   /** Setting to true demotes the previous default. */
   default?: boolean
-  /**
-   * Categorizes the location. Built-in values: `warehouse`, `store`, `fulfillment_center`;
-   * extensions may add their own.
-   */
-  kind?: string
+  /** Categorizes the location. The values listed are the built-in ones; extensions may add more. */
+  kind?: 'warehouse' | 'store' | 'fulfillment_center' | (string & {})
   propagate_all_variants?: boolean
   backorderable_default?: boolean
   address1?: string | null

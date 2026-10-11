@@ -31,7 +31,7 @@ module Spree
             # own endpoint: an agreement may name thousands of them.
             object :assignments, array: true, shape: ASSIGNMENT,
                                  description: 'The whole audience. An entry left out is withdrawn; omitting the key leaves the audience alone.'
-            object :order_minimums, array: true, shape: Spree::Api::V3::RequestShapes::CATALOG_ORDER_MINIMUM,
+            object :order_minimums, array: true, shape: Spree::Api::V3::Admin::CatalogOrderMinimumRequestSchema,
                                     description: 'The whole order-minimum set. A currency left out has its minimum lifted; omitting the key leaves them alone.'
             object :price_list, nullable: true, as: 'CatalogPriceListParams',
                                 description: 'The price list this catalog prices through, written inline: an object creates the owned list or updates it. Null deletes the list (a soft delete). Omit the key, or send `{}`, to leave the pricing alone. A catalog with an empty assortment prices without hiding anything; curate or import products to make it restrictive.' do
@@ -44,11 +44,11 @@ module Spree
               boolean :adjust_compare_at
               # Audience rules on an owned list are inert, since the catalog
               # assignment already decided the audience.
-              object :rules, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_LIST_RULE,
+              object :rules, array: true, shape: Spree::Api::V3::Admin::PriceListRuleRequestSchema,
                              description: "Contextual rules, in practice a `volume_rule`. Audience rules are left as they are, and an empty list clears the contextual rules."
-              object :prices, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_LIST_PRICE,
+              object :prices, array: true, shape: Spree::Api::V3::Admin::PriceListPriceRequestSchema,
                               description: 'Explicit per-variant amounts. An empty list clears them, which is what switching to a percentage sends.'
-              object :price_adjustment_tiers, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_ADJUSTMENT_TIER,
+              object :price_adjustment_tiers, array: true, shape: Spree::Api::V3::Admin::PriceAdjustmentTierRequestSchema,
                                               description: 'Quantity bands on the percentage. The payload is the whole ladder, so an empty list clears it.'
             end
           end

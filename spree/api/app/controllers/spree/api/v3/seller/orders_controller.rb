@@ -144,10 +144,8 @@ module Spree
           # files the address in their book and makes it their default for
           # every later checkout on the marketplace.
           def sent_addresses
-            @sent_addresses ||= params.permit(
-              shipping_address: address_permitted_keys,
-              billing_address: address_permitted_keys
-            ).slice(:shipping_address, :billing_address).reject { |_key, value| value.blank? }
+            @sent_addresses ||= params.permit(*declared_permitted_attributes).
+                                slice(:shipping_address, :billing_address).reject { |_key, value| value.blank? }
           end
 
           def corrected_addresses
@@ -166,16 +164,6 @@ module Spree
             # No label: an address-book label means nothing on an order's copy,
             # and labels are unique per owner, which an ownerless copy lacks.
             (address&.snapshot || Spree::Address.new).tap { |copy| copy.assign_attributes(sent.to_h.except('label', :label)) }
-          end
-
-          def address_permitted_keys
-            [
-              :firstname, :lastname, :first_name, :last_name,
-              :address1, :address2, :city,
-              :country_code, :state_code,
-              :zipcode, :postal_code, :phone, :alternative_phone,
-              :state_name, :company, :label
-            ]
           end
 
           # A request naming neither address has asked for nothing; saying so

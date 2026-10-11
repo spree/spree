@@ -15,7 +15,7 @@ module Spree
             string :name, required: :create, example: 'Premium T-Shirt'
             string :description, description: 'Rich text HTML. Reads come back as this (plain text) plus `description_html`.'
             string :slug
-            string :status, enum: Spree::Product::STATUSES
+            string :status, enum: Spree::Product::STATUSES, open: true
             string :meta_title, :meta_description, :meta_keywords
             id :tax_category_id
             id :product_type_id, nullable: true,
@@ -30,9 +30,9 @@ module Spree
             id :collection_ids, array: true,
                                 description: 'Manual collections this product belongs to. Automatic collections are kept as they are, since their rules decide membership.'
             object :metadata
-            object :prices, array: true, shape: Spree::Api::V3::RequestShapes::PRICE,
+            object :prices, array: true, shape: Spree::Api::V3::PriceRequestSchema,
                             description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant. For products with options, set prices per variant under `variants` instead. Don't pass both."
-            object :custom_fields, array: true, shape: Spree::Api::V3::RequestShapes::CUSTOM_FIELD_VALUE,
+            object :custom_fields, array: true, shape: Spree::Api::V3::CustomFieldValueRequestSchema,
                                    description: 'Custom field values, each validated against its definition.'
             # `external_url` is left out on purpose: it makes the server fetch
             # a URL the caller chose, so it belongs to trusted importers.
@@ -41,12 +41,7 @@ module Spree
               id :id
               string :signed_id, description: 'A `signed_id` from `files.upload()`.'
               id :source_media_id, description: 'Copies an asset from the media library.'
-              string :alt, nullable: true
-              integer :position
-              string :media_type, enum: Spree::Media::MEDIA_TYPES
-              string :external_video_url, nullable: true
-              string :poster_signed_id
-              number :focal_point_x, :focal_point_y, nullable: true
+              include_fields Spree::Api::V3::MediaRequestSchema
               id :variant_ids, array: true, description: 'Replaces the variants this media is linked to. An empty list clears them.'
             end
             object :digital_assets, array: true, as: 'ProductDigitalAssetParams',
@@ -67,8 +62,8 @@ module Spree
             object :variants, array: true, as: 'ProductVariantParams',
                               description: 'Every purchasable attribute (sku, prices, stock, weight, dimensions) lives on variants. An entry without `options` upserts onto the default variant of a simple product; pass `id` to update an existing variant.' do
               id :id
-              include_fields Spree::Api::V3::RequestShapes::VARIANT_ATTRIBUTES
-              object :options, array: true, shape: Spree::Api::V3::RequestShapes::VARIANT_OPTION,
+              include_fields Spree::Api::V3::VariantRequestSchema
+              object :options, array: true, shape: Spree::Api::V3::VariantOptionRequestSchema,
                                description: 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing.'
             end
           end
@@ -108,7 +103,7 @@ module Spree
           end
 
           %i[bulk_add_tags bulk_remove_tags].each do |action|
-            request_params('BulkTagsParams', action: action) { include_fields Spree::Api::V3::RequestShapes::BULK_TAGS }
+            request_params('BulkTagsParams', action: action) { include_fields Spree::Api::V3::Admin::BulkTagsRequestSchema }
           end
 
           request_params 'ProductBulkDestroyParams', action: :bulk_destroy do

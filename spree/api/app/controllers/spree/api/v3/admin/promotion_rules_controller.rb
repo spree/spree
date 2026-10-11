@@ -16,7 +16,7 @@ module Spree
           request_params :promotion_rule do
             string :type, required: :create, only: :create, example: 'currency',
                           description: 'The rule kind, from `GET /promotion_rules/types`.'
-            include_fields Spree::Api::V3::RequestShapes::PROMOTION_RULE_FIELDS
+            include_fields Spree::Api::V3::Admin::PromotionRuleRequestSchema
           end
 
           def types

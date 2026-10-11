@@ -17867,20 +17867,24 @@ components:
           type: string
         postal_code:
           type: string
-        zipcode:
-          type: string
         phone:
-          type: string
-        state_name:
           type: string
         label:
           type: string
+        zipcode:
+          type: string
+          description: Legacy spelling of `postal_code`; send only one of the two.
         country_code:
           type: string
           description: ISO 3166-1 alpha-2 code, such as `US`.
+          example: US
         state_code:
           type: string
           description: The state or province abbreviation, such as `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: For countries without states in the database.
         default_billing:
           type: boolean
           description: True makes this the node's default billing address, false gives

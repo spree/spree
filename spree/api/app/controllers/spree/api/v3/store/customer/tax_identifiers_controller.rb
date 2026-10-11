@@ -19,7 +19,7 @@ module Spree
             before_action :require_kind!, only: %i[show update destroy]
 
             request_params('TaxIdentifierParams', action: :update) do
-              include_fields Spree::Api::V3::RequestShapes::TAX_IDENTIFIER_FIELDS
+              include_fields Spree::Api::V3::TaxIdentifierRequestSchema
             end
 
             # GET /api/v3/store/customers/me/tax_identifiers

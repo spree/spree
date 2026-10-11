@@ -27,7 +27,7 @@ module Spree
                                      description: 'A `signed_id` from `files.upload()` for the landscape image, or null to remove it.'
             string :square_image_signed_id, nullable: true,
                                             description: 'A `signed_id` from `files.upload()` for the square image, or null to remove it.'
-            object :custom_fields, array: true, shape: Spree::Api::V3::RequestShapes::CUSTOM_FIELD_VALUE,
+            object :custom_fields, array: true, shape: Spree::Api::V3::CustomFieldValueRequestSchema,
                                    description: 'Custom field values, each validated against its definition.'
           end
 

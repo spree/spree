@@ -26,7 +26,7 @@ module Spree
             before_action :require_kind_and_value!, only: :update
 
             request_params('TaxIdentifierParams', action: :update) do
-              include_fields Spree::Api::V3::RequestShapes::TAX_IDENTIFIER_FIELDS
+              include_fields Spree::Api::V3::TaxIdentifierRequestSchema
             end
 
             # GET /api/v3/store/carts/:cart_id/tax_identifier

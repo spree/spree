@@ -7,7 +7,7 @@ module Spree
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
             request_params 'EmailTemplateRestoreParams' do
-              include_fields Spree::Api::V3::RequestShapes::EMAIL_TEMPLATE_LANGUAGE
+              include_fields Spree::Api::V3::Admin::EmailTemplateLanguageRequestSchema
               integer :lock_version, nullable: true, permit: false,
                                      description: "The open draft's `lock_version`, or null when there is none; checked as when saving."
             end

@@ -14,7 +14,7 @@ module Spree
             request_params :fee do
               string :label, required: :create, example: 'Gift wrap'
               decimal :amount, required: :create, example: '4.00'
-              string :kind, enum: Spree::Fee::KINDS, example: 'gift_wrap', description: 'Defaults to `surcharge`.'
+              string :kind, enum: Spree::Fee::KINDS, open: true, example: 'gift_wrap', description: 'Defaults to `surcharge`.'
               # Resolved through the order by the controller, never assigned.
               id :line_item_id, :fulfillment_id, only: :create, nullable: true, permit: false,
                                                  description: 'The line item or fulfillment the fee belongs to. Omitted, the fee is order-level.'

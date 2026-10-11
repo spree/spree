@@ -19,7 +19,8 @@ export type ProductUpdateParams = {
   /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
   description?: string
   slug?: string
-  status?: 'draft' | 'active' | 'archived'
+  /** The values listed are the built-in ones; extensions may add more. */
+  status?: 'draft' | 'active' | 'archived' | (string & {})
   meta_title?: string
   meta_description?: string
   meta_keywords?: string

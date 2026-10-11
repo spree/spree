@@ -10,7 +10,7 @@ module Spree
             include Spree::Api::V3::CompanyAddressWrites
 
             request_params 'CompanyAddressParams' do
-              include_fields Spree::Api::V3::RequestShapes::ADDRESS_FIELDS
+              include_fields Spree::Api::V3::AddressRequestSchema
               boolean :default_billing, permit: false,
                                         description: "True makes this the node's default billing address, false gives that up, and leaving it out changes nothing."
               boolean :default_shipping, permit: false,
@@ -72,10 +72,6 @@ module Spree
             # member rename or re-point its parent's entries.
             def scope
               action_name == 'index' ? @parent.address_book : @parent.addresses
-            end
-
-            def permitted_params
-              params.permit(*declared_permitted_attributes)
             end
           end
         end

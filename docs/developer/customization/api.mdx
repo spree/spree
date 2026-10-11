@@ -207,6 +207,30 @@ Each field takes `required: true` (or `:create` for create only), `nullable:`,
 own body with a name ending in `Params`:
 `request_params 'BrandMergeParams', action: :merge do ... end`.
 
+A shape several endpoints accept, such as an address or a price, is a class in
+`app/request_schemas`, declared the way a serializer is. A subclass starts from
+its parent's fields:
+
+```ruby app/request_schemas/spree/api/v3/brand_logo_request_schema.rb
+module Spree
+  module Api
+    module V3
+      class BrandLogoRequestSchema < Spree::Api::V3::RequestSchema
+        publishes 'BrandLogoParams'
+
+        string :signed_id, required: true
+        string :alt
+      end
+    end
+  end
+end
+```
+
+Endpoints then reference it: `object :logo, shape: Spree::Api::V3::BrandLogoRequestSchema`,
+or `include_fields` it to take its fields into their own body. Without
+`publishes` the class is a set of fields other declarations include, not a
+type of its own.
+
 <Note>
   An endpoint that needs logic of its own can still override
   `resource_permitted_attributes` with a plain `params.permit` list, but then

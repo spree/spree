@@ -10,7 +10,7 @@ module Spree
       #     string :status, enum: %w[draft active archived]
       #     id :category_ids, array: true
       #     object :metadata
-      #     object :prices, array: true, shape: RequestShapes::PRICE
+      #     object :prices, array: true, shape: Spree::Api::V3::PriceRequestSchema
       #     object :options, array: true do
       #       string :name, :value, required: true
       #     end
@@ -22,6 +22,8 @@ module Spree
       # `permit: false` documents a field the controller reads from the raw
       # params itself (external references, uploads), so it is left out of
       # the permit list. `format:` documents a string's format (`email`, `uri`).
+      # `open: true` marks an `enum:` list extensions may extend (statuses,
+      # fee kinds), matching how the serializers publish the same field.
       class RequestSchema
         KINDS = {
           string: { type: :string },
@@ -41,12 +43,16 @@ module Spree
 
         ACTIONS = %i[create update].freeze
 
+        OPEN_LIST_NOTE = 'The values listed are the built-in ones; extensions may add more.'.freeze
+
         class Field
-          attr_reader :name, :kind, :array, :required, :nullable, :description, :example, :enum, :only, :schema, :permit,
-                      :format
+          attr_reader :name, :kind, :array, :required, :nullable, :description, :example, :enum, :open, :only, :schema,
+                      :permit, :format
 
           def initialize(name, kind, array: false, required: false, nullable: false, description: nil,
-                         example: nil, enum: nil, only: nil, schema: nil, permit: true, format: nil)
+                         example: nil, enum: nil, open: false, only: nil, schema: nil, permit: true, format: nil)
+            raise ArgumentError, "open: needs an enum: list of the built-in values (#{name})" if open && enum.nil?
+
             unless required.in?([true, false, :create])
               raise ArgumentError, "required: must be true, false or :create (#{name})"
             end
@@ -60,6 +66,7 @@ module Spree
             @description = description
             @example = example
             @enum = enum&.map(&:to_s)
+            @open = open
             @only = only
             @schema = schema
             @permit = permit
@@ -95,6 +102,44 @@ module Spree
           new(name, &block)
         end
 
+        # A shape several endpoints share is a class in app/request_schemas,
+        # declared the way a serializer is:
+        #
+        #   class Spree::Api::V3::PriceRequestSchema < Spree::Api::V3::RequestSchema
+        #     publishes 'PriceParams'
+        #     string :currency, required: true
+        #   end
+        #
+        # A subclass starts from its parent's fields, so the Admin API's
+        # address extends the shared one. Without `publishes` the class is a
+        # field set other declarations include rather than a type of its own.
+        class << self
+          # @param name [String] the component name, ending in `Params`
+          def publishes(name)
+            raise ArgumentError, "a shape's name ends in Params (#{name})" unless name.to_s.end_with?('Params')
+            raise ArgumentError, "#{self.name}: `publishes` goes before the fields" if @definition
+
+            @published_name = name.to_s
+          end
+
+          # @return [RequestSchema] what the class declares
+          def definition
+            @definition ||= new(@published_name).tap do |schema|
+              schema.include_fields(superclass) if superclass < RequestSchema
+            end
+          end
+
+          # @param value [RequestSchema, Class] an instance or a declared class
+          # @return [RequestSchema, nil]
+          def resolve(value)
+            value.is_a?(Class) ? value.definition : value
+          end
+
+          (KINDS.keys + %i[object include_fields external_references]).each do |method|
+            define_method(method) { |*args, **options, &block| definition.public_send(method, *args, **options, &block) }
+          end
+        end
+
         # @param name [String, Symbol, nil] the resource, `product` publishing
         #   `ProductCreateParams` and `ProductUpdateParams`; or a name ending
         #   in `Params`, published as given for every action
@@ -114,11 +159,11 @@ module Spree
         # A nested hash. Without a block or `shape:` it takes any keys.
         #
         # @param name [Symbol]
-        # @param shape [RequestSchema, nil] a shared shape
+        # @param shape [RequestSchema, Class, nil] a shared shape
         # @param as [String, nil] publishes the block's fields as a component
         #   of this name, for a nested type clients want to name
         def object(name, shape: nil, as: nil, **options, &block)
-          schema = shape || (block && (as ? RequestSchema.shape(as, &block) : RequestSchema.new(&block)))
+          schema = RequestSchema.resolve(shape) || (block && (as ? RequestSchema.shape(as, &block) : RequestSchema.new(&block)))
           if options[:array] && schema.nil?
             raise ArgumentError, "#{name}: an array of objects needs a shape, since any-key hashes cannot be permitted in a list"
           end
@@ -140,9 +185,9 @@ module Spree
         # Adds the fields of another schema, for endpoints that extend a
         # shared set.
         #
-        # @param other [RequestSchema]
+        # @param other [RequestSchema, Class]
         def include_fields(other)
-          other.fields.each_value { |field| add(field) }
+          RequestSchema.resolve(other).fields.each_value { |field| add(field) }
         end
 
         # The `params.permit` list for an action.
@@ -152,28 +197,7 @@ module Spree
         # @return [Array<Symbol, Hash>]
         def permit_list(action = nil)
           action = action&.to_sym
-          scalars = []
-          nested = []
-
-          fields_for(action).each do |field|
-            next unless field.permit
-
-            if field.schema
-              nested << { field.name => field.schema.permit_list }
-            elsif field.free_object?
-              nested << { field.name => {} }
-            elsif field.kind == :any
-              # A value of any JSON type: a scalar, a list or a hash.
-              scalars << field.name
-              nested << { field.name => [] } << { field.name => {} }
-            elsif field.array
-              nested << { field.name => [] }
-            else
-              scalars << field.name
-            end
-          end
-
-          scalars + nested
+          (@permit_lists ||= {})[action] ||= build_permit_list(action).freeze
         end
 
         # The JSON Schema of the request body for an action.
@@ -221,8 +245,35 @@ module Spree
         def add(field)
           raise ArgumentError, "#{field.name} is declared twice" if fields.key?(field.name)
 
+          @permit_lists = nil
           fields[field.name] = field
         end
+
+        def build_permit_list(action)
+          scalars = []
+          nested = []
+
+          fields_for(action).each do |field|
+            next unless field.permit
+
+            if field.schema
+              nested << { field.name => field.schema.permit_list }
+            elsif field.free_object?
+              nested << { field.name => {} }
+            elsif field.kind == :any
+              # A value of any JSON type: a scalar, a list or a hash.
+              scalars << field.name
+              nested << { field.name => [] } << { field.name => {} }
+            elsif field.array
+              nested << { field.name => [] }
+            else
+              scalars << field.name
+            end
+          end
+
+          scalars + nested
+        end
+
 
         def fields_for(action)
           fields.values.select { |field| field.accepted_on?(action) }
@@ -230,7 +281,8 @@ module Spree
 
         def property_schema(field)
           item = item_schema(field)
-          documentation = { description: field.description, example: field.example }.compact
+          description = [field.description, (OPEN_LIST_NOTE if field.open)].compact.join(' ').presence
+          documentation = { description: description, example: field.example }.compact
 
           if field.array
             schema = { type: :array, items: item }.merge(documentation)
@@ -258,9 +310,13 @@ module Spree
           return { type: :object, additionalProperties: true } if field.free_object?
 
           schema = KINDS.fetch(field.kind).dup
-          schema[:enum] = field.enum if field.enum
           schema[:format] = field.format if field.format
-          schema
+          return schema unless field.enum
+          return schema.merge(enum: field.enum) unless field.open
+
+          # The same open list the serializers publish (`enum_type_name`):
+          # clients autocomplete the built-in values and still accept any other.
+          { anyOf: [schema.merge(enum: field.enum), schema] }
         end
       end
     end

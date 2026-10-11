@@ -27,14 +27,14 @@ module Spree
               id :id
               string :type, required: true, example: 'currency',
                             description: 'The rule kind, from `GET /promotion_rules/types`.'
-              include_fields Spree::Api::V3::RequestShapes::PROMOTION_RULE_FIELDS
+              include_fields Spree::Api::V3::Admin::PromotionRuleRequestSchema
             end
             object :actions, array: true, permit: false, as: 'PromotionActionDraftParams',
                              description: 'The actions the promotion should have, matched the same way as `rules`.' do
               id :id
               string :type, required: true, example: 'free_shipping',
                             description: 'The action kind, from `GET /promotion_actions/types`.'
-              include_fields Spree::Api::V3::RequestShapes::PROMOTION_ACTION_FIELDS
+              include_fields Spree::Api::V3::Admin::PromotionActionRequestSchema
             end
           end
 

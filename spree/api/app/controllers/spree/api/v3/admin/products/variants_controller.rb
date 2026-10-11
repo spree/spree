@@ -8,8 +8,8 @@ module Spree
 
             request_params :variant do
               external_references
-              include_fields Spree::Api::V3::RequestShapes::VARIANT_ATTRIBUTES
-              object :options, array: true, required: :create, shape: Spree::Api::V3::RequestShapes::VARIANT_OPTION,
+              include_fields Spree::Api::V3::VariantRequestSchema
+              object :options, array: true, required: :create, shape: Spree::Api::V3::VariantOptionRequestSchema,
                                description: 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing. On update, omit to leave the option values untouched.'
             end
 

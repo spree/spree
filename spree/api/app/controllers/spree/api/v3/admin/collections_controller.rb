@@ -34,7 +34,7 @@ module Spree
               string :value, example: 'summer'
               string :match_policy, enum: Spree::CollectionRule::MATCH_POLICIES, example: 'contains'
             end
-            object :custom_fields, array: true, shape: Spree::Api::V3::RequestShapes::CUSTOM_FIELD_VALUE,
+            object :custom_fields, array: true, shape: Spree::Api::V3::CustomFieldValueRequestSchema,
                                    description: 'Custom field values, each validated against its definition.'
           end
 

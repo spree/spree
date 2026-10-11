@@ -30,7 +30,7 @@ module Spree
           end
 
           %i[bulk_add_tags bulk_remove_tags].each do |action|
-            request_params('BulkTagsParams', action: action) { include_fields Spree::Api::V3::RequestShapes::BULK_TAGS }
+            request_params('BulkTagsParams', action: action) { include_fields Spree::Api::V3::Admin::BulkTagsRequestSchema }
           end
 
           # Re-declaring a `before_action` for the same method REPLACES the

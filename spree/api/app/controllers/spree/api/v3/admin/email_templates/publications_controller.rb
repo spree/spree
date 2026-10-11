@@ -7,7 +7,7 @@ module Spree
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
             request_params 'EmailTemplateVersionParams' do
-              include_fields Spree::Api::V3::RequestShapes::EMAIL_TEMPLATE_LANGUAGE
+              include_fields Spree::Api::V3::Admin::EmailTemplateLanguageRequestSchema
               integer :lock_version, permit: false,
                                      description: "The draft's `lock_version` as reviewed. A draft saved since is refused with 409."
             end

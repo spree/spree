@@ -5,9 +5,7 @@ module Spree
         module Customers
           class AddressesController < BaseController
             request_params 'CustomerAddressParams' do
-              include_fields Spree::Api::V3::RequestShapes::ADDRESS_FIELDS
-              string :firstname, :lastname, description: 'Older spellings of `first_name` and `last_name`.'
-              string :alternative_phone
+              include_fields Spree::Api::V3::Admin::AddressRequestSchema
               boolean :quick_checkout
               boolean :is_default_billing, :is_default_shipping, permit: false,
                                                                  description: "Makes this the customer's default address of that kind."

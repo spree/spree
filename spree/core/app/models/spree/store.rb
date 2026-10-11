@@ -362,8 +362,10 @@ module Spree
     validates :preferred_default_commission_tax_rate,
               numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
-    validates :preferred_unit_system, inclusion: { in: UNIT_SYSTEMS }
-    validates :preferred_weight_unit, inclusion: { in: Spree::Variant::WEIGHT_UNITS }
+    # Blank falls back to the defaults where they are read, so a store saved
+    # with one before these checks existed stays savable.
+    validates :preferred_unit_system, inclusion: { in: UNIT_SYSTEMS }, allow_blank: true
+    validates :preferred_weight_unit, inclusion: { in: Spree::Variant::WEIGHT_UNITS }, allow_blank: true
     validates :preferred_document_number_format,
               inclusion: { in: Spree::NumberGenerators::Registry::FORMATS.keys }
     validates :preferred_order_number_sequence_start,
