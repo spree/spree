@@ -376,6 +376,19 @@ Webhooks are on by default and can be switched off installation-wide.
 
 SSL certificates are verified in production, and not in development — so you can point an endpoint at a local tunnel with a self-signed certificate while building. Both are configurable if your environment needs something different.
 
+### Internal endpoints
+
+Outside development, Spree refuses webhook URLs that resolve to a private or internal address — both when the endpoint is saved and when each delivery is sent — so an endpoint can't be used to reach your internal network.
+
+If the receiver is a service you run on a private network, such as a storefront in the same Kubernetes cluster, allow its host with `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS`:
+
+```bash
+# One exact host, and every host under .svc.cluster.local
+SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS=storefront.internal,.svc.cluster.local
+```
+
+An entry matches that exact host; an entry with a leading dot matches any host under it (`.svc.cluster.local` matches `storefront.shop.svc.cluster.local`, not `evil-svc.cluster.local`). Matching is case-insensitive. The list is installation config only — store admins can't change it — and every host not on it stays behind the guard.
+
 ## Available Events
 
 Webhooks can subscribe to any event in Spree's event system. See [Webhook Events & Payloads](/api-reference/webhooks-events) for the complete list, or [list them through the Admin API](#event-subscriptions) to include the events your extensions add.
@@ -466,6 +479,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/webhook_endpoints' \
 2. Verify the endpoint is marked active
 3. Confirm the endpoint actually subscribes to the event you expect
 4. Check the event belongs to the same store as the endpoint
+5. If the endpoint is on a private network, check its host is in `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS` — otherwise every delivery fails with `has no public ip addresses`
 
 ### Signature Verification Failing
 

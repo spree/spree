@@ -121,6 +121,7 @@ boot rather than silently reverting to the default.
 |---|---|---|
 | `SPREE_WEBHOOKS_ENABLED` | `true` | Whether webhooks fire at all. |
 | `SPREE_WEBHOOKS_VERIFY_SSL` | `true` | Verifies SSL certificates on webhook endpoints. Off in development. |
+| `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS` | — | Comma-separated hosts webhooks may reach even though they resolve to a private address, e.g. `storefront.internal,.svc.cluster.local`. A leading dot matches any host under it. See [internal endpoints](/developer/core-concepts/webhooks#internal-endpoints). |
 
 ## Related
 
