@@ -549,6 +549,7 @@ describe Spree::Preferences::Preferable, type: :model do
           expect { record.assign_preferences({ 'fee' => '12.50', 'currency' => 'JPY' }) }
             .to raise_error(Spree::Preferences::InvalidPreferences, /0 decimal places for JPY/)
           expect { record.assign_preferences({ 'fee' => '1250', 'currency' => 'JPY' }) }.not_to raise_error
+          expect(record.money_preference_currency(:fee, { 'currency' => '' })).to be_nil
         end
 
         it 'takes the currency from the source its declaration names' do

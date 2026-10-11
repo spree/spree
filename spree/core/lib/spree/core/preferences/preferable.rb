@@ -110,7 +110,8 @@ module Spree::Preferences::Preferable
   def money_preference_currency(name, pending = {})
     declared = preference_definition(name)[:currency]
     source = declared || :currency
-    return pending[source.to_s] if pending[source.to_s].present?
+    # A currency sent in the same payload wins, even a blank one clearing it.
+    return pending[source.to_s].presence if pending.key?(source.to_s)
     return get_preference(source).presence if has_preference?(source)
 
     public_send(source).presence if declared && respond_to?(source)
