@@ -1,5 +1,7 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CurrencyCode } from '../generated'
+
 export type PriceBulkUpsertRowParams = {
   /**
    * Present: updates that row. Absent: upserts on
@@ -7,7 +9,7 @@ export type PriceBulkUpsertRowParams = {
    */
   id?: string | null
   variant_id: string
-  currency: string
+  currency: CurrencyCode
   /** Omit or null for a base price. */
   price_list_id?: string | null
   /**

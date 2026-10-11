@@ -11,7 +11,7 @@ module Spree
 
             request_params :customer_store_credit do
               decimal :amount, required: :create, example: '50.00'
-              string :currency, required: :create, only: :create, example: 'USD'
+              currency :currency, required: :create, only: :create, example: 'USD'
               string :memo
             end
 

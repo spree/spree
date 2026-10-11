@@ -5,7 +5,7 @@ module Spree
         typelize code: :string,
                  status: [:string, enum: Spree::GiftCard::DISPLAY_STATUSES, enum_type_name: 'GiftCardStatus'],
                  display_amount: [:string, nullable: true], display_amount_used: [:string, nullable: true],
-                 display_amount_remaining: [:string, nullable: true], currency: :string,
+                 display_amount_remaining: [:string, nullable: true], currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  expires_at: [:string, nullable: true], redeemed_at: [:string, nullable: true], expired: :boolean,
                  active: :boolean
 

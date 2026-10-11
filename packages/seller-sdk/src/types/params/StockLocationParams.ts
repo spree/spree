@@ -1,5 +1,7 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CountryCode } from '../generated'
+
 export type StockLocationParams = {
   name?: string
   admin_name?: string | null
@@ -17,7 +19,7 @@ export type StockLocationParams = {
   phone?: string | null
   company?: string | null
   /** ISO-3166 alpha-2 country code. */
-  country_code?: string | null
+  country_code?: CountryCode | null
   /** State or province abbreviation, resolved against the selected country's states. */
   state_code?: string | null
   /** Free-text state for countries that don't have a states list. */

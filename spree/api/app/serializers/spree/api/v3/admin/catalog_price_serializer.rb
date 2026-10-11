@@ -17,7 +17,7 @@ module Spree
           _attributes.delete(:id)
 
           typelize id: 'string | null', label: 'string | null', sku: 'string | null',
-                   currency: :string, source: [:string, enum: Spree::CatalogPrice::SOURCES], break_count: :number
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], source: [:string, enum: Spree::CatalogPrice::SOURCES], break_count: :number
 
           # The variant this prices, so a row can name what it is showing —
           # a product's variants can be priced differently, and one figure

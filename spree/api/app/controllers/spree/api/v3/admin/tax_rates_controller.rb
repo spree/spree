@@ -13,7 +13,7 @@ module Spree
             decimal :rate_percent, example: '19', description: 'The rate as a percentage.'
             boolean :included_in_price, :show_rate_in_label
             id :tax_category_id
-            string :country_code, nullable: true, example: 'DE',
+            country :country_code, nullable: true, example: 'DE',
                                   description: 'ISO country code. A rate naming no country taxes everywhere.'
             string :state_code, nullable: true, example: 'CA', description: 'State abbreviation within that country.'
             object :metadata

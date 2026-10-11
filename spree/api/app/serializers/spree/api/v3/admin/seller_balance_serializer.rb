@@ -6,8 +6,8 @@ module Spree
         # operator. A computed value rather than a record, so it carries no id.
         class SellerBalanceSerializer < V3::BaseSerializer
           typelize seller_id: :string,
-                   currency: :string,
-                   settlement_currency: :string,
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
+                   settlement_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    converted: :boolean,
                    earned: :string,
                    payable: :string,

@@ -12,7 +12,7 @@ module Spree
         # this branch's generated types.
         class OrderLineItemSerializer < V3::BaseSerializer
           typelize name: :string, sku: [:string, nullable: true], options_text: [:string, nullable: true],
-                   quantity: :number, currency: :string, variant_id: [:string, nullable: true],
+                   quantity: :number, currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], variant_id: [:string, nullable: true],
                    thumbnail_url: [:string, nullable: true]
 
           attributes :name, :options_text, :quantity, :currency

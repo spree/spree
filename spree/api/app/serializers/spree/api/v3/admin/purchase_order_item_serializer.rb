@@ -9,7 +9,7 @@ module Spree
                    quantity_rejected: :number,
                    quantity_over: :number,
                    outstanding: :number,
-                   currency: 'string | null',
+                   currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    purchase_order_id: 'string | null',
                    thumbnail_url: 'string | null',
                    product_id: 'string | null',

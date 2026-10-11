@@ -22,7 +22,8 @@ module Spree
             string :email, format: :email, example: 'customer@example.com'
             string :customer_note, example: 'Leave at door'
             id :market_id
-            string :currency, :locale
+            currency :currency
+            string :locale
             id :shipping_address_id, description: 'An existing address to ship to.', example: 'addr_abc123'
             id :billing_address_id, description: 'An existing address to bill.', example: 'addr_def456'
             id :preferred_stock_location_id

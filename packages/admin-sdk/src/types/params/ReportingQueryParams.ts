@@ -1,5 +1,7 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CurrencyCode } from '../generated'
+
 export type ReportingQueryParams = {
   /** Registered metric names, from the reporting schema endpoint. */
   metrics: string[]
@@ -41,5 +43,5 @@ export type ReportingQueryParams = {
   sort?: string
   /** At most 1000. */
   limit?: number
-  currency?: string
+  currency?: CurrencyCode
 }

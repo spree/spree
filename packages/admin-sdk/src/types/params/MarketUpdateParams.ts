@@ -1,10 +1,13 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CountryCode } from '../generated'
+import type { CurrencyCode } from '../generated'
+
 export type MarketUpdateParams = {
   /** Display name, unique within the store. */
   name?: string
   /** ISO 4217 currency code. */
-  currency?: string
+  currency?: CurrencyCode
   /** Locale used as the market default. Always part of `supported_locales`. */
   default_locale?: string
   /** Display prices with tax included. */
@@ -21,5 +24,5 @@ export type MarketUpdateParams = {
   /** Locales available in this market. The default locale is always included. */
   supported_locales?: string[]
   /** ISO 3166-1 alpha-2 codes of the countries in this market. At least one is required. */
-  country_codes?: string[]
+  country_codes?: CountryCode[]
 }

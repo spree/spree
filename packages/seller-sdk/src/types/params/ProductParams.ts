@@ -1,5 +1,6 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CurrencyCode } from '../generated'
 import type { SellerProductMediaParams } from './SellerProductMediaParams'
 import type { SellerProductVariantParams } from './SellerProductVariantParams'
 
@@ -27,7 +28,7 @@ export type ProductParams = {
    */
   prices?: {
     /** Omit to price in the store's currency. A seller has no currency of their own. */
-    currency?: string
+    currency?: CurrencyCode
     /**
      * A canonical decimal string (`"1234.56"`: period decimal, no grouping). The API does not parse
      * localized input.

@@ -3,10 +3,6 @@ module Spree
     module V3
       module Admin
         class ChannelsController < ResourceController
-          include Spree::Api::V3::LegacyPreferenceParams
-
-          accepts_legacy_preference_params Spree::Channel
-
           scoped_resource :settings
 
           request_params :channel do

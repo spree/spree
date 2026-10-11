@@ -15,7 +15,7 @@ module Spree
 
           request_params :market do
             string :name, required: :create, example: 'Europe', description: 'Display name, unique within the store.'
-            string :currency, required: :create, example: 'EUR', description: 'ISO 4217 currency code.'
+            currency :currency, required: :create, example: 'EUR', description: 'ISO 4217 currency code.'
             string :default_locale, required: :create, example: 'de',
                                     description: 'Locale used as the market default. Always part of `supported_locales`.'
             boolean :tax_inclusive, description: 'Display prices with tax included.'
@@ -25,7 +25,7 @@ module Spree
             integer :position, description: 'Sort order within the store; lower comes first.'
             string :supported_locales, array: true, example: %w[de en],
                                        description: 'Locales available in this market. The default locale is always included.'
-            string :country_codes, array: true, required: :create, example: %w[DE FR],
+            country :country_codes, array: true, required: :create, example: %w[DE FR],
                                    description: 'ISO 3166-1 alpha-2 codes of the countries in this market. At least one is required.'
           end
 

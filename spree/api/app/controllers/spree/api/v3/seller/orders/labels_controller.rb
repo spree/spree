@@ -23,7 +23,7 @@ module Spree
               string :carrier, description: "Free text; a forwarder's name is as valid as a carrier slug. Detected from the number when omitted."
               string :service, description: 'Carrier service the label was bought at.'
               decimal :cost, description: "What the seller paid the carrier. Accounting data only; it never touches the order's shipping charge."
-              string :currency, description: 'Currency of the cost.'
+              currency :currency, description: 'Currency of the cost.'
               string :file_format, enum: %w[pdf png zpl], description: 'Taken from the file when omitted.'
               string :tracking_url, description: 'Tracking page for the consignment the label mints.'
             end

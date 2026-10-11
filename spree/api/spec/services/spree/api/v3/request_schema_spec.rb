@@ -105,6 +105,22 @@ RSpec.describe Spree::Api::V3::RequestSchema do
       expect(schema.permit_list).to eq([:country_iso])
     end
 
+    it 'references the shared ISO code lists and publishes them' do
+      schema = described_class.new do
+        country :country_code
+        currency :currencies, array: true
+      end
+
+      expect(schema.json_schema[:properties]).to eq(
+        country_code: { '$ref': '#/components/schemas/CountryCode' },
+        currencies: { type: :array, items: { '$ref': '#/components/schemas/CurrencyCode' } }
+      )
+      expect(schema.code_lists['CountryCode'][:enum]).to include('US', 'DE')
+      expect(schema.code_lists['CountryCode'][:enum]).not_to include('AQ')
+      expect(schema.code_lists['CurrencyCode'][:enum]).to include('USD', 'EUR')
+      expect(schema.permit_list).to eq([:country_code, { currencies: [] }])
+    end
+
     it 'sends decimals as canonical strings' do
       expect(price.json_schema[:properties][:amount]).to include(type: :string, format: :decimal)
     end

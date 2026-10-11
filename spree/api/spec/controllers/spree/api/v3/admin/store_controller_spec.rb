@@ -385,15 +385,9 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     context 'with a pre-6.0 preferred_ key' do
       let(:params) { { preferred_guest_checkout: false } }
 
-      it 'still saves it for one release, with a deprecation warning' do
-        expect(Spree::Deprecation).to receive(:warn).with(/`preferred_guest_checkout` parameter is deprecated/)
-
-        subject
-
+      it 'ignores it: the Admin API takes the setting under its own name' do
+        expect { subject }.not_to(change { store.reload.preferred_guest_checkout })
         expect(response).to have_http_status(:ok)
-        expect(store.reload.preferred_guest_checkout).to eq(false)
-        expect(json_response).to include('guest_checkout' => false)
-        expect(json_response).not_to have_key('preferred_guest_checkout')
       end
     end
 

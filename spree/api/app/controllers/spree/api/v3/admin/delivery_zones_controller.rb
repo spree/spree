@@ -17,7 +17,7 @@ module Spree
             object :members, array: true, as: 'DeliveryZoneMemberParams',
                              description: "Replaces the zone's full member set atomically." do
               string :member_type, required: true, enum: Spree::DeliveryZoneMember::MEMBER_TYPES
-              string :country_code, example: 'US'
+              country :country_code, example: 'US'
               string :state_code, description: 'A subdivision code or name. Without `country_code` the country is inferred when only one country matches.'
               string :postal_code_prefix, :postal_code_from, :postal_code_to
             end

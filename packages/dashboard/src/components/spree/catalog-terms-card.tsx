@@ -156,10 +156,9 @@ function OrderMinimums({
   }
 
   const usedCurrencies = rows.map((row) => row.currency)
-  const nextCurrency =
-    [store?.default_currency, ...(store?.supported_currencies ?? [])]
-      .filter((code): code is string => !!code)
-      .find((code) => !usedCurrencies.includes(code)) ?? ''
+  const nextCurrency = [store?.default_currency, ...(store?.supported_currencies ?? [])]
+    .filter((code) => code !== undefined)
+    .find((code) => !usedCurrencies.includes(code))
 
   return (
     <section className="flex flex-col gap-3">
@@ -183,7 +182,9 @@ function OrderMinimums({
             size="sm"
             className="shrink-0"
             disabled={!nextCurrency}
-            onClick={() => update([...rows, { currency: nextCurrency, amount: '' }])}
+            onClick={() =>
+              nextCurrency && update([...rows, { currency: nextCurrency, amount: '' }])
+            }
           >
             <PlusIcon className="size-4" />
             {t('admin.actions.add')}

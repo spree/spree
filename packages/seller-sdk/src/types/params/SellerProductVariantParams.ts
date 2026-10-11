@@ -1,5 +1,7 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CountryCode } from '../generated'
+import type { CurrencyCode } from '../generated'
 import type { StockLevelParams } from './StockLevelParams'
 import type { VariantOptionParams } from './VariantOptionParams'
 
@@ -8,7 +10,7 @@ export type SellerProductVariantParams = {
   sku?: string
   barcode?: string
   cost_price?: string | null
-  cost_currency?: string
+  cost_currency?: CurrencyCode
   weight?: number | null
   height?: number | null
   width?: number | null
@@ -16,8 +18,8 @@ export type SellerProductVariantParams = {
   weight_unit?: 'g' | 'kg' | 'lb' | 'oz'
   dimensions_unit?: 'mm' | 'cm' | 'in' | 'ft'
   hs_code?: string
-  country_of_origin?: string
   customs_description?: string
+  country_of_origin?: CountryCode
   minimum_order_quantity?: number | null
   order_multiple?: number | null
   purchase_unit?: string
@@ -44,7 +46,7 @@ export type SellerProductVariantParams = {
   /** Per-currency prices. Upserted by currency. */
   prices?: {
     /** Omit to price in the store's currency. A seller has no currency of their own. */
-    currency?: string
+    currency?: CurrencyCode
     /**
      * A canonical decimal string (`"1234.56"`: period decimal, no grouping). The API does not parse
      * localized input.

@@ -21,7 +21,7 @@ module Spree
         # the one contact detail that lets a marketplace's customer be taken
         # off it, and it is not needed to pack, post or invoice.
         class OrderSerializer < V3::BaseSerializer
-          typelize number: :string, customer_note: [:string, nullable: true], currency: :string,
+          typelize number: :string, customer_note: [:string, nullable: true], currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    total_quantity: :number,
                    fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
                    payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
@@ -89,8 +89,8 @@ module Spree
           many :payment_splits, resource: proc { Spree.api.seller_payment_split_serializer },
                                 if: proc { expand?('payment_splits') }
           many :fulfillments, resource: proc { Spree.api.seller_fulfillment_serializer }
-          one :shipping_address, resource: proc { Spree.api.address_serializer }
-          one :billing_address, resource: proc { Spree.api.address_serializer }
+          one :shipping_address, resource: proc { Spree.api.seller_address_serializer }
+          one :billing_address, resource: proc { Spree.api.seller_address_serializer }
         end
       end
     end

@@ -1,3 +1,4 @@
+import type { CurrencyCode } from '@spree/admin-sdk'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -11,6 +12,7 @@ import {
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisplayName } from '../hooks/use-display-name'
+import { isCurrencyCode } from '../lib/iso-codes'
 import { useOptionalStore } from '../providers/store-provider'
 
 export { ALL_CURRENCY_CODES } from '../lib/currencies'
@@ -29,14 +31,14 @@ interface CurrencySelectProps {
   /** Controlled value. Pair with `onChange` to lift state out. */
   value?: string
   /** Fires on every selection change. */
-  onChange?: (currency: string) => void
+  onChange?: (currency: CurrencyCode) => void
   /**
    * Currency codes to pick from. Defaults to the current store's
    * `supported_currencies`. Pass `ALL_CURRENCY_CODES` (or any custom list) for
    * contexts where the merchant chooses a currency the store doesn't yet
    * support — e.g. a market's currency.
    */
-  options?: string[]
+  options?: readonly CurrencyCode[]
   /**
    * Announces the field as required to assistive technology (`aria-required`).
    * It does not enforce anything: the trigger is a button, so there is no
@@ -106,10 +108,10 @@ export function CurrencySelect({
   // falls back to the store's currencies rather than an empty picker.
   const items = useMemo(() => {
     const base = options?.length ? options : currencies
-    return value && !base.includes(value) ? [value, ...base] : base
+    return isCurrencyCode(value) && !base.includes(value) ? [value, ...base] : base
   }, [options, currencies, value])
 
-  const handleChange = (next: string) => {
+  const handleChange = (next: CurrencyCode) => {
     if (!isControlled) setInternalValue(next)
     onChange?.(next)
   }
@@ -122,7 +124,7 @@ export function CurrencySelect({
 
   // Case-insensitive match against the code and its localized name so typing
   // "EUR" or "Euro" both find it.
-  const filter = (code: string, query: string) => {
+  const filter = (code: CurrencyCode, query: string) => {
     const q = query.trim().toLowerCase()
     if (!q) return true
     return code.toLowerCase().includes(q) || renderOption(code).toLowerCase().includes(q)
@@ -137,10 +139,14 @@ export function CurrencySelect({
       {hiddenInput}
       <Combobox
         items={items}
-        value={value}
-        onValueChange={(next: string | null) => handleChange(next ?? '')}
-        itemToStringLabel={(code: string | null) => (code ? renderOption(code) : '')}
-        itemToStringValue={(code: string | null) => code ?? ''}
+        value={isCurrencyCode(value) ? value : null}
+        // Nothing on the picker clears it, so a null selection is not a choice
+        // to report.
+        onValueChange={(next: CurrencyCode | null) => {
+          if (next) handleChange(next)
+        }}
+        itemToStringLabel={(code: CurrencyCode | null) => (code ? renderOption(code) : '')}
+        itemToStringValue={(code: CurrencyCode | null) => code ?? ''}
         filter={filter}
         disabled={disabled}
       >
@@ -169,7 +175,7 @@ export function CurrencySelect({
           />
           <ComboboxEmpty>{t('admin.components.currency_select.empty')}</ComboboxEmpty>
           <ComboboxList>
-            {(code: string) => (
+            {(code: CurrencyCode) => (
               <ComboboxItem key={code} value={code}>
                 {renderOption(code)}
               </ComboboxItem>

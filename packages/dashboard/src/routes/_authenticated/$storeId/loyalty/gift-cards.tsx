@@ -278,7 +278,6 @@ function EditGiftCardSheet({
       code: '',
       // `amount` is a STRING — hydrated from the API's canonical decimal.
       amount: '',
-      currency: '',
       expires_at: '',
       customer_id: '',
     },

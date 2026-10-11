@@ -31,10 +31,6 @@ export type StoreUpdateParams = {
    * method's own setting wins when set.
    */
   capture_method?: 'checkout' | 'on_dispatch' | 'manual'
-  /** @deprecated Use `capture_method`. Removed in 6.1. */
-  preferred_auto_capture?: boolean
-  /** @deprecated Use `capture_method`. Removed in 6.1. */
-  preferred_auto_capture_on_dispatch?: boolean
   /** Counts on-hand quantities. Off means everything is treated as always available. */
   track_inventory_levels?: boolean
   /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */

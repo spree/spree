@@ -17,7 +17,7 @@ module Spree
           # scopes (+permitted_params+), so a foreign or unknown id 404s.
           request_params :price do
             id :variant_id, required: :create, example: 'variant_xY9'
-            string :currency, required: :create, example: 'USD'
+            currency :currency, required: :create, example: 'USD'
             integer :min_quantity,
                     description: 'The quantity a line must reach for this price to apply. Omit for the bottom rung of the ladder. Anything above 1 requires a `price_list_id`.'
             decimal :amount, :compare_at_amount, nullable: true, example: '19.99'
@@ -31,7 +31,7 @@ module Spree
               id :id, nullable: true, example: 'price_aBc123',
                       description: 'Present: updates that row. Absent: upserts on `(variant_id, currency, price_list_id, min_quantity)`.'
               id :variant_id, required: true, example: 'variant_xY9'
-              string :currency, required: true, example: 'USD'
+              currency :currency, required: true, example: 'USD'
               id :price_list_id, nullable: true, example: 'pl_aBc123', description: 'Omit or null for a base price.'
               integer :min_quantity,
                       description: "The rung of the variant's ladder. Omit for the bottom rung; anything above 1 requires a `price_list_id`. A variant carries at most ten rungs on one list per currency."

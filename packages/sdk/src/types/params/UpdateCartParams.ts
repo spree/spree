@@ -1,13 +1,14 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
 import type { CartAddressParams } from './CartAddressParams'
+import type { CurrencyCode } from '../generated'
 import type { LineItemInputParams } from './LineItemInputParams'
 
 export type UpdateCartParams = {
   email?: string
   customer_note?: string
   market_id?: string
-  currency?: string
+  currency?: CurrencyCode
   locale?: string
   /** An existing address to ship to. */
   shipping_address_id?: string

@@ -1,5 +1,7 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CurrencyCode } from '../generated'
+
 export type ShippingLabelCreateParams = {
   /**
    * A `signed_id` from `files.upload()`. Its presence records a label bought elsewhere instead of
@@ -21,7 +23,7 @@ export type ShippingLabelCreateParams = {
    */
   cost?: string
   /** Currency of the cost. */
-  currency?: string
+  currency?: CurrencyCode
   /** Taken from the file when omitted. */
   file_format?: 'pdf' | 'png' | 'zpl'
   /** Tracking page for the consignment the label mints. */

@@ -15,7 +15,7 @@ module Spree
 
           request_params :gift_card do
             decimal :amount, required: :create, example: '25.00', description: 'Greater than zero.'
-            string :currency, example: 'USD', description: 'ISO 4217 currency code. Defaults to the store currency.'
+            currency :currency, example: 'USD', description: 'ISO 4217 currency code. Defaults to the store currency.'
             string :code, example: 'WELCOME50', description: 'Generated when omitted.'
             date :expires_at, nullable: true, example: '2030-12-31'
             # Resolved through the caller's ability by `resolve_customer`.

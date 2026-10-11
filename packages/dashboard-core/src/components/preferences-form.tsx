@@ -1,3 +1,4 @@
+import type { CurrencyCode } from '@spree/admin-sdk'
 import {
   compareMoney,
   isDecimalString,
@@ -152,7 +153,7 @@ interface PreferencesFormProps {
    * would let a currency the store does not trade in be saved, and a
    * calculator set to one quotes no rate at all.
    */
-  currencyOptions?: string[]
+  currencyOptions?: readonly CurrencyCode[]
   /**
    * Render date/datetime pickers inline instead of in a Popover portal.
    * Set this when the form is inside a `<Sheet>` — Base UI's Popover fails
@@ -215,7 +216,7 @@ interface PreferenceFieldProps {
   label?: string
   onChange: (value: unknown) => void
   redactPasswords?: boolean
-  currencyOptions?: string[]
+  currencyOptions?: readonly CurrencyCode[]
   inlineDatePickers?: boolean
   /** The currency a money preference is in, when the record names one. */
   currency?: string

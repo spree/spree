@@ -20,7 +20,7 @@ module Spree
             id :customer_id
             boolean :use_customer_default_address, only: :create,
                                                    description: "With `customer_id`, copies the customer's saved billing and shipping addresses onto the order."
-            string :currency, example: 'USD'
+            currency :currency, example: 'USD'
             id :market_id
             id :channel_id, description: 'Defaults to the store primary channel when omitted.'
             string :locale, example: 'en-US'

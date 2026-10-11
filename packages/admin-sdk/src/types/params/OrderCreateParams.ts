@@ -1,6 +1,7 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
 import type { AddressInputParams } from './AddressInputParams'
+import type { CurrencyCode } from '../generated'
 
 export type OrderCreateParams = {
   /**
@@ -16,7 +17,7 @@ export type OrderCreateParams = {
    * With `customer_id`, copies the customer's saved billing and shipping addresses onto the order.
    */
   use_customer_default_address?: boolean
-  currency?: string
+  currency?: CurrencyCode
   market_id?: string
   /** Defaults to the store primary channel when omitted. */
   channel_id?: string

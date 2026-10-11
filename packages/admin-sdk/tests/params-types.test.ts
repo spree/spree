@@ -21,6 +21,7 @@ describe('renderParamsTypes', () => {
             status: { type: 'string', enum: ['draft', "it's"] },
             weight: { type: 'number', nullable: true },
             kind: { anyOf: [{ type: 'string', enum: ['tax', 'duty'] }, { type: 'string' }] },
+            country_code: { $ref: '#/components/schemas/CountryCode' },
             country_iso: {
               type: 'string',
               deprecated: true,
@@ -57,6 +58,8 @@ describe('renderParamsTypes', () => {
 
   it('imports the request types a type references', () => {
     expect(source).toContain("import type { PriceParams } from './PriceParams'\n")
+    expect(source).toContain("import type { CountryCode } from '../generated'\n")
+    expect(source).toContain('  country_code?: CountryCode\n')
   })
 
   it('maps each kind of value', () => {

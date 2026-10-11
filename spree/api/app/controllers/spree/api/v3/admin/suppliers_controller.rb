@@ -19,7 +19,7 @@ module Spree
             string :city, nullable: true, example: 'Brooklyn'
             string :state_name, nullable: true
             string :state_code, nullable: true, example: 'NY'
-            string :country_code, nullable: true, example: 'US'
+            country :country_code, nullable: true, example: 'US'
             string :postal_code, nullable: true, example: '11201'
             object :metadata, nullable: true
           end

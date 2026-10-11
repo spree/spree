@@ -15,8 +15,8 @@ module Spree
                                    description: "Becomes the tax provider's entity use code. Required when creating."
               string :issuing_authority, nullable: true, example: 'Finanzamt Berlin'
               datetime :issued_at, :expires_at, nullable: true
-              string :country_code, :state_code, nullable: true,
-                                                 description: 'Where the certificate holds. Omit both for one valid everywhere.'
+              country :country_code, nullable: true, description: 'Where the certificate holds. Omit it and `state_code` for one valid everywhere.'
+              string :state_code, nullable: true
               string :document_signed_id,
                      description: "A `signed_id` from `files.upload()` with `visibility: 'private'`."
               object :metadata

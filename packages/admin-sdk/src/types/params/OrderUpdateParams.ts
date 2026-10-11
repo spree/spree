@@ -1,6 +1,7 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
 import type { AddressInputParams } from './AddressInputParams'
+import type { CurrencyCode } from '../generated'
 
 export type OrderUpdateParams = {
   /**
@@ -12,7 +13,7 @@ export type OrderUpdateParams = {
   external_references?: Record<string, unknown>
   email?: string
   customer_id?: string
-  currency?: string
+  currency?: CurrencyCode
   market_id?: string
   /** Defaults to the store primary channel when omitted. */
   channel_id?: string

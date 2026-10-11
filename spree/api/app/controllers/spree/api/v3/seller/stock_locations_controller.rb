@@ -37,7 +37,7 @@ module Spree
                           description: 'Categorizes the location.'
             boolean :propagate_all_variants, :backorderable_default
             string :address1, :address2, :city, :zipcode, :phone, :company, nullable: true
-            string :country_code, nullable: true, example: 'US', description: 'ISO-3166 alpha-2 country code.'
+            country :country_code, nullable: true, example: 'US', description: 'ISO-3166 alpha-2 country code.'
             string :state_code, nullable: true, example: 'OR',
                                 description: "State or province abbreviation, resolved against the selected country's states."
             string :state_name, nullable: true, description: "Free-text state for countries that don't have a states list."

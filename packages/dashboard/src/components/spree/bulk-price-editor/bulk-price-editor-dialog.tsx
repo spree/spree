@@ -119,8 +119,9 @@ export function BulkPriceEditorDialog({
 
   // Currency switch discards pending edits — the working set is per-currency.
   const handleCurrencyChange = useCallback(
-    async (next: string) => {
-      if (next === currency) return
+    async (value: string) => {
+      const next = currencies.find((code) => code === value)
+      if (!next || next === currency) return
       if (editorState.dirtyCount > 0) {
         const ok = await confirm({
           title: t('admin.pages.products.price_lists.edit_prices.discard_confirm.title'),
@@ -135,7 +136,7 @@ export function BulkPriceEditorDialog({
       }
       setCurrency(next)
     },
-    [currency, editorState, confirm, t],
+    [currencies, currency, editorState, confirm, t],
   )
 
   const title = t('admin.pages.products.price_lists.edit_prices.title', { name: priceList.name })

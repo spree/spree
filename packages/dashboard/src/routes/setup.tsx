@@ -129,7 +129,6 @@ function SetupForm({
       password: '',
       password_confirmation: '',
       store_name: '',
-      country_code: '',
       locale: 'en',
       currency: 'USD',
       sample_data: true,

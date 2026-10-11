@@ -1,3 +1,4 @@
+import type { CountryCode } from '@spree/admin-sdk'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -18,8 +19,9 @@ import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCountries } from '../hooks/use-countries'
 import { useDisplayName } from '../hooks/use-display-name'
+import { isCountryCode } from '../lib/iso-codes'
 
-export type CountryOption = { iso: string; iso3: string; name: string }
+export type CountryOption = { iso: CountryCode; iso3: string; name: string }
 
 /**
  * Resolves a country's display name in the admin UI language (keyed on the
@@ -118,7 +120,8 @@ export function CountryCombobox({
   /** Forwarded to the trigger so a `<FieldLabel htmlFor>` can target it. */
   id?: string
   value: string | null | undefined
-  onValueChange: (iso: string) => void
+  /** Fires with the picked code, or `''` when the selection is cleared. */
+  onValueChange: (iso: CountryCode | '') => void
   /** Forwarded to the trigger so RHF's `<Controller>` can track touched state. */
   onBlur?: () => void
   /** Trigger text while nothing is selected. */
@@ -204,9 +207,9 @@ export function CountryMultiCombobox({
   disabled = false,
 }: {
   /** Selected 2-letter ISO codes. */
-  value: string[]
+  value: readonly string[]
   /** Fires with the next array of ISO codes. */
-  onValueChange: (isos: string[]) => void
+  onValueChange: (isos: CountryCode[]) => void
   placeholder?: string
   emptyText?: string
   disabled?: boolean
@@ -222,7 +225,10 @@ export function CountryMultiCombobox({
   // strings. Selected ISOs not yet present in `items` (list still loading)
   // fall back to a stub so chips don't vanish on first render.
   const selected = useMemo<CountryOption[]>(
-    () => value.map((iso) => items.find((c) => c.iso === iso) ?? { iso, iso3: '', name: iso }),
+    () =>
+      value
+        .filter(isCountryCode)
+        .map((iso) => items.find((c) => c.iso === iso) ?? { iso, iso3: '', name: iso }),
     [value, items],
   )
 

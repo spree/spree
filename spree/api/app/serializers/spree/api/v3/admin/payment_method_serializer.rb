@@ -4,7 +4,6 @@ module Spree
       module Admin
         class PaymentMethodSerializer < V3::PaymentMethodSerializer
           typelize active: :boolean,
-                   auto_capture: [:boolean, nullable: true],
                    capture_method: "'checkout' | 'on_dispatch' | 'manual' | null",
                    resolved_capture_method: "'checkout' | 'on_dispatch' | 'manual'",
                    storefront_visible: :boolean,
@@ -18,7 +17,7 @@ module Spree
           # Null capture_method means the method inherits from its store;
           # resolved_capture_method is what actually applies, so the dashboard
           # can show the inherited value.
-          attributes :metadata, :active, :auto_capture, :capture_method, :resolved_capture_method,
+          attributes :metadata, :active, :capture_method, :resolved_capture_method,
                      :storefront_visible, :position,
                      created_at: :iso8601, updated_at: :iso8601
 

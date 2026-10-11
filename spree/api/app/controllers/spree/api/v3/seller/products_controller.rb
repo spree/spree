@@ -44,7 +44,7 @@ module Spree
           # The operator's price shape, except `currency` may be left out: the
           # store's currency is assumed (see `default_price_currencies`).
           PRICE = Spree::Api::V3::RequestSchema.new do
-            string :currency, example: 'USD',
+            currency :currency, example: 'USD',
                               description: "Omit to price in the store's currency. A seller has no currency of their own."
             decimal :amount, required: true, example: '24.00',
                              description: 'A canonical decimal string (`"1234.56"`: period decimal, no grouping). The API does not parse localized input.'
@@ -84,11 +84,12 @@ module Spree
               id :id
               string :sku, :barcode
               decimal :cost_price, nullable: true
-              string :cost_currency
+              currency :cost_currency
               number :weight, :height, :width, :depth, nullable: true
               string :weight_unit, enum: Spree::Variant::WEIGHT_UNITS
               string :dimensions_unit, enum: Spree::Variant::DIMENSION_UNITS
-              string :hs_code, :country_of_origin, :customs_description
+              string :hs_code, :customs_description
+              country :country_of_origin
               integer :minimum_order_quantity, :order_multiple, nullable: true
               string :purchase_unit
               integer :units_per_carton, nullable: true, description: 'How many units fill one carton.'

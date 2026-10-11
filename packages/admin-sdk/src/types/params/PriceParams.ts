@@ -1,7 +1,9 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CurrencyCode } from '../generated'
+
 export type PriceParams = {
-  currency: string
+  currency: CurrencyCode
   /**
    * A canonical decimal string (`"1234.56"`: period decimal, no grouping). The API does not parse
    * localized input.

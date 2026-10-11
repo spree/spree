@@ -7,11 +7,12 @@ module Spree
       class VariantRequestSchema < Spree::Api::V3::RequestSchema
         string :sku, :barcode
         decimal :cost_price, nullable: true
-        string :cost_currency
+        currency :cost_currency
         number :weight, :height, :width, :depth, nullable: true
         string :weight_unit, enum: Spree::Variant::WEIGHT_UNITS
         string :dimensions_unit, enum: Spree::Variant::DIMENSION_UNITS
-        string :hs_code, :country_of_origin, :customs_description
+        string :hs_code, :customs_description
+        country :country_of_origin
         integer :minimum_order_quantity, :order_multiple, nullable: true
         string :purchase_unit
         integer :units_per_carton, nullable: true, description: 'How many units fill one carton.'

@@ -2,6 +2,7 @@ import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import type { PanelStockLocation, PanelStockLocationCreateParams } from '../api-client'
 import { blankToUndefined, emptyToUndefined } from '../lib/form-mappers'
+import { countryCodeSchema } from '../lib/iso-codes'
 
 // Labels live in `en.json` under `admin.stock_locations.kinds.*` and
 // `admin.stock_locations.pickup_stock_policies.*`. Consumers map these
@@ -27,7 +28,7 @@ export const stockLocationFormSchema = z.object({
   zipcode: z.string().optional(),
   phone: z.string().optional(),
   company: z.string().optional(),
-  country_code: z.string().optional(),
+  country_code: countryCodeSchema.or(z.literal('')).optional(),
   state_code: z.string().optional(),
   state_name: z.string().optional(),
   pickup_enabled: z.boolean(),
@@ -114,7 +115,7 @@ export function formValuesToParams(v: StockLocationFormValues): PanelStockLocati
     zipcode: blankToUndefined(v.zipcode),
     phone: blankToUndefined(v.phone),
     company: blankToUndefined(v.company),
-    country_code: blankToUndefined(v.country_code),
+    country_code: v.country_code || undefined,
     state_code: blankToUndefined(v.state_code),
     state_name: blankToUndefined(v.state_name),
     pickup_enabled: v.pickup_enabled,

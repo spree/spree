@@ -22,10 +22,10 @@ module Spree
             string :first_name, example: 'Olivia'
             string :last_name, example: 'Owner'
             string :store_name, permit: false, example: 'My Store'
-            string :country_code, required: true, permit: false, example: 'US',
+            country :country_code, required: true, permit: false, example: 'US',
                                   description: 'ISO 3166-1 alpha-2 country the store sells from. It determines the default market, the warehouse, the delivery zones and the currency.'
             string :locale, permit: false, example: 'en', description: "Storefront locale. Defaults to the country's own language."
-            string :currency, permit: false, example: 'USD',
+            currency :currency, permit: false, example: 'USD',
                               description: "ISO 4217 currency. Defaults to the country's own currency: pass one only when the store prices in something else."
             boolean :sample_data, permit: false,
                                   description: 'Load the demo catalog, customers and orders in the background once the admin account exists. The load takes minutes, so the response does not wait for it.'

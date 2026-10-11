@@ -5,7 +5,7 @@ module Spree
         # The least a whole order must come to under a catalog's agreement,
         # in one currency.
         class CatalogOrderMinimumSerializer < V3::BaseSerializer
-          typelize currency: :string
+          typelize currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode']
 
           attributes :currency, created_at: :iso8601, updated_at: :iso8601
 

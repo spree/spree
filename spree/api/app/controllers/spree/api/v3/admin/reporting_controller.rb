@@ -40,7 +40,7 @@ module Spree
             string :compare, enum: Spree::Reporting::Query::COMPARE_MODES
             string :sort, description: 'A metric name; prefix it with `-` to sort descending.'
             integer :limit, description: "At most #{Spree::Reporting::Query::MAX_LIMIT}."
-            string :currency
+            currency :currency
           end
 
           # POST /api/v3/admin/reporting/query

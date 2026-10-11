@@ -1,10 +1,12 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CurrencyCode } from '../generated'
+
 export type GiftCardCreateParams = {
   /** Greater than zero. */
   amount: string
   /** ISO 4217 currency code. Defaults to the store currency. */
-  currency?: string
+  currency?: CurrencyCode
   /** Generated when omitted. */
   code?: string
   expires_at?: string | null

@@ -1,4 +1,4 @@
-import { i18n } from '@spree/dashboard-core'
+import { currencyCodeSchema, i18n } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -25,7 +25,7 @@ const amountField = z
 export const issueStoreCreditFormSchema = z.object({
   customer_id: z.string().min(1, { error: requiredMessage('customer_id') }),
   amount: amountField,
-  currency: z.string().min(1, { error: requiredMessage('currency') }),
+  currency: currencyCodeSchema,
   memo: z.string(),
 })
 

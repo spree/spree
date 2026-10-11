@@ -12,6 +12,7 @@ import type {
   AuthTokens,
   Balance,
   Claim,
+  CountryCode,
   Delivery,
   DeliveryMethod,
   DeliveryProfile,
@@ -1414,7 +1415,7 @@ export type SellerExportType = 'orders' | 'products'
 
 /** A country as the address form needs it. */
 export interface SellerCountry {
-  iso: string
+  iso: CountryCode
   iso3: string
   name: string
   states_required?: boolean

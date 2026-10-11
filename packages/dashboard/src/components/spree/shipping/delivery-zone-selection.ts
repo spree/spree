@@ -1,4 +1,4 @@
-import type { DeliveryZone } from '@spree/admin-sdk'
+import type { CountryCode, DeliveryZone } from '@spree/admin-sdk'
 import type { DeliveryZoneMemberValues } from '../../../schemas/delivery-zone'
 
 /**
@@ -7,7 +7,7 @@ import type { DeliveryZoneMemberValues } from '../../../schemas/delivery-zone'
  * older member is never silently dropped on the next save.
  */
 export interface CountryRow {
-  iso: string
+  iso: CountryCode
   name: string
   statesRequired: boolean
   /** The zone kept this country but no market covers it any more. */
@@ -19,15 +19,15 @@ export interface CountryRow {
 /** What the member list means, expressed the way the picker manipulates it. */
 export interface Selection {
   /** ISOs selected as a whole country. */
-  countries: Set<string>
+  countries: Set<CountryCode>
   /** ISO → selected state abbreviations, for partially selected countries. */
-  states: Map<string, Set<string>>
+  states: Map<CountryCode, Set<string>>
   postalRules: DeliveryZoneMemberValues[]
 }
 
 export function readSelection(members: DeliveryZoneMemberValues[]): Selection {
-  const countries = new Set<string>()
-  const states = new Map<string, Set<string>>()
+  const countries = new Set<CountryCode>()
+  const states = new Map<CountryCode, Set<string>>()
   const postalRules: DeliveryZoneMemberValues[] = []
 
   for (const member of members) {
@@ -74,7 +74,7 @@ export function writeSelection(selection: Selection): DeliveryZoneMemberValues[]
  * country already matches every address a narrower member could — leaving
  * those behind would persist config that can never change an outcome.
  */
-export function supersedeCountry(selection: Selection, iso: string): Selection {
+export function supersedeCountry(selection: Selection, iso: CountryCode): Selection {
   const countries = new Set(selection.countries)
   const states = new Map(selection.states)
 
@@ -89,8 +89,8 @@ export function supersedeCountry(selection: Selection, iso: string): Selection {
 }
 
 export function claimedByOtherZones(siblingZones: DeliveryZone[]) {
-  const countries = new Set<string>()
-  const states = new Map<string, Set<string>>()
+  const countries = new Set<CountryCode>()
+  const states = new Map<CountryCode, Set<string>>()
 
   for (const zone of siblingZones) {
     for (const member of zone.members ?? []) {

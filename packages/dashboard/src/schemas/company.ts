@@ -3,7 +3,7 @@ import type {
   TaxExemptionCertificateParams,
   TaxIdentifierParams,
 } from '@spree/admin-sdk'
-import { blankToNull, signedIdParam } from '@spree/dashboard-core'
+import { blankToNull, countryCodeSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -61,7 +61,7 @@ export const TAX_IDENTIFIER_KINDS = ['eu_vat', 'gb_vat', 'ch_vat', 'au_abn', 'us
 export const taxExemptionCertificateFormSchema = z.object({
   certificate_number: z.string().min(1, { error: requiredMessage('certificate_number') }),
   reason_code: z.string().min(1, { error: requiredMessage('reason_code') }),
-  country_code: z.string().optional(),
+  country_code: countryCodeSchema.or(z.literal('')).optional(),
   state_code: z.string().optional(),
   issued_at: z.string().optional(),
   expires_at: z.string().optional(),
@@ -102,7 +102,7 @@ export function taxExemptionCertificateValuesToParams(
   return {
     certificate_number: values.certificate_number,
     reason_code: values.reason_code,
-    country_code: blankToNull(values.country_code),
+    country_code: values.country_code || null,
     state_code: blankToNull(values.state_code),
     issued_at: blankToNull(values.issued_at),
     expires_at: blankToNull(values.expires_at),

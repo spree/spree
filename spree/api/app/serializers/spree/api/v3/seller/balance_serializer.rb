@@ -6,8 +6,8 @@ module Spree
         #
         # A computed value rather than a record, so it carries no id.
         class BalanceSerializer < V3::BaseSerializer
-          typelize currency: :string,
-                   settlement_currency: :string,
+          typelize currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
+                   settlement_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    converted: :boolean,
                    earned: :string,
                    payable: :string,

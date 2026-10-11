@@ -40,7 +40,19 @@ module Spree
           date: { type: :string, format: :date },
           datetime: { type: :string, format: :'date-time' },
           id: { type: :string },
-          any: {}
+          any: {},
+          # ISO codes, from the closed lists below.
+          country: { type: :string },
+          currency: { type: :string }
+        }.freeze
+
+        # The ISO lists a `country` or `currency` field takes, published once
+        # per API as a named component — the same `CountryCode` and
+        # `CurrencyCode` types the serializers declare, so a value read from
+        # a response is the type a request takes.
+        CODE_LISTS = {
+          country: ['CountryCode', -> { Spree::IsoData.country_codes }],
+          currency: ['CurrencyCode', -> { Spree::Money::Rounding::CURRENCY_CODES }]
         }.freeze
 
         ACTIONS = %i[create update].freeze
@@ -242,6 +254,20 @@ module Spree
           end.uniq
         end
 
+        # The ISO code lists this schema's fields reach, nested ones included,
+        # as the components they publish.
+        #
+        # @return [Hash{String => Hash}]
+        def code_lists
+          fields.each_value.each_with_object({}) do |field, lists|
+            lists.merge!(field.schema.code_lists) if field.schema
+            next unless CODE_LISTS.key?(field.kind)
+
+            name, values = CODE_LISTS[field.kind]
+            lists[name] = { type: :string, enum: values.call }
+          end
+        end
+
         def shape?(schema)
           schema.name.present?
         end
@@ -313,6 +339,8 @@ module Spree
         end
 
         def item_schema(field)
+          return { '$ref': "#/components/schemas/#{CODE_LISTS[field.kind].first}" } if CODE_LISTS.key?(field.kind)
+
           if field.schema
             return { '$ref': "#/components/schemas/#{field.schema.name}" } if shape?(field.schema)
 

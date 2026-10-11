@@ -24,6 +24,7 @@ module RequestBodyHelper
     name = schema.component_name(action)
     register_request_schema(name, schema.json_schema(action.in?(%i[create update]) ? action : nil))
     schema.shapes.each { |shape| register_request_schema(shape.name, shape.json_schema) }
+    schema.code_lists.each { |list_name, definition| register_request_schema(list_name, definition) }
 
     parameter name: :body, in: :body, required: required, schema: { '$ref': "#/components/schemas/#{name}" }
   end

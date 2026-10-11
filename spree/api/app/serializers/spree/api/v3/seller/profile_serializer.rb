@@ -15,8 +15,8 @@ module Spree
                    terms_accepted_at: [:string, nullable: true],
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number,
-                   default_currency: :string,
-                   supported_currencies: [:string, multi: true],
+                   default_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
+                   supported_currencies: [:string, multi: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    timezone: [:string, nullable: true]
 
           attributes :timezone,
@@ -60,11 +60,11 @@ module Spree
           end
 
           one :billing_address,
-              resource: proc { Spree.api.address_serializer },
+              resource: proc { Spree.api.seller_address_serializer },
               if: proc { |seller| seller.billing_address.present? }
 
           one :returns_address,
-              resource: proc { Spree.api.address_serializer },
+              resource: proc { Spree.api.seller_address_serializer },
               if: proc { |seller| seller.returns_address.present? }
         end
       end

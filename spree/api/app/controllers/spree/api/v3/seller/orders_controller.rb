@@ -24,7 +24,7 @@ module Spree
           ADDRESS = Spree::Api::V3::RequestSchema.shape('OrderAddressParams') do
             string :first_name, :last_name, :address1, :city, :postal_code, :zipcode
             string :company, :address2, :phone, :alternative_phone, :state_code, :state_name, :label, nullable: true
-            string :country_code, example: 'US'
+            country :country_code, example: 'US'
           end
 
           request_params 'OrderCancelParams', action: :cancel do

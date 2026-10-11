@@ -8,7 +8,7 @@ module Spree
                  company: [:string, nullable: true], state_code: [:string, nullable: true],
                  state_abbr: [:string, nullable: true, deprecated: 'Use `state_code`. Removed in 6.1.'],
                  state_name: [:string, nullable: true],
-                 state_text: [:string, nullable: true], country_code: :string,
+                 state_text: [:string, nullable: true], country_code: [:string, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                  country_iso: [:string, deprecated: 'Use `country_code`. Removed in 6.1.'],
                  country_name: :string,
                  quick_checkout: :boolean, is_default_billing: :boolean, is_default_shipping: :boolean,

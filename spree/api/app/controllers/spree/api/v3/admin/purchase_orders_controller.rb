@@ -22,7 +22,7 @@ module Spree
           request_params :purchase_order do
             id :supplier_id, required: :create, permit: false, example: 'sup_1234567890'
             id :destination_location_id, required: :create, permit: false, example: 'sloc_1234567890'
-            string :currency, nullable: true, example: 'USD',
+            currency :currency, nullable: true, example: 'USD',
                               description: "Defaults to the store's currency; set it for a foreign-currency order."
             date :expected_at, nullable: true, example: '2026-10-01', description: 'The day the supplier promised. `null` clears it.'
             date :cancel_by, nullable: true, description: 'The day after which the goods are no longer wanted. `null` clears it.'
