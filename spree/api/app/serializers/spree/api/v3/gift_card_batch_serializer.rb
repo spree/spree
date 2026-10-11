@@ -4,7 +4,7 @@ module Spree
   module Api
     module V3
       class GiftCardBatchSerializer < BaseSerializer
-        typelize codes_count: :number, currency: [:string, nullable: true],
+        typelize codes_count: :number, currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  prefix: [:string, nullable: true], expires_at: [:string, nullable: true],
                  created_by_id: [:string, nullable: true]
 

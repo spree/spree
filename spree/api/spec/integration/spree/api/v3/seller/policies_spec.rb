@@ -65,15 +65,7 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Shipping Policy' },
-          slug: { type: :string, example: 'shipping-policy' },
-          body: { type: :string, example: '<p>Orders leave the workshop within two working days.</p>' }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'policy created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -135,14 +127,7 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       description 'Rewrites one of this seller\'s policies.'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          slug: { type: :string },
-          body: { type: :string }
-        }
-      }
+      request_body_for
 
       response '200', 'policy updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

@@ -21,6 +21,15 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'CreatePoDocumentParams', action: :create do |body|
+              body.attribute :filename, :string, required: true
+              body.attribute :content_type, :string, required: true
+              body.attribute :byte_size, :integer, required: true
+              body.attribute :checksum, :string,
+                required: true,
+                description: 'Base64-encoded MD5 digest of the file; the storage service checks the bytes against it.'
+            end
+
             # POST /api/v3/store/carts/:cart_id/po_document
             #
             # Takes the same flat request as the Admin API's `POST /files` and
@@ -43,7 +52,7 @@ module Spree
                 visibility: 'private',
                 max_byte_size: Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE,
                 allowed_content_types: Spree::Purchase::PurchaseOrder::PO_DOCUMENT_CONTENT_TYPES,
-                **params.permit(:filename, :content_type, :byte_size, :checksum).to_h.symbolize_keys
+                **params.permit(*declared_permitted_attributes).to_h.symbolize_keys
               )
 
               return render_po_document_invalid unless file_upload.save

@@ -3,11 +3,89 @@ module Spree
     module V3
       module Admin
         class DeliveryMethodsController < ResourceController
-          include Spree::Api::V3::LegacyPreferenceParams
-
-          accepts_legacy_calculator_params
-
           scoped_resource :delivery_methods
+
+          # A single POST/PATCH can ship eligibility rules and carrier service
+          # rows alongside the basics; `DeliveryMethod#rules=` / `#services=`
+          # reconcile to the desired set, so the dashboard saves the whole
+          # sheet in one round-trip.
+          request_params 'DeliveryMethodParams' do |body|
+            body.attribute :name, :string, example: 'Express'
+            body.attribute :admin_name, :string, nullable: true
+            body.attribute :code, :string, nullable: true
+            body.attribute :fulfillment_provider, :string,
+              example: 'manual',
+              description: 'Fulfillment provider shorthand (see the fulfillment providers endpoint), e.g. `manual`.'
+            body.attribute :pickup_point_provider, :string, nullable: true
+            body.attribute :rate_provider, :string,
+              nullable: true,
+              description: 'Rate provider shorthand (see the rate providers endpoint), e.g. `easy_post`. Omit or send null for the built-in provider, which prices through the method\'s calculator.'
+            body.attribute :storefront_visible, :boolean
+            body.attribute :available_to_sellers, :boolean,
+              description: "Marketplace only: whether a seller's packages may be quoted by this method. Off by default, and refused on a method that belongs to a seller."
+            body.attribute :tracking_url, :string, nullable: true
+            body.attribute :estimated_transit_business_days_min, :integer, nullable: true
+            body.attribute :estimated_transit_business_days_max, :integer, nullable: true
+            body.attribute :tax_category_id, :id,
+              nullable: true,
+              description: 'Prefixed tax category ID (`taxcat_...`), or null to clear.'
+            body.attribute :markup_flat, :decimal,
+              nullable: true,
+              description: 'Method-level flat handling fee added on top of provider-quoted rates.'
+            body.attribute :markup_percent, :decimal,
+              nullable: true,
+              description: 'Method-level percentage handling fee added on top of provider-quoted rates. Ignored for calculator-priced methods.'
+            body.attribute :delivery_profile_id, :id,
+              example: 'fp_86Rf07xd4z',
+              description: 'Delivery profile this method belongs to (`fp_...`); defaults to the store default profile.'
+            body.attribute :delivery_origin_group_id, :id,
+              description: "Origin group offering this method (`og_...`); defaults to the zone's group, else the profile's default group."
+            body.attribute :delivery_zone_id, :id,
+              nullable: true,
+              description: "Delivery zone narrowing destinations (`dz_...`), or null for no restriction. Must belong to the method's profile."
+            body.attribute :stock_location_ids, :array, of: :id,
+              description: 'Pickup locations (`sloc_...`); replaces the full set.'
+            body.attribute :calculator, :object,
+              description: "How the method prices a shipment: a type from the calculators endpoint and its preferences, matching that type's `schema`." do |calculator|
+              calculator.attribute :type, :string, example: 'flat_rate'
+              calculator.attribute :preferences, :hash, example: { amount: '12.5' }
+            end
+            # Permitted by `rule_attributes`, which adds the association-backed
+            # config each registered rule kind declares.
+            body.attribute :rules, :array,
+              permit: false,
+              description: 'Eligibility rules. Replaces the full set: omitted rules are removed.' do |rule|
+              rule.attribute :id, :id
+              rule.attribute :type, :string, description: 'A rule kind from the delivery method rule types endpoint.'
+              rule.attribute :active, :boolean
+              rule.attribute :preferences, :hash
+              rule.attribute :product_ids, :array, of: :id,
+                description: 'Products an association-backed rule (`excluded_products_rule`) applies to.'
+            end
+            body.attribute :services, :array,
+              as: 'DeliveryMethodServiceParams',
+              description: 'Carrier service rows: which provider services this method offers. Replaces the full set: omitted rows are removed; no rows means every service the provider returns is offered.' do |service|
+              service.attribute :id, :id, description: 'Prefixed row ID (`dms_...`) when updating an existing row.'
+              service.attribute :carrier, :string,
+                required: true,
+                example: 'UPS',
+                description: "Carrier identifier as the provider's API knows it."
+              service.attribute :service, :string,
+                required: true,
+                example: 'Ground',
+                description: "Service identifier as the provider's API knows it."
+              service.attribute :label, :string,
+                nullable: true,
+                description: 'Display label shown to customers instead of the carrier-derived name.'
+              service.attribute :markup_flat, :decimal,
+                nullable: true,
+                description: 'Overrides the method-level flat markup for this service.'
+              service.attribute :markup_percent, :decimal,
+                nullable: true,
+                description: 'Overrides the method-level percentage markup for this service.'
+              service.attribute :position, :integer
+            end
+          end
 
           # GET /api/v3/admin/delivery_methods/calculators
           # Registered delivery calculator classes with their preference
@@ -124,23 +202,8 @@ module Spree
             Spree.api.admin_delivery_method_serializer
           end
 
-          # A single POST/PATCH can ship eligibility rules and carrier service
-          # rows alongside the basics; `DeliveryMethod#rules=` / `#services=`
-          # reconcile to the desired set, so the dashboard saves the whole
-          # sheet in one round-trip.
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              :name, :admin_name, :code, :fulfillment_provider,
-              :pickup_point_provider, :rate_provider, :storefront_visible, :tracking_url,
-              :available_to_sellers,
-              :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :tax_category_id, :markup_flat, :markup_percent,
-              :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id,
-              stock_location_ids: [], calculator: [:type, { preferences: {} }],
-              rules: rule_attributes,
-              services: [:id, :carrier, :service, :label, :markup_flat, :markup_percent, :position]
-            )
+            params.permit(*permitted_attributes, rules: rule_attributes)
           end
 
           def rule_attributes

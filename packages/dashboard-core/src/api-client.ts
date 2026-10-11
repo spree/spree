@@ -14,7 +14,7 @@
  * promise the seller panel methods its API does not have.
  */
 
-import type { PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
+import type { CountryCode, PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
 
 /** What a panel may change on the signed-in person's own account. */
 export interface PanelAccountParams {
@@ -572,7 +572,7 @@ export interface PanelStockLocation {
   zipcode?: string | null
   phone?: string | null
   company?: string | null
-  country_code?: string | null
+  country_code?: CountryCode | null
   state_code?: string | null
   state_name?: string | null
   /** Rendered read-only in the table; either panel's serializer derives it. */
@@ -614,7 +614,7 @@ export type PanelStockLocationCreateParams = PanelStockLocationParams & { name: 
  * install.
  */
 export interface PanelCountry {
-  iso: string
+  iso: CountryCode
   iso3: string
   name: string
   states_required?: boolean

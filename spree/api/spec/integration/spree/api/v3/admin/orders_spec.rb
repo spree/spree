@@ -76,58 +76,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, example: 'customer@example.com' },
-          customer_id: { type: :string, description: 'Customer ID.' },
-          use_customer_default_address: { type: :boolean, description: "When true with customer_id, copies the customer's saved billing/shipping addresses onto the order." },
-          currency: { type: :string, example: 'USD' },
-          market_id: { type: :string, description: 'Market ID' },
-          channel_id: { type: :string, description: 'Channel ID. Defaults to the store primary channel when omitted.' },
-          preferred_stock_location_id: {
-            type: :string,
-            description: "Stock Location ID to prefer for fulfillment. Order Routing's built-in PreferredLocation rule reads this and ranks the location first; routing falls back to the next rule when the preferred location can't cover the cart."
-          },
-          locale: { type: :string, example: 'en-US' },
-          customer_note: { type: :string, description: 'Public, customer-visible note' },
-          internal_note: { type: :string, description: 'Staff-only note' },
-          metadata: { type: :object, description: 'Arbitrary key/value metadata' },
-          shipping_address: {
-            type: :object,
-            properties: {
-              first_name: { type: :string }, last_name: { type: :string },
-              address1: { type: :string }, city: { type: :string },
-              postal_code: { type: :string }, country_code: { type: :string },
-              state_code: { type: :string }, phone: { type: :string }
-            }
-          },
-          shipping_address_id: { type: :string, description: 'Existing customer address ID' },
-          billing_address: {
-            type: :object,
-            properties: {
-              first_name: { type: :string }, last_name: { type: :string },
-              address1: { type: :string }, city: { type: :string },
-              postal_code: { type: :string }, country_code: { type: :string },
-              state_code: { type: :string }, phone: { type: :string }
-            }
-          },
-          billing_address_id: { type: :string, description: 'Existing customer address ID' },
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              required: %w[variant_id quantity],
-              properties: {
-                variant_id: { type: :string, description: 'Variant ID' },
-                quantity: { type: :integer, example: 1 },
-                metadata: { type: :object }
-              }
-            }
-          },
-          coupon_code: { type: :string, description: 'Optional. Applied non-fatally; invalid codes do not block creation.' }
-        }
-      }
+      request_body_for
 
       response '201', 'order created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -213,57 +162,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string },
-          customer_note: { type: :string },
-          internal_note: { type: :string },
-          channel_id: { type: :string, description: 'Channel ID' },
-          preferred_stock_location_id: {
-            type: :string,
-            description: "Stock Location ID to prefer for fulfillment. Re-runs Order Routing's PreferredLocation rule on subsequent shipment rebuilds."
-          },
-          shipping_address: {
-            type: :object,
-            properties: {
-              firstname: { type: :string },
-              lastname: { type: :string },
-              address1: { type: :string },
-              city: { type: :string },
-              zipcode: { type: :string },
-              country_code: { type: :string },
-              state_code: { type: :string },
-              phone: { type: :string }
-            }
-          },
-          billing_address: {
-            type: :object,
-            properties: {
-              firstname: { type: :string },
-              lastname: { type: :string },
-              address1: { type: :string },
-              city: { type: :string },
-              zipcode: { type: :string },
-              country_code: { type: :string },
-              state_code: { type: :string },
-              phone: { type: :string }
-            }
-          },
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              required: %w[variant_id],
-              properties: {
-                variant_id: { type: :string, description: 'Variant ID' },
-                quantity: { type: :integer, example: 1 },
-                metadata: { type: :object }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'order updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -322,12 +221,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          notify_customer: { type: :boolean, description: 'Send the order confirmation email after completion.' }
-        }
-      }
+      request_body_for
 
       response '200', 'order completed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -384,16 +278,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          cancel_reason_id: { type: :string, description: "Why the order was canceled — the id of one of the store's cancellation reasons." },
-          cancel_note: { type: :string, description: 'Staff-facing note about the cancellation.' },
-          refund_payments: { type: :boolean, default: false, description: "Whether this order's share of a payment shared across a split checkout is handed back." },
-          refund_amount: { type: :string, description: "How much of that share to return. Defaults to all of it; refused on an order whose payment is not shared." },
-          notify_customer: { type: :boolean, default: false, description: 'Send the order cancellation email after canceling.' }
-        }
-      }
+      request_body_for
 
       response '200', 'order canceled' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

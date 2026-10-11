@@ -8,7 +8,7 @@ module Spree
       # their order history shows them — with the per-seller orders nested
       # inside it, each carrying its own items, delivery and tracking.
       class OrderGroupSerializer < BaseSerializer
-        typelize number: :string, email: [:string, nullable: true], currency: :string,
+        typelize number: :string, email: [:string, nullable: true], currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
                  payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
                  completed_at: [:string, nullable: true],

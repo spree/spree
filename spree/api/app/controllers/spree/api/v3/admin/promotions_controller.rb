@@ -5,6 +5,51 @@ module Spree
         class PromotionsController < ResourceController
           scoped_resource :promotions
 
+          request_params :promotion do |body|
+            body.attribute :name, :string, required: true, on: :create
+            body.attribute :description, :string, nullable: true
+            body.attribute :code, :string,
+              nullable: true,
+              description: 'Required for single-code coupon promotions. Ignored when `multi_codes` is true.'
+            body.attribute :path, :string, nullable: true
+            body.attribute :starts_at, :datetime, nullable: true
+            body.attribute :expires_at, :datetime, nullable: true
+            body.attribute :usage_limit, :integer, nullable: true
+            body.attribute :match_policy, :string, choices: Spree::Promotion::MATCH_POLICIES
+            body.attribute :kind, :string,
+              choices: Spree::Promotion.kinds.keys,
+              description: '`coupon_code` needs a code (or `multi_codes`); `automatic` applies without one.'
+            body.attribute :multi_codes, :boolean,
+              description: 'Generates `number_of_codes` codes starting with `code_prefix`.'
+            body.attribute :number_of_codes, :integer, nullable: true
+            body.attribute :code_prefix, :string, nullable: true
+            body.attribute :promotion_category_id, :id, nullable: true
+            # Rules and actions are permitted below, with the keys each
+            # registered kind adds.
+            body.attribute :rules, :array,
+              permit: false,
+              as: 'PromotionRuleDraftParams',
+              description: 'The rules the promotion should have: entries with `id` update, entries without are created, and rules left out are removed.' do |rule|
+              rule.attribute :id, :id
+              rule.attribute :type, :string,
+                required: true,
+                example: 'currency',
+                description: 'The rule kind, from `GET /promotion_rules/types`.'
+              rule.include_attributes Spree::Api::V3::Admin::PromotionRuleRequestSchema
+            end
+            body.attribute :actions, :array,
+              permit: false,
+              as: 'PromotionActionDraftParams',
+              description: 'The actions the promotion should have, matched the same way as `rules`.' do |action|
+              action.attribute :id, :id
+              action.attribute :type, :string,
+                required: true,
+                example: 'free_shipping',
+                description: 'The action kind, from `GET /promotion_actions/types`.'
+              action.include_attributes Spree::Api::V3::Admin::PromotionActionRequestSchema
+            end
+          end
+
           protected
 
           def model_class
@@ -23,21 +68,12 @@ module Spree
             promotion_includes
           end
 
-          # A single POST/PATCH /promotions can ship rules and actions
-          # alongside the basics; `Promotion#rules=` / `actions=` reconcile
-          # to the desired set. The nested allowlist below is the union of
-          # every built-in rule/action's expected keys. Plugin-defined
-          # subclasses can add to it — see `additional_permitted_attributes`
-          # below.
+          # `Promotion#rules=` / `actions=` reconcile to the desired set. The
+          # nested allowlists are the union of every registered rule/action
+          # kind's keys, so plugin-defined kinds add to them through
+          # `additional_permitted_attributes`.
           def resource_permitted_attributes
-            [
-              :name, :description, :code, :path,
-              :starts_at, :expires_at, :usage_limit, :match_policy,
-              :kind, :multi_codes, :number_of_codes, :code_prefix,
-              :promotion_category_id,
-              rules: rule_attributes,
-              actions: action_attributes
-            ]
+            [*super, { rules: rule_attributes, actions: action_attributes }]
           end
 
           def rule_attributes

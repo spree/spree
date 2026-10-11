@@ -1,4 +1,4 @@
-import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
+import type { CurrencyCode, PriceBulkUpsertRowParams } from '@spree/admin-sdk'
 import {
   adminClient,
   currencyParts,
@@ -99,7 +99,7 @@ function stableFilterKey(filter: FilterShape): string {
 export interface BulkPriceEditorProps {
   /** Filter by a specific price list. Omit to edit base prices. */
   priceListId?: string
-  currency: string
+  currency: CurrencyCode
   /** Extra Ransack predicates spread into the index call — e.g.
    *  `{ variant_product_id_eq: 'prod_xxx' }` for a per-product editor.
    *  Keys starting with `price_list_id` are stripped (the editor owns
@@ -624,9 +624,9 @@ export function BulkPriceEditor({
     // — that's what the server upserts on. `id` is not used by the bulk
     // endpoint; we already have the lookup columns on screen so there's
     // no point making the server backfill them.
-    const payload: PriceBulkUpsertRow[] = savedKeys.flatMap((priceId) => {
+    const payload: PriceBulkUpsertRowParams[] = savedKeys.flatMap((priceId) => {
       const edit = edits.get(priceId) as CellEdit
-      const row: PriceBulkUpsertRow = {
+      const row: PriceBulkUpsertRowParams = {
         variant_id: edit.variantId,
         currency,
         ...(priceListId ? { price_list_id: priceListId } : {}),

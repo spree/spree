@@ -9,9 +9,15 @@ module Spree
             # broad customer access.
             scoped_resource :store_credits
 
+            request_params :customer_store_credit do |body|
+              body.attribute :amount, :decimal, required: true, on: :create, example: '50.00'
+              body.attribute :currency, :currency, required: true, on: :create, only: :create, example: 'USD'
+              body.attribute :memo, :string
+            end
+
             # POST /api/v3/admin/customers/:customer_id/store_credits
             def create
-              @resource = @parent.store_credits.new(create_attrs)
+              @resource = @parent.store_credits.new(store_credit_attributes)
               @resource.created_by = try_spree_current_user
               @resource.store ||= current_store
               authorize_resource!(@resource, :create)
@@ -27,7 +33,7 @@ module Spree
             def update
               authorize_resource!(@resource)
 
-              if @resource.amount_used.positive? && update_attrs.key?(:amount)
+              if @resource.amount_used.positive? && store_credit_attributes.key?(:amount)
                 render_error(
                   code: 'store_credit_in_use',
                   message: 'Cannot change amount on a store credit that has already been used',
@@ -36,7 +42,7 @@ module Spree
                 return
               end
 
-              if @resource.update(update_attrs)
+              if @resource.update(store_credit_attributes)
                 render json: serialize_resource(@resource.reload)
               else
                 render_validation_error(@resource.errors)
@@ -78,12 +84,8 @@ module Spree
 
             private
 
-            def create_attrs
-              params.permit(:amount, :currency, :memo).to_h
-            end
-
-            def update_attrs
-              params.permit(:memo, :amount).to_h
+            def store_credit_attributes
+              params.permit(*declared_permitted_attributes).to_h
             end
           end
         end

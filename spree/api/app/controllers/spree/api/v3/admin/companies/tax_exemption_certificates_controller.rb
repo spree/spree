@@ -9,6 +9,25 @@ module Spree
           class TaxExemptionCertificatesController < BaseController
             include ActiveStorage::SetCurrent
 
+            request_params 'TaxExemptionCertificateParams' do |body|
+              body.attribute :certificate_number, :string,
+                example: 'DE-RESALE-7',
+                description: 'Required when creating.'
+              body.attribute :reason_code, :string,
+                example: 'resale',
+                description: "Becomes the tax provider's entity use code. Required when creating."
+              body.attribute :issuing_authority, :string, nullable: true, example: 'Finanzamt Berlin'
+              body.attribute :issued_at, :datetime, nullable: true
+              body.attribute :expires_at, :datetime, nullable: true
+              body.attribute :country_code, :country,
+                nullable: true,
+                description: 'Where the certificate holds. Omit it and `state_code` for one valid everywhere.'
+              body.attribute :state_code, :string, nullable: true
+              body.attribute :document_signed_id, :string,
+                description: "A `signed_id` from `files.upload()` with `visibility: 'private'`."
+              body.attribute :metadata, :hash
+            end
+
             before_action :authorize_parent_access!
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions have to be listed alongside the custom ones.
@@ -85,11 +104,8 @@ module Spree
               [{ document_attachment: :blob }]
             end
 
-            # `document_signed_id` comes from POST /api/v3/admin/files.
             def permitted_params
-              params.permit(:certificate_number, :reason_code, :issuing_authority,
-                            :issued_at, :expires_at, :country_code, :state_code, :document_signed_id,
-                            metadata: {})
+              params.permit(*declared_permitted_attributes)
             end
 
             def build_resource

@@ -13,6 +13,13 @@ module Spree
           # grantable separately from store configuration (6.0-admin-rbac.md).
           scoped_resource :staff
 
+          request_params :invitation do |body|
+            body.attribute :email, :string, required: true, on: :create
+            body.attribute :role_id, :id,
+              required: true, on: :create,
+              description: 'The role (`role_...`) the invitee gets on accepting.'
+          end
+
           # POST /api/v3/admin/invitations
           # Guards against inviting a new staff member straight into the admin
           # super-role unless the inviter already holds it.
@@ -65,7 +72,7 @@ module Spree
           # No extension union: an invitation carries only the role grant, which is
           # the authorization surface itself, not extensible resource data.
           def permitted_params
-            attrs = params.permit(:email, :role_id)
+            attrs = params.permit(*declared_permitted_attributes)
             if attrs[:role_id].present? && Spree::PrefixedId.prefixed_id?(attrs[:role_id])
               attrs[:role_id] = Spree::PrefixedId.decode_prefixed_id(attrs[:role_id])
             end

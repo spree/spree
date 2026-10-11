@@ -7,10 +7,18 @@ module Typelizer
   # open, and the OpenAPI property becomes an open enum, so a client generated
   # from either still accepts an added value while every built-in value stays
   # documented and autocompletable.
+  #
+  # ISO lists are the exception: a named type several serializers and the
+  # request types share, but closed, since nothing outside the standard can
+  # add a country or a currency.
   module OpenEnums
+    CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode].freeze
+
     module Property
       def enum_definition(...)
         definition = super
+        return definition if CLOSED_TYPE_NAMES.include?(enum_type_name)
+
         definition && "#{definition} | (string & {})"
       end
     end
@@ -20,6 +28,7 @@ module Typelizer
 
       def inline_schema(definition, property, openapi_version:)
         return super unless property.enum_type_name && property.enum.is_a?(Array) && !property.multi
+        return super if CLOSED_TYPE_NAMES.include?(property.enum_type_name)
 
         open = { anyOf: [{ type: :string, enum: property.enum.compact }, { type: :string }] }
         apply_nullable(open, property, openapi_version: openapi_version)

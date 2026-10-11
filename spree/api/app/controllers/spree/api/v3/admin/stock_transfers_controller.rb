@@ -18,6 +18,47 @@ module Spree
 
           scoped_resource :stock
 
+          # The warehouses and lines are read from the raw params and resolved
+          # through the store (see ReceivableActions), so only the document's
+          # own fields are permitted.
+          request_params :stock_transfer do |body|
+            body.attribute :source_location_id, :id,
+              required: true, on: :create,
+              permit: false,
+              example: 'sloc_1234567890'
+            body.attribute :destination_location_id, :id,
+              required: true, on: :create,
+              permit: false,
+              example: 'sloc_1234567890'
+            body.attribute :reference, :string,
+              nullable: true,
+              description: "The merchant's own label for the trip. `null` clears it."
+            body.attribute :notes, :string, nullable: true
+            body.attribute :items, :array,
+              permit: false,
+              as: 'StockTransferItemParams',
+              description: 'A draft may open empty and gain lines as the merchant packs. Sending the list replaces whatever the draft currently holds.' do |item|
+              item.attribute :variant_id, :id, required: true, example: 'variant_1234567890'
+              item.attribute :quantity_shipped, :integer, required: true, example: 10
+            end
+            body.attribute :metadata, :hash, nullable: true, only: :update
+          end
+
+          request_params 'StockTransferMarkInTransitParams', action: :mark_in_transit do |body|
+            body.attribute :force, :boolean, description: 'Ship even if it drives the source below zero.'
+          end
+
+          request_params 'ReceivableCloseParams', action: :close do |body|
+            body.attribute :reason, :string, nullable: true, description: 'Why the balance is not coming.'
+          end
+
+          request_params 'StockTransferCancelParams', action: :cancel do |body|
+            body.attribute :on_in_transit, :string,
+              choices: %w[restock write_off],
+              description: 'Required once the units have left the source: either they come back (`restock`) or they are written off as lost (`write_off`).'
+            body.attribute :reason, :string, nullable: true, description: 'Recorded against the written-off lines.'
+          end
+
           # The base registers this for show/update/destroy; a second
           # `before_action :set_resource` replaces that registration rather than
           # adding to it, so those three are listed again here.
@@ -139,13 +180,6 @@ module Spree
               attributes: editable_attributes,
               items: items_from_params(:quantity_shipped)
             }
-          end
-
-          # Only what mass assignment may safely carry. The two warehouses are
-          # resolved through the store instead, since an id the payload names
-          # has to be proved to belong here.
-          def resource_permitted_attributes
-            [:reference, :notes, { metadata: {} }]
           end
 
           # A transfer's status transitions are its own actions, so `update`

@@ -5,6 +5,10 @@ module Spree
         class RefundReasonsController < ResourceController
           scoped_resource :settings
 
+          request_params :reason do |body|
+            body.include_attributes Spree::Api::V3::Admin::ReasonRequestSchema
+          end
+
           protected
 
           def model_class
@@ -16,7 +20,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :active)
+            params.permit(*permitted_attributes)
           end
         end
       end

@@ -3,7 +3,13 @@ import type {
   GiftCardCreateParams,
   GiftCardUpdateParams,
 } from '@spree/admin-sdk'
-import { blankToNull, blankToUndefined, i18n, isPositiveMoney } from '@spree/dashboard-core'
+import {
+  blankToNull,
+  blankToUndefined,
+  currencyCodeSchema,
+  i18n,
+  isPositiveMoney,
+} from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 // Mirrors `Spree::Config[:gift_card_batch_limit]`. Hardcoded for now; if the
@@ -14,8 +20,6 @@ export const BATCH_LIMIT = 50_000
 // catalog has had a chance to initialize and so locale changes pick up.
 const amountPositive = () => i18n.t('admin.pages.promotions.gift_cards.validation.amount_positive')
 const prefixRequired = () => i18n.t('admin.pages.promotions.gift_cards.validation.prefix_required')
-const currencyRequired = () =>
-  i18n.t('admin.pages.promotions.gift_cards.validation.currency_required')
 
 // Amounts stay strings, from a number input that always yields a canonical
 // value ("49.5"), and are sent as typed.
@@ -27,7 +31,7 @@ export const giftCardCreateFormSchema = z
     // When `quantity > 1` it becomes the required batch `prefix`.
     code: z.string().optional(),
     amount: positiveAmountString,
-    currency: z.string().min(1, { error: currencyRequired }),
+    currency: currencyCodeSchema,
     expires_at: z.string().optional(),
     customer_id: z.string().optional(),
     quantity: z.coerce.number().int().min(1).max(BATCH_LIMIT),
@@ -47,7 +51,7 @@ export type GiftCardCreateFormValues = z.infer<typeof giftCardCreateFormSchema>
 export const giftCardEditFormSchema = z.object({
   code: z.string().optional(),
   amount: positiveAmountString,
-  currency: z.string().min(1, { error: currencyRequired }),
+  currency: currencyCodeSchema,
   expires_at: z.string().optional(),
   customer_id: z.string().optional(),
 })

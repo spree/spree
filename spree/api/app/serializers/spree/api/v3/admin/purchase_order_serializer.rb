@@ -7,7 +7,7 @@ module Spree
         class PurchaseOrderSerializer < V3::BaseSerializer
           typelize number: :string,
                    status: :string,
-                   currency: :string,
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    reference: 'string | null',
                    notes: 'string | null',
                    supplier_id: 'string | null',

@@ -7,7 +7,7 @@ module Spree
       class PriceSerializer < BaseSerializer
         typelize display_amount: [:string, nullable: true],
                  display_compare_at_amount: [:string, nullable: true],
-                 currency: [:string, nullable: true],
+                 currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  price_list_id: [:string, nullable: true]
 
         attributes :currency

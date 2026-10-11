@@ -11,6 +11,24 @@ module Spree
           class DiscountsController < BaseController
             scoped_resource :orders
 
+            request_params :discount do |body|
+              body.attribute :label, :string, required: true, on: :create, example: 'Customer appeasement'
+              body.attribute :value, :decimal,
+                only: :create,
+                example: '10.00',
+                description: 'An amount in the order currency for a `flat` discount, or a percentage for a `percent` one.'
+              body.attribute :amount, :decimal,
+                description: 'On create, an older spelling of `value`, read when `value` is absent. On update, the new amount of the row.'
+              body.attribute :value_type, :string,
+                only: :create,
+                choices: %w[flat percent],
+                description: 'Defaults to `flat`.'
+              body.attribute :line_item_id, :id,
+                only: :create,
+                nullable: true,
+                description: 'The line item the discount applies to. Omitted, the value is distributed across the line items.'
+            end
+
             # POST /api/v3/admin/orders/:order_id/discounts
             def create
               with_order_lock do
@@ -80,7 +98,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:label, :amount)
+              params.permit(*permitted_attributes)
             end
 
             def collection_includes

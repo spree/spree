@@ -1,5 +1,5 @@
 import { compareMoney, isDecimalString, type TaxRateParams } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { blankToNull, countryCodeSchema } from '@spree/dashboard-core'
 import { decimalPlacesMessage, requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -19,7 +19,7 @@ export const taxRateFormSchema = z.object({
   // Required: a rate always taxes exactly one category.
   tax_category_id: z.string().min(1, { error: requiredMessage('tax_rate.tax_category_id') }),
   // Empty means the rate applies everywhere, so neither field is required.
-  country_code: z.string().optional(),
+  country_code: countryCodeSchema.or(z.literal('')).optional(),
   state_code: z.string().optional(),
   included_in_price: z.boolean(),
   show_rate_in_label: z.boolean(),
@@ -47,7 +47,7 @@ export function taxRateValuesToParams(values: TaxRateFormValues): TaxRateParams 
     name: values.name,
     rate_percent: values.rate_percent,
     tax_category_id: values.tax_category_id,
-    country_code: blankToNull(values.country_code),
+    country_code: values.country_code || null,
     state_code: blankToNull(values.state_code),
     included_in_price: values.included_in_price,
     show_rate_in_label: values.show_rate_in_label,

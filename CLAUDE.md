@@ -244,7 +244,7 @@ The Store API (customer-facing) and Admin API (back-office) are two halves of th
 
 #### Flat request/response structure
 
-API v3 uses flat params — no nested Rails-style wrapping. Declare a controller's writable attributes by overriding **`resource_permitted_attributes`** (a plain list). The base `permitted_attributes` appends extension-contributed attributes to it, and `permitted_params` permits and normalizes the result. `Spree::PermittedAttributes` and its model-name inference are **removed in 6.0** — a controller that declares neither `resource_permitted_attributes` nor `permitted_params` raises `NotImplementedError` on its first write.
+API v3 uses flat params — no nested Rails-style wrapping. Declare a controller's writable attributes with **`request_params`** — one typed declaration that the controller permits from, the integration spec documents with `request_body_for`, and the SDK request types are generated from (`pnpm generate:params` → `src/types/params/`), so backend, OpenAPI and TypeScript cannot drift. Never hand-write a request body in an rswag spec or a request type in an SDK. Each attribute is `body.attribute :name, :type, **options` — types `:string :integer :number :decimal :boolean :date :datetime :id :any :country :currency :hash :object :array` (`of:` for an array's items, `shape:` for an object, `choices:` for a value list, `required: true` + `on: :create`, `only:` for one action); money is `:decimal` (canonical string), never `:number`; a country or currency code is `:country` / `:currency`, never `:string` — they publish the closed `CountryCode` / `CurrencyCode` types (from `Spree::IsoData.country_codes` and `Spree::Money::Rounding::CURRENCY_CODES`), which serializers declare with `enum_type_name: 'CountryCode'` / `'CurrencyCode'` so reads and writes share one type. A shape two or more endpoints accept (address, price, stock level, media) is a class in `spree/api/app/request_schemas/` (`class AddressRequestSchema < Spree::Api::V3::RequestSchema`, `publishes 'XyzParams'` to give it its own type; Admin variants subclass the shared one, like serializers) — never copy a field list between controllers; a body used by one endpoint stays inline in its controller; a custom action declares `request_params 'XyzParams', action: :xyz do |body|`. A spec checks that every attribute a model-backed create/update accepts is writable on the model. `resource_permitted_attributes` (a plain list) still works but leaves the body undocumented and untyped. The base `permitted_attributes` appends extension-contributed attributes to it, and `permitted_params` permits and normalizes the result. `Spree::PermittedAttributes` and its model-name inference are **removed in 6.0** — a controller that declares neither `resource_permitted_attributes` nor `permitted_params` raises `NotImplementedError` on its first write.
 
 Extensions add writable attributes to a core resource from an initializer, appending to the model's `additional_permitted_attributes` (a `class_attribute` on `Spree::Base`, default `[]`): `Spree::Product.additional_permitted_attributes += [:brand_id]`. Always `+=`, never `=` — assigning replaces what another extension added. Core STI subclasses set theirs with `self.additional_permitted_attributes = [...]` in the class body. Three rules that matter:
 
@@ -255,9 +255,11 @@ Extensions add writable attributes to a core resource from an initializer, appen
 Prefer Custom Fields for merchant-managed data; the hook is for extensions adding real columns.
 
 ```ruby
-# ✅ Flat params
-def permitted_params
-  params.permit(:name, :description, :slug)
+# ✅ Flat params, declared once
+request_params :product do |body|
+  body.attribute :name, :string, required: true, on: :create
+  body.attribute :description, :string
+  body.attribute :slug, :string
 end
 
 # ❌ Nested params — not used in API v3
@@ -415,6 +417,8 @@ end
   - **Open** (extensions may add, built-ins known at class-load — `has_status`, `Spree::Fee::KINDS`): add `enum_type_name: 'ModelStatus'` → open TS union (`'a' | 'b' | (string & {})`) + OpenAPI `anyOf`, so clients autocomplete the built-ins and still accept extension values
   - **Registry-driven `type`** (the typed families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
 - Never use `typelize_from` — it connects to the database
+- **A deprecated field is marked, never only described.** Response attributes: `typelize state_abbr: [:string, nullable: true, deprecated: 'Use `state_code`. Removed in 6.1.']`. Request fields: `string :country_iso, deprecated: 'Use `country_code`. Removed in 6.1.'`. Both reach the API reference (`deprecated: true`) and the SDK types (`@deprecated`, struck through in editors). The message names the replacement and the release that removes it; a "Deprecated:" sentence in a `comment:` or `description:` alone is invisible to clients
+- **Which API deprecates and which removes.** The Store API (the stable public contract) deprecates: a renamed or retired field keeps working, marked `deprecated:`, until the next minor release. Until 6.0 is stable, the Admin and Seller APIs remove instead — drop the field outright, move the dashboards to the replacement, and list it in the upgrade guide; an Admin/Seller serializer drops an inherited deprecated Store field with `_attributes.delete(:field)`. After 6.0 stable, the Admin and Seller APIs follow the Store API's deprecation procedure too
 - Customize via inheritance + `Spree.api.product_serializer = 'MyApp::ProductSerializer'`
 - NEVER create custom hash/arrays to represent associations or records inside the serializer - each record or a variant of a record (eg. lightweight variant of an existing serializer) should be it's own serializer
 - NEVER put too much logic in serializers, they should be lean and call models for custom methods
@@ -729,6 +733,7 @@ cd packages/sdk && pnpm test                             # 5. SDK tests
 - TypeScript types → `packages/sdk/src/types/generated/` (Store) and `packages/admin-sdk/src/types/generated/` (Admin)
 - Zod schemas → `src/zod/generated/` in each SDK, exported as `@spree/sdk/zod`, `@spree/admin-sdk/zod` and `@spree/seller-sdk/zod`. Each SDK's `zod-schemas.test.ts` validates them against the responses recorded in `docs/api-reference/*.yaml`
 - Store types: `StoreProduct`, `StoreOrder`, etc. Admin types: `AdminProduct`, `AdminOrder`, etc.
+- Request body types → `src/types/params/` in each SDK, from the request schemas swaggerize writes (`pnpm generate:params`; the Lefthook hook and CI keep them in sync with `docs/api-reference/*.yaml`)
 
 A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schemas automatically whenever `spree/api/app/serializers/**/*.rb` files are committed, then re-stages the generated output. You don't need to run steps 1 and 2 manually if you're committing serializer changes — the hook handles it. It also regenerates the Zod schemas when generated types or the generator change, and CI fails when committed schemas don't match the types. Steps 3–5 (integration tests, OpenAPI regen, SDK tests) still need to run locally before pushing — run step 3 as `pnpm test:rspec api spec/integration/` so it queues with the other sessions.
 

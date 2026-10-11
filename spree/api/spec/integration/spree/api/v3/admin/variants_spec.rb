@@ -61,62 +61,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :product_id, in: :path, type: :string, required: true, description: 'Product ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          sku: { type: :string, example: 'SKU-001' },
-          cost_price: { type: :string, example: '10.00' },
-          cost_currency: { type: :string, example: 'USD' },
-          weight: { type: :number },
-          height: { type: :number },
-          width: { type: :number },
-          depth: { type: :number },
-          weight_unit: { type: :string },
-          dimensions_unit: { type: :string },
-          track_inventory: { type: :boolean },
-          tax_category_id: { type: :string },
-          options: {
-            type: :array,
-            description: 'A variant on a product with option types should declare its option pairs (e.g. size + color) — one per option type it participates in. Option types and values are auto-created if missing.',
-            items: {
-              type: :object,
-              required: %w[name value],
-              properties: {
-                name: { type: :string, example: 'size' },
-                value: { type: :string, example: 'Small' }
-              }
-            }
-          },
-          position: { type: :integer },
-          barcode: { type: :string },
-          prices: {
-            type: :array,
-            description: 'Per-currency prices. Upserted by currency.',
-            items: {
-              type: :object,
-              required: %w[currency amount],
-              properties: {
-                currency: { type: :string, example: 'USD' },
-                amount: { type: :string, example: '29.99' },
-                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-              }
-            }
-          },
-          stock_levels: {
-            type: :array,
-            description: 'Per-stock-location inventory. Upserted by stock_location_id.',
-            items: {
-              type: :object,
-              required: %w[stock_location_id count_on_hand],
-              properties: {
-                stock_location_id: { type: :string, description: 'Stock location ID (e.g. sloc_xxx)' },
-                count_on_hand: { type: :integer, example: 50 },
-                backorderable: { type: :boolean }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'variant created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -199,62 +144,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
                 description: 'Bearer token for admin authentication'
       parameter name: :product_id, in: :path, type: :string, required: true, description: 'Product ID'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Variant ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          sku: { type: :string, example: 'SKU-001' },
-          cost_price: { type: :string, example: '10.00' },
-          cost_currency: { type: :string, example: 'USD' },
-          weight: { type: :number },
-          height: { type: :number },
-          width: { type: :number },
-          depth: { type: :number },
-          weight_unit: { type: :string },
-          dimensions_unit: { type: :string },
-          track_inventory: { type: :boolean },
-          tax_category_id: { type: :string },
-          options: {
-            type: :array,
-            description: 'One pair per option type the variant participates in (e.g. size + color). Option types and values are auto-created if missing.',
-            items: {
-              type: :object,
-              required: %w[name value],
-              properties: {
-                name: { type: :string, example: 'size' },
-                value: { type: :string, example: 'Small' }
-              }
-            }
-          },
-          position: { type: :integer },
-          barcode: { type: :string },
-          prices: {
-            type: :array,
-            description: 'Per-currency prices. Upserted by currency.',
-            items: {
-              type: :object,
-              required: %w[currency amount],
-              properties: {
-                currency: { type: :string, example: 'USD' },
-                amount: { type: :string, example: '29.99' },
-                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-              }
-            }
-          },
-          stock_levels: {
-            type: :array,
-            description: 'Per-stock-location inventory. Upserted by stock_location_id.',
-            items: {
-              type: :object,
-              required: %w[stock_location_id count_on_hand],
-              properties: {
-                stock_location_id: { type: :string, description: 'Stock location ID (e.g. sloc_xxx)' },
-                count_on_hand: { type: :integer, example: 50 },
-                backorderable: { type: :boolean }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'variant updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

@@ -56,15 +56,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[name key_type],
-        properties: {
-          name: { type: :string, example: 'Backend integration' },
-          key_type: { type: :string, enum: %w[publishable secret] },
-          scopes: { type: :array, items: { type: :string }, example: %w[read_orders write_orders] }
-        }
-      }
+      request_body_for
 
       response '201', 'secret key created — plaintext token returned once' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -128,12 +120,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Backend integration (renamed)' }
-        }
-      }
+      request_body_for
 
       response '200', 'API key renamed' do
         let(:id) { secret_key_record.prefixed_id }

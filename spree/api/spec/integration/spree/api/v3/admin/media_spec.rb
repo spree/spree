@@ -57,15 +57,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          signed_id: { type: :string, description: 'The `signed_id` returned by POST /api/v3/admin/files.' },
-          alt: { type: :string, example: 'Folded on a table' },
-          media_type: { type: :string, enum: %w[image video external_video], example: 'image' },
-          external_video_url: { type: :string, description: 'YouTube or Vimeo link, for an external video.' }
-        }
-      }
+      request_body_for
 
       response '201', 'file added' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -82,6 +74,36 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['attached']).to be(false)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/media/{id}' do
+    parameter name: :id, in: :path, type: :string, description: 'Media ID'
+
+    patch 'Update a library file' do
+      tags 'Media'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Edits a file in the library, such as its alt text.'
+      admin_scope :write, :media
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      request_body_for
+
+      response '200', 'file updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { media.prefixed_id }
+        let(:body) { { alt: 'Folded on a table' } }
+
+        schema SwaggerSchemaHelpers.ref('Media')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['alt']).to eq('Folded on a table')
         end
       end
     end
@@ -185,15 +207,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          source_media_id: { type: :string, description: 'A media record already in the library.' },
-          alt: { type: :string, example: 'Front view' },
-          position: { type: :integer, example: 1 }
-        },
-        required: %w[source_media_id]
-      }
+      request_body_for
 
       response '201', 'file placed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -206,6 +220,42 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['alt']).to eq('Front view')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{product_id}/media/{id}' do
+    parameter name: :product_id, in: :path, type: :string, description: 'Product ID'
+    parameter name: :id, in: :path, type: :string, description: 'Media ID'
+
+    patch 'Update product media' do
+      tags 'Media'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Edits a file placed on a product: its alt text, position and focal
+        point, and which of the product's variants it shows for
+        (`variant_ids`).
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      request_body_for
+
+      response '200', 'media updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:product_id) { product.prefixed_id }
+        let(:id) { media.prefixed_id }
+        let(:body) { { alt: 'Side view', position: 1 } }
+
+        schema SwaggerSchemaHelpers.ref('Media')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['alt']).to eq('Side view')
         end
       end
     end

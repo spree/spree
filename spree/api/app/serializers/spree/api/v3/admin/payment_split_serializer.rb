@@ -11,7 +11,7 @@ module Spree
           AMOUNTS = %i[authorized_amount captured_amount refunded_amount claimed_amount
                        net_captured_amount refundable_amount].freeze
 
-          typelize currency: :string,
+          typelize currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    payment_id: :string,
                    payment_number: 'string | null',
                    order_id: :string,

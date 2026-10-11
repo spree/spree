@@ -214,6 +214,35 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with an attribute an extension opened' do
+      let(:params) { { seo_title: 'Extension Title' } }
+
+      before { allow(Spree::Store).to receive(:additional_permitted_attributes).and_return([:seo_title]) }
+
+      it 'saves it' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(store.reload.seo_title).to eq('Extension Title')
+      end
+    end
+
+    context 'with the digital download limits' do
+      let(:params) do
+        { limit_digital_download_count: false, digital_asset_authorized_clicks: 9,
+          limit_digital_download_days: false, digital_asset_authorized_days: 30 }
+      end
+
+      it 'saves them' do
+        subject
+        expect(response).to have_http_status(:ok)
+        store.reload
+        expect(store.preferred_limit_digital_download_count).to be(false)
+        expect(store.preferred_digital_asset_authorized_clicks).to eq(9)
+        expect(store.preferred_limit_digital_download_days).to be(false)
+        expect(store.preferred_digital_asset_authorized_days).to eq(30)
+      end
+    end
+
     context 'with invalid params' do
       let(:params) { { name: '' } }
 
@@ -356,15 +385,9 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     context 'with a pre-6.0 preferred_ key' do
       let(:params) { { preferred_guest_checkout: false } }
 
-      it 'still saves it for one release, with a deprecation warning' do
-        expect(Spree::Deprecation).to receive(:warn).with(/`preferred_guest_checkout` parameter is deprecated/)
-
-        subject
-
+      it 'ignores it: the Admin API takes the setting under its own name' do
+        expect { subject }.not_to(change { store.reload.preferred_guest_checkout })
         expect(response).to have_http_status(:ok)
-        expect(store.reload.preferred_guest_checkout).to eq(false)
-        expect(json_response).to include('guest_checkout' => false)
-        expect(json_response).not_to have_key('preferred_guest_checkout')
       end
     end
 

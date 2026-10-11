@@ -1,4 +1,4 @@
-import type { Supplier } from '@spree/admin-sdk'
+import type { CurrencyCode, Supplier } from '@spree/admin-sdk'
 import { isDecimalString } from '@spree/admin-sdk'
 import {
   CurrencySelect,
@@ -36,7 +36,7 @@ import { type VariantLine, VariantLineEditor } from './variant-line-editor'
 export interface PurchaseOrderFormValues {
   supplierId: string
   destinationId: string
-  currency?: string
+  currency?: CurrencyCode
   expectedAt?: string
   cancelBy?: string
   reference: string
@@ -97,7 +97,7 @@ export function PurchaseOrderForm({
 
   const [supplierId, setSupplierId] = useState(initial.supplierId)
   const [destinationId, setDestinationId] = useState(initial.destinationId)
-  const [currency, setCurrency] = useState<string | undefined>(initial.currency)
+  const [currency, setCurrency] = useState<CurrencyCode | undefined>(initial.currency)
   const [expectedAt, setExpectedAt] = useState<string | undefined>(initial.expectedAt)
   const [cancelBy, setCancelBy] = useState<string | undefined>(initial.cancelBy)
   const [reference, setReference] = useState(initial.reference)

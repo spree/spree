@@ -3,10 +3,126 @@ module Spree
     module V3
       module Admin
         class StoreController < Admin::BaseController
-          include Spree::Api::V3::LegacyPreferenceParams
-
           scoped_resource :settings
-          accepts_legacy_preference_params Spree::Store
+
+          request_params :store do |body|
+            body.attribute :name, :string, example: 'My Store'
+            body.attribute :admin_locale, :string, example: 'en'
+            body.attribute :timezone, :string, example: 'Europe/Berlin'
+            body.attribute :weight_unit, :string, choices: Spree::Variant::WEIGHT_UNITS
+            body.attribute :unit_system, :string, choices: Spree::Store::UNIT_SYSTEMS
+            body.attribute :storefront_access, :string,
+              choices: Spree::Channel::Gating::STOREFRONT_ACCESS,
+              description: "The store-wide default for what anonymous visitors can see. Channels fall back to it when they don't set their own."
+            body.attribute :storefront_url, :string,
+              nullable: true,
+              description: "The storefront's public URL, the base for links in customer emails. Saving it also completes the storefront setup task."
+            body.attribute :guest_checkout, :boolean,
+              description: 'The store-wide default for guest checkout. Channels fall back to it.'
+            body.attribute :always_include_confirm_step, :boolean,
+              description: 'Always show a confirmation step in checkout, even when no payment method requires one.'
+            body.attribute :company_field_enabled, :boolean, description: 'Shows a company field on address forms.'
+            body.attribute :address_requires_company, :boolean,
+              description: 'Makes a company name mandatory on addresses.'
+            body.attribute :address_requires_phone, :boolean,
+              description: 'Makes a phone number mandatory on customer addresses.'
+            body.attribute :capture_method, :string,
+              choices: Spree::CaptureMethod::CAPTURE_METHODS,
+              description: "The store-wide default for when a customer is charged rather than only authorized. A payment method's own setting wins when set."
+            body.attribute :track_inventory_levels, :boolean,
+              description: 'Counts on-hand quantities. Off means everything is treated as always available.'
+            body.attribute :stock_reservations_enabled, :boolean,
+              description: "Holds stock for shoppers while they check out, so the same item can't be sold twice."
+            body.attribute :low_stock_threshold, :integer,
+              description: 'On-hand units at or below which a tracked variant counts as low stock on the home screen; 0 turns the warning off.'
+            body.attribute :tax_using_ship_address, :boolean,
+              description: 'Calculates tax from the shipping address. When false, tax is calculated from the billing address.'
+            body.attribute :track_price_history, :boolean,
+              description: 'Records price changes for the EU Omnibus lowest-price-in-30-days display.'
+            body.attribute :show_products_without_price, :boolean,
+              description: "Whether products with no price in the shopper's currency still appear in listings."
+            body.attribute :disable_sku_validation, :boolean,
+              description: 'Lets more than one variant share the same SKU.'
+            body.attribute :order_routing_strategy, :string,
+              description: 'The store-wide order routing strategy shorthand. Channels fall back to it.'
+            body.attribute :pricing_provider, :string,
+              description: 'Where prices come from: a registered provider key, or `internal`.'
+            body.attribute :inventory_provider, :string,
+              description: 'Where stock levels come from: a registered provider key, or `internal`.'
+            body.attribute :pricing_provider_failure_policy, :string,
+              choices: Spree::ProviderFailurePolicy::VALUES,
+              description: '`strict` refuses to price when the provider cannot answer; `fallback` uses the catalog.'
+            body.attribute :inventory_provider_failure_policy, :string,
+              choices: Spree::ProviderFailurePolicy::VALUES,
+              description: '`fallback` sells on the local stock snapshot when the provider cannot answer; `strict` refuses.'
+            body.attribute :payout_provider, :string,
+              description: 'Blank means the built-in provider: the marketplace settles by hand.'
+            body.attribute :default_payouts_schedule_interval, :string, choices: Spree::Seller::PAYOUT_INTERVALS
+            body.attribute :default_minimum_payout_amount, :decimal,
+              example: '50.00',
+              description: "In the store's currency."
+            body.attribute :auto_approve_sellers, :boolean,
+              description: 'Admits a seller as soon as they finish onboarding, with no operator review.'
+            body.attribute :auto_approve_seller_products, :boolean,
+              description: 'Puts a seller product on sale the moment it is submitted, with no review.'
+            body.attribute :send_seller_transactional_emails, :boolean,
+              description: 'When false, transactional seller emails (approval, payouts and so on) are not sent.'
+            body.attribute :default_commission_tax_rate, :decimal,
+              example: '0.23',
+              description: 'Tax charged on commission as a fraction (`"0.23"` is 23%), when neither the commission rate nor the tax provider names one.'
+            body.attribute :document_number_format, :string,
+              example: 'sequential',
+              description: 'How document numbers are produced: `sequential` or `random`. Applies to every numbered document.'
+            body.attribute :order_number_prefix, :string,
+              example: 'R',
+              description: 'Leads every order number. Uppercase letters, digits, dashes and # only.'
+            body.attribute :order_number_suffix, :string,
+              description: 'Ends every order number. Uppercase letters, digits, dashes and # only.'
+            body.attribute :order_number_sequence_start, :integer,
+              description: "The first sequential order number. Only applies before the store's first order."
+            body.attribute :limit_digital_download_count, :boolean,
+              description: 'Whether a digital download link stops working after a number of clicks.'
+            body.attribute :digital_asset_authorized_clicks, :integer,
+              description: 'How many clicks a download link allows, unless the file sets its own.'
+            body.attribute :limit_digital_download_days, :boolean,
+              description: 'Whether a digital download link expires after a number of days.'
+            body.attribute :digital_asset_authorized_days, :integer,
+              description: 'How many days a download link stays valid, unless the file sets its own.'
+            body.attribute :mail_from_address, :string, description: 'Sender address of every transactional email.'
+            body.attribute :customer_support_email, :string,
+              nullable: true,
+              description: 'Customer-facing reply-to address shown in the storefront and email footers.'
+            body.attribute :new_order_notifications_email, :string,
+              nullable: true,
+              description: 'Recipient of "new order placed" staff notifications.'
+            body.attribute :send_consumer_transactional_emails, :boolean,
+              description: 'When false, transactional customer emails (order confirmation and so on) are not sent.'
+            body.attribute :email_accent_color, :string,
+              nullable: true,
+              description: 'Customer email buttons and links, as `#RRGGBB`. Blank keeps the outlined buttons emails ship with.'
+            body.attribute :email_background_color, :string,
+              nullable: true,
+              description: 'Customer email page background, as `#RRGGBB`.'
+            body.attribute :email_card_color, :string,
+              nullable: true,
+              description: 'Customer email card behind the content, as `#RRGGBB`.'
+            body.attribute :email_text_color, :string,
+              nullable: true,
+              description: 'Customer email body text, as `#RRGGBB`.'
+            body.attribute :email_heading_color, :string,
+              nullable: true,
+              description: 'Customer email headings and emphasized text, as `#RRGGBB`.'
+            body.attribute :email_font, :string,
+              nullable: true,
+              example: 'inter',
+              description: 'Customer email font: `inter`, `system`, `helvetica`, `georgia`, `roboto`, `lato` or `merriweather`.'
+            body.attribute :logo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `files.upload()` for the store logo, or null to remove it.'
+            body.attribute :mailer_logo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `files.upload()` for the logo in transactional emails, or null to remove it.'
+          end
 
           # Reading the current store is shell data — the dashboard needs the
           # name, logo, timezone, currency and locales to render anything at
@@ -73,61 +189,10 @@ module Spree
             Spree.api.admin_store_serializer
           end
 
+          # Extensions' fields too: the store settings page saves the fields
+          # plugins add to it with the rest of the form.
           def permitted_params
-            params.permit(
-              :name,
-              :admin_locale,
-              :timezone,
-              :weight_unit,
-              :unit_system,
-              :storefront_access,
-              :storefront_url,
-              :guest_checkout,
-              :always_include_confirm_step,
-              :company_field_enabled,
-              :address_requires_company,
-              :address_requires_phone,
-              :capture_method,
-              # @deprecated Superseded by capture_method; the model maps them
-              #   onto it. Removed in 6.1.
-              :preferred_auto_capture,
-              :preferred_auto_capture_on_dispatch,
-              :track_inventory_levels,
-              :stock_reservations_enabled,
-              :low_stock_threshold,
-              :tax_using_ship_address,
-              :track_price_history,
-              :show_products_without_price,
-              :disable_sku_validation,
-              :order_routing_strategy,
-              :pricing_provider,
-              :inventory_provider,
-              :pricing_provider_failure_policy,
-              :inventory_provider_failure_policy,
-              :payout_provider,
-              :default_payouts_schedule_interval,
-              :default_minimum_payout_amount,
-              :auto_approve_sellers,
-              :auto_approve_seller_products,
-              :send_seller_transactional_emails,
-              :default_commission_tax_rate,
-              :document_number_format,
-              :order_number_prefix,
-              :order_number_suffix,
-              :order_number_sequence_start,
-              :mail_from_address,
-              :customer_support_email,
-              :new_order_notifications_email,
-              :send_consumer_transactional_emails,
-              :email_accent_color,
-              :email_background_color,
-              :email_card_color,
-              :email_text_color,
-              :email_heading_color,
-              :email_font,
-              :logo_signed_id,
-              :mailer_logo_signed_id
-            )
+            params.permit(*declared_permitted_attributes, *Array(Spree::Store.additional_permitted_attributes))
           end
         end
       end

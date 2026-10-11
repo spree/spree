@@ -72,23 +72,7 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          kind: { type: :string, enum: Spree::PackageType::KINDS },
-          length: { type: :number, nullable: true },
-          width: { type: :number, nullable: true },
-          height: { type: :number, nullable: true },
-          dimensions_unit: { type: :string, nullable: true },
-          weight: { type: :number, nullable: true, description: "The empty package's own weight, added to every quote" },
-          max_weight: { type: :number, nullable: true },
-          weight_unit: { type: :string, nullable: true },
-          default: { type: :boolean },
-          metadata: { type: :object, nullable: true }
-        },
-        required: %w[name kind]
-      }
+      request_body_for
 
       response '201', 'package type created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -167,22 +151,7 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          kind: { type: :string, enum: Spree::PackageType::KINDS },
-          length: { type: :number, nullable: true },
-          width: { type: :number, nullable: true },
-          height: { type: :number, nullable: true },
-          dimensions_unit: { type: :string, nullable: true },
-          weight: { type: :number, nullable: true },
-          max_weight: { type: :number, nullable: true },
-          weight_unit: { type: :string, nullable: true },
-          default: { type: :boolean },
-          metadata: { type: :object, nullable: true }
-        }
-      }
+      request_body_for
 
       response '200', 'package type updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

@@ -1,5 +1,4 @@
 import type {
-  AddressParams,
   ListParams,
   ListResponse,
   PaginatedResponse,
@@ -8,8 +7,11 @@ import type {
 } from '@spree/sdk-core'
 import { getParams, transformListParams } from '@spree/sdk-core'
 import type {
+  AcceptCompanyInvitationParams,
+  AddCompanyMemberParams,
   AddLineItemParams,
   Address,
+  AddressParams,
   AuthTokens,
   Cart,
   Category,
@@ -30,9 +32,14 @@ import type {
   CompletePaymentSetupSessionParams,
   Country,
   CreateCartParams,
+  CreateClaimParams,
+  CreateNewsletterSubscriberParams,
   CreatePaymentParams,
   CreatePaymentSessionParams,
   CreatePaymentSetupSessionParams,
+  CreateReturnParams,
+  CreateWishlistItemParams,
+  CreateWishlistParams,
   CreditCard,
   Currency,
   Customer,
@@ -43,6 +50,7 @@ import type {
   GiftCard,
   Locale,
   LoginCredentials,
+  LogoutParams,
   Market,
   NewsletterSubscriber,
   Order,
@@ -56,7 +64,9 @@ import type {
   ProductFiltersParams,
   ProductFiltersResponse,
   ProductListParams,
+  RefreshTokenParams,
   RegisterParams,
+  RequestNewsletterUnsubscribeParams,
   RequestPasswordResetParams,
   ResetPasswordParams,
   Return,
@@ -66,8 +76,14 @@ import type {
   StockLocation,
   StoreCredit,
   UpdateCartParams,
+  UpdateCompanyParams,
+  UpdateCustomerParams,
+  UpdateFulfillmentParams,
   UpdateLineItemParams,
   UpdatePaymentSessionParams,
+  UpdateWishlistItemParams,
+  UpdateWishlistParams,
+  VerifyNewsletterSubscriberParams,
   Wishlist,
   WishlistItem,
 } from './types'
@@ -124,13 +140,13 @@ export class StoreClient {
      * Returns new access JWT + rotated refresh token.
      * No Authorization header needed — uses refresh_token in body.
      */
-    refresh: (params: { refresh_token: string }, options?: RequestOptions): Promise<AuthTokens> =>
+    refresh: (params: RefreshTokenParams, options?: RequestOptions): Promise<AuthTokens> =>
       this.request<AuthTokens>('POST', '/auth/refresh', { ...options, body: params }),
 
     /**
      * Logout — revokes the refresh token.
      */
-    logout: (params: { refresh_token: string }, options?: RequestOptions): Promise<void> =>
+    logout: (params: LogoutParams, options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', '/auth/logout', { ...options, body: params }),
   }
 
@@ -644,7 +660,7 @@ export class StoreClient {
       update: (
         cartId: string,
         fulfillmentId: string,
-        params: { selected_delivery_rate_id: string },
+        params: UpdateFulfillmentParams,
         options?: RequestOptions,
       ): Promise<Cart> =>
         this.request<Cart>('PATCH', `/carts/${cartId}/fulfillments/${fulfillmentId}`, {
@@ -812,11 +828,7 @@ export class StoreClient {
        */
       create: (
         orderId: string,
-        params: {
-          items: Array<{ fulfillment_item_id: string; quantity: number }>
-          reason_id?: string
-          memo?: string
-        },
+        params: CreateReturnParams,
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('POST', `/orders/${orderId}/returns`, {
@@ -868,11 +880,7 @@ export class StoreClient {
        */
       create: (
         orderId: string,
-        params: {
-          items: Array<{ line_item_id: string; quantity: number; description?: string }>
-          reason_id?: string
-          memo?: string
-        },
+        params: CreateClaimParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('POST', `/orders/${orderId}/claims`, {
@@ -907,7 +915,7 @@ export class StoreClient {
      * store's allowed origins.
      */
     create: (
-      params: { email: string; redirect_url?: string },
+      params: CreateNewsletterSubscriberParams,
       options?: RequestOptions,
     ): Promise<NewsletterSubscriber> =>
       this.request<NewsletterSubscriber>('POST', '/newsletter_subscribers', {
@@ -918,7 +926,10 @@ export class StoreClient {
     /**
      * Confirm a pending subscription using the token from the confirmation email.
      */
-    verify: (params: { token: string }, options?: RequestOptions): Promise<NewsletterSubscriber> =>
+    verify: (
+      params: VerifyNewsletterSubscriberParams,
+      options?: RequestOptions,
+    ): Promise<NewsletterSubscriber> =>
       this.request<NewsletterSubscriber>('POST', '/newsletter_subscribers/verify', {
         ...options,
         body: params,
@@ -932,7 +943,7 @@ export class StoreClient {
      * payload when it's not in the store's allowed origins.
      */
     requestUnsubscribe: (
-      params: { email: string; redirect_url?: string },
+      params: RequestNewsletterUnsubscribeParams,
       options?: RequestOptions,
     ): Promise<void> =>
       this.request<void>('POST', '/newsletter_subscribers/request_unsubscribe', {
@@ -963,22 +974,7 @@ export class StoreClient {
     /**
      * Update current customer profile
      */
-    update: (
-      params: {
-        first_name?: string
-        last_name?: string
-        email?: string
-        password?: string
-        password_confirmation?: string
-        /** Required when changing email or password */
-        current_password?: string
-        accepts_email_marketing?: boolean
-        phone?: string
-        /** Arbitrary key-value metadata (stored, not returned in responses) */
-        metadata?: Record<string, unknown>
-      },
-      options?: RequestOptions,
-    ): Promise<Customer> =>
+    update: (params: UpdateCustomerParams, options?: RequestOptions): Promise<Customer> =>
       this.request<Customer>('PATCH', '/customers/me', {
         ...options,
         body: params,
@@ -1018,11 +1014,7 @@ export class StoreClient {
       /**
        * Update an address
        */
-      update: (
-        id: string,
-        params: Partial<AddressParams>,
-        options?: RequestOptions,
-      ): Promise<Address> =>
+      update: (id: string, params: AddressParams, options?: RequestOptions): Promise<Address> =>
         this.request<Address>('PATCH', `/customers/me/addresses/${id}`, {
           ...options,
           body: params,
@@ -1264,7 +1256,7 @@ export class StoreClient {
     get: (id: string, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('GET', `/companies/${id}`, options),
 
-    update: (id: string, params: { name?: string }, options?: RequestOptions): Promise<Company> =>
+    update: (id: string, params: UpdateCompanyParams, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('PATCH', `/companies/${id}`, { ...options, body: params }),
 
     addresses: {
@@ -1291,7 +1283,7 @@ export class StoreClient {
       update: (
         companyId: string,
         id: string,
-        params: Partial<CompanyAddressParams>,
+        params: CompanyAddressParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {
@@ -1325,7 +1317,7 @@ export class StoreClient {
        */
       create: (
         companyId: string,
-        params: { customer_email: string },
+        params: AddCompanyMemberParams,
         options?: RequestOptions,
       ): Promise<CompanyInvitation> =>
         this.request<CompanyInvitation>('POST', `/companies/${companyId}/members`, {
@@ -1392,13 +1384,7 @@ export class StoreClient {
      */
     accept: (
       token: string,
-      params?: {
-        first_name?: string
-        last_name?: string
-        phone?: string
-        password?: string
-        password_confirmation?: string
-      },
+      params?: AcceptCompanyInvitationParams,
       options?: RequestOptions,
     ): Promise<CompanyMembership> =>
       this.request<CompanyMembership>('POST', `/company_invitations/${token}/accept`, {
@@ -1444,10 +1430,7 @@ export class StoreClient {
     /**
      * Create a wishlist
      */
-    create: (
-      params: { name: string; is_private?: boolean; is_default?: boolean },
-      options?: RequestOptions,
-    ): Promise<Wishlist> =>
+    create: (params: CreateWishlistParams, options?: RequestOptions): Promise<Wishlist> =>
       this.request<Wishlist>('POST', '/wishlists', {
         ...options,
         body: params,
@@ -1458,7 +1441,7 @@ export class StoreClient {
      */
     update: (
       id: string,
-      params: { name?: string; is_private?: boolean; is_default?: boolean },
+      params: UpdateWishlistParams,
       options?: RequestOptions,
     ): Promise<Wishlist> =>
       this.request<Wishlist>('PATCH', `/wishlists/${id}`, {
@@ -1481,7 +1464,7 @@ export class StoreClient {
        */
       create: (
         wishlistId: string,
-        params: { variant_id: string; quantity?: number },
+        params: CreateWishlistItemParams,
         options?: RequestOptions,
       ): Promise<WishlistItem> =>
         this.request<WishlistItem>('POST', `/wishlists/${wishlistId}/items`, {
@@ -1495,7 +1478,7 @@ export class StoreClient {
       update: (
         wishlistId: string,
         itemId: string,
-        params: { quantity: number },
+        params: UpdateWishlistItemParams,
         options?: RequestOptions,
       ): Promise<WishlistItem> =>
         this.request<WishlistItem>('PATCH', `/wishlists/${wishlistId}/items/${itemId}`, {

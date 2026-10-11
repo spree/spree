@@ -8,6 +8,7 @@
     "test": "turbo test",
     "generate:zod": "pnpm --recursive --filter \"./packages/*\" run generate:zod",
     "generate:filters": "pnpm --recursive --filter \"./packages/*\" run generate:filters",
+    "generate:params": "pnpm --recursive --filter \"./packages/*\" run generate:params",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "format": "turbo format",

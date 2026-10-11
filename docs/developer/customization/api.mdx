@@ -152,7 +152,7 @@ Override these methods to customize:
 | `serializer_class` | Alba serializer (required) |
 | `scope` | Base query — add `.where()` to filter |
 | `find_resource` | Custom ID lookup (slug fallback, etc.) |
-| `permitted_params` | Custom strong params |
+| `permitted_params` | Custom strong params (prefer `request_params`) |
 | `collection_includes` | Eager loading for `index` |
 
 ### Routes
@@ -171,24 +171,84 @@ Spree::Core::Engine.add_routes do
 end
 ```
 
-### Permitted Attributes
+### Request Parameters
 
-For endpoints that accept writes (create/update), declare the attributes in your
-controller:
+For endpoints that accept writes (create/update), declare what the body takes
+with `request_params`, at the top of the controller. Each attribute names its
+type, the way a model attribute or a [preference](/developer/customization/model-preferences) does:
 
-```ruby
-def resource_permitted_attributes
-  [:name, :slug, :description, :logo]
+```ruby app/controllers/spree/api/v3/admin/brands_controller.rb
+request_params :brand do |body|
+  body.attribute :name, :string, required: true, on: :create
+  body.attribute :slug, :string
+  body.attribute :description, :string, description: 'Shown on the brand page.'
+  body.attribute :region_ids, :array, of: :id
+  body.attribute :metadata, :hash
 end
 ```
 
-Entries are `params.permit` fragments, so collections and nested structures use
-the shapes you would pass there directly — `[:name, { region_ids: [] }]`.
+This one declaration is the endpoint's contract: the controller permits exactly
+these keys and nesting, and nothing else. Spree's own endpoints publish the same
+declarations in the [API reference](/api-reference/introduction), and the SDK request types
+(`ProductCreateParams`, `ProductUpdateParams`, …) are generated from it, so the
+controller, the reference and the TypeScript types cannot drift apart.
+
+| Type | Sent as |
+|------|---------|
+| `:string`, `:boolean`, `:integer` | the JSON type of the same name |
+| `:decimal` | a canonical decimal string (`"19.99"`) — every amount of money |
+| `:number` | a JSON number — weights, dimensions, coordinates |
+| `:id` | a prefixed ID (`brand_k5nR8xLq`) |
+| `:country`, `:currency` | an ISO 3166-1 alpha-2 or ISO 4217 code, typed `CountryCode` / `CurrencyCode` |
+| `:date`, `:datetime` | ISO 8601 strings |
+| `:hash` | an object with any keys, such as `metadata` |
+| `:object` | an object with declared attributes: a block, or a shared `shape:` |
+| `:array` | a list: `of:` a type or a shared shape, or a block for its items |
+| `:any` | a scalar, a list or a hash |
+
+| Option | Meaning |
+|------|---------|
+| `required: true` | Required on create and update; add `on: :create` to require it only when creating |
+| `only: :create` | Accepted on one action alone (`:update` for the other) |
+| `choices:` | The values it takes; add `open: true` when extensions may add more |
+| `nullable: true` | Accepts `null`, usually to clear a value |
+| `description:`, `example:`, `format:` | Documentation for the API reference and the SDK types |
+| `deprecated: 'Use x. Removed in 6.1.'` | Keeps it working while the reference and the types flag it |
+| `permit: false` | Documented, but read by the action itself rather than permitted |
+
+A custom action declares its own body with a name ending in `Params`:
+`request_params 'BrandMergeParams', action: :merge do |body| ... end`.
+
+A shape several endpoints accept, such as an address or a price, is a class in
+`app/request_schemas`, declared the way a model declares its attributes. A
+subclass starts from its parent's attributes:
+
+```ruby app/request_schemas/spree/api/v3/brand_logo_request_schema.rb
+module Spree
+  module Api
+    module V3
+      class BrandLogoRequestSchema < Spree::Api::V3::RequestSchema
+        publishes 'BrandLogoParams'
+
+        attribute :signed_id, :string, required: true
+        attribute :alt, :string
+      end
+    end
+  end
+end
+```
+
+Endpoints then reference it, `body.attribute :logo, :object, shape: Spree::Api::V3::BrandLogoRequestSchema`,
+or take its attributes into their own body with `body.include_attributes Spree::Api::V3::BrandLogoRequestSchema`.
+Without `publishes` the class is a set of attributes other declarations
+include, not a type of its own.
 
 <Note>
-  Declare `resource_permitted_attributes`, not `permitted_attributes`. The
-  latter is what appends extension-contributed attributes to your list, so
-  overriding it replaces them.
+  An endpoint that needs logic of its own can still override
+  `resource_permitted_attributes` with a plain `params.permit` list, but then
+  its body is neither documented nor typed. Never override
+  `permitted_attributes`: it is what appends extension-contributed attributes
+  to your list, so overriding it replaces them.
 </Note>
 
 ### Adding an Attribute to a Core Resource

@@ -77,20 +77,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, description: 'Customer-facing rate name, e.g. "VAT"' },
-          rate: { type: :string, description: 'Rate as a decimal string, e.g. "0.19"' },
-          rate_percent: { type: :string, description: 'Rate as a percentage string, e.g. "19"' },
-          included_in_price: { type: :boolean },
-          show_rate_in_label: { type: :boolean },
-          tax_category_id: { type: :string },
-          country_code: { type: :string, description: 'ISO code, e.g. "DE". Omit for every country.' },
-          state_code: { type: :string, description: 'State abbreviation within that country, e.g. "CA".' }
-        },
-        required: %w[name tax_category_id]
-      }
+      request_body_for
 
       response '201', 'tax rate created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -153,19 +140,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          rate: { type: :string },
-          rate_percent: { type: :string },
-          included_in_price: { type: :boolean },
-          show_rate_in_label: { type: :boolean },
-          tax_category_id: { type: :string },
-          country_code: { type: :string },
-          state_code: { type: :string }
-        }
-      }
+      request_body_for
 
       response '200', 'tax rate updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

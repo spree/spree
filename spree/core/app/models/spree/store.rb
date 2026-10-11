@@ -41,11 +41,13 @@ module Spree
     #
     # Preferences
     #
+    UNIT_SYSTEMS = %w[metric imperial].freeze
+
     # general preferences
     preference :admin_locale, :string, format: :locale
     preference :timezone, :string, format: :timezone, default: Time.zone.name
     preference :weight_unit, :string, default: 'lb', choices: -> { Spree::Variant::WEIGHT_UNITS }
-    preference :unit_system, :string, default: 'imperial'
+    preference :unit_system, :string, default: 'imperial', choices: -> { UNIT_SYSTEMS }
     # Anonymous identifier of this installation, kept on the default store
     # (see Spree.install_id). Written by Spree, never by the operator.
     preference :install_id, :string, internal: true, nullable: true
@@ -360,6 +362,10 @@ module Spree
     validates :preferred_default_commission_tax_rate,
               numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
+    # Blank falls back to the defaults where they are read, so a store saved
+    # with one before these checks existed stays savable.
+    validates :preferred_unit_system, inclusion: { in: UNIT_SYSTEMS }, allow_blank: true
+    validates :preferred_weight_unit, inclusion: { in: Spree::Variant::WEIGHT_UNITS }, allow_blank: true
     validates :preferred_document_number_format,
               inclusion: { in: Spree::NumberGenerators::Registry::FORMATS.keys }
     validates :preferred_order_number_sequence_start,

@@ -22,10 +22,6 @@ module Spree
         # says; a seller reaches `active` only through review
         # (docs/plans/6.0-seller-product-submission.md).
         class ImportsController < Seller::ResourceController
-          include Spree::Api::V3::LegacyPreferenceParams
-
-          accepts_legacy_preference_params Spree::Import
-
           include ActiveStorage::SetCurrent
 
           # The import types a seller may run. An operator's `customers` or
@@ -35,6 +31,28 @@ module Spree
           PERMITTED_TYPES = ['Spree::Imports::Products'].freeze
 
           scoped_resource :products
+
+          request_params 'ImportCreateParams' do |body|
+            body.attribute :type, :string, required: true, choices: %w[products]
+            body.attribute :attachment_signed_id, :string,
+              required: true,
+              description: "The `signed_id` of the uploaded CSV, from `POST /files` with `visibility: 'private'`."
+            body.attribute :delimiter, :string, description: 'CSV column separator. Defaults to a comma.'
+            body.attribute :results_url, :string,
+              description: "Absolute URL of the panel's imports view; the import-done email links back to it. Honored only when it matches one of the store's allowed origins."
+          end
+
+          request_params 'ImportCompleteMappingParams', action: :complete_mapping do |body|
+            body.attribute :mappings, :array,
+              permit: false,
+              description: 'Column assignments to apply before processing starts.' do |mapping|
+              mapping.attribute :schema_field, :string, required: true, description: 'Canonical schema field name.'
+              mapping.attribute :file_column, :string,
+                required: true,
+                nullable: true,
+                description: 'CSV header to read the field from; `null` unmaps the field.'
+            end
+          end
 
           # POST /api/v3/seller/imports
           #
@@ -246,7 +264,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment_signed_id, :delimiter, :results_url)
+            params.permit(*permitted_attributes)
           end
 
           # The registered Import subclass matching `name`, or nil.

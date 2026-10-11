@@ -19,6 +19,80 @@ module Spree
           before_action :set_resource, only: [:show, :update, :destroy, :invite, :approve, :suspend, :reject,
                                               :onboarding, :reopen_onboarding]
 
+          # Enumerated rather than borrowing the legacy global list, which
+          # permits :id, :user_id and :deleted_at — the first of which would
+          # reintroduce the address-by-id hole below.
+          # The seller's own profile fields, plus the settlement and tax
+          # configuration only the operator sets. `status` is absent by
+          # design — see the class comment.
+          #
+          # Addresses are written as nested attributes, never as ids: an
+          # address has no store of its own, so accepting `billing_address_id`
+          # would bind an arbitrary row and the serializer would render it
+          # back in full — an enumeration oracle over every customer address
+          # on the installation.
+          request_params :seller do |body|
+            body.external_references
+            body.attribute :name, :string, required: true, on: :create, example: 'Northwind Books'
+            body.attribute :slug, :string,
+              example: 'northwind-books',
+              description: 'URL-safe slug, derived from the name when omitted.'
+            body.attribute :contact_email, :string, nullable: true, example: 'hi@northwind.example'
+            body.attribute :billing_email, :string, nullable: true, example: 'billing@northwind.example'
+            body.attribute :about, :string,
+              nullable: true,
+              example: '<p>Independent bookshop.</p>',
+              description: "Sanitized HTML: the seller's public description."
+            body.attribute :logo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from the files upload endpoint to set the image, `null` to remove it, or omit the key to leave it untouched. The same applies to `square_logo_signed_id` and `cover_photo_signed_id`.'
+            body.attribute :square_logo_signed_id, :string, nullable: true
+            body.attribute :cover_photo_signed_id, :string, nullable: true
+            body.attribute :tax_remittance, :string, choices: Spree::Seller::TAX_REMITTANCES, example: 'seller'
+            body.attribute :payouts_schedule_interval, :string,
+              nullable: true,
+              choices: Spree::Seller::PAYOUT_INTERVALS
+            body.attribute :minimum_payout_amount, :decimal, nullable: true, example: '25.0'
+            body.attribute :holiday_mode_until, :datetime,
+              nullable: true,
+              description: 'Set while the seller is away: the catalog stays but stops selling.'
+            body.attribute :legal_name, :string, nullable: true
+            body.attribute :registration_number, :string, nullable: true
+            body.attribute :metadata, :hash
+            body.attribute :billing_address, :object,
+              as: 'SellerAddressParams',
+              description: "The seller's own billing address, written inline. There is no `billing_address_id`: an address belongs to whoever it was created for, so it is never referenced by id." do |billing_address|
+              billing_address.include_attributes Spree::Api::V3::AddressRequestSchema
+            end
+            body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
+              description: 'Custom field values, each validated against its definition.'
+          end
+
+          request_params 'SellerInviteParams', action: :invite do |body|
+            body.attribute :email, :string, required: true, example: 'seller@example.com'
+            body.attribute :role_id, :id,
+              nullable: true,
+              example: 'role_UkLWZg9DAJ',
+              description: "A role this seller owns; defaults to the seller's own admin role."
+          end
+
+          request_params 'SellerApproveParams', action: :approve do |body|
+            body.attribute :override_requirements, :boolean,
+              description: 'Admits a seller whose onboarding checklist is unfinished: the operator\'s deliberate exception, which the `seller.approved` event records along with what was outstanding.'
+          end
+
+          request_params 'SellerReopenOnboardingParams', action: :reopen_onboarding do |body|
+            body.attribute :note, :string, description: 'What the seller has to fix.'
+          end
+
+          request_params 'SellerSuspendParams', action: :suspend do |body|
+            body.attribute :reason, :string, example: 'Counterfeit goods'
+          end
+
+          request_params 'SellerRejectParams', action: :reject do |body|
+            body.attribute :reason, :string, example: 'Incomplete paperwork'
+          end
+
           # POST /api/v3/admin/sellers/:id/invite
           #
           # Opens the seller's team to someone. They become a member when they
@@ -125,29 +199,8 @@ module Spree
              { store: :seller_requirements, logo_attachment: :blob, cover_photo_attachment: :blob }]
           end
 
-          # Enumerated rather than borrowing the legacy global list, which
-          # permits :id, :user_id and :deleted_at — the first of which would
-          # reintroduce the address-by-id hole below.
-          # The seller's own profile fields, plus the settlement and tax
-          # configuration only the operator sets. `status` is absent by
-          # design — see the class comment.
-          #
-          # Addresses are written as nested attributes, never as ids: an
-          # address has no store of its own, so accepting `billing_address_id`
-          # would bind an arbitrary row and the serializer would render it
-          # back in full — an enumeration oracle over every customer address
-          # on the installation.
           def permitted_params
-            normalize_params(
-              params.permit(:name, :slug, :contact_email, :billing_email, :about,
-                            :logo_signed_id, :square_logo_signed_id, :cover_photo_signed_id,
-                            :tax_remittance, :payouts_schedule_interval, :minimum_payout_amount,
-                            :holiday_mode_until,
-                            :legal_name, :registration_number,
-                            metadata: {},
-                            billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
-                            custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }])
-            )
+            normalize_params(params.permit(*declared_permitted_attributes))
           end
 
           # Creating a seller provisions their stock location too, so it goes

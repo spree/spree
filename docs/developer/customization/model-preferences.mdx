@@ -139,7 +139,7 @@ module Spree
 end
 ```
 
-**3. Accept it in the controller.** Exposing a setting does not make it writable: the controller decides, as for any attribute (see [permitted attributes](/developer/customization/api#permitted-attributes)):
+**3. Accept it in the controller.** Exposing a setting does not make it writable: the controller decides, as for any attribute (see [request parameters](/developer/customization/api#request-parameters)):
 
 ```ruby server/app/controllers/spree/api/v3/admin/brands_controller.rb
 def resource_permitted_attributes

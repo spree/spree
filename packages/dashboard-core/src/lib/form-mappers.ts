@@ -1,3 +1,4 @@
+import type { CountryCode } from '@spree/admin-sdk'
 import type { PanelAccountParams } from '../api-client'
 
 /**
@@ -91,7 +92,7 @@ export function editableAddressToStockLocationParams(values: {
   address2?: string | null
   city?: string | null
   postal_code?: string | null
-  country_code?: string | null
+  country_code?: CountryCode | null
   state_code?: string | null
   phone?: string | null
 }) {

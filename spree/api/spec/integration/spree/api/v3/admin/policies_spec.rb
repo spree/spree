@@ -79,15 +79,7 @@ RSpec.describe 'Admin Policies API', type: :request, swagger_doc: 'api-reference
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Wholesale Policy' },
-          slug: { type: :string, example: 'wholesale-policy' },
-          body: { type: :string, example: '<p>Trade orders ship within five working days.</p>' }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'policy created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -167,14 +159,7 @@ RSpec.describe 'Admin Policies API', type: :request, swagger_doc: 'api-reference
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          slug: { type: :string },
-          body: { type: :string }
-        }
-      }
+      request_body_for
 
       response '200', 'policy updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

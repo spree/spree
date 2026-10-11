@@ -51,20 +51,7 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[email],
-        properties: {
-          email: { type: :string, example: 'new@example.com' },
-          first_name: { type: :string },
-          last_name: { type: :string },
-          phone: { type: :string },
-          accepts_email_marketing: { type: :boolean },
-          internal_note: { type: :string },
-          tags: { type: :array, items: { type: :string } },
-          metadata: { type: :object }
-        }
-      }
+      request_body_for
 
       response '201', 'customer created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -123,19 +110,7 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string },
-          first_name: { type: :string },
-          last_name: { type: :string },
-          phone: { type: :string },
-          accepts_email_marketing: { type: :boolean },
-          internal_note: { type: :string },
-          tags: { type: :array, items: { type: :string } },
-          metadata: { type: :object }
-        }
-      }
+      request_body_for
 
       response '200', 'customer updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -186,14 +161,7 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids customer_group_ids],
-        properties: {
-          ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ', 'cus_QrLWXg9CAJ'] },
-          customer_group_ids: { type: :array, items: { type: :string }, example: ['cg_UkLWZg9DAJ'] }
-        }
-      }
+      request_body_for
 
       response '200', 'customers added to groups' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -230,14 +198,7 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids customer_group_ids],
-        properties: {
-          ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ'] },
-          customer_group_ids: { type: :array, items: { type: :string }, example: ['cg_UkLWZg9DAJ'] }
-        }
-      }
+      request_body_for
 
       response '200', 'customers removed from groups' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -276,14 +237,7 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids tags],
-        properties: {
-          ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ'] },
-          tags: { type: :array, items: { type: :string }, example: %w[vip newsletter] }
-        }
-      }
+      request_body_for
 
       response '200', 'tags added' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -320,14 +274,7 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids tags],
-        properties: {
-          ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ'] },
-          tags: { type: :array, items: { type: :string }, example: ['vip'] }
-        }
-      }
+      request_body_for
 
       response '200', 'tags removed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

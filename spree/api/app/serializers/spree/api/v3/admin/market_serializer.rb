@@ -3,6 +3,9 @@ module Spree
     module V3
       module Admin
         class MarketSerializer < V3::MarketSerializer
+          # The Store API keeps this deprecated name until 6.1.
+          _attributes.delete(:country_isos)
+
           typelize tax_provider: [:string, nullable: true, comment: 'Tax provider; null uses the store default. Built-in: internal. Provider gems register more.']
 
           attributes created_at: :iso8601, updated_at: :iso8601

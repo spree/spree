@@ -92,10 +92,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { name: { type: :string, example: 'Acme Industrial Group' } }
-      }
+      request_body_for
 
       response '200', 'company updated' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -153,11 +150,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { customer_email: { type: :string, example: 'colleague@acme.test' } },
-        required: ['customer_email']
-      }
+      request_body_for
 
       response '201', 'invitation sent' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -243,13 +236,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          label: { type: :string, example: 'Northern Warehouse' },
-          default_shipping: { type: :boolean, example: true }
-        }
-      }
+      request_body_for
 
       response '200', 'address book entry updated' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -396,15 +383,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
       sdk_example 'company-invitations/accept'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string, example: 'Ada' },
-          last_name: { type: :string, example: 'Lovelace' },
-          password: { type: :string, example: 'a-strong-password' },
-          password_confirmation: { type: :string, example: 'a-strong-password' }
-        }
-      }
+      request_body_for
 
       response '201', 'membership created' do
         let!(:invitation) { create(:company_invitation, company: company, email: 'new@acme.test') }

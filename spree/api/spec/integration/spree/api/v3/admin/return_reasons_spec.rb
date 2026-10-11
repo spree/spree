@@ -65,14 +65,7 @@ RSpec.describe 'Admin Return Reasons API', type: :request, swagger_doc: 'api-ref
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[name],
-        properties: {
-          name: { type: :string, example: 'Damaged in transit' },
-          active: { type: :boolean, example: true, description: 'Inactive reasons are hidden from the pickers on new records.' }
-        }
-      }
+      request_body_for
 
       response '201', 'return reason created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -149,13 +142,7 @@ RSpec.describe 'Admin Return Reasons API', type: :request, swagger_doc: 'api-ref
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          active: { type: :boolean }
-        }
-      }
+      request_body_for
 
       response '200', 'return reason updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

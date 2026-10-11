@@ -5,7 +5,8 @@ module Spree
         include Alba::Resource
         include Typelizer::DSL
 
-        typelize iso_code: :string, name: :string, symbol: :string, decimal_places: :number
+        typelize iso_code: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], name: :string, symbol: :string,
+                 decimal_places: :number
 
         attributes :iso_code, :name, :symbol
 

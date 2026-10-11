@@ -22,6 +22,14 @@ module Spree
                      only: [:lookup, :accept],
                      with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
 
+          request_params 'InvitationAcceptParams', action: :accept do |body|
+            body.attribute :password, :string,
+              description: 'Sets the password of a new account, or confirms the password of an existing one.'
+            body.attribute :password_confirmation, :string
+            body.attribute :first_name, :string, description: 'Used only when the invitation creates a new account.'
+            body.attribute :last_name, :string, description: 'Used only when the invitation creates a new account.'
+          end
+
           # GET /api/v3/seller/auth/invitations/:id/lookup?token=:token
           def lookup
             return unless load_invitation
@@ -121,7 +129,7 @@ module Spree
           end
 
           def signup_params(invitation)
-            params.permit(:password, :password_confirmation, :first_name, :last_name).
+            params.permit(*declared_permitted_attributes).
               merge(email: invitation.email)
           end
 

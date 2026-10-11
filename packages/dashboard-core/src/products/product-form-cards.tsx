@@ -13,6 +13,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import type { CurrencyCode } from '@spree/admin-sdk'
 import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
 import {
   getApiClient,
@@ -198,8 +199,8 @@ export function PricesCard({
    * StoreProvider; a seller's tenant is a seller and the store is derived
    * server-side, so it passes the currencies its profile reports.
    */
-  currencies?: string[]
-  defaultCurrency?: string
+  currencies?: CurrencyCode[]
+  defaultCurrency?: CurrencyCode
 }) {
   const { t } = useTranslation()
   const store = useOptionalStore()
@@ -208,7 +209,7 @@ export function PricesCard({
   // Not `useState(defaultCurrency)` alone: the store (or the seller's profile)
   // arrives after the first render, so a state seeded from the fallback would
   // stick and price everything in the wrong currency.
-  const [selectedCurrency, setCurrency] = useState<string | null>(null)
+  const [selectedCurrency, setCurrency] = useState<CurrencyCode | null>(null)
   const currency = selectedCurrency ?? defaultCurrency
 
   // Until the real default arrives there is no currency to price in, and an
@@ -224,7 +225,10 @@ export function PricesCard({
           {t('admin.common.prices')}
         </CardTitle>
         {currencies.length > 1 && (
-          <Select value={currency} onValueChange={setCurrency}>
+          <Select
+            value={currency}
+            onValueChange={(next) => setCurrency(currencies.find((code) => code === next) ?? null)}
+          >
             <SelectTrigger size="sm" className="w-24">
               <SelectValue />
             </SelectTrigger>

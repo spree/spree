@@ -17,11 +17,43 @@ module Spree
         # `Spree::DeliveryMethod` validates and why neither provider is
         # writable here.
         class DeliveryMethodsController < Seller::ResourceController
-          include Spree::Api::V3::LegacyPreferenceParams
-
-          accepts_legacy_calculator_params
-
           scoped_resource :delivery_methods
+
+          # No provider fields: both are fixed for a seller's method, and
+          # permitting them would let a write fail validation for a choice the
+          # seller was never offered. No markup either — that prices a
+          # carrier's quote, and a seller has no carrier.
+          request_params 'DeliveryMethodParams' do |body|
+            body.attribute :name, :string
+            body.attribute :admin_name, :string, nullable: true
+            body.attribute :code, :string, nullable: true
+            body.attribute :delivery_profile_id, :id, description: "One of the marketplace's delivery profiles."
+            body.attribute :delivery_zone_id, :id,
+              nullable: true,
+              description: 'Narrows where the method ships; null serves everywhere the profile reaches.'
+            body.attribute :storefront_visible, :boolean
+            body.attribute :tracking_url, :string, nullable: true
+            body.attribute :estimated_transit_business_days_min, :integer, nullable: true
+            body.attribute :estimated_transit_business_days_max, :integer, nullable: true
+            body.attribute :calculator, :object,
+              description: "How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type's `schema`." do |calculator|
+              calculator.attribute :type, :string, example: 'flat_rate'
+              calculator.attribute :preferences, :hash, example: { amount: '12.5' }
+            end
+            # Permitted in `permitted_params`, together with the attributes
+            # the seller's rule kinds declare on their own classes.
+            body.attribute :rules, :array,
+              permit: false,
+              as: 'DeliveryMethodRuleParams',
+              description: 'Replaces the whole set: a rule dropped here is deleted, so re-send surviving rules with their `id`. An empty list clears every condition.' do |rule|
+              rule.attribute :id, :id
+              rule.attribute :type, :string,
+                required: true,
+                description: 'A type from `/delivery_methods/rule_types`.'
+              rule.attribute :active, :boolean
+              rule.attribute :preferences, :hash
+            end
+          end
 
           # GET /api/v3/seller/delivery_methods/calculators
           # The ways a seller can price a method, with the preference schema
@@ -122,18 +154,10 @@ module Spree
             action_name == 'show' ? super : resource_scope.find_by_prefix_id!(params[:id])
           end
 
-          # No provider fields: both are fixed for a seller's method, and
-          # permitting them would let a write fail validation for a choice the
-          # seller was never offered. No markup either — that prices a
-          # carrier's quote, and a seller has no carrier.
           def permitted_params
             params.permit(
-              *model_additional_permitted_attributes,
-              :name, :admin_name, :code, :storefront_visible, :tracking_url,
-              :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :delivery_profile_id, :delivery_zone_id,
-              calculator: [:type, { preferences: {} }],
-              rules: [:id, :type, :active, { preferences: {} }, *subclassed_rule_attributes]
+              *permitted_attributes,
+              rules: [*request_params_schema.fields[:rules].schema.permit_list, *subclassed_rule_attributes]
             )
           end
 

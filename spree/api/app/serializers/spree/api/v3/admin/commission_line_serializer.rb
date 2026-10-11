@@ -21,9 +21,9 @@ module Spree
                    commission_rate_id: 'string | null',
                    kind: [:string, enum: Spree::CommissionRate::KINDS],
                    taxability_reason: 'string | null',
-                   country_code: 'string | null',
+                   country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    state_code: 'string | null',
-                   currency: :string
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode']
 
           # The treatment, in Spree::TaxLine's vocabulary — a seller's invoice
           # has to explain why its fee was taxed the way it was, and the

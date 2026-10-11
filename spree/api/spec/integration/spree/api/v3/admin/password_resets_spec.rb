@@ -29,18 +29,7 @@ RSpec.describe 'Admin Password Resets API', type: :request, swagger_doc: 'api-re
       admin_sdk_example 'auth/request-password-reset'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'admin@example.com' },
-          redirect_url: {
-            type: :string,
-            example: 'https://admin.your-store.com/reset-password',
-            description: 'Honoured only on the dashboard origin, for an account that is staff of the store; ignored otherwise.'
-          }
-        },
-        required: %w[email]
-      }
+      request_body_for
 
       response '202', 'reset requested' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -72,14 +61,7 @@ RSpec.describe 'Admin Password Resets API', type: :request, swagger_doc: 'api-re
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, description: 'The reset token from the emailed link'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          password: { type: :string, example: 'new-password-123' },
-          password_confirmation: { type: :string, example: 'new-password-123' }
-        },
-        required: %w[password password_confirmation]
-      }
+      request_body_for
 
       response '200', 'password reset' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

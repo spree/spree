@@ -57,14 +57,7 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
 
       admin_sdk_example 'company-tax-identifiers/create'
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          kind: { type: :string, description: 'The regime the number belongs to.', example: 'gb_vat' },
-          value: { type: :string, example: 'GB123456789' }
-        },
-        required: %w[kind value]
-      }
+      request_body_for
 
       response '201', 'registration created' do
         let(:body) { { kind: 'gb_vat', value: 'GB123456789' } }

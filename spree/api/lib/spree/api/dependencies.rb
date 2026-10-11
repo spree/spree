@@ -45,7 +45,7 @@ module Spree
            email_template_sample_record file_upload file_upload_target].freeze
 
       SELLER_SERIALIZERS =
-        %i[profile policy team_member account invitation invitation_acceptance_link product product_type
+        %i[address profile policy team_member account invitation invitation_acceptance_link product product_type
            delivery_profile delivery_method delivery_method_rule delivery_zone variant media stock_level order
            order_line_item fulfillment fulfillment_item delivery delivery_rate shipping_label return
            return_line_item exchange exchange_line_item claim claim_line_item reason package_type stock_location

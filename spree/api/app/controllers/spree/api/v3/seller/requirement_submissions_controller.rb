@@ -12,6 +12,16 @@ module Spree
         class RequirementSubmissionsController < Seller::BaseController
           scoped_resource :seller_profile
 
+          # `file_signed_id` comes from POST /files, so the bytes are already in
+          # storage by the time this runs.
+          request_params 'RequirementSubmissionParams' do |body|
+            body.attribute :note, :string, description: 'Anything the seller wants to say alongside the submission.'
+            body.attribute :reference, :string,
+              description: 'A reference number or external identifier, for requirements that ask for one.'
+            body.attribute :file_signed_id, :string,
+              description: 'A `signed_id` from `POST /files`, for requirements that ask for a document.'
+          end
+
           before_action :set_requirement, only: [:create]
           before_action :set_submission, only: [:download]
 
@@ -57,11 +67,8 @@ module Spree
 
           protected
 
-          # What a seller may say about a requirement. `file_signed_id` comes
-          # from POST /files, so the bytes are already in storage by the time
-          # this runs.
           def permitted_params
-            params.permit(:note, :reference, :file_signed_id)
+            params.permit(*declared_permitted_attributes)
           end
 
           def read_actions

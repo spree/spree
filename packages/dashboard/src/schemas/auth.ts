@@ -1,4 +1,4 @@
-import { i18n } from '@spree/dashboard-core'
+import { countryCodeSchema, currencyCodeSchema, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 // Lazy message factories — Zod v4 accepts `{ error: () => string }` as an
@@ -69,9 +69,9 @@ export const setupFormSchema = z
     password: z.string().min(8, { error: passwordMinLength }),
     password_confirmation: z.string(),
     store_name: z.string().min(1, { error: () => i18n.t('admin.validation.store_name_required') }),
-    country_code: z.string().min(1, { error: () => i18n.t('admin.validation.country_required') }),
+    country_code: countryCodeSchema,
     locale: z.string().min(1),
-    currency: z.string().min(1, { error: () => i18n.t('admin.validation.currency_required') }),
+    currency: currencyCodeSchema,
     sample_data: z.boolean(),
   })
   .refine((data) => data.password === data.password_confirmation, {

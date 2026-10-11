@@ -79,15 +79,7 @@ RSpec.describe 'Admin Customer Groups API', type: :request, swagger_doc: 'api-re
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[name],
-        properties: {
-          name: { type: :string, example: 'Wholesale' },
-          description: { type: :string, example: 'B2B accounts', nullable: true },
-          customer_ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ'] }
-        }
-      }
+      request_body_for
 
       response '201', 'customer group created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -197,14 +189,7 @@ RSpec.describe 'Admin Customer Groups API', type: :request, swagger_doc: 'api-re
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'VIP customers (Q1)' },
-          description: { type: :string, example: 'Updated description', nullable: true },
-          customer_ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ'] }
-        }
-      }
+      request_body_for
 
       response '200', 'customer group updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

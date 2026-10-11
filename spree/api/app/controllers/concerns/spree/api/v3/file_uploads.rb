@@ -27,7 +27,7 @@ module Spree
         private
 
         def file_upload_params
-          params.permit(:filename, :content_type, :byte_size, :checksum, :visibility, :file).to_h.symbolize_keys
+          params.permit(*declared_permitted_attributes).to_h.symbolize_keys
         end
       end
     end

@@ -74,17 +74,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[amount],
-        properties: {
-          amount: { type: :string, example: '25.00', description: 'Decimal amount, greater than zero.' },
-          currency: { type: :string, example: 'USD', description: 'ISO 4217 currency code. Defaults to the store currency.' },
-          code: { type: :string, example: 'WELCOME50', description: 'Optional caller-supplied code. Auto-generated when omitted.' },
-          expires_at: { type: :string, example: '2030-12-31', description: 'ISO 8601 date.', nullable: true },
-          customer_id: { type: :string, example: 'cus_UkLWZg9DAJ', description: 'Optional customer prefixed ID.', nullable: true }
-        }
-      }
+      request_body_for
 
       response '201', 'gift card created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -164,14 +154,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          amount: { type: :string, example: '75.00' },
-          expires_at: { type: :string, example: '2031-12-31', nullable: true },
-          customer_id: { type: :string, example: 'cus_UkLWZg9DAJ', nullable: true }
-        }
-      }
+      request_body_for
 
       response '200', 'gift card updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

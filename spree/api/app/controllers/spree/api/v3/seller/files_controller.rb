@@ -11,6 +11,10 @@ module Spree
 
           scoped_resource :seller_profile
 
+          request_params 'FileUploadCreateParams', action: :create do |body|
+            body.include_attributes Spree::Api::V3::FileUploadRequestSchema
+          end
+
           private
 
           def file_upload_serializer

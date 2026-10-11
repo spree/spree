@@ -12,6 +12,11 @@ module Spree
 
           skip_before_action :authenticate_user
 
+          # Permitted by Spree::Api::V3::FileUploads, shared with the seller branch.
+          request_params 'FileUploadCreateParams', action: :create do |body|
+            body.include_attributes Spree::Api::V3::FileUploadRequestSchema
+          end
+
           private
 
           def file_upload_serializer

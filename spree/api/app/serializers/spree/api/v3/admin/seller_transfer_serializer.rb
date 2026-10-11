@@ -18,9 +18,9 @@ module Spree
                    status: [:string, enum: Spree::SellerTransfer.statuses, enum_type_name: 'SellerTransferStatus'],
                    provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
-                   currency: :string,
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    settled_amount: 'string | null',
-                   settled_currency: 'string | null',
+                   settled_currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    converted: :boolean,
                    reference: 'string | null'
 

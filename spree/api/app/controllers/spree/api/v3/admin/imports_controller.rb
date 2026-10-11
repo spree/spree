@@ -11,15 +11,44 @@ module Spree
         # Spree::Import.required_scope). The index is filtered to the types
         # the key can write.
         class ImportsController < ResourceController
-          include Spree::Api::V3::LegacyPreferenceParams
-
-          accepts_legacy_preference_params Spree::Import
-
           include ActiveStorage::SetCurrent
 
           # The index spans many import types — `scope` filters it to the
           # writable ones instead of gating on a single scope.
           skip_scope_check! only: :index
+
+          request_params :import do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              example: 'products',
+              description: 'Which dataset to import, as its shorthand: `products`, `customers`, `product_translations`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
+            body.attribute :attachment_signed_id, :string,
+              required: true, on: :create,
+              description: 'The `signed_id` of the uploaded CSV, from `files.upload()` with `visibility: "private"`.'
+            body.attribute :delimiter, :string,
+              choices: [',', ';', '|', "\t"],
+              example: ',',
+              description: 'CSV column separator. Defaults to a comma.'
+            body.attribute :results_url, :string,
+              example: 'https://admin.example.com/store_abc/settings/imports',
+              description: "Absolute URL of your admin imports view; the import-done email links back to it with `?import=<id>` appended. Only honored when it matches one of the store's allowed origins."
+            body.attribute :price_list_id, :id,
+              description: 'For `price_list_prices` imports: the price list the rows are merged into. Must belong to the current store; other types ignore it.'
+          end
+
+          request_params 'ImportCompleteMappingParams', action: :complete_mapping do |body|
+            body.attribute :mappings, :array,
+              description: 'Column assignments to apply before processing starts. Omit to accept the ones assigned on create.' do |mapping|
+              mapping.attribute :schema_field, :string,
+                required: true,
+                example: 'slug',
+                description: "A schema field name from the import's `schema_fields`."
+              mapping.attribute :file_column, :string,
+                nullable: true,
+                example: 'Product Handle',
+                description: 'The CSV header to read the field from; null unmaps the field.'
+            end
+          end
 
           # POST /api/v3/admin/imports
           #
@@ -257,7 +286,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment_signed_id, :delimiter, :results_url, :price_list_id)
+            params.permit(*permitted_attributes)
           end
 
           # A price-list import writes into one list, named by its prefixed id.

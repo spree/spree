@@ -13,7 +13,7 @@ module Spree
                    status: [:string, enum: Spree::SellerPayout.statuses, enum_type_name: 'SellerPayoutStatus'],
                    provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
-                   currency: :string,
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    reference: 'string | null',
                    period_start: 'string | null',
                    period_end: 'string | null',

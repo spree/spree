@@ -8,6 +8,18 @@ module Spree
           class RulesController < ResourceController
             scoped_resource :delivery_methods
 
+            request_params :delivery_method_rule do |body|
+              body.attribute :type, :string,
+                required: true,
+                only: :create,
+                example: 'excluded_products_rule',
+                description: 'A rule kind from the delivery method rule types endpoint.'
+              body.attribute :active, :boolean, description: 'Defaults to true on create.'
+              body.attribute :preferences, :hash, description: "Values for the rule kind's preference schema."
+              body.attribute :product_ids, :array, of: :id,
+                description: 'Products an association-backed rule (`excluded_products_rule`) applies to. An empty list clears them.'
+            end
+
             def create
               rule_class = Spree.delivery_method_rules.detect do |klass|
                 klass.api_type == params[:type].to_s
@@ -62,7 +74,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(*model_additional_permitted_attributes, :type, :active, preferences: {}, product_ids: [])
+              params.permit(*permitted_attributes)
             end
 
             private

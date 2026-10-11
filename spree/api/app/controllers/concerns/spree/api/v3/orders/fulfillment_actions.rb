@@ -94,11 +94,7 @@ module Spree
           private
 
           def fulfill_params
-            @fulfill_params ||= params.permit(*fulfill_permitted_keys)
-          end
-
-          def fulfill_permitted_keys
-            [:tracking, :tracking_carrier, :notify_customer, { items: [:item_id, :quantity] }]
+            @fulfill_params ||= params.permit(*declared_permitted_attributes)
           end
 
           # Extra keywords the branch's own fulfil accepts — forcing past a

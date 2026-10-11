@@ -14,6 +14,15 @@ module Spree
           # grantable separately from store configuration (6.0-admin-rbac.md).
           scoped_resource :staff
 
+          request_params :admin_user do |body|
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+            # Applied through `apply_role_ids`, scoped to the current store.
+            body.attribute :role_ids, :array, of: :id,
+              permit: false,
+              description: "Role IDs of the current store the user should hold. Replaces the user's roles on this store; an empty list removes them all."
+          end
+
           # DELETE /api/v3/admin/admin_users/:id
           # Removes role assignments for the current store rather than deleting
           # the account globally. The user keeps access to any other stores.
@@ -79,7 +88,7 @@ module Spree
           private
 
           def identity_params
-            params.permit(:first_name, :last_name)
+            params.permit(*declared_permitted_attributes)
           end
 
           def role_ids_param

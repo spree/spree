@@ -356,7 +356,21 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 - `ship_address_id=` / `bill_address_id=` are **ownership-guarded**: an address not owned by the record's customer resolves to `nil`.
 - A signed-in customer entering checkout gets blank address slots **auto-filled from their saved defaults**.
 - **`use_billing` is deprecated** (removed in 6.1): the shipping address is canonical — use `use_shipping` to copy ship → bill.
-- The `firstname`, `lastname` and `zipcode` **columns are renamed** to `first_name`, `last_name` and `postal_code`. The API has used the new names since 5.4, but two things carried the old ones and now change: **validation error keys** (a client sending `postal_code` used to get its error back under `zipcode`) and **Ransack filter keys** (`q[zipcode_cont]` becomes `q[postal_code_cont]`). The old method names still read for one release.
+- The `firstname`, `lastname` and `zipcode` **columns are renamed** to `first_name`, `last_name` and `postal_code`. The API has used the new names since 5.4, but two things carried the old ones and now change: **validation error keys** (a client sending `postal_code` used to get its error back under `zipcode`) and **Ransack filter keys** (`q[zipcode_cont]` becomes `q[postal_code_cont]`). The old method names still read for one release. The Admin and Seller APIs no longer accept `firstname` and `lastname` in an address payload: send `first_name` and `last_name`.
+
+**The Admin and Seller APIs drop their deprecated fields in 6.0.** The Store API keeps its deprecated fields until 6.1, marked `deprecated` in the API reference and the SDK types; the Admin and Seller APIs remove theirs now:
+
+| Removed from the Admin and Seller APIs | Use |
+|---|---|
+| Address `country_iso`, `state_abbr` (read and write) | `country_code`, `state_code` |
+| Address `zipcode` (write) | `postal_code` |
+| Admin cart `number` | `id` |
+| Admin market `country_isos` | `country_codes` |
+| Import `owner_type`, `owner_id` | `store_id`, `seller_id` |
+| Payment method `auto_capture` (read and write) | `capture_method` |
+| Store settings `preferred_auto_capture`, `preferred_auto_capture_on_dispatch` | `capture_method` |
+| Settings sent under their `preferred_<name>` key | `<name>` |
+| Delivery method `calculator_type`, `calculator_preferences` | `calculator: { type, preferences }` |
 
 ## Returns, exchanges and claims
 
@@ -582,7 +596,7 @@ Settings no longer reach the Admin and Seller APIs in the shape of Ruby's prefer
 | Import (Admin and Seller) | `preferred_delimiter` | `delimiter` |
 | Seller profile | `preferred_timezone` | `timezone` |
 
-`order.preferred_stock_location_id` keeps its name: it is an association, not a setting. Validation errors name the field without the prefix too. Writes still accept the old `preferred_*` names until Spree 6.1, with a deprecation warning in the server log; responses only carry the new names. The store's `storefront_url` is the setting as saved, `null` when unset; `url` is the address customer links use. The store's `default_minimum_payout_amount` and `default_commission_tax_rate` are now exact decimal strings (`"0.23"`) instead of numbers.
+`order.preferred_stock_location_id` keeps its name: it is an association, not a setting. Validation errors name the field without the prefix too. The Admin and Seller APIs no longer accept the old `preferred_*` names; send the new ones. The store's `storefront_url` is the setting as saved, `null` when unset; `url` is the address customer links use. The store's `default_minimum_payout_amount` and `default_commission_tax_rate` are now exact decimal strings (`"0.23"`) instead of numbers.
 
 **`preference_schema` is replaced by `schema`.** Rules, actions, payment methods and integrations no longer carry `preference_schema` on every row. Each family's `/types` endpoint (and the delivery-method and promotion-action calculator lists) returns a `schema` per type instead: the JSON Schema of its `preferences`, with `format`, `enum`, `default` and `x-spree-secret`. Read a row's type, then look up its schema there. `/payment_methods/types` now lists every provider, with `installed: true` on those the store already has, instead of leaving them out.
 
@@ -590,7 +604,7 @@ Settings no longer reach the Admin and Seller APIs in the shape of Ruby's prefer
 
 **Id lists read as prefixed ids.** Preferences listing records, such as a rule's `channel_ids` or `customer_group_ids`, now return prefixed ids rather than database ids, the same form a write accepts.
 
-**Delivery methods nest their calculator.** `calculator_type` and `calculator_preferences` are replaced by `calculator: { type, preferences }` on read and write, the shape promotion actions already use. Writes still accept the old two parameters until Spree 6.1, with a deprecation warning; their values follow the new rules (decimals as strings).
+**Delivery methods nest their calculator.** `calculator_type` and `calculator_preferences` are replaced by `calculator: { type, preferences }` on read and write, the shape promotion actions already use. The old two parameters are no longer accepted; their values follow the new rules (decimals as strings).
 
 A preference marked deprecated, such as a flat rate calculator's `minimum_item_total`, is still accepted on write until its removal, with its deprecation warning, but is not read back.
 
@@ -1062,6 +1076,21 @@ Stored markup is also held to a narrower allowlist than 5.6 — see [the rich-te
 
 A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefront](https://github.com/spree/storefront), needs `@spree/sdk` 2.0 and the changes below. Most are type errors that point at the line to change.
 
+**The quickest path, for a person or a coding agent:**
+
+1. Upgrade `@spree/sdk` to 2.x and run the type checker (`pnpm exec tsc --noEmit`, or your framework's build).
+2. Match each error against the table below and apply its fix. Fix values where they come from (a context, a form, an API response), not with a cast at each call site.
+3. Search for the deprecated names in the [deprecated fields](#deprecated-fields-still-work-until-61) section and switch them, even where nothing fails to compile.
+
+| Type error mentions | Cause | Fix |
+|---|---|---|
+| `CountryCode` or `CurrencyCode` | Country and currency codes are typed | [Country and currency codes](#country-and-currency-codes-are-typed) |
+| `amount_in_cents`, `compare_at_amount_in_cents` | Removed from prices | Read `amount` ([Money](#money)) |
+| `string \| null` where a price or amount is read | Money fields are `null` for guests when the store hides prices | [Money can be null](#money-can-be-null) |
+| A property that "does not exist" in a `…Params` type | Request types now list exactly what the endpoint accepts | [Request types](#request-types-match-the-api) |
+| `ProductSort`, or a filter key | List filters and sort are typed | [List filters and sort](#list-filters-and-sort-are-typed) |
+| `number` is not assignable to `string` in a filter or amount | Money is a decimal string everywhere | Send `'20.00'`, not `20` ([Money](#money)) |
+
 ### List filters and sort are typed
 
 Each `list()` method now takes the filters and sort fields its endpoint accepts. A misspelled filter, a filter the endpoint doesn't support, or an unknown sort field used to return the unfiltered list; it is now a compile error. `ProductListParams`, `CategoryListParams`, `CollectionListParams` and `OrderListParams` keep their names but no longer accept arbitrary keys.
@@ -1096,6 +1125,57 @@ import { isOrderGroup } from '@spree/sdk'
 const result = await client.carts.complete(cartId)
 const orders = isOrderGroup(result) ? result.orders : [result]
 ```
+
+### Request types match the API
+
+Request types (`CreateCartParams`, `UpdateCartParams`, `AddLineItemParams`, `AddressParams` and the rest) are generated from what each endpoint accepts. Fields the API never accepted are gone, so a type error there means the value was being dropped. Fields the API accepted but the old types left out are now available.
+
+- **A cart's addresses take `CartAddressParams`, not `AddressParams`.** `AddressParams` is the customer's address book entry. A cart address also takes `id` (an address from the book) and `quick_checkout` (relaxed validation for a wallet's partial address):
+
+  ```ts src/lib/data/express-checkout-flow.ts
+  import type { CartAddressParams } from '@spree/sdk'
+
+  const shipping_address: CartAddressParams = { ...walletAddress, quick_checkout: true }
+  await client.carts.update(cartId, { shipping_address })
+  ```
+
+- **Some requirements relaxed.** `AddLineItemParams.quantity` is optional (it defaults to 1), and `RegisterParams.password_confirmation` is optional.
+- **Renamed types keep their old names until 6.1, marked deprecated:** `LineItemInput` is `LineItemInputParams`.
+
+### Country and currency codes are typed
+
+`country_code` and `currency` are typed as `CountryCode` (ISO 3166-1 alpha-2, such as `'US'`) and `CurrencyCode` (ISO 4217, such as `'EUR'`) in requests and responses. A plain `string` no longer type-checks where a request expects one. The values come from the API already typed (`Market.currency`, `Market.country_codes`, `Country.iso`, `Currency.iso_code`, `Address.country_code`), so type the state that holds them rather than casting each use:
+
+```ts src/contexts/StoreContext.tsx
+import type { CountryCode, CurrencyCode } from '@spree/sdk'
+
+interface StoreContextValue {
+  currency: CurrencyCode
+  country: CountryCode
+}
+```
+
+A code typed by a shopper or read from the URL is still a `string`. Check it against the store's own list (`market.country_codes`, the currencies endpoint) before using it, which also narrows its type:
+
+```ts
+const country = market.country_codes.find((code) => code === params.country.toUpperCase())
+```
+
+### Money can be null
+
+Every money field, including `display_*` amounts (a gift card's or store credit's `display_amount_remaining`, a delivery rate's `cost`), is typed `string | null`: it is `null` for a guest when the store hides prices (`prices_hidden`). Handle `null` where you format or add amounts, for example by showing nothing, or a "price on request" label.
+
+### Deprecated fields still work until 6.1
+
+These Store API fields keep working in 6.0 and are marked `@deprecated` in the SDK types, so editors strike them through. Switch now; they are removed in 6.1:
+
+| Deprecated | Use |
+|---|---|
+| Address `country_iso`, read and written | `country_code` |
+| Address `state_abbr`, read and written | `state_code` |
+| Company address `zipcode`, written | `postal_code` |
+| Cart `number` | `id` |
+| Market `country_isos` | `country_codes` |
 
 ### Other Store API changes to check
 

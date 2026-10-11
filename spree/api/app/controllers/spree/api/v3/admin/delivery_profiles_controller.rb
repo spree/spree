@@ -9,6 +9,18 @@ module Spree
         class DeliveryProfilesController < ResourceController
           scoped_resource :settings
 
+          request_params 'DeliveryProfileParams' do |body|
+            body.attribute :name, :string, example: 'Oversized'
+            body.attribute :kind, :string,
+              example: 'shipping',
+              description: 'Registered profile kind (`shipping`, `digital`, extension kinds) from the kinds endpoint. Read on create only; defaults to shipping.'
+            body.attribute :default, :boolean,
+              description: 'Promotes this profile to the store default; the previous default is demoted.'
+            body.attribute :position, :integer
+            body.attribute :stock_location_ids, :array, of: :id,
+              description: 'Prefixed stock location IDs (`sloc_...`); replaces the full set. Empty means every store location.'
+          end
+
           # GET /api/v3/admin/delivery_profiles/kinds
           # Registered profile kinds, so admin UIs offer extension-added
           # kinds without hardcoding the built-ins.
@@ -58,7 +70,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :default, :position, :kind, stock_location_ids: [])
+            params.permit(*permitted_attributes)
           end
 
           def collection_includes

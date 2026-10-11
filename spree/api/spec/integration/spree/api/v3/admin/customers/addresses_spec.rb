@@ -55,24 +55,7 @@ RSpec.describe 'Admin Customer Addresses API', type: :request, swagger_doc: 'api
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :customer_id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string },
-          last_name: { type: :string },
-          address1: { type: :string },
-          address2: { type: :string },
-          city: { type: :string },
-          postal_code: { type: :string },
-          country_code: { type: :string, description: 'ISO-2 country code (e.g. US)' },
-          state_code: { type: :string, description: 'State/province abbreviation (e.g. NY)' },
-          phone: { type: :string },
-          company: { type: :string },
-          label: { type: :string },
-          is_default_billing: { type: :boolean },
-          is_default_shipping: { type: :boolean }
-        }
-      }
+      request_body_for
 
       response '201', 'address created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -111,14 +94,7 @@ RSpec.describe 'Admin Customer Addresses API', type: :request, swagger_doc: 'api
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :customer_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          city: { type: :string },
-          is_default_billing: { type: :boolean },
-          is_default_shipping: { type: :boolean }
-        }
-      }
+      request_body_for
 
       response '200', 'address updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

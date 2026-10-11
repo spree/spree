@@ -13,6 +13,7 @@ module Spree
         include Spree::Api::V3::ApiKeyAuthentication
         include Spree::Api::V3::ErrorHandler
         include Spree::Api::V3::MoneyParams
+        include Spree::Api::V3::RequestParams
         include Spree::Api::V3::SecurityHeaders
         include Spree::Api::V3::ResourceSerializer
         include Spree::Api::V3::RateLimitHeaders

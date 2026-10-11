@@ -5,7 +5,7 @@ module Spree
         # One settlement to this seller, as the seller reads it.
         class PayoutSerializer < V3::BaseSerializer
           typelize status: :string,
-                   currency: :string,
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
                    reference: 'string | null',

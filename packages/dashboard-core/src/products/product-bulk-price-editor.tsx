@@ -1,3 +1,4 @@
+import type { CurrencyCode } from '@spree/admin-sdk'
 import type { ProductFormValues, VariantPriceFormValues } from '@spree/dashboard-core'
 import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useCallback, useMemo } from 'react'
@@ -13,7 +14,7 @@ interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<ProductFormValues, any, any>
   /** ISO currency code (e.g. "USD", "EUR"). */
-  currency: string
+  currency: CurrencyCode
   /** Display label for the product, used as the table's section header. */
   productName: string
 }

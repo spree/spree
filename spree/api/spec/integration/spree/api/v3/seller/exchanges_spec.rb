@@ -63,27 +63,7 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                fulfillment_item_id: { type: :string },
-                new_variant_id: { type: :string },
-                quantity: { type: :integer }
-              },
-              required: %w[fulfillment_item_id new_variant_id quantity]
-            }
-          },
-          reason_id: { type: :string, nullable: true },
-          stock_location_id: { type: :string, nullable: true },
-          memo: { type: :string, nullable: true }
-        },
-        required: %w[items]
-      }
+      request_body_for
 
       response '201', 'exchange opened' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -106,6 +86,47 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
     end
   end
 
+  path '/api/v3/seller/orders/{order_id}/exchanges/{id}/receive' do
+    parameter name: :order_id, in: :path, type: :string
+    parameter name: :id, in: :path, type: :string
+
+    patch 'Receive an exchange' do
+      tags 'Exchanges'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Records the goods coming back. Send the rows that actually arrived for
+        a partial or damaged receipt; omit them to receive everything.
+      DESC
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for(required: false)
+
+      response '200', 'exchange received' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { exchange.prefixed_id }
+        let(:body) do
+          {
+            items: [
+              { exchange_line_item_id: exchange.exchange_line_items.first.prefixed_id, quantity: 1, resellable: true }
+            ]
+          }
+        end
+
+        before { Spree::Exchanges::Approve.call(exchange: exchange) }
+
+        schema '$ref' => '#/components/schemas/Exchange'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('received')
+        end
+      end
+    end
+  end
+
   path '/api/v3/seller/orders/{order_id}/exchanges/{id}/fulfill' do
     parameter name: :order_id, in: :path, type: :string
     parameter name: :id, in: :path, type: :string
@@ -121,12 +142,7 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          refund_method: { type: :string, enum: %w[original_payment store_credit] }
-        }
-      }
+      request_body_for(required: false)
 
       response '200', 'replacement sent' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -143,6 +159,36 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
         schema '$ref' => '#/components/schemas/Exchange'
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/seller/orders/{order_id}/exchanges/{id}/cancel' do
+    parameter name: :order_id, in: :path, type: :string
+    parameter name: :id, in: :path, type: :string
+
+    patch 'Cancel an exchange' do
+      tags 'Exchanges'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description 'Withdraws an exchange before the goods come back.'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for(required: false)
+
+      response '200', 'exchange canceled' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { exchange.prefixed_id }
+        let(:body) { { reason: 'Customer kept the original' } }
+
+        schema '$ref' => '#/components/schemas/Exchange'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('canceled')
+        end
       end
     end
   end

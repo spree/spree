@@ -561,9 +561,12 @@ module Spree
           resource_permitted_attributes + model_additional_permitted_attributes
         end
 
-        # Override in subclass to declare the resource's writable attributes.
+        # The resource's writable attributes: its `request_params`
+        # declaration, or an override in the subclass.
         def resource_permitted_attributes
-          raise NotImplementedError, 'Subclass must implement resource_permitted_attributes or permitted_params'
+          return declared_permitted_attributes if request_params_schema
+
+          raise NotImplementedError, 'Subclass must declare request_params, or implement resource_permitted_attributes or permitted_params'
         end
 
         # Attributes extensions have declared on the model via

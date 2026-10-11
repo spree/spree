@@ -2,6 +2,7 @@ import {
   compareMoney,
   type Discount,
   type Fee,
+  type FeeCreateParams,
   isDecimalString,
   isZeroMoney,
   type Order,
@@ -573,12 +574,10 @@ function AddFeeDialog({
   const { t } = useTranslation()
   const orderId = order.id
   const [target, setTarget] = useState('order')
-  const [kind, setKind] = useState<string>('surcharge')
+  const [kind, setKind] = useState<(typeof FEE_KINDS)[number]>('surcharge')
 
-  const mutation = useOrderAdjustmentLinesMutation(
-    orderId,
-    (params: { label: string; amount: string; kind?: string; line_item_id?: string }) =>
-      adminClient.orders.fees.create(orderId, params),
+  const mutation = useOrderAdjustmentLinesMutation(orderId, (params: FeeCreateParams) =>
+    adminClient.orders.fees.create(orderId, params),
   )
 
   const targetOptions = [
@@ -648,7 +647,7 @@ function AddFeeDialog({
                   <Select
                     items={kindOptions}
                     value={kind}
-                    onValueChange={(v) => setKind(v as string)}
+                    onValueChange={(v) => setKind(v as (typeof FEE_KINDS)[number])}
                   >
                     <SelectTrigger>
                       <SelectValue />

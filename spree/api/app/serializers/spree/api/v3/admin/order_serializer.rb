@@ -34,7 +34,7 @@ module Spree
           typelize status: [:string, enum: Spree::Order::STATUSES],
                    last_ip_address: [:string, nullable: true],
                    considered_risky: :boolean, confirmation_delivered: :boolean,
-                   store_owner_notification_delivered: :boolean,
+                   store_owner_notification_delivered: [:boolean, nullable: true],
                    internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true],
                    approver_id: [:string, nullable: true],
                    approver_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],

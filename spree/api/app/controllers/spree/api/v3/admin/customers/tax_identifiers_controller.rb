@@ -8,6 +8,10 @@ module Spree
 
             include Spree::Api::V3::TaxIdentifierValidation
 
+            request_params 'TaxIdentifierParams' do |body|
+              body.include_attributes Spree::Api::V3::Admin::TaxIdentifierRequestSchema
+            end
+
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions have to be listed alongside the custom one.
             before_action :set_resource, only: [:show, :update, :destroy, :validate]
@@ -33,7 +37,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:kind, :value)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

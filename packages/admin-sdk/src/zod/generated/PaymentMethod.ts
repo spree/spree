@@ -10,7 +10,6 @@ export const PaymentMethodSchema = z.object({
   source_required: z.boolean(),
   metadata: z.record(z.string(), z.unknown()),
   active: z.boolean(),
-  auto_capture: z.boolean().nullable(),
   capture_method: z.string().nullable(),
   resolved_capture_method: z.string(),
   storefront_visible: z.boolean(),

@@ -15,6 +15,27 @@ module Spree
           class LabelsController < BaseController
             include Spree::Api::V3::Orders::ShippingLabelActions
 
+            # The permit list itself lives in ShippingLabelActions, shared with
+            # the operator's branch; this declaration documents it.
+            request_params :shipping_label do |body|
+              body.attribute :file_signed_id, :string,
+                required: true,
+                description: 'A `signed_id` from `files.upload()`.'
+              body.attribute :tracking_number, :string,
+                required: true,
+                description: 'The number printed on the label.'
+              body.attribute :carrier, :string,
+                description: "Free text; a forwarder's name is as valid as a carrier slug. Detected from the number when omitted."
+              body.attribute :service, :string, description: 'Carrier service the label was bought at.'
+              body.attribute :cost, :decimal,
+                description: "What the seller paid the carrier. Accounting data only; it never touches the order's shipping charge."
+              body.attribute :currency, :currency, description: 'Currency of the cost.'
+              body.attribute :file_format, :string,
+                choices: %w[pdf png zpl],
+                description: 'Taken from the file when omitted.'
+              body.attribute :tracking_url, :string, description: 'Tracking page for the consignment the label mints.'
+            end
+
             before_action :set_resource, only: [:show, :download, :destroy]
 
             # POST .../labels

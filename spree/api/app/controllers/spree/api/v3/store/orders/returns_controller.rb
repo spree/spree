@@ -17,6 +17,15 @@ module Spree
             # standard actions are listed alongside the label download.
             before_action :set_resource, only: [:show, :update, :destroy, :label]
 
+            request_params 'CreateReturnParams', action: :create do |body|
+              body.attribute :items, :array, required: true do |item|
+                item.attribute :fulfillment_item_id, :id, required: true, description: 'The shipped unit coming back.'
+                item.attribute :quantity, :integer, required: true
+              end
+              body.attribute :reason_id, :id, description: "One of the store's return reasons."
+              body.attribute :memo, :string
+            end
+
             # GET /api/v3/store/orders/:order_id/returns/:id/label
             #
             # The customer's return label, streamed to whoever owns the order.
@@ -85,7 +94,7 @@ module Spree
             end
 
             def create_params
-              @create_params ||= params.permit(:memo, :reason_id, items: [:fulfillment_item_id, :quantity])
+              @create_params ||= params.permit(*declared_permitted_attributes)
             end
 
             private

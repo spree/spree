@@ -1,6 +1,7 @@
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
+import { countryCodeSchema, currencyCodeSchema } from '../lib/iso-codes'
 import { normalizeQuantityRule } from './normalize-quantity'
 import { isSupportedVideoUrl } from './video-url'
 
@@ -36,7 +37,7 @@ export type VariantOptionPair = z.infer<typeof variantOptionPairSchema>
 // Form-side prices are canonical decimal STRINGS ("1234.56"), never numbers:
 // `Number(...)` coercion loses precision and turns `"1.234,56"` into `NaN`.
 export const variantPriceFormSchema = z.object({
-  currency: z.string(),
+  currency: currencyCodeSchema,
   amount: z.string(),
   compare_at_amount: z.string().nullable().optional(),
 })
@@ -58,7 +59,7 @@ export const variantFormSchema = z.object({
   weight_unit: z.string().nullable().optional(),
   dimensions_unit: z.string().nullable().optional(),
   hs_code: z.string().nullable().optional(),
-  country_of_origin: z.string().nullable().optional(),
+  country_of_origin: countryCodeSchema.nullable().optional(),
   customs_description: z.string().nullable().optional(),
   // Held as strings so an unusable entry can be reported rather than
   // silently coerced away: normalizing `0` straight to null would clear the

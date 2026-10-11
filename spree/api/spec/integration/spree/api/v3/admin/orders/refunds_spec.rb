@@ -58,15 +58,7 @@ RSpec.describe 'Admin Order Refunds API', type: :request, swagger_doc: 'api-refe
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[payment_id amount],
-        properties: {
-          payment_id: { type: :string, description: 'Payment ID' },
-          amount: { type: :string, example: '10.00' },
-          refund_reason_id: { type: :string, description: 'Refund reason ID' }
-        }
-      }
+      request_body_for
 
       response '201', 'refund created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

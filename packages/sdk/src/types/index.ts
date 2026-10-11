@@ -1,4 +1,4 @@
-import type { AddressParams, ListParams } from '@spree/sdk-core'
+import type { ListParams } from '@spree/sdk-core'
 import type {
   CategoryFilters,
   CategorySort,
@@ -10,9 +10,9 @@ import type {
   ProductSort,
 } from './filters.generated'
 import type { Cart as CartType } from './generated'
+import type { LineItemInputParams } from './params'
 
 export * from './filters.generated'
-
 // Re-export all generated types (unprefixed: Product, Order, etc.)
 export type {
   Address,
@@ -71,6 +71,7 @@ export type {
   Wishlist,
   WishlistItem,
 } from './generated'
+export type * from './params'
 
 // Checkout requirement — a single unsatisfied checkout prerequisite
 export interface CheckoutRequirement {
@@ -87,7 +88,6 @@ export type CartWarning = CartType['warnings'][number]
 
 // Hand-written domain types
 export type {
-  AddressParams,
   ErrorResponse,
   ListParams,
   ListResponse,
@@ -110,28 +110,6 @@ export interface AuthTokens {
 
 export type { EmailPasswordLogin, LoginCredentials, ProviderLogin } from '@spree/sdk-core'
 
-export interface RequestPasswordResetParams {
-  email: string
-  redirect_url?: string
-}
-
-export interface ResetPasswordParams {
-  password: string
-  password_confirmation: string
-}
-
-export interface RegisterParams {
-  email: string
-  password: string
-  password_confirmation: string
-  first_name?: string
-  last_name?: string
-  phone?: string
-  accepts_email_marketing?: boolean
-  /** Arbitrary key-value metadata (stored, not returned in responses) */
-  metadata?: Record<string, unknown>
-}
-
 export type ProductListParams = ListParams<ProductFilters, ProductSort>
 
 export type CategoryListParams = ListParams<CategoryFilters, CategorySort>
@@ -141,107 +119,13 @@ export type CollectionListParams = ListParams<CollectionFilters, CollectionSort>
 export type OrderListParams = ListParams<OrderFilters, OrderSort>
 
 // Line item input for bulk cart/order operations
-export interface LineItemInput {
-  /** Prefixed variant ID (e.g., "variant_k5nR8xLq") */
-  variant_id: string
-  /** Quantity to set (defaults to 1 if omitted) */
-  quantity?: number
-  /** Arbitrary key-value metadata (merged with existing on upsert) */
-  metadata?: Record<string, unknown>
-}
+/** @deprecated Renamed to `LineItemInputParams`. */
+export type LineItemInput = LineItemInputParams
 
 // Cart operations
-export interface CreateCartParams {
-  /** Arbitrary key-value metadata (stored, not returned in responses) */
-  metadata?: Record<string, unknown>
-  /** Items to add to the cart on creation */
-  items?: LineItemInput[]
-}
-
-export interface AddLineItemParams {
-  variant_id: string
-  quantity: number
-  /** Arbitrary key-value metadata (stored, not returned in responses) */
-  metadata?: Record<string, unknown>
-}
-
-export interface UpdateLineItemParams {
-  quantity?: number
-  /** Arbitrary key-value metadata (merged with existing) */
-  metadata?: Record<string, unknown>
-}
-
-export interface UpdateCartParams {
-  email?: string
-  currency?: string
-  locale?: string
-  customer_note?: string
-  /** Arbitrary key-value metadata (merged with existing) */
-  metadata?: Record<string, unknown>
-  /** Existing address ID to use as billing address */
-  billing_address_id?: string
-  /** Existing address ID to use as shipping address */
-  shipping_address_id?: string
-  /** New billing address */
-  billing_address?: AddressParams
-  /** New shipping address */
-  shipping_address?: AddressParams
-  /** When true, copies shipping address to billing address */
-  use_shipping?: boolean
-  /** Items to upsert (sets quantity for existing, creates new) */
-  items?: LineItemInput[]
-  /**
-   * The company node this purchase is for. The buyer must have standing over
-   * it — a membership on that node or one of its ancestors. Null clears it,
-   * and with it the company's catalog, pricing and tax anchoring.
-   */
-  company_id?: string | null
-  /**
-   * The buyer's own purchase-order reference. Their accounting reconciles the
-   * order, the invoice and the payment against it. Blank clears it.
-   */
-  po_number?: string | null
-  /**
-   * The `signed_id` of the buyer's purchase order, from
-   * `POST /store/carts/:id/po_document`. Blank detaches the document.
-   */
-  po_document_signed_id?: string | null
-}
-
 // Payments
-export interface CreatePaymentParams {
-  payment_method_id: string
-  amount?: string
-  metadata?: Record<string, unknown>
-}
-
 // Payment Sessions
-export interface CreatePaymentSessionParams {
-  payment_method_id: string
-  amount?: string
-  external_data?: Record<string, unknown>
-}
-
-export interface UpdatePaymentSessionParams {
-  amount?: string
-  external_data?: Record<string, unknown>
-}
-
-export interface CompletePaymentSessionParams {
-  session_result?: string
-  external_data?: Record<string, unknown>
-}
-
 // Payment Setup Sessions
-export interface CreatePaymentSetupSessionParams {
-  payment_method_id: string
-  external_data?: Record<string, unknown>
-}
-
-export interface CompletePaymentSetupSessionParams {
-  external_data?: Record<string, unknown>
-}
-
 // Product Filters types
 export interface FilterOption {
   id: string
@@ -308,17 +192,6 @@ export interface ProductFiltersResponse {
 export interface ProductFiltersParams {
   category_id?: string
   q?: Record<string, unknown>
-}
-
-/**
- * An address book entry for a company node: address fields, plus the two
- * things only a book entry has — what it is filed under, and which defaults
- * it holds for its node.
- */
-export type CompanyAddressParams = AddressParams & {
-  label?: string
-  default_billing?: boolean
-  default_shipping?: boolean
 }
 
 // The building blocks of the generated filter types, for a declaration file

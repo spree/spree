@@ -1,4 +1,4 @@
-import type { DeliveryZone } from '@spree/admin-sdk'
+import type { CountryCode, DeliveryZone } from '@spree/admin-sdk'
 import { useStore } from '@spree/dashboard-core'
 import {
   Button,
@@ -58,7 +58,7 @@ export function DeliveryZoneRegionPicker({
   const claimed = useMemo(() => claimedByOtherZones(siblingZones), [siblingZones])
 
   const rows = useMemo<CountryRow[]>(() => {
-    const byIso = new Map<string, CountryRow>()
+    const byIso = new Map<CountryCode, CountryRow>()
 
     for (const country of marketCountries) {
       byIso.set(country.iso, {
@@ -98,7 +98,7 @@ export function DeliveryZoneRegionPicker({
     onChange(writeSelection({ ...selection, ...next }))
   }
 
-  function toggleCountry(iso: string, checked: boolean) {
+  function toggleCountry(iso: CountryCode, checked: boolean) {
     if (checked) {
       apply(supersedeCountry(selection, iso))
       return
@@ -114,7 +114,7 @@ export function DeliveryZoneRegionPicker({
    * of a wholly-selected country: that country member has to become an
    * explicit member per remaining state before one can be dropped.
    */
-  function toggleState(iso: string, abbr: string, checked: boolean, allAbbrs: string[]) {
+  function toggleState(iso: CountryCode, abbr: string, checked: boolean, allAbbrs: string[]) {
     const countries = new Set(selection.countries)
     const states = new Map(selection.states)
     const wholeCountry = countries.has(iso)
@@ -414,7 +414,11 @@ function PostalRulesSection({
             <Select
               items={countryOptions}
               value={rule.country_code ?? ''}
-              onValueChange={(next) => update(index, { country_code: next as string })}
+              onValueChange={(next) =>
+                update(index, {
+                  country_code: countryOptions.find((option) => option.value === next)?.value,
+                })
+              }
             >
               <SelectTrigger className="flex-1">
                 <SelectValue>

@@ -6,7 +6,7 @@ module Spree
                  type: "'price_range'",
                  min: :string,
                  max: :string,
-                 currency: :string
+                 currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode']
 
         attributes :id, :type
 

@@ -28,7 +28,7 @@ export const channelFormSchema = z.object({
   active: z.boolean(),
   default: z.boolean(),
   order_routing_strategy: z.string(),
-  storefront_access: z.string(),
+  storefront_access: z.enum(STOREFRONT_ACCESS_VALUES),
   guest_checkout: z.string(),
   // Empty means shoppers outside any assigned catalog see every product
   // published on the channel.

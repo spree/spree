@@ -1,24 +1,28 @@
 import type { MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
+import { countryCodeSchema, currencyCodeSchema } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
+import type { DefaultValues } from 'react-hook-form'
 import { z } from 'zod/v4'
 
 export const marketFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
-  currency: z.string().min(1, { error: requiredMessage('market.currency') }),
+  currency: currencyCodeSchema,
   default_locale: z.string().min(1, { error: requiredMessage('market.default_locale') }),
   supported_locales: z.array(z.string()),
   tax_inclusive: z.boolean(),
   default: z.boolean(),
-  country_codes: z.array(z.string()).min(1, { error: requiredMessage('market.country_codes') }),
+  country_codes: z
+    .array(countryCodeSchema)
+    .min(1, { error: requiredMessage('market.country_codes') }),
   // Empty means the installation default rather than "no tax".
   tax_provider: z.string().optional(),
 })
 
 export type MarketFormValues = z.infer<typeof marketFormSchema>
 
-export const MARKET_DEFAULTS: MarketFormValues = {
+// No currency: a new market takes the store's, and an edited one its own.
+export const MARKET_DEFAULTS: DefaultValues<MarketFormValues> = {
   name: '',
-  currency: '',
   default_locale: '',
   supported_locales: [],
   tax_inclusive: false,

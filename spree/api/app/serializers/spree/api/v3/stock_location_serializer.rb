@@ -3,7 +3,7 @@ module Spree
     module V3
       class StockLocationSerializer < BaseSerializer
         typelize name: :string, address1: [:string, nullable: true], city: [:string, nullable: true],
-                 zipcode: [:string, nullable: true], country_code: [:string, nullable: true],
+                 zipcode: [:string, nullable: true], country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                  country_name: [:string, nullable: true], state_code: [:string, nullable: true],
                  state_text: [:string, nullable: true],
                  pickup_ready_in_minutes: [:number, nullable: true],

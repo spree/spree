@@ -69,40 +69,7 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Hoodie' },
-          delivery_profile_id: {
-            type: :string,
-            nullable: true,
-            example: 'fp_86Rf07xd4z',
-            description: 'Fulfillment profile stamped onto products created with this type. Null leaves new products on the store default profile.'
-          },
-          option_type_ids: {
-            type: :array,
-            items: { type: :string },
-            description: 'Option types seeded onto products created with this type.'
-          },
-          category_ids: {
-            type: :array,
-            items: { type: :string },
-            description: 'Categories seeded onto products created with this type.'
-          },
-          custom_field_definitions: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, description: 'Prefixed custom field definition id.' },
-                required: { type: :boolean },
-                sort_order: { type: :integer }
-              }
-            }
-          }
-        },
-        required: ['name']
-      }
+      request_body_for
 
       response '201', 'product type created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -180,26 +147,7 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Premium T-Shirt' },
-          delivery_profile_id: { type: :string, nullable: true },
-          option_type_ids: { type: :array, items: { type: :string } },
-          category_ids: { type: :array, items: { type: :string } },
-          custom_field_definitions: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                required: { type: :boolean },
-                sort_order: { type: :integer }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'product type updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

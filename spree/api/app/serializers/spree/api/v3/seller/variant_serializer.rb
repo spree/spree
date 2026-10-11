@@ -14,7 +14,7 @@ module Spree
 
           typelize position: :number,
                    cost_price: [:string, nullable: true],
-                   cost_currency: [:string, nullable: true],
+                   cost_currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    barcode: [:string, nullable: true],
                    available_stock: [:number, nullable: true],
                    total_on_hand: [:number, nullable: true],
@@ -22,7 +22,7 @@ module Spree
                    preorder_ships_at: [:string, nullable: true],
                    backorder_limit: [:number, nullable: true],
                    hs_code: [:string, nullable: true],
-                   country_of_origin: [:string, nullable: true],
+                   country_of_origin: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    customs_description: [:string, nullable: true],
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
                    purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS],

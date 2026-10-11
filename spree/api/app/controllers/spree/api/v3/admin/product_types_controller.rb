@@ -11,6 +11,30 @@ module Spree
         class ProductTypesController < ResourceController
           scoped_resource :product_types
 
+          # The associations are a template for products created with this type:
+          # replace-sets that never change the products already carrying it.
+          request_params :product_type do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Hoodie'
+            body.attribute :delivery_profile_id, :id,
+              nullable: true,
+              example: 'fp_86Rf07xd4z',
+              description: 'Delivery profile stamped onto products created with this type. Null leaves new products on the store default profile.'
+            body.attribute :option_type_ids, :array, of: :id,
+              description: 'Option types seeded onto products that get this type. Use apply to products to backfill existing ones.'
+            body.attribute :category_ids, :array, of: :id,
+              description: 'Categories seeded onto products that get this type. Categories from other stores are ignored.'
+            body.attribute :custom_field_definitions, :array,
+              as: 'ProductTypeCustomFieldDefinitionParams',
+              description: 'The custom field definitions the product form shows. Definitions not listed are removed from the type.' do |custom_field_definition|
+              custom_field_definition.attribute :id, :id,
+                required: true,
+                example: 'cfdef_abc123',
+                description: 'The custom field definition.'
+              custom_field_definition.attribute :required, :boolean
+              custom_field_definition.attribute :sort_order, :integer
+            end
+          end
+
           # Backfills this type's option types and categories onto the products
           # that already carry it. Additive and idempotent — nothing is removed.
           def apply_to_products
@@ -50,14 +74,7 @@ module Spree
           end
 
           def permitted_params
-            attrs = params.permit(
-              *model_additional_permitted_attributes,
-              :name,
-              :delivery_profile_id,
-              option_type_ids: [],
-              category_ids: [],
-              custom_field_definitions: [:id, :required, :sort_order]
-            )
+            attrs = params.permit(*permitted_attributes)
             attrs = scope_delivery_profile(attrs)
             scope_category_ids(attrs)
           end

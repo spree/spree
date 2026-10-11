@@ -1,5 +1,4 @@
 import type {
-  FileUploadCreateParams,
   ListParams,
   PaginatedResponse,
   PreferenceSchema,
@@ -13,6 +12,7 @@ import type {
   AuthTokens,
   Balance,
   Claim,
+  CountryCode,
   Delivery,
   DeliveryMethod,
   DeliveryProfile,
@@ -69,6 +69,53 @@ import type {
   StockLocationFilters,
   StockLocationSort,
 } from './types/filters.generated'
+import type {
+  AccountUpdateParams,
+  ClaimCancelParams,
+  ClaimCreateParams,
+  ClaimDenyParams,
+  ClaimResolveParams,
+  DeliveryCreateParams,
+  DeliveryMethodParams,
+  DeliveryUpdateParams,
+  ExchangeCancelParams,
+  ExchangeCreateParams,
+  ExchangeFulfillParams,
+  ExchangeReceiveParams,
+  FileUploadCreateParams,
+  FulfillmentFulfillParams,
+  FulfillmentSplitParams,
+  FulfillmentUpdateParams,
+  ImportCompleteMappingParams,
+  ImportCreateParams,
+  InvitationAcceptParams,
+  LoginParams,
+  OnboardingPayoutAccountParams,
+  OrderAddressCorrectionParams,
+  OrderCancelParams,
+  OrderNotesParams,
+  PackageTypeParams,
+  PasswordResetCreateParams,
+  PasswordResetUpdateParams,
+  PolicyCreateParams,
+  PolicyUpdateParams,
+  ProductBulkStatusParams,
+  ProductBulkSubmitParams,
+  ProductParams,
+  ProfileUpdateParams,
+  RequirementSubmissionParams,
+  ReturnCancelParams,
+  ReturnCreateParams,
+  ReturnReceiveParams,
+  ReturnRefundParams,
+  SellerExportCreateParams,
+  SellerTaxIdentifierParams,
+  ShippingLabelCreateParams,
+  StockLocationParams,
+  TeamMemberCreateParams,
+} from './types/params'
+
+export type * from './types/params'
 
 /**
  * Resource methods for the Spree Seller API — the marketplace seller panel.
@@ -85,10 +132,7 @@ export class SellerClient {
      * Signs a seller in. Fails for a store staff member who runs no seller —
      * authenticating is not enough, since staff share the same user class.
      */
-    login: (
-      params: { email: string; password: string },
-      options?: RequestOptions,
-    ): Promise<AuthTokens> =>
+    login: (params: LoginParams, options?: RequestOptions): Promise<AuthTokens> =>
       this.request<AuthTokens>('POST', '/auth/login', { ...options, body: params }),
 
     /** Exchanges the refresh cookie for a fresh access token. */
@@ -125,12 +169,7 @@ export class SellerClient {
     acceptInvitation: (
       invitationId: string,
       token: string,
-      params: {
-        password?: string
-        password_confirmation?: string
-        first_name?: string
-        last_name?: string
-      },
+      params: InvitationAcceptParams,
       options?: RequestOptions,
     ): Promise<AuthTokens> =>
       this.request<AuthTokens>('POST', `/auth/invitations/${invitationId}/accept`, {
@@ -147,7 +186,7 @@ export class SellerClient {
      * origin the server resolves for itself.
      */
     requestPasswordReset: (
-      params: { email: string; redirect_url?: string },
+      params: PasswordResetCreateParams,
       options?: RequestOptions,
     ): Promise<void> =>
       this.request<void>('POST', '/auth/password_resets', { ...options, body: params }),
@@ -160,7 +199,7 @@ export class SellerClient {
      */
     resetPassword: (
       token: string,
-      params: { password: string; password_confirmation: string },
+      params: PasswordResetUpdateParams,
       options?: RequestOptions,
     ): Promise<AuthTokens> =>
       this.request<AuthTokens>('PATCH', `/auth/password_resets/${encodeURIComponent(token)}`, {
@@ -257,7 +296,7 @@ export class SellerClient {
      * Invites a colleague. They join when they accept; the seller's own
      * lifecycle is untouched, since hiring is not a transition.
      */
-    invite: (params: { email: string }, options?: RequestOptions): Promise<unknown> =>
+    invite: (params: TeamMemberCreateParams, options?: RequestOptions): Promise<unknown> =>
       this.request<unknown>('POST', '/team', { ...options, body: params }),
 
     /** Revokes a member's access. The last remaining member cannot be removed. */
@@ -303,7 +342,7 @@ export class SellerClient {
      * paying by hand collects those details itself.
      */
     payoutAccount: (
-      data: { refresh_url: string; return_url: string },
+      data: OnboardingPayoutAccountParams,
       options?: RequestOptions,
     ): Promise<PayoutAccountLink> =>
       this.request<PayoutAccountLink>('POST', '/onboarding/payout_account', {
@@ -416,7 +455,10 @@ export class SellerClient {
      * `skipped_count` — present only when something was skipped — is what was
      * already on sale, already in review, or archived.
      */
-    bulkSubmit: (params: { ids: string[] }, options?: RequestOptions): Promise<BulkProductResult> =>
+    bulkSubmit: (
+      params: ProductBulkSubmitParams,
+      options?: RequestOptions,
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_submit', { ...options, body: params }),
 
     /**
@@ -426,7 +468,7 @@ export class SellerClient {
      * marketplace approves it, one at a time.
      */
     bulkStatusUpdate: (
-      params: { ids: string[]; status: 'draft' | 'archived' },
+      params: ProductBulkStatusParams,
       options?: RequestOptions,
     ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
@@ -480,16 +522,7 @@ export class SellerClient {
      * `refund_amount`: withdrawing from the whole order returns what that
      * order was paid, and a partial figure is a return.
      */
-    cancel: (
-      id: string,
-      params?: {
-        cancel_reason_id?: string
-        cancel_note?: string
-        refund_payments?: boolean
-        notify_customer?: boolean
-      },
-      options?: RequestOptions,
-    ): Promise<Order> =>
+    cancel: (id: string, params?: OrderCancelParams, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
 
     /**
@@ -500,10 +533,7 @@ export class SellerClient {
      */
     address: (
       id: string,
-      params: {
-        shipping_address?: OrderAddressParams
-        billing_address?: OrderAddressParams
-      },
+      params: OrderAddressCorrectionParams,
       options?: RequestOptions,
     ): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/address`, { ...options, body: params }),
@@ -526,7 +556,7 @@ export class SellerClient {
        */
       update: (
         orderId: string,
-        params: { customer_note?: string; internal_note?: string },
+        params: OrderNotesParams,
         options?: RequestOptions,
       ): Promise<Order> =>
         this.request<Order>('PATCH', `/orders/${orderId}/notes`, { ...options, body: params }),
@@ -547,12 +577,7 @@ export class SellerClient {
       fulfill: (
         orderId: string,
         id: string,
-        params?: {
-          tracking?: string
-          tracking_carrier?: string
-          notify_customer?: boolean
-          items?: Array<{ item_id: string; quantity: number }>
-        },
+        params?: FulfillmentFulfillParams,
         options?: RequestOptions,
       ): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/fulfill`, {
@@ -567,14 +592,7 @@ export class SellerClient {
       update: (
         orderId: string,
         id: string,
-        params: {
-          tracking?: string
-          tracking_carrier?: string
-          /** One of this seller's own shelves; the rates requote from there. */
-          stock_location_id?: string
-          /** One of the rates quoted for this parcel from its current origin. */
-          selected_delivery_rate_id?: string
-        },
+        params: FulfillmentUpdateParams,
         options?: RequestOptions,
       ): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}`, {
@@ -594,7 +612,7 @@ export class SellerClient {
       split: (
         orderId: string,
         id: string,
-        params: { variant_id: string; quantity: number; stock_location_id?: string },
+        params: FulfillmentSplitParams,
         options?: RequestOptions,
       ): Promise<{ data: Fulfillment[] }> =>
         this.request<{ data: Fulfillment[] }>(
@@ -634,12 +652,7 @@ export class SellerClient {
         create: (
           orderId: string,
           fulfillmentId: string,
-          params: {
-            tracking_number: string
-            carrier?: string
-            service?: string
-            tracking_url?: string
-          },
+          params: DeliveryCreateParams,
           options?: RequestOptions,
         ): Promise<Delivery> =>
           this.request<Delivery>(
@@ -652,12 +665,7 @@ export class SellerClient {
           orderId: string,
           fulfillmentId: string,
           id: string,
-          params: {
-            tracking_number?: string
-            carrier?: string
-            service?: string
-            tracking_url?: string
-          },
+          params: DeliveryUpdateParams,
           options?: RequestOptions,
         ): Promise<Delivery> =>
           this.request<Delivery>(
@@ -714,16 +722,7 @@ export class SellerClient {
         create: (
           orderId: string,
           fulfillmentId: string,
-          params: {
-            file_signed_id: string
-            tracking_number: string
-            carrier?: string
-            service?: string
-            cost?: string | number
-            currency?: string
-            file_format?: string
-            tracking_url?: string
-          },
+          params: ShippingLabelCreateParams,
           options?: RequestOptions,
         ): Promise<ShippingLabel> =>
           this.request<ShippingLabel>(
@@ -767,12 +766,7 @@ export class SellerClient {
 
       create: (
         orderId: string,
-        params: {
-          items: Array<{ fulfillment_item_id: string; quantity: number }>
-          memo?: string
-          reason_id?: string
-          stock_location_id?: string
-        },
+        params: ReturnCreateParams,
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('POST', `/orders/${orderId}/returns`, { ...options, body: params }),
@@ -784,9 +778,7 @@ export class SellerClient {
       receive: (
         orderId: string,
         id: string,
-        params?: {
-          items?: Array<{ return_line_item_id: string; quantity: number; resellable?: boolean }>
-        },
+        params?: ReturnReceiveParams,
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/receive`, {
@@ -798,7 +790,7 @@ export class SellerClient {
       refund: (
         orderId: string,
         id: string,
-        params?: { amount?: string; refund_method?: 'original_payment' | 'store_credit' },
+        params?: ReturnRefundParams,
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/refund`, {
@@ -809,7 +801,7 @@ export class SellerClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ReturnCancelParams,
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/cancel`, {
@@ -842,12 +834,7 @@ export class SellerClient {
 
       create: (
         orderId: string,
-        params: {
-          items: Array<{ fulfillment_item_id: string; new_variant_id: string; quantity: number }>
-          memo?: string
-          reason_id?: string
-          stock_location_id?: string
-        },
+        params: ExchangeCreateParams,
         options?: RequestOptions,
       ): Promise<Exchange> =>
         this.request<Exchange>('POST', `/orders/${orderId}/exchanges`, {
@@ -861,9 +848,7 @@ export class SellerClient {
       receive: (
         orderId: string,
         id: string,
-        params?: {
-          items?: Array<{ exchange_line_item_id: string; quantity: number; resellable?: boolean }>
-        },
+        params?: ExchangeReceiveParams,
         options?: RequestOptions,
       ): Promise<Exchange> =>
         this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/receive`, {
@@ -875,7 +860,7 @@ export class SellerClient {
       fulfill: (
         orderId: string,
         id: string,
-        params?: { refund_method?: 'original_payment' | 'store_credit' },
+        params?: ExchangeFulfillParams,
         options?: RequestOptions,
       ): Promise<Exchange> =>
         this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/fulfill`, {
@@ -886,7 +871,7 @@ export class SellerClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ExchangeCancelParams,
         options?: RequestOptions,
       ): Promise<Exchange> =>
         this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/cancel`, {
@@ -916,18 +901,7 @@ export class SellerClient {
 
       create: (
         orderId: string,
-        params: {
-          items: Array<{
-            line_item_id: string
-            quantity: number
-            description?: string
-            send_replacement?: boolean
-            replacement_variant_id?: string
-            refund_amount?: string
-          }>
-          memo?: string
-          reason_id?: string
-        },
+        params: ClaimCreateParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('POST', `/orders/${orderId}/claims`, { ...options, body: params }),
@@ -939,12 +913,7 @@ export class SellerClient {
       resolve: (
         orderId: string,
         id: string,
-        params: {
-          resolution: 'refund' | 'replacement' | 'refund_and_replacement'
-          refund_method?: 'original_payment' | 'store_credit'
-          amount?: string
-          replacement_line_item_ids?: string[]
-        },
+        params: ClaimResolveParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/resolve`, {
@@ -955,7 +924,7 @@ export class SellerClient {
       deny: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ClaimDenyParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/deny`, {
@@ -966,7 +935,7 @@ export class SellerClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ClaimCancelParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/cancel`, {
@@ -1396,26 +1365,6 @@ export class SellerClient {
 }
 
 /**
- * What a seller may write when publishing a policy. `name` is required — it is
- * how the marketplace's onboarding check finds the document.
- *
- * `body` takes HTML and is sanitized server-side; `body_html` is the
- * read-only rendering of what was stored.
- */
-export interface PolicyCreateParams {
-  name: string
-  slug?: string
-  body?: string | null
-}
-
-/** What a seller may change on a policy they already published. */
-export interface PolicyUpdateParams {
-  name?: string
-  slug?: string
-  body?: string | null
-}
-
-/**
  * API shorthand for an import type, not the Ruby class name.
  *
  * One member today: products are the only dataset a seller owns. Customers
@@ -1424,23 +1373,6 @@ export interface PolicyUpdateParams {
  */
 export type SellerImportType = 'products'
 
-export interface ImportCreateParams {
-  type: SellerImportType
-  /**
-   * The `signed_id` of the uploaded CSV, from `files.upload()` with
-   * `visibility: 'private'`.
-   */
-  attachment_signed_id: string
-  /** CSV column separator. Defaults to a comma on the server. */
-  delimiter?: ',' | ';' | '|' | '\t'
-  /**
-   * Absolute URL of the panel's imports view; the import-done email links back
-   * to it with `?import=<id>` appended. Honored only when it matches one of
-   * the store's configured allowed origins.
-   */
-  results_url?: string
-}
-
 export interface ImportMappingParam {
   /** Canonical schema field name (see `Import.schema_fields[].name`). */
   schema_field: string
@@ -1448,48 +1380,7 @@ export interface ImportMappingParam {
   file_column: string | null
 }
 
-export interface ImportCompleteMappingParams {
-  /** Column assignments to apply before processing starts. */
-  mappings?: ImportMappingParam[]
-}
-
 /** What a seller may write on one of their stock locations. */
-/**
- * One condition on a delivery method as it is written.
- *
- * Omitting `id` marks a rule as new; dropping one from the array deletes it.
- * `type` is a wire shorthand from `deliveryMethods.ruleTypes()` — a kind this
- * branch does not offer is a 404, never a silent drop.
- */
-export interface DeliveryMethodRuleParams {
-  id?: string
-  type: string
-  active?: boolean
-  preferences?: Record<string, unknown>
-}
-
-export interface DeliveryMethodParams {
-  name?: string
-  admin_name?: string | null
-  code?: string | null
-  /** One of the marketplace's delivery profiles. */
-  delivery_profile_id?: string
-  /** Narrows where the method ships; null serves everywhere the profile reaches. */
-  delivery_zone_id?: string | null
-  storefront_visible?: boolean
-  tracking_url?: string | null
-  estimated_transit_business_days_min?: number | null
-  estimated_transit_business_days_max?: number | null
-  /**
-   * How the method prices a shipment: the calculator's `type` (see
-   * `deliveryMethods.calculators()`) and its preferences, which must match the
-   * `schema` that list carries.
-   */
-  calculator?: { type?: string; preferences?: Record<string, unknown> }
-  /** Replaces the whole set; an empty array clears every condition. */
-  rules?: DeliveryMethodRuleParams[]
-}
-
 export interface DeliveryZoneListParams extends ListParams {
   /** Only zones under this delivery profile. */
   delivery_profile_id?: string
@@ -1514,41 +1405,6 @@ export interface DeliveryMethodRuleType {
 }
 
 /**
- * Measurements a seller records for their own packaging. `default` marks the
- * box their parcels are quoted with — one per seller, so it never displaces
- * the marketplace's.
- */
-export interface PackageTypeParams {
-  name?: string
-  kind?: string
-  length?: string | number | null
-  width?: string | number | null
-  height?: string | number | null
-  dimensions_unit?: string | null
-  weight?: string | number | null
-  max_weight?: string | number | null
-  weight_unit?: string | null
-  default?: boolean
-  metadata?: Record<string, unknown>
-}
-
-export interface StockLocationParams {
-  name?: string
-  company?: string | null
-  address1?: string | null
-  address2?: string | null
-  city?: string | null
-  zipcode?: string | null
-  country_code?: string | null
-  state_code?: string | null
-  state_name?: string | null
-  phone?: string | null
-  active?: boolean
-  default?: boolean
-  kind?: string
-}
-
-/**
  * The datasets a seller may export.
  *
  * Deliberately narrower than the operator's list: only records that can be
@@ -1557,39 +1413,9 @@ export interface StockLocationParams {
  */
 export type SellerExportType = 'orders' | 'products'
 
-export interface SellerExportCreateParams {
-  type: SellerExportType
-  /**
-   * Ransack query hash, the same predicate shape the list endpoints take
-   * (`{ number_cont: 'R12' }`). Ignored when `record_selection` is `'all'`.
-   */
-  search_params?: Record<string, unknown>
-  /**
-   * `'filtered'` (default) keeps `search_params`; `'all'` clears them on the
-   * server and exports everything this seller owns.
-   */
-  record_selection?: 'filtered' | 'all'
-  /**
-   * Absolute URL of the panel view to send the seller back to; the
-   * export-done email uses it as the download button's target. Honored only
-   * when it matches one of the store's allowed origins.
-   *
-   * Passed by the panel rather than derived server-side, because only the
-   * panel knows where it is mounted — a seller panel is served from a path
-   * under the store as often as from a host of its own.
-   */
-  results_url?: string
-}
-
-/** What a seller sends when recording a registration. */
-export interface SellerTaxIdentifierParams {
-  kind: string
-  value: string
-}
-
 /** A country as the address form needs it. */
 export interface SellerCountry {
-  iso: string
+  iso: CountryCode
   iso3: string
   name: string
   states_required?: boolean
@@ -1616,14 +1442,6 @@ export interface OnboardingResponse {
   requirements: RequirementStatus[]
 }
 
-/** What a seller says about one requirement. */
-export interface RequirementSubmissionParams {
-  note?: string
-  reference?: string
-  /** A `signed_id` from `files.upload()`, for kinds that ask for a document. */
-  file_signed_id?: string
-}
-
 /** The fields a seller may set on their own product. */
 /**
  * What a bulk product action did. `skipped_count` is present only when the
@@ -1633,91 +1451,6 @@ export interface RequirementSubmissionParams {
 export interface BulkProductResult {
   product_count: number
   skipped_count?: number
-}
-
-export interface ProductParams {
-  name?: string
-  description?: string
-  slug?: string
-  meta_title?: string
-  meta_description?: string
-  meta_keywords?: string
-  metadata?: Record<string, unknown>
-  /**
-   * The marketplace's type this product is listed against, from
-   * `productTypes.list()`. `null` detaches it. Saving with a type seeds its
-   * option types onto the product.
-   */
-  product_type_id?: string | null
-  /**
-   * Which of the marketplace's delivery profiles the product ships under,
-   * from `deliveryProfiles.list()`. A new product sent without one lands on
-   * the profile marked `default`.
-   */
-  delivery_profile_id?: string
-  /**
-   * The gallery, as a whole. A file absent from the list is removed, so send
-   * every image the product should end up with. `signed_id` attaches a fresh
-   * upload; `id` patches one already there.
-   */
-  media?: Array<{
-    id?: string
-    signed_id?: string
-    alt?: string | null
-    position?: number
-    media_type?: string
-    external_video_url?: string | null
-    focal_point_x?: number | null
-    focal_point_y?: number | null
-    variant_ids?: string[]
-  }>
-  /**
-   * The variants, as a whole — one absent from the list is removed. Tax
-   * category and delivery profile are deliberately absent: they are
-   * marketplace configuration and the API ignores them here.
-   */
-  variants?: Array<{
-    id?: string
-    sku?: string
-    barcode?: string | null
-    cost_price?: string | number | null
-    cost_currency?: string | null
-    weight?: string | number | null
-    height?: string | number | null
-    width?: string | number | null
-    depth?: string | number | null
-    weight_unit?: string | null
-    dimensions_unit?: string | null
-    hs_code?: string | null
-    country_of_origin?: string | null
-    customs_description?: string | null
-    track_inventory?: boolean
-    preorderable?: boolean
-    preorder_ships_at?: string | null
-    backorder_limit?: number | null
-    position?: number
-    options?: Array<{ name: string; value: string }>
-    prices?: Array<{
-      amount: string | number
-      compare_at_amount?: string | number
-      currency?: string
-    }>
-    stock_levels?: Array<{
-      id?: string
-      stock_location_id?: string
-      count_on_hand?: number
-      backorderable?: boolean
-    }>
-  }>
-  /**
-   * Omit `currency` and the price is recorded in the store's, which is the
-   * only place that knows it. A seller has no currency of their own to read.
-   */
-  prices?: Array<{
-    amount: string | number
-    compare_at_amount?: string | number
-    currency?: string
-  }>
 }
 
 /** What `/seller/me` answers. */
@@ -1768,87 +1501,4 @@ export interface MeResource {
    * remove it; omitting it leaves the current one alone.
    */
   update(params: AccountUpdateParams, options?: RequestOptions): Promise<MeResponse>
-}
-
-/** What a seller may change on their own account. */
-export interface AccountUpdateParams {
-  first_name?: string
-  last_name?: string
-  /** The panel's UI language, as a bundle code the panel ships (e.g. `de`). */
-  selected_locale?: string
-  /**
-   * A `signed_id` from `files.upload()` to set the photo, or `null` to remove
-   * it. Omit to leave the current one alone.
-   */
-  avatar_signed_id?: string | null
-}
-
-/** The fields a seller may change on their own record. */
-export interface ProfileUpdateParams {
-  name?: string
-  contact_email?: string | null
-  billing_email?: string | null
-  /** Sanitized HTML — the seller's public description. */
-  about?: string | null
-  /** `signed_id`s from `files.upload()`; `null` removes the image. */
-  logo_signed_id?: string | null
-  square_logo_signed_id?: string | null
-  cover_photo_signed_id?: string | null
-  /** The business a commission invoice is made out to. */
-  legal_name?: string | null
-  registration_number?: string | null
-  /**
-   * The seller's tax registration. One per kind — re-sending a kind corrects
-   * the number, and an empty value removes it. A changed number drops its
-   * validation verdict, since that answer was about the old one.
-   */
-  billing_address?: SellerAddressParams
-  /**
-   * Answers to the custom fields this marketplace's onboarding asks for.
-   * Narrowed server-side to those definitions — a field nothing asked for is
-   * ignored rather than written.
-   */
-  custom_fields?: Array<{ custom_field_definition_id: string; value: unknown }>
-  /**
-   * Accepts the marketplace's terms, stamping the moment. One-way: the stamp
-   * records that it happened, so sending `false` does not unmake it.
-   */
-  accept_terms?: boolean
-}
-
-/**
- * A correction to one of an order's addresses. Every field is optional: send
- * the lines that change and the rest of the address is carried over.
- */
-export interface OrderAddressParams {
-  first_name?: string
-  last_name?: string
-  company?: string
-  address1?: string
-  address2?: string
-  city?: string
-  postal_code?: string
-  zipcode?: string
-  phone?: string
-  alternative_phone?: string
-  country_code?: string
-  state_code?: string
-  state_name?: string
-  label?: string
-}
-
-export interface SellerAddressParams {
-  first_name?: string
-  last_name?: string
-  company?: string
-  address1?: string
-  address2?: string
-  city?: string
-  postal_code?: string
-  zipcode?: string
-  phone?: string
-  country_code?: string
-  state_code?: string
-  state_name?: string
-  label?: string
 }

@@ -1,4 +1,4 @@
-import type { CatalogParams, PriceList } from '@spree/admin-sdk'
+import type { CatalogParams, CurrencyCode, PriceList } from '@spree/admin-sdk'
 import { compareMoney, negateMoney } from '@spree/admin-sdk'
 import {
   blankToNull,
@@ -204,7 +204,7 @@ export type StagedProductTerms = Record<string, ProductTermEntry>
  */
 export interface OrderMinimumEntry {
   id?: string
-  currency: string
+  currency: CurrencyCode
   amount: string
 }
 

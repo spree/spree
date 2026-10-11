@@ -15,6 +15,23 @@ module Spree
 
           skip_before_action :authenticate_admin!
 
+          request_params 'PasswordResetRequestParams', action: :create do |body|
+            body.attribute :email, :string,
+              required: true,
+              permit: false,
+              format: :email,
+              example: 'admin@example.com'
+            body.attribute :redirect_url, :string,
+              permit: false,
+              example: 'https://admin.your-store.com/reset-password',
+              description: 'The page the emailed reset link points at, with the reset token appended. Honored only on the dashboard origin, for an account that is staff of the store; ignored otherwise.'
+          end
+
+          request_params 'PasswordResetParams', action: :update do |body|
+            body.attribute :password, :string, required: true, permit: false
+            body.attribute :password_confirmation, :string, required: true, permit: false
+          end
+
           # POST /api/v3/admin/password_resets
           def create
             user = Spree.admin_user_class.find_by(email: params[:email])

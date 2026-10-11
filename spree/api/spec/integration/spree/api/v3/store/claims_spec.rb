@@ -36,5 +36,41 @@ RSpec.describe 'Order Claims API', type: :request, swagger_doc: 'api-reference/s
         end
       end
     end
+
+    post 'Open a claim' do
+      tags 'Orders'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Reports a damaged, missing or wrong item on one of the customer\'s orders. Approving, denying and resolving it are the merchant\'s. Accessible via JWT or the order token header for guests.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: false,
+                description: 'Bearer token for authenticated customers'
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false,
+                description: 'Order token for guest access'
+      request_body_for
+
+      response '201', 'claim opened' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:claimable_order) { create(:shipped_order, store: store, customer: user) }
+        let(:order_id) { claimable_order.prefixed_id }
+        let(:claim_reason) { create(:claim_reason, store: store) }
+        let(:body) do
+          {
+            items: [{ line_item_id: claimable_order.line_items.first.prefixed_id, quantity: 1, description: 'Arrived with a cracked screen' }],
+            reason_id: claim_reason.prefixed_id,
+            memo: 'Box was crushed in transit'
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/Claim'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['id']).to start_with('claim_')
+        end
+      end
+    end
   end
 end

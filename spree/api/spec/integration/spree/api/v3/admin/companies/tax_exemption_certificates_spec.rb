@@ -69,23 +69,7 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
 
       admin_sdk_example 'tax-exemption-certificates/create'
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          certificate_number: { type: :string, example: 'DE-RESALE-7' },
-          reason_code: { type: :string, description: 'Becomes the tax provider\'s entity use code.', example: 'resale' },
-          country_code: { type: :string, nullable: true, example: 'DE' },
-          state_code: { type: :string, nullable: true, example: 'BE' },
-          expires_at: { type: :string, format: 'date-time', nullable: true },
-          issuing_authority: { type: :string, nullable: true, example: 'Finanzamt Berlin' },
-          document_signed_id: {
-            type: :string,
-            description: 'The `signed_id` returned by POST /api/v3/admin/files.',
-            example: 'eyJfcmFpbHMiOnsiZGF0YSI6MX0=--signed'
-          }
-        },
-        required: %w[certificate_number reason_code]
-      }
+      request_body_for
 
       response '201', 'certificate created' do
         let(:body) do

@@ -47,33 +47,7 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Globex Corporation' },
-          kind: { type: :string, enum: %w[company division],
-                  description: 'company = legal entity (may hold tax registrations), division = organizational unit. Roots must be company.',
-                  example: 'company' },
-          parent_id: { type: :string, nullable: true,
-                       description: 'The parent node. Omit for a root.',
-                       example: 'comp_86Rf07xd4z' },
-          external_references: {
-            type: :array,
-            description: 'Identities this business has in your own systems. A system you do ' \
-                         'not name keeps the reference it already has, and creating with a ' \
-                         'reference that already exists updates that business instead.',
-            items: {
-              type: :object,
-              properties: {
-                system: { type: :string, example: 'erp' },
-                external_id: { type: :string, example: 'GLBX-42' }
-              },
-              required: %w[system external_id]
-            }
-          }
-        },
-        required: ['name']
-      }
+      request_body_for
 
       let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 

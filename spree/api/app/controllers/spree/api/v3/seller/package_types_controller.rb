@@ -18,6 +18,27 @@ module Spree
         class PackageTypesController < Seller::ResourceController
           scoped_resource :package_types
 
+          # The same set the operator's controller permits — a seller measures
+          # their own packaging, so every field on the shared form is theirs
+          # to set. `seller_id` is deliberately absent: ownership comes from
+          # the authenticated seller, never the payload.
+          request_params 'PackageTypeParams' do |body|
+            body.attribute :name, :string
+            body.attribute :kind, :string, choices: Spree::PackageType::KINDS
+            body.attribute :length, :number, nullable: true
+            body.attribute :width, :number, nullable: true
+            body.attribute :height, :number, nullable: true
+            body.attribute :dimensions_unit, :string, nullable: true, choices: Spree::Variant::DIMENSION_UNITS
+            body.attribute :weight, :number,
+              nullable: true,
+              description: "The empty package's own weight, added to every quote."
+            body.attribute :max_weight, :number, nullable: true
+            body.attribute :weight_unit, :string, nullable: true, choices: Spree::Variant::WEIGHT_UNITS
+            body.attribute :default, :boolean,
+              description: "Makes this the box this seller's parcels are quoted with. One default per seller, so it never displaces the marketplace's."
+            body.attribute :metadata, :hash, nullable: true
+          end
+
           protected
 
           def model_class
@@ -83,15 +104,6 @@ module Spree
               Arel.sql('CASE WHEN seller_id IS NULL THEN 1 ELSE 0 END'),
               Spree::PackageType.arel_table[:name].asc
             )
-          end
-
-          # The same set the operator's controller permits — a seller measures
-          # their own packaging, so every field on the shared form is theirs
-          # to set. `seller_id` is deliberately absent: ownership comes from
-          # the authenticated seller, never the payload.
-          def resource_permitted_attributes
-            [:name, :kind, :length, :width, :height, :dimensions_unit,
-             :weight, :max_weight, :weight_unit, :default, { metadata: {} }]
           end
         end
       end

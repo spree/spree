@@ -13,6 +13,7 @@ import {
   currencyParts,
   defaultPreferences,
   filterPreferenceSchema,
+  isCurrencyCode,
   PreferencesForm,
   ResourceMultiAutocomplete,
   Subject,
@@ -962,7 +963,10 @@ function CurrencyAmountsField({
   const extraCodes = Object.keys(amounts).join(',')
   const codes = useMemo(() => {
     const supported = currencies.length > 0 ? currencies : [defaultCurrency]
-    const extra = extraCodes.split(',').filter((code) => code && !supported.includes(code))
+    const extra = extraCodes
+      .split(',')
+      .filter(isCurrencyCode)
+      .filter((code) => !supported.includes(code))
     return [defaultCurrency, ...supported.filter((code) => code !== defaultCurrency), ...extra]
   }, [currencies, defaultCurrency, extraCodes])
 

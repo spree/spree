@@ -46,19 +46,7 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Optional Bearer JWT — when present, links the subscription to that customer'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'subscriber@example.com' },
-          redirect_url: {
-            type: :string,
-            format: 'uri',
-            example: 'https://your-store.com/newsletter/confirm',
-            description: 'Storefront URL the verification token should be appended to. Silently omitted from the webhook payload when the store has allowed origins configured and this URL does not match one of them, or when no allowed origins are configured at all.'
-          }
-        },
-        required: %w[email]
-      }
+      request_body_for
 
       response '201', 'subscription created (or existing returned)' do
         let(:'x-spree-api-key') { api_key.token }
@@ -172,17 +160,7 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
       sdk_example 'newsletter-subscribers/verify'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          token: {
-            type: :string,
-            example: 'abc123def456',
-            description: 'Verification token from the confirmation email'
-          }
-        },
-        required: %w[token]
-      }
+      request_body_for
 
       response '200', 'subscription verified' do
         let(:'x-spree-api-key') { api_key.token }
@@ -439,17 +417,7 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
       DESC
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'subscriber@example.com' },
-          redirect_url: {
-            type: :string,
-            format: 'uri',
-            description: 'Storefront URL the unsubscribe token should be appended to in the resulting email. Silently dropped from the event payload if outside the store\'s allowed origins.'
-          }
-        }
-      }
+      request_body_for(required: false)
 
       response '202', 'event published when the email matches a subscriber' do
         let(:'x-spree-api-key') { api_key.token }

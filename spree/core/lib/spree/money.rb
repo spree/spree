@@ -32,6 +32,10 @@ module Spree
       # without decimals), so Spree reads its own copy.
       EXPONENTS = JSON.parse(File.read(File.expand_path('../../config/currency_exponents.json', __dir__))).freeze
 
+      # Every currency Spree knows, the closed list the API types publish as
+      # `CurrencyCode`.
+      CURRENCY_CODES = EXPONENTS.keys.sort.freeze
+
       # Unit prices may be quoted below the minor unit ("0.0125" USD); amounts
       # that change hands never are.
       UNIT_PRICE_DECIMALS = 4

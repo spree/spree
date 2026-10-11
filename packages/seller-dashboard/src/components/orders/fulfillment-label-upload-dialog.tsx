@@ -9,6 +9,7 @@ import {
   mapSpreeErrorsToForm,
 } from '@spree/dashboard-core'
 import { LabelUploadDialog } from '@spree/dashboard-ui'
+import type { CurrencyCode } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -25,7 +26,7 @@ export function FulfillmentLabelUploadDialog({
 }: {
   orderId: string
   fulfillmentId: string
-  currency: string
+  currency: CurrencyCode
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {

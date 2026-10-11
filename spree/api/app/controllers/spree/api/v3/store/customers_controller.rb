@@ -11,6 +11,33 @@ module Spree
           skip_before_action :authenticate_user, only: [:create]
           prepend_before_action :require_authentication!, only: [:show, :update]
 
+          CUSTOMER_FIELDS = Spree::Api::V3::RequestSchema.new do |schema|
+            schema.attribute :first_name, :string, example: 'John'
+            schema.attribute :last_name, :string, example: 'Doe'
+            schema.attribute :phone, :string, example: '+1 555 123 4567'
+            schema.attribute :accepts_email_marketing, :boolean
+            schema.attribute :metadata, :hash, description: 'Write-only key-value metadata.'
+          end
+
+          request_params 'RegisterParams', action: :create do |body|
+            body.attribute :email, :string, required: true, format: :email, example: 'newuser@example.com'
+            body.attribute :password, :string, required: true, example: 'password123'
+            body.attribute :password_confirmation, :string, example: 'password123'
+            body.include_attributes CUSTOMER_FIELDS
+            body.attribute :terms_of_service, :boolean,
+              permit: false,
+              description: "Whether the customer ticked the storefront's terms of service box. Recorded as their consent."
+          end
+
+          request_params 'UpdateCustomerParams', action: :update do |body|
+            body.attribute :email, :string, format: :email, example: 'customer@example.com'
+            body.attribute :password, :string
+            body.attribute :password_confirmation, :string
+            body.attribute :current_password, :string,
+              description: 'Required when changing the email or the password.'
+            body.include_attributes CUSTOMER_FIELDS
+          end
+
           # POST /api/v3/store/customers
           # Registration runs through the customer_create_workflow seam
           # (password requirement, newsletter-subscriber linking, registration
@@ -83,8 +110,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
-                          :accepts_email_marketing, :phone, :current_password, metadata: {})
+            params.permit(*declared_permitted_attributes)
           end
 
           private

@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class LineItemSerializer < BaseSerializer
-        typelize variant_id: :string, quantity: :number, currency: :string, name: :string, slug: :string,
+        typelize variant_id: :string, quantity: :number, currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], name: :string, slug: :string,
                  options_text: :string, compare_at_amount: [:string, nullable: true],
                  thumbnail_url: [:string, nullable: true], preorder: :boolean,
                  preorder_ships_at: [:string, nullable: true], seller_id: [:string, nullable: true]

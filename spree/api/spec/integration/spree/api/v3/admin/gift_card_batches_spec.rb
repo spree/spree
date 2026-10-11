@@ -62,17 +62,7 @@ RSpec.describe 'Admin Gift Card Batches API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[prefix amount codes_count],
-        properties: {
-          prefix: { type: :string, example: 'WELCOME', description: 'Lowercased and prepended to every generated code.' },
-          amount: { type: :string, example: '25.00', description: 'Decimal amount per card, greater than zero.' },
-          currency: { type: :string, example: 'USD', description: 'ISO 4217 currency code. Defaults to the store currency.' },
-          codes_count: { type: :integer, example: 100, description: 'Number of cards to generate. Capped at `gift_card_batch_limit`.' },
-          expires_at: { type: :string, example: '2030-12-31', nullable: true }
-        }
-      }
+      request_body_for
 
       response '201', 'gift card batch created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

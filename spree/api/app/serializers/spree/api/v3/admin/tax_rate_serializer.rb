@@ -10,7 +10,7 @@ module Spree
                    show_rate_in_label: :boolean,
                    tax_category_id: [:string, nullable: true],
                    store_id: [:string, nullable: true],
-                   country_code: [:string, nullable: true],
+                   country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    state_code: [:string, nullable: true],
                    metadata: ['Record<string, unknown>', nullable: true],
                    deleted_at: [:string, nullable: true]

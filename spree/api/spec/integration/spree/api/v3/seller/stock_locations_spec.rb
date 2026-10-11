@@ -62,25 +62,7 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Main warehouse' },
-          company: { type: :string, nullable: true },
-          address1: { type: :string, nullable: true, example: '1 Kiln Lane' },
-          address2: { type: :string, nullable: true },
-          city: { type: :string, nullable: true, example: 'Portland' },
-          zipcode: { type: :string, nullable: true, example: '97205' },
-          country_code: { type: :string, nullable: true, example: 'US' },
-          state_code: { type: :string, nullable: true, example: 'OR' },
-          state_name: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true },
-          active: { type: :boolean, description: 'Set `false` to retire a location — there is no delete' },
-          default: { type: :boolean },
-          kind: { type: :string, example: 'warehouse' }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'stock location created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -156,20 +138,7 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Main warehouse' },
-          address1: { type: :string, nullable: true },
-          city: { type: :string, nullable: true },
-          zipcode: { type: :string, nullable: true },
-          country_code: { type: :string, nullable: true },
-          state_code: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true },
-          active: { type: :boolean },
-          default: { type: :boolean }
-        }
-      }
+      request_body_for
 
       response '200', 'stock location updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

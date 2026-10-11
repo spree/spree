@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { CurrencyCode } from '@spree/admin-sdk'
 import {
   EMPTY_FILE_UPLOAD_VALUE,
   FileUploadField,
@@ -25,7 +26,7 @@ export function FulfillmentLabelUploadDialog({
 }: {
   orderId: string
   fulfillmentId: string
-  currency?: string
+  currency?: CurrencyCode
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {

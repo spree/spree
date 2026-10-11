@@ -69,17 +69,7 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[variant_id currency],
-        properties: {
-          variant_id: { type: :string, example: 'variant_xY9' },
-          currency: { type: :string, example: 'USD' },
-          amount: { type: :string, nullable: true, example: '19.99' },
-          compare_at_amount: { type: :string, nullable: true, example: '24.99' },
-          price_list_id: { type: :string, nullable: true, example: 'pl_aBc123' }
-        }
-      }
+      request_body_for
 
       response '201', 'price created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -150,13 +140,7 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          amount: { type: :string, nullable: true },
-          compare_at_amount: { type: :string, nullable: true }
-        }
-      }
+      request_body_for
 
       response '200', 'price updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -217,27 +201,7 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[prices],
-        properties: {
-          prices: {
-            type: :array,
-            items: {
-              type: :object,
-              required: %w[variant_id currency],
-              properties: {
-                id: { type: :string, nullable: true, example: 'price_aBc123' },
-                variant_id: { type: :string, example: 'variant_xY9' },
-                currency: { type: :string, example: 'USD' },
-                price_list_id: { type: :string, nullable: true, example: 'pl_aBc123' },
-                amount: { type: :string, nullable: true, example: '19.99' },
-                compare_at_amount: { type: :string, nullable: true, example: '24.99' }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'prices upserted' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -297,13 +261,7 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids],
-        properties: {
-          ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'prices deleted' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

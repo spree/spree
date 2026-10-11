@@ -10,6 +10,26 @@ module Spree
         class CustomFieldDefinitionsController < ResourceController
           scoped_resource :settings
 
+          request_params :custom_field_definition do |body|
+            body.attribute :namespace, :string, description: 'Defaults to `custom`.'
+            body.attribute :key, :string, required: true, on: :create
+            body.attribute :label, :string, description: 'Human-readable name; defaults to the titleized `key`.'
+            body.attribute :field_type, :string,
+              required: true, on: :create,
+              example: 'short_text',
+              description: 'Custom field type token (`short_text`, `long_text`, `rich_text`, `number`, …). An extension type that has no token is named by its registered class instead.'
+            body.attribute :resource_type, :string,
+              required: true, on: :create,
+              example: 'product',
+              description: 'Shorthand of the resource the field attaches to, from the resource types endpoint.'
+            body.attribute :storefront_visible, :boolean,
+              description: 'When false, the definition is admin-only and never exposed in the Store API.'
+            body.attribute :searchable, :boolean,
+              description: 'Include values in storefront product text search. Supported for `short_text`, `long_text` and `number` fields; other types are refused.'
+            body.attribute :sortable, :boolean,
+              description: 'Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`). Supported for `short_text` and `number` fields; other types are refused.'
+          end
+
           # GET /api/v3/admin/custom_field_definitions/resource_types
           #
           # What a definition can be attached to, from
@@ -34,9 +54,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :namespace, :key, :label, :field_type,
-                          :resource_type, :storefront_visible,
-                          :searchable, :sortable)
+            params.permit(*permitted_attributes)
           end
 
           # Pure registry discovery — maps to the read scope.

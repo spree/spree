@@ -41,18 +41,7 @@ RSpec.describe 'Admin Files API', type: :request, swagger_doc: 'api-reference/ad
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          filename: { type: :string, example: 'products.csv' },
-          content_type: { type: :string, example: 'text/csv' },
-          byte_size: { type: :integer, example: 48_213 },
-          checksum: { type: :string, description: 'Base64-encoded MD5 digest of the file', example: 'rL0Y20zC+Fzt72VPzMSk2A==' },
-          visibility: { type: :string, enum: %w[public private], default: 'public' },
-          file: { type: :string, format: :binary, description: 'The bytes, for a multipart upload' }
-        },
-        required: %w[filename content_type]
-      }
+      request_body_for
 
       response '201', 'presigned upload target created' do
         let(:body) do

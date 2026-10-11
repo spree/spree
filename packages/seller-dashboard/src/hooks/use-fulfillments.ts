@@ -1,5 +1,6 @@
 import { useResourceKeyBuilder } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
+import type { CurrencyCode } from '@spree/seller-sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { sellerClient } from '../api-client'
 
@@ -132,7 +133,7 @@ export function useFulfillmentActions(orderId: string) {
       carrier?: string
       service?: string
       cost?: string
-      currency?: string
+      currency?: CurrencyCode
     }) => sellerClient().orders.fulfillments.labels.create(orderId, fulfillmentId, params),
   )
 

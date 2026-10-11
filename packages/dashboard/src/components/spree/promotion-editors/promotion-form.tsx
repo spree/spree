@@ -3,9 +3,9 @@ import type {
   Customer,
   Promotion,
   PromotionAction,
-  PromotionActionDraft,
+  PromotionActionDraftParams,
   PromotionRule,
-  PromotionRuleDraft,
+  PromotionRuleDraftParams,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
@@ -126,8 +126,8 @@ export interface PromotionFormPayload {
   expires_at: string | null
   usage_limit: number | null
   match_policy: MatchPolicy
-  rules: PromotionRuleDraft[]
-  actions: PromotionActionDraft[]
+  rules: PromotionRuleDraftParams[]
+  actions: PromotionActionDraftParams[]
   /** Only sent in create mode — server rejects these on update. */
   kind?: PromotionKind
   code?: string | null

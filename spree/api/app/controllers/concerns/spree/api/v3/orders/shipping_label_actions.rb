@@ -80,13 +80,8 @@ module Spree
 
           private
 
-          def label_permitted_keys
-            [:file_signed_id, :tracking_number, :carrier, :service,
-             :cost, :currency, :file_format, :tracking_url]
-          end
-
           def label_params
-            @label_params ||= params.permit(*label_permitted_keys)
+            @label_params ||= params.permit(*declared_permitted_attributes)
           end
 
           # Records a label bought outside Spree.
@@ -100,7 +95,7 @@ module Spree
               result = Spree.shipping_label_record_workflow.call(
                 owner: @parent,
                 file: label_params[:file_signed_id],
-                **(label_permitted_keys - [:file_signed_id]).index_with { |key| label_params[key] }
+                **(declared_permitted_attributes.grep(Symbol) - [:file_signed_id]).index_with { |key| label_params[key] }
               )
 
               render_result(result, status: :created)

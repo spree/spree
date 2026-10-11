@@ -52,56 +52,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          code: { type: :string, nullable: true },
-          description: { type: :string, nullable: true },
-          starts_at: { type: :string, format: 'date-time', nullable: true },
-          expires_at: { type: :string, format: 'date-time', nullable: true },
-          usage_limit: { type: :integer, nullable: true },
-          match_policy: { type: :string, enum: %w[all any] },
-          kind: { type: :string, enum: %w[coupon_code automatic] },
-          multi_codes: { type: :boolean },
-          number_of_codes: { type: :integer, nullable: true },
-          code_prefix: { type: :string, nullable: true },
-          promotion_category_id: { type: :string, nullable: true },
-          rules: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                type: { type: :string, example: 'currency' },
-                preferences: { type: :object, additionalProperties: true },
-                product_ids: { type: :array, items: { type: :string } },
-                category_ids: { type: :array, items: { type: :string } },
-                customer_ids: { type: :array, items: { type: :string } }
-              },
-              required: ['type']
-            }
-          },
-          actions: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                type: { type: :string, example: 'free_shipping' },
-                preferences: { type: :object, additionalProperties: true },
-                calculator: {
-                  type: :object,
-                  properties: {
-                    type: { type: :string, example: 'flat_percent_item_total' },
-                    preferences: { type: :object, additionalProperties: true }
-                  }
-                }
-              },
-              required: ['type']
-            }
-          }
-        },
-        required: ['name']
-      }
+      request_body_for
 
       response '201', 'promotion created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -224,54 +175,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          description: { type: :string, nullable: true },
-          code: { type: :string, nullable: true },
-          starts_at: { type: :string, format: 'date-time', nullable: true },
-          expires_at: { type: :string, format: 'date-time', nullable: true },
-          usage_limit: { type: :integer, nullable: true },
-          match_policy: { type: :string, enum: %w[all any] },
-          kind: { type: :string, enum: %w[coupon_code automatic] },
-          promotion_category_id: { type: :string, nullable: true },
-          rules: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, nullable: true, description: 'Pass to update an existing rule; omit to build a new one' },
-                type: { type: :string, example: 'currency' },
-                preferences: { type: :object, additionalProperties: true },
-                product_ids: { type: :array, items: { type: :string } },
-                category_ids: { type: :array, items: { type: :string } },
-                customer_ids: { type: :array, items: { type: :string } }
-              },
-              required: ['type']
-            }
-          },
-          actions: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, nullable: true },
-                type: { type: :string, example: 'free_shipping' },
-                preferences: { type: :object, additionalProperties: true },
-                calculator: {
-                  type: :object,
-                  properties: {
-                    type: { type: :string, example: 'flat_percent_item_total' },
-                    preferences: { type: :object, additionalProperties: true }
-                  }
-                }
-              },
-              required: ['type']
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'promotion updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

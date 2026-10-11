@@ -19,6 +19,42 @@ module Spree
             # would be wrongly denied.
             scoped_resource :orders
 
+            request_params :return do |body|
+              body.attribute :items, :array,
+                required: true, on: :create,
+                only: :create,
+                description: 'Fulfilled units coming back, and how many of each.' do |item|
+                item.attribute :fulfillment_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+              end
+              body.attribute :stock_location_id, :id,
+                description: 'Where the goods come back to. Defaults to the location that shipped them.'
+              body.attribute :reason_id, :id, description: "One of the store's return reasons."
+              body.attribute :memo, :string
+              body.attribute :metadata, :hash, only: :update
+            end
+
+            request_params 'ReturnReceiveParams', action: :receive do |body|
+              body.attribute :items, :array,
+                description: 'What actually arrived. Omit to receive everything as requested and resellable; send rows for a partial or damaged receipt.' do |item|
+                item.attribute :return_line_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+                item.attribute :resellable, :boolean,
+                  description: 'Goods that cannot be resold are received but never restocked. Defaults to true.'
+              end
+            end
+
+            request_params 'ReturnRefundParams', action: :refund do |body|
+              body.attribute :amount, :decimal, description: 'Defaults to the value of what was actually received.'
+              body.attribute :refund_method, :string,
+                choices: Spree::RefundMethods::METHODS,
+                description: '`store_credit` issues credit immediately; `original_payment` (the default) refunds through the gateway that took the money.'
+            end
+
+            request_params 'ReturnCancelParams', action: :cancel do |body|
+              body.attribute :reason, :string, description: 'A note on why the return was canceled.'
+            end
+
             before_action :set_resource, only: [:show, :update, :approve, :receive, :refund, :cancel]
 
             # PATCH /api/v3/admin/orders/:order_id/returns/:id
@@ -50,7 +86,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:memo, :reason_id, :stock_location_id, metadata: {})
+              params.permit(*permitted_attributes)
             end
 
             private
