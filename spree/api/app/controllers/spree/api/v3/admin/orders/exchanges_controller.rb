@@ -13,6 +13,36 @@ module Spree
             # would name a key no catalog knows.
             scoped_resource :orders
 
+            request_params :exchange do
+              object :items, array: true, required: :create, only: :create,
+                             description: 'Items coming back, and what goes out in their place.' do
+                id :fulfillment_item_id, :new_variant_id, required: true
+                integer :quantity, required: true
+              end
+              id :stock_location_id, description: 'Where the goods come back to.'
+              id :reason_id, description: "One of the store's return reasons."
+              string :memo
+              object :metadata, only: :update
+            end
+
+            request_params 'ExchangeReceiveParams', action: :receive do
+              object :items, array: true,
+                             description: 'What actually arrived. Omit to receive everything as requested and resellable.' do
+                id :exchange_line_item_id, required: true
+                integer :quantity, required: true
+                boolean :resellable, description: 'Goods that cannot be resold are received but never restocked. Defaults to true.'
+              end
+            end
+
+            request_params 'ExchangeFulfillParams', action: :fulfill do
+              string :refund_method, enum: Spree::RefundMethods::METHODS,
+                                     description: 'How a credit is returned when the replacements cost less than what came back. Defaults to `store_credit`. A balance the customer owes is left for the merchant to collect.'
+            end
+
+            request_params 'ExchangeCancelParams', action: :cancel do
+              string :reason, description: 'A note on why the exchange was canceled.'
+            end
+
             before_action :set_resource, only: [:show, :update, :approve, :receive, :fulfill, :cancel]
 
             # PATCH /api/v3/admin/orders/:order_id/exchanges/:id
@@ -37,7 +67,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:memo, :reason_id, :stock_location_id, metadata: {})
+              params.permit(*permitted_attributes)
             end
 
             private

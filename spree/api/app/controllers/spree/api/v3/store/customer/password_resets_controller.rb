@@ -14,6 +14,16 @@ module Spree
 
             skip_before_action :authenticate_user
 
+            request_params 'RequestPasswordResetParams', action: :create do
+              string :email, required: true, format: :email, example: 'customer@example.com', description: 'The email of the account to reset.'
+              string :redirect_url, format: :uri, example: 'https://myshop.com/reset-password',
+                                    description: "Where the reset link sends the customer. Ignored unless it matches one of the store's allowed origins."
+            end
+
+            request_params 'ResetPasswordParams', action: :update do
+              string :password, :password_confirmation, required: true, example: 'newsecurepassword'
+            end
+
             # POST /api/v3/store/password_resets
             def create
               redirect_url = params[:redirect_url]

@@ -16,6 +16,14 @@ module Spree
           skip_before_action :set_current_seller_context
           before_action :require_current_user!
 
+          request_params 'AccountUpdateParams' do
+            string :first_name, example: 'Ada'
+            string :last_name, example: 'Lovelace'
+            string :selected_locale, example: 'de', description: "The panel's display language, as a code the panel ships."
+            string :avatar_signed_id, nullable: true,
+                                      description: 'A `signed_id` from `POST /files` to set the photo, or `null` to remove it. Omit to leave the current one alone.'
+          end
+
           def show
             render json: me_response
           end
@@ -40,7 +48,7 @@ module Spree
           private
 
           def permitted_params
-            params.permit(:selected_locale, :first_name, :last_name, :avatar_signed_id)
+            params.permit(*declared_permitted_attributes)
           end
 
           def me_response

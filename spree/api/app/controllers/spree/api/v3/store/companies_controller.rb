@@ -10,6 +10,10 @@ module Spree
         class CompaniesController < ResourceController
           prepend_before_action :require_authentication!
 
+          request_params 'UpdateCompanyParams', action: :update do
+            string :name, example: 'Acme Industrial Group'
+          end
+
           # PATCH /api/v3/store/companies/:id
           def update
             authorize_storefront_write!(@resource)
@@ -38,7 +42,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:name)
+            params.permit(*declared_permitted_attributes)
           end
         end
       end

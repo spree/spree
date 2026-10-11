@@ -71,26 +71,7 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                fulfillment_item_id: { type: :string },
-                quantity: { type: :integer }
-              },
-              required: %w[fulfillment_item_id quantity]
-            }
-          },
-          reason_id: { type: :string, nullable: true },
-          stock_location_id: { type: :string, nullable: true },
-          memo: { type: :string, nullable: true }
-        },
-        required: %w[items]
-      }
+      request_body_for
 
       response '201', 'return opened' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -159,23 +140,7 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                return_line_item_id: { type: :string },
-                quantity: { type: :integer },
-                resellable: { type: :boolean }
-              },
-              required: %w[return_line_item_id quantity]
-            }
-          }
-        }
-      }
+      request_body_for(required: false)
 
       response '200', 'return received' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -212,13 +177,7 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          amount: { type: :string, nullable: true },
-          refund_method: { type: :string, enum: %w[original_payment store_credit] }
-        }
-      }
+      request_body_for(required: false)
 
       response '200', 'return refunded' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -260,17 +219,20 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
 
     patch 'Cancel a return' do
       tags 'Returns'
+      consumes 'application/json'
       produces 'application/json'
       security [bearer_auth: []]
       description 'Calls the return off.'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for(required: false)
 
       response '200', 'return canceled' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
         let(:order_id) { order.prefixed_id }
         let(:id) { return_record.prefixed_id }
+        let(:body) { { reason: 'Customer decided to keep the goods' } }
 
         schema '$ref' => '#/components/schemas/Return'
 

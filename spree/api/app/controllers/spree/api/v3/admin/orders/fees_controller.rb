@@ -11,6 +11,15 @@ module Spree
           class FeesController < BaseController
             scoped_resource :orders
 
+            request_params :fee do
+              string :label, required: :create, example: 'Gift wrap'
+              decimal :amount, required: :create, example: '4.00'
+              string :kind, enum: Spree::Fee::KINDS, example: 'gift_wrap', description: 'Defaults to `surcharge`.'
+              # Resolved through the order by the controller, never assigned.
+              id :line_item_id, :fulfillment_id, only: :create, nullable: true, permit: false,
+                                                 description: 'The line item or fulfillment the fee belongs to. Omitted, the fee is order-level.'
+            end
+
             # POST /api/v3/admin/orders/:order_id/fees
             def create
               with_order_lock do
@@ -60,7 +69,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:label, :amount, :kind)
+              params.permit(*permitted_attributes)
             end
 
             def collection_includes

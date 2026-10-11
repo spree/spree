@@ -25,12 +25,7 @@ RSpec.describe 'Cart Store Credits API', type: :request, swagger_doc: 'api-refer
       parameter name: 'x-spree-token', in: :header, type: :string, required: false
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          amount: { type: :number, example: 10.0, description: 'Amount to apply (optional - defaults to max available)' }
-        }
-      }
+      request_body_for
 
       response '200', 'store credit applied' do
         let(:store_credit_payment_method) { create(:store_credit_payment_method) }

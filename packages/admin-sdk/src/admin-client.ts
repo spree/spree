@@ -195,7 +195,7 @@ export type ReportingCompare = 'previous_period' | 'previous_year'
 
 export type ReportingMetricFilterOp = 'eq' | 'gt' | 'gte' | 'lt' | 'lte'
 
-export interface ReportingQuery {
+export type ReportingQuery = {
   /** Registered metric names — discover via `reporting.schema()`. */
   metrics: string[]
   dimensions?: Array<
@@ -396,6 +396,7 @@ import type {
   AllowedOriginUpdateParams,
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
+  BulkTagsParams,
   CatalogAssignParams,
   CatalogOrderMinimumParams,
   CatalogParams,
@@ -403,9 +404,13 @@ import type {
   CategoryCreateParams,
   CategoryRepositionParams,
   CategoryUpdateParams,
+  ChannelAddProductsParams,
   ChannelCreateParams,
+  ChannelRemoveProductsParams,
   ChannelUpdateParams,
+  ClaimCancelParams,
   ClaimCreateParams,
+  ClaimDenyParams,
   ClaimResolveParams,
   ClaimUpdateParams,
   CollectionCreateParams,
@@ -417,6 +422,7 @@ import type {
   CompanyMembershipCreateParams,
   CompanyParams,
   CustomerAddressParams,
+  CustomerBulkGroupsParams,
   CustomerCreateParams,
   CustomerGroupCreateParams,
   CustomerGroupUpdateParams,
@@ -432,6 +438,8 @@ import type {
   DeliveryCreateParams,
   DeliveryMarkDeliveredParams,
   DeliveryMethodParams,
+  DeliveryMethodRuleCreateParams,
+  DeliveryMethodRuleUpdateParams,
   DeliveryOriginGroupParams,
   DeliveryProfileParams,
   DeliveryUpdateParams,
@@ -439,16 +447,22 @@ import type {
   DigitalAssetCreateParams,
   DigitalAssetProvider,
   DigitalAssetUpdateParams,
+  DiscountCodeApplyParams,
+  DiscountCreateParams,
+  DiscountUpdateParams,
   EmailTemplateDraftParams,
   EmailTemplateLanguageParams,
   EmailTemplatePreviewParams,
   EmailTemplateRestoreParams,
   EmailTemplateVersionParams,
+  ExchangeCancelParams,
   ExchangeCreateParams,
   ExchangeFulfillParams,
   ExchangeReceiveParams,
   ExchangeUpdateParams,
   ExportCreateParams,
+  FeeCreateParams,
+  FeeUpdateParams,
   FulfillmentCreateParams,
   FulfillmentFulfillParams,
   FulfillmentMarkDeliveredParams,
@@ -471,6 +485,7 @@ import type {
   MarketUpdateParams,
   MediaCreateParams,
   MediaLibraryCreateParams,
+  MediaLibraryUpdateParams,
   MediaUpdateParams,
   MediaUsageReference,
   MeUpdateParams,
@@ -492,13 +507,20 @@ import type {
   PaymentMethodUpdateParams,
   PolicyCreateParams,
   PolicyUpdateParams,
-  PriceBulkUpsertRow,
+  PriceBulkDestroyParams,
+  PriceBulkUpsertParams,
   PriceCreateParams,
   PriceListCreateParams,
   PriceListUpdateParams,
   PriceUpdateParams,
+  ProductBulkCategoriesParams,
+  ProductBulkChannelsParams,
+  ProductBulkCollectionsParams,
+  ProductBulkDestroyParams,
+  ProductBulkStatusParams,
   ProductCreateParams,
   ProductMembershipRepositionParams,
+  ProductRejectParams,
   ProductTypeApplyToProductsResponse,
   ProductTypeCreateParams,
   ProductTypeUpdateParams,
@@ -510,6 +532,7 @@ import type {
   PromotionRuleCreateParams,
   PromotionRuleUpdateParams,
   PromotionUpdateParams,
+  PurchaseOrderCancelParams,
   PurchaseOrderCreateParams,
   PurchaseOrderUpdateParams,
   ReasonCreateParams,
@@ -517,6 +540,7 @@ import type {
   ReceivableCloseParams,
   RefundCreateParams,
   ResourceTypeDefinition,
+  ReturnCancelParams,
   ReturnCreateParams,
   ReturnReceiveParams,
   ReturnRefundParams,
@@ -529,6 +553,7 @@ import type {
   SellerCreateParams,
   SellerInviteParams,
   SellerOnboarding,
+  SellerPayoutCompleteParams,
   SellerRejectParams,
   SellerReopenOnboardingParams,
   SellerRequirementCreateParams,
@@ -542,13 +567,14 @@ import type {
   SetupParams,
   SetupStatus,
   ShippingLabelCreateParams,
-  StockLevelBulkUpsertRow,
+  StockLevelBulkUpsertParams,
   StockLevelUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
   StockReceiptCreateParams,
   StockTransferCancelParams,
   StockTransferCreateParams,
+  StockTransferMarkInTransitParams,
   StockTransferUpdateParams,
   StoreCreditApplyParams,
   StoreCreditListResponse,
@@ -1277,7 +1303,7 @@ export class AdminClient {
      */
     reject: (
       id: string,
-      params?: { reason?: string },
+      params?: ProductRejectParams,
       options?: RequestOptions,
     ): Promise<Product> =>
       this.request<Product>('PATCH', `/products/${id}/reject`, { ...options, body: params }),
@@ -1287,21 +1313,21 @@ export class AdminClient {
      * against the product status enum and reindexes affected products.
      */
     bulkStatusUpdate: (
-      params: { ids: string[]; status: 'draft' | 'active' | 'archived' },
+      params: ProductBulkStatusParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; status: string }> =>
       this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
 
     /** Attach every product in `ids` to every category in `category_ids`. */
     bulkAddToCategories: (
-      params: { ids: string[]; category_ids: string[] },
+      params: ProductBulkCategoriesParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; category_count: number }> =>
       this.request('POST', '/products/bulk_add_to_categories', { ...options, body: params }),
 
     /** Detach every product in `ids` from every category in `category_ids`. */
     bulkRemoveFromCategories: (
-      params: { ids: string[]; category_ids: string[] },
+      params: ProductBulkCategoriesParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; category_count: number }> =>
       this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
@@ -1312,49 +1338,49 @@ export class AdminClient {
      * `collection_count` reports how many were actually applied.
      */
     bulkAddToCollections: (
-      params: { ids: string[]; collection_ids: string[] },
+      params: ProductBulkCollectionsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; collection_count: number }> =>
       this.request('POST', '/products/bulk_add_to_collections', { ...options, body: params }),
 
     /** Detach every product in `ids` from every collection in `collection_ids`. */
     bulkRemoveFromCollections: (
-      params: { ids: string[]; collection_ids: string[] },
+      params: ProductBulkCollectionsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; collection_count: number }> =>
       this.request('POST', '/products/bulk_remove_from_collections', { ...options, body: params }),
 
     /** Publish every product in `ids` on every channel in `channel_ids`. */
     bulkAddToChannels: (
-      params: { ids: string[]; channel_ids: string[] },
+      params: ProductBulkChannelsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; channel_count: number }> =>
       this.request('POST', '/products/bulk_add_to_channels', { ...options, body: params }),
 
     /** Unpublish every product in `ids` from every channel in `channel_ids`. */
     bulkRemoveFromChannels: (
-      params: { ids: string[]; channel_ids: string[] },
+      params: ProductBulkChannelsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; channel_count: number; removed: number }> =>
       this.request('POST', '/products/bulk_remove_from_channels', { ...options, body: params }),
 
     /** Add each tag name to every product. Tags are upserted by name. */
     bulkAddTags: (
-      params: { ids: string[]; tags: string[] },
+      params: BulkTagsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; tag_count: number }> =>
       this.request('POST', '/products/bulk_add_tags', { ...options, body: params }),
 
     /** Remove each tag name from every product. No-op for non-tagged. */
     bulkRemoveTags: (
-      params: { ids: string[]; tags: string[] },
+      params: BulkTagsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; tag_count: number }> =>
       this.request('POST', '/products/bulk_remove_tags', { ...options, body: params }),
 
     /** Soft-delete a list of products. */
     bulkDestroy: (
-      params: { ids: string[] },
+      params: ProductBulkDestroyParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number }> =>
       this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
@@ -1599,11 +1625,7 @@ export class AdminClient {
     create: (params: OrderCreateParams, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('POST', '/orders', { ...options, body: params }),
 
-    update: (
-      id: string,
-      params: OrderUpdateParams | Record<string, unknown>,
-      options?: RequestOptions,
-    ): Promise<Order> =>
+    update: (id: string, params: OrderUpdateParams, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
@@ -2034,7 +2056,7 @@ export class AdminClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ReturnCancelParams,
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/cancel`, {
@@ -2184,7 +2206,7 @@ export class AdminClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ExchangeCancelParams,
         options?: RequestOptions,
       ): Promise<Exchange> =>
         this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/cancel`, {
@@ -2253,7 +2275,7 @@ export class AdminClient {
       deny: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ClaimDenyParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/deny`, {
@@ -2264,7 +2286,7 @@ export class AdminClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ClaimCancelParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/cancel`, {
@@ -2364,12 +2386,7 @@ export class AdminClient {
        */
       create: (
         orderId: string,
-        params: {
-          label: string
-          value: string
-          value_type?: 'flat' | 'percent'
-          line_item_id?: string
-        },
+        params: DiscountCreateParams,
         options?: RequestOptions,
       ): Promise<{ data: Discount[] }> =>
         this.request<{ data: Discount[] }>('POST', `/orders/${orderId}/discounts`, {
@@ -2381,7 +2398,7 @@ export class AdminClient {
       update: (
         orderId: string,
         id: string,
-        params: { label?: string; amount?: string | number },
+        params: DiscountUpdateParams,
         options?: RequestOptions,
       ): Promise<Discount> =>
         this.request<Discount>('PATCH', `/orders/${orderId}/discounts/${id}`, {
@@ -2403,7 +2420,7 @@ export class AdminClient {
     discountCodes: {
       create: (
         orderId: string,
-        params: { code: string },
+        params: DiscountCodeApplyParams,
         options?: RequestOptions,
       ): Promise<Order> =>
         this.request<Order>('POST', `/orders/${orderId}/discount_codes`, {
@@ -2434,23 +2451,13 @@ export class AdminClient {
       get: (orderId: string, id: string, options?: RequestOptions): Promise<Fee> =>
         this.request<Fee>('GET', `/orders/${orderId}/fees/${id}`, options),
 
-      create: (
-        orderId: string,
-        params: {
-          label: string
-          amount: string | number
-          kind?: string
-          line_item_id?: string
-          fulfillment_id?: string
-        },
-        options?: RequestOptions,
-      ): Promise<Fee> =>
+      create: (orderId: string, params: FeeCreateParams, options?: RequestOptions): Promise<Fee> =>
         this.request<Fee>('POST', `/orders/${orderId}/fees`, { ...options, body: params }),
 
       update: (
         orderId: string,
         id: string,
-        params: { label?: string; amount?: string | number; kind?: string },
+        params: FeeUpdateParams,
         options?: RequestOptions,
       ): Promise<Fee> =>
         this.request<Fee>('PATCH', `/orders/${orderId}/fees/${id}`, { ...options, body: params }),
@@ -2585,13 +2592,7 @@ export class AdminClient {
 
       create: (
         deliveryMethodId: string,
-        params: {
-          type: string
-          active?: boolean
-          preferences?: Record<string, unknown>
-          /** Prefixed product IDs — association-backed rules (excluded_products_rule). */
-          product_ids?: string[]
-        },
+        params: DeliveryMethodRuleCreateParams,
         options?: RequestOptions,
       ): Promise<DeliveryMethodRule> =>
         this.request<DeliveryMethodRule>('POST', `/delivery_methods/${deliveryMethodId}/rules`, {
@@ -2602,12 +2603,7 @@ export class AdminClient {
       update: (
         deliveryMethodId: string,
         id: string,
-        params: {
-          active?: boolean
-          preferences?: Record<string, unknown>
-          /** Prefixed product IDs — association-backed rules (excluded_products_rule). */
-          product_ids?: string[]
-        },
+        params: DeliveryMethodRuleUpdateParams,
         options?: RequestOptions,
       ): Promise<DeliveryMethodRule> =>
         this.request<DeliveryMethodRule>(
@@ -2657,10 +2653,7 @@ export class AdminClient {
     get: (id: string, options?: RequestOptions): Promise<DeliveryProfile> =>
       this.request<DeliveryProfile>('GET', `/delivery_profiles/${id}`, options),
 
-    create: (
-      params: DeliveryProfileParams & { name: string },
-      options?: RequestOptions,
-    ): Promise<DeliveryProfile> =>
+    create: (params: DeliveryProfileParams, options?: RequestOptions): Promise<DeliveryProfile> =>
       this.request<DeliveryProfile>('POST', '/delivery_profiles', {
         ...options,
         body: params,
@@ -3006,13 +2999,13 @@ export class AdminClient {
      * number of rows the DB touched.
      */
     bulkUpsert: (
-      params: { prices: PriceBulkUpsertRow[] },
+      params: PriceBulkUpsertParams,
       options?: RequestOptions,
     ): Promise<{ price_count: number }> =>
       this.request('POST', '/prices/bulk_upsert', { ...options, body: params }),
 
     bulkDestroy: (
-      params: { ids: string[] },
+      params: PriceBulkDestroyParams,
       options?: RequestOptions,
     ): Promise<{ price_count: number }> =>
       this.request('DELETE', '/prices/bulk_destroy', { ...options, body: params }),
@@ -3647,7 +3640,7 @@ export class AdminClient {
 
     complete: (
       id: string,
-      data?: { reference?: string },
+      data?: SellerPayoutCompleteParams,
       options?: RequestOptions,
     ): Promise<SellerPayout> =>
       this.request<SellerPayout>('PATCH', `/seller_payouts/${id}/complete`, {
@@ -4530,7 +4523,7 @@ export class AdminClient {
      * prefixed IDs; the server decodes them. Idempotent.
      */
     bulkAddToGroups: (
-      params: { ids: string[]; customer_group_ids: string[] },
+      params: CustomerBulkGroupsParams,
       options?: RequestOptions,
     ): Promise<{ customer_count: number; customer_group_count: number }> =>
       this.request('POST', '/customers/bulk_add_to_groups', { ...options, body: params }),
@@ -4540,21 +4533,21 @@ export class AdminClient {
      * non-members. Same shape as `bulkAddToGroups`.
      */
     bulkRemoveFromGroups: (
-      params: { ids: string[]; customer_group_ids: string[] },
+      params: CustomerBulkGroupsParams,
       options?: RequestOptions,
     ): Promise<{ customer_count: number; customer_group_count: number }> =>
       this.request('POST', '/customers/bulk_remove_from_groups', { ...options, body: params }),
 
     /** Add each tag name to every customer. Tags are upserted by name. */
     bulkAddTags: (
-      params: { ids: string[]; tags: string[] },
+      params: BulkTagsParams,
       options?: RequestOptions,
     ): Promise<{ customer_count: number; tag_count: number }> =>
       this.request('POST', '/customers/bulk_add_tags', { ...options, body: params }),
 
     /** Remove each tag name from every customer. No-op for non-tagged. */
     bulkRemoveTags: (
-      params: { ids: string[]; tags: string[] },
+      params: BulkTagsParams,
       options?: RequestOptions,
     ): Promise<{ customer_count: number; tag_count: number }> =>
       this.request('POST', '/customers/bulk_remove_tags', { ...options, body: params }),
@@ -4751,8 +4744,11 @@ export class AdminClient {
     create: (params: MediaLibraryCreateParams, options?: RequestOptions): Promise<Media> =>
       this.request<Media>('POST', '/media', { ...options, body: params }),
 
-    update: (id: string, params: MediaUpdateParams, options?: RequestOptions): Promise<Media> =>
-      this.request<Media>('PATCH', `/media/${id}`, { ...options, body: params }),
+    update: (
+      id: string,
+      params: MediaLibraryUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Media> => this.request<Media>('PATCH', `/media/${id}`, { ...options, body: params }),
 
     /**
      * Deletes the file. A file still in use is refused (422 with its usage)
@@ -5200,11 +5196,7 @@ export class AdminClient {
      */
     addProducts: (
       id: string,
-      params: {
-        product_ids: string[]
-        published_at?: string | null
-        unpublished_at?: string | null
-      },
+      params: ChannelAddProductsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number }> =>
       this.request<{ product_count: number }>('POST', `/channels/${id}/add_products`, {
@@ -5215,7 +5207,7 @@ export class AdminClient {
     /** Unpublishes the listed products from this channel. */
     removeProducts: (
       id: string,
-      params: { product_ids: string[] },
+      params: ChannelRemoveProductsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number }> =>
       this.request<{ product_count: number }>('POST', `/channels/${id}/remove_products`, {
@@ -5397,7 +5389,7 @@ export class AdminClient {
      * intact. Response is `{ stock_level_count }`.
      */
     bulkUpsert: (
-      params: { stock_levels: StockLevelBulkUpsertRow[] },
+      params: StockLevelBulkUpsertParams,
       options?: RequestOptions,
     ): Promise<{ stock_level_count: number }> =>
       this.request('POST', '/stock_levels/bulk_upsert', { ...options, body: params }),
@@ -5488,7 +5480,7 @@ export class AdminClient {
      */
     markInTransit: (
       id: string,
-      params?: { force?: boolean },
+      params?: StockTransferMarkInTransitParams,
       options?: RequestOptions,
     ): Promise<StockTransfer> =>
       this.request<StockTransfer>('PATCH', `/stock_transfers/${id}/mark_in_transit`, {
@@ -5701,7 +5693,7 @@ export class AdminClient {
     },
     cancel: (
       id: string,
-      params?: { reason?: string },
+      params?: PurchaseOrderCancelParams,
       options?: RequestOptions,
     ): Promise<PurchaseOrder> =>
       this.request<PurchaseOrder>('PATCH', `/purchase_orders/${id}/cancel`, {

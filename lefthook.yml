@@ -38,6 +38,17 @@ pre-commit:
         pnpm generate:filters
         git add packages/sdk/src/types/filters.generated.ts packages/admin-sdk/src/types/filters.generated.ts packages/seller-sdk/src/types/filters.generated.ts
 
+    params:
+      # The API reference carries the request schemas; regenerating it, or
+      # changing the generator, needs fresh SDK request types.
+      glob:
+        - "docs/api-reference/{store,admin,seller}.yaml"
+        - "packages/sdk-core/scripts/generate-params.ts"
+        - "packages/sdk-core/src/params-types.ts"
+      run: |
+        pnpm generate:params
+        git add packages/sdk/src/types/params/ packages/admin-sdk/src/types/params/ packages/seller-sdk/src/types/params/
+
 pre-push:
   commands:
     biome-ci:

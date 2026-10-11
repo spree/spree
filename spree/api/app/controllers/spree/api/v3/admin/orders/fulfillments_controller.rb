@@ -14,6 +14,53 @@ module Spree
 
             scoped_resource :fulfillments
 
+            request_params :fulfillment do
+              id :stock_location_id, required: :create,
+                                     description: "The location the fulfillment ships from. On update, moving it re-prices the fulfillment against that location's rates."
+              id :source_fulfillment_id, only: :create,
+                                         description: "The only fulfillment of this order to move units from, its exchange and claim replacements included: how a canceled replacement is sent again. Omitted, the customer's bought units are taken from every unshipped fulfillment."
+              string :tracking, description: 'Carrier tracking number, or a full `https://` tracking link, which is served back as `tracking_url` unchanged.'
+              string :tracking_carrier, only: :update,
+                                        description: "Which carrier the tracking number belongs to: a slug from the tracking carriers endpoint. Left blank, it is detected from the number's format where possible."
+              id :selected_delivery_rate_id, only: :update
+              id :delivery_method_id, only: :create,
+                                      description: 'Delivery method attached as the selected rate. Defaults to the delivery method of the fully drained source fulfillments.'
+              decimal :cost, only: :create, example: '7.42',
+                             description: 'Explicit shipping cost, such as the 3PL price. Defaults to the summed cost of the fully drained source fulfillments, which keeps the order total unchanged. Persists only with `status: shipped`; pending fulfillments are re-priced by the rate engine.'
+              string :status, only: :create, enum: %w[shipped], description: 'Pass `shipped` to register an already-shipped external fulfillment.'
+              object :metadata, only: :create
+              object :items, array: true, only: :create,
+                             description: 'Line item quantities to fulfill. Omit to fulfill every unit not yet shipped.' do
+                id :item_id, required: true
+                integer :quantity, required: true
+              end
+            end
+
+            request_params 'FulfillmentFulfillParams', action: :fulfill do
+              object :items, array: true,
+                             description: 'Line item quantities to ship. Omit to ship everything the fulfillment holds; a subset is split onto a new fulfillment, which is the one that ships.' do
+                id :item_id, required: true
+                integer :quantity, required: true
+              end
+              string :tracking, description: 'Carrier tracking number or a full `https://` tracking link, stored on the fulfillment that ships.'
+              string :tracking_carrier, description: 'Which carrier the number belongs to; detected from the number when omitted.'
+              boolean :notify_customer,
+                      description: 'Whether the customer gets the shipment email. Defaults to true; pass false to suppress it for this dispatch only.'
+              boolean :force,
+                      description: 'Hand the goods over even though the order is unpaid or holds backordered units.'
+            end
+
+            request_params 'FulfillmentMarkDeliveredParams', action: :mark_delivered do
+              datetime :delivered_at, description: 'When it arrived. Defaults to now; return windows run from this time.'
+              boolean :notify_customer, description: 'Whether the customer gets a delivery notification. Defaults to true.'
+            end
+
+            request_params 'FulfillmentSplitParams', action: :split do
+              id :variant_id, required: true, description: 'The variant being moved out.'
+              integer :quantity, required: true
+              id :stock_location_id, description: "Origin of the new fulfillment. Defaults to the source fulfillment's location."
+            end
+
             before_action :set_resource, only: [:show, :update, :fulfill, :mark_delivered, :cancel, :split]
 
             # POST /api/v3/admin/orders/:order_id/fulfillments
@@ -74,7 +121,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:tracking, :tracking_carrier, :selected_delivery_rate_id, :stock_location_id)
+              params.permit(*permitted_attributes)
             end
 
             private
@@ -101,11 +148,11 @@ module Spree
             end
 
             def create_params
-              @create_params ||= params.permit(:stock_location_id, :source_fulfillment_id, :tracking, :delivery_method_id, :cost, :status, metadata: {}, items: [:item_id, :quantity])
+              @create_params ||= params.permit(*declared_permitted_attributes)
             end
 
             def mark_delivered_params
-              @mark_delivered_params ||= params.permit(:delivered_at, :notify_customer)
+              @mark_delivered_params ||= params.permit(*declared_permitted_attributes)
             end
 
             def find_stock_location!(id)

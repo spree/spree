@@ -11,6 +11,30 @@ module Spree
           skip_before_action :authenticate_user, only: [:create]
           prepend_before_action :require_authentication!, only: [:show, :update]
 
+          CUSTOMER_FIELDS = Spree::Api::V3::RequestSchema.new do
+            string :first_name, example: 'John'
+            string :last_name, example: 'Doe'
+            string :phone, example: '+1 555 123 4567'
+            boolean :accepts_email_marketing
+            object :metadata, description: 'Write-only key-value metadata.'
+          end
+
+          request_params 'RegisterParams', action: :create do
+            string :email, required: true, format: :email, example: 'newuser@example.com'
+            string :password, required: true, example: 'password123'
+            string :password_confirmation, example: 'password123'
+            include_fields CUSTOMER_FIELDS
+            boolean :terms_of_service, permit: false,
+                                       description: "Whether the customer ticked the storefront's terms of service box. Recorded as their consent."
+          end
+
+          request_params 'UpdateCustomerParams', action: :update do
+            string :email, format: :email, example: 'customer@example.com'
+            string :password, :password_confirmation
+            string :current_password, description: 'Required when changing the email or the password.'
+            include_fields CUSTOMER_FIELDS
+          end
+
           # POST /api/v3/store/customers
           # Registration runs through the customer_create_workflow seam
           # (password requirement, newsletter-subscriber linking, registration
@@ -83,8 +107,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
-                          :accepts_email_marketing, :phone, :current_password, metadata: {})
+            params.permit(*declared_permitted_attributes)
           end
 
           private

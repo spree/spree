@@ -7,6 +7,12 @@ module Spree
         class CustomerGroupsController < ResourceController
           scoped_resource :customers
 
+          request_params :customer_group do
+            string :name, required: :create, example: 'Wholesale'
+            string :description, nullable: true, example: 'B2B accounts'
+            id :customer_ids, array: true, example: %w[cus_UkLWZg9DAJ], description: "Replaces the group's members."
+          end
+
           protected
 
           def model_class
@@ -18,7 +24,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :description, customer_ids: [])
+            params.permit(*permitted_attributes)
           end
         end
       end

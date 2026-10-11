@@ -35,15 +35,7 @@ RSpec.describe 'Seller Authentication API', type: :request, swagger_doc: 'api-re
         while still letting sellers sign in with a password.
       DESC
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          provider: { type: :string, enum: ['email'], default: 'email' },
-          email: { type: :string, format: 'email', example: 'seller@example.com' },
-          password: { type: :string, example: 'password123' }
-        },
-        required: %w[email password]
-      }
+      request_body_for
 
       response '200', 'login successful' do
         let(:body) { { email: existing_seller_user.email, password: 'password123' } }

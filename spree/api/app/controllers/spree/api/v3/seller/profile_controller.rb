@@ -20,6 +20,25 @@ module Spree
 
           scoped_resource :seller_profile
 
+          # Enumerated rather than borrowing the legacy global list, which
+          # permits :id, :user_id and :deleted_at.
+          request_params 'ProfileUpdateParams' do
+            string :name, example: 'Acme Supplies'
+            string :contact_email, :billing_email, nullable: true, format: :email
+            string :about, nullable: true, description: "Sanitized HTML: the seller's public description."
+            string :legal_name, nullable: true, description: 'The business a commission invoice is made out to.'
+            string :registration_number, nullable: true
+            string :logo_signed_id, :square_logo_signed_id, :cover_photo_signed_id, nullable: true,
+                   description: 'A `signed_id` from `POST /files`; `null` removes the image.'
+            object :billing_address, as: 'SellerAddressParams' do
+              include_fields Spree::Api::V3::RequestShapes::ADDRESS_FIELDS
+            end
+            object :custom_fields, array: true, shape: Spree::Api::V3::RequestShapes::CUSTOM_FIELD_VALUE,
+                                   description: "Answers to the custom fields this marketplace's onboarding asks for. A field nothing asked for is ignored rather than written."
+            boolean :accept_terms, permit: false,
+                                   description: "Stamps the moment the seller accepted the marketplace's terms. One-way: sending `false` does not unmake the stamp."
+          end
+
           def show
             render json: serialize_seller
           end
@@ -54,8 +73,6 @@ module Spree
             %w[show]
           end
 
-          # Enumerated rather than borrowing the legacy global list, which
-          # permits :id, :user_id and :deleted_at.
           # Accepting the marketplace's terms is a profile write, not an endpoint
           # of its own: `accept_terms: true` stamps the time, which is what the
           # AcceptTerms requirement reads.
@@ -104,14 +121,7 @@ module Spree
           end
 
           def permitted_params
-            normalize_params(
-              params.permit(:name, :contact_email, :billing_email, :about,
-                            :legal_name, :registration_number,
-                            :logo_signed_id, :square_logo_signed_id, :cover_photo_signed_id,
-                            billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
-                            custom_fields: [:id, :custom_field_definition_id, :value,
-                                            { value: [] }, { value: {} }])
-            )
+            normalize_params(params.permit(*declared_permitted_attributes))
           end
 
           private

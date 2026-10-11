@@ -6,11 +6,54 @@ module Spree
         # through assignments. Merchandising data, so it answers to the
         # products scopes.
         class CatalogsController < ResourceController
+          ASSIGNMENT = Spree::Api::V3::RequestSchema.shape('CatalogAssignmentParams') do
+            string :assignable_type, required: true, enum: %w[customer_group company], example: 'company',
+                                     description: 'Buyer audiences only. A company assignment covers its subtree.'
+            id :assignable_id, required: true, example: 'comp_86Rf07xd4z'
+          end
+
           scoped_resource :products
 
           before_action :set_resource,
                         only: [:show, :update, :destroy, :assign, :import_products,
                                :activate, :deactivate]
+
+          request_params 'CatalogParams' do
+            string :name, example: 'VIP Assortment'
+            string :description, nullable: true, description: 'Internal note on what the agreement is, never shown to shoppers.'
+            boolean :active, example: true
+            integer :position
+            integer :minimum_order_quantity, :order_multiple, nullable: true,
+                                                              description: "The catalog-wide quantity terms, between a variant's own rule and a per-variant override. Null leaves the field to the variant's own rule."
+            object :metadata
+            # Small bounded sets, saved with the catalog so the whole
+            # agreement lands in one transaction. Per-product terms stay their
+            # own endpoint: an agreement may name thousands of them.
+            object :assignments, array: true, shape: ASSIGNMENT,
+                                 description: 'The whole audience. An entry left out is withdrawn; omitting the key leaves the audience alone.'
+            object :order_minimums, array: true, shape: Spree::Api::V3::RequestShapes::CATALOG_ORDER_MINIMUM,
+                                    description: 'The whole order-minimum set. A currency left out has its minimum lifted; omitting the key leaves them alone.'
+            object :price_list, nullable: true, as: 'CatalogPriceListParams',
+                                description: 'The price list this catalog prices through, written inline: an object creates the owned list or updates it. Null deletes the list (a soft delete). Omit the key, or send `{}`, to leave the pricing alone. A catalog with an empty assortment prices without hiding anything; curate or import products to make it restrictive.' do
+              string :name
+              string :description, nullable: true
+              string :status, :match_policy
+              datetime :starts_at, :ends_at, nullable: true
+              decimal :price_adjustment_percentage, nullable: true, example: '-15.0',
+                                                    description: 'Signed: negative discounts off base prices, positive marks up.'
+              boolean :adjust_compare_at
+              # Audience rules on an owned list are inert, since the catalog
+              # assignment already decided the audience.
+              object :rules, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_LIST_RULE,
+                             description: "Contextual rules, in practice a `volume_rule`. Audience rules are left as they are, and an empty list clears the contextual rules."
+              object :prices, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_LIST_PRICE,
+                              description: 'Explicit per-variant amounts. An empty list clears them, which is what switching to a percentage sends.'
+              object :price_adjustment_tiers, array: true, shape: Spree::Api::V3::RequestShapes::PRICE_ADJUSTMENT_TIER,
+                                              description: 'Quantity bands on the percentage. The payload is the whole ladder, so an empty list clears it.'
+            end
+          end
+
+          request_params('CatalogAssignParams', action: :assign) { include_fields ASSIGNMENT }
 
           # POST /api/v3/admin/catalogs/:id/import_products — copies the
           # attached price list's products into the assortment. Explicit by
@@ -30,7 +73,7 @@ module Spree
             render json: { added_count: @resource.import_products_from_price_list }
           end
 
-          # POST /api/v3/admin/catalogs/:id/assign — { assignable_type, assignable_id }
+          # POST /api/v3/admin/catalogs/:id/assign
           def assign
             authorize! :update, @resource
 
@@ -102,38 +145,7 @@ module Spree
           # as `null` detaches the list the catalog owns; omitting the key
           # leaves it alone.
           def permitted_params
-            permitted = params.permit(*model_additional_permitted_attributes,
-                                      :name, :description, :active, :position,
-                                      :minimum_order_quantity, :order_multiple,
-                                      metadata: {},
-                                      # Small bounded sets, saved with the
-                                      # catalog so the whole agreement lands
-                                      # in one transaction. Per-product terms
-                                      # stay their own endpoint — an
-                                      # agreement may name thousands of them.
-                                      assignments: [:assignable_type, :assignable_id],
-                                      order_minimums: [:currency, :amount],
-                                      price_list: [
-                                        :name, :description, :status, :match_policy,
-                                        :starts_at, :ends_at,
-                                        :price_adjustment_percentage, :adjust_compare_at,
-                                        # Contextual rules only in practice — a
-                                        # VolumeRule is what turns a percentage
-                                        # into automatic volume pricing. Audience
-                                        # rules on an owned list are inert, since
-                                        # the catalog assignment already decided
-                                        # the audience.
-                                        { rules: [:id, :type, { preferences: {} }] },
-                                        # An empty array clears the hand-entered
-                                        # amounts — what switching to a
-                                        # percentage sends.
-                                        { prices: [:id, :variant_id, :currency, :min_quantity,
-                                                   :amount, :compare_at_amount] },
-                                        # Quantity bands on the percentage. The
-                                        # payload is the whole ladder, so an
-                                        # empty array clears it.
-                                        { price_adjustment_tiers: [:min_quantity, :percentage] }
-                                      ])
+            permitted = params.permit(*permitted_attributes)
             # `permit` drops an explicit null, but detaching has to be
             # distinguishable from saying nothing.
             permitted[:price_list] = nil if params.key?(:price_list) && params[:price_list].nil?

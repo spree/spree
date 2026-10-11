@@ -59,35 +59,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[key field_type resource_type],
-        properties: {
-          namespace: { type: :string, description: 'Defaults to `custom`' },
-          key: { type: :string },
-          label: { type: :string, description: 'Human-readable name; defaults to titleized `key`' },
-          field_type: {
-            type: :string,
-            description: 'Custom field type token (`short_text`, `long_text`, `rich_text`, `number`, …). An extension type that has no token is named by its registered class instead.'
-          },
-          resource_type: {
-            type: :string,
-            description: 'Shorthand of the owning resource, e.g. `product`'
-          },
-          storefront_visible: {
-            type: :boolean,
-            description: 'When false, the definition is admin-only and never exposed in the Store API'
-          },
-          searchable: {
-            type: :boolean,
-            description: 'When true, values are included in storefront product text search'
-          },
-          sortable: {
-            type: :boolean,
-            description: 'When true, storefront product listings can sort by this field'
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'definition created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -155,15 +127,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          label: { type: :string },
-          storefront_visible: { type: :boolean },
-          searchable: { type: :boolean },
-          sortable: { type: :boolean }
-        }
-      }
+      request_body_for
 
       response '200', 'definition updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

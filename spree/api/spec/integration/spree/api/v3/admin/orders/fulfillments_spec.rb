@@ -66,36 +66,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[stock_location_id],
-        properties: {
-          stock_location_id: { type: :string, description: 'Stock location the fulfillment ships from' },
-          source_fulfillment_id: { type: :string,
-                                   description: "The only fulfillment of this order to move units from, its exchange and claim replacements included. Omit to take the customer's bought units from every unshipped fulfillment" },
-          tracking: { type: :string, example: 'INPOST-12345',
-                      description: 'Carrier tracking number, or a full https:// tracking link — a full URL is served back as tracking_url unchanged instead of being templated into the delivery method tracking URL' },
-          delivery_method_id: { type: :string,
-                                description: 'Delivery method (carrier) to attach as the selected rate. Defaults to the delivery method of the fully drained source fulfillment(s)' },
-          cost: { type: :string, example: '7.42',
-                  description: "Explicit shipping cost. Defaults to the summed cost of the fully drained source fulfillment(s), which keeps the order total unchanged; an explicit cost changes the order total and payment state. Guaranteed to persist only with status: 'shipped' — pending fulfillments are re-priced by the rate engine" },
-          status: { type: :string, enum: %w[shipped],
-                    description: "Pass 'shipped' to register the fulfillment as already shipped" },
-          items: {
-            type: :array,
-            description: 'Line item quantities to fulfill. Omit to fulfill every not-yet-shipped unit.',
-            items: {
-              type: :object,
-              required: %w[item_id quantity],
-              properties: {
-                item_id: { type: :string, description: 'Line item ID' },
-                quantity: { type: :integer, example: 1 }
-              }
-            }
-          },
-          metadata: { type: :object, additionalProperties: true }
-        }
-      }
+      request_body_for
 
       response '201', 'fulfillment created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -182,14 +153,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Fulfillment ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          tracking: { type: :string, example: '1Z999AA10123456784',
-                      description: 'Carrier tracking number, or a full https:// tracking link served back as tracking_url unchanged' },
-          selected_delivery_rate_id: { type: :string, description: 'Delivery rate ID (dr_...) to select' }
-        }
-      }
+      request_body_for
 
       response '200', 'shipment updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -206,6 +170,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
   path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/fulfill' do
     patch 'Fulfill a fulfillment' do
       tags 'Fulfillments'
+      consumes 'application/json'
       produces 'application/json'
       security [{ api_key: [], bearer_auth: [] }]
       description 'Marks a fulfillment as fulfilled.'
@@ -220,11 +185,13 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Fulfillment ID'
+      request_body_for(required: false)
 
       response '200', 'fulfillment fulfilled' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:order_id) { order.prefixed_id }
         let(:id) { shipment.prefixed_id }
+        let(:body) { { tracking: '1Z999AA10123456784', notify_customer: false } }
 
         before do
           shipment.update!(status: 'unfulfilled')
@@ -233,6 +200,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['status']).to eq('fulfilled')
+          expect(data['tracking']).to eq('1Z999AA10123456784')
         end
       end
     end
@@ -256,20 +224,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Fulfillment ID'
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          delivered_at: {
-            type: :string,
-            format: 'date-time',
-            description: 'When the goods arrived. Defaults to now.'
-          },
-          notify_customer: {
-            type: :boolean,
-            description: 'Whether the customer gets a delivery notification. Defaults to true.'
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'fulfillment delivered' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -346,15 +301,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Fulfillment ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[variant_id quantity],
-        properties: {
-          variant_id: { type: :string, description: 'Variant ID' },
-          quantity: { type: :integer, example: 1 },
-          stock_location_id: { type: :string, description: 'Target stock location ID' }
-        }
-      }
+      request_body_for
 
       response '200', 'fulfillment split' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

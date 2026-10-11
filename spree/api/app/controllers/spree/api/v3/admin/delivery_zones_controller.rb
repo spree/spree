@@ -8,6 +8,21 @@ module Spree
         class DeliveryZonesController < ResourceController
           scoped_resource :settings
 
+          request_params 'DeliveryZoneParams' do
+            string :name, example: 'US North-East'
+            string :description, nullable: true
+            id :delivery_profile_id,
+               description: 'Delivery profile this zone belongs to (`fp_...`); defaults to the store default profile.'
+            id :delivery_origin_group_id, description: 'Origin group this zone belongs to (`og_...`).'
+            object :members, array: true, as: 'DeliveryZoneMemberParams',
+                             description: "Replaces the zone's full member set atomically." do
+              string :member_type, required: true, enum: Spree::DeliveryZoneMember::MEMBER_TYPES
+              string :country_code, example: 'US'
+              string :state_code, description: 'A subdivision code or name. Without `country_code` the country is inferred when only one country matches.'
+              string :postal_code_prefix, :postal_code_from, :postal_code_to
+            end
+          end
+
           def create
             @resource = model_class.new(zone_params)
             authorize_resource!(@resource, :create)
@@ -50,11 +65,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              :name, :description, :delivery_profile_id, :delivery_origin_group_id,
-              members: [:member_type, :country_code, :state_code, :postal_code_prefix, :postal_code_from, :postal_code_to]
-            )
+            params.permit(*permitted_attributes)
           end
 
           def collection_includes

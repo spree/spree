@@ -76,15 +76,7 @@ RSpec.describe 'Seller Invitation Acceptance API', type: :request, swagger_doc: 
 
       parameter name: :token, in: :query, type: :string, required: true,
                 description: 'The token from the emailed link'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          password: { type: :string, example: 'password123' },
-          password_confirmation: { type: :string, example: 'password123' },
-          first_name: { type: :string, example: 'Robin' },
-          last_name: { type: :string, example: 'Ellis' }
-        }
-      }
+      request_body_for
 
       response '200', 'invitation accepted, session issued' do
         let(:id) { invitation.prefixed_id }

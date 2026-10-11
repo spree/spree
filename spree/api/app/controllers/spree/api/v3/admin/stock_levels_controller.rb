@@ -10,6 +10,34 @@ module Spree
 
           before_action :require_stock_levels!, only: [:bulk_upsert]
 
+          # Stock levels are auto-created against a (variant, stock_location)
+          # pair and never re-pointed, so update only touches the count and
+          # backorder flag, not the variant or location.
+          request_params :stock_level do
+            external_references
+            integer :count_on_hand,
+                    description: 'The count the shelf should end at: a whole number of zero or more. The API records the difference as an `adjusted` movement, so the correction appears in the stock history.'
+            integer :adjustment,
+                    description: 'A signed change to the shelf instead of a target count, applied to the count the API holds at that moment and recorded the same way. Cannot be sent together with `count_on_hand`.'
+            boolean :backorderable, description: 'Whether this location sells the variant beyond what it holds.'
+            # Optional so an audit requirement never turns an existing
+            # endpoint into a 422.
+            string :reason, description: 'Labels the correction in the stock history. Defaults to "Manual adjustment".'
+            object :metadata
+          end
+
+          request_params 'StockLevelBulkUpsertParams', action: :bulk_upsert do
+            object :stock_levels, array: true, required: true, as: 'StockLevelBulkUpsertRowParams',
+                                  description: 'Send an empty list to change nothing.' do
+              id :variant_id, required: true, example: 'variant_xY9'
+              id :stock_location_id, required: true, example: 'sloc_aBc'
+              integer :count_on_hand, nullable: true, example: 42, description: 'The absolute level the external system reports.'
+              integer :adjustment, nullable: true, example: -3,
+                                   description: 'A relative change, for feeds that report movements rather than levels. Each row needs `count_on_hand` or `adjustment`.'
+              boolean :backorderable, nullable: true
+            end
+          end
+
           def bulk_upsert
             authorize! :update, Spree::StockLevel
 
@@ -101,16 +129,8 @@ module Spree
             collection.order(Spree::StockLevel.arel_table[:id].asc)
           end
 
-          # Stock levels are auto-created against a (variant, stock_location)
-          # pair and never re-pointed, so update only touches the count and
-          # backorder flag — not the variant or location FKs.
-          #
-          # `reason` labels the correction in the stock history. It stays
-          # optional so an audit requirement never turns an existing endpoint
-          # into a 422; omitting it falls back to a translated default.
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :count_on_hand, :adjustment, :backorderable, :reason,
-                          metadata: {})
+            params.permit(*permitted_attributes)
           end
 
           private

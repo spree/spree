@@ -1,0 +1,26 @@
+// This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
+
+export type AddressParams = {
+  first_name?: string
+  last_name?: string
+  company?: string
+  address1?: string
+  address2?: string
+  city?: string
+  postal_code?: string
+  phone?: string
+  /** ISO 3166-1 alpha-2 country code, such as `US` or `DE`. */
+  country_code?: string
+  /** ISO 3166-2 subdivision code without the country prefix, such as `CA` or `NY`. */
+  state_code?: string
+  /** The state name, for countries without predefined states. */
+  state_name?: string
+  /** Deprecated: use `country_code`. Accepted until 6.1. */
+  country_iso?: string
+  /** Deprecated: use `state_code`. Accepted until 6.1. */
+  state_abbr?: string
+  /** Makes this the default billing address. */
+  is_default_billing?: boolean
+  /** Makes this the default shipping address. */
+  is_default_shipping?: boolean
+}

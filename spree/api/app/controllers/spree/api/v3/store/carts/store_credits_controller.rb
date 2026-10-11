@@ -10,6 +10,10 @@ module Spree
             before_action :require_authentication!
             before_action :find_cart!
 
+            request_params 'ApplyStoreCreditParams', action: :create do
+              decimal :amount, example: '10.00', description: 'Defaults to as much as the cart can use.'
+            end
+
             # POST /api/v3/store/carts/:cart_id/store_credits
             def create
               with_order_lock do

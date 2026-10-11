@@ -24,6 +24,13 @@ module Spree
           # standard actions have to be listed alongside the custom one.
           before_action :set_resource, only: [:show, :update, :destroy, :validate]
 
+          request_params 'SellerTaxIdentifierParams' do
+            string :kind, example: 'eu_vat',
+                          description: "#{Spree::Api::V3::RequestShapes::TAX_IDENTIFIER_KIND} One registration per kind."
+            string :value, example: 'DE100000008',
+                           description: 'A number the validator for its kind refuses is rejected rather than stored.'
+          end
+
           protected
 
           def model_class
@@ -39,7 +46,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:kind, :value)
+            params.permit(*declared_permitted_attributes)
           end
         end
       end

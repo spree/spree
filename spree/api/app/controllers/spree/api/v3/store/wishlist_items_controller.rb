@@ -7,6 +7,16 @@ module Spree
 
           prepend_before_action :require_authentication!
 
+          request_params 'CreateWishlistItemParams', action: :create do
+            id :variant_id, required: true, example: 'variant_abc123'
+            integer :quantity, example: 1
+          end
+
+          request_params 'UpdateWishlistItemParams', action: :update do
+            id :variant_id, description: 'Moves the item to another variant.'
+            integer :quantity, example: 2
+          end
+
           protected
 
           def set_parent
@@ -22,10 +32,6 @@ module Spree
 
           def serializer_class
             Spree.api.wishlist_item_serializer
-          end
-
-          def resource_permitted_attributes
-            [:variant_id, :quantity]
           end
 
           # The item renders its variant and product, so the variant must be

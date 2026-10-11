@@ -146,5 +146,34 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
         end
       end
     end
+
+    post 'Record a data request' do
+      tags 'Customers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Records a request a customer made to the merchant directly, to export
+        or erase their personal data, and starts answering it. A request of the
+        same kind already in progress for the customer is returned instead of a
+        second one.
+      DESC
+      admin_scope :write, :customers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      response '202', 'data request recorded' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { customer_id: customer.prefixed_id, kind: 'access' } }
+
+        schema '$ref' => '#/components/schemas/DataRequest'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['kind']).to eq('access')
+        end
+      end
+    end
   end
 end

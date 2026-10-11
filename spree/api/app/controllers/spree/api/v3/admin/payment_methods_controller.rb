@@ -10,6 +10,21 @@ module Spree
           subclassed_via -> { Spree::PaymentMethod.providers },
                          unknown_type_error: 'unknown_payment_method_type'
 
+          request_params :payment_method do
+            string :type, required: true, only: :create, permit: false, example: 'check',
+                          description: 'Wire shorthand from the payment method types endpoint.'
+            string :name, required: :create
+            string :description, nullable: true
+            boolean :active
+            boolean :storefront_visible, description: 'False keeps the method to the dashboard; true also offers it on the storefront.'
+            boolean :auto_capture, nullable: true, description: 'Deprecated: use `capture_method`. Removed in 6.1.'
+            string :capture_method, nullable: true, enum: Spree::CaptureMethod::CAPTURE_METHODS,
+                                    description: 'When customers are charged for this method. Null inherits the store setting.'
+            integer :position
+            object :metadata
+            object :preferences, description: "Values for the provider's preference schema, from the payment method types endpoint."
+          end
+
           # Lists available payment provider subclasses for the create form.
           # Returns: { data: [{ type, label, description, schema }] }.
           # `schema` is the JSON Schema of the provider-specific
@@ -42,19 +57,14 @@ module Spree
             Spree.api.admin_payment_method_serializer
           end
 
-          # Explicit allowlist per the v3 convention — flat params. `type` and
-          # `preferences` are added by `SubclassedResource` on top.
+          # `type` is read by `SubclassedResource` from the raw params.
           # Deliberately NOT routed through `normalize_params`: `metadata` holds
           # opaque merchant values, and prefixed-ID resolution recurses into
           # nested hashes — a value like `we_1MqJ8b...` matches the prefixed-ID
           # shape and would be decoded to an integer. `preferences` decode their
           # own ids from their schema.
           def permitted_params
-            params.permit(
-              :name, :description, :active, :storefront_visible, :auto_capture, :capture_method, :position,
-              *model_additional_permitted_attributes,
-              metadata: {}, preferences: {}
-            )
+            params.permit(*permitted_attributes)
           end
 
           def scope

@@ -8,6 +8,12 @@ module Spree
           class AddressesController < BaseController
             include Spree::Api::V3::CompanyAddressWrites
 
+            request_params 'CompanyAddressParams' do
+              include_fields Spree::Api::V3::RequestShapes::ADDRESS_FIELDS
+              boolean :default_billing, :default_shipping, permit: false,
+                                                           description: 'True makes this the default address of that kind, false gives the slot up, and leaving it out keeps the current default.'
+            end
+
             before_action :authorize_parent_access!
 
             # POST /api/v3/admin/companies/:company_id/addresses
@@ -52,6 +58,10 @@ module Spree
 
             def scope
               @parent.addresses
+            end
+
+            def permitted_params
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

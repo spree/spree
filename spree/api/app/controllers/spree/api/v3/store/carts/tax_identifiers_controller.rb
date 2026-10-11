@@ -25,6 +25,10 @@ module Spree
             # frozen onto the order at completion.
             before_action :require_kind_and_value!, only: :update
 
+            request_params('TaxIdentifierParams', action: :update) do
+              include_fields Spree::Api::V3::RequestShapes::TAX_IDENTIFIER_FIELDS
+            end
+
             # GET /api/v3/store/carts/:cart_id/tax_identifier
             #
             # The registration this cart will be taxed against — the override
@@ -73,7 +77,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:kind, :value)
+              params.permit(*declared_permitted_attributes)
             end
 
             private

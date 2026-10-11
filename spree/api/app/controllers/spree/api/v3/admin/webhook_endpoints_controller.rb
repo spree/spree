@@ -8,6 +8,20 @@ module Spree
         class WebhookEndpointsController < ResourceController
           scoped_resource :webhooks
 
+          request_params :webhook_endpoint do
+            string :name, nullable: true, example: 'Order pipeline', description: 'A label shown in the dashboard list.'
+            string :url, required: :create, example: 'https://example.com/webhooks/orders',
+                         description: 'HTTPS destination URL. It cannot resolve to a private IP address outside development.'
+            boolean :active, description: 'Defaults to true on create. Prefer the disable and enable endpoints to pause one.'
+            string :subscriptions, array: true, example: %w[order.placed order.canceled],
+                                   description: 'Event names this endpoint receives. An empty list or `["*"]` subscribes to every event; otherwise list exact names (`order.completed`) or patterns (`order.*`).'
+          end
+
+          request_params 'WebhookEndpointDisableParams', action: :disable do
+            string :reason, example: 'Investigating elevated 5xx rate',
+                            description: 'Shown next to the disabled indicator. Defaults to "Manually disabled".'
+          end
+
           before_action :reject_unauthorized_credential_subscription!, only: [:create, :update]
 
           # POST /api/v3/admin/webhook_endpoints/:id/send_test
@@ -68,7 +82,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :url, :active, subscriptions: [])
+            params.permit(*permitted_attributes)
           end
 
           private

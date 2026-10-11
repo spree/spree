@@ -10,6 +10,11 @@ module Spree
           skip_scope_check!
           skip_before_action :authenticate_admin!, only: [:lookup, :accept]
 
+          request_params 'InvitationAcceptParams', action: :accept do
+            string :password, description: 'Required when the invitee has no account yet: it creates one. An existing account signs in without it.'
+            string :password_confirmation, :first_name, :last_name
+          end
+
           rate_limit to: Spree::Api::Config[:rate_limit_login],
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
@@ -24,7 +29,6 @@ module Spree
           end
 
           # POST /api/v3/admin/auth/invitations/:id/accept?token=:token
-          # Body: { password?, password_confirmation?, first_name?, last_name? }
           def accept
             return unless load_invitation
 
@@ -99,7 +103,7 @@ module Spree
           end
 
           def signup_params(invitation)
-            params.permit(:password, :password_confirmation, :first_name, :last_name).
+            params.permit(*declared_permitted_attributes).
               merge(email: invitation.email)
           end
 

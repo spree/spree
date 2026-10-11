@@ -308,6 +308,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(image.reload.focal_point).to eq({ x: 0.25, y: 0.75 })
+        expect(json_response.values_at('focal_point_x', 'focal_point_y')).to eq([0.25, 0.75])
       end
     end
   end

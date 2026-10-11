@@ -5,6 +5,16 @@ module Spree
         class WishlistsController < ResourceController
           prepend_before_action :require_authentication!
 
+          request_params 'CreateWishlistParams', action: :create do
+            string :name, required: true, example: 'Birthday Ideas'
+            boolean :is_private, :is_default
+          end
+
+          request_params 'UpdateWishlistParams', action: :update do
+            string :name, example: 'Updated Name'
+            boolean :is_private, :is_default
+          end
+
           # POST /api/v3/store/wishlists
           def create
             @resource = current_user.wishlists.build(permitted_params)
@@ -29,10 +39,6 @@ module Spree
 
           def serializer_class
             Spree.api.wishlist_serializer
-          end
-
-          def resource_permitted_attributes
-            [:name, :is_default, :is_private]
           end
         end
       end

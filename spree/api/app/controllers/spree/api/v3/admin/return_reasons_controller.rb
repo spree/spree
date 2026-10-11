@@ -5,6 +5,11 @@ module Spree
         class ReturnReasonsController < ResourceController
           scoped_resource :settings
 
+          request_params :reason do
+            string :name, required: :create
+            boolean :active, description: 'Whether the reason is offered on new records.'
+          end
+
           protected
 
           def model_class
@@ -16,7 +21,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :active)
+            params.permit(*permitted_attributes)
           end
         end
       end

@@ -11,8 +11,32 @@ module Spree
         class CategoriesController < ResourceController
           scoped_resource :categories
 
+          # Category-half attributes only. The collection-bound fields
+          # (automatic, sort_order, rules) belong to Spree::Collection, and
+          # taxonomy_id is gone with Taxonomy.
+          request_params :category do
+            external_references
+            string :name, required: :create, example: 'Shirts'
+            # Resolved within scope by +permitted_params+, so a parent from
+            # another store or an automatic taxon can't be targeted.
+            id :parent_id, nullable: true, permit: false, example: 'ctg_abc123',
+                           description: 'The parent category. Omitted or null, a new category goes to the top level and an existing one keeps its parent: moving one to the top level is the reposition endpoint.'
+            string :description, description: 'Rich text HTML. Reads come back as this (plain text) plus `description_html`.'
+            string :permalink, :meta_title, :meta_description, :meta_keywords
+            string :image_signed_id, nullable: true,
+                                     description: 'A `signed_id` from `files.upload()` for the landscape image, or null to remove it.'
+            string :square_image_signed_id, nullable: true,
+                                            description: 'A `signed_id` from `files.upload()` for the square image, or null to remove it.'
+            object :custom_fields, array: true, shape: Spree::Api::V3::RequestShapes::CUSTOM_FIELD_VALUE,
+                                   description: 'Custom field values, each validated against its definition.'
+          end
+
+          request_params 'CategoryRepositionParams', action: :reposition do
+            id :new_parent_id, nullable: true, description: 'The new parent. Omit or null to move the category to the top level.'
+            integer :new_position, required: true, example: 0, description: "0-based index among the new parent's children."
+          end
+
           # PATCH /api/v3/admin/categories/:id/reposition
-          # Body: { new_parent_id: 'ctg_…' (omit for top level), new_position: 0 }
           # Moves the category to a new parent (or the top level) and/or index.
           def reposition
             category = find_resource
@@ -59,26 +83,8 @@ module Spree
             super.manual
           end
 
-          # Category-half attributes only. Deliberately excludes the
-          # collection-bound fields (automatic, sort_order, rules_match_policy,
-          # taxon_rules) and taxonomy_id — those belong to Spree::Collection
-          # (6.0) and Taxonomy is being dropped. A prefixed parent_id resolves
-          # within scope (so a parent from another store or an automatic taxon
-          # can't be targeted).
           def permitted_params
-            permitted = params.permit(
-              *model_additional_permitted_attributes,
-              :name, :description, :permalink,
-              :meta_title, :meta_description, :meta_keywords,
-              :image_signed_id, :square_image_signed_id,
-              # Inline custom field values keyed by definition id. The model
-              # setter (Spree::HasCustomFields#custom_fields=) validates each entry
-              # against its definition. `value` is permitted as a scalar AND as
-              # `value: []` / `value: {}` so JSON custom_fields round-trip whether
-              # the parsed payload is an array or an object, while
-              # text/number/boolean ship scalars.
-              custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }]
-            )
+            permitted = params.permit(*permitted_attributes)
             permitted[:parent] = scope.find_by_prefix_id!(params[:parent_id]) if params[:parent_id].present?
             permitted
           end

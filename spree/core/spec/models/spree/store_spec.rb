@@ -918,6 +918,19 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'units' do
+    let(:store) { build(:store) }
+
+    it 'rejects a unit system or weight unit outside its list' do
+      store.preferred_unit_system = 'nautical'
+      store.preferred_weight_unit = 'stone'
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_unit_system]).to be_present
+      expect(store.errors[:preferred_weight_unit]).to be_present
+    end
+  end
+
   describe 'capture method' do
     let(:store) { create(:store) }
 

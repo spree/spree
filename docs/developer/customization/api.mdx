@@ -152,7 +152,7 @@ Override these methods to customize:
 | `serializer_class` | Alba serializer (required) |
 | `scope` | Base query — add `.where()` to filter |
 | `find_resource` | Custom ID lookup (slug fallback, etc.) |
-| `permitted_params` | Custom strong params |
+| `permitted_params` | Custom strong params (prefer `request_params`) |
 | `collection_includes` | Eager loading for `index` |
 
 ### Routes
@@ -171,24 +171,48 @@ Spree::Core::Engine.add_routes do
 end
 ```
 
-### Permitted Attributes
+### Request Parameters
 
-For endpoints that accept writes (create/update), declare the attributes in your
-controller:
+For endpoints that accept writes (create/update), declare what the body takes
+with `request_params`, at the top of the controller:
 
-```ruby
-def resource_permitted_attributes
-  [:name, :slug, :description, :logo]
+```ruby app/controllers/spree/api/v3/admin/brands_controller.rb
+request_params :brand do
+  string :name, required: :create
+  string :slug
+  string :description, description: 'Shown on the brand page.'
+  id :region_ids, array: true
+  object :metadata
 end
 ```
 
-Entries are `params.permit` fragments, so collections and nested structures use
-the shapes you would pass there directly — `[:name, { region_ids: [] }]`.
+This one declaration is the endpoint's contract: the controller permits exactly
+these keys and nesting, and nothing else. Spree's own endpoints publish the same
+declarations in the [API reference](/api-reference/introduction), and the SDK request types
+(`ProductCreateParams`, `ProductUpdateParams`, …) are generated from it, so the
+controller, the reference and the TypeScript types cannot drift apart.
+
+| Kind | Sent as |
+|------|---------|
+| `string`, `boolean`, `integer` | the JSON type of the same name |
+| `decimal` | a canonical decimal string (`"19.99"`) — every amount of money |
+| `number` | a JSON number — weights, dimensions, coordinates |
+| `id` | a prefixed ID (`brand_k5nR8xLq`) |
+| `date`, `datetime` | ISO 8601 strings |
+| `object` | a nested hash: any keys, a block of fields, or a shared `shape:` |
+| `any` | a scalar, a list or a hash |
+
+Each field takes `required: true` (or `:create` for create only), `nullable:`,
+`array:`, `enum:`, `description:` and `example:`. A custom action declares its
+own body with a name ending in `Params`:
+`request_params 'BrandMergeParams', action: :merge do ... end`.
 
 <Note>
-  Declare `resource_permitted_attributes`, not `permitted_attributes`. The
-  latter is what appends extension-contributed attributes to your list, so
-  overriding it replaces them.
+  An endpoint that needs logic of its own can still override
+  `resource_permitted_attributes` with a plain `params.permit` list, but then
+  its body is neither documented nor typed. Never override
+  `permitted_attributes`: it is what appends extension-contributed attributes
+  to your list, so overriding it replaces them.
 </Note>
 
 ### Adding an Attribute to a Core Resource

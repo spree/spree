@@ -66,6 +66,13 @@ module Spree
             model_class.table_name.delete_prefix('spree_').to_sym
           end
 
+          # What extensions opened to sellers, never the operator-level list:
+          # an attribute opened to operators must not become seller-writable
+          # by accident.
+          def model_additional_permitted_attributes
+            Array(model_class.try(:additional_seller_permitted_attributes))
+          end
+
           def authorize_resource!(resource = @resource, action = action_name.to_sym)
             authorize!(action, resource)
           end

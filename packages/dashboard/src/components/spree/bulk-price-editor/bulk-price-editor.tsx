@@ -1,4 +1,4 @@
-import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
+import type { PriceBulkUpsertRowParams } from '@spree/admin-sdk'
 import {
   adminClient,
   currencyParts,
@@ -624,9 +624,9 @@ export function BulkPriceEditor({
     // — that's what the server upserts on. `id` is not used by the bulk
     // endpoint; we already have the lookup columns on screen so there's
     // no point making the server backfill them.
-    const payload: PriceBulkUpsertRow[] = savedKeys.flatMap((priceId) => {
+    const payload: PriceBulkUpsertRowParams[] = savedKeys.flatMap((priceId) => {
       const edit = edits.get(priceId) as CellEdit
-      const row: PriceBulkUpsertRow = {
+      const row: PriceBulkUpsertRowParams = {
         variant_id: edit.variantId,
         currency,
         ...(priceListId ? { price_list_id: priceListId } : {}),

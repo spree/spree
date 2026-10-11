@@ -9,6 +9,14 @@ module Spree
           class AddressesController < BaseController
             include Spree::Api::V3::CompanyAddressWrites
 
+            request_params 'CompanyAddressParams' do
+              include_fields Spree::Api::V3::RequestShapes::ADDRESS_FIELDS
+              boolean :default_billing, permit: false,
+                                        description: "True makes this the node's default billing address, false gives that up, and leaving it out changes nothing."
+              boolean :default_shipping, permit: false,
+                                         description: "True makes this the node's default shipping address, false gives that up, and leaving it out changes nothing."
+            end
+
             # POST /api/v3/store/companies/:company_id/addresses
             def create
               result = Spree.address_create_service.call(
@@ -67,7 +75,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:label, *Spree::Api::V3::AddressParams::ADDRESS_KEYS)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

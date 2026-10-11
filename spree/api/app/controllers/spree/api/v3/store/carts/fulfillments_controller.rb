@@ -9,6 +9,12 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'UpdateFulfillmentParams', action: :update do
+              id :selected_delivery_rate_id, example: 'dr_abc123', description: 'The delivery rate to select.'
+              string :pickup_point_external_id,
+                     description: "For a pickup point delivery method: the provider's id of the point to collect from."
+            end
+
             # PATCH /api/v3/store/carts/:cart_id/fulfillments/:id
             # Selects a delivery rate, and for pickup_point methods a concrete
             # pickup point (validated against the provider, then frozen into
@@ -35,7 +41,7 @@ module Spree
             private
 
             def permitted_params
-              params.permit(:selected_delivery_rate_id, :pickup_point_external_id)
+              params.permit(*declared_permitted_attributes)
             end
 
             def recalculate

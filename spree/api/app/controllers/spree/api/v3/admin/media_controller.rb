@@ -5,6 +5,26 @@ module Spree
         class MediaController < ResourceController
           scoped_resource :products
 
+          # The media file, a URL to fetch one from, and the library row to copy
+          # are transport, not attributes (+media_attributes+ drops them).
+          request_params :media do
+            external_references
+            string :alt, nullable: true, example: 'Front view'
+            integer :position, example: 1
+            string :media_type, enum: Spree::Media::MEDIA_TYPES, example: 'image',
+                                description: 'Defaults to `image`. `video` needs a `signed_id`; `external_video` needs an `external_video_url`.'
+            string :external_video_url, nullable: true, description: 'YouTube or Vimeo link. Required when `media_type` is `external_video`.'
+            string :poster_signed_id, description: "A `signed_id` from `files.upload()` for a video's poster frame."
+            number :focal_point_x, :focal_point_y, nullable: true
+            string :attachment, description: 'The file itself, sent as multipart form data. JSON clients upload first and send `signed_id`.'
+            string :url, description: 'Fetch an image from this URL, in the background. Images only: an external video uses `external_video_url`.'
+            string :signed_id, description: 'A `signed_id` from `files.upload()` for the media file itself.'
+            id :source_media_id,
+               description: 'Place a file that is already in the library. The new row shares the source file rather than copying it, and takes its own alt, position and variant links from here.'
+            id :variant_ids, array: true,
+                             description: 'Variants to link this product-level media to. Variants of other products are dropped.'
+          end
+
           def create
             # An external video has no file, so it takes the plain create path
             # even though a URL is present — `url` means "fetch this image from
@@ -91,16 +111,8 @@ module Spree
             permitted_params.except(:attachment, :url, :signed_id, :source_media_id)
           end
 
-          # The media file, a URL to fetch one from, and the library row to copy
-          # are transport, not attributes — everything a client can set lives on
-          # the model.
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              *Spree::Media::WRITABLE_ATTRIBUTES,
-              :attachment, :url, :signed_id, :source_media_id,
-              variant_ids: []
-            )
+            params.permit(*permitted_attributes)
           end
 
           def external_video_request?

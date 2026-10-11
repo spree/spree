@@ -39,14 +39,7 @@ RSpec.describe 'Seller Requirement Submissions API', type: :request, swagger_doc
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          note: { type: :string, description: 'Anything the seller wants to say alongside the submission' },
-          reference: { type: :string, description: 'A reference number or external identifier, for requirements that ask for one' },
-          file_signed_id: { type: :string, description: 'The `signed_id` returned by POST /files, for requirements that ask for a document' }
-        }
-      }
+      request_body_for
 
       response '201', 'submission recorded' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

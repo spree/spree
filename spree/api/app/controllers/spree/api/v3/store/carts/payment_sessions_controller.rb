@@ -10,6 +10,22 @@ module Spree
             before_action :find_cart!
             before_action :set_payment_session, only: [:show, :update, :complete]
 
+            request_params 'CreatePaymentSessionParams', action: :create do
+              id :payment_method_id, required: true, example: 'pm_abc123'
+              decimal :amount, example: '99.99', description: 'Defaults to the order total minus store credits.'
+              object :external_data, description: 'Provider-specific data passed to the gateway.'
+            end
+
+            request_params 'UpdatePaymentSessionParams', action: :update do
+              decimal :amount, example: '50.00'
+              object :external_data, description: 'Provider-specific data to update.'
+            end
+
+            request_params 'CompletePaymentSessionParams', action: :complete do
+              string :session_result, description: 'Provider-specific session result token.'
+              object :external_data, description: 'Provider-specific completion data.'
+            end
+
             # POST /api/v3/store/carts/:cart_id/payment_sessions
             def create
               with_order_lock do
@@ -94,15 +110,11 @@ module Spree
             end
 
             def permitted_params
-              params.permit(
-                :amount, :payment_method_id,
-                *Spree::PaymentSession.additional_permitted_attributes,
-                { external_data: {} }
-              )
+              params.permit(*declared_permitted_attributes, *Spree::PaymentSession.additional_permitted_attributes)
             end
 
             def complete_params
-              params.permit(:session_result, { external_data: {} })
+              params.permit(*declared_permitted_attributes)
             end
 
             private

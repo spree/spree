@@ -229,13 +229,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                refresh_token:
-                  type: string
-                  description: Refresh token from login response
-              required:
-              - refresh_token
+              "$ref": "#/components/schemas/RefreshTokenParams"
+        required: true
   "/api/v3/store/auth/logout":
     post:
       summary: Logout
@@ -273,11 +268,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                refresh_token:
-                  type: string
-                  description: Refresh token to revoke
+              "$ref": "#/components/schemas/LogoutParams"
+        required: true
   "/api/v3/store/password_resets":
     post:
       summary: Request a password reset
@@ -335,21 +327,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: customer@example.com
-                  description: Email address of the account to reset
-                redirect_url:
-                  type: string
-                  format: uri
-                  example: https://myshop.com/reset-password
-                  description: URL to redirect the user to after clicking the reset
-                    link. Validated against the store's allowed origins.
-              required:
-              - email
+              "$ref": "#/components/schemas/RequestPasswordResetParams"
+        required: true
   "/api/v3/store/password_resets/{token}":
     patch:
       summary: Reset password with token
@@ -439,18 +418,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  minLength: 6
-                  example: newsecurepassword
-                password_confirmation:
-                  type: string
-                  example: newsecurepassword
-              required:
-              - password
-              - password_confirmation
+              "$ref": "#/components/schemas/ResetPasswordParams"
+        required: true
   "/api/v3/store/categories":
     get:
       summary: List categories
@@ -1128,8 +1097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2706979
-                  slug: product-2706979
+                  name: Product 3226979
+                  slug: product-3226979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1419,8 +1388,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3189085
-                  slug: product-3189085
+                  name: Product 3709085
+                  slug: product-3709085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1449,8 +1418,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 3198209
-                  slug: product-3198209
+                  name: Product 3718209
+                  slug: product-3718209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1577,8 +1546,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3466885
-                slug: product-3466885
+                name: Product 3986885
+                slug: product-3986885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1924,6 +1893,122 @@ paths:
                   message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/carts/{cart_id}/po_document":
+    parameters:
+    - name: cart_id
+      in: path
+      required: true
+      description: Cart prefixed ID
+      schema:
+        type: string
+    post:
+      summary: Upload a purchase order document
+      tags:
+      - Carts
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Prepares an upload for the buyer's signed purchase order document. Send the
+        file's metadata, then `PUT` the bytes to `upload.url` with exactly
+        `upload.headers`, and attach the file by sending the returned `signed_id` as
+        `po_document_signed_id` on a cart update. Files are stored privately.
+        `checksum` is the file's MD5 digest, base64-encoded. Returns 422 when the
+        declared size or type is not accepted for a purchase order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: upload target created
+          content:
+            application/json:
+              example:
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e3e622807fc2a4cbaf839915644236c074b14c7b
+                filename: purchase-order.pdf
+                content_type: application/pdf
+                byte_size: 48210
+                visibility: private
+                expires_at: '2026-01-16T12:00:00.000Z'
+                upload:
+                  method: PUT
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--3750f7691683b5375486d3266b42be430e421821
+                  headers:
+                    Content-Type: application/pdf
+              schema:
+                "$ref": "#/components/schemas/FileUpload"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreatePoDocumentParams"
+        required: true
+  "/api/v3/store/carts/{cart_id}/tax_identifier":
+    parameters:
+    - name: cart_id
+      in: path
+      required: true
+      description: Cart prefixed ID
+      schema:
+        type: string
+    patch:
+      summary: Set the cart tax identifier
+      tags:
+      - Carts
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Sets the tax registration this cart is taxed against, overriding the one on the
+        customer's profile — for a buyer paying through a different company than the one
+        on their account. Send both `kind` and `value` every time. The cart's totals are
+        recalculated. Returns 201 when the cart had no override yet, 200 when it replaced one.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: tax identifier set
+          content:
+            application/json:
+              example:
+                id: txi_UkLWZg9DAJ
+                kind: eu_vat
+                value: DE100000008
+              schema:
+                "$ref": "#/components/schemas/TaxIdentifier"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/TaxIdentifierParams"
+        required: true
   "/api/v3/store/carts":
     get:
       summary: List active carts
@@ -2162,8 +2247,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 243715
-                    slug: product-243715
+                    name: Product 293715
+                    slug: product-293715
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2283,8 +2368,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2442171
-                    slug: product-2442171
+                    name: Product 2942171
+                    slug: product-2942171
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2485,30 +2570,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                metadata:
-                  type: object
-                  description: Write-only key-value metadata (Stripe-style).
-                items:
-                  type: array
-                  description: Items to add to the cart on creation
-                  items:
-                    type: object
-                    properties:
-                      variant_id:
-                        type: string
-                        example: variant_abc123
-                        description: Prefixed variant ID
-                      quantity:
-                        type: integer
-                        example: 2
-                        description: Quantity (defaults to 1)
-                      metadata:
-                        type: object
-                        additionalProperties: true
-                    required:
-                    - variant_id
+              "$ref": "#/components/schemas/CreateCartParams"
   "/api/v3/store/carts/{id}":
     get:
       summary: Get a cart
@@ -2596,7 +2658,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 248307 was removed because it was sold out
+                  message: Product 298307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2838,8 +2900,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2493263
-                  slug: product-2493263
+                  name: Product 2993263
+                  slug: product-2993263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -2887,72 +2949,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: customer@example.com
-                customer_note:
-                  type: string
-                  example: Leave at door
-                metadata:
-                  type: object
-                  additionalProperties: true
-                shipping_address_id:
-                  type: string
-                  description: Existing address ID to use as shipping address
-                  example: addr_abc123
-                billing_address_id:
-                  type: string
-                  description: Existing address ID to use as billing address
-                  example: addr_def456
-                billing_address:
-                  type: object
-                  properties:
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    address1:
-                      type: string
-                    address2:
-                      type: string
-                    city:
-                      type: string
-                    postal_code:
-                      type: string
-                    phone:
-                      type: string
-                    company:
-                      type: string
-                    country_code:
-                      type: string
-                    state_code:
-                      type: string
-                shipping_address:
-                  type: object
-                  properties:
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    address1:
-                      type: string
-                    address2:
-                      type: string
-                    city:
-                      type: string
-                    postal_code:
-                      type: string
-                    phone:
-                      type: string
-                    company:
-                      type: string
-                    country_code:
-                      type: string
-                    state_code:
-                      type: string
+              "$ref": "#/components/schemas/UpdateCartParams"
+        required: true
     delete:
       summary: Delete a cart
       tags:
@@ -3126,8 +3124,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2518992
-                  slug: product-2518992
+                  name: Product 3018992
+                  slug: product-3018992
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3158,7 +3156,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 283 Lovely Street
+                  address1: 354 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3180,7 +3178,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 282 Lovely Street
+                  address1: 353 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3341,8 +3339,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2544794
-                  slug: product-2544794
+                  name: Product 3044794
+                  slug: product-3044794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3396,8 +3394,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 127
-                    code: UPS_GROUND_144
+                    name: UPS Ground 163
+                    code: UPS_GROUND_180
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -3418,7 +3416,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 127
+                    name: UPS Ground 163
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -3437,8 +3435,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 127
-                      code: UPS_GROUND_144
+                      name: UPS Ground 163
+                      code: UPS_GROUND_180
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -3465,7 +3463,7 @@ paths:
                     gateway_payment_profile_id:
                   payment_method:
                     id: pm_UkLWZg9DAJ
-                    name: Check 5
+                    name: Check 8
                     description:
                     type: check
                     session_required: false
@@ -3476,7 +3474,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 289 Lovely Street
+                  address1: 360 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3498,7 +3496,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 288 Lovely Street
+                  address1: 359 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3683,8 +3681,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2852614
-                  slug: product-2852614
+                  name: Product 3372614
+                  slug: product-3372614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3742,14 +3740,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                code:
-                  type: string
-                  example: SAVE10
-                  description: Promotion discount code to apply
-              required:
-              - code
+              "$ref": "#/components/schemas/ApplyDiscountCodeParams"
+        required: true
   "/api/v3/store/carts/{cart_id}/discount_codes/{id}":
     delete:
       summary: Remove discount code
@@ -3884,8 +3876,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2863461
-                  slug: product-2863461
+                  name: Product 3383461
+                  slug: product-3383461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4073,8 +4065,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2888182
-                  slug: product-2888182
+                  name: Product 3408182
+                  slug: product-3408182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4128,8 +4120,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 146
-                    code: UPS_GROUND_164
+                    name: UPS Ground 184
+                    code: UPS_GROUND_202
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -4150,7 +4142,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 146
+                    name: UPS Ground 184
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -4169,8 +4161,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 146
-                      code: UPS_GROUND_164
+                      name: UPS Ground 184
+                      code: UPS_GROUND_202
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -4184,7 +4176,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 395 Lovely Street
+                  address1: 472 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4231,14 +4223,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                selected_delivery_rate_id:
-                  type: string
-                  example: dr_abc123
-                  description: Delivery rate ID to select
-              required:
-              - selected_delivery_rate_id
+              "$ref": "#/components/schemas/UpdateFulfillmentParams"
+        required: true
   "/api/v3/store/carts/{cart_id}/gift_cards":
     post:
       summary: Apply gift card
@@ -4372,8 +4358,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2905702
-                  slug: product-2905702
+                  name: Product 3425702
+                  slug: product-3425702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4481,14 +4467,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                code:
-                  type: string
-                  example: GC-ABCD-1234
-                  description: Gift card code to apply
-              required:
-              - code
+              "$ref": "#/components/schemas/ApplyGiftCardParams"
+        required: true
   "/api/v3/store/carts/{cart_id}/gift_cards/{id}":
     delete:
       summary: Remove gift card
@@ -4622,8 +4602,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2949569
-                  slug: product-2949569
+                  name: Product 3469569
+                  slug: product-3469569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4778,10 +4758,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 29763 cannot be delivered to the selected address
+                  message: Product 34963 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 298298 cannot be delivered to the selected address
+                  message: Product 350298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4839,8 +4819,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 29763
-                  slug: product-29763
+                  name: Product 34963
+                  slug: product-34963
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4870,8 +4850,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 298298
-                  slug: product-298298
+                  name: Product 350298
+                  slug: product-350298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4942,24 +4922,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                variant_id:
-                  type: string
-                  example: variant_abc123
-                  description: Variant ID to add
-                quantity:
-                  type: integer
-                  example: 2
-                  description: 'Quantity to add (default: 1)'
-                metadata:
-                  type: object
-                  additionalProperties: true
-                  description: Arbitrary key-value metadata
-                  example:
-                    gift_message: Happy Birthday!
-              required:
-              - variant_id
+              "$ref": "#/components/schemas/AddLineItemParams"
+        required: true
   "/api/v3/store/carts/{cart_id}/items/{id}":
     patch:
       summary: Update line item quantity
@@ -5102,8 +5066,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3049165
-                  slug: product-3049165
+                  name: Product 3569165
+                  slug: product-3569165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5151,18 +5115,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                quantity:
-                  type: integer
-                  minimum: 1
-                  example: 5
-                metadata:
-                  type: object
-                  additionalProperties: true
-                  description: Arbitrary key-value metadata (merged with existing)
-                  example:
-                    engraving: J.D.
+              "$ref": "#/components/schemas/UpdateLineItemParams"
+        required: true
     delete:
       summary: Remove line item from cart
       tags:
@@ -5393,7 +5347,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 141
+                  name: Credit Card 201
                   description:
                   type: bogus
                   session_required: true
@@ -5404,22 +5358,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                payment_method_id:
-                  type: string
-                  example: pm_abc123
-                  description: Payment method ID
-                amount:
-                  type: string
-                  example: '99.99'
-                  description: Payment amount (defaults to order total minus store
-                    credits)
-                external_data:
-                  type: object
-                  description: Provider-specific data passed to the gateway
-              required:
-              - payment_method_id
+              "$ref": "#/components/schemas/CreatePaymentSessionParams"
+        required: true
   "/api/v3/store/carts/{cart_id}/payment_sessions/{id}":
     parameters:
     - name: x-spree-api-key
@@ -5494,7 +5434,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 142
+                  name: Credit Card 202
                   description:
                   type: bogus
                   session_required: true
@@ -5562,7 +5502,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 144
+                  name: Credit Card 204
                   description:
                   type: bogus
                   session_required: true
@@ -5573,15 +5513,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                amount:
-                  type: string
-                  example: '50.00'
-                  description: Updated payment amount
-                external_data:
-                  type: object
-                  description: Provider-specific data to update
+              "$ref": "#/components/schemas/UpdatePaymentSessionParams"
+        required: true
   "/api/v3/store/carts/{cart_id}/payment_sessions/{id}/complete":
     parameters:
     - name: x-spree-api-key
@@ -5670,7 +5603,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 145
+                  name: Credit Card 205
                   description:
                   type: bogus
                   session_required: true
@@ -5691,14 +5624,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                session_result:
-                  type: string
-                  description: Provider-specific session result token
-                external_data:
-                  type: object
-                  description: Provider-specific completion data
+              "$ref": "#/components/schemas/CompletePaymentSessionParams"
+        required: true
   "/api/v3/store/carts/{cart_id}/payments":
     post:
       summary: Create payment
@@ -5771,7 +5698,7 @@ paths:
                 source:
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Check 6
+                  name: Check 9
                   description:
                   type: check
                   session_required: false
@@ -5793,22 +5720,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                payment_method_id:
-                  type: string
-                  example: pm_abc123
-                  description: Payment method ID (must be a non-session payment method)
-                amount:
-                  type: string
-                  example: '99.99'
-                  description: Payment amount (defaults to order total minus store
-                    credits)
-                metadata:
-                  type: object
-                  description: Arbitrary metadata to attach to the payment
-              required:
-              - payment_method_id
+              "$ref": "#/components/schemas/CreatePaymentParams"
+        required: true
   "/api/v3/store/carts/{cart_id}/store_credits":
     post:
       summary: Apply store credit
@@ -5936,8 +5849,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3679789
-                  slug: product-3679789
+                  name: Product 4219789
+                  slug: product-4219789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6020,12 +5933,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                amount:
-                  type: number
-                  example: 10.0
-                  description: Amount to apply (optional - defaults to max available)
+              "$ref": "#/components/schemas/ApplyStoreCreditParams"
+        required: true
     delete:
       summary: Remove store credit
       tags:
@@ -6150,8 +6059,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 369179
-                  slug: product-369179
+                  name: Product 423179
+                  slug: product-423179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6310,6 +6219,60 @@ paths:
                 required:
                 - data
                 - meta
+    post:
+      summary: Open a claim
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Reports a damaged, missing or wrong item on one of the customer's
+        orders. Approving, denying and resolving it are the merchant's. Accessible
+        via JWT or the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '201':
+          description: claim opened
+          content:
+            application/json:
+              example:
+                id: claim_gbHJdmfrXB
+                number: CLM1002
+                status: open
+                resolution:
+                order_id: or_gbHJdmfrXB
+                reason_id: clr_UkLWZg9DAJ
+                refund_total: '0.00'
+                display_refund_total: "$0.00"
+                approved_at:
+                resolved_at:
+                denied_at:
+                canceled_at:
+              schema:
+                "$ref": "#/components/schemas/Claim"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateClaimParams"
+        required: true
   "/api/v3/store/orders/{id}":
     get:
       summary: Get an order
@@ -6446,8 +6409,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 308496
-                  slug: product-308496
+                  name: Product 360496
+                  slug: product-360496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6510,8 +6473,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 160
-                    code: UPS_GROUND_178
+                    name: UPS Ground 198
+                    code: UPS_GROUND_216
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6532,7 +6495,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 160
+                    name: UPS Ground 198
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -6551,8 +6514,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 160
-                      code: UPS_GROUND_178
+                      name: UPS Ground 198
+                      code: UPS_GROUND_216
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6565,7 +6528,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 451 Lovely Street
+                  address1: 528 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6587,7 +6550,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 452 Lovely Street
+                  address1: 529 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6745,6 +6708,61 @@ paths:
                 required:
                 - data
                 - meta
+    post:
+      summary: Open a return
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Opens a return for shipped units of one of the customer's orders.
+        Approving, receiving and refunding it are the merchant's. Accessible via JWT
+        or the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '201':
+          description: return opened
+          content:
+            application/json:
+              example:
+                id: ret_gbHJdmfrXB
+                number: RET1002
+                status: requested
+                order_id: or_gbHJdmfrXB
+                reason_id: rar_UkLWZg9DAJ
+                refund_total: '10.00'
+                display_refund_total: "$10.00"
+                refund_tax_total: '0.00'
+                display_refund_tax_total: "$0.00"
+                approved_at:
+                received_at:
+                refunded_at:
+                canceled_at:
+              schema:
+                "$ref": "#/components/schemas/Return"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateReturnParams"
+        required: true
   "/api/v3/store/customers/me/addresses":
     get:
       summary: List customer addresses
@@ -6860,7 +6878,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 247 Lovely Street
+                  address1: 314 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6881,7 +6899,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 248 Lovely Street
+                  address1: 315 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6902,7 +6920,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 249 Lovely Street
+                  address1: 316 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7050,60 +7068,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  example: John
-                last_name:
-                  type: string
-                  example: Doe
-                address1:
-                  type: string
-                  example: 123 Main St
-                address2:
-                  type: string
-                  example: Apt 4B
-                city:
-                  type: string
-                  example: New York
-                postal_code:
-                  type: string
-                  example: '10001'
-                phone:
-                  type: string
-                  example: "+1 555 123 4567"
-                company:
-                  type: string
-                  example: Acme Inc
-                country_code:
-                  type: string
-                  example: US
-                  description: ISO 3166-1 alpha-2 country code (e.g., "US", "DE")
-                state_code:
-                  type: string
-                  example: NY
-                  description: ISO 3166-2 subdivision code without country prefix
-                    (e.g., "CA", "NY")
-                state_name:
-                  type: string
-                  example: New York
-                  description: State name - for countries without predefined states
-                is_default_billing:
-                  type: boolean
-                  example: true
-                  description: Set as default billing address
-                is_default_shipping:
-                  type: boolean
-                  example: true
-                  description: Set as default shipping address
-              required:
-              - first_name
-              - last_name
-              - address1
-              - city
-              - postal_code
-              - country_code
+              "$ref": "#/components/schemas/AddressParams"
+        required: true
   "/api/v3/store/customers/me/addresses/{id}":
     get:
       summary: Get an address
@@ -7160,7 +7126,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 261 Lovely Street
+                address1: 328 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -7242,7 +7208,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 267 Lovely Street
+                address1: 334 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -7264,28 +7230,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  example: John
-                last_name:
-                  type: string
-                  example: Doe
-                address1:
-                  type: string
-                  example: 456 Oak Ave
-                city:
-                  type: string
-                  example: Los Angeles
-                is_default_billing:
-                  type: boolean
-                  example: true
-                  description: Set as default billing address
-                is_default_shipping:
-                  type: boolean
-                  example: true
-                  description: Set as default shipping address
+              "$ref": "#/components/schemas/AddressParams"
+        required: true
     delete:
       summary: Delete an address
       tags:
@@ -7810,8 +7756,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2725270
-                    slug: product-2725270
+                    name: Product 3245270
+                    slug: product-3245270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -7874,8 +7820,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 138
-                      code: UPS_GROUND_155
+                      name: UPS Ground 176
+                      code: UPS_GROUND_193
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -7896,7 +7842,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 138
+                      name: UPS Ground 176
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -7915,8 +7861,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 138
-                        code: UPS_GROUND_155
+                        name: UPS Ground 176
+                        code: UPS_GROUND_193
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -7929,7 +7875,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 339 Lovely Street
+                    address1: 416 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -7951,7 +7897,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 340 Lovely Street
+                    address1: 417 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8134,8 +8080,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2745633
-                  slug: product-2745633
+                  name: Product 3265633
+                  slug: product-3265633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -8198,8 +8144,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 140
-                    code: UPS_GROUND_157
+                    name: UPS Ground 178
+                    code: UPS_GROUND_195
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -8220,7 +8166,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 140
+                    name: UPS Ground 178
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -8239,8 +8185,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 140
-                      code: UPS_GROUND_157
+                      name: UPS Ground 178
+                      code: UPS_GROUND_195
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8253,7 +8199,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 345 Lovely Street
+                  address1: 422 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8275,7 +8221,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 346 Lovely Street
+                  address1: 423 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8402,38 +8348,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: newuser@example.com
-                password:
-                  type: string
-                  minLength: 6
-                  example: password123
-                password_confirmation:
-                  type: string
-                  example: password123
-                first_name:
-                  type: string
-                  example: John
-                last_name:
-                  type: string
-                  example: Doe
-                phone:
-                  type: string
-                  example: "+1234567890"
-                accepts_email_marketing:
-                  type: boolean
-                  example: true
-                metadata:
-                  type: object
-                  example:
-                    source: storefront
-              required:
-              - email
-              - password
+              "$ref": "#/components/schemas/RegisterParams"
+        required: true
   "/api/v3/store/customers/me":
     get:
       summary: Get current customer profile
@@ -8498,7 +8414,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 351 Lovely Street
+                  address1: 428 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8519,7 +8435,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 352 Lovely Street
+                  address1: 429 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8541,7 +8457,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 352 Lovely Street
+                  address1: 429 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8563,7 +8479,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 351 Lovely Street
+                  address1: 428 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8655,7 +8571,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 353 Lovely Street
+                  address1: 430 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8676,7 +8592,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 354 Lovely Street
+                  address1: 431 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8698,7 +8614,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 354 Lovely Street
+                  address1: 431 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8720,7 +8636,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 353 Lovely Street
+                  address1: 430 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8757,34 +8673,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  example: John
-                last_name:
-                  type: string
-                  example: Doe
-                email:
-                  type: string
-                  format: email
-                  example: customer@example.com
-                password:
-                  type: string
-                  example: newpassword123
-                password_confirmation:
-                  type: string
-                  example: newpassword123
-                accepts_email_marketing:
-                  type: boolean
-                  example: true
-                phone:
-                  type: string
-                  example: "+1 555 123 4567"
-                metadata:
-                  type: object
-                  example:
-                    preferred_contact: email
+              "$ref": "#/components/schemas/UpdateCustomerParams"
+        required: true
   "/api/v3/store/customers/me/data_requests":
     get:
       summary: List data requests
@@ -8964,17 +8854,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                kind:
-                  type: string
-                  enum:
-                  - access
-                  - erasure
-                  description: Defaults to access
-                current_password:
-                  type: string
-                  description: Required for erasure
+              "$ref": "#/components/schemas/CreateDataRequestParams"
   "/api/v3/store/customers/me/data_requests/{id}":
     get:
       summary: Get a data request
@@ -9344,7 +9224,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 147
+                  name: Credit Card 207
                   description:
                   type: bogus
                   session_required: true
@@ -9375,17 +9255,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                payment_method_id:
-                  type: string
-                  example: pm_abc123
-                  description: Payment method ID
-                external_data:
-                  type: object
-                  description: Provider-specific data passed to the gateway
-              required:
-              - payment_method_id
+              "$ref": "#/components/schemas/CreatePaymentSetupSessionParams"
+        required: true
   "/api/v3/store/customers/me/payment_setup_sessions/{id}":
     parameters:
     - name: x-spree-api-key
@@ -9445,7 +9316,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 150
+                  name: Credit Card 210
                   description:
                   type: bogus
                   session_required: true
@@ -9526,7 +9397,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 152
+                  name: Credit Card 212
                   description:
                   type: bogus
                   session_required: true
@@ -9547,11 +9418,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                external_data:
-                  type: object
-                  description: Provider-specific completion data
+              "$ref": "#/components/schemas/CompletePaymentSetupSessionParams"
   "/api/v3/store/customers/me/store_credits":
     get:
       summary: List store credits
@@ -10660,19 +10527,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Birthday Ideas
-                is_private:
-                  type: boolean
-                  example: true
-                is_default:
-                  type: boolean
-                  example: false
-              required:
-              - name
+              "$ref": "#/components/schemas/CreateWishlistParams"
+        required: true
   "/api/v3/store/wishlists/{id}":
     get:
       summary: Get a wishlist
@@ -10814,17 +10670,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Updated Name
-                is_private:
-                  type: boolean
-                  example: true
-                is_default:
-                  type: boolean
-                  example: false
+              "$ref": "#/components/schemas/UpdateWishlistParams"
+        required: true
     delete:
       summary: Delete a wishlist
       tags:
@@ -10925,7 +10772,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-462
+                  sku: SKU-527
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -10962,17 +10809,92 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                variant_id:
-                  type: string
-                  example: variant_abc123
-                quantity:
-                  type: integer
-                  example: 1
-              required:
-              - variant_id
+              "$ref": "#/components/schemas/CreateWishlistItemParams"
+        required: true
   "/api/v3/store/wishlists/{wishlist_id}/items/{id}":
+    patch:
+      summary: Update a wishlist item
+      tags:
+      - Wishlists
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Changes the quantity of a wishlist item, or moves it to another
+        variant
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: wishlist_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: item updated
+          content:
+            application/json:
+              example:
+                id: wi_UkLWZg9DAJ
+                variant_id: variant_UkLWZg9DAJ
+                product_id: prod_UkLWZg9DAJ
+                wishlist_id: wl_UkLWZg9DAJ
+                quantity: 2
+                variant:
+                  id: variant_UkLWZg9DAJ
+                  product_id: prod_UkLWZg9DAJ
+                  sku: SKU-528
+                  options_text: ''
+                  track_inventory: true
+                  media_count: 0
+                  preorder_ships_at:
+                  thumbnail_url:
+                  purchasable: true
+                  in_stock: false
+                  backorderable: true
+                  preorder: false
+                  weight: 0.0
+                  height:
+                  width:
+                  depth:
+                  weight_unit: lb
+                  dimensions_unit: in
+                  minimum_order_quantity: 1
+                  order_multiple: 1
+                  purchase_unit: unit
+                  units_per_carton:
+                  price:
+                    id: price_UkLWZg9DAJ
+                    currency: USD
+                    amount: '19.99'
+                    compare_at_amount:
+                    display_amount: "$19.99"
+                    display_compare_at_amount:
+                    price_list_id:
+                  original_price:
+                  seller_id:
+                  option_values: []
+              schema:
+                "$ref": "#/components/schemas/WishlistItem"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateWishlistItemParams"
+        required: true
     delete:
       summary: Remove item from wishlist
       tags:
@@ -11121,22 +11043,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: subscriber@example.com
-                redirect_url:
-                  type: string
-                  format: uri
-                  example: https://your-store.com/newsletter/confirm
-                  description: Storefront URL the verification token should be appended
-                    to. Silently omitted from the webhook payload when the store has
-                    allowed origins configured and this URL does not match one of
-                    them, or when no allowed origins are configured at all.
-              required:
-              - email
+              "$ref": "#/components/schemas/CreateNewsletterSubscriberParams"
+        required: true
   "/api/v3/store/newsletter_subscribers/verify":
     post:
       summary: Verify a newsletter subscription
@@ -11200,14 +11108,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                token:
-                  type: string
-                  example: abc123def456
-                  description: Verification token from the confirmation email
-              required:
-              - token
+              "$ref": "#/components/schemas/VerifyNewsletterSubscriberParams"
+        required: true
   "/api/v3/store/newsletter_subscribers/{id}":
     parameters:
     - name: id
@@ -11291,18 +11193,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: subscriber@example.com
-                redirect_url:
-                  type: string
-                  format: uri
-                  description: Storefront URL the unsubscribe token should be appended
-                    to in the resulting email. Silently dropped from the event payload
-                    if outside the store's allowed origins.
+              "$ref": "#/components/schemas/RequestNewsletterUnsubscribeParams"
   "/api/v3/store/policies":
     get:
       summary: List store policies
@@ -11769,11 +11660,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Acme Industrial Group
+              "$ref": "#/components/schemas/UpdateCompanyParams"
+        required: true
   "/api/v3/store/companies/{company_id}/members":
     parameters:
     - name: company_id
@@ -11908,13 +11796,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                customer_email:
-                  type: string
-                  example: colleague@acme.test
-              required:
-              - customer_email
+              "$ref": "#/components/schemas/AddCompanyMemberParams"
+        required: true
   "/api/v3/store/companies/{company_id}/invitations":
     parameters:
     - name: company_id
@@ -12097,7 +11980,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 312 Lovely Street
+                  address1: 389 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -12168,7 +12051,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 315 Lovely Street
+                address1: 392 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -12188,14 +12071,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                label:
-                  type: string
-                  example: Northern Warehouse
-                default_shipping:
-                  type: boolean
-                  example: true
+              "$ref": "#/components/schemas/CompanyAddressParams"
+        required: true
     delete:
       summary: Remove an address book entry
       tags:
@@ -12432,8 +12309,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2715649
-                    slug: product-2715649
+                    name: Product 3235649
+                    slug: product-3235649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -12495,8 +12372,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 129
-                      code: UPS_GROUND_146
+                      name: UPS Ground 167
+                      code: UPS_GROUND_184
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -12517,7 +12394,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 129
+                      name: UPS Ground 167
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -12536,8 +12413,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 129
-                        code: UPS_GROUND_146
+                        name: UPS Ground 167
+                        code: UPS_GROUND_184
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -12550,7 +12427,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 323 Lovely Street
+                    address1: 400 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -12572,7 +12449,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 324 Lovely Street
+                    address1: 401 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -12713,20 +12590,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  example: Ada
-                last_name:
-                  type: string
-                  example: Lovelace
-                password:
-                  type: string
-                  example: a-strong-password
-                password_confirmation:
-                  type: string
-                  example: a-strong-password
+              "$ref": "#/components/schemas/AcceptCompanyInvitationParams"
+        required: true
   "/api/v3/store/delivery_methods":
     get:
       summary: List delivery methods
@@ -15768,14 +15633,14 @@ components:
           - image
           - video
           - external_video
+        external_video_url:
+          type: string
+          nullable: true
         focal_point_x:
           type: number
           nullable: true
         focal_point_y:
           type: number
-          nullable: true
-        external_video_url:
-          type: string
           nullable: true
         video_provider:
           type: string
@@ -15817,9 +15682,9 @@ components:
       - position
       - alt
       - media_type
+      - external_video_url
       - focal_point_x
       - focal_point_y
-      - external_video_url
       - video_provider
       - video_embed_url
       - video_url
@@ -17823,6 +17688,742 @@ components:
       - is_default
       - is_private
       x-typelizer: true
+    AcceptCompanyInvitationParams:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: Ada
+        last_name:
+          type: string
+          example: Lovelace
+        phone:
+          type: string
+        password:
+          type: string
+          example: a-strong-password
+        password_confirmation:
+          type: string
+          example: a-strong-password
+    AddCompanyMemberParams:
+      type: object
+      properties:
+        customer_email:
+          type: string
+          example: colleague@acme.test
+      required:
+      - customer_email
+    AddLineItemParams:
+      type: object
+      properties:
+        variant_id:
+          type: string
+          example: variant_abc123
+        quantity:
+          type: integer
+          description: Defaults to 1.
+          example: 2
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Write-only key-value metadata.
+          example:
+            gift_message: Happy Birthday!
+        options:
+          type: object
+          additionalProperties: true
+          description: Values for line item attributes an extension adds.
+      required:
+      - variant_id
+    AddressParams:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        phone:
+          type: string
+        country_code:
+          type: string
+          description: ISO 3166-1 alpha-2 country code, such as `US` or `DE`.
+          example: US
+        state_code:
+          type: string
+          description: ISO 3166-2 subdivision code without the country prefix, such
+            as `CA` or `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: The state name, for countries without predefined states.
+        country_iso:
+          type: string
+          description: 'Deprecated: use `country_code`. Accepted until 6.1.'
+        state_abbr:
+          type: string
+          description: 'Deprecated: use `state_code`. Accepted until 6.1.'
+        is_default_billing:
+          type: boolean
+          description: Makes this the default billing address.
+        is_default_shipping:
+          type: boolean
+          description: Makes this the default shipping address.
+    ApplyDiscountCodeParams:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The promotion code to apply.
+          example: SAVE10
+      required:
+      - code
+    ApplyGiftCardParams:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The gift card code to apply.
+          example: GC-ABCD-1234
+      required:
+      - code
+    ApplyStoreCreditParams:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: Defaults to as much as the cart can use.
+          example: '10.00'
+    CartAddressParams:
+      type: object
+      properties:
+        id:
+          type: string
+          description: An existing address of the customer to use. The other fields
+            are then ignored.
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        phone:
+          type: string
+        country_code:
+          type: string
+          description: ISO 3166-1 alpha-2 country code, such as `US` or `DE`.
+          example: US
+        state_code:
+          type: string
+          description: ISO 3166-2 subdivision code without the country prefix, such
+            as `CA` or `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: The state name, for countries without predefined states.
+        country_iso:
+          type: string
+          description: 'Deprecated: use `country_code`. Accepted until 6.1.'
+        state_abbr:
+          type: string
+          description: 'Deprecated: use `state_code`. Accepted until 6.1.'
+        quick_checkout:
+          type: boolean
+          description: Relaxes validation (name, phone, postal code, street), for
+            express checkouts that share a partial address.
+    CompanyAddressParams:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        zipcode:
+          type: string
+        phone:
+          type: string
+        state_name:
+          type: string
+        label:
+          type: string
+        country_code:
+          type: string
+          description: ISO 3166-1 alpha-2 code, such as `US`.
+        state_code:
+          type: string
+          description: The state or province abbreviation, such as `NY`.
+        default_billing:
+          type: boolean
+          description: True makes this the node's default billing address, false gives
+            that up, and leaving it out changes nothing.
+        default_shipping:
+          type: boolean
+          description: True makes this the node's default shipping address, false
+            gives that up, and leaving it out changes nothing.
+    CompletePaymentSessionParams:
+      type: object
+      properties:
+        session_result:
+          type: string
+          description: Provider-specific session result token.
+        external_data:
+          type: object
+          additionalProperties: true
+          description: Provider-specific completion data.
+    CompletePaymentSetupSessionParams:
+      type: object
+      properties:
+        external_data:
+          type: object
+          additionalProperties: true
+          description: Provider-specific completion data.
+    CreateCartParams:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: customer@example.com
+        customer_note:
+          type: string
+          example: Leave at door
+        market_id:
+          type: string
+        currency:
+          type: string
+        locale:
+          type: string
+        shipping_address_id:
+          type: string
+          description: An existing address to ship to.
+          example: addr_abc123
+        billing_address_id:
+          type: string
+          description: An existing address to bill.
+          example: addr_def456
+        preferred_stock_location_id:
+          type: string
+        company_id:
+          type: string
+          description: 'The company node this purchase is for. The buyer must have
+            standing over it: a membership on that node or one of its ancestors. Null
+            clears it, and with it the company''s catalog, pricing and tax anchoring.'
+          nullable: true
+        po_number:
+          type: string
+          description: The buyer's own purchase-order reference. Their accounting
+            reconciles the order, the invoice and the payment against it. Blank clears
+            it.
+          nullable: true
+        po_document_signed_id:
+          type: string
+          description: The `signed_id` of the buyer's purchase order, from `POST /store/carts/:id/po_document`.
+            Blank detaches the document.
+          nullable: true
+        use_shipping:
+          type: boolean
+          description: When true, copies the shipping address to the billing address.
+        shipping_address:
+          allOf:
+          - "$ref": "#/components/schemas/CartAddressParams"
+          description: A new shipping address.
+        billing_address:
+          allOf:
+          - "$ref": "#/components/schemas/CartAddressParams"
+          description: A new billing address.
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Write-only key-value metadata, merged with what the cart has.
+        items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/LineItemInputParams"
+          description: 'Items to upsert: sets the quantity of a variant already in
+            the cart, adds the others.'
+    CreateClaimParams:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              line_item_id:
+                type: string
+              quantity:
+                type: integer
+              description:
+                type: string
+                description: What is wrong with the item.
+            required:
+            - line_item_id
+            - quantity
+        reason_id:
+          type: string
+          description: One of the store's claim reasons.
+        memo:
+          type: string
+      required:
+      - items
+    CreateDataRequestParams:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - access
+          - erasure
+          description: Defaults to `access`.
+        current_password:
+          type: string
+          description: Required for `erasure`.
+    CreateNewsletterSubscriberParams:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: subscriber@example.com
+        redirect_url:
+          type: string
+          format: uri
+          description: The storefront URL the verification token is appended to. Left
+            out of the webhook payload unless it matches one of the store's allowed
+            origins.
+          example: https://your-store.com/newsletter/confirm
+      required:
+      - email
+    CreatePaymentParams:
+      type: object
+      properties:
+        payment_method_id:
+          type: string
+          description: A payment method that needs no payment session.
+          example: pm_abc123
+        amount:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: Defaults to the order total minus store credits.
+          example: '99.99'
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Key-value metadata to attach to the payment.
+      required:
+      - payment_method_id
+    CreatePaymentSessionParams:
+      type: object
+      properties:
+        payment_method_id:
+          type: string
+          example: pm_abc123
+        amount:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: Defaults to the order total minus store credits.
+          example: '99.99'
+        external_data:
+          type: object
+          additionalProperties: true
+          description: Provider-specific data passed to the gateway.
+      required:
+      - payment_method_id
+    CreatePaymentSetupSessionParams:
+      type: object
+      properties:
+        payment_method_id:
+          type: string
+          example: pm_abc123
+        external_data:
+          type: object
+          additionalProperties: true
+          description: Provider-specific data passed to the gateway.
+      required:
+      - payment_method_id
+    CreatePoDocumentParams:
+      type: object
+      properties:
+        filename:
+          type: string
+        content_type:
+          type: string
+        byte_size:
+          type: integer
+        checksum:
+          type: string
+          description: Base64-encoded MD5 digest of the file; the storage service
+            checks the bytes against it.
+      required:
+      - filename
+      - content_type
+      - byte_size
+      - checksum
+    CreateReturnParams:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              fulfillment_item_id:
+                type: string
+                description: The shipped unit coming back.
+              quantity:
+                type: integer
+            required:
+            - fulfillment_item_id
+            - quantity
+        reason_id:
+          type: string
+          description: One of the store's return reasons.
+        memo:
+          type: string
+      required:
+      - items
+    CreateWishlistItemParams:
+      type: object
+      properties:
+        variant_id:
+          type: string
+          example: variant_abc123
+        quantity:
+          type: integer
+          example: 1
+      required:
+      - variant_id
+    CreateWishlistParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Birthday Ideas
+        is_private:
+          type: boolean
+        is_default:
+          type: boolean
+      required:
+      - name
+    LineItemInputParams:
+      type: object
+      properties:
+        variant_id:
+          type: string
+          example: variant_abc123
+        quantity:
+          type: integer
+          description: Defaults to 1.
+          example: 2
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Key-value metadata, merged with what the line item has.
+        options:
+          type: object
+          additionalProperties: true
+      required:
+      - variant_id
+    LogoutParams:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          description: The refresh token to revoke.
+    RefreshTokenParams:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          description: The refresh token from the login response.
+      required:
+      - refresh_token
+    RegisterParams:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: newuser@example.com
+        password:
+          type: string
+          example: password123
+        password_confirmation:
+          type: string
+          example: password123
+        first_name:
+          type: string
+          example: John
+        last_name:
+          type: string
+          example: Doe
+        phone:
+          type: string
+          example: "+1 555 123 4567"
+        accepts_email_marketing:
+          type: boolean
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Write-only key-value metadata.
+        terms_of_service:
+          type: boolean
+          description: Whether the customer ticked the storefront's terms of service
+            box. Recorded as their consent.
+      required:
+      - email
+      - password
+    RequestNewsletterUnsubscribeParams:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: subscriber@example.com
+        redirect_url:
+          type: string
+          format: uri
+          description: The storefront URL the unsubscribe token is appended to in
+            the email. Left out of the event payload unless it matches one of the
+            store's allowed origins.
+    RequestPasswordResetParams:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The email of the account to reset.
+          example: customer@example.com
+        redirect_url:
+          type: string
+          format: uri
+          description: Where the reset link sends the customer. Ignored unless it
+            matches one of the store's allowed origins.
+          example: https://myshop.com/reset-password
+      required:
+      - email
+    ResetPasswordParams:
+      type: object
+      properties:
+        password:
+          type: string
+          example: newsecurepassword
+        password_confirmation:
+          type: string
+          example: newsecurepassword
+      required:
+      - password
+      - password_confirmation
+    TaxIdentifierParams:
+      type: object
+      properties:
+        kind:
+          type: string
+          description: 'The registration the number belongs to, such as `eu_vat` or
+            `gb_vat`. Any kind is accepted; one with a registered validator is checked
+            by it. Built-in: `eu_vat`. Extensions may register more.'
+          example: eu_vat
+        value:
+          type: string
+          example: DE123456789
+      required:
+      - kind
+      - value
+    UpdateCartParams:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: customer@example.com
+        customer_note:
+          type: string
+          example: Leave at door
+        market_id:
+          type: string
+        currency:
+          type: string
+        locale:
+          type: string
+        shipping_address_id:
+          type: string
+          description: An existing address to ship to.
+          example: addr_abc123
+        billing_address_id:
+          type: string
+          description: An existing address to bill.
+          example: addr_def456
+        preferred_stock_location_id:
+          type: string
+        company_id:
+          type: string
+          description: 'The company node this purchase is for. The buyer must have
+            standing over it: a membership on that node or one of its ancestors. Null
+            clears it, and with it the company''s catalog, pricing and tax anchoring.'
+          nullable: true
+        po_number:
+          type: string
+          description: The buyer's own purchase-order reference. Their accounting
+            reconciles the order, the invoice and the payment against it. Blank clears
+            it.
+          nullable: true
+        po_document_signed_id:
+          type: string
+          description: The `signed_id` of the buyer's purchase order, from `POST /store/carts/:id/po_document`.
+            Blank detaches the document.
+          nullable: true
+        use_shipping:
+          type: boolean
+          description: When true, copies the shipping address to the billing address.
+        shipping_address:
+          allOf:
+          - "$ref": "#/components/schemas/CartAddressParams"
+          description: A new shipping address.
+        billing_address:
+          allOf:
+          - "$ref": "#/components/schemas/CartAddressParams"
+          description: A new billing address.
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Write-only key-value metadata, merged with what the cart has.
+        items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/LineItemInputParams"
+          description: 'Items to upsert: sets the quantity of a variant already in
+            the cart, adds the others.'
+    UpdateCompanyParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Acme Industrial Group
+    UpdateCustomerParams:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: customer@example.com
+        password:
+          type: string
+        password_confirmation:
+          type: string
+        current_password:
+          type: string
+          description: Required when changing the email or the password.
+        first_name:
+          type: string
+          example: John
+        last_name:
+          type: string
+          example: Doe
+        phone:
+          type: string
+          example: "+1 555 123 4567"
+        accepts_email_marketing:
+          type: boolean
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Write-only key-value metadata.
+    UpdateFulfillmentParams:
+      type: object
+      properties:
+        selected_delivery_rate_id:
+          type: string
+          description: The delivery rate to select.
+          example: dr_abc123
+        pickup_point_external_id:
+          type: string
+          description: 'For a pickup point delivery method: the provider''s id of
+            the point to collect from.'
+    UpdateLineItemParams:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          description: At least 1. Remove an item with DELETE.
+          example: 5
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Write-only key-value metadata, merged with what the line item
+            has.
+          example:
+            engraving: J.D.
+    UpdatePaymentSessionParams:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          example: '50.00'
+        external_data:
+          type: object
+          additionalProperties: true
+          description: Provider-specific data to update.
+    UpdateWishlistItemParams:
+      type: object
+      properties:
+        variant_id:
+          type: string
+          description: Moves the item to another variant.
+        quantity:
+          type: integer
+          example: 2
+    UpdateWishlistParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Updated Name
+        is_private:
+          type: boolean
+        is_default:
+          type: boolean
+    VerifyNewsletterSubscriberParams:
+      type: object
+      properties:
+        token:
+          type: string
+          description: The verification token from the confirmation email.
+          example: abc123def456
+      required:
+      - token
   x-spree-filter-tables:
     Address:
       attributes:

@@ -6,6 +6,16 @@ module Spree
           class PaymentsController < BaseController
             scoped_resource :payments
 
+            request_params :payment do
+              id :payment_method_id, required: :create
+              decimal :amount, description: "Defaults to the order total left after store credit."
+              id :source_id, description: "A saved payment source of the order's customer (a credit card), for an off-session charge. Used only by payment methods that require a source."
+            end
+
+            request_params 'PaymentCaptureParams', action: :capture do
+              decimal :amount, description: 'Captures part of the authorized amount. Defaults to all of it.'
+            end
+
             before_action :set_resource, only: [:show, :capture, :void]
 
             # POST /api/v3/admin/orders/:order_id/payments
@@ -77,10 +87,6 @@ module Spree
 
             def serializer_class
               Spree.api.admin_payment_serializer
-            end
-
-            def permitted_params
-              params.permit(:amount, :payment_method_id, :source_id)
             end
 
             # Saved-source charges require an order customer — sources are scoped

@@ -52,14 +52,7 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          type: { type: :string, example: 'free_shipping' },
-          preferences: { type: :object, additionalProperties: true }
-        },
-        required: ['type']
-      }
+      request_body_for
 
       response '201', 'action created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -89,6 +82,40 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
 
     let(:action) { Spree::Promotion::Actions::FreeShipping.create!(promotion: promotion) }
     let(:id) { action.prefixed_id }
+
+    patch 'Update an action on a promotion' do
+      tags 'Promotions'
+      produces 'application/json'
+      consumes 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Changes an action's settings. For adjustment actions, `calculator`
+        sets the calculator and its preferences; sending a different
+        calculator `type` swaps it. The action's own `type` is fixed once
+        created.
+      DESC
+      admin_scope :write, :promotions
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'action updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:action) do
+          Spree::Promotion::Actions::CreateItemAdjustments.create!(
+            promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 10)
+          )
+        end
+        let(:body) { { calculator: { type: 'percent_on_line_item', preferences: { percent: '15' } } } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['type']).to eq('create_item_adjustments')
+          expect(action.reload.calculator).to be_a(Spree::Calculator::PercentOnLineItem)
+        end
+      end
+    end
 
     delete 'Delete an action from a promotion' do
       tags 'Promotions'

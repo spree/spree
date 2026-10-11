@@ -44,16 +44,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Oversized' },
-          kind: { type: :string, example: 'shipping', description: 'Registered profile kind; defaults to shipping.' },
-          default: { type: :boolean },
-          stock_location_ids: { type: :array, items: { type: :string }, description: 'Empty means every store location.' }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'delivery profile created' do
         let(:body) { { name: "Oversized #{Time.current.to_f}" } }
@@ -113,14 +104,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, nullable: true, example: 'EU warehouse' },
-          position: { type: :integer, nullable: true },
-          stock_location_ids: { type: :array, items: { type: :string }, description: 'Empty means every store location.' }
-        }
-      }
+      request_body_for
 
       response '201', 'origin group created' do
         let(:delivery_profile_id) { create(:delivery_profile, store: store, name: "Grouped #{Time.current.to_f}").prefixed_id }
@@ -149,14 +133,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          default: { type: :boolean },
-          stock_location_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'delivery profile updated' do
         let(:profile) { create(:delivery_profile, store: store, name: "Bulky #{Time.current.to_f}") }

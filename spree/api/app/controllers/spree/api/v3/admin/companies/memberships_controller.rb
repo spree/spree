@@ -13,6 +13,12 @@ module Spree
             # who buys for a node — and memberships carry customer emails.
             before_action :authorize_parent_access!
 
+            request_params :company_membership do
+              string :customer_email, required: :create, example: 'buyer@example.com',
+                                      description: 'An existing customer becomes a member immediately; an unknown email becomes an invitation, and the response is an invitation instead of a membership.'
+              object :metadata
+            end
+
             # POST /api/v3/admin/companies/:company_id/memberships
             def create
               result = Spree.company_add_member_service.call(
@@ -52,7 +58,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:customer_email, metadata: {})
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

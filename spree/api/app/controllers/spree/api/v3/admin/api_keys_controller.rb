@@ -14,6 +14,17 @@ module Spree
           # `read_api_keys` — any key can describe itself.
           skip_scope_check! only: :current
 
+          # `key_type`, `scopes` and `channel_id` are create-only (immutability
+          # lives on Spree::ApiKey), so a rename returns 200 rather than 422.
+          request_params :api_key do
+            string :name, required: true
+            string :key_type, required: true, only: :create, enum: Spree::ApiKey::KEY_TYPES
+            string :scopes, array: true, only: :create, example: %w[read_orders write_products],
+                            description: 'Required for secret keys. You can only grant scopes you hold yourself. Fixed once created: to change them, create a new key and revoke the old one.'
+            id :channel_id, only: :create,
+                            description: 'Binds a publishable key to one channel of the store (`ch_...`), so it rejects requests for other channels. Fixed once created; omit it for a store-wide key.'
+          end
+
           # POST /api/v3/admin/api_keys
           # Prevents scope amplification for BOTH principals: a key minted via a
           # secret API key can only carry scopes that key already holds, and a
@@ -94,16 +105,10 @@ module Spree
             end
           end
 
-          # `key_type`, `scopes`, and `channel_id` are create-only (immutability
-          # lives on Spree::ApiKey); update is limited to the human-facing `name`.
-          # Stripping them here keeps them out of mass assignment so a rename
-          # returns 200 rather than 422.
           # No extension union: an API key's scopes and type are the authorization
           # surface itself, not extensible resource data.
           def permitted_params
-            return params.permit(:name) if action_name == 'update'
-
-            params.permit(:name, :key_type, :channel_id, scopes: [])
+            params.permit(*declared_permitted_attributes)
           end
 
           private

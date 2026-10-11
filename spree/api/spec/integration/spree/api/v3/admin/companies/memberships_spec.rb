@@ -51,13 +51,7 @@ RSpec.describe 'Admin Company Memberships API', type: :request, swagger_doc: 'ap
 
       admin_sdk_example 'companies/memberships/create'
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          customer_email: { type: :string, example: 'buyer@example.com' }
-        },
-        required: ['customer_email']
-      }
+      request_body_for
 
       response '201', 'member added' do
         let!(:customer) { create(:customer, email: 'buyer@example.com') }

@@ -10,6 +10,68 @@ module Spree
           # The order accepts a `po_document_signed_id` and streams it back.
           include ActiveStorage::SetCurrent
 
+          ADDRESS = Spree::Api::V3::RequestSchema.shape('AddressInputParams') do
+            string :first_name, :last_name
+            string :firstname, :lastname, description: 'Legacy spelling of `first_name` / `last_name`; send only one of the two.'
+            string :address1, :address2, :city
+            string :postal_code
+            string :zipcode, description: 'Legacy spelling of `postal_code`; send only one of the two.'
+            string :country_code, example: 'US'
+            string :state_code, example: 'NY'
+            string :state_name, description: 'For countries without states in the database.'
+            string :phone, :alternative_phone, :company, :label
+          end
+
+          request_params :order do
+            external_references
+            string :email, example: 'customer@example.com'
+            id :customer_id
+            boolean :use_customer_default_address, only: :create,
+                                                   description: "With `customer_id`, copies the customer's saved billing and shipping addresses onto the order."
+            string :currency, example: 'USD'
+            id :market_id
+            id :channel_id, description: 'Defaults to the store primary channel when omitted.'
+            string :locale, example: 'en-US'
+            string :customer_note, description: 'Public, customer-visible note.'
+            string :internal_note, description: 'Staff-only note. Rich text HTML; reads come back as this plus `internal_note_html`.'
+            string :po_number, description: "The buyer's own purchase-order reference. Searchable alongside the order number, and rendered on every order-facing document."
+            string :po_document_signed_id, nullable: true,
+                                           description: "The `signed_id` of the buyer's purchase order, from `files.upload()` with `visibility: 'private'`. Null removes the document the order carries."
+            id :shipping_address_id, :billing_address_id, only: :create, description: 'An existing address of the customer.'
+            id :preferred_stock_location_id,
+               description: "Stock location to prefer for fulfillment. Order Routing's built-in preferred-location rule ranks it first; routing falls back to the next rule when the location can't cover the cart."
+            id :company_id, nullable: true,
+                            description: "Makes the order a company purchase, with that company's catalog prices and tax treatment. Null makes a draft a plain customer order again."
+            string :coupon_code, only: :create, description: 'Applied non-fatally: an invalid code does not block creation.'
+            object :metadata
+            string :tags, array: true
+            object :shipping_address, shape: ADDRESS
+            object :billing_address, shape: ADDRESS
+            object :items, array: true,
+                           description: 'Line items to upsert, keyed by variant. An entry sets that variant\'s quantity, creating the line item when the order has none; `quantity: 0` removes it. Variants you do not send are left alone.' do
+              id :variant_id, required: true
+              integer :quantity, example: 1
+              decimal :price, nullable: true,
+                              description: "Negotiated unit price; stamps `price_source: 'manual'`. Null reverts the line to catalog pricing. Draft orders only."
+              object :metadata
+            end
+          end
+
+          request_params 'OrderCompleteParams', action: :complete do
+            boolean :payment_pending
+            boolean :notify_customer, description: 'Send the order confirmation email after completion.'
+          end
+
+          request_params 'OrderCancelParams', action: :cancel do
+            id :cancel_reason_id, description: "Why the order was canceled: the id of one of the store's cancellation reasons."
+            string :cancel_note, description: 'Staff-facing note about the cancellation.'
+            boolean :refund_payments,
+                    description: "Whether this order's share of a payment shared across a split checkout is handed back."
+            decimal :refund_amount,
+                    description: 'How much of that share to return. Defaults to all of it; refused on an order whose payment is not shared.'
+            boolean :notify_customer, description: 'Send the order cancellation email after canceling.'
+          end
+
           skip_before_action :set_resource, only: [:index, :create]
           before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
 
@@ -260,44 +322,13 @@ module Spree
           end
 
           def order_create_params
-            permitted = normalize_params(
-              params.permit(
-                :email, :customer_id, :use_customer_default_address,
-                :currency, :market_id, :channel_id, :locale,
-                :customer_note, :internal_note,
-                # The buyer's own purchase-order reference, and the signed blob
-                # id of the document behind it — a PO arriving by email and
-                # keyed in is the draft-order flow plus these two fields.
-                :po_number, :po_document_signed_id,
-                :shipping_address_id, :billing_address_id,
-                :preferred_stock_location_id, :company_id,
-                :coupon_code,
-                metadata: {},
-                tags: [],
-                shipping_address: address_permitted_keys,
-                billing_address: address_permitted_keys,
-                items: item_permitted_keys
-              )
-            )
-            resolve_company_param(permitted)
+            resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:create))))
           end
 
+          # Named rather than read from the action, since an upsert reaches
+          # update from the create action.
           def order_update_params
-            permitted = normalize_params(
-              params.permit(
-                :email, :customer_id,
-                :customer_note, :internal_note,
-                :po_number, :po_document_signed_id,
-                :currency, :locale, :market_id, :channel_id,
-                :preferred_stock_location_id, :company_id,
-                metadata: {},
-                tags: [],
-                shipping_address: address_permitted_keys,
-                billing_address: address_permitted_keys,
-                items: item_permitted_keys
-              )
-            )
-            resolve_company_param(permitted)
+            resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:update))))
           end
 
           # An incidental lookup like any other: resolved through the store so
@@ -314,20 +345,6 @@ module Spree
                 nil
               end
             permitted
-          end
-
-          def address_permitted_keys
-            [
-              :firstname, :lastname, :first_name, :last_name,
-              :address1, :address2, :city,
-              :country_code, :state_code,
-              :zipcode, :postal_code, :phone, :alternative_phone,
-              :state_name, :company, :label
-            ]
-          end
-
-          def item_permitted_keys
-            [:variant_id, :quantity, :price, { metadata: {} }]
           end
         end
       end

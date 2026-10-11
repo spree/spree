@@ -7,6 +7,13 @@ module Spree
 
           skip_scope_check!
 
+          request_params :me do
+            string :selected_locale, example: 'de', description: 'The dashboard display language.'
+            string :first_name, :last_name
+            string :avatar_signed_id, nullable: true,
+                                      description: 'A `signed_id` from `files.upload()` to set the avatar, or null to remove it. Omit it to keep the current photo.'
+          end
+
           before_action :require_current_user!
 
           # GET /api/v3/admin/me
@@ -70,7 +77,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:selected_locale, :first_name, :last_name, :avatar_signed_id)
+            params.permit(*declared_permitted_attributes)
           end
 
           def me_response

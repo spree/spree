@@ -58,15 +58,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[payment_method_id],
-        properties: {
-          payment_method_id: { type: :string, description: 'Payment method ID' },
-          amount: { type: :string, example: '99.99' },
-          source_id: { type: :string, description: 'Payment source ID' }
-        }
-      }
+      request_body_for
 
       response '201', 'payment created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -122,9 +114,10 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
   path '/api/v3/admin/orders/{order_id}/payments/{id}/capture' do
     patch 'Capture a payment' do
       tags 'Payments'
+      consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Captures a pending payment.'
+      description 'Captures a pending payment, in full or for part of the authorized amount.'
       admin_scope :write, :payments
 
       admin_sdk_example 'order-payments/capture'
@@ -136,11 +129,13 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Payment ID'
+      request_body_for(required: false)
 
       response '200', 'payment captured' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:order_id) { order.prefixed_id }
         let(:id) { payment.prefixed_id }
+        let(:body) { { amount: Spree::Money::Rounding.format(payment.amount, payment.currency) } }
 
         before do
           payment.update_column(:status, 'pending') if payment.status != 'pending'
@@ -158,6 +153,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:order_id) { order.prefixed_id }
         let(:id) { payment.prefixed_id }
+        let(:body) { {} }
 
         before do
           # Bogus gateway forces a failure when the authorization doesn't start with `BGS-`.

@@ -18,6 +18,23 @@ module Spree
         class PackageTypesController < Seller::ResourceController
           scoped_resource :package_types
 
+          # The same set the operator's controller permits — a seller measures
+          # their own packaging, so every field on the shared form is theirs
+          # to set. `seller_id` is deliberately absent: ownership comes from
+          # the authenticated seller, never the payload.
+          request_params 'PackageTypeParams' do
+            string :name
+            string :kind, enum: Spree::PackageType::KINDS
+            number :length, :width, :height, nullable: true
+            string :dimensions_unit, nullable: true, enum: Spree::Variant::DIMENSION_UNITS
+            number :weight, nullable: true, description: "The empty package's own weight, added to every quote."
+            number :max_weight, nullable: true
+            string :weight_unit, nullable: true, enum: Spree::Variant::WEIGHT_UNITS
+            boolean :default,
+                    description: "Makes this the box this seller's parcels are quoted with. One default per seller, so it never displaces the marketplace's."
+            object :metadata, nullable: true
+          end
+
           protected
 
           def model_class
@@ -83,15 +100,6 @@ module Spree
               Arel.sql('CASE WHEN seller_id IS NULL THEN 1 ELSE 0 END'),
               Spree::PackageType.arel_table[:name].asc
             )
-          end
-
-          # The same set the operator's controller permits — a seller measures
-          # their own packaging, so every field on the shared form is theirs
-          # to set. `seller_id` is deliberately absent: ownership comes from
-          # the authenticated seller, never the payload.
-          def resource_permitted_attributes
-            [:name, :kind, :length, :width, :height, :dimensions_unit,
-             :weight, :max_weight, :weight_unit, :default, { metadata: {} }]
           end
         end
       end

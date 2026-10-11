@@ -25,6 +25,13 @@ module Spree
                      store: Rails.cache,
                      with: RATE_LIMIT_RESPONSE
 
+          request_params :password_reset do
+            string :email, required: true, only: :create, example: 'seller@acme.test'
+            string :redirect_url, only: :create, example: 'https://sellers.your-store.com/reset-password',
+                                  description: 'Must match an allowed origin of the store; ignored otherwise.'
+            string :password, :password_confirmation, required: true, only: :update, example: 'new-password-123'
+          end
+
           # POST /api/v3/seller/auth/password_resets
           def create
             user = Spree.admin_user_class.find_by(email: params[:email])

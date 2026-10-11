@@ -5,7 +5,8 @@ import { z } from 'zod/v4'
 // `admin.store.weight_units.*`. Consumers translate at render time.
 export type UnitSystem = 'metric' | 'imperial'
 export const UNIT_SYSTEMS: readonly UnitSystem[] = ['metric', 'imperial']
-export const WEIGHT_UNITS: Record<UnitSystem, readonly string[]> = {
+export type WeightUnit = 'kg' | 'g' | 'lb' | 'oz'
+export const WEIGHT_UNITS: Record<UnitSystem, readonly WeightUnit[]> = {
   metric: ['kg', 'g'],
   imperial: ['lb', 'oz'],
 }

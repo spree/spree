@@ -34,5 +34,73 @@ RSpec.describe 'Admin Tax Categories API', type: :request, swagger_doc: 'api-ref
         end
       end
     end
+
+    post 'Create a tax category' do
+      tags 'Settings'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Creates a tax category. `tax_code` is the code a tax provider uses to classify the goods in it.'
+      admin_scope :write, :settings
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      request_body_for
+
+      response '201', 'tax category created' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { name: 'Food', tax_code: 'PF050000', description: 'Groceries and prepared food' } }
+
+        schema '$ref' => '#/components/schemas/TaxCategory'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq('Food')
+          expect(data['tax_code']).to eq('PF050000')
+        end
+      end
+
+      response '422', 'validation failed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { name: '' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/tax_categories/{id}' do
+    parameter name: :id, in: :path, type: :string, description: 'Tax category ID'
+
+    let(:id) { tax_category.prefixed_id }
+
+    patch 'Update a tax category' do
+      tags 'Settings'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      admin_scope :write, :settings
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      request_body_for
+
+      response '200', 'tax category updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { name: 'Apparel', is_default: true } }
+
+        schema '$ref' => '#/components/schemas/TaxCategory'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq('Apparel')
+          expect(data['is_default']).to be(true)
+        end
+      end
+    end
   end
 end

@@ -214,6 +214,23 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with the digital download limits' do
+      let(:params) do
+        { limit_digital_download_count: false, digital_asset_authorized_clicks: 9,
+          limit_digital_download_days: false, digital_asset_authorized_days: 30 }
+      end
+
+      it 'saves them' do
+        subject
+        expect(response).to have_http_status(:ok)
+        store.reload
+        expect(store.preferred_limit_digital_download_count).to be(false)
+        expect(store.preferred_digital_asset_authorized_clicks).to eq(9)
+        expect(store.preferred_limit_digital_download_days).to be(false)
+        expect(store.preferred_digital_asset_authorized_days).to eq(30)
+      end
+    end
+
     context 'with invalid params' do
       let(:params) { { name: '' } }
 

@@ -29,15 +29,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          variant_id: { type: :string, example: 'variant_abc123', description: 'Variant ID to add' },
-          quantity: { type: :integer, example: 2, description: 'Quantity to add (default: 1)' },
-          metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata', example: { gift_message: 'Happy Birthday!' } }
-        },
-        required: %w[variant_id]
-      }
+      request_body_for
 
       response '201', 'item added, returns updated cart' do
         let(:new_product) { create(:product) }
@@ -128,13 +120,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Line item ID'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          quantity: { type: :integer, minimum: 1, example: 5 },
-          metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata (merged with existing)', example: { engraving: 'J.D.' } }
-        }
-      }
+      request_body_for
 
       response '200', 'quantity updated, returns updated cart' do
         let(:'x-spree-api-key') { api_key.token }

@@ -65,14 +65,7 @@ RSpec.describe 'Admin Claim Reasons API', type: :request, swagger_doc: 'api-refe
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[name],
-        properties: {
-          name: { type: :string, example: 'Arrived damaged' },
-          active: { type: :boolean, example: true, description: 'Inactive reasons are hidden from the pickers on new records.' }
-        }
-      }
+      request_body_for
 
       response '201', 'claim reason created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -149,13 +142,7 @@ RSpec.describe 'Admin Claim Reasons API', type: :request, swagger_doc: 'api-refe
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          active: { type: :boolean }
-        }
-      }
+      request_body_for
 
       response '200', 'claim reason updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

@@ -11,6 +11,50 @@ module Spree
           skip_before_action :set_resource
           prepend_before_action :require_authentication!, only: [:index, :associate]
 
+          CART_ADDRESS = Spree::Api::V3::RequestSchema.shape('CartAddressParams') do
+            id :id, description: 'An existing address of the customer to use. The other fields are then ignored.'
+            include_fields Spree::Api::V3::RequestShapes::STORE_ADDRESS_FIELDS
+            boolean :quick_checkout, description: 'Relaxes validation (name, phone, postal code, street), for express checkouts that share a partial address.'
+          end
+
+          # Creating and updating a cart accept the same fields.
+          CART_FIELDS = Spree::Api::V3::RequestSchema.new do
+            string :email, format: :email, example: 'customer@example.com'
+            string :customer_note, example: 'Leave at door'
+            id :market_id
+            string :currency, :locale
+            id :shipping_address_id, description: 'An existing address to ship to.', example: 'addr_abc123'
+            id :billing_address_id, description: 'An existing address to bill.', example: 'addr_def456'
+            id :preferred_stock_location_id
+            id :company_id, nullable: true, description: <<~TEXT.squish
+              The company node this purchase is for. The buyer must have standing over it: a membership
+              on that node or one of its ancestors. Null clears it, and with it the company's catalog,
+              pricing and tax anchoring.
+            TEXT
+            string :po_number, nullable: true, description: <<~TEXT.squish
+              The buyer's own purchase-order reference. Their accounting reconciles the order, the
+              invoice and the payment against it. Blank clears it.
+            TEXT
+            string :po_document_signed_id, nullable: true, description: <<~TEXT.squish
+              The `signed_id` of the buyer's purchase order, from `POST /store/carts/:id/po_document`.
+              Blank detaches the document.
+            TEXT
+            boolean :use_shipping, description: 'When true, copies the shipping address to the billing address.'
+            object :shipping_address, shape: CART_ADDRESS, description: 'A new shipping address.'
+            object :billing_address, shape: CART_ADDRESS, description: 'A new billing address.'
+            object :metadata, description: 'Write-only key-value metadata, merged with what the cart has.'
+            object :items, array: true, as: 'LineItemInputParams',
+                           description: 'Items to upsert: sets the quantity of a variant already in the cart, adds the others.' do
+              id :variant_id, required: true, example: 'variant_abc123'
+              integer :quantity, example: 2, description: 'Defaults to 1.'
+              object :metadata, description: 'Key-value metadata, merged with what the line item has.'
+              object :options
+            end
+          end
+
+          request_params('CreateCartParams', action: :create) { include_fields CART_FIELDS }
+          request_params('UpdateCartParams', action: :update) { include_fields CART_FIELDS }
+
           # GET /api/v3/store/carts/:id
           # Returns cart by prefixed ID
           # Auto-advances the checkout state machine so that shipments and
@@ -182,41 +226,7 @@ module Spree
           private
 
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              :email,
-              :customer_note,
-              :market_id,
-              :currency,
-              :locale,
-              :shipping_address_id,
-              :billing_address_id,
-              :preferred_stock_location_id,
-              :company_id,
-              # The buyer's own purchase-order reference, and the signed blob id
-              # of the document behind it (from POST .../carts/:id/po_document).
-              :po_number,
-              :po_document_signed_id,
-              :use_shipping,
-              shipping_address: address_params,
-              billing_address: address_params,
-              metadata: {},
-              items: item_params
-            )
-          end
-
-          def address_params
-            [
-              :id, :first_name, :last_name,
-              :address1, :address2,
-              :city, :postal_code, :phone, :company,
-              # country_iso and state_abbr are the legacy write names, accepted until 6.1.
-              :country_code, :country_iso, :state_code, :state_abbr, :state_name, :quick_checkout
-            ]
-          end
-
-          def item_params
-            [:variant_id, :quantity, { metadata: {}, options: {} }]
+            params.permit(*permitted_attributes)
           end
 
           # Find incomplete cart for associate action.

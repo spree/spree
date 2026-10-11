@@ -104,4 +104,33 @@ RSpec.describe 'Seller Onboarding API', type: :request, swagger_doc: 'api-refere
       end
     end
   end
+
+  path '/api/v3/seller/onboarding/payout_account' do
+    post 'Get a payout account link' do
+      tags 'Onboarding'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        A fresh link to wherever the marketplace's payout provider collects
+        what it needs before it will pay this seller. Ask for it when the
+        seller acts: these links are short-lived and single-use. Answers
+        `{ "url": null }` when the provider hosts no onboarding.
+      DESC
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'payout account link' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:panel) { Spree::Sellers::PanelUrl.call(store: store) }
+        let(:body) { { refresh_url: "#{panel}/onboarding", return_url: "#{panel}/onboarding?done=1" } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)).to have_key('url')
+        end
+      end
+    end
+  end
 end

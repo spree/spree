@@ -41,7 +41,89 @@ module Spree
             'archived' => -> { Spree.product_archive_workflow }
           }.freeze
 
+          # The operator's price shape, except `currency` may be left out: the
+          # store's currency is assumed (see `default_price_currencies`).
+          PRICE = Spree::Api::V3::RequestSchema.new do
+            string :currency, example: 'USD',
+                              description: "Omit to price in the store's currency. A seller has no currency of their own."
+            decimal :amount, required: true, example: '24.00',
+                             description: 'A canonical decimal string (`"1234.56"`: period decimal, no grouping). The API does not parse localized input.'
+            decimal :compare_at_amount, nullable: true, example: '30.00'
+          end
+
           scoped_resource :products
+
+          request_params 'ProductParams' do
+            string :name, example: 'Hand-thrown mug'
+            string :description
+            string :slug, example: 'hand-thrown-mug'
+            string :meta_title, :meta_description, :meta_keywords
+            object :metadata
+            id :product_type_id, nullable: true,
+                                 description: "The marketplace's product type this product is listed against, from the product types endpoint. Null detaches it. Saving with a type seeds its option types onto the product."
+            id :delivery_profile_id,
+               description: "Which of the marketplace's delivery profiles the product ships under. A new product sent without one lands on the profile marked default."
+            object :prices, array: true, shape: PRICE,
+                            description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant."
+            # `external_url` stays out for the same reason it does on the
+            # operator's endpoint: it would make the server fetch a URL the
+            # caller chose.
+            object :media, array: true, as: 'SellerProductMediaParams',
+                           description: 'The gallery, as a whole: a file absent from the list is removed. `signed_id` attaches a fresh upload; `id` updates one already there.' do
+              id :id
+              string :signed_id, description: 'A `signed_id` from `POST /files`.'
+              string :alt, nullable: true
+              integer :position
+              string :media_type, enum: Spree::Media::MEDIA_TYPES
+              string :external_video_url, nullable: true
+              string :poster_signed_id
+              number :focal_point_x, :focal_point_y, nullable: true
+              id :variant_ids, array: true, description: 'Replaces the variants this media is linked to. An empty list clears them.'
+            end
+            # Narrower than the operator's variant set: `seller_id` would let a
+            # payload hand a variant to somebody else, and
+            # `tax_category_id`/`delivery_profile_id` are marketplace
+            # configuration.
+            object :variants, array: true, as: 'SellerProductVariantParams',
+                              description: 'The variants, as a whole: one absent from the list is removed. Pass `id` to update an existing variant.' do
+              id :id
+              string :sku, :barcode
+              decimal :cost_price, nullable: true
+              string :cost_currency
+              number :weight, :height, :width, :depth, nullable: true
+              string :weight_unit, enum: Spree::Variant::WEIGHT_UNITS
+              string :dimensions_unit, enum: Spree::Variant::DIMENSION_UNITS
+              string :hs_code, :country_of_origin, :customs_description
+              integer :minimum_order_quantity, :order_multiple, nullable: true
+              string :purchase_unit
+              integer :units_per_carton, nullable: true, description: 'How many units fill one carton.'
+              id :carton_package_type_id, nullable: true, description: 'The carton this variant is packed into: a package type of kind `carton`.'
+              number :carton_weight, nullable: true, description: "What one packed carton weighs, in the variant's weight unit."
+              integer :cartons_per_pallet, nullable: true, description: 'How many cartons stack on one pallet.'
+              boolean :track_inventory, :preorderable
+              datetime :preorder_ships_at, nullable: true,
+                                           description: 'The "ships by" date shown to customers while the variant is a pre-order. Null clears it.'
+              integer :backorder_limit, nullable: true,
+                                        description: 'Maximum units sellable beyond available stock, capping backorders and pre-orders. Null is unlimited.'
+              integer :position
+              object :options, array: true, shape: Spree::Api::V3::RequestShapes::VARIANT_OPTION,
+                               description: 'One pair per option type the variant takes part in (size, color).'
+              object :prices, array: true, shape: PRICE, description: 'Per-currency prices. Upserted by currency.'
+              object :stock_levels, array: true, shape: Spree::Api::V3::RequestShapes::STOCK_LEVEL,
+                                    description: "Stock per location, at this seller's own locations only: a location belonging to anyone else is ignored."
+            end
+          end
+
+          request_params 'ProductBulkSubmitParams', action: :bulk_submit do
+            id :ids, array: true, required: true,
+                     description: 'Only drafts and rejected listings are submitted; the rest are counted in `skipped_count`.'
+          end
+
+          request_params 'ProductBulkStatusParams', action: :bulk_status_update do
+            id :ids, array: true, required: true, example: ['prod_UkLWZg9DAJ']
+            string :status, required: true, enum: SELLER_BULK_STATUS_WORKFLOWS.keys,
+                            description: 'A listing goes on sale only when the marketplace approves it, so there is no bulk route onto `active`.'
+          end
 
           before_action :set_status_resource, only: [:submit, :draft, :archive]
           before_action :require_ids!, only: [:bulk_submit, :bulk_status_update, :bulk_destroy]
@@ -165,34 +247,7 @@ module Spree
           end
 
           def permitted_params
-            attrs = params.permit(
-              *model_class.additional_seller_permitted_attributes,
-              :name, :description, :slug,
-              :meta_title, :meta_description, :meta_keywords,
-              :product_type_id, :delivery_profile_id,
-              metadata: {},
-              prices: [:amount, :compare_at_amount, :currency],
-              # Inline media, the same shape the operator sends. `external_url`
-              # stays out for the same reason it does there — it would make the
-              # server fetch a URL the caller chose.
-              media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, { variant_ids: [] }],
-              # A seller's variants. Narrower than the operator's set:
-              # `seller_id` would let a payload hand a variant to somebody else,
-              # and `tax_category_id`/`delivery_profile_id` are marketplace
-              # configuration.
-              variants: [
-                :id, :sku, :barcode,
-                :cost_price, :cost_currency,
-                :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-                :hs_code, :country_of_origin, :customs_description,
-                :minimum_order_quantity, :order_multiple, :purchase_unit, :units_per_carton,
-                :carton_package_type_id, :carton_weight, :cartons_per_pallet,
-                :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :position,
-                options: [:name, :value],
-                prices: [:amount, :compare_at_amount, :currency],
-                stock_levels: [:id, :stock_location_id, :count_on_hand, :backorderable]
-              ]
-            )
+            attrs = params.permit(*permitted_attributes)
 
             # Assigned only when present: writing a nil `prices` or
             # `stock_levels` key reaches the association setter as nil, which

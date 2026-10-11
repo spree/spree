@@ -14,6 +14,20 @@ module Spree
         class PackageTypesController < ResourceController
           scoped_resource :package_types
 
+          request_params :package_type do
+            string :name, required: :create, example: 'Euro pallet', description: 'Unique within the store.'
+            string :kind, required: :create, enum: Spree::PackageType::KINDS, example: 'pallet',
+                          description: 'What this packaging is: the box parcels ship in, or the carton, pallet or container a wholesale order leaves on.'
+            number :length, :width, :height, nullable: true
+            string :dimensions_unit, nullable: true, enum: Spree::Variant::DIMENSION_UNITS, example: 'cm',
+                                     description: "Unit the three dimensions are in; falls back to the store's unit system."
+            number :weight, nullable: true, description: "The empty package's own weight, added to content weight on every quote."
+            number :max_weight, nullable: true, description: 'What the package can hold, not the same as its own weight.'
+            string :weight_unit, nullable: true, enum: Spree::Variant::WEIGHT_UNITS, example: 'kg'
+            boolean :default, description: 'The box every parcel quote is built on. Setting this demotes whichever row held it.'
+            object :metadata
+          end
+
           protected
 
           def model_class
@@ -26,11 +40,6 @@ module Spree
 
           def collection_includes
             [:seller]
-          end
-
-          def resource_permitted_attributes
-            [:name, :kind, :length, :width, :height, :dimensions_unit,
-             :weight, :max_weight, :weight_unit, :default, { metadata: {} }]
           end
         end
       end

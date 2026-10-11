@@ -10,6 +10,21 @@ module Spree
                      only: [:create, :verify, :request_unsubscribe],
                      with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_register]) }
 
+          request_params 'CreateNewsletterSubscriberParams', action: :create do
+            string :email, required: true, format: :email, example: 'subscriber@example.com'
+            string :redirect_url, format: :uri, example: 'https://your-store.com/newsletter/confirm',
+                                  description: "The storefront URL the verification token is appended to. Left out of the webhook payload unless it matches one of the store's allowed origins."
+          end
+
+          request_params 'VerifyNewsletterSubscriberParams', action: :verify do
+            string :token, required: true, example: 'abc123def456', description: 'The verification token from the confirmation email.'
+          end
+
+          request_params 'RequestNewsletterUnsubscribeParams', action: :request_unsubscribe do
+            string :email, format: :email, example: 'subscriber@example.com'
+            string :redirect_url, format: :uri, description: "The storefront URL the unsubscribe token is appended to in the email. Left out of the event payload unless it matches one of the store's allowed origins."
+          end
+
           # POST /api/v3/store/newsletter_subscribers
           def create
             subscriber = Spree::NewsletterSubscriber.subscribe(

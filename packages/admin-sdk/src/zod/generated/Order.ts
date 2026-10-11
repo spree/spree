@@ -68,7 +68,7 @@ export const OrderSchema = z.object({
   last_ip_address: z.string().nullable(),
   considered_risky: z.boolean(),
   confirmation_delivered: z.boolean(),
-  store_owner_notification_delivered: z.boolean(),
+  store_owner_notification_delivered: z.boolean().nullable(),
   metadata: z.record(z.string(), z.unknown()),
   cancel_note: z.string().nullable(),
   canceled_at: z.string().nullable(),

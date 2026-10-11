@@ -7,6 +7,32 @@ module Spree
 
           scoped_resource :customers
 
+          request_params :customer do
+            string :email, required: :create, example: 'new@example.com'
+            string :first_name, :last_name, :phone
+            string :password, :password_confirmation,
+                   description: 'Optional: a customer created without one claims the account through a password reset.'
+            string :selected_locale
+            string :avatar_signed_id, description: 'A `signed_id` from `files.upload()`.'
+            boolean :accepts_email_marketing
+            string :internal_note, description: 'Rich text HTML. Reads come back as this plus `internal_note_html`.'
+            object :metadata
+            string :tags, array: true
+            id :customer_group_ids, array: true, description: "Replaces the customer's group membership."
+          end
+
+          %i[bulk_add_to_groups bulk_remove_from_groups].each do |action|
+            request_params 'CustomerBulkGroupsParams', action: action do
+              id :ids, array: true, required: true, example: %w[cus_UkLWZg9DAJ cus_QrLWXg9CAJ]
+              id :customer_group_ids, array: true, required: true, example: %w[cg_UkLWZg9DAJ],
+                                      description: 'Groups from other stores are ignored.'
+            end
+          end
+
+          %i[bulk_add_tags bulk_remove_tags].each do |action|
+            request_params('BulkTagsParams', action: action) { include_fields Spree::Api::V3::RequestShapes::BULK_TAGS }
+          end
+
           # Re-declaring a `before_action` for the same method REPLACES the
           # inherited registration rather than adding to it, so the inherited
           # actions have to be repeated here or show/update/destroy silently
@@ -258,13 +284,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              :email, :first_name, :last_name, :phone,
-              :password, :password_confirmation, :selected_locale,
-              :avatar_signed_id, :accepts_email_marketing, :internal_note,
-              metadata: {}, tags: [], customer_group_ids: []
-            )
+            params.permit(*permitted_attributes)
           end
 
           # Authorises bulk group mutation, decodes prefixed IDs, then dispatches

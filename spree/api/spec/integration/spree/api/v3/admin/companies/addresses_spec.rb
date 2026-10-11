@@ -35,5 +35,39 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
         end
       end
     end
+
+    post 'Create a company address' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Adds an address to the business. Pass `default_billing: true` or `default_shipping: true` to make it the default of that kind.'
+      admin_scope :write, :customers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :company_id, in: :path, type: :string, required: true
+      request_body_for
+
+      response '201', 'address created' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) do
+          {
+            company: 'Acme Wholesale', label: 'Warehouse',
+            address1: '350 Fifth Avenue', city: 'New York', postal_code: '10118',
+            country_code: address.country.iso, state_code: address.state.abbr, phone: '+12125551234',
+            default_shipping: true
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/Address'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['label']).to eq('Warehouse')
+          expect(company.reload.default_shipping_address&.prefixed_id).to eq(data['id'])
+        end
+      end
+    end
   end
 end

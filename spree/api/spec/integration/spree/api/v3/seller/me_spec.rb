@@ -67,15 +67,7 @@ RSpec.describe 'Seller Account API', type: :request, swagger_doc: 'api-reference
         `email` is identity-bound and cannot be changed here.
       DESC
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string, example: 'Ada' },
-          last_name: { type: :string, example: 'Lovelace' },
-          selected_locale: { type: :string, example: 'de', description: 'Panel display language, as a code the panel ships.' },
-          avatar_signed_id: { type: :string, nullable: true, description: 'The `signed_id` returned by POST /files, or `null` to remove the photo.' }
-        }
-      }
+      request_body_for
 
       response '200', 'account updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

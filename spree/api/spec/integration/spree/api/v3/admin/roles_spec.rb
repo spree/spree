@@ -47,19 +47,11 @@ RSpec.describe 'Admin Roles API', type: :request, swagger_doc: 'api-reference/ad
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :role, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'order_manager' },
-          description: { type: :string, nullable: true, example: 'Handles daily orders' },
-          permissions: { type: :array, items: { type: :string }, example: %w[write_orders read_customers] }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'role created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:role) { { name: 'order_manager', description: 'Handles daily orders', permissions: %w[write_orders read_customers] } }
+        let(:body) { { name: 'order_manager', description: 'Handles daily orders', permissions: %w[write_orders read_customers] } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -70,7 +62,7 @@ RSpec.describe 'Admin Roles API', type: :request, swagger_doc: 'api-reference/ad
 
       response '422', 'invalid request' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:role) { { name: 'broken', permissions: %w[write_bogus] } }
+        let(:body) { { name: 'broken', permissions: %w[write_bogus] } }
 
         run_test!
       end
@@ -93,20 +85,13 @@ RSpec.describe 'Admin Roles API', type: :request, swagger_doc: 'api-reference/ad
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :role, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          description: { type: :string, nullable: true },
-          permissions: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'role updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:existing_role) { create(:role, name: 'support', permissions: %w[read_orders]) }
         let(:id) { existing_role.prefixed_id }
-        let(:role) { { permissions: %w[read_orders read_customers] } }
+        let(:body) { { permissions: %w[read_orders read_customers] } }
 
         run_test! do |response|
           data = JSON.parse(response.body)

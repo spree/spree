@@ -56,14 +56,7 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          kind: { type: :string, example: 'eu_vat' },
-          value: { type: :string, example: 'DE100000008' }
-        },
-        required: %w[kind value]
-      }
+      request_body_for
 
       response '201', 'registration recorded' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -97,13 +90,7 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          kind: { type: :string, example: 'eu_vat' },
-          value: { type: :string, example: 'DE100000016' }
-        }
-      }
+      request_body_for
 
       response '200', 'registration corrected' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

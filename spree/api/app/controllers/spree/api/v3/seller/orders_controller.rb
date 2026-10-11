@@ -21,6 +21,26 @@ module Spree
 
           scoped_resource :orders
 
+          ADDRESS = Spree::Api::V3::RequestSchema.shape('OrderAddressParams') do
+            string :first_name, :last_name, :address1, :city, :postal_code, :zipcode
+            string :company, :address2, :phone, :alternative_phone, :state_code, :state_name, :label, nullable: true
+            string :country_code, example: 'US'
+          end
+
+          request_params 'OrderCancelParams', action: :cancel do
+            id :cancel_reason_id, nullable: true, description: 'A reason from the order cancellation reasons endpoint.'
+            string :cancel_note, nullable: true, description: 'Free text beside the reason.'
+            boolean :refund_payments, description: "Hand back what the buyer paid for this order's goods."
+            boolean :notify_customer, description: 'Email the customer about the cancellation.'
+          end
+
+          request_params 'OrderAddressCorrectionParams', action: :address do
+            object :shipping_address, shape: ADDRESS,
+                                      description: 'Only the lines that change; the rest of the address is carried over.'
+            object :billing_address, shape: ADDRESS,
+                                     description: 'Only the lines that change; the rest of the address is carried over.'
+          end
+
           before_action :set_resource, only: [:show, :cancel, :address]
 
           # PATCH /api/v3/seller/orders/:id/cancel

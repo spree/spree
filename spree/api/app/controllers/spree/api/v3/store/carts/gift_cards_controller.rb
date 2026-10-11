@@ -9,6 +9,10 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'ApplyGiftCardParams', action: :create do
+              string :code, required: true, example: 'GC-ABCD-1234', description: 'The gift card code to apply.'
+            end
+
             # POST /api/v3/store/carts/:cart_id/gift_cards
             def create
               with_order_lock do
@@ -64,7 +68,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:code)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

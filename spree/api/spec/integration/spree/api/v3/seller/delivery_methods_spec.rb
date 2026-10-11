@@ -65,40 +65,7 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          admin_name: { type: :string, nullable: true },
-          code: { type: :string, nullable: true },
-          delivery_profile_id: { type: :string, description: "One of the marketplace's delivery profiles" },
-          delivery_zone_id: { type: :string, nullable: true, description: 'Narrows where the method ships' },
-          storefront_visible: { type: :boolean },
-          tracking_url: { type: :string, nullable: true },
-          estimated_transit_business_days_min: { type: :integer, nullable: true },
-          estimated_transit_business_days_max: { type: :integer, nullable: true },
-calculator: {
-            type: :object,
-            description: 'How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type\'s `schema`.',
-            properties: {
-              type: { type: :string, example: 'flat_rate' },
-              preferences: { type: :object, example: { amount: '12.5' } }
-            }
-          },
-          rules: {
-            type: :array,
-            description: 'Conditions on the method, from `/delivery_methods/rule_types`',
-            items: {
-              type: :object,
-              properties: {
-                type: { type: :string },
-                preferences: { type: :object }
-              }
-            }
-          }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'delivery method created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -157,40 +124,7 @@ calculator: {
       security [bearer_auth: []]
       description "Only the seller's own methods can be changed — a marketplace method shared with sellers is read-only."
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          admin_name: { type: :string, nullable: true },
-          code: { type: :string, nullable: true },
-          delivery_profile_id: { type: :string, description: "One of the marketplace's delivery profiles" },
-          delivery_zone_id: { type: :string, nullable: true, description: 'Narrows where the method ships' },
-          storefront_visible: { type: :boolean },
-          tracking_url: { type: :string, nullable: true },
-          estimated_transit_business_days_min: { type: :integer, nullable: true },
-          estimated_transit_business_days_max: { type: :integer, nullable: true },
-calculator: {
-            type: :object,
-            description: 'How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type\'s `schema`.',
-            properties: {
-              type: { type: :string, example: 'flat_rate' },
-              preferences: { type: :object, example: { amount: '12.5' } }
-            }
-          },
-          rules: {
-            type: :array,
-            description: 'Replaces the whole set — a rule dropped here is deleted, so re-send surviving rules with their `id`.',
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                type: { type: :string },
-                preferences: { type: :object }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'delivery method updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

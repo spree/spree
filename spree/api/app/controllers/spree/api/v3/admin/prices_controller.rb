@@ -13,6 +13,36 @@ module Spree
           before_action :require_ids!, only: [:bulk_destroy]
           before_action :require_prices!, only: [:bulk_upsert]
 
+          # variant_id and price_list_id resolve through the current store's
+          # scopes (+permitted_params+), so a foreign or unknown id 404s.
+          request_params :price do
+            id :variant_id, required: :create, example: 'variant_xY9'
+            string :currency, required: :create, example: 'USD'
+            integer :min_quantity,
+                    description: 'The quantity a line must reach for this price to apply. Omit for the bottom rung of the ladder. Anything above 1 requires a `price_list_id`.'
+            decimal :amount, :compare_at_amount, nullable: true, example: '19.99'
+            id :price_list_id, nullable: true, example: 'pl_aBc123',
+                               description: 'Omit or null for a base price; a price list for a list override.'
+          end
+
+          request_params 'PriceBulkUpsertParams', action: :bulk_upsert do
+            object :prices, array: true, required: true, as: 'PriceBulkUpsertRowParams',
+                            description: 'Send an empty list to change nothing.' do
+              id :id, nullable: true, example: 'price_aBc123',
+                      description: 'Present: updates that row. Absent: upserts on `(variant_id, currency, price_list_id, min_quantity)`.'
+              id :variant_id, required: true, example: 'variant_xY9'
+              string :currency, required: true, example: 'USD'
+              id :price_list_id, nullable: true, example: 'pl_aBc123', description: 'Omit or null for a base price.'
+              integer :min_quantity,
+                      description: "The rung of the variant's ladder. Omit for the bottom rung; anything above 1 requires a `price_list_id`. A variant carries at most ten rungs on one list per currency."
+              decimal :amount, :compare_at_amount, nullable: true, example: '19.99'
+            end
+          end
+
+          request_params 'PriceBulkDestroyParams', action: :bulk_destroy do
+            id :ids, array: true, required: true, example: %w[price_aBc123]
+          end
+
           # Bulk-upserts prices on the unique key
           # `(variant_id, currency, price_list_id, min_quantity)` — one row per
           # rung of a variant's ladder (docs/plans/6.0-volume-pricing.md).
@@ -169,11 +199,8 @@ module Spree
             false
           end
 
-          # Resolves variant_id / price_list_id through the current store's
-          # scopes so a foreign or unknown id 404s instead of binding the
-          # price to another store's record.
           def permitted_params
-            permitted = params.permit(*model_additional_permitted_attributes, :variant_id, :currency, :min_quantity, :amount, :compare_at_amount, :price_list_id)
+            permitted = params.permit(*permitted_attributes)
             permitted[:variant_id] = store_variants.find_by_prefix_id!(permitted[:variant_id]).id if permitted[:variant_id].present?
             permitted[:price_list_id] = store_price_lists.find_by_prefix_id!(permitted[:price_list_id]).id if permitted[:price_list_id].present?
             permitted

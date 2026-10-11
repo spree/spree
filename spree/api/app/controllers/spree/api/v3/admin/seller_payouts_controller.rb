@@ -12,6 +12,10 @@ module Spree
         class SellerPayoutsController < ResourceController
           scoped_resource :payouts
 
+          request_params 'SellerPayoutCompleteParams', action: :complete do
+            string :reference, example: 'TRF-8842', description: "The provider's own id for the settlement, when one made it."
+          end
+
           # PATCH /api/v3/admin/seller_payouts/:id/complete
           #
           # What the built-in provider waits for: the operator saying the bank

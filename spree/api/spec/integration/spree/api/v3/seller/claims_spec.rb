@@ -59,29 +59,7 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                line_item_id: { type: :string },
-                quantity: { type: :integer },
-                description: { type: :string, nullable: true },
-                send_replacement: { type: :boolean },
-                replacement_variant_id: { type: :string, nullable: true },
-                refund_amount: { type: :string, nullable: true }
-              },
-              required: %w[line_item_id quantity]
-            }
-          },
-          reason_id: { type: :string, nullable: true },
-          memo: { type: :string, nullable: true }
-        },
-        required: %w[items]
-      }
+      request_body_for
 
       response '201', 'claim opened' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -144,16 +122,7 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          resolution: { type: :string, enum: %w[refund replacement refund_and_replacement] },
-          refund_method: { type: :string, enum: %w[original_payment store_credit] },
-          amount: { type: :string, nullable: true },
-          replacement_line_item_ids: { type: :array, items: { type: :string } }
-        },
-        required: %w[resolution]
-      }
+      request_body_for
 
       response '200', 'claim resolved' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -177,21 +146,54 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
 
     patch 'Deny a claim' do
       tags 'Claims'
+      consumes 'application/json'
       produces 'application/json'
       security [bearer_auth: []]
       description 'Turns the claim down.'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for(required: false)
 
       response '200', 'claim denied' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
         let(:order_id) { order.prefixed_id }
         let(:id) { claim.prefixed_id }
+        let(:body) { { reason: 'Reported after the claim window closed' } }
 
         schema '$ref' => '#/components/schemas/Claim'
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/seller/orders/{order_id}/claims/{id}/cancel' do
+    parameter name: :order_id, in: :path, type: :string
+    parameter name: :id, in: :path, type: :string
+
+    patch 'Cancel a claim' do
+      tags 'Claims'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description 'Withdraws a claim that is no longer needed.'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for(required: false)
+
+      response '200', 'claim canceled' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { claim.prefixed_id }
+        let(:body) { { reason: 'Customer found the missing item' } }
+
+        schema '$ref' => '#/components/schemas/Claim'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('canceled')
+        end
       end
     end
   end

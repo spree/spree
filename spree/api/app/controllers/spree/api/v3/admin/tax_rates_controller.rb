@@ -7,6 +7,18 @@ module Spree
         class TaxRatesController < ResourceController
           scoped_resource :settings
 
+          request_params 'TaxRateParams' do
+            string :name, example: 'VAT', description: 'Customer-facing rate name.'
+            decimal :rate, example: '0.19', description: 'The rate as a fraction. Send this or `rate_percent`.'
+            decimal :rate_percent, example: '19', description: 'The rate as a percentage.'
+            boolean :included_in_price, :show_rate_in_label
+            id :tax_category_id
+            string :country_code, nullable: true, example: 'DE',
+                                  description: 'ISO country code. A rate naming no country taxes everywhere.'
+            string :state_code, nullable: true, example: 'CA', description: 'State abbreviation within that country.'
+            object :metadata
+          end
+
           protected
 
           def model_class
@@ -22,9 +34,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :rate, :rate_percent, :included_in_price,
-                          :show_rate_in_label, :tax_category_id,
-                          :country_code, :state_code, metadata: {})
+            params.permit(*permitted_attributes)
           end
         end
       end

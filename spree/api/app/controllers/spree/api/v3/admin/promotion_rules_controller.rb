@@ -13,6 +13,12 @@ module Spree
           subclassed_via -> { Spree.promotions.rules },
                          unknown_type_error: 'unknown_promotion_rule_type'
 
+          request_params :promotion_rule do
+            string :type, required: :create, only: :create, example: 'currency',
+                          description: 'The rule kind, from `GET /promotion_rules/types`.'
+            include_fields Spree::Api::V3::RequestShapes::PROMOTION_RULE_FIELDS
+          end
+
           def types
             authorize! :read, model_class
 
@@ -30,7 +36,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, preferences: {})
+            params.permit(*permitted_attributes)
           end
 
           # `types` is read-only discovery — maps to the read scope + :show ability.

@@ -11,6 +11,10 @@ module Spree
           # email has an account. Any member can invite; restraint is
           # Enterprise's policy layer.
           class MembersController < BaseController
+            request_params 'AddCompanyMemberParams', action: :create do
+              string :customer_email, required: true, example: 'colleague@acme.test'
+            end
+
             # POST /api/v3/store/companies/:company_id/members
             def create
               result = Spree.company_add_member_service.call(

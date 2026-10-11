@@ -60,13 +60,7 @@ RSpec.describe 'Seller Team API', type: :request, swagger_doc: 'api-reference/se
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'colleague@acme.test' }
-        },
-        required: %w[email]
-      }
+      request_body_for
 
       response '201', 'invitation sent' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

@@ -11,6 +11,23 @@ module Spree
         class ProductTypesController < ResourceController
           scoped_resource :product_types
 
+          # The associations are a template for products created with this type:
+          # replace-sets that never change the products already carrying it.
+          request_params :product_type do
+            string :name, required: :create, example: 'Hoodie'
+            id :delivery_profile_id, nullable: true, example: 'fp_86Rf07xd4z',
+                                     description: 'Delivery profile stamped onto products created with this type. Null leaves new products on the store default profile.'
+            id :option_type_ids, array: true,
+                                 description: 'Option types seeded onto products that get this type. Use apply to products to backfill existing ones.'
+            id :category_ids, array: true, description: 'Categories seeded onto products that get this type. Categories from other stores are ignored.'
+            object :custom_field_definitions, array: true, as: 'ProductTypeCustomFieldDefinitionParams',
+                                              description: 'The custom field definitions the product form shows. Definitions not listed are removed from the type.' do
+              id :id, required: true, example: 'cfdef_abc123', description: 'The custom field definition.'
+              boolean :required
+              integer :sort_order
+            end
+          end
+
           # Backfills this type's option types and categories onto the products
           # that already carry it. Additive and idempotent — nothing is removed.
           def apply_to_products
@@ -50,14 +67,7 @@ module Spree
           end
 
           def permitted_params
-            attrs = params.permit(
-              *model_additional_permitted_attributes,
-              :name,
-              :delivery_profile_id,
-              option_type_ids: [],
-              category_ids: [],
-              custom_field_definitions: [:id, :required, :sort_order]
-            )
+            attrs = params.permit(*permitted_attributes)
             attrs = scope_delivery_profile(attrs)
             scope_category_ids(attrs)
           end

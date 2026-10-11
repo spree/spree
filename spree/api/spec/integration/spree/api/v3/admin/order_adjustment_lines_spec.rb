@@ -75,16 +75,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          label: { type: :string, example: 'Customer appeasement' },
-          value: { type: :string, example: '10.00' },
-          value_type: { type: :string, enum: %w[flat percent], example: 'flat' },
-          line_item_id: { type: :string, nullable: true, example: 'item_abc123', description: 'Target line item; omit to distribute order-level' }
-        },
-        required: %w[label value]
-      }
+      request_body_for
 
       response '201', 'discount created' do
         let(:body) { { label: 'Appeasement', value: '3.00', value_type: 'flat', line_item_id: line_item.prefixed_id } }
@@ -99,6 +90,35 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
         let(:body) { { label: 'Bad', value: -1 } }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/orders/{order_id}/discounts/{id}' do
+    patch 'Update manual discount' do
+      tags 'Orders'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Edits the label or amount of a manual discount and re-sums the order totals. Promotion-sourced rows are owned by recalculation and respond 422.'
+      admin_scope :write, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Discount prefixed ID'
+      request_body_for
+
+      response '200', 'discount updated' do
+        let(:discount) { create(:discount, order: order, line_item: line_item, amount: -2, label: 'Loyalty', kind: 'manual') }
+        let(:id) { discount.prefixed_id }
+        let(:body) { { label: 'Loyalty reward', amount: '-5.00' } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['label']).to eq('Loyalty reward')
+          expect(data['amount']).to eq('-5.00')
+        end
       end
     end
   end
@@ -141,17 +161,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          label: { type: :string, example: 'Gift wrap' },
-          amount: { type: :string, example: '4.00' },
-          kind: { type: :string, enum: Spree::Fee::KINDS, example: 'gift_wrap', description: "Defaults to 'surcharge'" },
-          line_item_id: { type: :string, nullable: true },
-          fulfillment_id: { type: :string, nullable: true }
-        },
-        required: %w[label amount]
-      }
+      request_body_for
 
       response '201', 'fee created' do
         let(:body) { { label: 'Gift wrap', amount: '4.00', kind: 'gift_wrap' } }
@@ -167,6 +177,35 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
         let(:body) { { label: 'Mystery', amount: '4.00', kind: 'nonsense' } }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/orders/{order_id}/fees/{id}' do
+    patch 'Update fee' do
+      tags 'Orders'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Edits the label, amount or kind of a fee and re-sums the order totals. Works on completed orders.'
+      admin_scope :write, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Fee prefixed ID'
+      request_body_for
+
+      response '200', 'fee updated' do
+        let(:fee) { create(:fee, order: order, label: 'Handling', kind: 'handling', amount: '5.00') }
+        let(:id) { fee.prefixed_id }
+        let(:body) { { amount: '8.00' } }
+
+        schema '$ref' => '#/components/schemas/Fee'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['amount']).to eq('8.00')
+        end
       end
     end
   end

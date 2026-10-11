@@ -19,6 +19,37 @@ module Spree
             # would be wrongly denied.
             scoped_resource :orders
 
+            request_params :return do
+              object :items, array: true, required: :create, only: :create,
+                             description: 'Fulfilled units coming back, and how many of each.' do
+                id :fulfillment_item_id, required: true
+                integer :quantity, required: true
+              end
+              id :stock_location_id, description: 'Where the goods come back to. Defaults to the location that shipped them.'
+              id :reason_id, description: "One of the store's return reasons."
+              string :memo
+              object :metadata, only: :update
+            end
+
+            request_params 'ReturnReceiveParams', action: :receive do
+              object :items, array: true,
+                             description: 'What actually arrived. Omit to receive everything as requested and resellable; send rows for a partial or damaged receipt.' do
+                id :return_line_item_id, required: true
+                integer :quantity, required: true
+                boolean :resellable, description: 'Goods that cannot be resold are received but never restocked. Defaults to true.'
+              end
+            end
+
+            request_params 'ReturnRefundParams', action: :refund do
+              decimal :amount, description: 'Defaults to the value of what was actually received.'
+              string :refund_method, enum: Spree::RefundMethods::METHODS,
+                                     description: '`store_credit` issues credit immediately; `original_payment` (the default) refunds through the gateway that took the money.'
+            end
+
+            request_params 'ReturnCancelParams', action: :cancel do
+              string :reason, description: 'A note on why the return was canceled.'
+            end
+
             before_action :set_resource, only: [:show, :update, :approve, :receive, :refund, :cancel]
 
             # PATCH /api/v3/admin/orders/:order_id/returns/:id
@@ -50,7 +81,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:memo, :reason_id, :stock_location_id, metadata: {})
+              params.permit(*permitted_attributes)
             end
 
             private

@@ -10,6 +10,10 @@ module Spree
           # orders are frozen; their discounts change only through manual rows
           # (see DiscountsController).
           class DiscountCodesController < BaseController
+            request_params 'DiscountCodeApplyParams' do
+              string :code, required: true
+            end
+
             skip_before_action :set_resource, raise: false
 
             # POST /api/v3/admin/orders/:order_id/discount_codes
@@ -76,7 +80,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:code)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

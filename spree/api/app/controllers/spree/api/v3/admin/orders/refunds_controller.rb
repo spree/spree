@@ -6,6 +6,12 @@ module Spree
           class RefundsController < BaseController
             scoped_resource :refunds
 
+            request_params :refund do
+              id :payment_id, required: :create
+              decimal :amount, required: :create
+              id :refund_reason_id, description: "Defaults to the store's first refund reason."
+            end
+
             # POST /api/v3/admin/orders/:order_id/refunds
             #
             # Deliberately not wrapped in with_order_lock: the workflow calls

@@ -16,6 +16,42 @@ module Spree
           before_action -> { decimal_param(:value) }, only: %i[create update]
           scoped_resource :commissions
 
+          request_params :commission_rate do
+            string :name, required: :create, example: 'Audio sellers'
+            string :code, nullable: true, example: 'audio',
+                          description: 'Your own identifier for this rate; unique per store.'
+            boolean :enabled
+            integer :position, example: 1,
+                               description: 'Place in the list. Rates resolve top-down and the first whose rules match wins, so 1 is tried first. New rates are created at the top; send this to move one. A rate with no rules matches every sale, so the marketplace default belongs at the bottom.'
+            string :kind, required: :create, enum: Spree::CommissionRate::KINDS, example: 'percentage',
+                          description: '`percentage` charges a share of the sale; `fixed` charges a flat fee.'
+            decimal :value, required: :create, example: '12.5',
+                            description: 'A percentage (10 = 10%) or a flat amount, per `kind`.'
+            boolean :tax_inclusive,
+                    description: "Charge on the price including the customer's VAT. Left off, commission is charged on the seller's net revenue, which is the usual basis where the fee is taxed as its own supply."
+            boolean :include_shipping,
+                    description: "Also charge commission on the seller's delivery revenue. Percentage rates only."
+            decimal :commission_tax_rate, nullable: true, example: '0.21',
+                                          description: "VAT on the commission itself, as a fraction rather than a percentage. Null lets the store's tax engine answer for the seller's jurisdiction."
+            object :metadata
+            object :amounts, example: { USD: '2.50', EUR: '2.00' },
+                             description: 'What a flat fee charges, keyed by currency, as decimal strings. A sale in a currency with no amount falls to the next matching rate. Replaces the whole set.'
+            object :bounds, example: { USD: { min_amount: '1.00', max_amount: '50.00' } },
+                            description: 'The floor and cap a percentage charges within, keyed by currency: `{ min_amount, max_amount }` decimal strings. A sale in a currency with no bounds is charged unbounded. Replaces the whole set.'
+            # Permitted in `permitted_params`, with the keys each registered
+            # rule kind adds.
+            object :rules, array: true, permit: false, as: 'CommissionRuleDraftParams',
+                           description: 'The full targeting; what you send replaces what the rate holds.' do
+              id :id, nullable: true, description: 'Present for an existing rule; omit to create one.'
+              string :type, required: true, example: 'seller_rule',
+                            description: 'A kind from `GET /commission_rates/rule_types`.'
+              object :preferences, example: { seller_ids: ['sel_a1b2c3'] },
+                                   description: "Configuration for the kind, per its type's `schema`."
+              id :product_ids, array: true,
+                               description: 'For kinds that name products, which are kept outside preferences.'
+            end
+          end
+
           # GET /api/v3/admin/commission_rates/rule_types
           #
           # Every registered rule kind with its configuration schema, so a
@@ -83,17 +119,8 @@ module Spree
 
           def permitted_params
             attributes = normalize_params(
-              params.permit(
-                :name, :code, :enabled, :position, :kind, :value,
-                :tax_inclusive, :include_shipping, :commission_tax_rate,
-                metadata: {},
-                amounts: {},
-                # Nested one level deeper than +amounts+ — currency => floor and
-                # cap — so the whole subtree is permitted rather than its keys,
-                # which are currency codes and not knowable here.
-                bounds: {},
-                rules: [:id, :type, { preferences: {} }, *rule_association_attributes]
-              )
+              params.permit(*declared_permitted_attributes,
+                            rules: [:id, :type, { preferences: {} }, *rule_association_attributes])
             )
 
             attributes[:rules] = resolved_rule_rows(attributes[:rules]) if attributes.key?(:rules)

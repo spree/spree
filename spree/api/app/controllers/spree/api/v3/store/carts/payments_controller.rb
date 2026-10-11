@@ -8,6 +8,13 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'CreatePaymentParams', action: :create do
+              id :payment_method_id, required: true, example: 'pm_abc123',
+                                     description: 'A payment method that needs no payment session.'
+              decimal :amount, example: '99.99', description: 'Defaults to the order total minus store credits.'
+              object :metadata, description: 'Key-value metadata to attach to the payment.'
+            end
+
             # POST /api/v3/store/carts/:cart_id/payments
             # Creates a payment for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer)
             def create

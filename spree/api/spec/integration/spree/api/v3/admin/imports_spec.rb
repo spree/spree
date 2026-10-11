@@ -60,47 +60,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[type attachment_signed_id],
-        properties: {
-          type: {
-            type: :string,
-            enum: %w[
-              products
-              customers
-              product_translations
-              price_list_prices
-              purchase_orders
-            ],
-            example: 'products'
-          },
-          price_list_id: {
-            type: :string,
-            description: 'For `price_list_prices` imports: the price list the rows are merged into. ' \
-                         'Must belong to the current store.',
-            example: 'pl_86Rf07xd4z'
-          },
-          attachment_signed_id: {
-            type: :string,
-            description: 'The `signed_id` returned by POST /api/v3/admin/files.',
-            example: 'eyJfcmFpbHMiOnsiZGF0YSI6MX0=--signed'
-          },
-          delimiter: {
-            type: :string,
-            enum: [',', ';', '|', "\t"],
-            description: 'CSV column separator. Defaults to a comma.',
-            example: ','
-          },
-          results_url: {
-            type: :string,
-            description: 'Absolute URL of your admin imports view; the import-done email links back to it ' \
-                         'with `?import=<id>` appended. Only honored when it matches one of the store\'s ' \
-                         'configured allowed origins.',
-            example: 'https://admin.example.com/store_abc/settings/imports'
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'import created in mapping state' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -281,23 +241,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          mappings: {
-            type: :array,
-            description: 'Column assignments to apply before starting. `file_column: null` unmaps a field.',
-            items: {
-              type: :object,
-              required: %w[schema_field],
-              properties: {
-                schema_field: { type: :string, example: 'slug' },
-                file_column: { type: :string, nullable: true, example: 'Product Handle' }
-              }
-            }
-          }
-        }
-      }
+      request_body_for(required: false)
 
       response '200', 'mapping completed, processing queued' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

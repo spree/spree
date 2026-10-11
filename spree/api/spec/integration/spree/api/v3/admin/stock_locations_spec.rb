@@ -80,41 +80,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Brooklyn warehouse' },
-          admin_name: { type: :string, nullable: true, description: 'Internal name shown only in the admin' },
-          active: { type: :boolean, example: true },
-          default: { type: :boolean, description: 'Setting to true demotes the previous default.' },
-          kind: {
-            type: :string,
-            enum: Spree::StockLocation::KINDS,
-            description: 'Categorizes the location.',
-            example: 'warehouse'
-          },
-          propagate_all_variants: { type: :boolean },
-          backorderable_default: { type: :boolean },
-          address1: { type: :string, nullable: true },
-          address2: { type: :string, nullable: true },
-          city: { type: :string, nullable: true },
-          zipcode: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true },
-          company: { type: :string, nullable: true },
-          country_code: { type: :string, nullable: true, description: 'ISO-3166 alpha-2 country code (e.g. "US").' },
-          state_code: { type: :string, nullable: true, description: 'State / province abbreviation (e.g. "NY"). Resolved against the selected country.' },
-          state_name: { type: :string, nullable: true, description: 'Free-text state for countries without a states list.' },
-          pickup_enabled: { type: :boolean },
-          pickup_stock_policy: {
-            type: :string,
-            enum: Spree::StockLocation::PICKUP_STOCK_POLICIES,
-            description: "'local' = items at this location only; 'any' = transfer-eligible (ship-to-store)."
-          },
-          pickup_ready_in_minutes: { type: :number, nullable: true, minimum: 0 },
-          pickup_instructions: { type: :string, nullable: true }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'stock location created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -207,31 +173,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          admin_name: { type: :string, nullable: true },
-          active: { type: :boolean },
-          default: { type: :boolean },
-          kind: { type: :string, enum: Spree::StockLocation::KINDS },
-          propagate_all_variants: { type: :boolean },
-          backorderable_default: { type: :boolean },
-          address1: { type: :string, nullable: true },
-          address2: { type: :string, nullable: true },
-          city: { type: :string, nullable: true },
-          zipcode: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true },
-          company: { type: :string, nullable: true },
-          country_code: { type: :string, nullable: true },
-          state_code: { type: :string, nullable: true },
-          state_name: { type: :string, nullable: true },
-          pickup_enabled: { type: :boolean },
-          pickup_stock_policy: { type: :string, enum: Spree::StockLocation::PICKUP_STOCK_POLICIES },
-          pickup_ready_in_minutes: { type: :number, nullable: true, minimum: 0 },
-          pickup_instructions: { type: :string, nullable: true }
-        }
-      }
+      request_body_for
 
       response '200', 'stock location updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

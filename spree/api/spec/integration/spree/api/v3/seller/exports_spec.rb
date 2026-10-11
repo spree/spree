@@ -32,31 +32,7 @@ RSpec.describe 'Seller Exports API', type: :request, swagger_doc: 'api-reference
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          type: {
-            type: :string,
-            enum: %w[orders products],
-            description: 'Which dataset to export.'
-          },
-          record_selection: {
-            type: :string,
-            enum: %w[filtered all],
-            description: '`filtered` (default) honours `search_params`; `all` exports everything this seller owns.'
-          },
-          search_params: {
-            type: :object,
-            description: 'Ransack predicates, the same shape the list endpoints take. Ignored when `record_selection` is `all`.',
-            additionalProperties: true
-          },
-          results_url: {
-            type: :string,
-            description: 'Panel URL the export-done email links back to. Honoured only when it matches one of the store\'s allowed origins.'
-          }
-        },
-        required: %w[type]
-      }
+      request_body_for
 
       response '201', 'export queued' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

@@ -35,18 +35,7 @@ RSpec.describe 'Seller Files API', type: :request, swagger_doc: 'api-reference/s
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          filename: { type: :string, example: 'registration.pdf' },
-          content_type: { type: :string, example: 'application/pdf' },
-          byte_size: { type: :integer, example: 51_234 },
-          checksum: { type: :string, description: 'Base64-encoded MD5 digest of the file', example: 'rL0Y20zC+Fzt72VPzMSk2A==' },
-          visibility: { type: :string, enum: %w[public private], default: 'public' },
-          file: { type: :string, format: :binary, description: 'The bytes, for a multipart upload' }
-        },
-        required: %w[filename content_type]
-      }
+      request_body_for
 
       response '201', 'upload target created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

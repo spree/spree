@@ -13,6 +13,16 @@ module Spree
         class GiftCardsController < ResourceController
           scoped_resource :gift_cards
 
+          request_params :gift_card do
+            decimal :amount, required: :create, example: '25.00', description: 'Greater than zero.'
+            string :currency, example: 'USD', description: 'ISO 4217 currency code. Defaults to the store currency.'
+            string :code, example: 'WELCOME50', description: 'Generated when omitted.'
+            date :expires_at, nullable: true, example: '2030-12-31'
+            # Resolved through the caller's ability by `resolve_customer`.
+            id :customer_id, nullable: true, permit: false, example: 'cus_UkLWZg9DAJ',
+                             description: 'The customer the card belongs to. Needs the `read_customers` permission; null detaches it.'
+          end
+
           before_action :resolve_customer, only: [:create, :update]
 
           protected
@@ -26,7 +36,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :code, :amount, :expires_at, :currency).tap do |attributes|
+            params.permit(*permitted_attributes).tap do |attributes|
               attributes[:customer] = @customer if params.key?(:customer_id)
             end
           end

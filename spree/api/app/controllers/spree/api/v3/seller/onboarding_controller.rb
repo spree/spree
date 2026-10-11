@@ -12,6 +12,11 @@ module Spree
         class OnboardingController < Seller::BaseController
           scoped_resource :seller_profile
 
+          request_params 'OnboardingPayoutAccountParams', action: :payout_account do
+            string :refresh_url, :return_url, required: true, format: :uri,
+                                              description: "Where the provider sends the seller back. Must be on the seller panel's origin; any other address is replaced with the panel's."
+          end
+
           # GET /api/v3/seller/onboarding
           def show
             render json: onboarding_payload

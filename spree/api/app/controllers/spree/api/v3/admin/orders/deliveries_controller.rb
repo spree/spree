@@ -13,6 +13,21 @@ module Spree
           class DeliveriesController < BaseController
             include Spree::Api::V3::Orders::DeliveryActions
 
+            # The permit list itself lives in DeliveryActions, shared with the
+            # seller branch; this declaration documents it.
+            request_params :delivery do
+              string :tracking_number, required: :create,
+                                       description: 'A carrier tracking number, a freight PRO or container number, or a full tracking link. A corrected number resets the carrier status to `pending`.'
+              string :carrier, description: "Free text; detected from the number's format when omitted."
+              string :service, :tracking_url
+            end
+
+            request_params 'DeliveryMarkDeliveredParams', action: :mark_delivered do
+              datetime :delivered_at, description: 'When it arrived. Defaults to now.'
+              boolean :notify_customer,
+                      description: 'Whether the customer gets a delivery notification once the parcel completes. Defaults to true.'
+            end
+
             before_action :set_resource, only: [:show, :update, :destroy, :mark_delivered]
 
             # PATCH .../deliveries/:id/mark_delivered — staff saying this one
@@ -47,7 +62,7 @@ module Spree
             private
 
             def mark_delivered_params
-              @mark_delivered_params ||= params.permit(:delivered_at, :notify_customer)
+              @mark_delivered_params ||= params.permit(*declared_permitted_attributes)
             end
 
             # Only an explicit false suppresses the email.

@@ -15,8 +15,11 @@ module Spree
 
             before_action :set_product, only: [:reposition]
 
+            request_params 'ProductMembershipRepositionParams', action: :reposition do
+              integer :new_position, required: true, example: 0, description: "0-based index among the parent's products."
+            end
+
             # PATCH /api/v3/admin/categories/:category_id/products/:id/reposition
-            # Body: { new_position: 0 } — 0-based index among the category's products.
             # @product is already constrained to the category's scope, so a
             # classification always exists.
             def reposition

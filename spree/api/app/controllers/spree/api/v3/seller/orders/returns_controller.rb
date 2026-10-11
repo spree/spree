@@ -17,6 +17,33 @@ module Spree
 
             before_action :set_resource, only: [:show, :approve, :receive, :refund, :cancel]
 
+            request_params :return do
+              object :items, array: true, required: true do
+                id :fulfillment_item_id, required: true
+                integer :quantity, required: true
+              end
+              id :reason_id, nullable: true
+              id :stock_location_id, nullable: true, description: "One of this seller's own stock locations, where the goods are restocked."
+              string :memo, nullable: true
+            end
+
+            request_params 'ReturnReceiveParams', action: :receive do
+              object :items, array: true, description: 'What actually arrived. Omit to receive everything as requested and resellable.' do
+                id :return_line_item_id, required: true
+                integer :quantity, required: true
+                boolean :resellable, description: 'Defaults to true.'
+              end
+            end
+
+            request_params 'ReturnRefundParams', action: :refund do
+              decimal :amount, nullable: true
+              string :refund_method, enum: %w[original_payment store_credit], description: 'Defaults to `original_payment`.'
+            end
+
+            request_params 'ReturnCancelParams', action: :cancel do
+              string :reason, description: 'A note on why the return was canceled.'
+            end
+
             protected
 
             def serializer_class

@@ -73,29 +73,11 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :supplier, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Northwind Trading' },
-          contact_name: { type: :string, nullable: true, example: 'Dana Okafor' },
-          email: { type: :string, nullable: true, example: 'sales@northwind.test' },
-          phone: { type: :string, nullable: true, example: '555-0100' },
-          notes: { type: :string, nullable: true },
-          address1: { type: :string, nullable: true, example: '1 Warehouse Way' },
-          address2: { type: :string, nullable: true },
-          city: { type: :string, nullable: true, example: 'Brooklyn' },
-          state_code: { type: :string, nullable: true, example: 'NY' },
-          state_name: { type: :string, nullable: true },
-          country_code: { type: :string, nullable: true, example: 'US' },
-          postal_code: { type: :string, nullable: true, example: '11201' },
-          metadata: { type: :object, nullable: true }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'supplier created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:supplier) do
+        let(:body) do
           {
             name: 'Northwind Trading',
             contact_name: 'Dana Okafor',
@@ -116,7 +98,7 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
 
       response '422', 'validation error' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:supplier) { { name: '' } }
+        let(:body) { { name: '' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -167,20 +149,12 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :supplier, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          contact_name: { type: :string, nullable: true },
-          email: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true }
-        }
-      }
+      request_body_for
 
       response '200', 'supplier updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { supplier_record.prefixed_id }
-        let(:supplier) { { contact_name: 'Sam Reyes' } }
+        let(:body) { { contact_name: 'Sam Reyes' } }
 
         schema '$ref' => '#/components/schemas/Supplier'
 

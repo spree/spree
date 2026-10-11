@@ -23,6 +23,28 @@ module Spree
 
             before_action :set_resource, only: [:show, :update, :fulfill, :cancel, :split]
 
+            request_params :fulfillment do
+              string :tracking, :tracking_carrier, nullable: true
+              id :stock_location_id, description: "One of this seller's own stock locations; the rates requote from there."
+              id :selected_delivery_rate_id, description: 'One of the rates quoted for this parcel from its current origin.'
+            end
+
+            request_params 'FulfillmentFulfillParams', action: :fulfill do
+              string :tracking, description: 'Carrier tracking number.'
+              string :tracking_carrier, description: 'Carrier name.'
+              boolean :notify_customer, description: 'Send the dispatch email (default true).'
+              object :items, array: true, description: 'Ship only these lines; the rest split onto a new fulfillment.' do
+                id :item_id, required: true, description: 'Prefixed line item ID.'
+                integer :quantity, required: true
+              end
+            end
+
+            request_params 'FulfillmentSplitParams', action: :split do
+              id :variant_id, required: true, description: 'The variant being moved out.'
+              integer :quantity, required: true
+              id :stock_location_id, description: "One of this seller's own stock locations. Defaults to the source fulfillment's location."
+            end
+
             protected
 
             def serializer_class
@@ -34,8 +56,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:tracking, :tracking_carrier, :stock_location_id,
-                            :selected_delivery_rate_id)
+              params.permit(*declared_permitted_attributes)
             end
 
             private

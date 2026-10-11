@@ -74,13 +74,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          origin: { type: :string, example: 'https://admin.example.com' }
-        },
-        required: %w[origin]
-      }
+      request_body_for
 
       response '201', 'allowed origin created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -158,12 +152,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          origin: { type: :string }
-        }
-      }
+      request_body_for
 
       response '200', 'allowed origin updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

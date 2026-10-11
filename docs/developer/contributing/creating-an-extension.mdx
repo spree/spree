@@ -163,6 +163,13 @@ module Spree
         class ReviewsController < ResourceController
           scoped_resource :reviews
 
+          request_params :review do
+            id :product_id, required: :create
+            integer :rating, required: :create
+            string :body
+            boolean :approved
+          end
+
           protected
 
           def model_class
@@ -171,10 +178,6 @@ module Spree
 
           def serializer_class
             Spree::Api::V3::Admin::ReviewSerializer
-          end
-
-          def resource_permitted_attributes
-            [:product_id, :rating, :body, :approved]
           end
         end
       end

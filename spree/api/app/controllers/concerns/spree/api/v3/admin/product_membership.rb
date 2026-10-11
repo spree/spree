@@ -32,6 +32,14 @@ module Spree
             # Membership actions resolve products themselves; the base
             # single-resource load has nothing to look up.
             skip_before_action :set_resource
+
+            # Adding (create) and removing (destroy) take the same body.
+            [nil, :destroy].each do |action|
+              request_params 'ProductMembershipParams', action: action do
+                id :product_ids, array: true, required: true, example: %w[prod_abc123],
+                                 description: 'Products from other stores, or ones the caller cannot see, are ignored.'
+              end
+            end
           end
 
           # POST /{parents}/:parent_id/products

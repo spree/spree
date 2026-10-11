@@ -25,6 +25,18 @@ module Spree
 
           scoped_resource :exports
 
+          request_params 'SellerExportCreateParams' do
+            string :type, required: true, enum: ALLOWED_TYPES, description: 'Which dataset to export.'
+            string :record_selection, enum: %w[filtered all],
+                                      description: '`filtered` (default) keeps `search_params`; `all` exports everything this seller owns.'
+            # Read from the raw params: an arbitrary Ransack hash with nested
+            # groupings, which `permit(k: {})` rejects.
+            object :search_params, permit: false,
+                                   description: 'Ransack predicates, the same shape the list endpoints take. Ignored when `record_selection` is `all`.'
+            string :results_url,
+                   description: "Panel URL the export-done email links back to. Honored only when it matches one of the store's allowed origins."
+          end
+
           # POST /api/v3/seller/exports
           #
           # Refused before the record is built when the type is not one a
@@ -140,7 +152,7 @@ module Spree
           # `to_unsafe_h`. `:format` is deliberately dropped: only CSV exists,
           # and Rails' request format would otherwise overwrite the enum.
           def permitted_params
-            attrs = params.permit(*model_additional_permitted_attributes, :type, :record_selection, :results_url)
+            attrs = params.permit(*permitted_attributes)
             raw = params[:search_params]
             attrs[:search_params] = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw if raw.present?
             attrs

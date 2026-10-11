@@ -12,6 +12,37 @@ module Spree
             # would name a key no catalog knows.
             scoped_resource :orders
 
+            request_params :claim do
+              object :items, array: true, required: :create, only: :create,
+                             description: 'Affected items, and how each should be made right.' do
+                id :line_item_id, required: true
+                integer :quantity, required: true
+                string :description
+                boolean :send_replacement
+                id :replacement_variant_id, description: 'Defaults to the variant that was bought.'
+                decimal :refund_amount
+              end
+              id :reason_id, description: "One of the store's claim reasons."
+              string :memo
+              object :metadata, only: :update
+            end
+
+            request_params 'ClaimResolveParams', action: :resolve do
+              string :resolution, required: true, enum: Spree::Claim::RESOLUTIONS, description: 'Money back, a replacement shipment, or both.'
+              string :refund_method, enum: Spree::RefundMethods::METHODS, description: 'Defaults to `store_credit`.'
+              decimal :amount, description: 'Defaults to the claim total.'
+              id :replacement_line_item_ids, array: true,
+                                             description: 'Which claim lines to send a replacement for. Omit to keep what the claim was opened with.'
+            end
+
+            request_params 'ClaimDenyParams', action: :deny do
+              string :reason, description: 'Recorded on the claim for the customer.'
+            end
+
+            request_params 'ClaimCancelParams', action: :cancel do
+              string :reason, description: 'A note on why the claim was canceled.'
+            end
+
             before_action :set_resource, only: [:show, :update, :approve, :resolve, :deny, :cancel]
 
             # PATCH /api/v3/admin/orders/:order_id/claims/:id
@@ -36,7 +67,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:memo, :reason_id, metadata: {})
+              params.permit(*permitted_attributes)
             end
 
             private

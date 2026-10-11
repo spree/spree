@@ -9,6 +9,20 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'AddLineItemParams', action: :create do
+              id :variant_id, required: true, example: 'variant_abc123'
+              integer :quantity, example: 2, description: 'Defaults to 1.'
+              object :metadata, example: { gift_message: 'Happy Birthday!' },
+                                description: 'Write-only key-value metadata.'
+              object :options, description: 'Values for line item attributes an extension adds.'
+            end
+
+            request_params 'UpdateLineItemParams', action: :update do
+              integer :quantity, example: 5, description: 'At least 1. Remove an item with DELETE.'
+              object :metadata, example: { engraving: 'J.D.' },
+                                description: 'Write-only key-value metadata, merged with what the line item has.'
+            end
+
             # POST  /api/v3/store/carts/:cart_id/items
             def create
               with_order_lock do
@@ -113,11 +127,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(
-                :id, :variant_id, :quantity,
-                *Spree::LineItem.additional_permitted_attributes,
-                { metadata: {}, options: {} }
-              )
+              params.permit(*declared_permitted_attributes, *Spree::LineItem.additional_permitted_attributes)
             end
           end
         end

@@ -9,6 +9,19 @@ module Spree
           class TaxExemptionCertificatesController < BaseController
             include ActiveStorage::SetCurrent
 
+            request_params 'TaxExemptionCertificateParams' do
+              string :certificate_number, example: 'DE-RESALE-7', description: 'Required when creating.'
+              string :reason_code, example: 'resale',
+                                   description: "Becomes the tax provider's entity use code. Required when creating."
+              string :issuing_authority, nullable: true, example: 'Finanzamt Berlin'
+              datetime :issued_at, :expires_at, nullable: true
+              string :country_code, :state_code, nullable: true,
+                                                 description: 'Where the certificate holds. Omit both for one valid everywhere.'
+              string :document_signed_id,
+                     description: "A `signed_id` from `files.upload()` with `visibility: 'private'`."
+              object :metadata
+            end
+
             before_action :authorize_parent_access!
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions have to be listed alongside the custom ones.
@@ -85,11 +98,8 @@ module Spree
               [{ document_attachment: :blob }]
             end
 
-            # `document_signed_id` comes from POST /api/v3/admin/files.
             def permitted_params
-              params.permit(:certificate_number, :reason_code, :issuing_authority,
-                            :issued_at, :expires_at, :country_code, :state_code, :document_signed_id,
-                            metadata: {})
+              params.permit(*declared_permitted_attributes)
             end
 
             def build_resource

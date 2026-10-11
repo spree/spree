@@ -16,6 +16,26 @@ module Spree
           subclassed_via -> { Spree.seller_requirements },
                          unknown_type_error: 'unknown_seller_requirement_type'
 
+          # `type` is stripped before assignment by the subclassed-resource
+          # flow, so a saved row's kind can never change — which matters
+          # because its submissions answered the old one.
+          request_params :seller_requirement do
+            string :type, required: true, only: :create, example: 'document',
+                          description: 'The kind, from the seller requirement types endpoint.'
+            string :name, example: 'Business registration',
+                          description: 'What the seller sees. Required for kinds that can be added more than once, since the wording is the only thing telling them apart. Left blank on the others, the kind names itself.'
+            string :description, example: 'A copy of your certificate of incorporation.', description: 'Instructions shown to the seller.'
+            integer :position, example: 1, description: 'Place in the checklist.'
+            boolean :active, example: true
+            boolean :required, example: true, description: 'Whether this blocks approval. Off means recommended.'
+            object :preferences, example: { accepted_content_types: ['application/pdf'] },
+                                 description: "Configuration for this kind, per its type's `schema`."
+            object :metadata
+            # Permitted per kind, from the kind's own `additional_permitted_attributes`.
+            id :custom_field_definition_ids, array: true, permit: false,
+                                             description: 'Custom field definitions this requirement asks the seller to fill in (`required_custom_fields` kind).'
+          end
+
           # GET /api/v3/admin/seller_requirements/types
           #
           # The kinds an operator can add, with the shape of each one's
@@ -70,12 +90,8 @@ module Spree
             super.ordered
           end
 
-          # `type` is stripped before assignment by the subclassed-resource
-          # flow, so a saved row's kind can never change — which matters
-          # because its submissions answered the old one.
           def permitted_params
-            params.permit(:type, :name, :description, :position, :active, :required,
-                          preferences: {}, metadata: {})
+            params.permit(*declared_permitted_attributes)
           end
 
           # `types` is read-only discovery — maps to the read scope.

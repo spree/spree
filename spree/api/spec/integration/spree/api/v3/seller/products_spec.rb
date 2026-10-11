@@ -61,34 +61,7 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Hand-thrown mug' },
-          description: { type: :string },
-          slug: { type: :string, example: 'hand-thrown-mug' },
-          status: { type: :string, example: 'draft' },
-          meta_title: { type: :string },
-          meta_description: { type: :string },
-          meta_keywords: { type: :string },
-          product_type_id: { type: :string, example: 'ptype_abc123' },
-          tags: { type: :array, items: { type: :string }, example: %w[ceramics handmade] },
-          category_ids: { type: :array, items: { type: :string }, example: ['cat_abc123'] },
-          metadata: { type: :object, additionalProperties: true },
-          prices: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                amount: { type: :string, example: '24.00' },
-                compare_at_amount: { type: :string, example: '30.00' },
-                currency: { type: :string, example: 'USD' }
-              }
-            }
-          }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'product created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -160,18 +133,7 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
       description 'Edits a product the acting seller owns.'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Hand-thrown mug, large' },
-          description: { type: :string },
-          slug: { type: :string },
-          status: { type: :string, example: 'active' },
-          tags: { type: :array, items: { type: :string } },
-          category_ids: { type: :array, items: { type: :string } },
-          metadata: { type: :object, additionalProperties: true }
-        }
-      }
+      request_body_for
 
       response '200', 'product updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -201,6 +163,61 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         let(:id) { product.prefixed_id }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/bulk_submit' do
+    post 'Submit products for review' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Submits a selection for the marketplace to review. Only drafts and
+        rejected listings can be submitted, so a mixed selection moves what it
+        can: `product_count` is what was submitted, and `skipped_count`, present
+        only when something was skipped, is the rest.
+      DESC
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'products submitted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let!(:draft) { create(:product, store: store, seller: seller, status: 'draft') }
+        let(:body) { { ids: [draft.prefixed_id] } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['product_count']).to eq(1)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/bulk_status_update' do
+    post 'Change the status of products' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Moves a selection to `draft` or `archived`. There is no bulk route onto
+        `active`: a listing goes on sale when the marketplace approves it.
+      DESC
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'statuses changed' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:body) { { ids: [product.prefixed_id], status: 'archived' } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['product_count']).to eq(1)
+        end
       end
     end
   end

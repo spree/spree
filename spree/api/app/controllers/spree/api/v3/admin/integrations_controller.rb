@@ -15,6 +15,13 @@ module Spree
           subclassed_via -> { Spree::Integration.registered_classes },
                          unknown_type_error: 'unknown_integration_type'
 
+          request_params :integration do
+            string :type, required: true, only: :create, example: 'carrier',
+                          description: 'Wire shorthand from the integration types endpoint.'
+            boolean :active, description: 'Activating runs the connection check, and a failed check is a 422.'
+            object :preferences, description: 'Credential values. Secret preferences come back masked, and sending a masked value back keeps the stored secret.'
+          end
+
           # GET /api/v3/admin/integrations/types
           # Pure registry discovery — which integrations are installed and how
           # they're configured. Deliberately carries no per-store connected
@@ -47,7 +54,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :active, preferences: {})
+            params.permit(*permitted_attributes)
           end
 
           # `types` is read-only discovery — maps to the read scope.

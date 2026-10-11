@@ -87,6 +87,17 @@ jobs:
             exit 1
           fi
 
+      # Request body types come from the request schemas in docs/api-reference,
+      # which swaggerize writes from the controllers' request_params.
+      - name: Check SDK request types are up to date
+        run: |
+          pnpm generate:params
+          if [ -n "$(git status --porcelain -- 'packages/*/src/types/params')" ]; then
+            git diff -- 'packages/*/src/types/params'
+            echo "::error::SDK request types are out of date. Run 'pnpm generate:params' and commit the result."
+            exit 1
+          fi
+
       - run: pnpm turbo lint typecheck test build --cache-dir=.turbo
 
   # Creates a new project with create-spree-app the way a user would, but from

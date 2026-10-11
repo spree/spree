@@ -4,6 +4,15 @@ module Spree
       module Admin
         module Orders
           class ItemsController < BaseController
+            request_params :line_item do
+              id :variant_id, required: true, only: :create
+              integer :quantity, example: 1, description: 'Defaults to 1 when adding an item.'
+              decimal :price, nullable: true,
+                              description: "Negotiated unit price. Stamps the line `price_source: 'manual'`, so quantity changes and recalculation never re-price it; an explicit null reverts the line to catalog pricing. Omit to leave pricing alone. Draft (incomplete) orders only."
+              object :options, only: :create
+              object :metadata, only: :update
+            end
+
             # POST /api/v3/admin/orders/:order_id/items
             def create
               with_order_lock do
@@ -69,7 +78,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:variant_id, :quantity, :price, metadata: {}, options: {})
+              params.permit(*permitted_attributes)
             end
 
             private

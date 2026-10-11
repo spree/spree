@@ -9,8 +9,33 @@ module Spree
 
           scoped_resource :settings
 
+          request_params :channel do
+            string :name, required: :create, example: 'Point of Sale'
+            string :code, example: 'pos', description: 'URL-safe slug, derived from `name` when blank (`Point of Sale` becomes `point-of-sale`).'
+            boolean :active, :default
+            string :order_routing_strategy, nullable: true,
+                                            description: 'Order routing strategy shorthand (built-in: `rules`). Null inherits the store setting.'
+            string :storefront_access, nullable: true, enum: Spree::Channel::Gating::STOREFRONT_ACCESS,
+                                       description: 'What anonymous visitors can see. Null inherits the store setting.'
+            boolean :guest_checkout, nullable: true,
+                                     description: 'Whether guests can check out without an account. Null inherits the store setting.'
+            id :default_catalog_id, nullable: true,
+                                    description: 'Catalog (`cat_...`) shown to shoppers no company or customer group catalog covers. Null means every product published on the channel.'
+            id :stock_location_ids, array: true,
+                                    description: 'Stock locations (`sloc_...`) that fulfill this channel. Replaces the whole set; an empty list means every location of the store.'
+          end
+
+          request_params 'ChannelAddProductsParams', action: :add_products do
+            id :product_ids, array: true, required: true
+            datetime :published_at, nullable: true, description: 'When the publications go live. Null means immediately.'
+            datetime :unpublished_at, nullable: true, description: 'When the publications come down. Null means never.'
+          end
+
+          request_params 'ChannelRemoveProductsParams', action: :remove_products do
+            id :product_ids, array: true, required: true
+          end
+
           # POST /api/v3/admin/channels/:id/add_products
-          # Body: { product_ids: [...], published_at: nil, unpublished_at: nil }
           def add_products
             channel = find_resource
             authorize! :update, channel
@@ -24,7 +49,6 @@ module Spree
           end
 
           # POST /api/v3/admin/channels/:id/remove_products
-          # Body: { product_ids: [...] }
           def remove_products
             channel = find_resource
             authorize! :update, channel
@@ -65,10 +89,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :code, :active, :default, :order_routing_strategy,
-                          :storefront_access, :guest_checkout,
-                          :default_catalog_id,
-                          stock_location_ids: [])
+            params.permit(*permitted_attributes)
           end
 
           # `stock_location_ids` replaces the channel's fulfillment-origin

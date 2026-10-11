@@ -36,6 +36,22 @@ module Spree
 
           scoped_resource :products
 
+          request_params 'ImportCreateParams' do
+            string :type, required: true, enum: %w[products]
+            string :attachment_signed_id, required: true,
+                                          description: "The `signed_id` of the uploaded CSV, from `POST /files` with `visibility: 'private'`."
+            string :delimiter, description: 'CSV column separator. Defaults to a comma.'
+            string :results_url,
+                   description: "Absolute URL of the panel's imports view; the import-done email links back to it. Honored only when it matches one of the store's allowed origins."
+          end
+
+          request_params 'ImportCompleteMappingParams', action: :complete_mapping do
+            object :mappings, array: true, permit: false, description: 'Column assignments to apply before processing starts.' do
+              string :schema_field, required: true, description: 'Canonical schema field name.'
+              string :file_column, required: true, nullable: true, description: 'CSV header to read the field from; `null` unmaps the field.'
+            end
+          end
+
           # POST /api/v3/seller/imports
           #
           # `attachment_signed_id` is a signed id from
@@ -246,7 +262,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment_signed_id, :delimiter, :results_url)
+            params.permit(*permitted_attributes)
           end
 
           # The registered Import subclass matching `name`, or nil.

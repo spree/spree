@@ -60,14 +60,7 @@ RSpec.describe 'Admin Order Line Items API', type: :request, swagger_doc: 'api-r
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[variant_id],
-        properties: {
-          variant_id: { type: :string, description: 'Prefixed variant ID' },
-          quantity: { type: :integer, default: 1 }
-        }
-      }
+      request_body_for
 
       response '201', 'item added' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -134,12 +127,7 @@ RSpec.describe 'Admin Order Line Items API', type: :request, swagger_doc: 'api-r
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Item ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          quantity: { type: :integer }
-        }
-      }
+      request_body_for
 
       response '200', 'item updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

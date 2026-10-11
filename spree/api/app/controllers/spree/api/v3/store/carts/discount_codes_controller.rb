@@ -9,6 +9,10 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'ApplyDiscountCodeParams', action: :create do
+              string :code, required: true, example: 'SAVE10', description: 'The promotion code to apply.'
+            end
+
             # POST  /api/v3/store/carts/:cart_id/discount_codes
             # Applies a discount code. A real-but-not-yet-eligible code is
             # accepted and persisted — recalculation activates the discount
@@ -69,7 +73,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:code)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end
