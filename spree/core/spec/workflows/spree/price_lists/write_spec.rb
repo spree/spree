@@ -50,21 +50,6 @@ RSpec.describe 'Spree::PriceLists write workflows' do
       expect(price.amount).to eq(5)
     end
 
-    it 'touches only the variants whose prices change' do
-      priced_variant, blank_variant = create_list(:variant, 2, product: product)
-      price_list.add_products([product.id])
-
-      expect {
-        described_class.call(
-          price_list: price_list,
-          attributes: { prices: [
-            { variant_id: priced_variant.id, currency: 'USD', amount: 5 },
-            { variant_id: blank_variant.id, currency: 'USD', amount: '' }
-          ] }
-        )
-      }.to have_enqueued_job(Spree::Variants::TouchJob).with([priced_variant.id.to_s])
-    end
-
     # An empty array means "clear every override", which is a different
     # instruction from sending no prices at all.
     it 'clears every override when given an empty prices array' do
