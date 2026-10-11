@@ -1,4 +1,4 @@
-import type { Order } from '@spree/admin-sdk'
+import { type Order, SpreeError } from '@spree/admin-sdk'
 import {
   AddressFormDialog,
   type AddressParams,
@@ -122,24 +122,24 @@ export function CustomerCard({ order }: { order: Order }) {
           }
           open={!!editAddress}
           onOpenChange={(open) => !open && setEditAddress(null)}
-          onSave={(address) =>
-            addressMutation.mutate(
-              { type: editAddress, address },
-              {
-                onSuccess: () => setEditAddress(null),
-                // The dialog stays open on failure so the entered address is
-                // not lost and can be corrected and resubmitted.
-                onError: (error) =>
-                  toastManager.add({
-                    type: 'error',
-                    title:
-                      error instanceof Error
-                        ? error.message
-                        : t('admin.orders.errors.failed_to_update_address'),
-                  }),
-              },
-            )
-          }
+          // The dialog stays open on failure so the entered address is not
+          // lost. A 422 goes back to it to show above the form, since a toast
+          // would sit underneath the open sheet.
+          onSave={async (address) => {
+            try {
+              await addressMutation.mutateAsync({ type: editAddress, address })
+              setEditAddress(null)
+            } catch (error) {
+              if (error instanceof SpreeError && error.status === 422) throw error
+              toastManager.add({
+                type: 'error',
+                title:
+                  error instanceof Error
+                    ? error.message
+                    : t('admin.orders.errors.failed_to_update_address'),
+              })
+            }
+          }}
           isPending={addressMutation.isPending}
         />
       )}

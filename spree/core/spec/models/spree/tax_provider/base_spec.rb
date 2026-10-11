@@ -55,6 +55,12 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(described_class.available_for_store?(order.store)).to be(true)
     end
 
+    # The admin hides the market's switch for a provider that does not read it.
+    it "ignores the market's tax-inclusive flag until a provider says it reads it" do
+      expect(described_class.uses_market_tax_inclusive?).to be(false)
+      expect(Spree::TaxProvider::Internal.uses_market_tax_inclusive?).to be(false)
+    end
+
     it 'is answerable without instantiating the provider' do
       expect(described_class).to respond_to(:unsupported_capabilities)
       expect(described_class).to respond_to(:available_for_store?)
@@ -69,6 +75,7 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(hash[:name]).to eq('Internal')
       expect(hash[:available]).to be(true)
       expect(hash[:default]).to be(true)
+      expect(hash[:uses_market_tax_inclusive]).to be(false)
       expect(hash[:unsupported_capabilities].map { |capability| capability[:key] }).to eq(
         %w[us_local_tax reverse_charge oss_thresholds proportional_delivery_tax]
       )

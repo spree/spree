@@ -130,6 +130,62 @@ module Spree
         end
       end
 
+      describe 'market' do
+        let(:de_country) { Spree::Country.by_iso('DE') }
+        let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country], default_locale: 'en') }
+        let(:de_address_attrs) do
+          {
+            firstname: 'Hans', lastname: 'Muster',
+            address1: 'Unter den Linden 1', city: 'Berlin',
+            zipcode: '10117', phone: '+4930123456', country_code: 'DE'
+          }
+        end
+
+        context 'with a shipping address in another market' do
+          let(:params) { { email: 'new@example.com', shipping_address: de_address_attrs } }
+
+          it 'places the draft in that market, in its currency' do
+            expect(subject).to be_success
+            expect(subject.value.market).to eq(eu_market)
+            expect(subject.value.currency).to eq('EUR')
+          end
+
+          context 'when staff name a market' do
+            let(:params) { super().merge(market_id: store.default_market.prefixed_id) }
+
+            it 'keeps the named market and refuses the address' do
+              expect(subject).to be_failure
+              expect(subject.error.to_s).to eq("The #{store.default_market.name} market does not sell to Germany. Choose a shipping address in one of its countries.")
+            end
+          end
+        end
+
+        context 'with a shipping address no market sells to' do
+          let(:params) do
+            { email: 'new@example.com', shipping_address: de_address_attrs.merge(city: 'Tokyo', zipcode: '100-0001', country_code: 'JP') }
+          end
+
+          it 'refuses the address' do
+            expect(subject).to be_failure
+            expect(subject.error.to_s).to include('does not sell to Japan')
+          end
+        end
+
+        # Admin requests resolve a market from x-spree-country like any other;
+        # the currency used to come from the store regardless.
+        context 'without an address, on a request resolved to a market' do
+          let(:params) { { email: 'new@example.com' } }
+
+          before { Spree::Current.market = eu_market }
+
+          it 'takes the currency of that market' do
+            expect(subject).to be_success
+            expect(subject.value.market).to eq(eu_market)
+            expect(subject.value.currency).to eq('EUR')
+          end
+        end
+      end
+
       context 'when delivery is not required' do
         let(:params) do
           {

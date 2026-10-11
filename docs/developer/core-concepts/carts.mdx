@@ -142,13 +142,14 @@ meant for a person, and `step` is only a grouping hint.
 
 This is what lets you design your own checkout. Spree tells you what's missing; you decide how and when to ask for it — one long page, a few steps, or whatever suits your storefront.
 
-Seven checks run on every cart read:
+Eight checks run on every cart read:
 
 | `code` | `step` | Raised when |
 |---|---|---|
 | `line_items_required` | `cart` | The cart is empty |
 | `email_required` | `address` | No email address |
 | `ship_address_required` | `address` | Something needs shipping and there is no address |
+| `ship_address_outside_market` | `address` | The shipping address is in a country the cart's [market](/developer/core-concepts/markets#shipping-addresses) no longer sells to |
 | `delivery_method_required` | `delivery` | A delivery method hasn't been chosen |
 | `payment_required` | `payment` | The total isn't covered by payments |
 | `po_number_required` | `address` | A company requires a purchase-order number |
@@ -232,6 +233,8 @@ To add your own step or requirement, see
       },
     })
     ```
+
+    The shipping address has to be in one of the countries of the cart's [market](/developer/core-concepts/markets#shipping-addresses). An address anywhere else is refused with a `422`.
   </Step>
   <Step title="Choose delivery">
     Each [fulfillment](/developer/core-concepts/fulfillments) offers delivery rates. Pick one per fulfillment.

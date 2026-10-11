@@ -13,6 +13,8 @@ module Spree
     let(:state)   { country.states.first || create(:state, country: country) }
     let(:other_country) { create(:country) }
     let(:other_state)   { create(:state, country: other_country) }
+    # A market only sells to its own countries, so moving an order there needs one.
+    let!(:other_market) { create(:market, store: store, countries: [other_country]) }
     let!(:zone)   { create(:zone) }
     let!(:other_zone)  { create(:zone) }
     let!(:shipping_method) do
@@ -144,6 +146,113 @@ module Spree
           order.reload
           expect(order.email).to eq('string@example.com')
           expect(order.line_items.find_by(variant: variant)).to be_present
+        end
+      end
+
+      describe 'market' do
+        let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
+        let(:params) do
+          {
+            shipping_address: {
+              firstname: 'Bob', lastname: 'Stone',
+              address1: '99 New Street', city: 'Other City',
+              zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),
+              phone: '555-000-9999',
+              country_code: other_country.iso, state_abbr: other_state.abbr
+            }
+          }
+        end
+
+        before do
+          other_market.update!(currency: 'EUR')
+          create(:price_eur, variant: variant, amount: 90)
+        end
+
+        it 'moves a draft into the market of its shipping address and re-prices it' do
+          expect(subject).to be_success
+
+          order.reload
+          expect(order.market).to eq(other_market)
+          expect(order.currency).to eq('EUR')
+          expect(order.line_items.first.price).to eq(90)
+        end
+
+        context 'when the order is placed' do
+          before { order.update_columns(status: 'placed') }
+
+          it 'keeps its market and refuses the address' do
+            expect(subject).to be_failure
+            expect(subject.error.to_s).to include("does not sell to #{other_country.name}")
+            expect(order.reload.market).to eq(store.default_market)
+            expect(order.ship_address&.country_code).not_to eq(other_country.iso)
+          end
+        end
+
+        # An upgraded order whose address was never in its market.
+        context 'when a placed order outside its market has its street corrected' do
+          let(:params) { { shipping_address: super()[:shipping_address].merge(address1: '100 Corrected Street') } }
+
+          before do
+            order.update_columns(ship_address_id: create(:address, country: other_country, state: other_state).id, status: 'placed')
+          end
+
+          it 'accepts it, since the country stays the same' do
+            expect(subject).to be_success
+            expect(order.reload.ship_address.address1).to eq('100 Corrected Street')
+          end
+        end
+
+        # Deleting a market leaves its orders without one until their next save.
+        context 'when the market the order was in is deleted' do
+          let(:params) { { internal_note: 'Called the customer' } }
+
+          before do
+            order.update_columns(ship_address_id: create(:address, country: other_country, state: other_state).id,
+                                 market_id: nil, status: 'placed')
+          end
+
+          it 'gives it the default market without refusing its address' do
+            expect(subject).to be_success
+            expect(order.reload.market).to eq(store.default_market)
+          end
+        end
+
+        context 'when staff name a market' do
+          let(:params) { super().merge(market_id: store.default_market.prefixed_id) }
+
+          it 'keeps the named market and refuses the address' do
+            expect(subject).to be_failure
+            expect(order.reload.market).to eq(store.default_market)
+          end
+        end
+
+        context 'with a blank market_id' do
+          let(:params) { { market_id: '' } }
+
+          before { order.update_columns(market_id: other_market.id) }
+
+          it 'leaves the market as it is' do
+            expect(subject).to be_success
+            expect(order.reload.market).to eq(other_market)
+          end
+        end
+
+        context 'after staff named a market' do
+          it 'lets a later address follow its market again' do
+            described_class.call(order: order, params: { market_id: store.default_market.prefixed_id })
+
+            expect(order.skip_market_resolution).to be_nil
+            expect(described_class.call(order: order, params: params)).to be_success
+            expect(order.reload.market).to eq(other_market)
+          end
+        end
+
+        context 'with another store' do
+          let(:params) { { market_id: create(:market, store: create(:store)).prefixed_id } }
+
+          it "refuses that store's market" do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          end
         end
       end
 

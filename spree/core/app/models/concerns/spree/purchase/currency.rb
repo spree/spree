@@ -22,7 +22,7 @@ module Spree
       def ensure_currency
         return if currency.present?
 
-        self.currency = market&.currency
+        self.currency = market&.currency || store&.default_currency
       end
     end
   end

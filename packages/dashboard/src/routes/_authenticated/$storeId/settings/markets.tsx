@@ -46,6 +46,7 @@ import {
   useMarket,
   useUpdateMarket,
 } from '../../../../hooks/use-markets'
+import { effectiveTaxProvider, useTaxProviders } from '../../../../hooks/use-tax-rates'
 import {
   MARKET_DEFAULTS,
   type MarketFormValues,
@@ -310,6 +311,11 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
   const { availableLocales } = useStore()
   const { errors } = form.formState
   const defaultLocaleField = form.watch('default_locale')
+  const { providers } = useTaxProviders()
+  // Follows the provider picked in this form, so switching to one that reads
+  // the flag shows its stored value before the merchant saves.
+  const showTaxInclusive = !!effectiveTaxProvider(providers, form.watch('tax_provider'))
+    ?.uses_market_tax_inclusive
 
   return (
     <FieldGroup>
@@ -421,29 +427,31 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
 
       <TaxProviderField form={form} />
 
-      <Field>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col">
-            <FieldLabel htmlFor="market-tax-inclusive" className="cursor-pointer">
-              {t('admin.fields.market.tax_inclusive.label')}
-            </FieldLabel>
-            <span className="text-xs text-muted-foreground">
-              {t('admin.fields.market.tax_inclusive.help')}
-            </span>
+      {showTaxInclusive && (
+        <Field>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col">
+              <FieldLabel htmlFor="market-tax-inclusive" className="cursor-pointer">
+                {t('admin.fields.market.tax_inclusive.label')}
+              </FieldLabel>
+              <span className="text-xs text-muted-foreground">
+                {t('admin.fields.market.tax_inclusive.help')}
+              </span>
+            </div>
+            <Controller
+              name="tax_inclusive"
+              control={form.control}
+              render={({ field }) => (
+                <Switch
+                  id="market-tax-inclusive"
+                  checked={!!field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
           </div>
-          <Controller
-            name="tax_inclusive"
-            control={form.control}
-            render={({ field }) => (
-              <Switch
-                id="market-tax-inclusive"
-                checked={!!field.value}
-                onCheckedChange={field.onChange}
-              />
-            )}
-          />
-        </div>
-      </Field>
+        </Field>
+      )}
 
       <Field>
         <div className="flex items-start justify-between gap-4">

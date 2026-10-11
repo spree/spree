@@ -333,6 +333,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       end
 
       context 'as the ship address' do
+        # A placed order ships only inside its market, which is the default one.
+        let(:country) { Spree::Country.by_iso('US') }
         let!(:order) { create(:completed_order_with_totals, customer: user, ship_address: address) }
 
         it_behaves_like 'soft-deletes the referenced address', :ship_address

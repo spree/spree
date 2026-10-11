@@ -14,16 +14,7 @@ import {
 import { TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useTaxProviders } from '../../hooks/use-tax-rates'
-
-/** One entry from `GET /tax_providers` — classes registered in code, not rows. */
-interface TaxProviderOption {
-  id: string
-  name: string
-  available: boolean
-  default: boolean
-  unsupported_capabilities?: Array<{ key: string; label: string; description?: string }>
-}
+import { effectiveTaxProvider, useTaxProviders } from '../../hooks/use-tax-rates'
 
 /** Any form whose values carry a `tax_provider` string. */
 interface TaxProviderFormShape {
@@ -42,8 +33,7 @@ export function TaxProviderField<T extends TaxProviderFormShape>({
   form: UseFormReturn<T>
 }) {
   const { t } = useTranslation()
-  const { data } = useTaxProviders()
-  const providers = (data?.data ?? []) as unknown as TaxProviderOption[]
+  const { providers } = useTaxProviders()
 
   const defaultProvider = providers.find((provider) => provider.default)
   const defaultLabel = defaultProvider
@@ -58,10 +48,9 @@ export function TaxProviderField<T extends TaxProviderFormShape>({
       control={form.control}
       render={({ field }) => {
         const selectedId = (field.value as string) || ''
-        const selected = providers.find((provider) => provider.id === selectedId)
         // An unselected market runs on the installation default, so that is
         // whose limits apply.
-        const effective = selected ?? defaultProvider
+        const effective = effectiveTaxProvider(providers, selectedId)
         const unsupported = effective?.unsupported_capabilities ?? []
 
         return (

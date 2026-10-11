@@ -103,6 +103,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[email completed_at token updated_at]
 
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
+    self.drops_ship_address_on_market_change = true
 
     delegate :name, to: :customer, prefix: true, allow_nil: true
 
@@ -340,6 +341,5 @@ module Spree
       self.warnings |= [{ code: 'coupon_code_unavailable', message: I18n.t('spree.coupon_code_unavailable') }] if removed
       self
     end
-
   end
 end

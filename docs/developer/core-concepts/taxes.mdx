@@ -217,6 +217,18 @@ curl 'https://api.mystore.com/api/v3/admin/tax_providers' \
 
 A provider declares up front what it cannot do — no US local tax, no reverse charge — so the dashboard can warn a merchant who pairs it with a market that needs it, rather than quietly under-collecting.
 
+A provider also declares whether it reads the market's **tax-inclusive pricing** flag (`uses_market_tax_inclusive` in the list above). Spree's own rates don't: each rate's `included_in_price` decides. The dashboard shows a market's switch only when its provider reads it, so a merchant never sets a switch that does nothing. A provider that doesn't declare it is treated as not reading it:
+
+```ruby server/app/models/my_app/tax_provider.rb
+module MyApp
+  class TaxProvider < Spree::TaxProvider::Base
+    def self.uses_market_tax_inclusive?
+      true
+    end
+  end
+end
+```
+
 Whichever provider is in use, the result is the same: tax lines on the order, in the same shape. Your storefront code doesn't change.
 
 The provider also decides the tax given back on returns, claims and exchanges, and the refund pays exactly what it answers. Spree's own rates give back each returned unit's share of the tax the sale actually charged, so the customer gets back what they paid even if a rate has been edited since. An external service may calculate it itself instead, for example at the rates in force on the day of the sale. If it cannot be reached, the return is refused until it can, rather than refunding tax nobody worked out.

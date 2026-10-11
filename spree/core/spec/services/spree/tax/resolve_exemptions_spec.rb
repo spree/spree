@@ -18,6 +18,8 @@ describe Spree::Tax::ResolveExemptions do
     let(:division) { create(:company, store: store, kind: 'division', parent: company) }
     let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
     let(:berlin) { create(:state, country: germany, abbr: 'BE', name: 'Berlin') }
+    # A market sells only to its own countries; the draft moves into this one.
+    let!(:german_market) { create(:market, store: store, countries: [germany]) }
 
     before do
       order.update!(company: division,

@@ -62,6 +62,26 @@ RSpec.describe Spree::Checkout::Requirements do
         a_hash_including(step: 'address', field: 'ship_address')
       )
     end
+
+    # The address was accepted while France was still in the market.
+    context 'when the market stops selling to the address country' do
+      let(:eu_market) do
+        create(:market, :eu, store: store, countries: [Spree::Country.by_iso('DE'), Spree::Country.by_iso('FR')])
+      end
+      let!(:cart) do
+        create(:cart, store: store, market: eu_market, currency: 'EUR',
+                      ship_address: create(:address, country: Spree::Country.by_iso('FR')))
+      end
+
+      it 'refuses the address' do
+        eu_market.update!(country_codes: ['DE'])
+
+        expect(described_class.new(cart.reload).call(completion: true)).to include(
+          step: 'address', field: 'ship_address', code: 'ship_address_outside_market',
+          message: 'The Europe market does not sell to France. Choose a shipping address in one of its countries.'
+        )
+      end
+    end
   end
 
   describe 'shipping_method requirement' do

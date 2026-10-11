@@ -256,12 +256,133 @@ module Spree
 
         context 'when shipping address country is in the new market' do
           let(:de_address) { create(:address, country: de_country) }
-          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, ship_address: de_address) }
+          # A cart from before addresses were checked against the market.
+          let(:cart) do
+            create(:cart_with_line_items, customer: user, store: store, market: us_market).tap do |cart|
+              cart.update_columns(ship_address_id: de_address.id)
+            end
+          end
           let(:params) { { market_id: eu_market.prefixed_id } }
 
           it 'keeps the shipping address' do
             expect(subject).to be_success
             expect(cart.reload.ship_address).to eq(de_address)
+          end
+        end
+
+        context 'when the currency switches the market' do
+          let!(:us_state) { Spree::State.resolve(us_country.iso, 'NY') }
+          let(:us_address) { create(:address, country: us_country, state: us_state) }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, ship_address: us_address, email: 'buyer@example.com') }
+          let(:params) { { currency: 'EUR' } }
+
+          it 'clears a shipping address the new market does not sell to' do
+            expect(subject).to be_success
+            expect(cart.reload.market).to eq(eu_market)
+            expect(cart.ship_address).to be_nil
+          end
+
+          context 'with the shipping address copied to billing' do
+            let(:params) { { currency: 'EUR', use_shipping: true } }
+
+            it 'drops it before the copy, so billing keeps what it had' do
+              billing_before = cart.bill_address_id
+
+              expect(subject).to be_success
+              expect(cart.reload.ship_address).to be_nil
+              expect(cart.bill_address_id).to eq(billing_before)
+            end
+          end
+        end
+
+        context 'when the submitted shipping address is outside the market' do
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, email: 'buyer@example.com') }
+          let(:params) do
+            {
+              shipping_address: {
+                first_name: 'Hans', last_name: 'Muster', address1: 'Unter den Linden 1',
+                city: 'Berlin', postal_code: '10117', country_code: 'DE', phone: '+4930123456'
+              }
+            }
+          end
+
+          it 'refuses it, naming the market and the country' do
+            expect(subject).to be_failure
+            expect(subject.error.to_s).to eq("The #{us_market.name} market does not sell to Germany. Choose a shipping address in one of its countries.")
+            expect(cart.reload.ship_address).to be_nil
+            expect(cart.market).to eq(us_market)
+          end
+        end
+
+        # A guest's address row is edited in place and saved before the cart is.
+        context "when a guest edits their address's country in place" do
+          let!(:us_state) { Spree::State.resolve(us_country.iso, 'NY') }
+          let(:cart) do
+            create(:cart_with_line_items, store: store, market: us_market, email: 'guest@example.com',
+                                          ship_address: create(:address, country: us_country, state: us_state))
+          end
+          let(:params) do
+            {
+              shipping_address: {
+                first_name: 'Hans', last_name: 'Muster', address1: 'Unter den Linden 1',
+                city: 'Berlin', postal_code: '10117', country_code: 'DE', phone: '+4930123456'
+              }
+            }
+          end
+
+          # Under the lock the Store API takes, as a request runs it.
+          it 'refuses it and keeps the address it had' do
+            address_id = cart.ship_address_id
+
+            expect(cart.with_lock { described_class.call(cart: cart, params: params) }).to be_failure
+            expect(cart.reload.ship_address_id).to eq(address_id)
+            expect(cart.ship_address.country_code).to eq('US')
+          end
+        end
+
+        context 'when the market the cart was in is deleted' do
+          let(:cart) do
+            create(:cart_with_line_items, customer: user, store: store, market: eu_market, currency: 'EUR',
+                                          ship_address: create(:address, country: de_country), email: 'buyer@example.com')
+          end
+          let(:params) { { customer_note: 'Leave at the door' } }
+
+          before do
+            cart
+            eu_market.destroy!
+            cart.reload
+          end
+
+          it 'moves it to another market and drops the address' do
+            expect(subject).to be_success
+            expect(cart.reload.market).to be_present
+            expect(cart.market_id).not_to eq(eu_market.id)
+            expect(cart.ship_address).to be_nil
+          end
+
+          context "with the customer's saved address in the deleted market's country" do
+            before do
+              cart.update_columns(ship_address_id: nil)
+              user.update!(ship_address: create(:address, country: de_country, owner: user))
+              cart.reload
+            end
+
+            it 'leaves it off the cart rather than failing the update' do
+              expect(subject).to be_success
+              expect(cart.reload.ship_address).to be_nil
+            end
+          end
+        end
+
+        context "when the customer's saved address is outside the market" do
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market) }
+          let(:params) { { email: 'buyer@example.com' } }
+
+          before { user.update!(ship_address: create(:address, country: de_country, owner: user)) }
+
+          it 'leaves it off the cart rather than failing the update' do
+            expect(subject).to be_success
+            expect(cart.reload.ship_address).to be_nil
           end
         end
       end

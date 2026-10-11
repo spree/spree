@@ -20,6 +20,7 @@ module Spree
         # the half-applied edit.
         ApplicationRecord.transaction(requires_new: true) do
           ship_address_id_before = @order.ship_address_id
+          assign_market
           assign_addresses(address_params)
 
           # Raised rather than returned: a `return` from inside the block commits
@@ -39,6 +40,9 @@ module Spree
         success(@order.reload)
       rescue ActiveRecord::RecordInvalid => e
         failure(e.record, e.record.errors.full_messages.to_sentence)
+      ensure
+        # A market named for this call only; later saves of the order follow its address again.
+        @order&.skip_market_resolution = nil
       end
 
       private
@@ -61,6 +65,16 @@ module Spree
         ADDRESS_PARAM_ALIASES.transform_values do |aliases|
           aliases.map { |key| @params.delete(key) }.compact.find(&:present?)
         end.compact_blank
+      end
+
+      # Read through the store so another store's market is a 404, and named
+      # explicitly so it outranks the one the shipping address would pick.
+      def assign_market
+        market_id = @params.delete(:market_id)
+        return if market_id.blank?
+
+        @order.market = @order.store.markets.find_by_param!(market_id)
+        @order.skip_market_resolution = true
       end
 
       def assign_addresses(address_params)

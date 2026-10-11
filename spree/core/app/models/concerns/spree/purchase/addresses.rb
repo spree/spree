@@ -23,6 +23,8 @@ module Spree
         accepts_nested_attributes_for :bill_address
         accepts_nested_attributes_for :ship_address
 
+        after_save { @ship_address_country_edited = false }
+
         alias_method :billing_address, :bill_address
         alias_method :billing_address=, :bill_address=
         alias_attribute :billing_address_id, :bill_address_id
@@ -93,7 +95,8 @@ module Spree
       # Fills any blank bill/ship address from the customer's valid saved
       # defaults. The ship address is skipped when no physical delivery is
       # required, so shipping-address validations never fire on digital-only
-      # purchases.
+      # purchases, and when the market does not sell to it, so a default the
+      # buyer never chose for this market cannot fail the save.
       #
       # @return [void]
       def assign_default_addresses!
@@ -103,7 +106,9 @@ module Spree
         # Skip the ship address only for all-digital records to avoid
         # triggering shipping-address validations (an empty record still
         # gets one — items usually arrive after the address).
-        self.ship_address = customer.ship_address if !ship_address_id && customer.ship_address&.valid? && !digital?
+        if !ship_address_id && customer.ship_address&.valid? && !digital? && market_sells_to?(customer.ship_address)
+          self.ship_address = customer.ship_address
+        end
       end
 
       # Copies the ship address onto the bill address and promotes it to the
@@ -168,8 +173,16 @@ module Spree
       # @param attributes [Hash, ActionController::Parameters]
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes, guest_row: guest_editable_address(ship_address, bill_address_id))
+        # The row is saved before the purchase is, so a country edited in
+        # place no longer shows among the address's pending changes.
+        @ship_address_country_edited = ship_address&.saved_change_to_country_code? || false
         customer.ship_address = ship_address if should_assign_user_default_address?(ship_address)
         self.ship_address = nil if quick_checkout_address?(attributes[:quick_checkout]) && !ship_address.persisted?
+      end
+
+      # @return [Boolean] whether this write moved the shipping address row to another country in place
+      def ship_address_country_edited?
+        @ship_address_country_edited || false
       end
 
       private

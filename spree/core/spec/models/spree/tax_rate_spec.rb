@@ -126,6 +126,9 @@ describe Spree::TaxRate, type: :model do
       # Prices are quoted including German VAT — the market being browsed is
       # Germany, which is where the store's own country comes from.
       before { @default_store.default_market.update!(countries: [germany]) }
+      # A market sells only to its own countries, so the other destinations
+      # get one of their own; the home country stays Germany.
+      let!(:elsewhere_market) { create(:market, store: @default_store, countries: [france, india]) }
 
       ZIPCODES = { 'DE' => '10115', 'FR' => '75001', 'IN' => '110001' }.freeze
 
