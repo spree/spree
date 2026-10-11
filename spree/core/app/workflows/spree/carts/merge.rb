@@ -52,7 +52,7 @@ module Spree
           existing = matching_line_item(other_line_item)
 
           if existing
-            existing.quantity += other_line_item.quantity
+            existing.absorb(other_line_item)
             existing.save!
             other_line_item.destroy!
           else

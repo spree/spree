@@ -11,16 +11,40 @@ RSpec.describe Spree::Carts::Merge do
   after { Spree.hooks.clear! }
 
   describe 'merging' do
-    it 'absorbs the quantity of a matching item and destroys the drained cart' do
+    it 'absorbs the quantity of a matching item, gifts included, and destroys the drained cart' do
       cart.line_items.create!(variant: variant, quantity: 1, currency: cart.currency)
-      other_cart.line_items.create!(variant: variant, quantity: 2, currency: other_cart.currency)
+      other_line_item = other_cart.line_items.create!(variant: variant, quantity: 2, currency: other_cart.currency)
+      create(:line_item_gift, line_item: other_line_item)
 
       result = described_class.call(cart: cart, other_cart: other_cart)
 
       expect(result).to be_success
       expect(cart.reload.line_items.count).to eq(1)
       expect(cart.line_items.first.quantity).to eq(3)
+      expect(cart.line_items.first.gifted_quantity).to eq(1)
       expect { other_cart.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'does not carry a gift the surviving line already holds from the same promotion' do
+      gift = create(:line_item_gift, line_item: cart.line_items.create!(variant: variant, quantity: 1, currency: cart.currency))
+      create(:line_item_gift, line_item: other_cart.line_items.create!(variant: variant, quantity: 1, currency: other_cart.currency),
+                              promotion_action: gift.promotion_action)
+
+      described_class.call(cart: cart, other_cart: other_cart)
+
+      line_item = cart.reload.line_items.first
+      expect([line_item.quantity, line_item.gifted_quantity]).to eq([1, 1])
+    end
+
+    it "drops another promotion's gift rather than carry two gifts on one line" do
+      gift = create(:line_item_gift, line_item: cart.line_items.create!(variant: variant, quantity: 1, currency: cart.currency))
+      create(:line_item_gift, line_item: other_cart.line_items.create!(variant: variant, quantity: 1, currency: other_cart.currency))
+
+      described_class.call(cart: cart, other_cart: other_cart)
+
+      line_item = cart.reload.line_items.first
+      expect(line_item.quantity).to eq(1)
+      expect(line_item.gifts).to contain_exactly(gift)
     end
 
     it 'moves a non-matching item across' do

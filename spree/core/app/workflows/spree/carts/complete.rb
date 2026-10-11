@@ -327,6 +327,7 @@ module Spree
         cart.line_items.reload.index_with do |cart_line_item|
           attributes = cart_line_item.attributes.except('id', 'cart_id', 'created_at', 'updated_at')
           line_item = order.line_items.new(attributes.merge('order_id' => order.id))
+          line_item.copy_gifts_from(cart_line_item)
           line_item.skip_tax_estimation = true
           line_item.save!
           line_item

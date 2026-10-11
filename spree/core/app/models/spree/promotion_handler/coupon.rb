@@ -185,16 +185,7 @@ module Spree
       end
 
       def remove_promotion_line_items(promotion)
-        create_line_item_actions_ids = promotion.actions.
-          where(type: %w[Spree::Promotion::Actions::CreateLineItems Spree::Promotion::Actions::CreateLineItems]).pluck(:id)
-
-        Spree::PromotionActionLineItem.where(promotion_action: create_line_item_actions_ids).find_each do |item|
-          line_item = order.find_line_item_by_variant(item.variant)
-          next if line_item.blank?
-
-          remove_service = order.is_a?(Spree::Cart) ? Spree.cart_remove_item_service : Spree.order_remove_item_service
-          remove_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order }, variant: item.variant, quantity: item.quantity)
-        end
+        promotion.actions.grep(Spree::Promotion::Actions::CreateLineItems).each { |action| action.remove_gifts(order) }
       end
 
       def handle_present_promotion

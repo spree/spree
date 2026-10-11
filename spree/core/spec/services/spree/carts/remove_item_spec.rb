@@ -33,6 +33,21 @@ module Spree
         expect(cart.line_items.count).to eq 1
         expect(line_item.quantity).to eq 1
       end
+
+      it 'takes a gift back out of the gifted count, never below none' do
+        gift = create(:line_item_gift, line_item: line_item)
+        cart.line_items.reload
+
+        subject.call(cart: cart, variant: variant, quantity: 1, gift: gift.promotion_action)
+        expect(line_item.reload.gifted_quantity).to eq 0
+        expect(line_item.gifts).to be_empty
+
+        line_item.update_column(:quantity, 3)
+        create(:line_item_gift, line_item: line_item, promotion_action: gift.promotion_action)
+        cart.line_items.reload
+        subject.call(cart: cart, variant: variant, quantity: 2, gift: gift.promotion_action)
+        expect([line_item.reload.quantity, line_item.gifted_quantity]).to eq [1, 0]
+      end
     end
 
     context 'raise error' do

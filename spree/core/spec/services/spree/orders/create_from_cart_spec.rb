@@ -22,6 +22,7 @@ module Spree
       it 'copies the cart into a fresh draft order and leaves the cart untouched' do
         line_item = cart.line_items.first
         line_item.update_columns(price: 7.2, price_source: 'contract')
+        create(:line_item_gift, line_item: line_item)
 
         result = described_class.call(cart: cart)
 
@@ -47,6 +48,7 @@ module Spree
         expect(copied.price).to eq(7.2)
         expect(copied.price_source).to eq('contract')
         expect(copied.quantity).to eq(line_item.quantity)
+        expect(copied.gifted_quantity).to eq(1)
 
         # No money records: the draft's own lifecycle rebuilds them.
         expect(order.payments).to be_empty

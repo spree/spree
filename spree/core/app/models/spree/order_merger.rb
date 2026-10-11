@@ -57,7 +57,7 @@ module Spree
     # to their own choosing. Default is merge with errors.
     def handle_merge(current_line_item, other_order_line_item)
       if current_line_item
-        current_line_item.quantity += other_order_line_item.quantity
+        current_line_item.absorb(other_order_line_item)
         handle_error(current_line_item) unless current_line_item.save
       else
         order.line_items << other_order_line_item

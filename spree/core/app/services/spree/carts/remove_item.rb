@@ -3,7 +3,11 @@ module Spree
     class RemoveItem
       prepend Spree::ServiceModule::Base
 
-      def call(cart: nil, order: nil, variant: nil, quantity: nil, options: nil)
+      # @param line_item [Spree::LineItem, nil] the line to take the units from,
+      #   when the caller already holds it; otherwise found by variant
+      # @param gift [Spree::PromotionAction, nil] the promotion action whose
+      #   gift these units are, being taken back
+      def call(cart: nil, order: nil, variant: nil, quantity: nil, options: nil, line_item: nil, gift: nil)
         if order
           Spree::Deprecation.warn('Calling Spree::Carts::RemoveItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
           cart ||= order
@@ -12,7 +16,7 @@ module Spree
         quantity ||= 1
 
         ActiveRecord::Base.transaction do
-          line_item = remove_from_line_item(cart: cart, variant: variant, quantity: quantity, options: options)
+          line_item = remove_from_line_item(cart: cart, variant: variant, quantity: quantity, options: options, line_item: line_item, gift: gift)
           Spree.cart_recalculate_workflow.call(line_item: line_item,
                                               cart: cart,
                                               options: options)
@@ -22,12 +26,15 @@ module Spree
 
       private
 
-      def remove_from_line_item(cart:, variant:, quantity:, options:)
-        line_item = Spree.line_item_by_variant_finder.new.execute(cart: cart, variant: variant, options: options)
+      def remove_from_line_item(cart:, variant:, quantity:, options:, line_item:, gift:)
+        line_item ||= Spree.line_item_by_variant_finder.new.execute(cart: cart, variant: variant, options: options)
 
-        raise ActiveRecord::RecordNotFound if line_item.nil?
+        raise ActiveRecord::RecordNotFound if line_item.nil? || line_item.owner != cart
 
         line_item.quantity -= quantity
+        # In the same save, because the recalculation below takes the gift
+        # back again and must find these units no longer counted as given.
+        line_item.change_gift(gift, -quantity) if gift
 
         if line_item.quantity.zero?
           cart.line_items.destroy(line_item)

@@ -97,6 +97,35 @@ module Spree
           end.to change { adjustable.discounts.count }.by(1)
         end
       end
+
+      context 'with a gift code saved before the cart qualifies' do
+        let(:cart) { create(:cart) }
+        let(:tote) { create(:variant) }
+        let(:mug) { create(:variant) }
+        let!(:gift_promotion) do
+          create(:promotion, kind: :coupon_code, code: 'totegift', store: cart.store).tap do |promotion|
+            create(:promotion_rule_product, promotion: promotion).products << tote.product
+            create(:promotion_action_create_line_items, promotion: promotion).
+              promotion_action_line_items.create!(variant: mug, quantity: 2)
+          end
+        end
+
+        before { cart.update_column(:coupon_code, 'totegift') }
+
+        it 'adds the gift once the cart qualifies' do
+          Spree.cart_add_item_workflow.call(cart: cart, variant: tote, quantity: 1)
+
+          expect(cart.line_items.reload.find_by(variant_id: mug.id).gifted_quantity).to eq(2)
+          expect(cart.promotions).to include(gift_promotion)
+        end
+
+        it 'adds nothing while the cart does not qualify' do
+          Spree.cart_add_item_workflow.call(cart: cart, variant: create(:variant), quantity: 1)
+
+          expect(cart.line_items.reload.map(&:variant_id)).not_to include(mug.id)
+          expect(cart.promotions).to be_empty
+        end
+      end
     end
   end
 end

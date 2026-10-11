@@ -34,8 +34,11 @@ module Spree
 
       private
 
+      # A code saved before the cart qualified is not joined yet, and a gift
+      # promotion joins only once this activation has added its gift.
       def promotions
-        promotion_scope.find_by_sql("#{order.promotions.active.to_sql} UNION #{promotion_scope.active.automatic.to_sql}")
+        joined_and_automatic = promotion_scope.find_by_sql("#{order.promotions.active.to_sql} UNION #{promotion_scope.active.automatic.to_sql}")
+        (joined_and_automatic + Spree::Promotion.held_by_saved_coupon_code(order)).uniq(&:id)
       end
 
       def promotion_scope

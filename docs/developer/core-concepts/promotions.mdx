@@ -137,11 +137,11 @@ Writes a discount on each fulfillment covering its delivery cost. The row is kep
 
 ### Free items (`CreateLineItems`)
 
-Adds specified products to the cart when the promotion is eligible, checking stock first, and discounts them to zero. A customer who already has the gift in their cart gets theirs free rather than a duplicate; any further copies they bought stay paid for. The gift is taken back when the promotion stops applying.
+Adds specified products to the cart when the promotion is eligible, checking stock first, and discounts them to zero. The gift is added on top of any copies the customer already chose, and those stay paid for, so "buy a mug, get a second one free" can name the same product in its rule and its gift. When the promotion stops applying it takes back the gift and leaves the customer's own copies in the cart.
 
 No second action is needed to make the gift free — pairing this with an order discount set to the gift's price discounts it twice.
 
-A gift the promotion gives away does not count toward what other promotions measure: it cannot lift an order over an `ItemTotal` threshold, and an order discount's percentage is taken from the paid goods only. Nor does it count toward its own promotion's threshold, so in "Spend \$100 get a free sample" the sample is taken back once the paid goods drop to \$100 or less. A copy of the gift the customer pays for counts toward other promotions like any other item, but not toward its own promotion's threshold.
+A gift the promotion gives away does not count toward what other promotions measure: it cannot lift an order over an `ItemTotal` threshold, and an order discount's percentage is taken from the paid goods only. Nor does it count toward its own promotion's threshold, so in "Spend \$100 get a free sample" the sample is taken back once the paid goods drop to \$100 or less. A copy of the gift the customer chose themselves counts like any other item.
 
 **Use case:** "Free gift with purchase", "Spend $100 get a free sample".
 

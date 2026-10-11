@@ -49,7 +49,11 @@ module Spree
       end
 
       it 'copies line items, fulfillments and addresses — never sharing rows' do
+        gift = create(:line_item_gift, line_item: ready_cart.line_items.first)
         order = subject.value
+
+        copied = order.line_items.find_by(variant_id: gift.line_item.variant_id)
+        expect(copied.gifts.map { |record| [record.promotion_action_id, record.quantity] }).to eq([[gift.promotion_action_id, 1]])
 
         expect(order.line_items.count).to eq(ready_cart.line_items.count)
         expect(order.line_items.ids).not_to match_array(ready_cart.line_items.ids)
