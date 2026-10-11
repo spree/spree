@@ -169,10 +169,42 @@ RSpec.describe Spree::AttachmentContentTypeValidator do
         expect(record.errors[:document]).to be_empty
       end
 
-      # Plain text has no signature, so a CSV cannot be told apart from any
-      # other unidentified file without trusting its name.
-      it 'rejects a CSV file' do
-        attach("po_number,sku,quantity\nPO-1,A1,3\n", filename: 'po.csv', content_type: 'text/csv').validate
+      it 'accepts a CSV file' do
+        attach("po_number,sku,quantity\r\nPO-1,A1,3\r\n", filename: 'po.csv', content_type: 'text/csv').validate
+
+        expect(record.errors[:document]).to be_empty
+      end
+
+      # Spreadsheet tools still export CSV in legacy encodings, so the text is
+      # not required to be UTF-8.
+      it 'accepts a CSV file exported in a legacy encoding' do
+        attach("sku;name\r\nA1;Caf\xE9\r\n", filename: 'po.csv', content_type: 'text/csv').validate
+
+        expect(record.errors[:document]).to be_empty
+      end
+
+      # Plain text has no signature, so the name is what makes it a CSV — but
+      # only for bytes Marcel cannot otherwise identify and that hold no binary.
+      it 'rejects a script named as a CSV file' do
+        attach("#!/bin/sh\necho pwned\n", filename: 'po.csv', content_type: 'text/csv').validate
+
+        expect(record.errors[:document]).to be_present
+      end
+
+      it 'rejects an HTML page named as a CSV file' do
+        attach('<html><script>alert(1)</script></html>', filename: 'po.csv', content_type: 'text/csv').validate
+
+        expect(record.errors[:document]).to be_present
+      end
+
+      it 'rejects binary bytes named as a CSV file' do
+        attach("\x00\x01\x02binary\xFF#{"\x00" * 64}", filename: 'po.csv', content_type: 'text/csv').validate
+
+        expect(record.errors[:document]).to be_present
+      end
+
+      it 'rejects plain text without a CSV name' do
+        attach("po_number,sku\nPO-1,A1\n", filename: 'po.txt', content_type: 'text/plain').validate
 
         expect(record.errors[:document]).to be_present
       end

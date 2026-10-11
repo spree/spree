@@ -1142,7 +1142,7 @@ en:
     phone: Phone
     pickup:
       store_pickup: Store Pickup
-    po_document_invalid: A purchase order document must be a PDF, image, Word document or spreadsheet of %{size} or less.
+    po_document_invalid: A purchase order document must be a PDF, image, Word document, spreadsheet or CSV file of %{size} or less.
     po_document_missing: This order has no attached purchase order document.
     po_document_too_large: is larger than %{size}.
     po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
