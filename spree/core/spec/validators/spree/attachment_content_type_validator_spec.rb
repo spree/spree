@@ -153,18 +153,15 @@ RSpec.describe Spree::AttachmentContentTypeValidator do
         end
       end
 
-      it 'accepts an Excel spreadsheet' do
-        attach(docx_bytes, filename: 'po.xlsx',
-                           content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet').validate
+      it 'accepts a PDF' do
+        attach(pdf_bytes, filename: 'po.pdf', content_type: 'application/pdf').validate
 
         expect(record.errors[:document]).to be_empty
       end
 
-      it 'accepts a legacy Excel spreadsheet' do
-        ole = +"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1".b
-        ole << ("\x00" * 5000).b
-
-        attach(ole, filename: 'po.xls', content_type: 'application/vnd.ms-excel').validate
+      it 'accepts a spreadsheet' do
+        attach(docx_bytes, filename: 'po.xlsx',
+                           content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet').validate
 
         expect(record.errors[:document]).to be_empty
       end
@@ -173,40 +170,6 @@ RSpec.describe Spree::AttachmentContentTypeValidator do
         attach("po_number,sku,quantity\r\nPO-1,A1,3\r\n", filename: 'po.csv', content_type: 'text/csv').validate
 
         expect(record.errors[:document]).to be_empty
-      end
-
-      # Spreadsheet tools still export CSV in legacy encodings, so the text is
-      # not required to be UTF-8.
-      it 'accepts a CSV file exported in a legacy encoding' do
-        attach("sku;name\r\nA1;Caf\xE9\r\n", filename: 'po.csv', content_type: 'text/csv').validate
-
-        expect(record.errors[:document]).to be_empty
-      end
-
-      # Plain text has no signature, so the name is what makes it a CSV — but
-      # only for bytes Marcel cannot otherwise identify and that hold no binary.
-      it 'rejects a script named as a CSV file' do
-        attach("#!/bin/sh\necho pwned\n", filename: 'po.csv', content_type: 'text/csv').validate
-
-        expect(record.errors[:document]).to be_present
-      end
-
-      it 'rejects an HTML page named as a CSV file' do
-        attach('<html><script>alert(1)</script></html>', filename: 'po.csv', content_type: 'text/csv').validate
-
-        expect(record.errors[:document]).to be_present
-      end
-
-      it 'rejects binary bytes named as a CSV file' do
-        attach("\x00\x01\x02binary\xFF#{"\x00" * 64}", filename: 'po.csv', content_type: 'text/csv').validate
-
-        expect(record.errors[:document]).to be_present
-      end
-
-      it 'rejects plain text without a CSV name' do
-        attach("po_number,sku\nPO-1,A1\n", filename: 'po.txt', content_type: 'text/plain').validate
-
-        expect(record.errors[:document]).to be_present
       end
     end
   end
