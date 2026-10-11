@@ -43,7 +43,7 @@ module Spree
             before_action :require_something_to_grant!, only: :create
 
             def show
-              render json: {
+              request = Spree::OauthConsentRequest.new(
                 client_name: client_name,
                 scopes: requested_permissions,
                 # What the merchant may hand over, which is the intersection
@@ -53,7 +53,9 @@ module Spree
                 grantable_scopes: grantable_scopes,
                 resource: requested_resource,
                 redirect_uri: @pre_auth.redirect_uri
-              }
+              )
+
+              render json: Spree.api.admin_oauth_consent_request_serializer.new(request).to_h
             end
 
             # The merchant may approve less than the client asked for, and
@@ -67,14 +69,20 @@ module Spree
             # standing ceiling, so it would widen on its own the day that
             # person is promoted.
             def create
-              render json: { redirect_uri: granted_code_request.authorize.redirect_uri }
+              render_redirect(granted_code_request.authorize.redirect_uri)
             end
 
             def destroy
-              render json: { redirect_uri: code_request.deny.redirect_uri }
+              render_redirect(code_request.deny.redirect_uri)
             end
 
             private
+
+            def render_redirect(uri)
+              redirect = Spree::OauthRedirect.new(redirect_uri: uri)
+
+              render json: Spree.api.admin_oauth_redirect_serializer.new(redirect).to_h
+            end
 
             # A secret key authenticates but is not a person; `current_actor`
             # returns the key in that case, and a grant must belong to a user.

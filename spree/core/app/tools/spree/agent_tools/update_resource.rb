@@ -6,7 +6,10 @@ module Spree
     class UpdateResource < Spree::AgentTools::ResourceWrite
       tool_name 'update_resource'
       description 'Change a record. Call describe_resource first for the attributes a ' \
-                  'resource accepts, and send only the ones to change.'
+                  'resource accepts, and send only the ones to change. A list-valued ' \
+                  'attribute is the exception: it REPLACES the whole list, so send every row ' \
+                  'to keep, not only the new ones — sending one variant leaves a product ' \
+                  'with one variant.'
 
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :id, description: 'The record id as shown in search results', required: true

@@ -1,8 +1,4 @@
-import type {
-  OauthAuthorizationParams,
-  OauthAuthorizationRequest,
-  OauthRedirect,
-} from '@spree/admin-sdk'
+import type { OauthAuthorizationParams, OauthConsentRequest, OauthRedirect } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 
@@ -13,7 +9,7 @@ import { useQuery } from '@tanstack/react-query'
  * challenge, so a stale read would describe a request that no longer exists.
  */
 export function useOauthAuthorization(params: OauthAuthorizationParams | null) {
-  return useQuery<OauthAuthorizationRequest>({
+  return useQuery<OauthConsentRequest>({
     queryKey: useResourceKey('oauth-authorization', JSON.stringify(params ?? {})),
     enabled: params !== null,
     staleTime: 0,

@@ -4,8 +4,15 @@ RSpec.describe Spree::Mcp::Exports do
   let(:store) { @default_store }
   let(:user) { create(:admin_user) }
 
+  # Reading an export now goes through the Admin API's own endpoints, so the
+  # context carries the credential a real request would.
   def context_for(scopes)
-    Spree::AgentTools::Context.new(store: store, user: user, granted_scopes: scopes)
+    key = create(:api_key, :secret, store: store, scopes: scopes)
+
+    Spree::AgentTools::Context.new(
+      store: store, api_key: key, granted_scopes: scopes,
+      request_headers: { 'HTTP_X_SPREE_API_KEY' => key.plaintext_token, 'HTTP_HOST' => 'www.example.com' }
+    )
   end
 
   def finished_export(klass, store: @default_store)
@@ -63,8 +70,9 @@ RSpec.describe Spree::Mcp::Exports do
   # returning it would push out the conversation that asked for it.
   it 'describes a file too large to return instead of returning it' do
     export = finished_export(Spree::Exports::Products)
-    allow(export.attachment.blob).to receive(:byte_size).and_return(described_class::MAX_INLINE_BYTES + 1)
-    allow_any_instance_of(Spree::Exports::Products).to receive(:attachment).and_return(export.attachment)
+    # The size comes from what the endpoint reports, so the cap is what has
+    # to move — the file itself is a fixture of a few bytes.
+    stub_const("#{described_class}::MAX_INLINE_BYTES", 1)
 
     contents = described_class.read(context_for(['read_all']), "spree+export://#{export.prefixed_id}")
 

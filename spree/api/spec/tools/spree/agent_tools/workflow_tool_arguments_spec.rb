@@ -192,5 +192,39 @@ RSpec.describe 'agent workflow tool arguments' do
       expect(result[:error]).to be_present
       expect(theirs.reload.status).not_to eq('canceled')
     end
+    # A keyword the endpoint carries under another name has to arrive, or the
+    # tool reports a change it did not make. Three shapes caught real drops
+    # while this was written: a record renamed by the action
+    # (`reason:` -> `cancel_reason_id`), an attributes hash that IS the body,
+    # and a keyword whose record fills a path segment of a different name.
+    it 'sends a record the action renamed' do
+      order = create(:order_ready_to_ship, store: store)
+      reason = store.order_cancellation_reasons.first || create(:order_cancellation_reason, store: store)
+
+      result = tool('orders_cancel').call(order: order.prefixed_id, reason: reason.prefixed_id)
+
+      expect(result[:error]).to be_nil
+      expect(order.reload.cancel_reason_id).to eq(reason.id)
+    end
+
+    it 'merges an attributes hash into the body' do
+      product = create(:product, store: store)
+      sku = "SKU-#{SecureRandom.hex(3)}"
+
+      result = tool('variants_create').call(product: product.prefixed_id, attributes: { 'sku' => sku })
+
+      expect(result[:error]).to be_nil
+      expect(Spree::Variant.where(sku: sku)).to exist
+    end
+
+    it 'fills a path segment from a keyword of a different name' do
+      order = create(:order_ready_to_ship, store: store)
+
+      result = tool('shipping_labels_purchase').call(owner: order.fulfillments.first.prefixed_id)
+
+      # The provider refuses in test, which is the endpoint answering — a
+      # segment left unfilled would have been a 404 instead.
+      expect(result[:error]).not_to match(/not found/i)
+    end
   end
 end

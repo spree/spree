@@ -93,7 +93,25 @@ module Spree
           body = operations.dig('post', 'requestBody', 'content', 'application/json', 'schema')
           body ||= operations.dig('patch', 'requestBody', 'content', 'application/json', 'schema')
 
-          body.is_a?(Hash) ? body['properties'].presence : nil
+          resolve_schema(body)&.dig('properties').presence
+        end
+
+        public
+
+        # A request body is declared once per endpoint and published as a
+        # component, so the operation carries a `$ref` to it rather than the
+        # properties themselves. Followed a few hops, which is as deep as the
+        # generated document nests them.
+        #
+        # @param schema [Hash, nil] a schema that may be a reference
+        # @return [Hash, nil] the schema it names
+        def resolve_schema(schema, depth = 0)
+          return unless schema.is_a?(Hash)
+          return schema unless schema.key?('$ref')
+          return if depth > 3
+
+          name = schema['$ref'].to_s.split('/').last
+          resolve_schema(document.dig('components', 'schemas', name), depth + 1)
         end
       end
     end

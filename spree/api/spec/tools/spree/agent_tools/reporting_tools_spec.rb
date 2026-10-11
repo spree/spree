@@ -46,7 +46,7 @@ RSpec.describe 'agent reporting tools' do
     it 'names what a dimension grouped by' do
       product = create(:product, store: store, name: 'Rotary Shaver 9000')
       order = create(:completed_order_with_totals, store: store)
-      order.line_items.first.update!(variant: product.master)
+      order.line_items.first.update!(variant: product.default_variant)
 
       result = tool('query_report').call(metrics: ['units_sold'], dimensions: ['product'])
 

@@ -115,4 +115,54 @@ RSpec.describe Spree::Api::V3::ParamsNormalizer do
     end
   end
 
+  # The sqid alphabet is shared across models, so `prod_` and `variant_`
+  # decode to the same integers. Decoding whatever arrives meant an order
+  # asked for a product answered 201 and held a line item for an unrelated
+  # variant that happened to carry that number.
+  describe 'an id of the wrong kind' do
+    let(:order_controller_class) do
+      Class.new(ActionController::API) do
+        include Spree::Api::V3::ParamsNormalizer
+
+        public :resolve_prefixed_ids
+
+        def model_class
+          Spree::Order
+        end
+
+        def nested_param_models
+          { 'items' => Spree::LineItem }
+        end
+      end
+    end
+
+    let(:order_controller) { order_controller_class.new }
+
+    it 'leaves a product id where a variant belongs, so the lookup refuses it' do
+      product = create(:product)
+      hash = { 'items' => [{ 'variant_id' => product.prefixed_id, 'quantity' => 1 }] }.with_indifferent_access
+
+      result = order_controller.resolve_prefixed_ids(hash)
+
+      expect(result['items'].first['variant_id']).to eq(product.prefixed_id)
+    end
+
+    it 'decodes an id of the right kind' do
+      variant = create(:variant)
+      hash = { 'items' => [{ 'variant_id' => variant.prefixed_id, 'quantity' => 1 }] }.with_indifferent_access
+
+      result = order_controller.resolve_prefixed_ids(hash)
+
+      expect(result['items'].first['variant_id']).to eq(variant.id)
+    end
+
+    it 'decodes a top-level association id of the right kind' do
+      customer = create(:customer)
+      hash = { 'customer_id' => customer.prefixed_id }.with_indifferent_access
+
+      result = order_controller.resolve_prefixed_ids(hash)
+
+      expect(result['customer_id']).to eq(customer.id)
+    end
+  end
 end

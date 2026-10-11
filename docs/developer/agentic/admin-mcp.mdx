@@ -51,8 +51,8 @@ The tools are not a mirror of the API's endpoints — there would be hundreds, a
 | Answering with numbers | `describe_reporting`, `query_report` | Revenue, orders and units, sliced by time, product, channel or country — the same figures the dashboard charts show |
 | Doing things | One tool per operation: `orders_create`, `orders_cancel`, `fulfillments_mark_delivered`, `products_activate`, `refunds_create`, `price_lists_activate` and around fifty more | Each runs the same workflow the dashboard runs, so validations, emails and webhooks behave identically |
 | Merchandising | `curate_products` | Which products a category, collection, catalog or price list holds |
-| Receiving files | `upload_file`, then `media_create` or `create_import` | A merchant hands over images or a CSV: store the file, then put it in a product gallery or start an import from it |
-| Reading files | MCP resources | Finished exports, and documents attached to records — a buyer's purchase order, a shipping label |
+| Receiving files | `upload_file`, then `media_create`, `create_import` or an update | A merchant hands over an image, a CSV or a buyer's purchase order: store the file, then put it in a product gallery, start an import from it, or set it on the order |
+| Reading files | MCP resources | Finished exports, as CSV |
 | Store setup | `create_resource`, `update_resource`, `delete_resource` | Markets, channels, delivery and payment methods, tax rates and the rest of the settings screens |
 
 An agent is only ever shown the tools its key permits, so the list stays small and relevant: a key minted for order operations sees around twenty.
@@ -75,7 +75,6 @@ Some things are deliberately out of reach, whatever scopes the key holds.
 
 - **Credentials.** API keys, integrations, webhook endpoints and gift card codes are never returned by any tool. A gift card code is the money itself, and an integration's settings are where provider credentials live.
 - **Erasing a customer.** GDPR erasure is irreversible and is not something to put behind a single confirmation prompt. Do it in the dashboard.
-- **Files.** Media uploads, import files and label downloads. The protocol carries text and structured data.
 - **Order editing.** Adding line items, discounts and fees to an existing order still runs through paths that are not yet workflows. Cancelling, refunding and fulfilling all work today.
 
 ## Adding your own tools

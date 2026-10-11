@@ -1,7 +1,6 @@
 require 'spree/agent_tools/registry'
 require 'spree/agent_tools/context'
 require 'spree/agent_tools/resource_map'
-require 'spree/agent_tools/attachment_registry'
 require 'spree/agent_tools/api_dispatch'
 require 'spree/agent_tools/membership_map'
 require 'spree/agent_tools/workflow_endpoints'

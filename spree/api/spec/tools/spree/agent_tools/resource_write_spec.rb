@@ -168,4 +168,100 @@ RSpec.describe 'agent generic record writes' do
       expect(names).not_to include('create_resource', 'update_resource', 'delete_resource')
     end
   end
+  # "Create a product named Expensive Bag with two variants (size S and M),
+  # quantity 100, price 199 USD" is one call, not four. A model that creates
+  # the product and then adds each variant separately pays several round
+  # trips and leaves the default variant behind, since a product write
+  # reconciles its variant list rather than adding to it.
+  describe 'a record with its nested records' do
+    let(:location) { store.stock_locations.first || create(:stock_location, store: store) }
+
+    def variant_row(size)
+      {
+        'options' => [{ 'name' => 'Size', 'value' => size }],
+        'prices' => [{ 'currency' => 'USD', 'amount' => '199.00' }],
+        'stock_levels' => [{ 'stock_location_id' => location.prefixed_id, 'count_on_hand' => 100 }]
+      }
+    end
+
+    it 'creates a product, its variants, their prices and their stock in one call' do
+      result = tool('create_resource').call(
+        resource: 'products',
+        attributes: { 'name' => 'Expensive Bag', 'status' => 'active',
+                      'variants' => [variant_row('S'), variant_row('M')] }
+      )
+
+      expect(result[:error]).to be_nil
+
+      product = Spree::Product.for_store(store).find_by(name: 'Expensive Bag')
+      # Two, not three: the variant a bare create would have left behind is
+      # reconciled away by the same write.
+      expect(product.variants.count).to eq(2)
+      expect(product.variants.map(&:options_text)).to contain_exactly('Size: S', 'Size: M')
+      expect(product.variants.map { |variant| variant.price_in('USD').amount }).to all(eq(199))
+      expect(product.variants.map(&:total_on_hand)).to all(eq(100))
+    end
+
+    it 'creates an order with its line items in one call' do
+      variant = create(:variant, product: create(:product, store: store))
+
+      result = tool('create_resource').call(
+        resource: 'orders',
+        attributes: { 'email' => 'buyer@example.com',
+                      'items' => [{ 'variant_id' => variant.prefixed_id, 'quantity' => 3 }] }
+      )
+
+      expect(result[:error]).to be_nil
+
+      order = Spree::Order.for_store(store).find_by_prefix_id(result.dig(:record, :id))
+      expect(order.line_items.sum(&:quantity)).to eq(3)
+    end
+
+    # Named rather than described: a model that is only told `variants` exists
+    # sends the variants one at a time to their own endpoint.
+    it 'says what fits inside a list-valued attribute' do
+      described = tool('describe_resource').call(resource: 'products')[:resources].first
+
+      expect(described[:nested_attributes]['variants']).to include('options', 'prices', 'stock_levels')
+      expect(described[:writable_attributes]).to include('variants')
+    end
+  end
+  # A record arrives without its associations, because a full admin payload
+  # is more than a model's context should hold. Naming them is how a model
+  # sees the variants it just created.
+  describe 'asking for a record\'s associations' do
+    let(:product) do
+      tool('create_resource').call(
+        resource: 'products',
+        attributes: { 'name' => "Expand #{SecureRandom.hex(3)}",
+                      'variants' => [{ 'options' => [{ 'name' => 'Size', 'value' => 'S' }] },
+                                     { 'options' => [{ 'name' => 'Size', 'value' => 'M' }] }] }
+      )
+    end
+
+    def fetch(**arguments)
+      tool('get_resource').call(resource: 'products', id: product.dig(:record, :id), **arguments)
+    end
+
+    it 'leaves them out by default' do
+      expect(fetch[:record]).not_to have_key('variants')
+    end
+
+    it 'includes the ones it is asked for' do
+      expect(fetch(expand: ['variants'])[:record]['variants'].size).to eq(2)
+    end
+
+    it 'names the real list when asked for one that does not exist' do
+      result = fetch(expand: ['nonsense'])
+
+      expect(result[:error]).to include('nonsense')
+      expect(result[:expandable]).to include('variants')
+    end
+
+    it 'says which ones a resource offers' do
+      described = tool('describe_resource').call(resource: 'products')[:resources].first
+
+      expect(described[:expandable_associations]).to include('variants')
+    end
+  end
 end

@@ -4,13 +4,18 @@ module Spree
     # for when the summary from a search is not enough to answer the question.
     class GetResource < Spree::AgentTool
       tool_name 'get_resource'
-      description 'Fetch one record in full by its id, e.g. prod_86Rf07xd4z or an order number.'
+      description 'Fetch one record in full by its id, e.g. prod_86Rf07xd4z or an order ' \
+                  'number. A record\'s associations are left out unless asked for: name them ' \
+                  'in expand to see a product\'s variants or an order\'s line items. ' \
+                  'describe_resource lists which ones a resource offers.'
       permission nil
 
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :id, description: 'The record id as shown in search results', required: true
+      param :expand, type: :array, items: :string,
+                     description: "Associations to include, e.g. [\"variants\"] on a product"
 
-      def call(resource:, id:)
+      def call(resource:, id:, expand: nil)
         entry = ResourceMap.find(resource)
         return unknown_resource(resource) if entry.nil?
         return { error: "You do not have permission to read #{entry.key}." } unless
@@ -19,7 +24,11 @@ module Spree
         path = entry.api_path(:show)
         return { error: "#{entry.key} cannot be fetched one at a time." } if path.blank? || path.include?('/:') && path.count(':') > 1
 
-        response = dispatch.call(method: :get, path: path.sub(':id', id.to_s))
+        requested, refusal = expansions(entry, expand)
+        return refusal if refusal
+
+        response = dispatch.call(method: :get, path: path.sub(':id', id.to_s),
+                                 params: requested.any? ? { expand: requested.join(',') } : {})
         return { error: not_found(entry, id, response) } unless response.success?
 
         attributes = sanitize(response.data, entry)
@@ -37,6 +46,21 @@ module Spree
           count: 1,
           total: 1
         }
+      end
+
+      # An association the serializer does not offer is named back rather than
+      # ignored, so a model that guessed learns the real list instead of
+      # reading a record that silently lacks what it asked for.
+      def expansions(entry, expand)
+        requested = Array(expand).map(&:to_s).reject(&:blank?)
+        return [[], nil] if requested.empty?
+
+        offered = entry.expandable_associations
+        unknown = requested - offered
+        return [requested, nil] if unknown.empty?
+
+        [nil, { error: "#{entry.key} cannot expand #{unknown.to_sentence}.",
+                expandable: offered }]
       end
 
       # Named, not identified: "Look up Rotary Shaver 9000" is what the

@@ -84,6 +84,9 @@ module Spree
         def body_keys_for(document, route)
           operation = document.dig('paths', openapi_path(route[:path]), route[:verb].downcase)
           schema = operation&.dig('requestBody', 'content', 'application/json', 'schema')
+          # Bodies are declared once and published as components, so the
+          # operation points at one rather than carrying its properties.
+          schema = Spree::Api::AgentWriteSchemas.resolve_schema(schema)
 
           (schema&.dig('properties') || {}).keys
         end
