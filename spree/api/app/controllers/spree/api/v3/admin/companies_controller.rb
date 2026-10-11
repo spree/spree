@@ -12,9 +12,9 @@ module Spree
         class CompaniesController < ResourceController
           scoped_resource :customers
 
-          request_params 'CompanyParams' do |body|
+          request_params :company do |body|
             body.external_references
-            body.attribute :name, :string, example: 'Globex Corporation', description: 'Required when creating.'
+            body.attribute :name, :string, required: true, on: :create, example: 'Globex Corporation'
             body.attribute :kind, :string,
               choices: Spree::Company::KINDS,
               example: 'company',

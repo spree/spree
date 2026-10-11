@@ -4,8 +4,8 @@ import type { CatalogAssignmentParams } from './CatalogAssignmentParams'
 import type { CatalogOrderMinimumParams } from './CatalogOrderMinimumParams'
 import type { CatalogPriceListParams } from './CatalogPriceListParams'
 
-export type CatalogParams = {
-  name?: string
+export type CatalogCreateParams = {
+  name: string
   /** Internal note on what the agreement is, never shown to shoppers. */
   description?: string | null
   active?: boolean

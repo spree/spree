@@ -1,6 +1,6 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
-export type DeliveryProfileParams = {
+export type DeliveryProfileUpdateParams = {
   name?: string
   /**
    * Registered profile kind (`shipping`, `digital`, extension kinds) from the kinds endpoint. Read

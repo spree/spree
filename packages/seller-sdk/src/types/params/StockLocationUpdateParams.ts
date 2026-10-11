@@ -2,7 +2,7 @@
 
 import type { CountryCode } from '../generated'
 
-export type StockLocationParams = {
+export type StockLocationUpdateParams = {
   name?: string
   admin_name?: string | null
   /** Set `false` to retire a location: there is no delete. */

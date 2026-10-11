@@ -17,7 +17,7 @@ import {
   toastManager,
 } from '@spree/dashboard-ui'
 import { PencilIcon, PlusIcon } from '@spree/dashboard-ui/icons'
-import type { StockLocationParams } from '@spree/seller-sdk'
+import type { StockLocationUpdateParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -67,7 +67,7 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
   const title = t('profile.returns_address')
 
   const save = useMutation({
-    mutationFn: (params: StockLocationParams) => {
+    mutationFn: (params: StockLocationUpdateParams) => {
       if (!location) throw new Error(t('common.error'))
       return sellerClient().stockLocations.update(location.id, params)
     },

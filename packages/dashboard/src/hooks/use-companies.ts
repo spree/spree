@@ -1,15 +1,18 @@
 import type {
   Address,
   Company,
-  CompanyAddressParams,
+  CompanyAddressCreateParams,
+  CompanyAddressUpdateParams,
+  CompanyCreateParams,
   CompanyInvitation,
   CompanyMembership,
   CompanyMembershipCreateParams,
-  CompanyParams,
+  CompanyUpdateParams,
   TaxExemptionCertificate,
-  TaxExemptionCertificateParams,
+  TaxExemptionCertificateCreateParams,
   TaxIdentifier,
-  TaxIdentifierParams,
+  TaxIdentifierCreateParams,
+  TaxIdentifierUpdateParams,
 } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -59,7 +62,7 @@ export function useCompanyChildren(parentId: string | undefined, page = 1, limit
 }
 
 export function useCreateCompany() {
-  return useResourceMutation<Company, Error, CompanyParams>({
+  return useResourceMutation<Company, Error, CompanyCreateParams>({
     mutationFn: (params) => adminClient.companies.create(params),
     invalidate: [['companies']],
     successMessage: i18n.t('admin.companies.messages.created'),
@@ -68,7 +71,7 @@ export function useCreateCompany() {
 }
 
 export function useUpdateCompany(id: string) {
-  return useResourceMutation<Company, Error, CompanyParams>({
+  return useResourceMutation<Company, Error, CompanyUpdateParams>({
     mutationFn: (params) => adminClient.companies.update(id, params),
     invalidate: [['companies'], ['companies', id]],
     successMessage: i18n.t('admin.companies.messages.updated'),
@@ -106,7 +109,7 @@ export function useCompanyAddresses(companyId: string | undefined, page = 1, lim
 
 /** Adds a labeled address to the node; the address row is owned by the entry. */
 export function useCreateCompanyAddress(companyId: string) {
-  return useResourceMutation<Address, Error, CompanyAddressParams>({
+  return useResourceMutation<Address, Error, CompanyAddressCreateParams>({
     mutationFn: (params) => adminClient.companies.addresses.create(companyId, params),
     invalidate: [['companies', companyId, 'addresses']],
     successMessage: i18n.t('admin.company_addresses.messages.created'),
@@ -116,7 +119,7 @@ export function useCreateCompanyAddress(companyId: string) {
 
 /** Edits an entry in place — the address row is updated, never replaced. */
 export function useUpdateCompanyAddress(companyId: string) {
-  return useResourceMutation<Address, Error, { id: string; params: CompanyAddressParams }>({
+  return useResourceMutation<Address, Error, { id: string; params: CompanyAddressUpdateParams }>({
     mutationFn: ({ id, params }) => adminClient.companies.addresses.update(companyId, id, params),
     invalidate: [['companies', companyId, 'addresses']],
     successMessage: i18n.t('admin.company_addresses.messages.updated'),
@@ -215,7 +218,7 @@ export function useCompanyTaxIdentifiers(companyId: string | undefined) {
 }
 
 export function useCreateCompanyTaxIdentifier(companyId: string) {
-  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierParams>({
+  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierCreateParams>({
     mutationFn: (params) => adminClient.companies.taxIdentifiers.create(companyId, params),
     invalidate: [['companies', companyId, 'tax-identifiers']],
     successMessage: i18n.t('admin.tax_identifiers.messages.created'),
@@ -228,7 +231,11 @@ export function useCreateCompanyTaxIdentifier(companyId: string) {
  * travels with the variables rather than being bound when the hook is created.
  */
 export function useUpdateCompanyTaxIdentifier(companyId: string) {
-  return useResourceMutation<TaxIdentifier, Error, { id: string; params: TaxIdentifierParams }>({
+  return useResourceMutation<
+    TaxIdentifier,
+    Error,
+    { id: string; params: TaxIdentifierUpdateParams }
+  >({
     mutationFn: ({ id, params }) =>
       adminClient.companies.taxIdentifiers.update(companyId, id, params),
     invalidate: [['companies', companyId, 'tax-identifiers']],
@@ -273,7 +280,7 @@ export function useTaxExemptionCertificates(companyId: string | undefined) {
 }
 
 export function useCreateTaxExemptionCertificate(companyId: string) {
-  return useResourceMutation<TaxExemptionCertificate, Error, TaxExemptionCertificateParams>({
+  return useResourceMutation<TaxExemptionCertificate, Error, TaxExemptionCertificateCreateParams>({
     mutationFn: (params) =>
       adminClient.companies.taxExemptionCertificates.create(companyId, params),
     invalidate: [['companies', companyId, 'tax-exemption-certificates']],

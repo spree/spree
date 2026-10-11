@@ -9,8 +9,8 @@ module Spree
           # rows alongside the basics; `DeliveryMethod#rules=` / `#services=`
           # reconcile to the desired set, so the dashboard saves the whole
           # sheet in one round-trip.
-          request_params 'DeliveryMethodParams' do |body|
-            body.attribute :name, :string, example: 'Express'
+          request_params :delivery_method do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Express'
             body.attribute :admin_name, :string, nullable: true
             body.attribute :code, :string, nullable: true
             body.attribute :fulfillment_provider, :string,

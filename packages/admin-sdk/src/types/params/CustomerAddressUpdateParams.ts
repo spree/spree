@@ -2,7 +2,7 @@
 
 import type { CountryCode } from '../generated'
 
-export type CustomerAddressParams = {
+export type CustomerAddressUpdateParams = {
   first_name?: string
   last_name?: string
   company?: string

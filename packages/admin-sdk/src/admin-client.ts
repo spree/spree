@@ -398,9 +398,10 @@ import type {
   ApiKeyUpdateParams,
   BulkTagsParams,
   CatalogAssignParams,
+  CatalogCreateParams,
   CatalogOrderMinimumParams,
-  CatalogParams,
   CatalogProductTermsParams,
+  CatalogUpdateParams,
   CategoryCreateParams,
   CategoryRepositionParams,
   CategoryUpdateParams,
@@ -418,10 +419,13 @@ import type {
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
   CommissionRuleType,
-  CompanyAddressParams,
+  CompanyAddressCreateParams,
+  CompanyAddressUpdateParams,
+  CompanyCreateParams,
   CompanyMembershipCreateParams,
-  CompanyParams,
-  CustomerAddressParams,
+  CompanyUpdateParams,
+  CustomerAddressCreateParams,
+  CustomerAddressUpdateParams,
   CustomerBulkGroupsParams,
   CustomerCreateParams,
   CustomerGroupCreateParams,
@@ -437,13 +441,16 @@ import type {
   CustomFieldUpdateParams,
   DeliveryCreateParams,
   DeliveryMarkDeliveredParams,
-  DeliveryMethodParams,
+  DeliveryMethodCreateParams,
   DeliveryMethodRuleCreateParams,
   DeliveryMethodRuleUpdateParams,
+  DeliveryMethodUpdateParams,
   DeliveryOriginGroupParams,
-  DeliveryProfileParams,
+  DeliveryProfileCreateParams,
+  DeliveryProfileUpdateParams,
   DeliveryUpdateParams,
-  DeliveryZoneParams,
+  DeliveryZoneCreateParams,
+  DeliveryZoneUpdateParams,
   DigitalAssetCreateParams,
   DigitalAssetProvider,
   DigitalAssetUpdateParams,
@@ -501,6 +508,7 @@ import type {
   PackageTypeUpdateParams,
   PasswordResetParams,
   PasswordResetRequestParams,
+  PaymentCaptureParams,
   PaymentCreateParams,
   PaymentMethodCreateParams,
   PaymentMethodType,
@@ -585,9 +593,12 @@ import type {
   SupplierUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
-  TaxExemptionCertificateParams,
-  TaxIdentifierParams,
-  TaxRateParams,
+  TaxExemptionCertificateCreateParams,
+  TaxExemptionCertificateUpdateParams,
+  TaxIdentifierCreateParams,
+  TaxIdentifierUpdateParams,
+  TaxRateCreateParams,
+  TaxRateUpdateParams,
   TrackingCarrierOption,
   VariantCreateParams,
   VariantUpdateParams,
@@ -2324,8 +2335,17 @@ export class AdminClient {
       ): Promise<Payment> =>
         this.request<Payment>('POST', `/orders/${orderId}/payments`, { ...options, body: params }),
 
-      capture: (orderId: string, id: string, options?: RequestOptions): Promise<Payment> =>
-        this.request<Payment>('PATCH', `/orders/${orderId}/payments/${id}/capture`, options),
+      /** Captures the payment: the full authorized amount, or `amount` for a partial capture. */
+      capture: (
+        orderId: string,
+        id: string,
+        params?: PaymentCaptureParams,
+        options?: RequestOptions,
+      ): Promise<Payment> =>
+        this.request<Payment>('PATCH', `/orders/${orderId}/payments/${id}/capture`, {
+          ...options,
+          body: params,
+        }),
 
       void: (orderId: string, id: string, options?: RequestOptions): Promise<Payment> =>
         this.request<Payment>('PATCH', `/orders/${orderId}/payments/${id}/void`, options),
@@ -2528,12 +2548,15 @@ export class AdminClient {
     get: (id: string, options?: RequestOptions): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('GET', `/delivery_methods/${id}`, options),
 
-    create: (params: DeliveryMethodParams, options?: RequestOptions): Promise<DeliveryMethod> =>
+    create: (
+      params: DeliveryMethodCreateParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('POST', '/delivery_methods', { ...options, body: params }),
 
     update: (
       id: string,
-      params: DeliveryMethodParams,
+      params: DeliveryMethodUpdateParams,
       options?: RequestOptions,
     ): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('PATCH', `/delivery_methods/${id}`, {
@@ -2653,7 +2676,10 @@ export class AdminClient {
     get: (id: string, options?: RequestOptions): Promise<DeliveryProfile> =>
       this.request<DeliveryProfile>('GET', `/delivery_profiles/${id}`, options),
 
-    create: (params: DeliveryProfileParams, options?: RequestOptions): Promise<DeliveryProfile> =>
+    create: (
+      params: DeliveryProfileCreateParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryProfile> =>
       this.request<DeliveryProfile>('POST', '/delivery_profiles', {
         ...options,
         body: params,
@@ -2662,7 +2688,7 @@ export class AdminClient {
     /** `stock_location_ids` replaces the profile's full location set. */
     update: (
       id: string,
-      params: DeliveryProfileParams,
+      params: DeliveryProfileUpdateParams,
       options?: RequestOptions,
     ): Promise<DeliveryProfile> =>
       this.request<DeliveryProfile>('PATCH', `/delivery_profiles/${id}`, {
@@ -2754,13 +2780,13 @@ export class AdminClient {
         params: getParams(params),
       }),
 
-    create: (params: DeliveryZoneParams, options?: RequestOptions): Promise<DeliveryZone> =>
+    create: (params: DeliveryZoneCreateParams, options?: RequestOptions): Promise<DeliveryZone> =>
       this.request<DeliveryZone>('POST', '/delivery_zones', { ...options, body: params }),
 
     /** `members` replaces the zone's full member set atomically. */
     update: (
       id: string,
-      params: DeliveryZoneParams,
+      params: DeliveryZoneUpdateParams,
       options?: RequestOptions,
     ): Promise<DeliveryZone> =>
       this.request<DeliveryZone>('PATCH', `/delivery_zones/${id}`, { ...options, body: params }),
@@ -3855,10 +3881,10 @@ export class AdminClient {
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<TaxRate> =>
       this.request<TaxRate>('GET', `/tax_rates/${id}`, { ...options, params: getParams(params) }),
 
-    create: (params: TaxRateParams, options?: RequestOptions): Promise<TaxRate> =>
+    create: (params: TaxRateCreateParams, options?: RequestOptions): Promise<TaxRate> =>
       this.request<TaxRate>('POST', '/tax_rates', { ...options, body: params }),
 
-    update: (id: string, params: TaxRateParams, options?: RequestOptions): Promise<TaxRate> =>
+    update: (id: string, params: TaxRateUpdateParams, options?: RequestOptions): Promise<TaxRate> =>
       this.request<TaxRate>('PATCH', `/tax_rates/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
@@ -3920,11 +3946,11 @@ export class AdminClient {
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('GET', `/companies/${id}`, { ...options, params: getParams(params) }),
 
-    create: (params: CompanyParams, options?: RequestOptions): Promise<Company> =>
+    create: (params: CompanyCreateParams, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('POST', '/companies', { ...options, body: params }),
 
     /** Re-parenting is an ordinary update — depth, cycle and store revalidate. */
-    update: (id: string, params: CompanyParams, options?: RequestOptions): Promise<Company> =>
+    update: (id: string, params: CompanyUpdateParams, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('PATCH', `/companies/${id}`, { ...options, body: params }),
 
     /** Destroys the node and its whole subtree. */
@@ -3944,7 +3970,7 @@ export class AdminClient {
 
       create: (
         companyId: string,
-        params: CompanyAddressParams,
+        params: CompanyAddressCreateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('POST', `/companies/${companyId}/addresses`, {
@@ -3959,7 +3985,7 @@ export class AdminClient {
       update: (
         companyId: string,
         id: string,
-        params: CompanyAddressParams,
+        params: CompanyAddressUpdateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {
@@ -4066,7 +4092,7 @@ export class AdminClient {
 
       create: (
         companyId: string,
-        params: TaxIdentifierParams,
+        params: TaxIdentifierCreateParams,
         options?: RequestOptions,
       ): Promise<TaxIdentifier> =>
         this.request<TaxIdentifier>('POST', `/companies/${companyId}/tax_identifiers`, {
@@ -4077,7 +4103,7 @@ export class AdminClient {
       update: (
         companyId: string,
         id: string,
-        params: TaxIdentifierParams,
+        params: TaxIdentifierUpdateParams,
         options?: RequestOptions,
       ): Promise<TaxIdentifier> =>
         this.request<TaxIdentifier>('PATCH', `/companies/${companyId}/tax_identifiers/${id}`, {
@@ -4140,7 +4166,7 @@ export class AdminClient {
 
       create: (
         companyId: string,
-        params: TaxExemptionCertificateParams,
+        params: TaxExemptionCertificateCreateParams,
         options?: RequestOptions,
       ): Promise<TaxExemptionCertificate> =>
         this.request<TaxExemptionCertificate>(
@@ -4152,7 +4178,7 @@ export class AdminClient {
       update: (
         companyId: string,
         id: string,
-        params: TaxExemptionCertificateParams,
+        params: TaxExemptionCertificateUpdateParams,
         options?: RequestOptions,
       ): Promise<TaxExemptionCertificate> =>
         this.request<TaxExemptionCertificate>(
@@ -4226,10 +4252,10 @@ export class AdminClient {
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Catalog> =>
       this.request<Catalog>('GET', `/catalogs/${id}`, { ...options, params: getParams(params) }),
 
-    create: (params: CatalogParams, options?: RequestOptions): Promise<Catalog> =>
+    create: (params: CatalogCreateParams, options?: RequestOptions): Promise<Catalog> =>
       this.request<Catalog>('POST', '/catalogs', { ...options, body: params }),
 
-    update: (id: string, params: CatalogParams, options?: RequestOptions): Promise<Catalog> =>
+    update: (id: string, params: CatalogUpdateParams, options?: RequestOptions): Promise<Catalog> =>
       this.request<Catalog>('PATCH', `/catalogs/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
@@ -4576,7 +4602,7 @@ export class AdminClient {
 
       create: (
         customerId: string,
-        params: CustomerAddressParams,
+        params: CustomerAddressCreateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('POST', `/customers/${customerId}/addresses`, {
@@ -4587,7 +4613,7 @@ export class AdminClient {
       update: (
         customerId: string,
         id: string,
-        params: CustomerAddressParams,
+        params: CustomerAddressUpdateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/customers/${customerId}/addresses/${id}`, {
@@ -4625,7 +4651,7 @@ export class AdminClient {
 
       create: (
         customerId: string,
-        params: TaxIdentifierParams,
+        params: TaxIdentifierCreateParams,
         options?: RequestOptions,
       ): Promise<TaxIdentifier> =>
         this.request<TaxIdentifier>('POST', `/customers/${customerId}/tax_identifiers`, {
@@ -4636,7 +4662,7 @@ export class AdminClient {
       update: (
         customerId: string,
         id: string,
-        params: TaxIdentifierParams,
+        params: TaxIdentifierUpdateParams,
         options?: RequestOptions,
       ): Promise<TaxIdentifier> =>
         this.request<TaxIdentifier>('PATCH', `/customers/${customerId}/tax_identifiers/${id}`, {

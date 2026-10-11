@@ -221,6 +221,38 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         end
       end
     end
+
+    post 'Add an address book entry' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Adds a labeled site to the node. Pass `default_billing: true` or `default_shipping: true` to make it the default of that kind.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      request_body_for
+
+      response '201', 'address book entry created' do
+        let!(:membership) { create(:company_membership, company: company, customer: user) }
+        let(:existing) { create(:company_address, owner: company, label: 'Headquarters') }
+        let(:company_id) { company.prefixed_id }
+        let(:body) do
+          {
+            label: 'Northern Warehouse', first_name: 'Ada', last_name: 'Lovelace',
+            address1: '350 Fifth Avenue', city: 'New York', postal_code: '10118',
+            country_code: existing.country.iso, state_code: existing.state.abbr, phone: '+12125551234',
+            default_shipping: true
+          }
+        end
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['label']).to eq('Northern Warehouse')
+        end
+      end
+    end
   end
 
   path '/api/v3/store/companies/{company_id}/addresses/{id}' do

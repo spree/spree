@@ -28,8 +28,8 @@ module Spree
           # their own warehouse, so every field on the shared form is theirs to
           # set. Anything missing here is dropped by `permit` without a word,
           # and the form would appear to save while quietly discarding it.
-          request_params 'StockLocationParams' do |body|
-            body.attribute :name, :string, example: 'Main warehouse'
+          request_params :stock_location do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Main warehouse'
             body.attribute :admin_name, :string, nullable: true
             body.attribute :active, :boolean, description: 'Set `false` to retire a location: there is no delete.'
             body.attribute :default, :boolean

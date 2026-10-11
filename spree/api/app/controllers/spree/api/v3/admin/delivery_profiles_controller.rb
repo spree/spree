@@ -9,8 +9,8 @@ module Spree
         class DeliveryProfilesController < ResourceController
           scoped_resource :settings
 
-          request_params 'DeliveryProfileParams' do |body|
-            body.attribute :name, :string, example: 'Oversized'
+          request_params :delivery_profile do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Oversized'
             body.attribute :kind, :string,
               example: 'shipping',
               description: 'Registered profile kind (`shipping`, `digital`, extension kinds) from the kinds endpoint. Read on create only; defaults to shipping.'

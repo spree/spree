@@ -6,8 +6,8 @@ module Spree
         class TaxIdentifierRequestSchema < Spree::Api::V3::RequestSchema
           attribute :kind, :string,
             example: 'gb_vat',
-            description: "#{Spree::Api::V3::TaxIdentifierRequestSchema::KIND_DESCRIPTION} Required when creating."
-          attribute :value, :string, example: 'GB123456789', description: 'Required when creating.'
+            description: "#{Spree::Api::V3::TaxIdentifierRequestSchema::KIND_DESCRIPTION}"
+          attribute :value, :string, example: 'GB123456789'
         end
       end
     end

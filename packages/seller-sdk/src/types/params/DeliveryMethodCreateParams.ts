@@ -2,8 +2,8 @@
 
 import type { DeliveryMethodRuleParams } from './DeliveryMethodRuleParams'
 
-export type DeliveryMethodParams = {
-  name?: string
+export type DeliveryMethodCreateParams = {
+  name: string
   admin_name?: string | null
   code?: string | null
   /** One of the marketplace's delivery profiles. */

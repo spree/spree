@@ -76,7 +76,8 @@ import type {
   ClaimDenyParams,
   ClaimResolveParams,
   DeliveryCreateParams,
-  DeliveryMethodParams,
+  DeliveryMethodCreateParams,
+  DeliveryMethodUpdateParams,
   DeliveryUpdateParams,
   ExchangeCancelParams,
   ExchangeCreateParams,
@@ -94,14 +95,16 @@ import type {
   OrderAddressCorrectionParams,
   OrderCancelParams,
   OrderNotesParams,
-  PackageTypeParams,
+  PackageTypeCreateParams,
+  PackageTypeUpdateParams,
   PasswordResetCreateParams,
   PasswordResetUpdateParams,
   PolicyCreateParams,
   PolicyUpdateParams,
   ProductBulkStatusParams,
   ProductBulkSubmitParams,
-  ProductParams,
+  ProductCreateParams,
+  ProductUpdateParams,
   ProfileUpdateParams,
   RequirementSubmissionParams,
   ReturnCancelParams,
@@ -109,9 +112,11 @@ import type {
   ReturnReceiveParams,
   ReturnRefundParams,
   SellerExportCreateParams,
-  SellerTaxIdentifierParams,
+  SellerTaxIdentifierCreateParams,
+  SellerTaxIdentifierUpdateParams,
   ShippingLabelCreateParams,
-  StockLocationParams,
+  StockLocationCreateParams,
+  StockLocationUpdateParams,
   TeamMemberCreateParams,
 } from './types/params'
 
@@ -263,12 +268,15 @@ export class SellerClient {
     list: (options?: RequestOptions): Promise<{ data: TaxIdentifier[] }> =>
       this.request<{ data: TaxIdentifier[] }>('GET', '/tax_identifiers', options),
 
-    create: (params: SellerTaxIdentifierParams, options?: RequestOptions): Promise<TaxIdentifier> =>
+    create: (
+      params: SellerTaxIdentifierCreateParams,
+      options?: RequestOptions,
+    ): Promise<TaxIdentifier> =>
       this.request<TaxIdentifier>('POST', '/tax_identifiers', { ...options, body: params }),
 
     update: (
       id: string,
-      params: SellerTaxIdentifierParams,
+      params: SellerTaxIdentifierUpdateParams,
       options?: RequestOptions,
     ): Promise<TaxIdentifier> =>
       this.request<TaxIdentifier>('PATCH', `/tax_identifiers/${id}`, {
@@ -422,10 +430,10 @@ export class SellerClient {
         params: expand ? { expand } : undefined,
       }),
 
-    create: (params: ProductParams, options?: RequestOptions): Promise<Product> =>
+    create: (params: ProductCreateParams, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('POST', '/products', { ...options, body: params }),
 
-    update: (id: string, params: ProductParams, options?: RequestOptions): Promise<Product> =>
+    update: (id: string, params: ProductUpdateParams, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('PATCH', `/products/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
@@ -1104,12 +1112,15 @@ export class SellerClient {
     get: (id: string, options?: RequestOptions): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('GET', `/delivery_methods/${id}`, options),
 
-    create: (params: DeliveryMethodParams, options?: RequestOptions): Promise<DeliveryMethod> =>
+    create: (
+      params: DeliveryMethodCreateParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('POST', '/delivery_methods', { ...options, body: params }),
 
     update: (
       id: string,
-      params: DeliveryMethodParams,
+      params: DeliveryMethodUpdateParams,
       options?: RequestOptions,
     ): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('PATCH', `/delivery_methods/${id}`, {
@@ -1156,12 +1167,12 @@ export class SellerClient {
     get: (id: string, options?: RequestOptions): Promise<StockLocation> =>
       this.request<StockLocation>('GET', `/stock_locations/${id}`, options),
 
-    create: (params: StockLocationParams, options?: RequestOptions): Promise<StockLocation> =>
+    create: (params: StockLocationCreateParams, options?: RequestOptions): Promise<StockLocation> =>
       this.request<StockLocation>('POST', '/stock_locations', { ...options, body: params }),
 
     update: (
       id: string,
-      params: StockLocationParams,
+      params: StockLocationUpdateParams,
       options?: RequestOptions,
     ): Promise<StockLocation> =>
       this.request<StockLocation>('PATCH', `/stock_locations/${id}`, {
@@ -1202,12 +1213,12 @@ export class SellerClient {
     get: (id: string, options?: RequestOptions): Promise<PackageType> =>
       this.request<PackageType>('GET', `/package_types/${id}`, options),
 
-    create: (params: PackageTypeParams, options?: RequestOptions): Promise<PackageType> =>
+    create: (params: PackageTypeCreateParams, options?: RequestOptions): Promise<PackageType> =>
       this.request<PackageType>('POST', '/package_types', { ...options, body: params }),
 
     update: (
       id: string,
-      params: PackageTypeParams,
+      params: PackageTypeUpdateParams,
       options?: RequestOptions,
     ): Promise<PackageType> =>
       this.request<PackageType>('PATCH', `/package_types/${id}`, {

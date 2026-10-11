@@ -1,4 +1,4 @@
-import type { CatalogParams, CurrencyCode, PriceList } from '@spree/admin-sdk'
+import type { CatalogCreateParams, CurrencyCode, PriceList } from '@spree/admin-sdk'
 import { compareMoney, negateMoney } from '@spree/admin-sdk'
 import {
   blankToNull,
@@ -268,7 +268,7 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
 export function catalogValuesToParams(
   values: CatalogFormValues,
   loaded?: CatalogPricingValues,
-): CatalogParams {
+): CatalogCreateParams {
   return {
     name: values.name,
     description: blankToNull(values.description),

@@ -2,11 +2,10 @@
 
 import type { CountryCode } from '../generated'
 
-export type TaxExemptionCertificateParams = {
-  /** Required when creating. */
-  certificate_number?: string
-  /** Becomes the tax provider's entity use code. Required when creating. */
-  reason_code?: string
+export type TaxExemptionCertificateCreateParams = {
+  certificate_number: string
+  /** Becomes the tax provider's entity use code. */
+  reason_code: string
   issuing_authority?: string | null
   issued_at?: string | null
   expires_at?: string | null

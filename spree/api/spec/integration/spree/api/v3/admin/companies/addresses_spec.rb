@@ -70,4 +70,37 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
       end
     end
   end
+
+  path '/api/v3/admin/companies/{company_id}/addresses/{id}' do
+    let(:company_id) { company.prefixed_id }
+    let(:id) { address.prefixed_id }
+
+    patch 'Update a company address' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Changes an address of the business. Pass `default_billing` or `default_shipping` to move that default to it, or `false` to give it up.'
+      admin_scope :write, :customers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :company_id, in: :path, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true
+      request_body_for
+
+      response '200', 'address updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { label: 'Northern Warehouse', default_billing: true } }
+
+        schema '$ref' => '#/components/schemas/Address'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['label']).to eq('Northern Warehouse')
+          expect(company.reload.default_billing_address&.prefixed_id).to eq(data['id'])
+        end
+      end
+    end
+  end
 end

@@ -21,8 +21,8 @@ module Spree
                         only: [:show, :update, :destroy, :assign, :import_products,
                                :activate, :deactivate]
 
-          request_params 'CatalogParams' do |body|
-            body.attribute :name, :string, example: 'VIP Assortment'
+          request_params :catalog do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'VIP Assortment'
             body.attribute :description, :string,
               nullable: true,
               description: 'Internal note on what the agreement is, never shown to shoppers.'

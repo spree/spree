@@ -2,7 +2,8 @@ import type {
   Catalog,
   CatalogAssignment,
   CatalogAssignParams,
-  CatalogParams,
+  CatalogCreateParams,
+  CatalogUpdateParams,
 } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -25,7 +26,7 @@ export function useCatalog(id: string | undefined) {
 }
 
 export function useCreateCatalog() {
-  return useResourceMutation<Catalog, Error, CatalogParams>({
+  return useResourceMutation<Catalog, Error, CatalogCreateParams>({
     mutationFn: (params) => adminClient.catalogs.create(params),
     invalidate: [['catalogs']],
     successMessage: i18n.t('admin.catalogs.messages.created'),
@@ -34,7 +35,7 @@ export function useCreateCatalog() {
 }
 
 export function useUpdateCatalog(id: string) {
-  return useResourceMutation<Catalog, Error, CatalogParams>({
+  return useResourceMutation<Catalog, Error, CatalogUpdateParams>({
     mutationFn: (params) => adminClient.catalogs.update(id, params),
     invalidate: [['catalogs'], ['catalogs', id]],
     successMessage: i18n.t('admin.catalogs.messages.updated'),
@@ -113,7 +114,7 @@ export function listCatalogProductsPage(catalogId: string, page: number, limit =
 
 export interface CatalogSavePayload {
   /** Settings PATCH body; omitted when the form is clean. */
-  attributes?: CatalogParams
+  attributes?: CatalogCreateParams
   /** Staged assortment additions, flushed on Save. */
   addProductIds?: string[]
   /** Staged assortment removals, flushed on Save. */

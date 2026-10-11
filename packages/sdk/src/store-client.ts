@@ -11,7 +11,8 @@ import type {
   AddCompanyMemberParams,
   AddLineItemParams,
   Address,
-  AddressParams,
+  AddressCreateParams,
+  AddressUpdateParams,
   AuthTokens,
   Cart,
   Category,
@@ -23,7 +24,8 @@ import type {
   Collection,
   CollectionListParams,
   Company,
-  CompanyAddressParams,
+  CompanyAddressCreateParams,
+  CompanyAddressUpdateParams,
   CompanyInvitation,
   CompanyInvitationFilters,
   CompanyInvitationSort,
@@ -1007,7 +1009,7 @@ export class StoreClient {
       /**
        * Create an address
        */
-      create: (params: AddressParams, options?: RequestOptions): Promise<Address> =>
+      create: (params: AddressCreateParams, options?: RequestOptions): Promise<Address> =>
         this.request<Address>('POST', '/customers/me/addresses', {
           ...options,
           body: params,
@@ -1016,7 +1018,11 @@ export class StoreClient {
       /**
        * Update an address
        */
-      update: (id: string, params: AddressParams, options?: RequestOptions): Promise<Address> =>
+      update: (
+        id: string,
+        params: AddressUpdateParams,
+        options?: RequestOptions,
+      ): Promise<Address> =>
         this.request<Address>('PATCH', `/customers/me/addresses/${id}`, {
           ...options,
           body: params,
@@ -1274,7 +1280,7 @@ export class StoreClient {
 
       create: (
         companyId: string,
-        params: CompanyAddressParams,
+        params: CompanyAddressCreateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('POST', `/companies/${companyId}/addresses`, {
@@ -1285,7 +1291,7 @@ export class StoreClient {
       update: (
         companyId: string,
         id: string,
-        params: CompanyAddressParams,
+        params: CompanyAddressUpdateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {
