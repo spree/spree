@@ -148,4 +148,49 @@ RSpec.describe 'agent workflow tool arguments' do
       expect(store.purchase_orders.last.created_by).to eq(admin)
     end
   end
+  # A workflow with an endpoint runs through it: the controller's routing,
+  # authentication, authorization and serializer, rather than a second copy
+  # of each beside them.
+  describe 'running through the endpoint' do
+    it 'dispatches every workflow that has one' do
+      in_process = Spree::AgentTools::DefaultCatalog::WORKFLOWS.reject do |key, _options|
+        Spree::AgentTools::WorkflowEndpoints.find(key)
+      end
+
+      # Only the product status moves, which the Admin API does not expose:
+      # `PATCH` writes the column and the bulk action uses `update_all`, so
+      # neither publishes the event nor withdraws an open submission.
+      expect(in_process.keys).to contain_exactly(
+        :product_activate_workflow, :product_draft_workflow, :product_archive_workflow
+      )
+    end
+
+    it 'fills a parent segment from the record the caller named' do
+      order = create(:order_with_line_items, store: store)
+      payment = create(:payment, order: order, amount: 10)
+
+      result = tool('payments_void').call(payment: payment.prefixed_id)
+
+      expect(result[:error]).to be_nil
+      expect(payment.reload.status).to eq('void')
+    end
+
+    it 'sends a keyword under the name the endpoint documents' do
+      order = create(:order_ready_to_ship, store: store)
+
+      result = tool('orders_cancel').call(order: order.prefixed_id, cancel_note: 'Duplicate order')
+
+      expect(result[:error]).to be_nil
+      expect(order.reload.status).to eq('canceled')
+    end
+
+    it 'does not reach a record in another store' do
+      theirs = create(:order_ready_to_ship, store: create(:store, code: "other-#{SecureRandom.hex(4)}"))
+
+      result = tool('orders_cancel').call(order: theirs.prefixed_id)
+
+      expect(result[:error]).to be_present
+      expect(theirs.reload.status).not_to eq('canceled')
+    end
+  end
 end
