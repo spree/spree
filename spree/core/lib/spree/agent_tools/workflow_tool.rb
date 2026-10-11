@@ -169,6 +169,11 @@ module Spree
         resolved = resolve_arguments(arguments)
         return resolved if resolved.is_a?(Hash) && resolved[:error]
 
+        # The endpoint runs this workflow behind its own routing,
+        # authentication, authorization and serializer, so when there is one
+        # the request goes through it rather than beside it.
+        return dispatch(resolved) if endpoint
+
         refusal = unauthorized_create || unauthorized_record(resolved)
         return refusal if refusal
 
@@ -177,6 +182,13 @@ module Spree
         run(keywords, subject: subject_record(resolved))
       rescue ArgumentError => e
         { error: e.message }
+      end
+
+      # @return [Spree::AgentTools::WorkflowEndpoints::Entry, nil]
+      def endpoint
+        return @endpoint if defined?(@endpoint)
+
+        @endpoint = WorkflowEndpoints.find(self.class.dependency_key)
       end
 
       # One line saying what this tool did, for the client's confirmation
@@ -193,6 +205,94 @@ module Spree
       end
 
       private
+
+      # Runs the workflow by calling the operation that runs it.
+      #
+      # The path's `:id` is the record the write is about; a parent segment
+      # (`:order_id` on a payment) is read from that record rather than asked
+      # for, since the caller named the payment and the order follows from it.
+      # Everything else travels in the body under the name the endpoint
+      # documents, which is not always the workflow's keyword — a
+      # cancellation's `note:` is `cancel_note` on the wire.
+      def dispatch(resolved)
+        subject = subject_record(resolved)
+        path, missing = endpoint_path(subject, resolved)
+        return { error: missing } if missing
+
+        response = ApiDispatch.new(context).call(
+          method: endpoint.verb.downcase.to_sym, path: path, body: dispatch_body(resolved)
+        )
+        return { error: response.error_message } unless response.success?
+
+        { summary: summary(resolved, subject: subject),
+          record: payload_summary(response.data) }.compact
+      end
+
+      def endpoint_path(subject, resolved)
+        values = {}
+
+        endpoint.path_params.each do |segment|
+          record = segment == 'id' ? subject : parent_for(segment, subject, resolved)
+          return [nil, "This tool needs a #{segment.sub(/_id\z/, '').humanize.downcase} it was not given."] if
+            record.nil?
+
+          values[segment] = record.prefixed_id
+        end
+
+        [endpoint.path_for(values), nil]
+      end
+
+      # A parent segment names an association: `:order_id` on a payment is
+      # `payment.order`. A record the caller named for that association is
+      # preferred, so a split payment is refunded against the order the
+      # caller meant.
+      def parent_for(segment, subject, resolved)
+        name = segment.sub(/_id\z/, '')
+        named = resolved[name.to_sym]
+        return named if named.is_a?(ActiveRecord::Base)
+
+        subject.try(name)
+      end
+
+      # What the operation accepts, under its own names. A record resolved for
+      # a path segment is already in the path; anything else the endpoint does
+      # not document is left out rather than sent and ignored.
+      def dispatch_body(resolved)
+        accepted = endpoint.body_keys
+        return {} if accepted.empty?
+
+        resolved.each_with_object({}) do |(name, value), body|
+          key = body_key_for(name, accepted)
+          next if key.nil?
+
+          body[key] = value.is_a?(ActiveRecord::Base) ? value.prefixed_id : value
+        end
+      end
+
+      # The endpoint's name for a workflow keyword. Exact first, then the
+      # `_id` form a record takes on the wire, then a prefixed spelling —
+      # `note:` is `cancel_note` where the resource is what the prefix names.
+      def body_key_for(name, accepted)
+        candidates = [name.to_s, "#{name}_id", "#{subject_prefix}_#{name}", "#{subject_prefix}_#{name}_id"]
+
+        candidates.find { |candidate| accepted.include?(candidate) }
+      end
+
+      def subject_prefix
+        @subject_prefix ||= workflow_class.workflow_key.split('.').first.to_s.singularize
+      end
+
+      # A record as the endpoint returned it, summarised the way a record read
+      # from the map would be.
+      def payload_summary(data)
+        return unless data.is_a?(Hash)
+
+        entry = ResourceMap.all.find { |candidate| candidate.key == data['object'] } ||
+                subject_entry
+        return { id: data['id'] } if entry.nil?
+
+        RecordSummary.from_payload(entry: entry, payload: data)
+      end
 
       # Holding `write_orders` says an admin may change orders; it does not say
       # they may change *this* one. A host app narrows that with a

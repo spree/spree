@@ -54,10 +54,19 @@ module Spree
       # Workflow key => permission, or => {permission:, except:, summary:}.
       WORKFLOWS = {
         # Catalog
+        #
+        # The three status moves below run in this process rather than through
+        # an endpoint, because the Admin API has none for them: `PATCH` writes
+        # the column and the bulk action uses `update_all`, so neither
+        # publishes the status event nor withdraws an open seller submission.
+        # They dispatch as soon as an admin status endpoint exists.
         product_activate_workflow: 'write_products',
         product_draft_workflow: 'write_products',
         product_archive_workflow: 'write_products',
-        product_approve_workflow: 'write_products',
+        # `note` and `auto` belong to the workflow, not to the endpoint: the
+        # review action passes neither, so offering them would describe a
+        # capability no caller has.
+        product_approve_workflow: { permission: 'write_products', except: %i[note auto] },
         product_reject_workflow: 'write_products',
         variant_create_workflow: 'write_products',
         variant_update_workflow: 'write_products',
