@@ -202,6 +202,26 @@ describe('discoverDashboardPluginManifests', () => {
 
     expect(manifest.routesDir).toBe(path.join(store, 'src/routes'))
   })
+
+  it('reports the directories of pages outside a store', () => {
+    const store = installThroughPnpmLink(fixture.root, '@acme/plugin', {
+      main: 'src/index.ts',
+      spree: {
+        dashboard: {
+          plugin: true,
+          authenticatedRoutes: './src/account-routes',
+          publicRoutes: './src/public-routes',
+        },
+      },
+    })
+    fixture.writeHost({ '@acme/plugin': '1.0.0' })
+
+    const [manifest] = discoverDashboardPluginManifests({ root: fixture.root })
+
+    expect(manifest.routesDir).toBeUndefined()
+    expect(manifest.authenticatedRoutesDir).toBe(path.join(store, 'src/account-routes'))
+    expect(manifest.publicRoutesDir).toBe(path.join(store, 'src/public-routes'))
+  })
 })
 
 describe('resolveShellRoutesDir', () => {

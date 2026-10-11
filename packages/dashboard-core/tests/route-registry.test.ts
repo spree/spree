@@ -1,5 +1,11 @@
-import { describe, expect, it } from 'vitest'
-import { matchPluginRoute, type RouteEntry } from '../src/lib/route-registry'
+import { afterEach, describe, expect, it } from 'vitest'
+import {
+  __resetPluginRoutes,
+  getPluginRoutes,
+  matchPluginRoute,
+  pluginRoutes,
+  type RouteEntry,
+} from '../src/lib/route-registry'
 
 function entry(key: string, path: string): RouteEntry {
   return { key, path, component: () => null }
@@ -27,8 +33,32 @@ describe('matchPluginRoute', () => {
     expect(matchPluginRoute('brands/br_123', routes)?.entry.key).toBe('brand-detail')
   })
 
+  it('ignores routes mounted outside a store', () => {
+    const routes: RouteEntry[] = [
+      { key: 'sign-up', scope: 'public', path: '/sign-up', component: () => null },
+      { key: 'account', scope: 'authenticated', path: '/account', component: () => null },
+    ]
+    expect(matchPluginRoute('sign-up', routes)).toBeNull()
+    expect(matchPluginRoute('account', routes)).toBeNull()
+  })
+
   it('returns null when nothing matches', () => {
     expect(matchPluginRoute('unknown', [entry('brands', '/brands')])).toBeNull()
     expect(matchPluginRoute('', [entry('brands', '/brands')])).toBeNull()
+  })
+})
+
+describe('pluginRoutes.add', () => {
+  afterEach(() => __resetPluginRoutes())
+
+  it('registers routes of every scope', () => {
+    pluginRoutes.add(entry('brands', '/brands'))
+    pluginRoutes.add({ key: 'sign-up', scope: 'public', path: '/sign-up', component: () => null })
+    expect(getPluginRoutes().map((route) => route.key)).toEqual(['brands', 'sign-up'])
+  })
+
+  it('rejects an unknown scope', () => {
+    const route = { key: 'odd', scope: 'global', path: '/odd', component: () => null }
+    expect(() => pluginRoutes.add(route as unknown as RouteEntry)).toThrow(/scope must be one of/)
   })
 })

@@ -39,6 +39,17 @@ export interface DashboardPluginManifest {
    * Compiled into the host's route tree by `@spree/dashboard/vite`.
    */
   routesDir?: string
+  /**
+   * Absolute path to the plugin's directory of signed-in pages outside any
+   * store (`"authenticatedRoutes"` in the marker), mounted at the root inside
+   * the dashboard's auth guard.
+   */
+  authenticatedRoutesDir?: string
+  /**
+   * Absolute path to the plugin's directory of public pages
+   * (`"publicRoutes"` in the marker), mounted at the root with no sign-in.
+   */
+  publicRoutesDir?: string
 }
 
 /**
@@ -68,10 +79,14 @@ export function discoverDashboardPluginManifests(
       manifests.push({ name })
       continue
     }
-    const routes = pkg.spree?.dashboard?.routes
+    const marker = pkg.spree?.dashboard
+    const resolveDir = (dir?: string) =>
+      dir ? path.resolve(path.dirname(manifestPath), dir) : undefined
     manifests.push({
       name,
-      routesDir: routes ? path.resolve(path.dirname(manifestPath), routes) : undefined,
+      routesDir: resolveDir(marker?.routes),
+      authenticatedRoutesDir: resolveDir(marker?.authenticatedRoutes),
+      publicRoutesDir: resolveDir(marker?.publicRoutes),
     })
   }
   return manifests
@@ -156,6 +171,8 @@ interface PluginManifest {
     dashboard?: {
       plugin?: boolean
       routes?: string
+      authenticatedRoutes?: string
+      publicRoutes?: string
     }
   }
 }

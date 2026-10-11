@@ -56,9 +56,13 @@ export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}):
  * The TanStack Router generator, configured with a virtual route config that
  * mirrors the shell's top-level layout skeleton and physically mounts:
  *
- *   - the shell's `_authenticated/$storeId` pages, and
- *   - each plugin's declared routes directory (the `spree.dashboard.routes`
- *     marker), under the same authenticated store scope.
+ *   - the shell's `_authenticated/$storeId` pages,
+ *   - each plugin's store pages (the `spree.dashboard.routes` marker), under
+ *     the same authenticated store scope,
+ *   - each plugin's signed-in pages outside a store
+ *     (`spree.dashboard.authenticatedRoutes`), inside the `_authenticated`
+ *     layout, and
+ *   - each plugin's public pages (`spree.dashboard.publicRoutes`), at the root.
  *
  * The skeleton names the shell's top-level route files explicitly; when the
  * shell grows a new top-level route it must be added here. The shell's own
@@ -72,24 +76,32 @@ function dashboardRouterPlugin(hostRoot: string, options: SpreeDashboardPluginOp
     { root: hostRoot, onWarn: (msg) => console.warn(`[@spree/dashboard/vite] ${msg}`) },
     options.plugins,
   )
-  const routedPlugins = manifests.filter((m): m is typeof m & { routesDir: string } =>
-    Boolean(m.routesDir),
-  )
+  const routeDirs = (key: 'routesDir' | 'authenticatedRoutesDir' | 'publicRoutesDir') =>
+    manifests.flatMap((m): RouteSource[] => {
+      const routesDir = m[key]
+      return routesDir ? [{ label: m.name, routesDir }] : []
+    })
+  const storeSources = routeDirs('routesDir')
+  const authenticatedSources = routeDirs('authenticatedRoutesDir')
+  const publicSources = routeDirs('publicRoutesDir')
 
   // Pre-flight: fail on route-path collisions with an error naming the
   // offending packages (the shell counts as `@spree/dashboard`), before the
   // generator's file-path-only error would fire.
   const sources: RouteSource[] = [
     { label: '@spree/dashboard', routesDir: shellRoutesDir },
-    ...routedPlugins.map((m) => ({ label: m.name, routesDir: m.routesDir })),
+    ...storeSources,
+    ...authenticatedSources,
+    ...publicSources,
   ]
   assertNoRouteCollisions(sources)
 
   // POSIX-normalize: the generator expects forward slashes; path.relative
   // emits backslashes on Windows.
-  const pluginMounts = routedPlugins.map((m) =>
-    physical('', path.relative(shellRoutesDir, m.routesDir).split(path.sep).join('/')),
-  )
+  const mount = (list: RouteSource[]) =>
+    list.map((source) =>
+      physical('', path.relative(shellRoutesDir, source.routesDir).split(path.sep).join('/')),
+    )
 
   const virtualRouteConfig = rootRoute('__root.tsx', [
     route('/login', 'login.tsx'),
@@ -97,11 +109,13 @@ function dashboardRouterPlugin(hostRoot: string, options: SpreeDashboardPluginOp
     route('/forgot-password', 'forgot-password.tsx'),
     route('/reset-password', 'reset-password.tsx'),
     route('/accept-invitation/$invitationId', 'accept-invitation.$invitationId.tsx'),
+    ...mount(publicSources),
     layout('_authenticated.tsx', [
       index('_authenticated/index.tsx'),
+      ...mount(authenticatedSources),
       route('/$storeId', '_authenticated/$storeId.tsx', [
         physical('', '_authenticated/$storeId'),
-        ...pluginMounts,
+        ...mount(storeSources),
       ]),
     ]),
   ])
