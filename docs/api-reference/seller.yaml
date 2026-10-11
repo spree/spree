@@ -21330,8 +21330,10 @@ components:
         state_abbr:
           type: string
           nullable: true
+          deprecated: true
         country_iso:
           type: string
+          deprecated: true
         state_name:
           type: string
           nullable: true
@@ -22353,9 +22355,11 @@ components:
         owner_type:
           type: string
           nullable: true
+          deprecated: true
         owner_id:
           type: string
           nullable: true
+          deprecated: true
         user_id:
           type: string
           nullable: true

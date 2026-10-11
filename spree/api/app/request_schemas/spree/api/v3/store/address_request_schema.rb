@@ -9,8 +9,8 @@ module Spree
           string :country_code, example: 'US', description: 'ISO 3166-1 alpha-2 country code, such as `US` or `DE`.'
           string :state_code, example: 'NY', description: 'ISO 3166-2 subdivision code without the country prefix, such as `CA` or `NY`.'
           string :state_name, description: 'The state name, for countries without predefined states.'
-          string :country_iso, description: 'Deprecated: use `country_code`. Accepted until 6.1.'
-          string :state_abbr, description: 'Deprecated: use `state_code`. Accepted until 6.1.'
+          string :country_iso, deprecated: 'Use `country_code`. Removed in 6.1.'
+          string :state_abbr, deprecated: 'Use `state_code`. Removed in 6.1.'
         end
       end
     end

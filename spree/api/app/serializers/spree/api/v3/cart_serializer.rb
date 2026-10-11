@@ -4,7 +4,7 @@ module Spree
       # Store API Cart Serializer
       # Pre-purchase cart data with checkout progression info
       class CartSerializer < BaseSerializer
-        typelize number: :string, current_step: :string, completed_steps: 'string[]', token: :string,
+        typelize number: [:string, deprecated: 'Use `id`; a cart has no order number. Removed in 6.1.'], current_step: :string, completed_steps: 'string[]', token: :string,
                  email: [:string, nullable: true], customer_note: [:string, nullable: true],
                  market_id: [:string, nullable: true], channel_id: [:string, nullable: true], currency: :string,
                  locale: [:string, nullable: true], total_quantity: :number, coupon_code: [:string, nullable: true],

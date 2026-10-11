@@ -24,6 +24,8 @@ module Spree
       # the permit list. `format:` documents a string's format (`email`, `uri`).
       # `open: true` marks an `enum:` list extensions may extend (statuses,
       # fee kinds), matching how the serializers publish the same field.
+      # `deprecated: 'Use country_code. Removed in 6.1.'` keeps a field
+      # working while the API reference and the SDK types flag it.
       class RequestSchema
         KINDS = {
           string: { type: :string },
@@ -47,10 +49,13 @@ module Spree
 
         class Field
           attr_reader :name, :kind, :array, :required, :nullable, :description, :example, :enum, :open, :only, :schema,
-                      :permit, :format
+                      :permit, :format, :deprecated
 
           def initialize(name, kind, array: false, required: false, nullable: false, description: nil,
-                         example: nil, enum: nil, open: false, only: nil, schema: nil, permit: true, format: nil)
+                         example: nil, enum: nil, open: false, only: nil, schema: nil, permit: true, format: nil,
+                         deprecated: nil)
+            raise ArgumentError, "deprecated: says what to use instead (#{name})" if deprecated == true
+
             raise ArgumentError, "open: needs an enum: list of the built-in values (#{name})" if open && enum.nil?
 
             unless required.in?([true, false, :create])
@@ -71,6 +76,7 @@ module Spree
             @schema = schema
             @permit = permit
             @format = format
+            @deprecated = deprecated
           end
 
           # @param action [Symbol, nil]
@@ -281,8 +287,9 @@ module Spree
 
         def property_schema(field)
           item = item_schema(field)
-          description = [field.description, (OPEN_LIST_NOTE if field.open)].compact.join(' ').presence
+          description = [field.description, (OPEN_LIST_NOTE if field.open), deprecation_note(field)].compact.join(' ').presence
           documentation = { description: description, example: field.example }.compact
+          documentation[:deprecated] = true if field.deprecated
 
           if field.array
             schema = { type: :array, items: item }.merge(documentation)
@@ -299,6 +306,10 @@ module Spree
           item = item.merge(documentation)
           item[:nullable] = true if field.nullable
           item
+        end
+
+        def deprecation_note(field)
+          "Deprecated: #{field.deprecated}" if field.deprecated
         end
 
         def item_schema(field)

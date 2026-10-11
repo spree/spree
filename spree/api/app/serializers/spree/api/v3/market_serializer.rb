@@ -6,7 +6,7 @@ module Spree
                  default_locale: :string,
                  supported_locales: [:string, multi: true],
                  country_codes: [:string, multi: true],
-                 country_isos: [:string, multi: true],
+                 country_isos: [:string, multi: true, deprecated: 'Use `country_codes`. Removed in 6.1.'],
                  tax_inclusive: :boolean,
                  default: :boolean
 

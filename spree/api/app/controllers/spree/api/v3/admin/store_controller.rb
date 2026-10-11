@@ -27,7 +27,7 @@ module Spree
             string :capture_method, enum: Spree::CaptureMethod::CAPTURE_METHODS,
                                     description: "The store-wide default for when a customer is charged rather than only authorized. A payment method's own setting wins when set."
             boolean :preferred_auto_capture, :preferred_auto_capture_on_dispatch,
-                    description: 'Deprecated: use `capture_method`. Removed in 6.1.'
+                    deprecated: 'Use `capture_method`. Removed in 6.1.'
             boolean :track_inventory_levels,
                     description: 'Counts on-hand quantities. Off means everything is treated as always available.'
             boolean :stock_reservations_enabled,

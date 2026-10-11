@@ -17,7 +17,7 @@ module Spree
             string :description, nullable: true
             boolean :active
             boolean :storefront_visible, description: 'False keeps the method to the dashboard; true also offers it on the storefront.'
-            boolean :auto_capture, nullable: true, description: 'Deprecated: use `capture_method`. Removed in 6.1.'
+            boolean :auto_capture, nullable: true, deprecated: 'Use `capture_method`. Removed in 6.1.'
             string :capture_method, nullable: true, enum: Spree::CaptureMethod::CAPTURE_METHODS,
                                     description: 'When customers are charged for this method. Null inherits the store setting.'
             integer :position

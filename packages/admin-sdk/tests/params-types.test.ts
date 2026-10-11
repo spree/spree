@@ -21,6 +21,11 @@ describe('renderParamsTypes', () => {
             status: { type: 'string', enum: ['draft', "it's"] },
             weight: { type: 'number', nullable: true },
             kind: { anyOf: [{ type: 'string', enum: ['tax', 'duty'] }, { type: 'string' }] },
+            country_iso: {
+              type: 'string',
+              deprecated: true,
+              description: 'The old name. Deprecated: Use country_code.',
+            },
             tags: { type: 'array', items: { type: 'string' } },
             metadata: { type: 'object', additionalProperties: true },
             value: {},
@@ -62,6 +67,9 @@ describe('renderParamsTypes', () => {
     expect(source).toContain("  status?: 'draft' | 'it\\'s'\n")
     expect(source).toContain('  weight?: number | null\n')
     expect(source).toContain("  kind?: 'tax' | 'duty' | (string & {})\n")
+    expect(source).toContain(
+      '  /**\n   * The old name.\n   * @deprecated Use country_code.\n   */\n  country_iso?: string\n',
+    )
     expect(source).toContain('  tags?: string[]\n')
     expect(source).toContain('  metadata?: Record<string, unknown>\n')
     expect(source).toContain('  value?: unknown\n')

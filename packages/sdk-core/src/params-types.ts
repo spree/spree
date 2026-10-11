@@ -11,6 +11,7 @@ export interface ParamsSchema {
   format?: string
   enum?: string[]
   nullable?: boolean
+  deprecated?: boolean
   description?: string
   properties?: Record<string, ParamsSchema>
   required?: string[]
@@ -74,6 +75,15 @@ function docComment(description: string | undefined, indent: string): string[] {
   ]
 }
 
+// The reference says why a field is deprecated at the end of its description
+// (`Deprecated: Use country_code.`); TypeScript wants that in the tag, which
+// editors show and strike the field through for.
+function propertyDoc(property: ParamsSchema): string | undefined {
+  if (!property.deprecated) return property.description
+  const [text, note] = (property.description ?? '').split(/\s*Deprecated: /)
+  return [text, `@deprecated ${note ?? ''}`.trimEnd()].filter(Boolean).join('\n')
+}
+
 const literal = (value: string) => `'${value.replaceAll('\\', '\\\\').replaceAll("'", "\\'")}'`
 
 function valueType(schema: ParamsSchema, indent: string): string {
@@ -110,7 +120,7 @@ function objectType(schema: ParamsSchema, indent: string): string {
   const required = new Set(schema.required ?? [])
   const lines = ['{']
   for (const [key, property] of Object.entries(schema.properties ?? {})) {
-    lines.push(...docComment(property.description, inner))
+    lines.push(...docComment(propertyDoc(property), inner))
     lines.push(
       `${inner}${quoteKey(key)}${required.has(key) ? '' : '?'}: ${valueType(property, inner)}`,
     )

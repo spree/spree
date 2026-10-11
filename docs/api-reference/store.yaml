@@ -13448,8 +13448,10 @@ components:
         state_abbr:
           type: string
           nullable: true
+          deprecated: true
         country_iso:
           type: string
+          deprecated: true
         state_name:
           type: string
           nullable: true
@@ -13544,6 +13546,7 @@ components:
           nullable: true
         number:
           type: string
+          deprecated: true
         token:
           type: string
         email:
@@ -15305,9 +15308,11 @@ components:
         owner_type:
           type: string
           nullable: true
+          deprecated: true
         owner_id:
           type: string
           nullable: true
+          deprecated: true
         user_id:
           type: string
           nullable: true
@@ -15556,6 +15561,7 @@ components:
           type: array
           items:
             type: string
+          deprecated: true
         supported_locales:
           type: array
           items:
@@ -17768,10 +17774,12 @@ components:
           description: The state name, for countries without predefined states.
         country_iso:
           type: string
-          description: 'Deprecated: use `country_code`. Accepted until 6.1.'
+          description: 'Deprecated: Use `country_code`. Removed in 6.1.'
+          deprecated: true
         state_abbr:
           type: string
-          description: 'Deprecated: use `state_code`. Accepted until 6.1.'
+          description: 'Deprecated: Use `state_code`. Removed in 6.1.'
+          deprecated: true
         is_default_billing:
           type: boolean
           description: Makes this the default billing address.
@@ -17842,10 +17850,12 @@ components:
           description: The state name, for countries without predefined states.
         country_iso:
           type: string
-          description: 'Deprecated: use `country_code`. Accepted until 6.1.'
+          description: 'Deprecated: Use `country_code`. Removed in 6.1.'
+          deprecated: true
         state_abbr:
           type: string
-          description: 'Deprecated: use `state_code`. Accepted until 6.1.'
+          description: 'Deprecated: Use `state_code`. Removed in 6.1.'
+          deprecated: true
         quick_checkout:
           type: boolean
           description: Relaxes validation (name, phone, postal code, street), for

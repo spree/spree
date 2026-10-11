@@ -6,7 +6,8 @@ module Spree
       class ImportSerializer < BaseSerializer
         typelize number: :string,
                  type: [:string, nullable: true, comment: 'Import type. Built-in: products, product_translations, customers, price_list_prices. Extensions may register more.'], status: [:string, enum: Spree::Import.statuses, enum_type_name: 'ImportStatus'],
-                 owner_type: [:string, nullable: true], owner_id: [:string, nullable: true],
+                 owner_type: [:string, nullable: true, deprecated: 'Read `store_id` / `seller_id`. Removed in 6.1.'],
+                 owner_id: [:string, nullable: true, deprecated: 'Read `store_id` / `seller_id`. Removed in 6.1.'],
                  store_id: [:string, nullable: true], seller_id: [:string, nullable: true],
                  user_id: [:string, nullable: true], rows_count: :number
 

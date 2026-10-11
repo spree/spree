@@ -6,7 +6,7 @@ export type PaymentMethodUpdateParams = {
   active?: boolean
   /** False keeps the method to the dashboard; true also offers it on the storefront. */
   storefront_visible?: boolean
-  /** Deprecated: use `capture_method`. Removed in 6.1. */
+  /** @deprecated Use `capture_method`. Removed in 6.1. */
   auto_capture?: boolean | null
   /** When customers are charged for this method. Null inherits the store setting. */
   capture_method?: 'checkout' | 'on_dispatch' | 'manual' | null

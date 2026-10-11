@@ -96,6 +96,15 @@ RSpec.describe Spree::Api::V3::RequestSchema do
       )
     end
 
+    it 'flags a deprecated field and says what replaces it' do
+      schema = described_class.new { string :country_iso, description: 'The old name.', deprecated: 'Use `country_code`.' }
+
+      expect(schema.json_schema[:properties][:country_iso]).to eq(
+        type: :string, deprecated: true, description: 'The old name. Deprecated: Use `country_code`.'
+      )
+      expect(schema.permit_list).to eq([:country_iso])
+    end
+
     it 'sends decimals as canonical strings' do
       expect(price.json_schema[:properties][:amount]).to include(type: :string, format: :decimal)
     end
@@ -155,6 +164,10 @@ RSpec.describe Spree::Api::V3::RequestSchema do
     it 'refuses publishes after the fields' do
       expect { Class.new(described_class) { string :city; publishes 'LateParams' } }.to raise_error(ArgumentError, /before the fields/)
     end
+  end
+
+  it 'refuses a deprecation that names no replacement' do
+    expect { described_class.new { string :old, deprecated: true } }.to raise_error(ArgumentError, /instead/)
   end
 
   it 'rejects a field declared twice' do

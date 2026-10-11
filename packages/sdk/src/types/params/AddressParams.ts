@@ -15,9 +15,9 @@ export type AddressParams = {
   state_code?: string
   /** The state name, for countries without predefined states. */
   state_name?: string
-  /** Deprecated: use `country_code`. Accepted until 6.1. */
+  /** @deprecated Use `country_code`. Removed in 6.1. */
   country_iso?: string
-  /** Deprecated: use `state_code`. Accepted until 6.1. */
+  /** @deprecated Use `state_code`. Removed in 6.1. */
   state_abbr?: string
   /** Makes this the default billing address. */
   is_default_billing?: boolean

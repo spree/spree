@@ -51485,8 +51485,10 @@ components:
         state_abbr:
           type: string
           nullable: true
+          deprecated: true
         country_iso:
           type: string
+          deprecated: true
         state_name:
           type: string
           nullable: true
@@ -51734,6 +51736,7 @@ components:
           nullable: true
         number:
           type: string
+          deprecated: true
         token:
           type: string
         email:
@@ -54977,9 +54980,11 @@ components:
         owner_type:
           type: string
           nullable: true
+          deprecated: true
         owner_id:
           type: string
           nullable: true
+          deprecated: true
         user_id:
           type: string
           nullable: true
@@ -55289,6 +55294,7 @@ components:
           type: array
           items:
             type: string
+          deprecated: true
         supported_locales:
           type: array
           items:
@@ -64416,7 +64422,8 @@ components:
             on the storefront.
         auto_capture:
           type: boolean
-          description: 'Deprecated: use `capture_method`. Removed in 6.1.'
+          description: 'Deprecated: Use `capture_method`. Removed in 6.1.'
+          deprecated: true
           nullable: true
         capture_method:
           type: string
@@ -64456,7 +64463,8 @@ components:
             on the storefront.
         auto_capture:
           type: boolean
-          description: 'Deprecated: use `capture_method`. Removed in 6.1.'
+          description: 'Deprecated: Use `capture_method`. Removed in 6.1.'
+          deprecated: true
           nullable: true
         capture_method:
           type: string
@@ -67048,10 +67056,12 @@ components:
             than only authorized. A payment method's own setting wins when set.
         preferred_auto_capture:
           type: boolean
-          description: 'Deprecated: use `capture_method`. Removed in 6.1.'
+          description: 'Deprecated: Use `capture_method`. Removed in 6.1.'
+          deprecated: true
         preferred_auto_capture_on_dispatch:
           type: boolean
-          description: 'Deprecated: use `capture_method`. Removed in 6.1.'
+          description: 'Deprecated: Use `capture_method`. Removed in 6.1.'
+          deprecated: true
         track_inventory_levels:
           type: boolean
           description: Counts on-hand quantities. Off means everything is treated
