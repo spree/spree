@@ -1,4 +1,5 @@
 import type {
+  AuthProvidersResponse,
   EmailPasswordLogin,
   FileUploadCreateParams,
   ListParams,
@@ -340,26 +341,6 @@ export interface AuthTokens {
   /** Short-lived JWT access token. Goes in `Authorization: Bearer`. Keep in memory only. */
   token: string
   user: AdminUser
-}
-
-/**
- * One authentication provider the store accepts.
- *
- * `password` providers are driven by the login form; `redirect` providers send
- * the browser to `authorization_url` and come back through the OAuth callback.
- */
-export interface AuthProvider {
-  /** Registry key, e.g. "email" or "entra". Identifies the provider on login. */
-  key: string
-  kind: 'password' | 'redirect'
-  /** Button label for redirect providers. Absent for password providers. */
-  label?: string
-  /** Where to send the browser. Absent if the provider is misconfigured or unreachable. */
-  authorization_url?: string
-}
-
-export interface AuthProvidersResponse {
-  providers: AuthProvider[]
 }
 
 export interface PermissionRule {
@@ -3332,7 +3313,7 @@ export class AdminClient {
         this.request<{ data: SellerTeamMember[] }>('GET', `/sellers/${sellerId}/team`, options),
 
       /** Revokes a member's access. */
-      remove: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
+      delete: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/sellers/${sellerId}/team/${id}`, options),
     },
 
@@ -3342,7 +3323,7 @@ export class AdminClient {
         this.request<{ data: Invitation[] }>('GET', `/sellers/${sellerId}/invitations`, options),
 
       /** Withdraws an offer. */
-      remove: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
+      delete: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/sellers/${sellerId}/invitations/${id}`, options),
 
       /** Sends the email again; refused once the offer has lapsed. */

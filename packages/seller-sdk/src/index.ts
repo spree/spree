@@ -1,4 +1,6 @@
 export type {
+  AuthProvider,
+  AuthProvidersResponse,
   FileUploadCreateParams,
   RequestOptions,
   RetryConfig,

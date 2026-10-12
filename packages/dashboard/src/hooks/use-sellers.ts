@@ -157,7 +157,7 @@ export function useSellerTeam(sellerId: string) {
 
 export function useRemoveSellerTeamMember(sellerId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.sellers.team.remove(sellerId, id),
+    mutationFn: (id) => adminClient.sellers.team.delete(sellerId, id),
     invalidate: [
       ['sellers', sellerId, 'team'],
       ['sellers', sellerId],
@@ -176,7 +176,7 @@ export function useSellerInvitations(sellerId: string) {
 
 export function useRevokeSellerInvitation(sellerId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.sellers.invitations.remove(sellerId, id),
+    mutationFn: (id) => adminClient.sellers.invitations.delete(sellerId, id),
     invalidate: [['sellers', sellerId, 'invitations']],
     successMessage: i18n.t('admin.sellers.team.messages.invitation_revoked'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),

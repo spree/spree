@@ -41,6 +41,8 @@ export { createRequestFn, SpreeError } from './request'
 // Shared types
 export type {
   AddressParams,
+  AuthProvider,
+  AuthProvidersResponse,
   EmailPasswordLogin,
   ErrorResponse,
   ListParams,

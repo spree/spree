@@ -1,4 +1,5 @@
 import type {
+  AuthProvidersResponse,
   ListParams,
   PaginatedResponse,
   PreferenceSchema,
@@ -101,6 +102,7 @@ import type {
   PasswordResetUpdateParams,
   PolicyCreateParams,
   PolicyUpdateParams,
+  ProductBulkDestroyParams,
   ProductBulkStatusParams,
   ProductBulkSubmitParams,
   ProductCreateParams,
@@ -149,8 +151,8 @@ export class SellerClient {
       this.request<void>('POST', '/auth/logout', options),
 
     /** Sign-in methods this marketplace offers sellers, for the login page. */
-    providers: (options?: RequestOptions): Promise<{ providers: unknown[] }> =>
-      this.request<{ providers: unknown[] }>('GET', '/auth/providers', options),
+    providers: (options?: RequestOptions): Promise<AuthProvidersResponse> =>
+      this.request<AuthProvidersResponse>('GET', '/auth/providers', options),
 
     /**
      * Reads an invitation from the emailed link, before anyone signs in — the
@@ -284,7 +286,7 @@ export class SellerClient {
         body: params,
       }),
 
-    remove: (id: string, options?: RequestOptions): Promise<void> =>
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/tax_identifiers/${id}`, options),
 
     /**
@@ -304,11 +306,11 @@ export class SellerClient {
      * Invites a colleague. They join when they accept; the seller's own
      * lifecycle is untouched, since hiring is not a transition.
      */
-    invite: (params: TeamMemberCreateParams, options?: RequestOptions): Promise<unknown> =>
-      this.request<unknown>('POST', '/team', { ...options, body: params }),
+    invite: (params: TeamMemberCreateParams, options?: RequestOptions): Promise<Invitation> =>
+      this.request<Invitation>('POST', '/team', { ...options, body: params }),
 
     /** Revokes a member's access. The last remaining member cannot be removed. */
-    remove: (id: string, options?: RequestOptions): Promise<void> =>
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/team/${id}`, options),
   }
 
@@ -394,7 +396,7 @@ export class SellerClient {
       this.request<Invitation>('PATCH', `/invitations/${id}/resend`, options),
 
     /** Withdraws an offer that has not been accepted. */
-    revoke: (id: string, options?: RequestOptions): Promise<void> =>
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/invitations/${id}`, options),
 
     /** The link a colleague opens to join; it carries the invitation's token. */
@@ -483,7 +485,7 @@ export class SellerClient {
 
     /** Delete a selection. Ids outside this seller's catalog are ignored. */
     bulkDestroy: (
-      params: { ids: string[] },
+      params: ProductBulkDestroyParams,
       options?: RequestOptions,
     ): Promise<BulkProductResult> =>
       this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
