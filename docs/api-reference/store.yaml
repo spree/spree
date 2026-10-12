@@ -6281,8 +6281,17 @@ paths:
       security:
       - api_key: []
         bearer_auth: []
-      description: Returns a single completed order by prefixed ID. Accessible via
-        JWT (authenticated users) or order token header (guests).
+      description: |
+        Returns a completed purchase. Accessible via JWT (authenticated users) or order token header (guests).
+
+        Resolves three kinds of id: the order's own (`or_…`), the id of the cart it was placed from, and the
+        id of an order group (`ogrp_…`). The cart's id is the handle a storefront keeps through checkout, so
+        a confirmation page can ask what its cart became without having learned a new one.
+
+        A checkout that reached several sellers divided into one order per seller, and the cart moved up to
+        the group holding them — so that handle, and the group's own id, answer with the **order group**,
+        with the per-seller orders nested inside it. Every other lookup answers with an **order**. The two
+        are told apart by the id prefix (`ogrp_` vs `or_`), or by the presence of `orders`.
       x-codeSamples:
       - lang: javascript
         label: Spree SDK
@@ -6316,7 +6325,8 @@ paths:
       - name: id
         in: path
         required: true
-        description: Order prefixed ID
+        description: Prefixed ID of the order, of the cart it was placed from, or
+          of its order group
         schema:
           type: string
       - name: x-spree-token
