@@ -44,22 +44,28 @@ Click **New gift card** in the top-right corner. A panel opens over the list wit
 
 - **Quantity** - How many cards to issue. Leave it at 1 for a single card.
 - **Code** - The code the customer will type. Leave it blank and a code of sixteen letters and numbers is made for you. Type your own when you want something memorable for a campaign.
-- **Amount** - What the card is worth. The card cannot be created without an amount above zero.
-- **Currency** - The currency the card's value is held in.
+- **Amount** - What the card is worth. It has to be above zero, and the panel stays open with a message under **Amount** until it is.
+- **Currency** - The currency the card's value is held in. Choose it with care, because the box is locked once the card is issued.
 - **Expires** - Set a date if your gift card terms limit how long a card is valid. Leave it on **No expiry** otherwise.
 - **Customer (optional)** - The customer the card belongs to. Start typing their email address and pick them from the list.
 
-Fill in the panel and click **Create gift card**. The panel closes, a message confirms the card was created, and the new card is at the top of the list with its full amount under **Remaining**.
+![The New gift card panel filled in for one $50.00 card attached to a customer](/docs/images/user/loyalty/gift-cards/2-new-gift-card-form.png)
 
-![The new gift card at the top of the list, attached to a customer](/docs/images/user/loyalty/gift-cards/2-new-gift-card.png)
+Fill in the panel and click **Create gift card**. The panel closes, a *Gift card created* message appears, and the new card sits at the top of the list as **Active**, with its full amount under **Remaining** and nothing under **Used**.
+
+![The new gift card at the top of the list, attached to a customer](/docs/images/user/loyalty/gift-cards/3-new-gift-card.png)
 
 Creating the card does not send it to anyone, so pass the code on to the customer yourself, by email, on a printed card or at the till. The code is all they need to spend it.
+
+### Issuing a Batch of Cards
+
+Type a number above 1 in **Quantity** and the panel changes to suit a batch. **Code** becomes **Prefix**, the **Customer (optional)** field goes away, and the button counts the cards, for example **Create 3 gift cards**. Use this for a campaign, a set of cards sold over the counter, or anything where the cards are not going to one named person.
 
 ## How to Check a Card's Balance
 
 Click a card's code in the list, or open the row menu and choose **Edit**. A panel opens with the card's code as its title. Its **Usage** section shows what the card was worth, how much has been spent, what remains and which member of staff issued it.
 
-![A gift card's panel showing its usage](/docs/images/user/loyalty/gift-cards/3-gift-card-detail.png)
+![A gift card's panel showing its usage](/docs/images/user/loyalty/gift-cards/4-gift-card-detail.png)
 
 Once a card is fully spent, every box in the panel is greyed out and the panel is there to read.
 
@@ -69,7 +75,7 @@ Customers spend a card in your shop's checkout. They type the code into the **Gi
 
 When the card covers the whole order, the payment section reads *No payment required* and the customer clicks **Place Order**. When the card covers only part of it, the customer picks a payment method for the rest, such as **Check**, and places the order. The order page then lists both payments, one for the card's share and one for the rest.
 
-![The checkout summary with a gift card paying part of the order and the rest due](/docs/images/user/loyalty/gift-cards/4-checkout-summary.png)
+![The checkout summary with a gift card paying part of the order and the rest due](/docs/images/user/loyalty/gift-cards/5-checkout-summary.png)
 
 A card that is not attached to a customer can be spent by anyone who has the code, including a shopper checking out as a guest. A card with money left after an order keeps that balance, and the customer can use the same code again on a later order until nothing remains.
 
@@ -95,7 +101,6 @@ Open the row menu on the card and choose **Delete**, then confirm with **Delete*
 
 ## Further Reading
 
-- [<u>Issue a Gift Card</u>](/user/loyalty/issue-gift-card) - Issuing a card in more detail
 - [<u>Store Credits List</u>](/user/loyalty/store-credits-list) - Balances you owe individual customers
 - [<u>Draft orders</u>](/user/orders/draft-orders) - Building an order for a customer, with a gift card as payment
 - [<u>Orders list and the order page</u>](/user/orders/orders) - Where a redeemed card shows on an order
