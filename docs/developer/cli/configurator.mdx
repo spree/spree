@@ -26,13 +26,13 @@ version: 1
 
 store:
   name: Acme Wholesale
-  preferences:
-    guest_checkout: false
+  guest_checkout: false
 
 channels:
   - code: wholesale
     name: Wholesale
-    preferences: { storefront_access: login_required, guest_checkout: false }
+    storefront_access: login_required
+    guest_checkout: false
 
 customer_groups:
   - name: Wholesale
@@ -93,9 +93,9 @@ The header line points editors at the published JSON Schema, so VS Code and ever
 
 | Section | Matched on | Notes |
 |---|---|---|
-| `store` | the one store | update only: name, contact addresses and `preferences` |
+| `store` | the one store | update only: name, contact addresses and settings such as `guest_checkout` or `timezone` |
 | `stock_locations` | `name` | |
-| `channels` | `code` | `stock_locations` by name, `preferences` without the `preferred_` prefix (`order_routing_strategy`, `storefront_access`, `guest_checkout`) |
+| `channels` | `code` | `stock_locations` by name; `order_routing_strategy`, `storefront_access`, `guest_checkout` |
 | `markets` | `name` | `currency`, `countries`, `default_locale`, `supported_locales`; this is where currency and country live. The default locale always counts as supported, so the list need not repeat it |
 | `customer_groups` | `name` | |
 | `tax_categories` | `name` | `default: true` marks the store default |

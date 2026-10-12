@@ -44,6 +44,11 @@ export interface Section<Entry = unknown, Live extends LiveRecord = LiveRecord>
    * the entry cannot be applied to this record.
    */
   current?(live: Live, ctx: RunContext, desired: Payload, entry: Entry): Promise<Payload>
+  /**
+   * The request body as the API takes it, just before it is sent: nested
+   * amounts the comparison keeps as numbers go out as decimal strings.
+   */
+  wire?(payload: Payload, ctx: RunContext): Promise<Payload>
   /** Natural keys of other sections this section's entries refer to, so they load in one request per section. */
   references?(config: SpreeConfig): Partial<Record<string, string[]>>
   create?(payload: Payload, entry: Entry, ctx: RunContext): Promise<Live>
@@ -61,14 +66,6 @@ export interface Section<Entry = unknown, Live extends LiveRecord = LiveRecord>
  */
 export type AnySection = Section<never, LiveRecord>
 
-/** `{ guest_checkout: false }` → `{ preferred_guest_checkout: false }`. */
-export function preferencesPayload(preferences: Record<string, unknown> | undefined): Payload {
-  if (!preferences) return {}
-  return Object.fromEntries(
-    Object.entries(preferences).map(([key, value]) => [`preferred_${key}`, value]),
-  )
-}
-
 export type PreferenceValue = string | number | boolean | null
 
 /** The scalar values of a preferences hash: a file cannot carry the rest. */
@@ -84,21 +81,6 @@ export function scalarPreferences(
     scalars[key] = value as PreferenceValue
   }
   return scalars
-}
-
-/** The `preferred_*` attributes of a live record, back in file form. */
-export function preferencesFromLive(
-  live: LiveRecord,
-  only?: string[],
-): Record<string, PreferenceValue> {
-  return scalarPreferences(
-    Object.fromEntries(
-      Object.entries(live)
-        .filter(([attribute]) => attribute.startsWith('preferred_'))
-        .map(([attribute, value]) => [attribute.slice('preferred_'.length), value]),
-    ),
-    only,
-  )
 }
 
 /** Resolves a list of natural keys to ids (or pending refs), reporting against `path`. */

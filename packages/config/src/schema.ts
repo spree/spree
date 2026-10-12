@@ -1,17 +1,10 @@
 import { z } from 'zod'
-import {
-  type AttributeOf,
-  attributeSchema,
-  type Resource,
-  specShape,
-  writablePreferences,
-} from './spec.js'
+import { specShape } from './spec.js'
 
 /**
  * The shape of `spree.config.yml`. Sections mirror Admin API resources but
  * are written the way a person writes them: references by natural key, prices
- * keyed by currency, stock keyed by warehouse name, preferences without the
- * `preferred_` prefix.
+ * keyed by currency, stock keyed by warehouse name.
  *
  * Plain attributes come from the Admin API spec (`spec.ts`); only what a
  * person writes differently from the API (keys, references, nested shapes) is
@@ -49,34 +42,71 @@ const stockByLocation = z
   )
 const names = (description: string) => z.array(nonEmpty).optional().describe(description)
 
-/**
- * The preferences a resource permits, typed from the spec and without the
- * `preferred_` prefix. Rails drops any other key without a word, so an
- * unlisted key would read as a change on every deploy; the file refuses it.
- */
-function preferencesOf(resource: Resource) {
-  return z
-    .object(
-      Object.fromEntries(
-        writablePreferences(resource).map((key) => [
-          key,
-          attributeSchema(resource, `preferred_${key}` as AttributeOf<typeof resource>).optional(),
-        ]),
-      ),
-    )
-    .strict()
-    .describe('Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`.')
-}
-
 // --- Attributes each section writes as they are -----------------------------
 
+// Everything the store endpoint accepts but its uploads (logos), which a
+// file cannot carry.
 export const STORE_ATTRIBUTES = [
   'name',
+  'admin_locale',
+  'timezone',
+  'weight_unit',
+  'unit_system',
+  'storefront_access',
+  'storefront_url',
+  'guest_checkout',
+  'always_include_confirm_step',
+  'company_field_enabled',
+  'address_requires_company',
+  'address_requires_phone',
+  'capture_method',
+  'track_inventory_levels',
+  'stock_reservations_enabled',
+  'low_stock_threshold',
+  'tax_using_ship_address',
+  'track_price_history',
+  'show_products_without_price',
+  'disable_sku_validation',
+  'order_routing_strategy',
+  'pricing_provider',
+  'inventory_provider',
+  'pricing_provider_failure_policy',
+  'inventory_provider_failure_policy',
+  'payout_provider',
+  'default_payouts_schedule_interval',
+  'default_minimum_payout_amount',
+  'auto_approve_sellers',
+  'auto_approve_seller_products',
+  'send_seller_transactional_emails',
+  'default_commission_tax_rate',
+  'document_number_format',
+  'order_number_prefix',
+  'order_number_suffix',
+  'order_number_sequence_start',
+  'limit_digital_download_count',
+  'digital_asset_authorized_clicks',
+  'limit_digital_download_days',
+  'digital_asset_authorized_days',
   'mail_from_address',
   'customer_support_email',
   'new_order_notifications_email',
+  'send_consumer_transactional_emails',
+  'email_accent_color',
+  'email_background_color',
+  'email_card_color',
+  'email_text_color',
+  'email_heading_color',
+  'email_font',
 ] as const
-export const CHANNEL_ATTRIBUTES = ['code', 'name', 'active', 'default'] as const
+export const CHANNEL_ATTRIBUTES = [
+  'code',
+  'name',
+  'active',
+  'default',
+  'order_routing_strategy',
+  'storefront_access',
+  'guest_checkout',
+] as const
 export const MARKET_ATTRIBUTES = [
   'name',
   'currency',
@@ -218,11 +248,10 @@ export const storeSchema = z
   .object({
     ...specShape('store', STORE_ATTRIBUTES),
     name: nonEmpty.optional(),
-    preferences: preferencesOf('store').optional(),
   })
   .strict()
   .describe(
-    'The store row seeded at install. Updated only; currency, locale and country are market attributes.',
+    'The store row seeded at install, and its settings. Updated only; currency, locale and country are market attributes.',
   )
 
 export const channelSchema = z
@@ -231,7 +260,6 @@ export const channelSchema = z
     code: nonEmpty,
     name: nonEmpty,
     stock_locations: names('Stock location names.'),
-    preferences: preferencesOf('channels').optional(),
   })
   .strict()
 

@@ -7,8 +7,8 @@ function polishStore(api: FakeApi) {
     ...api.store,
     default_country_code: 'PL',
     default_currency: 'PLN',
-    preferred_unit_system: 'metric',
-    preferred_weight_unit: 'kg',
+    unit_system: 'metric',
+    weight_unit: 'kg',
   }
   api.seed('/countries', [
     { id: 'PL', iso: 'PL', name: 'Poland' },
@@ -116,12 +116,15 @@ describe('provisionStore', () => {
     await provisionStore(api)
     const standard = api.all('/delivery_methods').find((method) => method.name === 'Standard')
     if (!standard) throw new Error('Standard was not created')
-    standard.calculator_preferences = { amount: '7.5', currency: 'PLN' }
+    standard.calculator = { type: 'flat_rate', preferences: { amount: '7.5', currency: 'PLN' } }
 
     await provisionStore(api)
 
     expect(api.calls.filter((call) => call.method === 'PATCH')).toEqual([])
-    expect(standard.calculator_preferences).toEqual({ amount: '7.5', currency: 'PLN' })
+    expect(standard.calculator).toEqual({
+      type: 'flat_rate',
+      preferences: { amount: '7.5', currency: 'PLN' },
+    })
   })
 
   it('skips kinds the installation has not registered rather than failing on them', async () => {
@@ -187,5 +190,37 @@ describe('provisionStore', () => {
       'Non-taxable',
     ])
     expect(api.all('/package_types').map((box) => box.name)).toEqual(['Our box'])
+  })
+
+  // The API takes amounts as canonical decimal strings and refuses numbers.
+  it('sends the amounts the templates write as numbers as decimal strings', async () => {
+    const api = new FakeApi()
+    polishStore(api)
+    api.seed('/delivery_methods/calculators', [
+      {
+        type: 'flat_rate',
+        schema: {
+          properties: {
+            amount: { type: 'string', pattern: '^-?\\d+(\\.\\d+)?$' },
+            currency: { type: 'string', pattern: '^[A-Z]{3}$' },
+          },
+        },
+      },
+    ])
+
+    await provisionStore(api)
+
+    const posted = (path: string, name: string) =>
+      api.calls.find(
+        (call) =>
+          call.method === 'POST' &&
+          call.path === path &&
+          (call.body as { name?: string } | undefined)?.name === name,
+      )?.body as Record<string, unknown> | undefined
+    expect(posted('/commission_rates', 'Marketplace default')?.value).toBe('0')
+    expect(posted('/delivery_methods', 'Standard')?.calculator).toEqual({
+      type: 'flat_rate',
+      preferences: { amount: '5', currency: 'PLN' },
+    })
   })
 })
