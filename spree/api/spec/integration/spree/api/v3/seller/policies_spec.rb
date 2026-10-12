@@ -28,6 +28,8 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
         marketplace's onboarding checklist.
       DESC
 
+      seller_sdk_example 'policies/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -64,6 +66,8 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
         the onboarding check matches on it.
       DESC
 
+      seller_sdk_example 'policies/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -93,6 +97,8 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       produces 'application/json'
       security [bearer_auth: []]
       description 'Returns one of this seller\'s policies, by prefixed ID or slug.'
+
+      seller_sdk_example 'policies/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -126,6 +132,8 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       security [bearer_auth: []]
       description 'Rewrites one of this seller\'s policies.'
 
+      seller_sdk_example 'policies/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -147,6 +155,8 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       tags 'Policies'
       security [bearer_auth: []]
       description 'Withdraws one of this seller\'s policies.'
+
+      seller_sdk_example 'policies/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

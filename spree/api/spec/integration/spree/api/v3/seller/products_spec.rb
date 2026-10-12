@@ -20,6 +20,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         first-party.
       DESC
 
+      seller_sdk_example 'products/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -59,6 +61,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         the product is promotionable — are not writable here; they belong to the
         marketplace, not the seller.
       DESC
+
+      seller_sdk_example 'products/create'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -101,6 +105,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         is not told the record exists.
       DESC
 
+      seller_sdk_example 'products/get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'product returned' do
@@ -132,6 +138,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
       security [bearer_auth: []]
       description 'Edits a product the acting seller owns.'
 
+      seller_sdk_example 'products/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -154,6 +162,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
       produces 'application/json'
       security [bearer_auth: []]
       description 'Deletes a product the acting seller owns.'
+
+      seller_sdk_example 'products/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -179,6 +189,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         can: `product_count` is what was submitted, and `skipped_count`, present
         only when something was skipped, is the rest.
       DESC
+
+      seller_sdk_example 'products/bulk-submit'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -206,6 +218,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         Moves a selection to `draft` or `archived`. There is no bulk route onto
         `active`: a listing goes on sale when the marketplace approves it.
       DESC
+
+      seller_sdk_example 'products/bulk-status-update'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for

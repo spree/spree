@@ -75,6 +75,20 @@ paths:
         defaults to `email`. Sellers and store staff read different provider
         registries, so a marketplace can require SSO for its own back office
         while still letting sellers sign in with a password.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+          })
+
+          const auth = await client.auth.login({
+            email: 'seller@example.com',
+            password: 'password123',
+          })
       parameters: []
       responses:
         '200':
@@ -128,6 +142,17 @@ paths:
         storefront or the back office cannot be exchanged for a seller session.
         Membership is rechecked here too: a user whose last seller role was
         revoked mid-session is refused rather than renewed.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+          })
+
+          const auth = await client.auth.refresh()
       responses:
         '200':
           description: refresh successful
@@ -166,6 +191,17 @@ paths:
       tags:
       - Authentication
       description: Revokes the refresh-token cookie, ending the seller session.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+          })
+
+          await client.auth.logout()
       responses:
         '204':
           description: logout successful
@@ -178,6 +214,17 @@ paths:
         The sign-in methods this marketplace offers sellers, for the login page
         to render. Unauthenticated — a login page must be able to ask before
         anyone has signed in.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+          })
+
+          const { providers } = await client.auth.providers()
       responses:
         '200':
           description: providers listed
@@ -212,6 +259,17 @@ paths:
         invitation: both answer `404`, so the endpoint cannot be used to
         enumerate. An invitation onto the store's own staff rather than a seller
         answers `404` here too.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+          })
+
+          const invitation = await client.auth.lookupInvitation('inv_xxx', 'token-from-email')
       parameters:
       - name: token
         in: query
@@ -266,6 +324,22 @@ paths:
         `password` is required when no account exists for the invited address, in
         which case it sets one. When an account already exists, the same field is
         how the person proves the account is theirs.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+          })
+
+          const auth = await client.auth.acceptInvitation('inv_xxx', 'token-from-email', {
+            password: 'password123',
+            password_confirmation: 'password123',
+            first_name: 'Jane',
+            last_name: 'Doe',
+          })
       parameters:
       - name: token
         in: query
@@ -331,6 +405,20 @@ paths:
         email is delivered by Spree via the
         `seller_user.password_reset_requested` event, which is never forwarded
         to webhook endpoints.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+          })
+
+          await client.auth.requestPasswordReset({
+            email: 'seller@example.com',
+            redirect_url: 'https://sellers.your-store.com/reset-password',
+          })
       parameters: []
       responses:
         '202':
@@ -360,6 +448,20 @@ paths:
         The token is single-use, and resetting revokes every other session the
         account holds. A token whose seller membership has since been revoked is
         refused exactly as an expired one.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+          })
+
+          const auth = await client.auth.resetPassword('reset-token-from-email', {
+            password: 'new-password-123',
+            password_confirmation: 'new-password-123',
+          })
       parameters:
       - name: id
         in: path
@@ -421,6 +523,18 @@ paths:
         Sending the header narrows `permission_keys` and `permissions` to that
         seller; without it both are empty, because capability is per seller and
         there is no answer spanning all of them.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+          })
+
+          const me = await client.me.get()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -683,6 +797,22 @@ paths:
         `avatar_signed_id` takes the `signed_id` from `POST /files` to set the
         photo, or `null` to remove it; omit it to leave the current one alone.
         `email` is identity-bound and cannot be changed here.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+          })
+
+          const me = await client.me.update({
+            first_name: 'Jane',
+            last_name: 'Doe',
+            selected_locale: 'en',
+          })
       parameters: []
       responses:
         '200':
@@ -754,6 +884,19 @@ paths:
         in a billing address needs every country.
 
         Unpaginated. An address dropdown needs all ~250 at once.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: countries } = await client.countries.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -12338,6 +12481,19 @@ paths:
         A shared marketplace method comes back with `editable: false` — it is
         listed so the seller can see what already ships their goods, and every
         write against it is a 404.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: deliveryMethods } = await client.deliveryMethods.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -12487,6 +12643,23 @@ paths:
         Neither the rate provider nor the fulfillment provider is settable: a
         seller prices their own rates and enters tracking numbers by hand,
         because carrier accounts belong to the marketplace.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const deliveryMethod = await client.deliveryMethods.create({
+            name: 'Next day',
+            delivery_profile_id: 'fp_UkLWZg9DAJ',
+            calculator: { type: 'flat_rate', preferences: { amount: '9.99', currency: 'USD' } },
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -12562,6 +12735,19 @@ paths:
       - Delivery Methods
       security:
       - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const deliveryMethod = await client.deliveryMethods.get('dm_UkLWZg9DAJ')
       responses:
         '200':
           description: delivery method found
@@ -12601,6 +12787,23 @@ paths:
       - bearer_auth: []
       description: Only the seller's own methods can be changed — a marketplace method
         shared with sellers is read-only.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const deliveryMethod = await client.deliveryMethods.update('dm_UkLWZg9DAJ', {
+            name: 'Next day (tracked)',
+            estimated_transit_business_days_min: 1,
+            estimated_transit_business_days_max: 2,
+          })
       parameters: []
       responses:
         '200':
@@ -12645,6 +12848,19 @@ paths:
       - Delivery Methods
       security:
       - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.deliveryMethods.delete('dm_UkLWZg9DAJ')
       responses:
         '204':
           description: delivery method retired
@@ -12657,6 +12873,19 @@ paths:
       - bearer_auth: []
       description: The eligibility rules a seller may put on their own method, with
         the preference schema each form is rendered from.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: ruleTypes } = await client.deliveryMethods.ruleTypes()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -12763,6 +12992,19 @@ paths:
       - Delivery Methods
       security:
       - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: calculators } = await client.deliveryMethods.calculators()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -12944,6 +13186,19 @@ paths:
         the profiles themselves, and the zones and methods behind them, are the
         marketplace's. A product created without one lands on the profile
         marked `default`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: deliveryProfiles } = await client.deliveryProfiles.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13052,6 +13307,21 @@ paths:
         draws one. Pass `delivery_profile_id` to list only the zones under the
         profile a method belongs to, which is what the method form's picker
         asks for.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: deliveryZones } = await client.deliveryZones.list({
+            delivery_profile_id: 'fp_UkLWZg9DAJ',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13164,6 +13434,19 @@ paths:
         Each requirement's `id` is what a submission is posted against. A
         marketplace that asks for nothing returns an empty list, which is a
         complete answer rather than a missing one.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const onboarding = await client.onboarding.get()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13208,6 +13491,19 @@ paths:
         message names the blocking requirements, and the seller's status is
         unchanged. Returns the same payload as the checklist so the panel can
         re-render from one response.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const onboarding = await client.onboarding.submitForReview()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13249,6 +13545,22 @@ paths:
         what it needs before it will pay this seller. Ask for it when the
         seller acts: these links are short-lived and single-use. Answers
         `{ "url": null }` when the provider hosts no onboarding.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const link = await client.onboarding.payoutAccount({
+            refresh_url: 'https://sellers.your-store.com/onboarding',
+            return_url: 'https://sellers.your-store.com/onboarding',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13296,6 +13608,21 @@ paths:
 
         An attestation is accepted on the spot; a requirement the operator
         reviews comes back `pending`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const submission = await client.requirementSubmissions.create('selreq_xxx', {
+            note: 'Confirmed.',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13356,6 +13683,36 @@ paths:
         Served through the API rather than from a storage URL on purpose: these
         are identity and registration documents, so every read is authorized
         against the acting seller. Another seller's submission answers `404`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          // The onboarding checklist carries each requirement's latest submission.
+          const { requirements } = await client.onboarding.get()
+          const submission = requirements.find((requirement) => requirement.submission?.file_url)?.submission
+
+          if (submission?.file_url) {
+            // Documents are served through the API, so fetch with the session's token
+            // and seller, then drive the browser download:
+            const response = await fetch(`https://your-store.com${submission.file_url}`, {
+              headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
+            })
+            const url = URL.createObjectURL(await response.blob())
+            const link = Object.assign(document.createElement('a'), {
+              href: url,
+              download: submission.file_name ?? 'document',
+            })
+            link.click()
+            URL.revokeObjectURL(url)
+          }
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13388,6 +13745,19 @@ paths:
         policies and every other seller's are invisible here. A seller starts
         with none: what they are expected to publish is decided by the
         marketplace's onboarding checklist.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: policies } = await client.policies.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13495,6 +13865,22 @@ paths:
 
         When the marketplace requires a named policy, use that exact name —
         the onboarding check matches on it.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const policy = await client.policies.create({
+            name: 'Returns Policy',
+            body: '<p>Return anything unopened within 30 days.</p>',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13537,6 +13923,19 @@ paths:
       security:
       - bearer_auth: []
       description: Returns one of this seller's policies, by prefixed ID or slug.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const policy = await client.policies.get('returns-policy')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13575,6 +13974,21 @@ paths:
       security:
       - bearer_auth: []
       description: Rewrites one of this seller's policies.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const policy = await client.policies.update('returns-policy', {
+            body: '<p>Return anything unopened within 60 days.</p>',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13609,6 +14023,19 @@ paths:
       security:
       - bearer_auth: []
       description: Withdraws one of this seller's policies.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.policies.delete('returns-policy')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13632,6 +14059,22 @@ paths:
         and its delivery profile, so a seller picks one when listing; defining
         types is the marketplace's. Send the chosen `id` as `product_type_id`
         on the product.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: productTypes } = await client.productTypes.list({
+            name_cont: 'apparel',
+            sort: 'name',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13726,6 +14169,19 @@ paths:
       - Product Types
       security:
       - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const productType = await client.productTypes.get('pt_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -13762,6 +14218,23 @@ paths:
         Every call is rooted in the acting seller server-side, so this can never
         return another seller's product or one the marketplace operator sells
         first-party.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: products, meta } = await client.products.list({
+            status_eq: 'draft',
+            sort: '-created_at',
+            limit: 25,
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14023,6 +14496,23 @@ paths:
         The operator's own settings — tax category, delivery profile and whether
         the product is promotionable — are not writable here; they belong to the
         marketplace, not the seller.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const product = await client.products.create({
+            name: 'Hand-thrown mug',
+            description: '<p>Stoneware, glazed by hand.</p>',
+            prices: [{ currency: 'USD', amount: '24.00' }],
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14109,6 +14599,19 @@ paths:
 
         An id belonging to another seller answers `404`, not `403` — the seller
         is not told the record exists.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const product = await client.products.get('prod_UkLWZg9DAJ', 'variants,media')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14184,6 +14687,21 @@ paths:
       security:
       - bearer_auth: []
       description: Edits a product the acting seller owns.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const product = await client.products.update('prod_UkLWZg9DAJ', {
+            name: 'Hand-thrown mug, large',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14251,6 +14769,19 @@ paths:
       security:
       - bearer_auth: []
       description: Deletes a product the acting seller owns.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.products.delete('prod_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14272,6 +14803,21 @@ paths:
         rejected listings can be submitted, so a mixed selection moves what it
         can: `product_count` is what was submitted, and `skipped_count`, present
         only when something was skipped, is the rest.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const result = await client.products.bulkSubmit({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14301,6 +14847,22 @@ paths:
       description: |
         Moves a selection to `draft` or `archived`. There is no bulk route onto
         `active`: a listing goes on sale when the marketplace approves it.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const result = await client.products.bulkStatusUpdate({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            status: 'archived',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14333,6 +14895,19 @@ paths:
         Singular by nature: the seller in play is always the one named by
         `X-Spree-Seller-Id`, never an id in the path — so a seller cannot address
         another seller here even by guessing one.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const profile = await client.profile.get()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14406,6 +14981,23 @@ paths:
         `custom_fields` is narrowed server-side to the definitions this
         marketplace's onboarding actually asks this seller for; a field nothing
         asked for is ignored rather than written.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const profile = await client.profile.update({
+            name: 'Acme Outfitters',
+            contact_email: 'hello@acme.example',
+            legal_name: 'Acme Outfitters Ltd',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14479,6 +15071,19 @@ paths:
 
         Rooted in the acting seller, so the marketplace operator's own warehouses
         never appear here.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: stockLocations } = await client.stockLocations.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14617,6 +15222,26 @@ paths:
 
         The seller and the store come from the request context whatever the
         payload says.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const stockLocation = await client.stockLocations.create({
+            name: 'Brooklyn warehouse',
+            kind: 'warehouse',
+            country_code: 'US',
+            state_code: 'NY',
+            city: 'Brooklyn',
+            zipcode: '11201',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14688,6 +15313,19 @@ paths:
       description: |
         A stock location the acting seller owns. An id belonging to another
         seller — or to the marketplace operator — answers `404`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const stockLocation = await client.stockLocations.get('sloc_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14745,6 +15383,22 @@ paths:
         There is no delete: a location holds stock levels and is named on
         historical fulfillments, so a seller retires one by setting `active` to
         `false`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const stockLocation = await client.stockLocations.update('sloc_UkLWZg9DAJ', {
+            returns_enabled: true,
+            phone: '+1 718 555 0100',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14801,6 +15455,19 @@ paths:
 
         Sending an invitation lives on `team`, because that is hiring. Chasing or
         withdrawing one is bookkeeping on the offer itself, so it lives here.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: invitations } = await client.invitations.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14847,6 +15514,19 @@ paths:
         The link a colleague opens to join the team. It carries the invitation's
         token, so the listing never includes it; fetch it when someone asks to
         copy the link.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const link = await client.invitations.acceptanceLink('inv_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14881,6 +15561,19 @@ paths:
         Sends the invitation email again, for a colleague who never got the first
         one. An invitation whose window has closed is refused rather than
         re-sent.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const invitation = await client.invitations.resend('inv_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14926,6 +15619,19 @@ paths:
       security:
       - bearer_auth: []
       description: Withdraws an offer that has not been accepted.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.invitations.revoke('inv_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -14957,6 +15663,19 @@ paths:
 
         Rooted at the acting seller throughout, so a seller only ever sees their
         own team. Unpaginated — a seller's team is small by nature.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: members } = await client.team.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15002,6 +15721,21 @@ paths:
 
         The role is not a parameter. Every member holds the seller's own seeded
         role, which already carries the whole seller vocabulary.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const invitation = await client.team.invite({
+            email: 'colleague@example.com',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15062,6 +15796,19 @@ paths:
         The team can never reach zero: emptying it would leave a seller nobody
         can sign in to, and only the marketplace operator could put someone back.
         The last remaining member is refused with `422`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.team.remove('adm_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15114,6 +15861,24 @@ paths:
         upload. `visibility` is `public` (the default, web images, videos and
         CSV only) or `private` (any type). `checksum` is the file's MD5
         digest, base64-encoded.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const file = await client.files.create({
+            filename: 'registration.pdf',
+            content_type: 'application/pdf',
+            byte_size: 51234,
+            visibility: 'private',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15164,6 +15929,19 @@ paths:
 
         Computed from the ledger rather than stored, so the rows carry no id
         and there is nothing to page.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: balances } = await client.balances.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15209,6 +15987,19 @@ paths:
       security:
       - bearer_auth: []
       description: Problems reported on one of this seller's orders.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: claims } = await client.orders.claims.list('or_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15304,6 +16095,22 @@ paths:
 
         A replacement variant, if one is offered, comes from this seller's own
         catalogue — a rival's is not theirs to promise.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const claim = await client.orders.claims.create('or_UkLWZg9DAJ', {
+            items: [{ line_item_id: 'li_UkLWZg9DAJ', quantity: 1, description: 'Arrived damaged' }],
+            reason_id: 'clr_UkLWZg9DAJ',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15355,6 +16162,19 @@ paths:
       security:
       - bearer_auth: []
       description: Accepts that the claim is good.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const claim = await client.orders.claims.approve('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15404,6 +16224,23 @@ paths:
 
         A refund is bounded by this order's share of the payment, so one
         seller can never settle out of a sibling's money.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const claim = await client.orders.claims.resolve('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ', {
+            resolution: 'refund',
+            refund_method: 'original_payment',
+            amount: '19.99',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15455,6 +16292,21 @@ paths:
       security:
       - bearer_auth: []
       description: Turns the claim down.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const claim = await client.orders.claims.deny('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ', {
+            reason: 'Reported after the claim window closed',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15505,6 +16357,21 @@ paths:
       security:
       - bearer_auth: []
       description: Withdraws a claim that is no longer needed.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const claim = await client.orders.claims.cancel('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ', {
+            reason: 'Customer found the missing item',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15547,6 +16414,19 @@ paths:
         What can go wrong with a delivery, as the marketplace defines it.
 
         Read-only: a seller picks from the operator's vocabulary.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: reasons } = await client.claimReasons.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15630,6 +16510,19 @@ paths:
       security:
       - bearer_auth: []
       description: Goods swapped for different ones on one of this seller's orders.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: exchanges } = await client.orders.exchanges.list('or_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15725,6 +16618,24 @@ paths:
         The replacement comes from this seller's own catalogue: it is stock
         they will send, so a variant belonging to another seller is not theirs
         to promise and reads as missing.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const exchange = await client.orders.exchanges.create('or_UkLWZg9DAJ', {
+            items: [
+              { fulfillment_item_id: 'fi_UkLWZg9DAJ', new_variant_id: 'variant_86Rf07xd4z', quantity: 1 },
+            ],
+            reason_id: 'rar_UkLWZg9DAJ',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15778,6 +16689,21 @@ paths:
       description: |
         Records the goods coming back. Send the rows that actually arrived for
         a partial or damaged receipt; omit them to receive everything.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const exchange = await client.orders.exchanges.receive('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ', {
+            items: [{ exchange_line_item_id: 'eli_UkLWZg9DAJ', quantity: 1, resellable: true }],
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15830,6 +16756,19 @@ paths:
       description: |
         Sends the replacement goods, settling any price difference at the same
         time — which is why it takes a refund method.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const exchange = await client.orders.exchanges.fulfill('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15880,6 +16819,21 @@ paths:
       security:
       - bearer_auth: []
       description: Withdraws an exchange before the goods come back.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const exchange = await client.orders.exchanges.cancel('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ', {
+            reason: 'Customer kept the original',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15928,6 +16882,22 @@ paths:
 
         Generation runs in the background: poll `GET /api/v3/seller/exports/{id}`
         until `done` is true, then fetch `download_url`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const exp = await client.exports.create({
+            type: 'orders',
+            search_params: { completed_at_gt: '2026-01-01' },
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15986,6 +16956,19 @@ paths:
       description: |
         Reads one of this seller's exports. Poll this until `done` is true,
         then fetch `download_url`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const exp = await client.exports.get('exp_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16040,6 +17023,39 @@ paths:
 
         The bytes are served by this endpoint rather than through a redirect,
         so the seller's own session authorizes every download.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          // An export is built in the background; poll until it is done.
+          let exp = await client.exports.get('exp_UkLWZg9DAJ')
+          while (!exp.done) {
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+            exp = await client.exports.get(exp.id)
+          }
+
+          if (exp.download_url) {
+            // Exports are served through the API, so fetch with the session's token
+            // and seller, then drive the browser download:
+            const response = await fetch(`https://your-store.com${exp.download_url}`, {
+              headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
+            })
+            const url = URL.createObjectURL(await response.blob())
+            const link = Object.assign(document.createElement('a'), {
+              href: url,
+              download: exp.filename ?? 'export.csv',
+            })
+            link.click()
+            URL.revokeObjectURL(url)
+          }
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16089,6 +17105,19 @@ paths:
         Reached through the order, which is itself fetched through the acting
         seller — so a fulfillment on somebody else's order is unreachable
         whatever ids are sent.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: fulfillments } = await client.orders.fulfillments.list('or_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16227,6 +17256,23 @@ paths:
 
         `items` narrows the dispatch to part of what the fulfillment holds; the
         remainder splits onto a new one. Omit it to ship the lot.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const fulfillment = await client.orders.fulfillments.fulfill('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
+            tracking: '1Z879E930346834440',
+            tracking_carrier: 'ups',
+            notify_customer: true,
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16314,6 +17360,22 @@ paths:
         Adds or corrects the tracking number and its carrier. Can also move the
         parcel to another of the seller's own stock locations, which quotes its
         rates again from there, or pick a different one of its quoted rates.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const fulfillment = await client.orders.fulfillments.update('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
+            tracking: '1Z879E930346834440',
+            tracking_carrier: 'ups',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16401,6 +17463,19 @@ paths:
       description: |
         A parcel this seller is not going to send after all. The goods go back
         on the shelf and the carrier is stood down.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const fulfillment = await client.orders.fulfillments.cancel('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16483,6 +17558,26 @@ paths:
         Moves part of what this parcel holds onto a new one, for goods leaving
         separately. Answers with every fulfillment on the order, since
         splitting rewrites more than one.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: fulfillments } = await client.orders.fulfillments.split(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            {
+              variant_id: 'variant_86Rf07xd4z',
+              quantity: 1,
+            },
+          )
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16604,6 +17699,22 @@ paths:
       - bearer_auth: []
       description: The consignments of one of this seller's parcels, one per tracking
         number, with each carrier status.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: deliveries } = await client.orders.fulfillments.deliveries.list(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+          )
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16706,6 +17817,26 @@ paths:
       - bearer_auth: []
       description: 'Adds a tracked consignment to the parcel: a second box, or a freight
         number covering several pallets.'
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const delivery = await client.orders.fulfillments.deliveries.create(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            {
+              tracking_number: '1Z879E930346834440',
+              carrier: 'ups',
+            },
+          )
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16766,6 +17897,24 @@ paths:
       - bearer_auth: []
       description: Corrects the tracking number, carrier or link. A corrected number
         starts the carrier journey over.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const delivery = await client.orders.fulfillments.deliveries.update(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'dlv_UkLWZg9DAJ',
+            { tracking_number: '1Z879E930346834441' },
+          )
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16820,6 +17969,22 @@ paths:
       - bearer_auth: []
       description: Every label bought or uploaded for one of this seller's parcels,
         refunded ones included.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: labels } = await client.orders.fulfillments.labels.list(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+          )
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16935,6 +18100,24 @@ paths:
         `POST /files` first and send its `signed_id` as `file_signed_id`.
         Buying a label needs the marketplace's carrier account, so a request
         without a file is refused.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const label = await client.orders.fulfillments.labels.create('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
+            file_signed_id: 'signed_id_from_files_upload',
+            tracking_number: '1Z879E930346834440',
+            cost: '6.50',
+            currency: 'USD',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16985,6 +18168,19 @@ paths:
       description: |
         The carriers a tracking number can be pinned to, from the registry —
         so a carrier an extension adds appears without a client change.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: carriers } = await client.trackingCarriers.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -17056,6 +18252,22 @@ paths:
       - bearer_auth: []
       description: This seller's product CSV imports, queued or finished. Another
         seller's imports are never listed.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: imports } = await client.imports.list({
+            status_eq: 'completed',
+            sort: '-created_at',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -17314,6 +18526,22 @@ paths:
         `attachment_signed_id`. On success the import is in the `mapping` state, carrying
         the auto-assigned column `mappings`; confirm them with
         `PATCH /imports/{id}/complete_mapping`. Imported products are created as drafts.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const productImport = await client.imports.create({
+            type: 'products',
+            attachment_signed_id: 'eyJfcmFpbHMiOnsiZGF0YSI6MTIzLCJwdXIiOiJibG9iX2lkIn19--4b9d',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -17694,6 +18922,21 @@ paths:
       - bearer_auth: []
       description: The rows of one of this seller's imports, each with its status
         and any validation errors.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: rows } = await client.imports.rows.list('imp_UkLWZg9DAJ', {
+            status_eq: 'failed',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -17805,6 +19048,21 @@ paths:
         Applies the submitted column mappings, then starts row processing. Omit `mappings`
         to accept the auto-assigned ones from the create response. Returns 422 when a
         required field is left unmapped (`details.missing_required_fields`).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const productImport = await client.imports.completeMapping('imp_UkLWZg9DAJ', {
+            mappings: [{ schema_field: 'name', file_column: 'Product name' }],
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -18177,6 +19435,23 @@ paths:
 
         Checkouts still in flight are left out: until one completes it is
         nobody's order.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: orders, meta } = await client.orders.list({
+            fulfillment_status_eq: 'unfulfilled',
+            sort: '-completed_at',
+            limit: 25,
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -18464,6 +19739,19 @@ paths:
 
         How the customer paid the marketplace is deliberately absent — that is
         between the buyer and the operator.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const order = await client.orders.get('or_UkLWZg9DAJ', { expand: ['payment_splits'] })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -18643,6 +19931,23 @@ paths:
 
         There is no `refund_amount`: withdrawing from the whole order returns
         what that order was paid, and a partial figure is a return.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const order = await client.orders.cancel('or_UkLWZg9DAJ', {
+            cancel_reason_id: 'ocr_UkLWZg9DAJ',
+            cancel_note: 'Out of stock with the supplier',
+            refund_payments: true,
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -18814,6 +20119,21 @@ paths:
 
         This is the only write against the order itself besides cancelling:
         nothing else about it, its totals included, is the seller's to change.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const order = await client.orders.address('or_UkLWZg9DAJ', {
+            shipping_address: { address1: '9 Corrected Way', city: 'Portland', postal_code: '97201' },
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -18994,6 +20314,19 @@ paths:
         A marketplace basket splits into one order per seller, so the internal
         note here is this seller's alone rather than the operator's note about
         the whole sale.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const order = await client.orders.notes.get('or_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19149,6 +20482,21 @@ paths:
 
         `internal_note` accepts HTML and is sanitized on save;
         `internal_note_html` reads it back.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const order = await client.orders.notes.update('or_UkLWZg9DAJ', {
+            internal_note: '<p>Packed with the fragile insert.</p>',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19321,6 +20669,19 @@ paths:
 
         Read-only: a seller picks one when cancelling, and the operator decides
         what the list holds. Retired reasons are left out.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: reasons } = await client.orderCancellationReasons.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19408,6 +20769,19 @@ paths:
 
         The row marked `default` is the box this seller's parcels are quoted
         with — its size and weight are added to every rate.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: packageTypes } = await client.packageTypes.list({ owner: 'mine' })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19550,6 +20924,28 @@ paths:
         makes it the box their parcels are quoted with, and demotes whichever
         of their rows held the flag before — the marketplace's default is a
         different owner's row and is left alone.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const packageType = await client.packageTypes.create({
+            name: 'Medium box',
+            kind: 'box',
+            length: 40,
+            width: 30,
+            height: 20,
+            dimensions_unit: 'cm',
+            max_weight: 10,
+            weight_unit: 'kg',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19616,6 +21012,19 @@ paths:
       description: |
         Returns one package type by prefixed ID — the seller's own, or a
         marketplace row they may pack into.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const packageType = await client.packageTypes.get('pkgtype_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19665,6 +21074,21 @@ paths:
       description: |
         Changes the seller's own packaging. A marketplace row is not theirs to
         edit and answers 404.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const packageType = await client.packageTypes.update('pkgtype_UkLWZg9DAJ', {
+            max_weight: 15,
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19711,6 +21135,19 @@ paths:
         Retires one of the seller's own package types. The default box is
         refused — name another default first, or every parcel silently falls
         back to the marketplace's box.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.packageTypes.delete('pkgtype_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19736,6 +21173,22 @@ paths:
 
         Read-only: a payout is created by the marketplace's sweep and
         confirmed by the payout provider or the operator.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: payouts } = await client.payouts.list({
+            status_eq: 'completed',
+            sort: '-period_end',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19861,6 +21314,19 @@ paths:
       - bearer_auth: []
       description: One of this seller's settlements. Another seller's is not found,
         whatever id is sent.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const payout = await client.payouts.get('vpo_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -19916,6 +21382,19 @@ paths:
         Reached through the order, which is itself fetched through the acting
         seller — so a return on somebody else's order is unreachable whatever
         ids are sent.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: returns } = await client.orders.returns.list('or_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20015,6 +21494,22 @@ paths:
         order, so only what this seller actually shipped can come back. An
         optional stock location says which of the seller's own shelves it
         returns to.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const orderReturn = await client.orders.returns.create('or_UkLWZg9DAJ', {
+            items: [{ fulfillment_item_id: 'fi_UkLWZg9DAJ', quantity: 1 }],
+            reason_id: 'rar_UkLWZg9DAJ',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20077,6 +21572,19 @@ paths:
       security:
       - bearer_auth: []
       description: Agrees the goods may come back.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const orderReturn = await client.orders.returns.approve('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20128,6 +21636,21 @@ paths:
         Records what actually arrived, and whether it can be sold again.
 
         Omitting `items` receives everything as requested and resellable.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const orderReturn = await client.orders.returns.receive('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ', {
+            items: [{ return_line_item_id: 'rli_UkLWZg9DAJ', quantity: 1, resellable: true }],
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20187,6 +21710,21 @@ paths:
         theirs to do. The amount is bounded by what the return is owed and, on
         a basket split between sellers, by this order's share of the payment —
         never a sibling's.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const orderReturn = await client.orders.returns.refund('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ', {
+            refund_method: 'original_payment',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20248,6 +21786,21 @@ paths:
       security:
       - bearer_auth: []
       description: Calls the return off.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const orderReturn = await client.orders.returns.cancel('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ', {
+            reason: 'Customer decided to keep the goods',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20294,6 +21847,19 @@ paths:
 
         Read-only: the vocabulary is the operator's, and a seller picks from
         it. Retired reasons are left out.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: reasons } = await client.returnReasons.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20377,6 +21943,19 @@ paths:
         A collection rather than a single field: a business trading in more
         than one regime holds a registration in each, and they are not
         alternatives. One per kind.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: taxIdentifiers } = await client.taxIdentifiers.list()
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20448,6 +22027,22 @@ paths:
 
         A number a registered validator refuses is rejected outright rather
         than stored, so a typo cannot reach an invoice.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const taxIdentifier = await client.taxIdentifiers.create({
+            kind: 'eu_vat',
+            value: 'DE123456789',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20498,6 +22093,21 @@ paths:
       description: |
         A changed number drops its validation verdict, because that answer was
         about the old one.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const taxIdentifier = await client.taxIdentifiers.update('txi_xxx', {
+            value: 'DE987654321',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20527,6 +22137,19 @@ paths:
       - Tax Identifiers
       security:
       - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.taxIdentifiers.remove('txi_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20555,6 +22178,19 @@ paths:
         installed for the kind — core format-checks EU VAT numbers but asks no
         registry, so a stock install answers 422 here rather than queueing a
         check nobody can answer.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const taxIdentifier = await client.taxIdentifiers.validate('txi_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20586,6 +22222,22 @@ paths:
 
         Read-only. Filter with `q[order_id_eq]` for one order's rows, or
         `q[payout_id_eq]` for the earnings one settlement covers.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: transfers } = await client.transfers.list({
+            payout_id_eq: 'vpo_UkLWZg9DAJ',
+            sort: '-created_at',
+          })
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -20718,6 +22370,19 @@ paths:
       - bearer_auth: []
       description: One of this seller's transfers. Another seller's is not found,
         whatever id is sent.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const transfer = await client.transfers.get('vtr_UkLWZg9DAJ')
       parameters:
       - name: X-Spree-Seller-Id
         in: header

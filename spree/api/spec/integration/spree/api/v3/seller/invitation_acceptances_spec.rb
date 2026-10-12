@@ -29,6 +29,8 @@ RSpec.describe 'Seller Invitation Acceptance API', type: :request, swagger_doc: 
         answers `404` here too.
       DESC
 
+      seller_sdk_example 'auth/lookup-invitation', as: :guest
+
       parameter name: :token, in: :query, type: :string, required: true,
                 description: 'The token from the emailed link'
 
@@ -73,6 +75,8 @@ RSpec.describe 'Seller Invitation Acceptance API', type: :request, swagger_doc: 
         which case it sets one. When an account already exists, the same field is
         how the person proves the account is theirs.
       DESC
+
+      seller_sdk_example 'auth/accept-invitation', as: :guest
 
       parameter name: :token, in: :query, type: :string, required: true,
                 description: 'The token from the emailed link'

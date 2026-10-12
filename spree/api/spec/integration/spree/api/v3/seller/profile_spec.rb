@@ -24,6 +24,8 @@ RSpec.describe 'Seller Profile API', type: :request, swagger_doc: 'api-reference
         another seller here even by guessing one.
       DESC
 
+      seller_sdk_example 'profile/get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'profile returned' do
@@ -68,6 +70,8 @@ RSpec.describe 'Seller Profile API', type: :request, swagger_doc: 'api-reference
         marketplace's onboarding actually asks this seller for; a field nothing
         asked for is ignored rather than written.
       DESC
+
+      seller_sdk_example 'profile/update'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for

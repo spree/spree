@@ -32,6 +32,8 @@ RSpec.describe 'Seller Onboarding API', type: :request, swagger_doc: 'api-refere
         complete answer rather than a missing one.
       DESC
 
+      seller_sdk_example 'onboarding/get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'checklist returned' do
@@ -72,6 +74,8 @@ RSpec.describe 'Seller Onboarding API', type: :request, swagger_doc: 'api-refere
         unchanged. Returns the same payload as the checklist so the panel can
         re-render from one response.
       DESC
+
+      seller_sdk_example 'onboarding/submit-for-review'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -117,6 +121,8 @@ RSpec.describe 'Seller Onboarding API', type: :request, swagger_doc: 'api-refere
         seller acts: these links are short-lived and single-use. Answers
         `{ "url": null }` when the provider hosts no onboarding.
       DESC
+
+      seller_sdk_example 'onboarding/payout-account'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for

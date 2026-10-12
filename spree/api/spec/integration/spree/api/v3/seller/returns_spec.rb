@@ -36,6 +36,8 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
         ids are sent.
       DESC
 
+      seller_sdk_example 'order-returns/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       filter_parameters_for
 
@@ -69,6 +71,8 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
         optional stock location says which of the seller's own shelves it
         returns to.
       DESC
+
+      seller_sdk_example 'order-returns/create'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -109,6 +113,8 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
       security [bearer_auth: []]
       description 'Agrees the goods may come back.'
 
+      seller_sdk_example 'order-returns/approve'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'return approved' do
@@ -138,6 +144,8 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
 
         Omitting `items` receives everything as requested and resellable.
       DESC
+
+      seller_sdk_example 'order-returns/receive'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
@@ -175,6 +183,8 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
         a basket split between sellers, by this order's share of the payment —
         never a sibling's.
       DESC
+
+      seller_sdk_example 'order-returns/refund'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
@@ -224,6 +234,8 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
       security [bearer_auth: []]
       description 'Calls the return off.'
 
+      seller_sdk_example 'order-returns/cancel'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
 
@@ -252,6 +264,8 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
         Read-only: the vocabulary is the operator's, and a seller picks from
         it. Retired reasons are left out.
       DESC
+
+      seller_sdk_example 'return-reasons/list'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       filter_parameters_for

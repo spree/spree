@@ -25,6 +25,8 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
         never appear here.
       DESC
 
+      seller_sdk_example 'stock-locations/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -60,6 +62,8 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
         The seller and the store come from the request context whatever the
         payload says.
       DESC
+
+      seller_sdk_example 'stock-locations/create'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -100,6 +104,8 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
         seller — or to the marketplace operator — answers `404`.
       DESC
 
+      seller_sdk_example 'stock-locations/get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'stock location returned' do
@@ -136,6 +142,8 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
         historical fulfillments, so a seller retires one by setting `active` to
         `false`.
       DESC
+
+      seller_sdk_example 'stock-locations/update'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for

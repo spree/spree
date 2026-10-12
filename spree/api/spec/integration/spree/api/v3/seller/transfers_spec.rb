@@ -27,6 +27,8 @@ RSpec.describe 'Seller Transfers API', type: :request, swagger_doc: 'api-referen
         `q[payout_id_eq]` for the earnings one settlement covers.
       DESC
 
+      seller_sdk_example 'transfers/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -59,6 +61,8 @@ RSpec.describe 'Seller Transfers API', type: :request, swagger_doc: 'api-referen
       produces 'application/json'
       security [bearer_auth: []]
       description "One of this seller's transfers. Another seller's is not found, whatever id is sent."
+
+      seller_sdk_example 'transfers/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

@@ -32,6 +32,8 @@ RSpec.describe 'Seller Payouts API', type: :request, swagger_doc: 'api-reference
         confirmed by the payout provider or the operator.
       DESC
 
+      seller_sdk_example 'payouts/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -64,6 +66,8 @@ RSpec.describe 'Seller Payouts API', type: :request, swagger_doc: 'api-reference
       produces 'application/json'
       security [bearer_auth: []]
       description "One of this seller's settlements. Another seller's is not found, whatever id is sent."
+
+      seller_sdk_example 'payouts/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

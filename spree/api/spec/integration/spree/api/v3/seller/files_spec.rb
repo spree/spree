@@ -34,6 +34,8 @@ RSpec.describe 'Seller Files API', type: :request, swagger_doc: 'api-reference/s
         digest, base64-encoded.
       DESC
 
+      seller_sdk_example 'files/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 

@@ -60,7 +60,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "console": "tsx console.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.examples.json",
     "examples:typecheck": "tsc --noEmit -p tsconfig.examples.json",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
