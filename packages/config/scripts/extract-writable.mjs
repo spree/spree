@@ -14,19 +14,29 @@ const spec = parse(readFileSync(resolve(root, '../../docs/api-reference/admin.ya
 /** The parts of a property schema the configurator reads. */
 function slim(property) {
   const out = {}
-  for (const key of ['type', 'nullable', 'enum', 'deprecated']) {
+  for (const key of ['type', 'format', 'nullable', 'enum', 'deprecated']) {
     if (property[key] !== undefined) out[key] = property[key]
   }
   if (property.items?.type) out.items = { type: property.items.type }
   return out
 }
 
+/** A schema with any `$ref` (or single-entry `allOf`) followed to the component it names. */
+function dereference(schema) {
+  const ref = schema?.$ref ?? (schema?.allOf?.length === 1 ? schema.allOf[0].$ref : undefined)
+  if (!ref) return schema
+  return { ...spec.components.schemas[ref.split('/').pop()], nullable: schema.nullable }
+}
+
 function bodyOf(operation) {
-  const schema = operation?.requestBody?.content?.['application/json']?.schema
+  const schema = dereference(operation?.requestBody?.content?.['application/json']?.schema)
   if (!schema?.properties) return null
   return {
     properties: Object.fromEntries(
-      Object.entries(schema.properties).map(([name, property]) => [name, slim(property)]),
+      Object.entries(schema.properties).map(([name, property]) => [
+        name,
+        slim(dereference(property)),
+      ]),
     ),
     required: schema.required ?? [],
   }

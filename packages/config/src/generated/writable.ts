@@ -7,6 +7,161 @@ export const WRITABLE = {
         "name": {
           "type": "string"
         },
+        "admin_locale": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "weight_unit": {
+          "type": "string",
+          "enum": [
+            "g",
+            "kg",
+            "lb",
+            "oz"
+          ]
+        },
+        "unit_system": {
+          "type": "string",
+          "enum": [
+            "metric",
+            "imperial"
+          ]
+        },
+        "storefront_access": {
+          "type": "string",
+          "enum": [
+            "public",
+            "prices_hidden",
+            "login_required"
+          ]
+        },
+        "storefront_url": {
+          "type": "string",
+          "nullable": true
+        },
+        "guest_checkout": {
+          "type": "boolean"
+        },
+        "always_include_confirm_step": {
+          "type": "boolean"
+        },
+        "company_field_enabled": {
+          "type": "boolean"
+        },
+        "address_requires_company": {
+          "type": "boolean"
+        },
+        "address_requires_phone": {
+          "type": "boolean"
+        },
+        "capture_method": {
+          "type": "string",
+          "enum": [
+            "checkout",
+            "on_dispatch",
+            "manual"
+          ]
+        },
+        "track_inventory_levels": {
+          "type": "boolean"
+        },
+        "stock_reservations_enabled": {
+          "type": "boolean"
+        },
+        "low_stock_threshold": {
+          "type": "integer"
+        },
+        "tax_using_ship_address": {
+          "type": "boolean"
+        },
+        "track_price_history": {
+          "type": "boolean"
+        },
+        "show_products_without_price": {
+          "type": "boolean"
+        },
+        "disable_sku_validation": {
+          "type": "boolean"
+        },
+        "order_routing_strategy": {
+          "type": "string"
+        },
+        "pricing_provider": {
+          "type": "string"
+        },
+        "inventory_provider": {
+          "type": "string"
+        },
+        "pricing_provider_failure_policy": {
+          "type": "string",
+          "enum": [
+            "fallback",
+            "strict"
+          ]
+        },
+        "inventory_provider_failure_policy": {
+          "type": "string",
+          "enum": [
+            "fallback",
+            "strict"
+          ]
+        },
+        "payout_provider": {
+          "type": "string"
+        },
+        "default_payouts_schedule_interval": {
+          "type": "string",
+          "enum": [
+            "daily",
+            "weekly",
+            "biweekly",
+            "monthly",
+            "manual"
+          ]
+        },
+        "default_minimum_payout_amount": {
+          "type": "string",
+          "format": "decimal"
+        },
+        "auto_approve_sellers": {
+          "type": "boolean"
+        },
+        "auto_approve_seller_products": {
+          "type": "boolean"
+        },
+        "send_seller_transactional_emails": {
+          "type": "boolean"
+        },
+        "default_commission_tax_rate": {
+          "type": "string",
+          "format": "decimal"
+        },
+        "document_number_format": {
+          "type": "string"
+        },
+        "order_number_prefix": {
+          "type": "string"
+        },
+        "order_number_suffix": {
+          "type": "string"
+        },
+        "order_number_sequence_start": {
+          "type": "integer"
+        },
+        "limit_digital_download_count": {
+          "type": "boolean"
+        },
+        "digital_asset_authorized_clicks": {
+          "type": "integer"
+        },
+        "limit_digital_download_days": {
+          "type": "boolean"
+        },
+        "digital_asset_authorized_days": {
+          "type": "integer"
+        },
         "mail_from_address": {
           "type": "string"
         },
@@ -18,179 +173,40 @@ export const WRITABLE = {
           "type": "string",
           "nullable": true
         },
-        "preferred_admin_locale": {
+        "send_consumer_transactional_emails": {
+          "type": "boolean"
+        },
+        "email_accent_color": {
           "type": "string",
           "nullable": true
         },
-        "preferred_timezone": {
-          "type": "string"
-        },
-        "preferred_weight_unit": {
-          "type": "string"
-        },
-        "preferred_unit_system": {
-          "type": "string"
-        },
-        "preferred_storefront_access": {
-          "type": "string",
-          "enum": [
-            "public",
-            "prices_hidden",
-            "login_required"
-          ]
-        },
-        "preferred_storefront_url": {
+        "email_background_color": {
           "type": "string",
           "nullable": true
         },
-        "preferred_guest_checkout": {
-          "type": "boolean"
-        },
-        "preferred_always_include_confirm_step": {
-          "type": "boolean"
-        },
-        "preferred_company_field_enabled": {
-          "type": "boolean"
-        },
-        "preferred_address_requires_company": {
-          "type": "boolean"
-        },
-        "preferred_address_requires_phone": {
-          "type": "boolean"
-        },
-        "preferred_capture_method": {
-          "type": "string",
-          "enum": [
-            "checkout",
-            "on_dispatch",
-            "manual"
-          ]
-        },
-        "preferred_auto_capture": {
-          "type": "boolean",
-          "deprecated": true
-        },
-        "preferred_auto_capture_on_dispatch": {
-          "type": "boolean"
-        },
-        "preferred_track_inventory_levels": {
-          "type": "boolean"
-        },
-        "preferred_stock_reservations_enabled": {
-          "type": "boolean"
-        },
-        "preferred_low_stock_threshold": {
-          "type": "integer"
-        },
-        "preferred_tax_using_ship_address": {
-          "type": "boolean"
-        },
-        "preferred_track_price_history": {
-          "type": "boolean"
-        },
-        "preferred_show_products_without_price": {
-          "type": "boolean"
-        },
-        "preferred_disable_sku_validation": {
-          "type": "boolean"
-        },
-        "preferred_order_routing_strategy": {
-          "type": "string"
-        },
-        "preferred_pricing_provider": {
-          "type": "string"
-        },
-        "preferred_inventory_provider": {
-          "type": "string"
-        },
-        "preferred_pricing_provider_failure_policy": {
-          "type": "string",
-          "enum": [
-            "fallback",
-            "strict"
-          ]
-        },
-        "preferred_inventory_provider_failure_policy": {
-          "type": "string",
-          "enum": [
-            "fallback",
-            "strict"
-          ]
-        },
-        "preferred_payout_provider": {
+        "email_card_color": {
           "type": "string",
           "nullable": true
         },
-        "preferred_default_payouts_schedule_interval": {
-          "type": "string",
-          "enum": [
-            "daily",
-            "weekly",
-            "biweekly",
-            "monthly",
-            "manual"
-          ]
-        },
-        "preferred_default_minimum_payout_amount": {
-          "type": "number"
-        },
-        "preferred_auto_approve_sellers": {
-          "type": "boolean"
-        },
-        "preferred_auto_approve_seller_products": {
-          "type": "boolean"
-        },
-        "preferred_send_seller_transactional_emails": {
-          "type": "boolean"
-        },
-        "preferred_send_consumer_transactional_emails": {
-          "type": "boolean"
-        },
-        "preferred_email_accent_color": {
+        "email_text_color": {
           "type": "string",
           "nullable": true
         },
-        "preferred_email_background_color": {
+        "email_heading_color": {
           "type": "string",
           "nullable": true
         },
-        "preferred_email_card_color": {
+        "email_font": {
           "type": "string",
           "nullable": true
         },
-        "preferred_email_text_color": {
+        "logo_signed_id": {
           "type": "string",
           "nullable": true
         },
-        "preferred_email_heading_color": {
+        "mailer_logo_signed_id": {
           "type": "string",
           "nullable": true
-        },
-        "preferred_email_font": {
-          "type": "string",
-          "nullable": true
-        },
-        "preferred_default_commission_tax_rate": {
-          "type": "number"
-        },
-        "preferred_document_number_format": {
-          "type": "string",
-          "enum": [
-            "sequential",
-            "random"
-          ]
-        },
-        "preferred_order_number_prefix": {
-          "type": "string"
-        },
-        "preferred_order_number_suffix": {
-          "type": "string"
-        },
-        "preferred_order_number_sequence_start": {
-          "type": "integer"
-        },
-        "mailer_logo": {
-          "type": "string"
         }
       },
       "required": []
@@ -199,6 +215,9 @@ export const WRITABLE = {
   "stock_locations": {
     "create": {
       "properties": {
+        "external_references": {
+          "type": "object"
+        },
         "name": {
           "type": "string"
         },
@@ -212,14 +231,7 @@ export const WRITABLE = {
         "default": {
           "type": "boolean"
         },
-        "kind": {
-          "type": "string",
-          "enum": [
-            "warehouse",
-            "store",
-            "fulfillment_center"
-          ]
-        },
+        "kind": {},
         "propagate_all_variants": {
           "type": "boolean"
         },
@@ -252,7 +264,249 @@ export const WRITABLE = {
         },
         "country_code": {
           "type": "string",
-          "nullable": true
+          "nullable": true,
+          "enum": [
+            "AD",
+            "AE",
+            "AF",
+            "AG",
+            "AI",
+            "AL",
+            "AM",
+            "AO",
+            "AR",
+            "AS",
+            "AT",
+            "AU",
+            "AW",
+            "AZ",
+            "BA",
+            "BB",
+            "BD",
+            "BE",
+            "BF",
+            "BG",
+            "BH",
+            "BI",
+            "BJ",
+            "BL",
+            "BM",
+            "BN",
+            "BO",
+            "BQ",
+            "BR",
+            "BS",
+            "BT",
+            "BW",
+            "BY",
+            "BZ",
+            "CA",
+            "CC",
+            "CD",
+            "CF",
+            "CG",
+            "CH",
+            "CI",
+            "CK",
+            "CL",
+            "CM",
+            "CN",
+            "CO",
+            "CR",
+            "CU",
+            "CV",
+            "CW",
+            "CX",
+            "CY",
+            "CZ",
+            "DE",
+            "DJ",
+            "DK",
+            "DM",
+            "DO",
+            "DZ",
+            "EC",
+            "EE",
+            "EG",
+            "ER",
+            "ES",
+            "ET",
+            "FI",
+            "FJ",
+            "FK",
+            "FM",
+            "FO",
+            "FR",
+            "GA",
+            "GB",
+            "GD",
+            "GE",
+            "GF",
+            "GG",
+            "GH",
+            "GI",
+            "GL",
+            "GM",
+            "GN",
+            "GP",
+            "GQ",
+            "GR",
+            "GT",
+            "GU",
+            "GW",
+            "GY",
+            "HK",
+            "HN",
+            "HR",
+            "HT",
+            "HU",
+            "ID",
+            "IE",
+            "IL",
+            "IM",
+            "IN",
+            "IQ",
+            "IR",
+            "IS",
+            "IT",
+            "JE",
+            "JM",
+            "JO",
+            "JP",
+            "KE",
+            "KG",
+            "KH",
+            "KI",
+            "KM",
+            "KN",
+            "KP",
+            "KR",
+            "KW",
+            "KY",
+            "KZ",
+            "LA",
+            "LB",
+            "LC",
+            "LI",
+            "LK",
+            "LR",
+            "LS",
+            "LT",
+            "LU",
+            "LV",
+            "LY",
+            "MA",
+            "MC",
+            "MD",
+            "ME",
+            "MF",
+            "MG",
+            "MH",
+            "MK",
+            "ML",
+            "MM",
+            "MN",
+            "MO",
+            "MP",
+            "MQ",
+            "MR",
+            "MS",
+            "MT",
+            "MU",
+            "MV",
+            "MW",
+            "MX",
+            "MY",
+            "MZ",
+            "NA",
+            "NC",
+            "NE",
+            "NF",
+            "NG",
+            "NI",
+            "NL",
+            "NO",
+            "NP",
+            "NR",
+            "NU",
+            "NZ",
+            "OM",
+            "PA",
+            "PE",
+            "PF",
+            "PG",
+            "PH",
+            "PK",
+            "PL",
+            "PM",
+            "PN",
+            "PR",
+            "PS",
+            "PT",
+            "PW",
+            "PY",
+            "QA",
+            "RE",
+            "RO",
+            "RS",
+            "RU",
+            "RW",
+            "SA",
+            "SB",
+            "SC",
+            "SD",
+            "SE",
+            "SG",
+            "SH",
+            "SI",
+            "SJ",
+            "SK",
+            "SL",
+            "SM",
+            "SN",
+            "SO",
+            "SR",
+            "SS",
+            "ST",
+            "SV",
+            "SX",
+            "SY",
+            "SZ",
+            "TC",
+            "TD",
+            "TG",
+            "TH",
+            "TJ",
+            "TK",
+            "TL",
+            "TM",
+            "TN",
+            "TO",
+            "TR",
+            "TT",
+            "TV",
+            "TW",
+            "TZ",
+            "UA",
+            "UG",
+            "US",
+            "UY",
+            "UZ",
+            "VA",
+            "VC",
+            "VE",
+            "VG",
+            "VI",
+            "VN",
+            "VU",
+            "WF",
+            "WS",
+            "YE",
+            "YT",
+            "ZA",
+            "ZM",
+            "ZW"
+          ]
         },
         "state_code": {
           "type": "string",
@@ -273,15 +527,15 @@ export const WRITABLE = {
           ]
         },
         "pickup_ready_in_minutes": {
-          "type": "number",
-          "nullable": true
-        },
-        "pickup_instructions": {
-          "type": "string",
+          "type": "integer",
           "nullable": true
         },
         "returns_enabled": {
           "type": "boolean"
+        },
+        "pickup_instructions": {
+          "type": "string",
+          "nullable": true
         }
       },
       "required": [
@@ -290,6 +544,9 @@ export const WRITABLE = {
     },
     "update": {
       "properties": {
+        "external_references": {
+          "type": "object"
+        },
         "name": {
           "type": "string"
         },
@@ -303,14 +560,7 @@ export const WRITABLE = {
         "default": {
           "type": "boolean"
         },
-        "kind": {
-          "type": "string",
-          "enum": [
-            "warehouse",
-            "store",
-            "fulfillment_center"
-          ]
-        },
+        "kind": {},
         "propagate_all_variants": {
           "type": "boolean"
         },
@@ -343,7 +593,249 @@ export const WRITABLE = {
         },
         "country_code": {
           "type": "string",
-          "nullable": true
+          "nullable": true,
+          "enum": [
+            "AD",
+            "AE",
+            "AF",
+            "AG",
+            "AI",
+            "AL",
+            "AM",
+            "AO",
+            "AR",
+            "AS",
+            "AT",
+            "AU",
+            "AW",
+            "AZ",
+            "BA",
+            "BB",
+            "BD",
+            "BE",
+            "BF",
+            "BG",
+            "BH",
+            "BI",
+            "BJ",
+            "BL",
+            "BM",
+            "BN",
+            "BO",
+            "BQ",
+            "BR",
+            "BS",
+            "BT",
+            "BW",
+            "BY",
+            "BZ",
+            "CA",
+            "CC",
+            "CD",
+            "CF",
+            "CG",
+            "CH",
+            "CI",
+            "CK",
+            "CL",
+            "CM",
+            "CN",
+            "CO",
+            "CR",
+            "CU",
+            "CV",
+            "CW",
+            "CX",
+            "CY",
+            "CZ",
+            "DE",
+            "DJ",
+            "DK",
+            "DM",
+            "DO",
+            "DZ",
+            "EC",
+            "EE",
+            "EG",
+            "ER",
+            "ES",
+            "ET",
+            "FI",
+            "FJ",
+            "FK",
+            "FM",
+            "FO",
+            "FR",
+            "GA",
+            "GB",
+            "GD",
+            "GE",
+            "GF",
+            "GG",
+            "GH",
+            "GI",
+            "GL",
+            "GM",
+            "GN",
+            "GP",
+            "GQ",
+            "GR",
+            "GT",
+            "GU",
+            "GW",
+            "GY",
+            "HK",
+            "HN",
+            "HR",
+            "HT",
+            "HU",
+            "ID",
+            "IE",
+            "IL",
+            "IM",
+            "IN",
+            "IQ",
+            "IR",
+            "IS",
+            "IT",
+            "JE",
+            "JM",
+            "JO",
+            "JP",
+            "KE",
+            "KG",
+            "KH",
+            "KI",
+            "KM",
+            "KN",
+            "KP",
+            "KR",
+            "KW",
+            "KY",
+            "KZ",
+            "LA",
+            "LB",
+            "LC",
+            "LI",
+            "LK",
+            "LR",
+            "LS",
+            "LT",
+            "LU",
+            "LV",
+            "LY",
+            "MA",
+            "MC",
+            "MD",
+            "ME",
+            "MF",
+            "MG",
+            "MH",
+            "MK",
+            "ML",
+            "MM",
+            "MN",
+            "MO",
+            "MP",
+            "MQ",
+            "MR",
+            "MS",
+            "MT",
+            "MU",
+            "MV",
+            "MW",
+            "MX",
+            "MY",
+            "MZ",
+            "NA",
+            "NC",
+            "NE",
+            "NF",
+            "NG",
+            "NI",
+            "NL",
+            "NO",
+            "NP",
+            "NR",
+            "NU",
+            "NZ",
+            "OM",
+            "PA",
+            "PE",
+            "PF",
+            "PG",
+            "PH",
+            "PK",
+            "PL",
+            "PM",
+            "PN",
+            "PR",
+            "PS",
+            "PT",
+            "PW",
+            "PY",
+            "QA",
+            "RE",
+            "RO",
+            "RS",
+            "RU",
+            "RW",
+            "SA",
+            "SB",
+            "SC",
+            "SD",
+            "SE",
+            "SG",
+            "SH",
+            "SI",
+            "SJ",
+            "SK",
+            "SL",
+            "SM",
+            "SN",
+            "SO",
+            "SR",
+            "SS",
+            "ST",
+            "SV",
+            "SX",
+            "SY",
+            "SZ",
+            "TC",
+            "TD",
+            "TG",
+            "TH",
+            "TJ",
+            "TK",
+            "TL",
+            "TM",
+            "TN",
+            "TO",
+            "TR",
+            "TT",
+            "TV",
+            "TW",
+            "TZ",
+            "UA",
+            "UG",
+            "US",
+            "UY",
+            "UZ",
+            "VA",
+            "VC",
+            "VE",
+            "VG",
+            "VI",
+            "VN",
+            "VU",
+            "WF",
+            "WS",
+            "YE",
+            "YT",
+            "ZA",
+            "ZM",
+            "ZW"
+          ]
         },
         "state_code": {
           "type": "string",
@@ -364,15 +856,15 @@ export const WRITABLE = {
           ]
         },
         "pickup_ready_in_minutes": {
-          "type": "number",
-          "nullable": true
-        },
-        "pickup_instructions": {
-          "type": "string",
+          "type": "integer",
           "nullable": true
         },
         "returns_enabled": {
           "type": "boolean"
+        },
+        "pickup_instructions": {
+          "type": "string",
+          "nullable": true
         }
       },
       "required": []
@@ -393,11 +885,11 @@ export const WRITABLE = {
         "default": {
           "type": "boolean"
         },
-        "preferred_order_routing_strategy": {
+        "order_routing_strategy": {
           "type": "string",
           "nullable": true
         },
-        "preferred_storefront_access": {
+        "storefront_access": {
           "type": "string",
           "nullable": true,
           "enum": [
@@ -406,7 +898,7 @@ export const WRITABLE = {
             "login_required"
           ]
         },
-        "preferred_guest_checkout": {
+        "guest_checkout": {
           "type": "boolean",
           "nullable": true
         },
@@ -439,11 +931,11 @@ export const WRITABLE = {
         "default": {
           "type": "boolean"
         },
-        "preferred_order_routing_strategy": {
+        "order_routing_strategy": {
           "type": "string",
           "nullable": true
         },
-        "preferred_storefront_access": {
+        "storefront_access": {
           "type": "string",
           "nullable": true,
           "enum": [
@@ -452,7 +944,7 @@ export const WRITABLE = {
             "login_required"
           ]
         },
-        "preferred_guest_checkout": {
+        "guest_checkout": {
           "type": "boolean",
           "nullable": true
         },
@@ -477,16 +969,190 @@ export const WRITABLE = {
           "type": "string"
         },
         "currency": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "ARS",
+            "AUD",
+            "AWG",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BTN",
+            "BWP",
+            "BYN",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHF",
+            "CLF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUC",
+            "CUP",
+            "CVE",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "EEK",
+            "EGP",
+            "ERN",
+            "ETB",
+            "EUR",
+            "FJD",
+            "FKP",
+            "GBP",
+            "GEL",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MRU",
+            "MTL",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SHP",
+            "SKK",
+            "SLE",
+            "SLL",
+            "SOS",
+            "SRD",
+            "SSP",
+            "STD",
+            "STN",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMM",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "USD",
+            "UYI",
+            "UYU",
+            "UYW",
+            "UZS",
+            "VED",
+            "VEF",
+            "VES",
+            "VND",
+            "VUV",
+            "WST",
+            "XAF",
+            "XCD",
+            "XCG",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZMW",
+            "ZWD",
+            "ZWG",
+            "ZWL",
+            "ZWN",
+            "ZWR"
+          ]
         },
         "default_locale": {
           "type": "string"
-        },
-        "supported_locales": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "tax_inclusive": {
           "type": "boolean"
@@ -501,11 +1167,14 @@ export const WRITABLE = {
         "position": {
           "type": "integer"
         },
-        "country_codes": {
+        "supported_locales": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "country_codes": {
+          "type": "array"
         }
       },
       "required": [
@@ -521,16 +1190,190 @@ export const WRITABLE = {
           "type": "string"
         },
         "currency": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "ARS",
+            "AUD",
+            "AWG",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BTN",
+            "BWP",
+            "BYN",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHF",
+            "CLF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUC",
+            "CUP",
+            "CVE",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "EEK",
+            "EGP",
+            "ERN",
+            "ETB",
+            "EUR",
+            "FJD",
+            "FKP",
+            "GBP",
+            "GEL",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MRU",
+            "MTL",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SHP",
+            "SKK",
+            "SLE",
+            "SLL",
+            "SOS",
+            "SRD",
+            "SSP",
+            "STD",
+            "STN",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMM",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "USD",
+            "UYI",
+            "UYU",
+            "UYW",
+            "UZS",
+            "VED",
+            "VEF",
+            "VES",
+            "VND",
+            "VUV",
+            "WST",
+            "XAF",
+            "XCD",
+            "XCG",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZMW",
+            "ZWD",
+            "ZWG",
+            "ZWL",
+            "ZWN",
+            "ZWR"
+          ]
         },
         "default_locale": {
           "type": "string"
-        },
-        "supported_locales": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "tax_inclusive": {
           "type": "boolean"
@@ -545,11 +1388,14 @@ export const WRITABLE = {
         "position": {
           "type": "integer"
         },
-        "country_codes": {
+        "supported_locales": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "country_codes": {
+          "type": "array"
         }
       },
       "required": []
@@ -668,6 +1514,9 @@ export const WRITABLE = {
         "name": {
           "type": "string"
         },
+        "kind": {
+          "type": "string"
+        },
         "default": {
           "type": "boolean"
         },
@@ -695,18 +1544,13 @@ export const WRITABLE = {
           "nullable": true
         },
         "delivery_profile_id": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "delivery_origin_group_id": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "members": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": [
@@ -723,18 +1567,13 @@ export const WRITABLE = {
           "nullable": true
         },
         "delivery_profile_id": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "delivery_origin_group_id": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "members": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": []
@@ -755,26 +1594,13 @@ export const WRITABLE = {
           "nullable": true
         },
         "fulfillment_provider": {
-          "type": "string",
-          "nullable": true
-        },
-        "rate_provider": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "pickup_point_provider": {
           "type": "string",
           "nullable": true
         },
-        "delivery_profile_id": {
-          "type": "string",
-          "nullable": true
-        },
-        "delivery_origin_group_id": {
-          "type": "string",
-          "nullable": true
-        },
-        "delivery_zone_id": {
+        "rate_provider": {
           "type": "string",
           "nullable": true
         },
@@ -800,23 +1626,34 @@ export const WRITABLE = {
           "type": "string",
           "nullable": true
         },
-        "calculator_type": {
-          "type": "string"
-        },
-        "calculator_preferences": {
-          "type": "object"
-        },
         "markup_flat": {
-          "type": "number"
+          "type": "string",
+          "format": "decimal",
+          "nullable": true
         },
         "markup_percent": {
-          "type": "number"
+          "type": "string",
+          "format": "decimal",
+          "nullable": true
+        },
+        "delivery_profile_id": {
+          "type": "string"
+        },
+        "delivery_origin_group_id": {
+          "type": "string"
+        },
+        "delivery_zone_id": {
+          "type": "string",
+          "nullable": true
         },
         "stock_location_ids": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "calculator": {
+          "type": "object"
         },
         "rules": {
           "type": "array",
@@ -825,10 +1662,7 @@ export const WRITABLE = {
           }
         },
         "services": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": [
@@ -849,26 +1683,13 @@ export const WRITABLE = {
           "nullable": true
         },
         "fulfillment_provider": {
-          "type": "string",
-          "nullable": true
-        },
-        "rate_provider": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "pickup_point_provider": {
           "type": "string",
           "nullable": true
         },
-        "delivery_profile_id": {
-          "type": "string",
-          "nullable": true
-        },
-        "delivery_origin_group_id": {
-          "type": "string",
-          "nullable": true
-        },
-        "delivery_zone_id": {
+        "rate_provider": {
           "type": "string",
           "nullable": true
         },
@@ -894,23 +1715,34 @@ export const WRITABLE = {
           "type": "string",
           "nullable": true
         },
-        "calculator_type": {
-          "type": "string"
-        },
-        "calculator_preferences": {
-          "type": "object"
-        },
         "markup_flat": {
-          "type": "number"
+          "type": "string",
+          "format": "decimal",
+          "nullable": true
         },
         "markup_percent": {
-          "type": "number"
+          "type": "string",
+          "format": "decimal",
+          "nullable": true
+        },
+        "delivery_profile_id": {
+          "type": "string"
+        },
+        "delivery_origin_group_id": {
+          "type": "string"
+        },
+        "delivery_zone_id": {
+          "type": "string",
+          "nullable": true
         },
         "stock_location_ids": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "calculator": {
+          "type": "object"
         },
         "rules": {
           "type": "array",
@@ -919,10 +1751,7 @@ export const WRITABLE = {
           }
         },
         "services": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": []
@@ -945,16 +1774,20 @@ export const WRITABLE = {
           ]
         },
         "length": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "width": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "height": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "dimensions_unit": {
           "type": "string",
+          "nullable": true,
           "enum": [
             "mm",
             "cm",
@@ -963,13 +1796,16 @@ export const WRITABLE = {
           ]
         },
         "weight": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "max_weight": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "weight_unit": {
           "type": "string",
+          "nullable": true,
           "enum": [
             "g",
             "kg",
@@ -1005,16 +1841,20 @@ export const WRITABLE = {
           ]
         },
         "length": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "width": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "height": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "dimensions_unit": {
           "type": "string",
+          "nullable": true,
           "enum": [
             "mm",
             "cm",
@@ -1023,13 +1863,16 @@ export const WRITABLE = {
           ]
         },
         "weight": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "max_weight": {
-          "type": "number"
+          "type": "number",
+          "nullable": true
         },
         "weight_unit": {
           "type": "string",
+          "nullable": true,
           "enum": [
             "g",
             "kg",
@@ -1075,17 +1918,13 @@ export const WRITABLE = {
             "manual"
           ]
         },
-        "auto_capture": {
-          "type": "boolean",
-          "nullable": true
-        },
         "position": {
           "type": "integer"
         },
-        "preferences": {
+        "metadata": {
           "type": "object"
         },
-        "metadata": {
+        "preferences": {
           "type": "object"
         }
       },
@@ -1118,17 +1957,13 @@ export const WRITABLE = {
             "manual"
           ]
         },
-        "auto_capture": {
-          "type": "boolean",
-          "nullable": true
-        },
         "position": {
           "type": "integer"
         },
-        "preferences": {
+        "metadata": {
           "type": "object"
         },
-        "metadata": {
+        "preferences": {
           "type": "object"
         }
       },
@@ -1158,10 +1993,7 @@ export const WRITABLE = {
           }
         },
         "custom_field_definitions": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": [
@@ -1190,10 +2022,7 @@ export const WRITABLE = {
           }
         },
         "custom_field_definitions": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": []
@@ -1233,17 +2062,259 @@ export const WRITABLE = {
           "type": "string",
           "nullable": true
         },
-        "state_code": {
+        "state_name": {
           "type": "string",
           "nullable": true
         },
-        "state_name": {
+        "state_code": {
           "type": "string",
           "nullable": true
         },
         "country_code": {
           "type": "string",
-          "nullable": true
+          "nullable": true,
+          "enum": [
+            "AD",
+            "AE",
+            "AF",
+            "AG",
+            "AI",
+            "AL",
+            "AM",
+            "AO",
+            "AR",
+            "AS",
+            "AT",
+            "AU",
+            "AW",
+            "AZ",
+            "BA",
+            "BB",
+            "BD",
+            "BE",
+            "BF",
+            "BG",
+            "BH",
+            "BI",
+            "BJ",
+            "BL",
+            "BM",
+            "BN",
+            "BO",
+            "BQ",
+            "BR",
+            "BS",
+            "BT",
+            "BW",
+            "BY",
+            "BZ",
+            "CA",
+            "CC",
+            "CD",
+            "CF",
+            "CG",
+            "CH",
+            "CI",
+            "CK",
+            "CL",
+            "CM",
+            "CN",
+            "CO",
+            "CR",
+            "CU",
+            "CV",
+            "CW",
+            "CX",
+            "CY",
+            "CZ",
+            "DE",
+            "DJ",
+            "DK",
+            "DM",
+            "DO",
+            "DZ",
+            "EC",
+            "EE",
+            "EG",
+            "ER",
+            "ES",
+            "ET",
+            "FI",
+            "FJ",
+            "FK",
+            "FM",
+            "FO",
+            "FR",
+            "GA",
+            "GB",
+            "GD",
+            "GE",
+            "GF",
+            "GG",
+            "GH",
+            "GI",
+            "GL",
+            "GM",
+            "GN",
+            "GP",
+            "GQ",
+            "GR",
+            "GT",
+            "GU",
+            "GW",
+            "GY",
+            "HK",
+            "HN",
+            "HR",
+            "HT",
+            "HU",
+            "ID",
+            "IE",
+            "IL",
+            "IM",
+            "IN",
+            "IQ",
+            "IR",
+            "IS",
+            "IT",
+            "JE",
+            "JM",
+            "JO",
+            "JP",
+            "KE",
+            "KG",
+            "KH",
+            "KI",
+            "KM",
+            "KN",
+            "KP",
+            "KR",
+            "KW",
+            "KY",
+            "KZ",
+            "LA",
+            "LB",
+            "LC",
+            "LI",
+            "LK",
+            "LR",
+            "LS",
+            "LT",
+            "LU",
+            "LV",
+            "LY",
+            "MA",
+            "MC",
+            "MD",
+            "ME",
+            "MF",
+            "MG",
+            "MH",
+            "MK",
+            "ML",
+            "MM",
+            "MN",
+            "MO",
+            "MP",
+            "MQ",
+            "MR",
+            "MS",
+            "MT",
+            "MU",
+            "MV",
+            "MW",
+            "MX",
+            "MY",
+            "MZ",
+            "NA",
+            "NC",
+            "NE",
+            "NF",
+            "NG",
+            "NI",
+            "NL",
+            "NO",
+            "NP",
+            "NR",
+            "NU",
+            "NZ",
+            "OM",
+            "PA",
+            "PE",
+            "PF",
+            "PG",
+            "PH",
+            "PK",
+            "PL",
+            "PM",
+            "PN",
+            "PR",
+            "PS",
+            "PT",
+            "PW",
+            "PY",
+            "QA",
+            "RE",
+            "RO",
+            "RS",
+            "RU",
+            "RW",
+            "SA",
+            "SB",
+            "SC",
+            "SD",
+            "SE",
+            "SG",
+            "SH",
+            "SI",
+            "SJ",
+            "SK",
+            "SL",
+            "SM",
+            "SN",
+            "SO",
+            "SR",
+            "SS",
+            "ST",
+            "SV",
+            "SX",
+            "SY",
+            "SZ",
+            "TC",
+            "TD",
+            "TG",
+            "TH",
+            "TJ",
+            "TK",
+            "TL",
+            "TM",
+            "TN",
+            "TO",
+            "TR",
+            "TT",
+            "TV",
+            "TW",
+            "TZ",
+            "UA",
+            "UG",
+            "US",
+            "UY",
+            "UZ",
+            "VA",
+            "VC",
+            "VE",
+            "VG",
+            "VI",
+            "VN",
+            "VU",
+            "WF",
+            "WS",
+            "YE",
+            "YT",
+            "ZA",
+            "ZM",
+            "ZW"
+          ]
         },
         "postal_code": {
           "type": "string",
@@ -1291,17 +2362,259 @@ export const WRITABLE = {
           "type": "string",
           "nullable": true
         },
-        "state_code": {
+        "state_name": {
           "type": "string",
           "nullable": true
         },
-        "state_name": {
+        "state_code": {
           "type": "string",
           "nullable": true
         },
         "country_code": {
           "type": "string",
-          "nullable": true
+          "nullable": true,
+          "enum": [
+            "AD",
+            "AE",
+            "AF",
+            "AG",
+            "AI",
+            "AL",
+            "AM",
+            "AO",
+            "AR",
+            "AS",
+            "AT",
+            "AU",
+            "AW",
+            "AZ",
+            "BA",
+            "BB",
+            "BD",
+            "BE",
+            "BF",
+            "BG",
+            "BH",
+            "BI",
+            "BJ",
+            "BL",
+            "BM",
+            "BN",
+            "BO",
+            "BQ",
+            "BR",
+            "BS",
+            "BT",
+            "BW",
+            "BY",
+            "BZ",
+            "CA",
+            "CC",
+            "CD",
+            "CF",
+            "CG",
+            "CH",
+            "CI",
+            "CK",
+            "CL",
+            "CM",
+            "CN",
+            "CO",
+            "CR",
+            "CU",
+            "CV",
+            "CW",
+            "CX",
+            "CY",
+            "CZ",
+            "DE",
+            "DJ",
+            "DK",
+            "DM",
+            "DO",
+            "DZ",
+            "EC",
+            "EE",
+            "EG",
+            "ER",
+            "ES",
+            "ET",
+            "FI",
+            "FJ",
+            "FK",
+            "FM",
+            "FO",
+            "FR",
+            "GA",
+            "GB",
+            "GD",
+            "GE",
+            "GF",
+            "GG",
+            "GH",
+            "GI",
+            "GL",
+            "GM",
+            "GN",
+            "GP",
+            "GQ",
+            "GR",
+            "GT",
+            "GU",
+            "GW",
+            "GY",
+            "HK",
+            "HN",
+            "HR",
+            "HT",
+            "HU",
+            "ID",
+            "IE",
+            "IL",
+            "IM",
+            "IN",
+            "IQ",
+            "IR",
+            "IS",
+            "IT",
+            "JE",
+            "JM",
+            "JO",
+            "JP",
+            "KE",
+            "KG",
+            "KH",
+            "KI",
+            "KM",
+            "KN",
+            "KP",
+            "KR",
+            "KW",
+            "KY",
+            "KZ",
+            "LA",
+            "LB",
+            "LC",
+            "LI",
+            "LK",
+            "LR",
+            "LS",
+            "LT",
+            "LU",
+            "LV",
+            "LY",
+            "MA",
+            "MC",
+            "MD",
+            "ME",
+            "MF",
+            "MG",
+            "MH",
+            "MK",
+            "ML",
+            "MM",
+            "MN",
+            "MO",
+            "MP",
+            "MQ",
+            "MR",
+            "MS",
+            "MT",
+            "MU",
+            "MV",
+            "MW",
+            "MX",
+            "MY",
+            "MZ",
+            "NA",
+            "NC",
+            "NE",
+            "NF",
+            "NG",
+            "NI",
+            "NL",
+            "NO",
+            "NP",
+            "NR",
+            "NU",
+            "NZ",
+            "OM",
+            "PA",
+            "PE",
+            "PF",
+            "PG",
+            "PH",
+            "PK",
+            "PL",
+            "PM",
+            "PN",
+            "PR",
+            "PS",
+            "PT",
+            "PW",
+            "PY",
+            "QA",
+            "RE",
+            "RO",
+            "RS",
+            "RU",
+            "RW",
+            "SA",
+            "SB",
+            "SC",
+            "SD",
+            "SE",
+            "SG",
+            "SH",
+            "SI",
+            "SJ",
+            "SK",
+            "SL",
+            "SM",
+            "SN",
+            "SO",
+            "SR",
+            "SS",
+            "ST",
+            "SV",
+            "SX",
+            "SY",
+            "SZ",
+            "TC",
+            "TD",
+            "TG",
+            "TH",
+            "TJ",
+            "TK",
+            "TL",
+            "TM",
+            "TN",
+            "TO",
+            "TR",
+            "TT",
+            "TV",
+            "TW",
+            "TZ",
+            "UA",
+            "UG",
+            "US",
+            "UY",
+            "UZ",
+            "VA",
+            "VC",
+            "VE",
+            "VG",
+            "VI",
+            "VN",
+            "VU",
+            "WF",
+            "WS",
+            "YE",
+            "YT",
+            "ZA",
+            "ZM",
+            "ZW"
+          ]
         },
         "postal_code": {
           "type": "string",
@@ -1318,11 +2631,15 @@ export const WRITABLE = {
   "categories": {
     "create": {
       "properties": {
+        "external_references": {
+          "type": "object"
+        },
         "name": {
           "type": "string"
         },
         "parent_id": {
-          "type": "string"
+          "type": "string",
+          "nullable": true
         },
         "description": {
           "type": "string"
@@ -1339,19 +2656,16 @@ export const WRITABLE = {
         "meta_keywords": {
           "type": "string"
         },
-        "image": {
+        "image_signed_id": {
           "type": "string",
           "nullable": true
         },
-        "square_image": {
+        "square_image_signed_id": {
           "type": "string",
           "nullable": true
         },
         "custom_fields": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": [
@@ -1360,11 +2674,15 @@ export const WRITABLE = {
     },
     "update": {
       "properties": {
+        "external_references": {
+          "type": "object"
+        },
         "name": {
           "type": "string"
         },
         "parent_id": {
-          "type": "string"
+          "type": "string",
+          "nullable": true
         },
         "description": {
           "type": "string"
@@ -1381,19 +2699,16 @@ export const WRITABLE = {
         "meta_keywords": {
           "type": "string"
         },
-        "image": {
+        "image_signed_id": {
           "type": "string",
           "nullable": true
         },
-        "square_image": {
+        "square_image_signed_id": {
           "type": "string",
           "nullable": true
         },
         "custom_fields": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": []
@@ -1402,6 +2717,9 @@ export const WRITABLE = {
   "products": {
     "create": {
       "properties": {
+        "external_references": {
+          "type": "object"
+        },
         "name": {
           "type": "string"
         },
@@ -1411,29 +2729,18 @@ export const WRITABLE = {
         "slug": {
           "type": "string"
         },
-        "status": {
-          "type": "string",
-          "enum": [
-            "draft",
-            "active",
-            "archived"
-          ]
-        },
+        "status": {},
         "meta_title": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "meta_description": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "meta_keywords": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "tax_category_id": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "product_type_id": {
           "type": "string",
@@ -1445,6 +2752,12 @@ export const WRITABLE = {
         },
         "promotionable": {
           "type": "boolean"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "category_ids": {
           "type": "array",
@@ -1458,50 +2771,26 @@ export const WRITABLE = {
             "type": "string"
           }
         },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "metadata": {
           "type": "object"
         },
         "prices": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "custom_fields": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "media": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "digital_assets": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "product_publications": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "variants": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": [
@@ -1510,6 +2799,9 @@ export const WRITABLE = {
     },
     "update": {
       "properties": {
+        "external_references": {
+          "type": "object"
+        },
         "name": {
           "type": "string"
         },
@@ -1519,29 +2811,18 @@ export const WRITABLE = {
         "slug": {
           "type": "string"
         },
-        "status": {
-          "type": "string",
-          "enum": [
-            "draft",
-            "active",
-            "archived"
-          ]
-        },
+        "status": {},
         "meta_title": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "meta_description": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "meta_keywords": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "tax_category_id": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
         "product_type_id": {
           "type": "string",
@@ -1553,6 +2834,12 @@ export const WRITABLE = {
         },
         "promotionable": {
           "type": "boolean"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "category_ids": {
           "type": "array",
@@ -1566,50 +2853,26 @@ export const WRITABLE = {
             "type": "string"
           }
         },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "metadata": {
           "type": "object"
         },
         "prices": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "custom_fields": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "media": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "digital_assets": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "product_publications": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         },
         "variants": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": []
@@ -1630,12 +2893,6 @@ export const WRITABLE = {
         "phone": {
           "type": "string"
         },
-        "accepts_email_marketing": {
-          "type": "boolean"
-        },
-        "internal_note": {
-          "type": "string"
-        },
         "password": {
           "type": "string"
         },
@@ -1643,18 +2900,19 @@ export const WRITABLE = {
           "type": "string"
         },
         "selected_locale": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
-        "avatar": {
-          "type": "string",
-          "nullable": true
+        "avatar_signed_id": {
+          "type": "string"
         },
-        "customer_group_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "accepts_email_marketing": {
+          "type": "boolean"
+        },
+        "internal_note": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
         },
         "tags": {
           "type": "array",
@@ -1662,8 +2920,11 @@ export const WRITABLE = {
             "type": "string"
           }
         },
-        "metadata": {
-          "type": "object"
+        "customer_group_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [
@@ -1684,12 +2945,6 @@ export const WRITABLE = {
         "phone": {
           "type": "string"
         },
-        "accepts_email_marketing": {
-          "type": "boolean"
-        },
-        "internal_note": {
-          "type": "string"
-        },
         "password": {
           "type": "string"
         },
@@ -1697,18 +2952,19 @@ export const WRITABLE = {
           "type": "string"
         },
         "selected_locale": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         },
-        "avatar": {
-          "type": "string",
-          "nullable": true
+        "avatar_signed_id": {
+          "type": "string"
         },
-        "customer_group_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "accepts_email_marketing": {
+          "type": "boolean"
+        },
+        "internal_note": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
         },
         "tags": {
           "type": "array",
@@ -1716,8 +2972,11 @@ export const WRITABLE = {
             "type": "string"
           }
         },
-        "metadata": {
-          "type": "object"
+        "customer_group_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": []
@@ -1726,6 +2985,9 @@ export const WRITABLE = {
   "sellers": {
     "create": {
       "properties": {
+        "external_references": {
+          "type": "object"
+        },
         "name": {
           "type": "string"
         },
@@ -1741,6 +3003,18 @@ export const WRITABLE = {
           "nullable": true
         },
         "about": {
+          "type": "string",
+          "nullable": true
+        },
+        "logo_signed_id": {
+          "type": "string",
+          "nullable": true
+        },
+        "square_logo_signed_id": {
+          "type": "string",
+          "nullable": true
+        },
+        "cover_photo_signed_id": {
           "type": "string",
           "nullable": true
         },
@@ -1763,11 +3037,13 @@ export const WRITABLE = {
           ]
         },
         "minimum_payout_amount": {
-          "type": "number",
+          "type": "string",
+          "format": "decimal",
           "nullable": true
         },
         "holiday_mode_until": {
           "type": "string",
+          "format": "date-time",
           "nullable": true
         },
         "legal_name": {
@@ -1778,29 +3054,14 @@ export const WRITABLE = {
           "type": "string",
           "nullable": true
         },
-        "logo": {
-          "type": "string",
-          "nullable": true
-        },
-        "square_logo": {
-          "type": "string",
-          "nullable": true
-        },
-        "cover_photo": {
-          "type": "string",
-          "nullable": true
+        "metadata": {
+          "type": "object"
         },
         "billing_address": {
           "type": "object"
         },
         "custom_fields": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "metadata": {
-          "type": "object"
+          "type": "array"
         }
       },
       "required": [
@@ -1809,6 +3070,9 @@ export const WRITABLE = {
     },
     "update": {
       "properties": {
+        "external_references": {
+          "type": "object"
+        },
         "name": {
           "type": "string"
         },
@@ -1827,11 +3091,15 @@ export const WRITABLE = {
           "type": "string",
           "nullable": true
         },
-        "legal_name": {
+        "logo_signed_id": {
           "type": "string",
           "nullable": true
         },
-        "registration_number": {
+        "square_logo_signed_id": {
+          "type": "string",
+          "nullable": true
+        },
+        "cover_photo_signed_id": {
           "type": "string",
           "nullable": true
         },
@@ -1854,36 +3122,31 @@ export const WRITABLE = {
           ]
         },
         "minimum_payout_amount": {
-          "type": "number",
+          "type": "string",
+          "format": "decimal",
           "nullable": true
         },
         "holiday_mode_until": {
           "type": "string",
+          "format": "date-time",
           "nullable": true
         },
-        "logo": {
+        "legal_name": {
           "type": "string",
           "nullable": true
         },
-        "square_logo": {
+        "registration_number": {
           "type": "string",
           "nullable": true
         },
-        "cover_photo": {
-          "type": "string",
-          "nullable": true
+        "metadata": {
+          "type": "object"
         },
         "billing_address": {
           "type": "object"
         },
         "custom_fields": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "metadata": {
-          "type": "object"
+          "type": "array"
         }
       },
       "required": []
@@ -2017,10 +3280,8 @@ export const WRITABLE = {
           ]
         },
         "value": {
-          "type": "number"
-        },
-        "amounts": {
-          "type": "object"
+          "type": "string",
+          "format": "decimal"
         },
         "tax_inclusive": {
           "type": "boolean"
@@ -2028,21 +3289,22 @@ export const WRITABLE = {
         "include_shipping": {
           "type": "boolean"
         },
-        "bounds": {
-          "type": "object"
-        },
         "commission_tax_rate": {
-          "type": "number",
+          "type": "string",
+          "format": "decimal",
           "nullable": true
         },
         "metadata": {
           "type": "object"
         },
+        "amounts": {
+          "type": "object"
+        },
+        "bounds": {
+          "type": "object"
+        },
         "rules": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": [
@@ -2074,10 +3336,8 @@ export const WRITABLE = {
           ]
         },
         "value": {
-          "type": "number"
-        },
-        "amounts": {
-          "type": "object"
+          "type": "string",
+          "format": "decimal"
         },
         "tax_inclusive": {
           "type": "boolean"
@@ -2085,21 +3345,22 @@ export const WRITABLE = {
         "include_shipping": {
           "type": "boolean"
         },
-        "bounds": {
-          "type": "object"
-        },
         "commission_tax_rate": {
-          "type": "number",
+          "type": "string",
+          "format": "decimal",
           "nullable": true
         },
         "metadata": {
           "type": "object"
         },
+        "amounts": {
+          "type": "object"
+        },
+        "bounds": {
+          "type": "object"
+        },
         "rules": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "type": "array"
         }
       },
       "required": []
@@ -2117,16 +3378,19 @@ export const WRITABLE = {
         "description": {
           "type": "string"
         },
-        "required": {
-          "type": "boolean"
+        "position": {
+          "type": "integer"
         },
         "active": {
           "type": "boolean"
         },
-        "position": {
-          "type": "integer"
+        "required": {
+          "type": "boolean"
         },
         "preferences": {
+          "type": "object"
+        },
+        "metadata": {
           "type": "object"
         },
         "custom_field_definition_ids": {
@@ -2134,9 +3398,6 @@ export const WRITABLE = {
           "items": {
             "type": "string"
           }
-        },
-        "metadata": {
-          "type": "object"
         }
       },
       "required": [
@@ -2151,16 +3412,19 @@ export const WRITABLE = {
         "description": {
           "type": "string"
         },
-        "required": {
-          "type": "boolean"
+        "position": {
+          "type": "integer"
         },
         "active": {
           "type": "boolean"
         },
-        "position": {
-          "type": "integer"
+        "required": {
+          "type": "boolean"
         },
         "preferences": {
+          "type": "object"
+        },
+        "metadata": {
           "type": "object"
         },
         "custom_field_definition_ids": {
@@ -2168,9 +3432,6 @@ export const WRITABLE = {
           "items": {
             "type": "string"
           }
-        },
-        "metadata": {
-          "type": "object"
         }
       },
       "required": []
@@ -2196,8 +3457,7 @@ export const WRITABLE = {
           }
         },
         "channel_id": {
-          "type": "string",
-          "nullable": true
+          "type": "string"
         }
       },
       "required": [
@@ -2211,7 +3471,9 @@ export const WRITABLE = {
           "type": "string"
         }
       },
-      "required": []
+      "required": [
+        "name"
+      ]
     }
   },
   "allowed_origins": {

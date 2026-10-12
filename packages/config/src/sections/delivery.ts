@@ -16,6 +16,7 @@ import {
   PACKAGE_TYPE_ATTRIBUTES,
   type PackageTypeEntry,
 } from '../schema.js'
+import { decimalString } from '../spec.js'
 import type { LiveRecord } from '../types.js'
 import {
   FIRST_PARTY,
@@ -208,6 +209,49 @@ function numeric(value: unknown): unknown {
   return numericString(value) ?? value
 }
 
+interface CalculatorType {
+  type: string
+  schema?: { properties?: Record<string, { type?: string; pattern?: string }> }
+}
+
+const calculatorTypes = new WeakMap<RunContext, Promise<CalculatorType[]>>()
+
+/** The calculator types and their preference schemas, read once per run. */
+function calculatorsFor(ctx: RunContext): Promise<CalculatorType[]> {
+  let types = calculatorTypes.get(ctx)
+  if (!types) {
+    types = ctx.client
+      .request<{ data: CalculatorType[] }>('GET', '/delivery_methods/calculators')
+      .then((response) => response.data)
+    calculatorTypes.set(ctx, types)
+  }
+  return types
+}
+
+/**
+ * Calculator preferences as the API takes them: an amount the file wrote as
+ * a number goes out as a decimal string, per the calculator's own schema.
+ */
+async function wireCalculator(
+  calculator: { type: string; preferences?: Record<string, unknown> },
+  ctx: RunContext,
+) {
+  if (!calculator.preferences) return calculator
+  const definition = (await calculatorsFor(ctx)).find((type) => type.type === calculator.type)
+  const properties = definition?.schema?.properties ?? {}
+  return {
+    ...calculator,
+    preferences: Object.fromEntries(
+      Object.entries(calculator.preferences).map(([key, value]) => [
+        key,
+        properties[key]?.type === 'string' && properties[key]?.pattern
+          ? decimalString(value)
+          : value,
+      ]),
+    ),
+  }
+}
+
 export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
   name: 'delivery_methods',
   scope: 'write_delivery_methods',
@@ -237,14 +281,16 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
       payload.tax_category_id = await ctx.ref('tax_categories', entry.tax_category, path)
     const pickupLocations = await refs(ctx, 'stock_locations', entry.pickup_locations, path)
     if (pickupLocations) payload.stock_location_ids = pickupLocations
-    if (entry.calculator) {
-      payload.calculator_type = entry.calculator.type
-      if (entry.calculator.preferences)
-        payload.calculator_preferences = entry.calculator.preferences
-    }
+    if (entry.calculator) payload.calculator = entry.calculator
     return payload
   },
   current: (live, ctx, desired) => methodPickupLocations.current(live, ctx, desired),
+  async wire(payload, ctx) {
+    const calculator = payload.calculator as
+      | { type: string; preferences?: Record<string, unknown> }
+      | undefined
+    return calculator ? { ...payload, calculator: await wireCalculator(calculator, ctx) } : payload
+  },
   async update(live, payload, _entry, ctx) {
     return ctx.client.request<DeliveryMethod>('PATCH', `/delivery_methods/${live.id}`, {
       body: await methodPickupLocations.write(live, payload, ctx),
@@ -273,16 +319,20 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
     }
     const pickupLocations = await keysOf(ctx, 'stock_locations', live.stock_location_ids)
     if (pickupLocations.length) entry.pickup_locations = pickupLocations
-    if (live.calculator_type) {
+    const calculator = live.calculator as
+      | { type: string; preferences?: Record<string, unknown> }
+      | null
+      | undefined
+    if (calculator) {
       // Unset preferences and numeric strings are how the API reports them;
       // a file reads better without the former and with plain numbers.
       const preferences = Object.fromEntries(
-        Object.entries((live.calculator_preferences as Record<string, unknown>) ?? {})
+        Object.entries(calculator.preferences ?? {})
           .filter(([, value]) => !isEmptyPreference(value))
           .map(([key, value]) => [key, numeric(value)]),
       )
       entry.calculator = {
-        type: String(live.calculator_type),
+        type: calculator.type,
         ...(Object.keys(preferences).length
           ? { preferences: preferences as Record<string, string | number | boolean | null> }
           : {}),

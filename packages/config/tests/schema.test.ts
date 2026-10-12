@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { toJsonSchema } from '../src/node'
-import { writablePreferences } from '../src/spec'
 
 const PACKAGE_COPY = resolve(import.meta.dirname, '../schemas/spree-config.json')
 const DOCS_COPY = resolve(import.meta.dirname, '../../../docs/schemas/spree-config/1.json')
@@ -20,42 +19,18 @@ describe('published JSON Schema', () => {
   })
 })
 
-const ADMIN_CONTROLLERS = resolve(
-  import.meta.dirname,
-  '../../../spree/api/app/controllers/spree/api/v3/admin',
-)
-
-/** The `preferred_*` names a controller permits, deprecated ones excluded. */
-function permittedPreferences(controller: string): string[] {
-  const source = readFileSync(resolve(ADMIN_CONTROLLERS, controller), 'utf-8')
-  const deprecated = new Set(['auto_capture'])
-  return [...source.matchAll(/:preferred_(\w+)/g)]
-    .map((match) => match[1])
-    .filter((name) => !deprecated.has(name))
-}
-
-// A preference the controller does not permit is dropped without an error,
-// so the spec the file's preferences come from must list exactly the
-// controller's.
-describe('preference keys', () => {
-  it.each([
-    ['store', 'store_controller.rb'],
-    ['channels', 'channels_controller.rb'],
-  ] as const)('%s accepts exactly what the Admin API permits', (resource, controller) => {
-    expect([...writablePreferences(resource)].sort()).toEqual(
-      permittedPreferences(controller).sort(),
-    )
-  })
-})
-
 // The section attributes come from the Admin API spec and the templates are
 // embedded for the browser; both generated files must match their sources.
 describe('generated sources', () => {
-  it.each(['extract-writable.mjs', 'embed-templates.mjs'])('%s output is up to date', (script) => {
-    expect(() =>
-      execFileSync('node', [resolve(import.meta.dirname, '../scripts', script), '--check'], {
-        stdio: 'pipe',
-      }),
-    ).not.toThrow()
-  }, 60_000) // parsing the whole Admin API spec takes seconds on a CI runner
+  it.each(['extract-writable.mjs', 'embed-templates.mjs'])(
+    '%s output is up to date',
+    (script) => {
+      expect(() =>
+        execFileSync('node', [resolve(import.meta.dirname, '../scripts', script), '--check'], {
+          stdio: 'pipe',
+        }),
+      ).not.toThrow()
+    },
+    60_000,
+  ) // parsing the whole Admin API spec takes seconds on a CI runner
 })

@@ -14,6 +14,7 @@ export type Resource = keyof Writable
 
 interface PropertySchema {
   readonly type?: string
+  readonly format?: string
   readonly nullable?: boolean
   readonly enum?: readonly (string | number)[]
   readonly deprecated?: boolean
@@ -28,17 +29,19 @@ type PropertiesOf<R extends Resource> = Properties<Writable[R]['create']> &
 
 type ScalarOf<P> = P extends { enum: readonly (infer E)[] }
   ? E
-  : P extends { type: 'string' }
-    ? string
-    : P extends { type: 'boolean' }
-      ? boolean
-      : P extends { type: 'integer' | 'number' }
-        ? number
-        : P extends { type: 'array'; items: { type: 'string' } }
-          ? string[]
-          : P extends { type: 'array' }
-            ? unknown[]
-            : string | number | boolean
+  : P extends { type: 'string'; format: 'decimal' | 'money' }
+    ? number | string
+    : P extends { type: 'string' }
+      ? string
+      : P extends { type: 'boolean' }
+        ? boolean
+        : P extends { type: 'integer' | 'number' }
+          ? number
+          : P extends { type: 'array'; items: { type: 'string' } }
+            ? string[]
+            : P extends { type: 'array' }
+              ? unknown[]
+              : string | number | boolean
 
 type ValueOf<P> = P extends { nullable: true } ? ScalarOf<P> | null : ScalarOf<P>
 
@@ -77,8 +80,9 @@ export function numbersAsNumbers<T extends object>(resource: string, entry: T): 
   if (!(resource in WRITABLE)) return entry
   const out = { ...entry } as Record<string, unknown>
   for (const [attribute, value] of Object.entries(out)) {
-    const type = property(resource as Resource, attribute)?.type
-    if ((type === 'number' || type === 'integer') && typeof value === 'string' && value.trim()) {
+    const schema = property(resource as Resource, attribute)
+    const numeric = schema?.type === 'number' || schema?.type === 'integer' || isDecimal(schema)
+    if (numeric && typeof value === 'string' && value.trim()) {
       const number = Number(value)
       if (Number.isFinite(number)) out[attribute] = number
     }
@@ -86,17 +90,36 @@ export function numbersAsNumbers<T extends object>(resource: string, entry: T): 
   return out as T
 }
 
-/** The `preferred_*` attributes the resource accepts, without the prefix. */
-export function writablePreferences(resource: Resource): [string, ...string[]] {
-  const names = writableAttributes(resource)
-    .filter((name) => name.startsWith('preferred_'))
-    .map((name) => name.slice('preferred_'.length))
-  if (!names.length) throw new Error(`the Admin API documents no preferences for ${resource}`)
-  return names as [string, ...string[]]
+/** Amounts the API takes as canonical decimal strings, never JSON numbers. */
+const DECIMAL = /^-?\d+(\.\d+)?$/
+
+/** A decimal as the API takes it: `29.9` in a file is sent as `"29.9"`. */
+export function decimalString(value: unknown): unknown {
+  return typeof value === 'number' ? String(value) : value
+}
+
+function isDecimal(schema: PropertySchema | undefined): boolean {
+  return schema?.type === 'string' && (schema.format === 'decimal' || schema.format === 'money')
+}
+
+/**
+ * A request body as the API takes it: every decimal attribute the file wrote
+ * as a number is sent as a decimal string.
+ */
+export function asWireValues(resource: string, payload: Record<string, unknown>) {
+  if (!(resource in WRITABLE)) return payload
+  return Object.fromEntries(
+    Object.entries(payload).map(([attribute, value]) => [
+      attribute,
+      isDecimal(property(resource as Resource, attribute)) ? decimalString(value) : value,
+    ]),
+  )
 }
 
 function scalar(schema: PropertySchema): ZodType {
   if (schema.enum?.length) return z.enum(schema.enum.map(String) as [string, ...string[]])
+  // Written as a number or a decimal string; sent as a string.
+  if (isDecimal(schema)) return z.union([z.number(), z.string().regex(DECIMAL)])
   switch (schema.type) {
     case 'string':
       return z.string()

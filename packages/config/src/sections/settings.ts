@@ -31,8 +31,6 @@ import {
   partialIdList,
   pick,
   plainSection,
-  preferencesFromLive,
-  preferencesPayload,
   present,
   refs,
   type Section,
@@ -61,30 +59,36 @@ export const store: Section<StoreEntry, Store> = {
   entries: (config) => (config.store ? [config.store] : []),
   entryKey: () => 'store',
   async desired(entry) {
-    return { ...pick(entry, STORE_ATTRIBUTES), ...preferencesPayload(entry.preferences) }
+    return pick(entry, STORE_ATTRIBUTES)
   },
   async update(_live, payload, _entry, ctx) {
     return ctx.client.request<Store>('PATCH', '/store', { body: payload })
   },
+  // The settings a store is most often configured by; the file may set any
+  // of STORE_ATTRIBUTES, but capturing every one would bury these.
   async toFile(live) {
-    const entry = present(live as unknown as StoreEntry, STORE_ATTRIBUTES)
-    const preferences = preferencesFromLive(live, [
-      'timezone',
-      'weight_unit',
-      'unit_system',
-      'storefront_access',
-      'guest_checkout',
-      'capture_method',
-      'track_inventory_levels',
-      'stock_reservations_enabled',
-      'low_stock_threshold',
-      'tax_using_ship_address',
-      'order_number_prefix',
-      'order_number_suffix',
-    ])
-    return { ...entry, ...(Object.keys(preferences).length ? { preferences } : {}) } as StoreEntry
+    return present(live as unknown as StoreEntry, STORE_INTROSPECTED) as StoreEntry
   },
 }
+
+const STORE_INTROSPECTED = [
+  'name',
+  'mail_from_address',
+  'customer_support_email',
+  'new_order_notifications_email',
+  'timezone',
+  'weight_unit',
+  'unit_system',
+  'storefront_access',
+  'guest_checkout',
+  'capture_method',
+  'track_inventory_levels',
+  'stock_reservations_enabled',
+  'low_stock_threshold',
+  'tax_using_ship_address',
+  'order_number_prefix',
+  'order_number_suffix',
+] as const satisfies readonly (typeof STORE_ATTRIBUTES)[number][]
 
 // A channel may also sell from sellers' warehouses, which the file cannot name.
 const channelStockLocations = partialIdList('stock_locations', 'stock_location_ids')
@@ -105,7 +109,6 @@ export const channels: Section<ChannelEntry, Channel> = {
     return {
       ...pick(entry, CHANNEL_ATTRIBUTES),
       stock_location_ids: await refs(ctx, 'stock_locations', entry.stock_locations, path),
-      ...preferencesPayload(entry.preferences),
     }
   },
   current: (live, ctx, desired) => channelStockLocations.current(live, ctx, desired),
@@ -117,15 +120,9 @@ export const channels: Section<ChannelEntry, Channel> = {
   async toFile(live, ctx) {
     const entry = present(live as unknown as ChannelEntry, CHANNEL_ATTRIBUTES)
     const stockLocations = await keysOf(ctx, 'stock_locations', live.stock_location_ids)
-    const preferences = preferencesFromLive(live, [
-      'order_routing_strategy',
-      'storefront_access',
-      'guest_checkout',
-    ])
     return {
       ...entry,
       ...(stockLocations.length ? { stock_locations: stockLocations } : {}),
-      ...(Object.keys(preferences).length ? { preferences } : {}),
     } as ChannelEntry
   },
 }

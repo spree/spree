@@ -78,13 +78,16 @@ const BOOTSTRAP_RUBY = [
   // the default store's, so signing in still opens the default store first, and
   // its dashboard stays in English so the specs' labels match.
   `comma_store = Spree::Store.find_by(code: 'e2e-nl') || Spree::Store.create!(code: 'e2e-nl', name: 'Winkel', url: 'nl.example.com', mail_from_address: 'no-reply@example.com', preferred_admin_locale: 'en')`,
-  'Spree::Seeds::StoreResources.call(store: comma_store); Spree::Stores::ProvisionDefaults.call(store: comma_store, country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.stock_locations.exists?',
+  // Placed in the Netherlands the way first-run setup places a store; its
+  // defaults are deployed through the Admin API once the server is up.
+  'comma_store.relocate(country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.read_attribute(:default_country_code) == "NL"',
+  'comma_deploy_key = comma_store.api_keys.create!(name: "e2e configurator", key_type: "secret", scopes: ["write_all"])',
   // A second market in USD, so the store sells in a currency written with a
   // period as well as its own.
   `comma_store.markets.find_or_create_by!(name: 'United States') { |m| m.currency = 'USD'; m.default_locale = 'en'; m.countries = [Spree::Country.find_by_iso!('US')] } unless comma_store.markets.exists?(currency: 'USD')`,
   'comma_store.add_user(admin, Spree::Role.default_admin_role(comma_store)) unless comma_store.role_users.exists?(user: admin)',
   'port = ENV.fetch("PORT", 3010)',
-  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id, deploy_token: deploy_key.plaintext_token)',
+  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id, deploy_token: deploy_key.plaintext_token, comma_deploy_token: comma_deploy_key.plaintext_token)',
 ].join('; ')
 
 // Transaction data the fixture file cannot carry (orders, payouts, transfers,
@@ -224,9 +227,11 @@ export default async function globalSetup() {
   const { config } = loadConfig(STORE_CONFIG)
   assertFixturesDeclared(config)
 
-  const { deploy_token: deployToken, ...credentials } = JSON.parse(
-    runRailsBootstrap(BOOTSTRAP_RUBY, RAILS_ENV),
-  ) as Record<string, string>
+  const {
+    deploy_token: deployToken,
+    comma_deploy_token: commaDeployToken,
+    ...credentials
+  } = JSON.parse(runRailsBootstrap(BOOTSTRAP_RUBY, RAILS_ENV)) as Record<string, string>
   writeFileSync(CREDENTIALS_FILE, JSON.stringify(credentials))
 
   await startRails(PORT, RAILS_ENV, RAILS_PID_FILE)
@@ -245,6 +250,13 @@ export default async function globalSetup() {
   const defaults = await provisionStore(client, { country: false })
   if (reportHasFailures(defaults)) {
     throw new Error(`Deploying the store defaults failed:\n${renderReport(defaults)}`)
+  }
+  // The Dutch store gets every default, the country-shaped ones included.
+  const commaDefaults = await provisionStore(
+    createAdminClient({ baseUrl: credentials.api_url, secretKey: commaDeployToken, retry: false }),
+  )
+  if (reportHasFailures(commaDefaults)) {
+    throw new Error(`Deploying the Dutch store's defaults failed:\n${renderReport(commaDefaults)}`)
   }
   const report = await deployConfig(config, client, { prune: ['products'] })
   if (reportHasFailures(report)) {
