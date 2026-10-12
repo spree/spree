@@ -52,6 +52,7 @@
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",
     "@spree/sdk-core": "workspace:*",
+    "@spree/telemetry": "workspace:*",
     "@types/node": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",

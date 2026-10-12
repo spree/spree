@@ -1,4 +1,5 @@
 import * as p from '@clack/prompts'
+import { markCommandCancelled, trackCommand } from '@spree/telemetry'
 import { Command, Option } from 'commander'
 import getPort, { portNumbers } from 'get-port'
 import pc from 'picocolors'
@@ -7,6 +8,7 @@ import { runPrompts } from './prompts.js'
 import { scaffold } from './scaffold.js'
 import type { PackageManager } from './types.js'
 import { detectPackageManager } from './utils.js'
+import { VERSION } from './version.js'
 
 const program = new Command()
   .name('create-spree-app')
@@ -32,6 +34,11 @@ const program = new Command()
   .option('--use-pnpm', 'use pnpm as package manager')
   .action(async (directory: string | undefined, flags: Record<string, unknown>) => {
     p.intro(pc.bold('Create Spree App'))
+    const tracking = trackCommand({
+      cli: 'create-spree-app',
+      cliVersion: VERSION,
+      command: 'create',
+    })
 
     let packageManager: PackageManager = await detectPackageManager()
     if (flags.useNpm) packageManager = 'npm'
@@ -54,6 +61,13 @@ const program = new Command()
         noDocsMcp: flags.docsMcp === undefined ? undefined : flags.docsMcp === false,
         noStart: flags.start === false ? true : undefined,
         packageManager,
+      })
+      tracking?.setOptions({
+        storefront: options.storefront,
+        dashboard: options.dashboard,
+        seller_dashboard: options.sellerDashboard,
+        start: options.start,
+        package_manager: options.packageManager,
       })
 
       const preferred = Number(flags.port)
@@ -89,6 +103,7 @@ const program = new Command()
       p.outro('Happy selling!')
     } catch (err) {
       if (err instanceof Error && err.message.includes('cancelled')) {
+        markCommandCancelled()
         p.cancel('Setup cancelled.')
         process.exit(0)
       }
