@@ -9,13 +9,12 @@ module Spree
           class TaxExemptionCertificatesController < BaseController
             include ActiveStorage::SetCurrent
 
-            request_params 'TaxExemptionCertificateParams' do |body|
-              body.attribute :certificate_number, :string,
-                example: 'DE-RESALE-7',
-                description: 'Required when creating.'
-              body.attribute :reason_code, :string,
+            request_params :tax_exemption_certificate do |body|
+              body.attribute :certificate_number, :string, required: true, on: :create,
+                example: 'DE-RESALE-7'
+              body.attribute :reason_code, :string, required: true, on: :create,
                 example: 'resale',
-                description: "Becomes the tax provider's entity use code. Required when creating."
+                description: "Becomes the tax provider's entity use code."
               body.attribute :issuing_authority, :string, nullable: true, example: 'Finanzamt Berlin'
               body.attribute :issued_at, :datetime, nullable: true
               body.attribute :expires_at, :datetime, nullable: true

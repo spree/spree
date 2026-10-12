@@ -2,7 +2,7 @@
 
 import type { DeliveryZoneMemberParams } from './DeliveryZoneMemberParams'
 
-export type DeliveryZoneParams = {
+export type DeliveryZoneUpdateParams = {
   name?: string
   description?: string | null
   /** Delivery profile this zone belongs to (`fp_...`); defaults to the store default profile. */

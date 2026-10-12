@@ -2,7 +2,7 @@
 
 import type { DeliveryMethodServiceParams } from './DeliveryMethodServiceParams'
 
-export type DeliveryMethodParams = {
+export type DeliveryMethodUpdateParams = {
   name?: string
   admin_name?: string | null
   code?: string | null

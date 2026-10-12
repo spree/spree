@@ -218,6 +218,25 @@ RSpec.describe Spree::Api::V3::RequestSchema do
       expect { declare { |schema| schema.attribute :rows, :array, of: :any, permit: false } }.not_to raise_error
     end
 
+    it 'requires attributes taken from a shared set' do
+      shared = described_class.new { |schema| schema.attribute :city, :string }
+      schema = declare do |body|
+        body.include_attributes shared
+        body.require_attributes :city, on: :create
+      end
+
+      expect(schema.json_schema(:create)[:required]).to eq(['city'])
+      expect(schema.json_schema(:update)).not_to have_key(:required)
+      expect(shared.json_schema).not_to have_key(:required)
+      expect { declare { |body| body.require_attributes :missing } }.to raise_error(ArgumentError, /not an attribute/)
+
+      always = declare do |body|
+        body.include_attributes(described_class.new { |schema| schema.attribute :city, :string, required: true })
+        body.require_attributes :city, on: :create
+      end
+      expect(always.json_schema(:update)[:required]).to eq(['city'])
+    end
+
     it 'rejects an :object without a shape' do
       expect { declare { |schema| schema.attribute :address, :object } }.to raise_error(ArgumentError, /use :hash/)
     end

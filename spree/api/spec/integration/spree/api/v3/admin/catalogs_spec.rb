@@ -64,6 +64,35 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/admin/catalogs/{id}' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Update a catalog' do
+      tags 'Catalogs'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Updates a catalog and its commercial terms. Only the attributes sent change.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'catalog updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+        let(:body) { { name: 'Wholesale Plus', minimum_order_quantity: 10, order_multiple: 5 } }
+
+        schema '$ref' => '#/components/schemas/Catalog'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['name']).to eq('Wholesale Plus')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/catalogs/{id}/assign' do
     post 'Assign a catalog to an audience' do
       tags 'Catalogs'

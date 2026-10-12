@@ -56,8 +56,8 @@ module Spree
 
           scoped_resource :products
 
-          request_params 'ProductParams' do |body|
-            body.attribute :name, :string, example: 'Hand-thrown mug'
+          request_params :product do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Hand-thrown mug'
             body.attribute :description, :string
             body.attribute :slug, :string, example: 'hand-thrown-mug'
             body.attribute :meta_title, :string

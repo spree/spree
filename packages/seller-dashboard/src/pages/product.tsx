@@ -19,7 +19,7 @@ import {
   variantToWirePayload,
 } from '@spree/dashboard-core'
 import { FormActions, ResourceLayout, StatusBadge, toastManager } from '@spree/dashboard-ui'
-import type { ProductParams } from '@spree/seller-sdk'
+import type { ProductCreateParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -119,7 +119,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
       values: ProductFormValues
       extensionValues: Record<string, unknown>
     }) => {
-      const payload: ProductParams = {
+      const payload: ProductCreateParams = {
         ...extensionValues,
         name: values.name,
         description: values.description,
@@ -150,7 +150,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         })),
         variants: (values.variants ?? []).map((variant, index) =>
           variantToWirePayload(variant, index),
-        ) as ProductParams['variants'],
+        ) as ProductCreateParams['variants'],
       }
 
       return productId

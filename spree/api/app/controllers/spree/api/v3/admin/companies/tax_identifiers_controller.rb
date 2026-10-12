@@ -12,8 +12,9 @@ module Spree
           class TaxIdentifiersController < BaseController
             include Spree::Api::V3::TaxIdentifierValidation
 
-            request_params 'TaxIdentifierParams' do |body|
+            request_params :tax_identifier do |body|
               body.include_attributes Spree::Api::V3::Admin::TaxIdentifierRequestSchema
+              body.require_attributes :kind, :value, on: :create
             end
 
             before_action :authorize_parent_access!

@@ -1,6 +1,6 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
-export type CompanyParams = {
+export type CompanyCreateParams = {
   /**
    * Identities the record has in external systems, keyed by system: the same
    * `{ system: external_id }` map the Admin API renders, so what you read can be sent straight
@@ -8,8 +8,7 @@ export type CompanyParams = {
    * entries is accepted too.
    */
   external_references?: Record<string, unknown>
-  /** Required when creating. */
-  name?: string
+  name: string
   /**
    * `company` is a legal entity (may hold tax registrations), `division` an organizational unit.
    * Roots must be `company`.

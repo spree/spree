@@ -6383,7 +6383,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 26 Lovely Street
+                  address1: 27 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6507,7 +6507,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/CustomerAddressParams"
+              "$ref": "#/components/schemas/CustomerAddressCreateParams"
         required: true
   "/api/v3/admin/customers/{customer_id}/addresses/{id}":
     patch:
@@ -6570,7 +6570,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 28 Lovely Street
+                address1: 29 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Manhattan
@@ -6596,7 +6596,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/CustomerAddressParams"
+              "$ref": "#/components/schemas/CustomerAddressUpdateParams"
         required: true
     delete:
       summary: Delete a customer address
@@ -7363,6 +7363,66 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/admin/customers/{customer_id}/tax_identifiers/{id}":
+    patch:
+      summary: Update a customer tax registration
+      tags:
+      - Customers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Corrects a registration number. A changed number is checked again before it counts as verified.
+
+        **Required scope:** `write_customers` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: customer_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: registration updated
+          content:
+            application/json:
+              example:
+                id: txi_UkLWZg9DAJ
+                kind: eu_vat
+                value: DE100000008
+                validation_status:
+                validation_evidence:
+                source:
+                validated_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                validatable: false
+                customer_id: cust_UkLWZg9DAJ
+                cart_id:
+                order_id:
+              schema:
+                "$ref": "#/components/schemas/TaxIdentifier"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/TaxIdentifierUpdateParams"
+        required: true
   "/api/v3/admin/customers":
     get:
       summary: List customers
@@ -29150,7 +29210,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/TaxRateParams"
+              "$ref": "#/components/schemas/TaxRateCreateParams"
         required: true
   "/api/v3/admin/tax_rates/{id}":
     parameters:
@@ -29248,7 +29308,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/TaxRateParams"
+              "$ref": "#/components/schemas/TaxRateUpdateParams"
         required: true
     delete:
       summary: Delete a tax rate
@@ -35931,7 +35991,62 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/CatalogParams"
+              "$ref": "#/components/schemas/CatalogCreateParams"
+        required: true
+  "/api/v3/admin/catalogs/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update a catalog
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a catalog and its commercial terms. Only the attributes sent change.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: catalog updated
+          content:
+            application/json:
+              example:
+                id: cat_UkLWZg9DAJ
+                name: Wholesale Plus
+                description:
+                active: true
+                position: 1
+                metadata: {}
+                minimum_order_quantity: 10
+                order_multiple: 5
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                products_count: 0
+                pricing_strategy: base
+              schema:
+                "$ref": "#/components/schemas/Catalog"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CatalogUpdateParams"
         required: true
   "/api/v3/admin/catalogs/{id}/assign":
     post:
@@ -38598,7 +38713,81 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/CompanyAddressParams"
+              "$ref": "#/components/schemas/CompanyAddressCreateParams"
+        required: true
+  "/api/v3/admin/companies/{company_id}/addresses/{id}":
+    patch:
+      summary: Update a company address
+      tags:
+      - Companies
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Changes an address of the business. Pass `default_billing` or `default_shipping` to move that default to it, or `false` to give it up.
+
+        **Required scope:** `write_customers` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: company_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: address updated
+          content:
+            application/json:
+              example:
+                id: addr_UkLWZg9DAJ
+                label: Northern Warehouse
+                first_name:
+                last_name:
+                full_name: ''
+                address1: 25 Lovely Street
+                address2: Northwest
+                postal_code: '10118'
+                city: New York
+                phone: 555-555-0199
+                company: Company
+                country_name: United States
+                country_code: US
+                state_text: NY
+                state_code: NY
+                quick_checkout: false
+                is_default_billing: true
+                is_default_shipping: false
+                state_name: New York
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                latitude:
+                longitude:
+                customer_id:
+                owner_id: comp_UkLWZg9DAJ
+                owner_type: company
+              schema:
+                "$ref": "#/components/schemas/Address"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CompanyAddressUpdateParams"
         required: true
   "/api/v3/admin/companies/{company_id}/invitations":
     get:
@@ -39054,7 +39243,75 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/TaxExemptionCertificateParams"
+              "$ref": "#/components/schemas/TaxExemptionCertificateCreateParams"
+        required: true
+  "/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}":
+    parameters:
+    - name: x-spree-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: company_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update a tax exemption certificate
+      tags:
+      - Companies
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Corrects the details recorded for a certificate, such as its issuing authority or expiry date.
+
+        **Required scope:** `write_customers` (for API-key authentication).
+      parameters: []
+      responses:
+        '200':
+          description: certificate updated
+          content:
+            application/json:
+              example:
+                id: cert_UkLWZg9DAJ
+                certificate_number: DE-RESALE-1
+                reason_code: resale
+                status: pending
+                issuing_authority: Finanzamt Berlin
+                metadata: {}
+                issued_at:
+                expires_at: '2027-12-31T23:59:59.000Z'
+                verified_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                company_id: comp_UkLWZg9DAJ
+                country_code:
+                state_code:
+                active: false
+                lapsed: false
+                can_be_deleted: true
+                document_filename:
+                document_byte_size:
+                document_url:
+              schema:
+                "$ref": "#/components/schemas/TaxExemptionCertificate"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/TaxExemptionCertificateUpdateParams"
         required: true
   "/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}/verify":
     parameters:
@@ -39445,7 +39702,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/TaxIdentifierParams"
+              "$ref": "#/components/schemas/TaxIdentifierCreateParams"
         required: true
   "/api/v3/admin/companies/{company_id}/tax_identifiers/{id}/validate":
     parameters:
@@ -39718,7 +39975,61 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/CompanyParams"
+              "$ref": "#/components/schemas/CompanyCreateParams"
+        required: true
+  "/api/v3/admin/companies/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update a company
+      tags:
+      - Companies
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a company node. Only the attributes sent change.
+
+        **Required scope:** `write_customers` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: company updated
+          content:
+            application/json:
+              example:
+                id: comp_UkLWZg9DAJ
+                name: Acme Industrial Group
+                kind: company
+                po_number_required: true
+                parent_id:
+                ancestors: []
+                external_references:
+                  erp: ACME-1
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                children_count: 0
+                members_count: 0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CompanyUpdateParams"
         required: true
   "/api/v3/admin/custom_field_definitions/resource_types":
     get:
@@ -40265,7 +40576,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/DeliveryProfileParams"
+              "$ref": "#/components/schemas/DeliveryProfileCreateParams"
         required: true
   "/api/v3/admin/delivery_profiles/{delivery_profile_id}/origin_groups":
     parameters:
@@ -40514,7 +40825,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/DeliveryProfileParams"
+              "$ref": "#/components/schemas/DeliveryProfileUpdateParams"
         required: true
     delete:
       summary: Delete a delivery profile
@@ -40785,7 +41096,82 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/DeliveryMethodParams"
+              "$ref": "#/components/schemas/DeliveryMethodCreateParams"
+        required: true
+  "/api/v3/admin/delivery_methods/{id}":
+    patch:
+      summary: Update delivery method
+      tags:
+      - Delivery
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a delivery method. Only the attributes sent change.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: delivery method updated
+          content:
+            application/json:
+              example:
+                id: dm_UkLWZg9DAJ
+                name: UPS Express
+                code: UPS_GROUND_11
+                estimated_transit_business_days_min: 1
+                estimated_transit_business_days_max: 2
+                digital: false
+                pickup: false
+                pickup_point: false
+                admin_name:
+                storefront_visible: true
+                tracking_url:
+                available_to_sellers: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                deleted_at:
+                markup_flat: '0.00'
+                markup_percent: '0'
+                seller_id:
+                seller_name:
+                services: []
+                rules: []
+                tax_category_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
+                delivery_origin_group_id: og_UkLWZg9DAJ
+                delivery_zone_id:
+                stock_location_ids: []
+                fulfillment_provider: manual
+                pickup_point_provider:
+                rate_provider:
+                calculator:
+                  type: flat_rate
+                  preferences:
+                    amounts: {}
+                    amount: '10.00'
+                    currency: USD
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DeliveryMethodUpdateParams"
         required: true
   "/api/v3/admin/delivery_methods/calculators":
     get:
@@ -41151,7 +41537,73 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/DeliveryZoneParams"
+              "$ref": "#/components/schemas/DeliveryZoneCreateParams"
+        required: true
+  "/api/v3/admin/delivery_zones/{id}":
+    patch:
+      summary: Update delivery zone
+      tags:
+      - Delivery
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a delivery zone. Sending `members` replaces the whole member list; leaving it out keeps the current members.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to embed, e.g. `members`
+        schema:
+          type: string
+      responses:
+        '200':
+          description: delivery zone updated
+          content:
+            application/json:
+              example:
+                id: dz_UkLWZg9DAJ
+                name: US East Coast
+                description: Omnis ipsam provident laboriosam est.
+                members:
+                - id: dzm_UkLWZg9DAJ
+                  member_type: postal_code
+                  country_code: US
+                  state_code:
+                  postal_code_prefix:
+                  postal_code_from: '10000'
+                  postal_code_to: '14999'
+                  country_name: United States
+                  state_name:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                delivery_profile_id: fp_UkLWZg9DAJ
+                delivery_origin_group_id: og_UkLWZg9DAJ
+                delivery_method_ids: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DeliveryZoneUpdateParams"
         required: true
   "/api/v3/admin/delivery_methods/{delivery_method_id}/rules":
     get:
@@ -65423,10 +65875,13 @@ components:
           nullable: true
         issued_at:
           type: string
+          nullable: true
         expires_at:
           type: string
+          nullable: true
         verified_at:
           type: string
+          nullable: true
         created_at:
           type: string
         updated_at:
@@ -68644,20 +69099,7 @@ components:
       required:
       - assignable_type
       - assignable_id
-    CatalogOrderMinimumParams:
-      type: object
-      properties:
-        currency:
-          allOf:
-          - "$ref": "#/components/schemas/CurrencyCode"
-          description: ISO 4217 code. Required on create; one minimum per currency.
-          example: USD
-        amount:
-          type: string
-          format: decimal
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          example: '500.00'
-    CatalogParams:
+    CatalogCreateParams:
       type: object
       properties:
         name:
@@ -68708,6 +69150,21 @@ components:
             A catalog with an empty assortment prices without hiding anything; curate
             or import products to make it restrictive.'
           nullable: true
+      required:
+      - name
+    CatalogOrderMinimumParams:
+      type: object
+      properties:
+        currency:
+          allOf:
+          - "$ref": "#/components/schemas/CurrencyCode"
+          description: ISO 4217 code. Required on create; one minimum per currency.
+          example: USD
+        amount:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          example: '500.00'
     CatalogPriceListParams:
       type: object
       properties:
@@ -68772,6 +69229,57 @@ components:
               order_multiple: 24
       required:
       - terms
+    CatalogUpdateParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: VIP Assortment
+        description:
+          type: string
+          description: Internal note on what the agreement is, never shown to shoppers.
+          nullable: true
+        active:
+          type: boolean
+          example: true
+        position:
+          type: integer
+        minimum_order_quantity:
+          type: integer
+          description: The catalog-wide quantity terms, between a variant's own rule
+            and a per-variant override. Null leaves the field to the variant's own
+            rule.
+          nullable: true
+        order_multiple:
+          type: integer
+          description: The catalog-wide quantity terms, between a variant's own rule
+            and a per-variant override. Null leaves the field to the variant's own
+            rule.
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+        assignments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CatalogAssignmentParams"
+          description: The whole audience. An entry left out is withdrawn; omitting
+            the key leaves the audience alone.
+        order_minimums:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CatalogOrderMinimumParams"
+          description: The whole order-minimum set. A currency left out has its minimum
+            lifted; omitting the key leaves them alone.
+        price_list:
+          allOf:
+          - "$ref": "#/components/schemas/CatalogPriceListParams"
+          description: 'The price list this catalog prices through, written inline:
+            an object creates the owned list or updates it. Null deletes the list
+            (a soft delete). Omit the key, or send `{}`, to leave the pricing alone.
+            A catalog with an empty assortment prices without hiding anything; curate
+            or import products to make it restrictive.'
+          nullable: true
     CategoryCreateParams:
       type: object
       properties:
@@ -69428,7 +69936,7 @@ components:
           description: For kinds that name products, which are kept outside preferences.
       required:
       - type
-    CompanyAddressParams:
+    CompanyAddressCreateParams:
       type: object
       properties:
         first_name:
@@ -69469,6 +69977,89 @@ components:
           type: boolean
           description: True makes this the default address of that kind, false gives
             the slot up, and leaving it out keeps the current default.
+      required:
+      - first_name
+      - last_name
+      - address1
+      - city
+      - country_code
+    CompanyAddressUpdateParams:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        phone:
+          type: string
+        label:
+          type: string
+        country_code:
+          allOf:
+          - "$ref": "#/components/schemas/CountryCode"
+          description: ISO 3166-1 alpha-2 code, such as `US`.
+          example: US
+        state_code:
+          type: string
+          description: The state or province abbreviation, such as `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: For countries without states in the database.
+        default_billing:
+          type: boolean
+          description: True makes this the default address of that kind, false gives
+            the slot up, and leaving it out keeps the current default.
+        default_shipping:
+          type: boolean
+          description: True makes this the default address of that kind, false gives
+            the slot up, and leaving it out keeps the current default.
+    CompanyCreateParams:
+      type: object
+      properties:
+        external_references:
+          type: object
+          additionalProperties: true
+          description: 'Identities the record has in external systems, keyed by system:
+            the same `{ system: external_id }` map the Admin API renders, so what
+            you read can be sent straight back. Systems you do not name keep the reference
+            they have. A list of `{ system, external_id }` entries is accepted too.'
+        name:
+          type: string
+          example: Globex Corporation
+        kind:
+          type: string
+          enum:
+          - company
+          - division
+          description: "`company` is a legal entity (may hold tax registrations),
+            `division` an organizational unit. Roots must be `company`."
+          example: company
+        parent_id:
+          type: string
+          description: The parent node. Omit or null for a root.
+          example: comp_86Rf07xd4z
+          nullable: true
+        po_number_required:
+          type: boolean
+          description: 'Whether this buyer''s own procurement process demands a PO
+            reference on every order: checkout asks for one and refuses to complete
+            without it.'
+        metadata:
+          type: object
+          additionalProperties: true
+      required:
+      - name
     CompanyMembershipCreateParams:
       type: object
       properties:
@@ -69483,7 +70074,7 @@ components:
           additionalProperties: true
       required:
       - customer_email
-    CompanyParams:
+    CompanyUpdateParams:
       type: object
       properties:
         external_references:
@@ -69495,7 +70086,6 @@ components:
             they have. A list of `{ system, external_id }` entries is accepted too.'
         name:
           type: string
-          description: Required when creating.
           example: Globex Corporation
         kind:
           type: string
@@ -69620,7 +70210,56 @@ components:
         value:
           description: A scalar for text, number and boolean fields; a list or a hash
             for JSON fields.
-    CustomerAddressParams:
+    CustomerAddressCreateParams:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        phone:
+          type: string
+        label:
+          type: string
+        country_code:
+          allOf:
+          - "$ref": "#/components/schemas/CountryCode"
+          description: ISO 3166-1 alpha-2 code, such as `US`.
+          example: US
+        state_code:
+          type: string
+          description: The state or province abbreviation, such as `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: For countries without states in the database.
+        alternative_phone:
+          type: string
+        quick_checkout:
+          type: boolean
+        is_default_billing:
+          type: boolean
+          description: Makes this the customer's default address of that kind.
+        is_default_shipping:
+          type: boolean
+          description: Makes this the customer's default address of that kind.
+      required:
+      - first_name
+      - last_name
+      - address1
+      - city
+      - country_code
+    CustomerAddressUpdateParams:
       type: object
       properties:
         first_name:
@@ -69875,7 +70514,7 @@ components:
           type: boolean
           description: Whether the customer gets a delivery notification once the
             parcel completes. Defaults to true.
-    DeliveryMethodParams:
+    DeliveryMethodCreateParams:
       type: object
       properties:
         name:
@@ -69997,6 +70636,8 @@ components:
           description: 'Carrier service rows: which provider services this method
             offers. Replaces the full set: omitted rows are removed; no rows means
             every service the provider returns is offered.'
+      required:
+      - name
     DeliveryMethodRuleCreateParams:
       type: object
       properties:
@@ -70071,6 +70712,128 @@ components:
       required:
       - carrier
       - service
+    DeliveryMethodUpdateParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Express
+        admin_name:
+          type: string
+          nullable: true
+        code:
+          type: string
+          nullable: true
+        fulfillment_provider:
+          type: string
+          description: Fulfillment provider shorthand (see the fulfillment providers
+            endpoint), e.g. `manual`.
+          example: manual
+        pickup_point_provider:
+          type: string
+          nullable: true
+        rate_provider:
+          type: string
+          description: Rate provider shorthand (see the rate providers endpoint),
+            e.g. `easy_post`. Omit or send null for the built-in provider, which prices
+            through the method's calculator.
+          nullable: true
+        storefront_visible:
+          type: boolean
+        available_to_sellers:
+          type: boolean
+          description: 'Marketplace only: whether a seller''s packages may be quoted
+            by this method. Off by default, and refused on a method that belongs to
+            a seller.'
+        tracking_url:
+          type: string
+          nullable: true
+        estimated_transit_business_days_min:
+          type: integer
+          nullable: true
+        estimated_transit_business_days_max:
+          type: integer
+          nullable: true
+        tax_category_id:
+          type: string
+          description: Prefixed tax category ID (`taxcat_...`), or null to clear.
+          nullable: true
+        markup_flat:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: Method-level flat handling fee added on top of provider-quoted
+            rates.
+          nullable: true
+        markup_percent:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: Method-level percentage handling fee added on top of provider-quoted
+            rates. Ignored for calculator-priced methods.
+          nullable: true
+        delivery_profile_id:
+          type: string
+          description: Delivery profile this method belongs to (`fp_...`); defaults
+            to the store default profile.
+          example: fp_86Rf07xd4z
+        delivery_origin_group_id:
+          type: string
+          description: Origin group offering this method (`og_...`); defaults to the
+            zone's group, else the profile's default group.
+        delivery_zone_id:
+          type: string
+          description: Delivery zone narrowing destinations (`dz_...`), or null for
+            no restriction. Must belong to the method's profile.
+          nullable: true
+        stock_location_ids:
+          type: array
+          items:
+            type: string
+          description: Pickup locations (`sloc_...`); replaces the full set.
+        calculator:
+          type: object
+          properties:
+            type:
+              type: string
+              example: flat_rate
+            preferences:
+              type: object
+              additionalProperties: true
+              example:
+                amount: '12.5'
+          description: 'How the method prices a shipment: a type from the calculators
+            endpoint and its preferences, matching that type''s `schema`.'
+        rules:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+                description: A rule kind from the delivery method rule types endpoint.
+              active:
+                type: boolean
+              preferences:
+                type: object
+                additionalProperties: true
+              product_ids:
+                type: array
+                items:
+                  type: string
+                description: Products an association-backed rule (`excluded_products_rule`)
+                  applies to.
+          description: 'Eligibility rules. Replaces the full set: omitted rules are
+            removed.'
+        services:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeliveryMethodServiceParams"
+          description: 'Carrier service rows: which provider services this method
+            offers. Replaces the full set: omitted rows are removed; no rows means
+            every service the provider returns is offered.'
     DeliveryOriginGroupParams:
       type: object
       properties:
@@ -70086,7 +70849,32 @@ components:
             type: string
           description: Prefixed stock location IDs (`sloc_...`); replaces the full
             set. Empty means every store location.
-    DeliveryProfileParams:
+    DeliveryProfileCreateParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Oversized
+        kind:
+          type: string
+          description: Registered profile kind (`shipping`, `digital`, extension kinds)
+            from the kinds endpoint. Read on create only; defaults to shipping.
+          example: shipping
+        default:
+          type: boolean
+          description: Promotes this profile to the store default; the previous default
+            is demoted.
+        position:
+          type: integer
+        stock_location_ids:
+          type: array
+          items:
+            type: string
+          description: Prefixed stock location IDs (`sloc_...`); replaces the full
+            set. Empty means every store location.
+      required:
+      - name
+    DeliveryProfileUpdateParams:
       type: object
       properties:
         name:
@@ -70124,6 +70912,29 @@ components:
           type: string
         tracking_url:
           type: string
+    DeliveryZoneCreateParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: US North-East
+        description:
+          type: string
+          nullable: true
+        delivery_profile_id:
+          type: string
+          description: Delivery profile this zone belongs to (`fp_...`); defaults
+            to the store default profile.
+        delivery_origin_group_id:
+          type: string
+          description: Origin group this zone belongs to (`og_...`).
+        members:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeliveryZoneMemberParams"
+          description: Replaces the zone's full member set atomically.
+      required:
+      - name
     DeliveryZoneMemberParams:
       type: object
       properties:
@@ -70149,7 +70960,7 @@ components:
           type: string
       required:
       - member_type
-    DeliveryZoneParams:
+    DeliveryZoneUpdateParams:
       type: object
       properties:
         name:
@@ -74810,16 +75621,15 @@ components:
           nullable: true
         is_default:
           type: boolean
-    TaxExemptionCertificateParams:
+    TaxExemptionCertificateCreateParams:
       type: object
       properties:
         certificate_number:
           type: string
-          description: Required when creating.
           example: DE-RESALE-7
         reason_code:
           type: string
-          description: Becomes the tax provider's entity use code. Required when creating.
+          description: Becomes the tax provider's entity use code.
           example: resale
         issuing_authority:
           type: string
@@ -74848,21 +75658,116 @@ components:
         metadata:
           type: object
           additionalProperties: true
-    TaxIdentifierParams:
+      required:
+      - certificate_number
+      - reason_code
+    TaxExemptionCertificateUpdateParams:
+      type: object
+      properties:
+        certificate_number:
+          type: string
+          example: DE-RESALE-7
+        reason_code:
+          type: string
+          description: Becomes the tax provider's entity use code.
+          example: resale
+        issuing_authority:
+          type: string
+          example: Finanzamt Berlin
+          nullable: true
+        issued_at:
+          type: string
+          format: date-time
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        country_code:
+          allOf:
+          - "$ref": "#/components/schemas/CountryCode"
+          description: Where the certificate holds. Omit it and `state_code` for one
+            valid everywhere.
+          nullable: true
+        state_code:
+          type: string
+          nullable: true
+        document_signed_id:
+          type: string
+          description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.'
+        metadata:
+          type: object
+          additionalProperties: true
+    TaxIdentifierCreateParams:
       type: object
       properties:
         kind:
           type: string
           description: 'The registration the number belongs to, such as `eu_vat` or
             `gb_vat`. Any kind is accepted; one with a registered validator is checked
-            by it. Built-in: `eu_vat`. Extensions may register more. Required when
-            creating.'
+            by it. Built-in: `eu_vat`. Extensions may register more.'
           example: gb_vat
         value:
           type: string
-          description: Required when creating.
           example: GB123456789
-    TaxRateParams:
+      required:
+      - kind
+      - value
+    TaxIdentifierUpdateParams:
+      type: object
+      properties:
+        kind:
+          type: string
+          description: 'The registration the number belongs to, such as `eu_vat` or
+            `gb_vat`. Any kind is accepted; one with a registered validator is checked
+            by it. Built-in: `eu_vat`. Extensions may register more.'
+          example: gb_vat
+        value:
+          type: string
+          example: GB123456789
+    TaxRateCreateParams:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Customer-facing rate name.
+          example: VAT
+        rate:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: The rate as a fraction. Send this or `rate_percent`.
+          example: '0.19'
+        rate_percent:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: The rate as a percentage.
+          example: '19'
+        included_in_price:
+          type: boolean
+        show_rate_in_label:
+          type: boolean
+        tax_category_id:
+          type: string
+        country_code:
+          allOf:
+          - "$ref": "#/components/schemas/CountryCode"
+          description: ISO country code. A rate naming no country taxes everywhere.
+          example: DE
+          nullable: true
+        state_code:
+          type: string
+          description: State abbreviation within that country.
+          example: CA
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+      required:
+      - name
+      - tax_category_id
+    TaxRateUpdateParams:
       type: object
       properties:
         name:

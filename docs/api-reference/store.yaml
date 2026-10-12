@@ -3156,7 +3156,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 354 Lovely Street
+                  address1: 355 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3178,7 +3178,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 353 Lovely Street
+                  address1: 354 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3395,7 +3395,7 @@ paths:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
                     name: UPS Ground 163
-                    code: UPS_GROUND_180
+                    code: UPS_GROUND_181
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -3436,7 +3436,7 @@ paths:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
                       name: UPS Ground 163
-                      code: UPS_GROUND_180
+                      code: UPS_GROUND_181
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -3474,7 +3474,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 360 Lovely Street
+                  address1: 361 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3496,7 +3496,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 359 Lovely Street
+                  address1: 360 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4121,7 +4121,7 @@ paths:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
                     name: UPS Ground 184
-                    code: UPS_GROUND_202
+                    code: UPS_GROUND_203
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -4162,7 +4162,7 @@ paths:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
                       name: UPS Ground 184
-                      code: UPS_GROUND_202
+                      code: UPS_GROUND_203
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -4176,7 +4176,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 472 Lovely Street
+                  address1: 476 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6474,7 +6474,7 @@ paths:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
                     name: UPS Ground 198
-                    code: UPS_GROUND_216
+                    code: UPS_GROUND_217
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6515,7 +6515,7 @@ paths:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
                       name: UPS Ground 198
-                      code: UPS_GROUND_216
+                      code: UPS_GROUND_217
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6528,7 +6528,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 528 Lovely Street
+                  address1: 532 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6550,7 +6550,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 529 Lovely Street
+                  address1: 533 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6878,7 +6878,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 314 Lovely Street
+                  address1: 315 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6899,7 +6899,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 315 Lovely Street
+                  address1: 316 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6920,7 +6920,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 316 Lovely Street
+                  address1: 317 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7068,7 +7068,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/AddressParams"
+              "$ref": "#/components/schemas/AddressCreateParams"
         required: true
   "/api/v3/store/customers/me/addresses/{id}":
     get:
@@ -7126,7 +7126,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 328 Lovely Street
+                address1: 329 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -7208,7 +7208,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 334 Lovely Street
+                address1: 335 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -7230,7 +7230,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/AddressParams"
+              "$ref": "#/components/schemas/AddressUpdateParams"
         required: true
     delete:
       summary: Delete an address
@@ -7821,7 +7821,7 @@ paths:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
                       name: UPS Ground 176
-                      code: UPS_GROUND_193
+                      code: UPS_GROUND_194
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -7862,7 +7862,7 @@ paths:
                       delivery_method:
                         id: dm_UkLWZg9DAJ
                         name: UPS Ground 176
-                        code: UPS_GROUND_193
+                        code: UPS_GROUND_194
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -7875,7 +7875,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 416 Lovely Street
+                    address1: 420 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -7897,7 +7897,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 417 Lovely Street
+                    address1: 421 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8145,7 +8145,7 @@ paths:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
                     name: UPS Ground 178
-                    code: UPS_GROUND_195
+                    code: UPS_GROUND_196
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -8186,7 +8186,7 @@ paths:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
                       name: UPS Ground 178
-                      code: UPS_GROUND_195
+                      code: UPS_GROUND_196
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8199,7 +8199,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 422 Lovely Street
+                  address1: 426 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8221,7 +8221,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 423 Lovely Street
+                  address1: 427 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8414,7 +8414,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 428 Lovely Street
+                  address1: 432 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8435,7 +8435,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 429 Lovely Street
+                  address1: 433 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8457,7 +8457,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 429 Lovely Street
+                  address1: 433 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8479,7 +8479,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 428 Lovely Street
+                  address1: 432 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8571,7 +8571,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 430 Lovely Street
+                  address1: 434 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8592,7 +8592,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 431 Lovely Street
+                  address1: 435 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8614,7 +8614,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 431 Lovely Street
+                  address1: 435 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8636,7 +8636,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 430 Lovely Street
+                  address1: 434 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -11980,7 +11980,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 389 Lovely Street
+                  address1: 390 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -12006,6 +12006,61 @@ paths:
                   in: 1
                   previous:
                   next:
+    post:
+      summary: Add an address book entry
+      tags:
+      - Companies
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: 'Adds a labeled site to the node. Pass `default_billing: true`
+        or `default_shipping: true` to make it the default of that kind.'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: address book entry created
+          content:
+            application/json:
+              example:
+                id: addr_VqXmZF31wY
+                label: Northern Warehouse
+                first_name: Ada
+                last_name: Lovelace
+                full_name: Ada Lovelace
+                address1: 350 Fifth Avenue
+                address2:
+                postal_code: '10118'
+                city: New York
+                phone: "+12125551234"
+                company: Acme Industrial
+                country_name: United States
+                country_code: US
+                state_text: NY
+                state_code: NY
+                quick_checkout: false
+                is_default_billing: false
+                is_default_shipping: true
+                state_abbr: NY
+                country_iso: US
+                state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Address"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CompanyAddressCreateParams"
+        required: true
   "/api/v3/store/companies/{company_id}/addresses/{id}":
     parameters:
     - name: company_id
@@ -12051,7 +12106,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 392 Lovely Street
+                address1: 396 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -12067,11 +12122,13 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Address"
       requestBody:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/CompanyAddressParams"
+              "$ref": "#/components/schemas/CompanyAddressUpdateParams"
         required: true
     delete:
       summary: Remove an address book entry
@@ -12373,7 +12430,7 @@ paths:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
                       name: UPS Ground 167
-                      code: UPS_GROUND_184
+                      code: UPS_GROUND_185
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -12414,7 +12471,7 @@ paths:
                       delivery_method:
                         id: dm_UkLWZg9DAJ
                         name: UPS Ground 167
-                        code: UPS_GROUND_184
+                        code: UPS_GROUND_185
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -12427,7 +12484,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 400 Lovely Street
+                    address1: 404 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -12449,7 +12506,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 401 Lovely Street
+                    address1: 405 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -21687,7 +21744,59 @@ components:
           description: Values for line item attributes an extension adds.
       required:
       - variant_id
-    AddressParams:
+    AddressCreateParams:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        phone:
+          type: string
+        country_code:
+          allOf:
+          - "$ref": "#/components/schemas/CountryCode"
+          description: ISO 3166-1 alpha-2 country code, such as `US` or `DE`.
+          example: US
+        state_code:
+          type: string
+          description: ISO 3166-2 subdivision code without the country prefix, such
+            as `CA` or `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: The state name, for countries without predefined states.
+        country_iso:
+          type: string
+          description: 'Deprecated: Use `country_code`. Removed in 6.1.'
+          deprecated: true
+        state_abbr:
+          type: string
+          description: 'Deprecated: Use `state_code`. Removed in 6.1.'
+          deprecated: true
+        is_default_billing:
+          type: boolean
+          description: Makes this the default billing address.
+        is_default_shipping:
+          type: boolean
+          description: Makes this the default shipping address.
+      required:
+      - first_name
+      - last_name
+      - address1
+      - city
+      - country_code
+    AddressUpdateParams:
       type: object
       properties:
         first_name:
@@ -21808,7 +21917,58 @@ components:
           type: boolean
           description: Relaxes validation (name, phone, postal code, street), for
             express checkouts that share a partial address.
-    CompanyAddressParams:
+    CompanyAddressCreateParams:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        phone:
+          type: string
+        label:
+          type: string
+        country_code:
+          allOf:
+          - "$ref": "#/components/schemas/CountryCode"
+          description: ISO 3166-1 alpha-2 code, such as `US`.
+          example: US
+        state_code:
+          type: string
+          description: The state or province abbreviation, such as `NY`.
+          example: NY
+        state_name:
+          type: string
+          description: For countries without states in the database.
+        zipcode:
+          type: string
+          description: 'Deprecated: Use `postal_code`. Removed in 6.1.'
+          deprecated: true
+        default_billing:
+          type: boolean
+          description: True makes this the node's default billing address, false gives
+            that up, and leaving it out changes nothing.
+        default_shipping:
+          type: boolean
+          description: True makes this the node's default shipping address, false
+            gives that up, and leaving it out changes nothing.
+      required:
+      - first_name
+      - last_name
+      - address1
+      - city
+      - country_code
+    CompanyAddressUpdateParams:
       type: object
       properties:
         first_name:

@@ -2,16 +2,16 @@
 
 import type { CountryCode } from '../generated'
 
-export type TaxRateParams = {
+export type TaxRateCreateParams = {
   /** Customer-facing rate name. */
-  name?: string
+  name: string
   /** The rate as a fraction. Send this or `rate_percent`. */
   rate?: string
   /** The rate as a percentage. */
   rate_percent?: string
   included_in_price?: boolean
   show_rate_in_label?: boolean
-  tax_category_id?: string
+  tax_category_id: string
   /** ISO country code. A rate naming no country taxes everywhere. */
   country_code?: CountryCode | null
   /** State abbreviation within that country. */

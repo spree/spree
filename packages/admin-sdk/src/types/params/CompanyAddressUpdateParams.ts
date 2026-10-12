@@ -2,7 +2,7 @@
 
 import type { CountryCode } from '../generated'
 
-export type CompanyAddressParams = {
+export type CompanyAddressUpdateParams = {
   first_name?: string
   last_name?: string
   company?: string
@@ -18,16 +18,14 @@ export type CompanyAddressParams = {
   state_code?: string
   /** For countries without states in the database. */
   state_name?: string
-  /** @deprecated Use `postal_code`. Removed in 6.1. */
-  zipcode?: string
   /**
-   * True makes this the node's default billing address, false gives that up, and leaving it out
-   * changes nothing.
+   * True makes this the default address of that kind, false gives the slot up, and leaving it out
+   * keeps the current default.
    */
   default_billing?: boolean
   /**
-   * True makes this the node's default shipping address, false gives that up, and leaving it out
-   * changes nothing.
+   * True makes this the default address of that kind, false gives the slot up, and leaving it out
+   * keeps the current default.
    */
   default_shipping?: boolean
 }

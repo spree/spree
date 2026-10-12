@@ -2,17 +2,17 @@
 
 import type { CountryCode } from '../generated'
 
-export type AddressParams = {
-  first_name?: string
-  last_name?: string
+export type AddressCreateParams = {
+  first_name: string
+  last_name: string
   company?: string
-  address1?: string
+  address1: string
   address2?: string
-  city?: string
+  city: string
   postal_code?: string
   phone?: string
   /** ISO 3166-1 alpha-2 country code, such as `US` or `DE`. */
-  country_code?: CountryCode
+  country_code: CountryCode
   /** ISO 3166-2 subdivision code without the country prefix, such as `CA` or `NY`. */
   state_code?: string
   /** The state name, for countries without predefined states. */

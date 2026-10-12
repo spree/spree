@@ -12564,7 +12564,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND_115
+                  code: UPS_GROUND_116
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12587,7 +12587,7 @@ paths:
                       currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND_116
+                  code: UPS_GROUND_117
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12714,7 +12714,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/DeliveryMethodParams"
+              "$ref": "#/components/schemas/DeliveryMethodCreateParams"
         required: true
   "/api/v3/seller/delivery_methods/{id}":
     parameters:
@@ -12756,7 +12756,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND_121
+                code: UPS_GROUND_122
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12813,7 +12813,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND_123
+                code: UPS_GROUND_124
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12840,7 +12840,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/DeliveryMethodParams"
+              "$ref": "#/components/schemas/DeliveryMethodUpdateParams"
         required: true
     delete:
       summary: Retire a delivery method
@@ -14578,7 +14578,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/ProductParams"
+              "$ref": "#/components/schemas/ProductCreateParams"
         required: true
   "/api/v3/seller/products/{id}":
     parameters:
@@ -14760,7 +14760,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/ProductParams"
+              "$ref": "#/components/schemas/ProductUpdateParams"
         required: true
     delete:
       summary: Delete a product
@@ -15294,7 +15294,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/StockLocationParams"
+              "$ref": "#/components/schemas/StockLocationCreateParams"
         required: true
   "/api/v3/seller/stock_locations/{id}":
     parameters:
@@ -15438,7 +15438,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/StockLocationParams"
+              "$ref": "#/components/schemas/StockLocationUpdateParams"
         required: true
   "/api/v3/seller/invitations":
     get:
@@ -19663,7 +19663,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 263 Lovely Street
+                    address1: 264 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -19683,7 +19683,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 262 Lovely Street
+                    address1: 263 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -19859,7 +19859,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 265 Lovely Street
+                  address1: 266 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -19879,7 +19879,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 264 Lovely Street
+                  address1: 265 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20055,7 +20055,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 271 Lovely Street
+                  address1: 272 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20075,7 +20075,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 270 Lovely Street
+                  address1: 271 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20261,7 +20261,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 272 Lovely Street
+                  address1: 273 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20434,7 +20434,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 277 Lovely Street
+                  address1: 278 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20454,7 +20454,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 276 Lovely Street
+                  address1: 277 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20604,7 +20604,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 279 Lovely Street
+                  address1: 280 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20624,7 +20624,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 278 Lovely Street
+                  address1: 279 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20993,7 +20993,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/PackageTypeParams"
+              "$ref": "#/components/schemas/PackageTypeCreateParams"
         required: true
   "/api/v3/seller/package_types/{id}":
     parameters:
@@ -21123,7 +21123,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/PackageTypeParams"
+              "$ref": "#/components/schemas/PackageTypeUpdateParams"
         required: true
     delete:
       summary: Delete a package type
@@ -22075,7 +22075,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/SellerTaxIdentifierParams"
+              "$ref": "#/components/schemas/SellerTaxIdentifierCreateParams"
         required: true
   "/api/v3/seller/tax_identifiers/{id}":
     parameters:
@@ -22129,7 +22129,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/SellerTaxIdentifierParams"
+              "$ref": "#/components/schemas/SellerTaxIdentifierUpdateParams"
         required: true
     delete:
       summary: Remove a tax registration
@@ -29777,7 +29777,7 @@ components:
           type: string
       required:
       - tracking_number
-    DeliveryMethodParams:
+    DeliveryMethodCreateParams:
       type: object
       properties:
         name:
@@ -29826,6 +29826,8 @@ components:
             "$ref": "#/components/schemas/DeliveryMethodRuleParams"
           description: 'Replaces the whole set: a rule dropped here is deleted, so
             re-send surviving rules with their `id`. An empty list clears every condition.'
+      required:
+      - name
     DeliveryMethodRuleParams:
       type: object
       properties:
@@ -29841,6 +29843,55 @@ components:
           additionalProperties: true
       required:
       - type
+    DeliveryMethodUpdateParams:
+      type: object
+      properties:
+        name:
+          type: string
+        admin_name:
+          type: string
+          nullable: true
+        code:
+          type: string
+          nullable: true
+        delivery_profile_id:
+          type: string
+          description: One of the marketplace's delivery profiles.
+        delivery_zone_id:
+          type: string
+          description: Narrows where the method ships; null serves everywhere the
+            profile reaches.
+          nullable: true
+        storefront_visible:
+          type: boolean
+        tracking_url:
+          type: string
+          nullable: true
+        estimated_transit_business_days_min:
+          type: integer
+          nullable: true
+        estimated_transit_business_days_max:
+          type: integer
+          nullable: true
+        calculator:
+          type: object
+          properties:
+            type:
+              type: string
+              example: flat_rate
+            preferences:
+              type: object
+              additionalProperties: true
+              example:
+                amount: '12.5'
+          description: 'How the method is priced: a type from `/delivery_methods/calculators`
+            and its preferences, per that type''s `schema`.'
+        rules:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeliveryMethodRuleParams"
+          description: 'Replaces the whole set: a rule dropped here is deleted, so
+            re-send surviving rules with their `id`. An empty list clears every condition.'
     DeliveryUpdateParams:
       type: object
       properties:
@@ -30182,7 +30233,62 @@ components:
           description: The seller's own working note, as HTML. Sanitized on save;
             `internal_note_html` reads it back.
           nullable: true
-    PackageTypeParams:
+    PackageTypeCreateParams:
+      type: object
+      properties:
+        name:
+          type: string
+        kind:
+          type: string
+          enum:
+          - box
+          - envelope
+          - carton
+          - pallet
+          - container
+        length:
+          type: number
+          nullable: true
+        width:
+          type: number
+          nullable: true
+        height:
+          type: number
+          nullable: true
+        dimensions_unit:
+          type: string
+          enum:
+          - mm
+          - cm
+          - in
+          - ft
+          nullable: true
+        weight:
+          type: number
+          description: The empty package's own weight, added to every quote.
+          nullable: true
+        max_weight:
+          type: number
+          nullable: true
+        weight_unit:
+          type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
+          nullable: true
+        default:
+          type: boolean
+          description: Makes this the box this seller's parcels are quoted with. One
+            default per seller, so it never displaces the marketplace's.
+        metadata:
+          type: object
+          additionalProperties: true
+          nullable: true
+      required:
+      - name
+    PackageTypeUpdateParams:
       type: object
       properties:
         name:
@@ -30325,7 +30431,79 @@ components:
             counted in `skipped_count`.
       required:
       - ids
-    ProductParams:
+    ProductCreateParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Hand-thrown mug
+        description:
+          type: string
+        slug:
+          type: string
+          example: hand-thrown-mug
+        meta_title:
+          type: string
+        meta_description:
+          type: string
+        meta_keywords:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+        product_type_id:
+          type: string
+          description: The marketplace's product type this product is listed against,
+            from the product types endpoint. Null detaches it. Saving with a type
+            seeds its option types onto the product.
+          nullable: true
+        delivery_profile_id:
+          type: string
+          description: Which of the marketplace's delivery profiles the product ships
+            under. A new product sent without one lands on the profile marked default.
+        prices:
+          type: array
+          items:
+            type: object
+            properties:
+              currency:
+                allOf:
+                - "$ref": "#/components/schemas/CurrencyCode"
+                description: Omit to price in the store's currency. A seller has no
+                  currency of their own.
+                example: USD
+              amount:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                description: 'A canonical decimal string (`"1234.56"`: period decimal,
+                  no grouping). The API does not parse localized input.'
+                example: '24.00'
+              compare_at_amount:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                example: '30.00'
+                nullable: true
+            required:
+            - amount
+          description: 'Shorthand for a simple (no-options) product: per-currency
+            prices that forward to the product''s sole variant.'
+        media:
+          type: array
+          items:
+            "$ref": "#/components/schemas/SellerProductMediaParams"
+          description: 'The gallery, as a whole: a file absent from the list is removed.
+            `signed_id` attaches a fresh upload; `id` updates one already there.'
+        variants:
+          type: array
+          items:
+            "$ref": "#/components/schemas/SellerProductVariantParams"
+          description: 'The variants, as a whole: one absent from the list is removed.
+            Pass `id` to update an existing variant.'
+      required:
+      - name
+    ProductUpdateParams:
       type: object
       properties:
         name:
@@ -30759,7 +30937,25 @@ components:
             "$ref": "#/components/schemas/StockLevelParams"
           description: 'Stock per location, at this seller''s own locations only:
             a location belonging to anyone else is ignored.'
-    SellerTaxIdentifierParams:
+    SellerTaxIdentifierCreateParams:
+      type: object
+      properties:
+        kind:
+          type: string
+          description: 'The registration the number belongs to, such as `eu_vat` or
+            `gb_vat`. Any kind is accepted; one with a registered validator is checked
+            by it. Built-in: `eu_vat`. Extensions may register more. One registration
+            per kind.'
+          example: eu_vat
+        value:
+          type: string
+          description: A number the validator for its kind refuses is rejected rather
+            than stored.
+          example: DE100000008
+      required:
+      - kind
+      - value
+    SellerTaxIdentifierUpdateParams:
       type: object
       properties:
         kind:
@@ -30831,7 +31027,90 @@ components:
       required:
       - stock_location_id
       - count_on_hand
-    StockLocationParams:
+    StockLocationCreateParams:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Main warehouse
+        admin_name:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+          description: 'Set `false` to retire a location: there is no delete.'
+        default:
+          type: boolean
+        kind:
+          anyOf:
+          - type: string
+            enum:
+            - warehouse
+            - store
+            - fulfillment_center
+          - type: string
+          description: Categorizes the location. The values listed are the built-in
+            ones; extensions may add more.
+          example: warehouse
+        propagate_all_variants:
+          type: boolean
+        backorderable_default:
+          type: boolean
+        address1:
+          type: string
+          nullable: true
+        address2:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        zipcode:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        country_code:
+          allOf:
+          - "$ref": "#/components/schemas/CountryCode"
+          description: ISO-3166 alpha-2 country code.
+          example: US
+          nullable: true
+        state_code:
+          type: string
+          description: State or province abbreviation, resolved against the selected
+            country's states.
+          example: OR
+          nullable: true
+        state_name:
+          type: string
+          description: Free-text state for countries that don't have a states list.
+          nullable: true
+        pickup_enabled:
+          type: boolean
+        pickup_stock_policy:
+          type: string
+          enum:
+          - local
+          - any
+          description: "`local` collects only items at this location; `any` lets items
+            transfer in from other locations (ship-to-store)."
+        pickup_ready_in_minutes:
+          type: integer
+          nullable: true
+        returns_enabled:
+          type: boolean
+          description: Whether customers may send returns to this location.
+        pickup_instructions:
+          type: string
+          nullable: true
+      required:
+      - name
+    StockLocationUpdateParams:
       type: object
       properties:
         name:

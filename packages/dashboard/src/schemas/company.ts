@@ -1,7 +1,7 @@
 import type {
-  CompanyParams,
-  TaxExemptionCertificateParams,
-  TaxIdentifierParams,
+  CompanyCreateParams,
+  TaxExemptionCertificateCreateParams,
+  TaxIdentifierCreateParams,
 } from '@spree/admin-sdk'
 import { blankToNull, countryCodeSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
@@ -20,7 +20,7 @@ export type CompanyFormValues = z.infer<typeof companyFormSchema>
 
 export const COMPANY_DEFAULTS: CompanyFormValues = { name: '', po_number_required: false }
 
-export function companyValuesToParams(values: CompanyFormValues): CompanyParams {
+export function companyValuesToParams(values: CompanyFormValues): CompanyCreateParams {
   return {
     name: values.name,
     po_number_required: values.po_number_required,
@@ -47,7 +47,9 @@ export type TaxIdentifierFormValues = z.infer<typeof taxIdentifierFormSchema>
 
 export const TAX_IDENTIFIER_DEFAULTS: TaxIdentifierFormValues = { kind: '', value: '' }
 
-export function taxIdentifierValuesToParams(values: TaxIdentifierFormValues): TaxIdentifierParams {
+export function taxIdentifierValuesToParams(
+  values: TaxIdentifierFormValues,
+): TaxIdentifierCreateParams {
   return { kind: values.kind, value: values.value }
 }
 
@@ -98,7 +100,7 @@ export const TAX_EXEMPTION_REASON_CODES = [
 
 export function taxExemptionCertificateValuesToParams(
   values: TaxExemptionCertificateFormValues,
-): TaxExemptionCertificateParams {
+): TaxExemptionCertificateCreateParams {
   return {
     certificate_number: values.certificate_number,
     reason_code: values.reason_code,

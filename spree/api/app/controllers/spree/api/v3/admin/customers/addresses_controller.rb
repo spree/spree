@@ -4,8 +4,9 @@ module Spree
       module Admin
         module Customers
           class AddressesController < BaseController
-            request_params 'CustomerAddressParams' do |body|
+            request_params :customer_address do |body|
               body.include_attributes Spree::Api::V3::Admin::AddressRequestSchema
+              body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
               body.attribute :quick_checkout, :boolean
               body.attribute :is_default_billing, :boolean,
                 permit: false,

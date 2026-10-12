@@ -8,8 +8,8 @@ module Spree
         class DeliveryZonesController < ResourceController
           scoped_resource :settings
 
-          request_params 'DeliveryZoneParams' do |body|
-            body.attribute :name, :string, example: 'US North-East'
+          request_params :delivery_zone do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'US North-East'
             body.attribute :description, :string, nullable: true
             body.attribute :delivery_profile_id, :id,
               description: 'Delivery profile this zone belongs to (`fp_...`); defaults to the store default profile.'

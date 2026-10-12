@@ -9,8 +9,9 @@ module Spree
           class AddressesController < BaseController
             include Spree::Api::V3::CompanyAddressWrites
 
-            request_params 'CompanyAddressParams' do |body|
+            request_params :company_address do |body|
               body.include_attributes Spree::Api::V3::AddressRequestSchema
+              body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
               body.attribute :zipcode, :string, deprecated: 'Use `postal_code`. Removed in 6.1.'
               body.attribute :default_billing, :boolean,
                 permit: false,

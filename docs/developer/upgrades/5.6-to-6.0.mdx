@@ -1140,7 +1140,7 @@ Request types (`CreateCartParams`, `UpdateCartParams`, `AddLineItemParams`, `Add
   ```
 
 - **Some requirements relaxed.** `AddLineItemParams.quantity` is optional (it defaults to 1), and `RegisterParams.password_confirmation` is optional.
-- **Renamed types keep their old names until 6.1, marked deprecated:** `LineItemInput` is `LineItemInputParams`.
+- **Renamed types keep their old names until 6.1, marked deprecated:** `LineItemInput` is `LineItemInputParams`. `AddressParams` and `CompanyAddressParams` are split by action into `AddressCreateParams` / `AddressUpdateParams` and `CompanyAddressCreateParams` / `CompanyAddressUpdateParams`: creating requires the name, street, city and country, and updating takes any of them.
 
 ### Country and currency codes are typed
 

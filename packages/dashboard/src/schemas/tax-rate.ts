@@ -1,4 +1,4 @@
-import { compareMoney, isDecimalString, type TaxRateParams } from '@spree/admin-sdk'
+import { compareMoney, isDecimalString, type TaxRateCreateParams } from '@spree/admin-sdk'
 import { blankToNull, countryCodeSchema } from '@spree/dashboard-core'
 import { decimalPlacesMessage, requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
@@ -42,7 +42,7 @@ export const TAX_RATE_DEFAULTS: TaxRateFormValues = {
  * country on an existing rate has to widen it back to everywhere, which an
  * omitted key would not do.
  */
-export function taxRateValuesToParams(values: TaxRateFormValues): TaxRateParams {
+export function taxRateValuesToParams(values: TaxRateFormValues): TaxRateCreateParams {
   return {
     name: values.name,
     rate_percent: values.rate_percent,

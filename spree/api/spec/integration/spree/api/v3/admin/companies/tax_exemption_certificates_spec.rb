@@ -96,6 +96,38 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
     end
   end
 
+  path '/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}' do
+    let(:company_id) { company.prefixed_id }
+    let(:id) { certificate.prefixed_id }
+    let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+    parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+    parameter name: :Authorization, in: :header, type: :string, required: true
+    parameter name: :company_id, in: :path, type: :string, required: true
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Update a tax exemption certificate' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Corrects the details recorded for a certificate, such as its issuing authority or expiry date.'
+      admin_scope :write, :customers
+
+      request_body_for
+
+      response '200', 'certificate updated' do
+        let(:body) { { issuing_authority: 'Finanzamt Berlin', expires_at: '2027-12-31T23:59:59Z' } }
+
+        schema '$ref' => '#/components/schemas/TaxExemptionCertificate'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['issuing_authority']).to eq('Finanzamt Berlin')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}/verify' do
     let(:company_id) { company.prefixed_id }
     let(:id) { certificate.prefixed_id }

@@ -100,6 +100,17 @@ module Spree
             required == true || (required == :create && action == :create)
           end
 
+          # This field, required on `on` (`:create`) or always. A field
+          # already required always stays required always.
+          #
+          # @param on [Symbol, nil] `:create`, or nil for every action
+          # @return [Field]
+          def required_copy(on)
+            copy = dup
+            copy.instance_variable_set(:@required, required == true ? true : on || true)
+            copy
+          end
+
           # A hash of any keys, such as `metadata` or `provider_settings`.
           def free_object?
             kind == :object && schema.nil?
@@ -159,7 +170,7 @@ module Spree
             value.is_a?(Class) ? value.definition : value
           end
 
-          %i[attribute include_attributes external_references].each do |method|
+          %i[attribute include_attributes require_attributes external_references].each do |method|
             define_method(method) { |*args, **options, &block| definition.public_send(method, *args, **options, &block) }
           end
         end
@@ -222,6 +233,22 @@ module Spree
         # @param other [RequestSchema, Class]
         def include_attributes(other)
           RequestSchema.resolve(other).fields.each_value { |field| add(field) }
+        end
+
+        # Marks attributes this schema took from another as required, for an
+        # endpoint whose model needs what the shared set leaves optional.
+        #
+        # @param names [Array<Symbol>]
+        # @param on [Symbol, nil] `:create` to require them only when creating
+        # @return [void]
+        def require_attributes(*names, on: nil)
+          raise ArgumentError, '`on:` is :create' if on && on != :create
+
+          names.each do |name|
+            field = fields.fetch(name) { raise ArgumentError, "#{name} is not an attribute of this schema" }
+            fields[name] = field.required_copy(on)
+          end
+          @permit_lists = nil
         end
 
         # The `params.permit` list for an action.

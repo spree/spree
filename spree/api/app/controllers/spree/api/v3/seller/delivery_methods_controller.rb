@@ -23,8 +23,8 @@ module Spree
           # permitting them would let a write fail validation for a choice the
           # seller was never offered. No markup either — that prices a
           # carrier's quote, and a seller has no carrier.
-          request_params 'DeliveryMethodParams' do |body|
-            body.attribute :name, :string
+          request_params :delivery_method do |body|
+            body.attribute :name, :string, required: true, on: :create
             body.attribute :admin_name, :string, nullable: true
             body.attribute :code, :string, nullable: true
             body.attribute :delivery_profile_id, :id, description: "One of the marketplace's delivery profiles."

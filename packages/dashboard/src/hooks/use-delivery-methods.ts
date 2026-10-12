@@ -1,4 +1,8 @@
-import type { DeliveryMethod, DeliveryMethodParams } from '@spree/admin-sdk'
+import type {
+  DeliveryMethod,
+  DeliveryMethodCreateParams,
+  DeliveryMethodUpdateParams,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -62,7 +66,7 @@ export function useAllDeliveryMethods() {
 }
 
 export function useCreateDeliveryMethod() {
-  return useResourceMutation<DeliveryMethod, Error, DeliveryMethodParams>({
+  return useResourceMutation<DeliveryMethod, Error, DeliveryMethodCreateParams>({
     mutationFn: (params) => adminClient.deliveryMethods.create(params),
     invalidate: [['delivery-methods']],
     successMessage: i18n.t('admin.delivery_methods.messages.created'),
@@ -71,7 +75,7 @@ export function useCreateDeliveryMethod() {
 }
 
 export function useUpdateDeliveryMethod(id: string) {
-  return useResourceMutation<DeliveryMethod, Error, DeliveryMethodParams>({
+  return useResourceMutation<DeliveryMethod, Error, DeliveryMethodUpdateParams>({
     mutationFn: (params) => adminClient.deliveryMethods.update(id, params),
     invalidate: [['delivery-methods'], ['delivery-methods', id]],
     successMessage: i18n.t('admin.delivery_methods.messages.updated'),

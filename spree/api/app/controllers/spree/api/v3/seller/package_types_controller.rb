@@ -22,8 +22,8 @@ module Spree
           # their own packaging, so every field on the shared form is theirs
           # to set. `seller_id` is deliberately absent: ownership comes from
           # the authenticated seller, never the payload.
-          request_params 'PackageTypeParams' do |body|
-            body.attribute :name, :string
+          request_params :package_type do |body|
+            body.attribute :name, :string, required: true, on: :create
             body.attribute :kind, :string, choices: Spree::PackageType::KINDS
             body.attribute :length, :number, nullable: true
             body.attribute :width, :number, nullable: true

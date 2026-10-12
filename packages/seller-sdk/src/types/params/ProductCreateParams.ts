@@ -4,8 +4,8 @@ import type { CurrencyCode } from '../generated'
 import type { SellerProductMediaParams } from './SellerProductMediaParams'
 import type { SellerProductVariantParams } from './SellerProductVariantParams'
 
-export type ProductParams = {
-  name?: string
+export type ProductCreateParams = {
+  name: string
   description?: string
   slug?: string
   meta_title?: string

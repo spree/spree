@@ -68,4 +68,33 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
       end
     end
   end
+
+  path '/api/v3/admin/companies/{id}' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Update a company' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Updates a company node. Only the attributes sent change.'
+      admin_scope :write, :customers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'company updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { company.prefixed_id }
+        let(:body) { { name: 'Acme Industrial Group', po_number_required: true } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq('Acme Industrial Group')
+          expect(data['po_number_required']).to be(true)
+        end
+      end
+    end
+  end
 end
