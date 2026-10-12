@@ -5,6 +5,8 @@ module Spree
         # Admin API Line Item Serializer
         # Extends the store serializer with metadata visibility
         class LineItemSerializer < V3::LineItemSerializer
+          include Concerns::ExternalReferencesAttribute
+
           without_formatted_money
 
           # The Admin API has no guest gating — money fields inherited from the

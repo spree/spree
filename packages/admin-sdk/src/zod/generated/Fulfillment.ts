@@ -33,6 +33,7 @@ export const FulfillmentSchema = z.object({
   stock_location: StockLocationSchema.optional(),
   delivery_rates: z.array(DeliveryRateSchema).optional(),
   tax_lines: z.array(TaxLineSchema).optional(),
+  external_references: z.record(z.string(), z.string()),
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),
   updated_at: z.string(),

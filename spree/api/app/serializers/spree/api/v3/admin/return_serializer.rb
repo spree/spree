@@ -5,6 +5,8 @@ module Spree
     module V3
       module Admin
         class ReturnSerializer < V3::ReturnSerializer
+          include Concerns::ExternalReferencesAttribute
+
           without_formatted_money
 
           typelize memo: [:string, nullable: true],

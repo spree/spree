@@ -179,6 +179,7 @@ module Spree
 
       fulfillment_ids = fulfillments.map(&:id)
       DeliveryRate.where(fulfillment_id: fulfillment_ids).delete_all
+      Spree::ExternalReference.where(resource_type: Spree::Fulfillment.name, resource_id: fulfillment_ids).delete_all if fulfillment_ids.any?
       fulfillments.delete_all
       fulfillment_items.reset
       return fulfillments.reload unless can_propose_deliveries?

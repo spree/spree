@@ -154,6 +154,24 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       expect(line_item.reload.quantity).to eq(5)
     end
 
+    it 'addresses the line item by the key the order system knows it by' do
+      line_item.set_external_id('oms', 'LINE-1')
+
+      patch :update, params: { order_id: order.prefixed_id, id: 'external:oms:LINE-1', quantity: 3 }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(line_item.reload.quantity).to eq(3)
+      expect(json_response['external_references']).to eq('oms' => 'LINE-1')
+    end
+
+    it 'records the key a connector sends' do
+      patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id,
+                               external_references: { oms: 'LINE-2' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(line_item.reload.external_id_for('oms')).to eq('LINE-2')
+    end
+
     context 'with a negotiated price' do
       subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: '7.20' }, as: :json }
 

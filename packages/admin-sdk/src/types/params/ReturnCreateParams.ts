@@ -1,6 +1,13 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
 export type ReturnCreateParams = {
+  /**
+   * Identities the record has in external systems, keyed by system: the same
+   * `{ system: external_id }` map the Admin API renders, so what you read can be sent straight
+   * back. Systems you do not name keep the reference they have. A list of `{ system, external_id }`
+   * entries is accepted too.
+   */
+  external_references?: Record<string, unknown>
   /** Fulfilled units coming back, and how many of each. */
   items: {
     fulfillment_item_id: string

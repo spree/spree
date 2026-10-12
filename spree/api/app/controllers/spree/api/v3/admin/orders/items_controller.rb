@@ -5,6 +5,7 @@ module Spree
         module Orders
           class ItemsController < BaseController
             request_params :line_item do |body|
+              body.external_references
               body.attribute :variant_id, :id, required: true, only: :create
               body.attribute :quantity, :integer, example: 1, description: 'Defaults to 1 when adding an item.'
               body.attribute :price, :decimal,

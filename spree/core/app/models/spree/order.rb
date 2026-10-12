@@ -921,6 +921,9 @@ module Spree
 
       shipment_ids = fulfillments.map(&:id)
       DeliveryRate.where(fulfillment_id: shipment_ids).delete_all
+      # A connector's key for a fulfillment that is going away would otherwise
+      # outlive it and block the key from naming the rebuilt one.
+      Spree::ExternalReference.where(resource_type: Spree::Fulfillment.name, resource_id: shipment_ids).delete_all if shipment_ids.any?
 
       fulfillments.delete_all
 

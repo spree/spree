@@ -295,8 +295,8 @@ module Spree
             # reads it — otherwise a page of orders costs a query per
             # fulfillment for a field that is nil on every parcel order.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
-             :market, { fulfillments: :selected_delivery_rate },
-             { line_items: [{ variant: :prices }, { price_list: :catalog }] },
+             :market, { fulfillments: %i[selected_delivery_rate external_references] },
+             { line_items: [:external_references, { variant: :prices }, { price_list: :catalog }] },
              { po_document_attachment: :blob }]
           end
 

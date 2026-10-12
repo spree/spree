@@ -15,6 +15,7 @@ module Spree
             scoped_resource :fulfillments
 
             request_params :fulfillment do |body|
+              body.external_references
               body.attribute :stock_location_id, :id,
                 required: true, on: :create,
                 description: "The location the fulfillment ships from. On update, moving it re-prices the fulfillment against that location's rates."
@@ -138,6 +139,13 @@ module Spree
 
             def permitted_params
               params.permit(*permitted_attributes)
+            end
+
+            # A replayed create runs the update action, which takes neither the
+            # units to move nor how the parcel was registered: those only shape
+            # a new fulfillment.
+            def normalize_upsert_params!
+              %i[items source_fulfillment_id delivery_method_id cost status metadata].each { |key| params.delete(key) }
             end
 
             private

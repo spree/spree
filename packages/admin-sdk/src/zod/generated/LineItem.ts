@@ -32,6 +32,7 @@ export const LineItemSchema = z.object({
   get option_values() { return z.array(OptionValueSchema); },
   digital_links: z.array(DigitalLinkSchema),
   tax_lines: z.array(TaxLineSchema).optional(),
+  external_references: z.record(z.string(), z.string()),
   metadata: z.record(z.string(), z.unknown()),
   price_source: z.string().nullable(),
   created_at: z.string(),

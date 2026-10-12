@@ -9933,6 +9933,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     shipping_label_id:
+                  external_references: {}
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -10044,6 +10045,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
+                external_references: {}
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -10176,6 +10178,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
+                external_references: {}
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -10279,6 +10282,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
+                external_references: {}
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -10388,6 +10392,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
+                external_references: {}
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -10500,6 +10505,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
+                external_references: {}
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -10617,6 +10623,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   shipping_label_id:
+                external_references: {}
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -10718,6 +10725,7 @@ paths:
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
                   deliveries: []
+                  external_references: {}
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -16945,6 +16953,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                   digital_links: []
+                  external_references: {}
                   metadata: {}
                   price_source:
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -17053,6 +17062,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
+                external_references: {}
                 metadata: {}
                 price_source:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -17175,6 +17185,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
+                external_references: {}
                 metadata: {}
                 price_source:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -17278,6 +17289,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
+                external_references: {}
                 metadata: {}
                 price_source:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -19121,6 +19133,7 @@ paths:
                   received_at:
                   refunded_at:
                   canceled_at:
+                  external_references: {}
                   memo: Item did not fit
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -19276,6 +19289,7 @@ paths:
                   received_at:
                   refunded_at:
                   canceled_at:
+                  external_references: {}
                   memo: Item did not fit
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -19355,6 +19369,7 @@ paths:
                 received_at:
                 refunded_at:
                 canceled_at:
+                external_references: {}
                 memo: Too small
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -19437,6 +19452,7 @@ paths:
                 received_at:
                 refunded_at:
                 canceled_at:
+                external_references: {}
                 memo: Customer shipped it back with a tracking number
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -19509,6 +19525,7 @@ paths:
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at:
                 canceled_at:
+                external_references: {}
                 memo: Item did not fit
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -19580,6 +19597,7 @@ paths:
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at: '2026-01-15T12:00:00Z'
                 canceled_at:
+                external_references: {}
                 memo: Item did not fit
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -19651,6 +19669,7 @@ paths:
                 received_at:
                 refunded_at:
                 canceled_at: '2026-01-15T12:00:00Z'
+                external_references: {}
                 memo: |-
                   Item did not fit
                   Customer changed their mind
@@ -56887,6 +56906,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/TaxLine"
+        external_references:
+          type: object
         metadata:
           type: object
         created_at:
@@ -56939,6 +56960,7 @@ components:
       - delivered_at
       - items
       - deliveries
+      - external_references
       - metadata
       - created_at
       - updated_at
@@ -57930,6 +57952,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/TaxLine"
+        external_references:
+          type: object
         metadata:
           type: object
         price_source:
@@ -57987,6 +58011,7 @@ components:
       - thumbnail_url
       - option_values
       - digital_links
+      - external_references
       - metadata
       - price_source
       - created_at
@@ -62932,6 +62957,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ReturnLineItem"
+        external_references:
+          type: object
         memo:
           type: string
           nullable: true
@@ -62995,6 +63022,7 @@ components:
       - received_at
       - refunded_at
       - canceled_at
+      - external_references
       - memo
       - metadata
       - created_at
@@ -73286,6 +73314,13 @@ components:
     FulfillmentCreateParams:
       type: object
       properties:
+        external_references:
+          type: object
+          additionalProperties: true
+          description: 'Identities the record has in external systems, keyed by system:
+            the same `{ system: external_id }` map the Admin API renders, so what
+            you read can be sent straight back. Systems you do not name keep the reference
+            they have. A list of `{ system, external_id }` entries is accepted too.'
         stock_location_id:
           type: string
           description: The location the fulfillment ships from. On update, moving
@@ -73401,6 +73436,13 @@ components:
     FulfillmentUpdateParams:
       type: object
       properties:
+        external_references:
+          type: object
+          additionalProperties: true
+          description: 'Identities the record has in external systems, keyed by system:
+            the same `{ system: external_id }` map the Admin API renders, so what
+            you read can be sent straight back. Systems you do not name keep the reference
+            they have. A list of `{ system, external_id }` entries is accepted too.'
         stock_location_id:
           type: string
           description: The location the fulfillment ships from. On update, moving
@@ -73630,6 +73672,13 @@ components:
     LineItemCreateParams:
       type: object
       properties:
+        external_references:
+          type: object
+          additionalProperties: true
+          description: 'Identities the record has in external systems, keyed by system:
+            the same `{ system: external_id }` map the Admin API renders, so what
+            you read can be sent straight back. Systems you do not name keep the reference
+            they have. A list of `{ system, external_id }` entries is accepted too.'
         variant_id:
           type: string
         quantity:
@@ -73653,6 +73702,13 @@ components:
     LineItemUpdateParams:
       type: object
       properties:
+        external_references:
+          type: object
+          additionalProperties: true
+          description: 'Identities the record has in external systems, keyed by system:
+            the same `{ system: external_id }` map the Admin API renders, so what
+            you read can be sent straight back. Systems you do not name keep the reference
+            they have. A list of `{ system, external_id }` entries is accepted too.'
         quantity:
           type: integer
           description: Defaults to 1 when adding an item.
@@ -76121,6 +76177,13 @@ components:
     ReturnCreateParams:
       type: object
       properties:
+        external_references:
+          type: object
+          additionalProperties: true
+          description: 'Identities the record has in external systems, keyed by system:
+            the same `{ system: external_id }` map the Admin API renders, so what
+            you read can be sent straight back. Systems you do not name keep the reference
+            they have. A list of `{ system, external_id }` entries is accepted too.'
         items:
           type: array
           items:
@@ -76184,6 +76247,13 @@ components:
     ReturnUpdateParams:
       type: object
       properties:
+        external_references:
+          type: object
+          additionalProperties: true
+          description: 'Identities the record has in external systems, keyed by system:
+            the same `{ system: external_id }` map the Admin API renders, so what
+            you read can be sent straight back. Systems you do not name keep the reference
+            they have. A list of `{ system, external_id }` entries is accepted too.'
         stock_location_id:
           type: string
           description: Where the goods come back to. Defaults to the location that

@@ -60,6 +60,9 @@ The system does not have to be a connected [integration](/developer/providers/ov
 | Stock locations | ERP warehouse code |
 | Stock levels | ERP inventory record |
 | Orders | ERP sales order number, written back after the order is sent there |
+| Line items | The order line's key in the system the order was sent to, which that system's shipments and refunds name |
+| Fulfillments | The shipment's key in the system that shipped it, so a repeated update changes the tracking instead of shipping twice |
+| Returns | The refund's key in the system it came from, so a repeated message never refunds twice |
 | Companies | ERP or CRM account number (B2B) |
 | Sellers | Payout provider account, recorded by the [payout provider](/developer/providers/payouts) itself |
 

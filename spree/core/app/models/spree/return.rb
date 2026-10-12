@@ -19,6 +19,7 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasStatus
     include Spree::HasCustomFields
+    include Spree::HasExternalReferences
     include Spree::Metadata
     include Spree::PostSale::Taxation
 
