@@ -1,6 +1,6 @@
 import fs from 'node:fs'
-import os from 'node:os'
 import path from 'node:path'
+import { configDir as sharedConfigDir } from '@spree/telemetry'
 import pc from 'picocolors'
 import { DEFAULT_SPREE_PORT } from './constants.js'
 import { detectProject } from './context.js'
@@ -67,9 +67,7 @@ export interface ProjectCredentials {
 export class CredentialError extends Error {}
 
 export function configDir(): string {
-  return process.env.XDG_CONFIG_HOME
-    ? path.join(process.env.XDG_CONFIG_HOME, 'spree')
-    : path.join(os.homedir(), '.config', 'spree')
+  return sharedConfigDir()
 }
 
 export function configPath(): string {

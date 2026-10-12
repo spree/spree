@@ -108,6 +108,9 @@ importers:
       '@spree/sdk-core':
         specifier: workspace:*
         version: link:../sdk-core
+      '@spree/telemetry':
+        specifier: workspace:*
+        version: link:../telemetry
       '@types/node':
         specifier: ^25.6.0
         version: 25.9.9
@@ -142,6 +145,9 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
     devDependencies:
+      '@spree/telemetry':
+        specifier: workspace:*
+        version: link:../telemetry
       '@types/node':
         specifier: ^25.6.0
         version: 25.9.9
@@ -875,6 +881,21 @@ importers:
       zod:
         specifier: ^4.4.3
         version: 4.6.5
+
+  packages/telemetry:
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.9.9
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.29)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.5
+        version: 4.1.11(@types/node@25.9.9)(@vitest/coverage-v8@4.1.11)(msw@2.15.0(@types/node@25.9.9)(typescript@6.0.3))(vite@8.3.3(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
 packages:
 

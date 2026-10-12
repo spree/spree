@@ -1,6 +1,6 @@
 ---
 title: Update Checks and Usage Data
-description: How Spree tells you a newer release exists, the usage data the same daily check reports, and how to turn either off.
+description: How Spree tells you a newer release exists, the usage data the update check and the command line tools report, and how to turn either off.
 ---
 
 When an admin opens the [Dashboard](/developer/dashboard/deployment), Spree asks `spreecloud.io` whether a newer Spree release exists, at most once a day. When one does, the dashboard tells admins who can manage the store, and shows that release's notes.
@@ -60,3 +60,38 @@ end
 Either way, turning a switch off wins over the other method: an environment variable cannot turn back on what the initializer turned off, and the reverse.
 
 The check never runs in the `test` environment or on a CI server (any machine with the `CI` environment variable set, which GitHub Actions, GitLab CI, CircleCI and most other services do), so test runs send nothing.
+
+## Command line tools
+
+The [Spree CLI](/developer/cli/quickstart) and `create-spree-app` report how setup goes, so the Spree team can see where new projects get stuck. They send one event each time you run one of these commands yourself: `create-spree-app`, and `spree init`, `add`, `dev`, `upgrade`, `eject`, `build`, `plugin` and `generate`.
+
+Nothing is sent for any other command, such as `spree api` or `spree exec`, when the command runs in a script, a pipe or CI, or for the `spree init` and `spree add` that `create-spree-app` runs for you. The event is sent in the background after the command finishes, so it never slows a command down or makes it fail. The first time, the CLI prints a notice saying so.
+
+| Field | Example | Notes |
+| --- | --- | --- |
+| `command` | `dev` | Which command ran. Never its arguments. |
+| `status`, `exit_code` | `ok`, `0` | Whether it succeeded, failed, or you cancelled it. Never the error message. |
+| `duration_ms` | `8421` | How long it took. |
+| `cli`, `cli_version` | `@spree/cli`, `1.4.0` | Which tool and version. |
+| `node_version`, `package_manager` | `24.4.0`, `pnpm` | The Node.js version and package manager. |
+| `os`, `arch`, `docker` | `darwin`, `arm64`, `false` | The operating system, processor type, and whether it ran inside Docker. |
+| `machine_id` | `2f1f2f60-9114-4b3a-…` | A random identifier created once on your machine. It is not derived from anything about you. |
+| `project_id` | `3f1c…` | A one-way hash of the project's git remote, keyed with your machine ID, so runs of one project on one machine can be grouped. The remote is never sent, and the hash cannot be matched against a list of public repositories. |
+| `options` | `storefront: true` | For `create-spree-app` only: the choices you made, such as including a storefront. |
+
+To turn it off on your machine:
+
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree telemetry disable
+    ```
+  </Tab>
+  <Tab title="Environment variable">
+    ```bash
+    export SPREE_TELEMETRY_DISABLED=1
+    ```
+  </Tab>
+</Tabs>
+
+`DO_NOT_TRACK=1` works too. `spree telemetry status` shows whether reporting is on and why.
