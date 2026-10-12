@@ -19,7 +19,7 @@ module Spree
               with_order_lock do
                 result = Spree.store_credit_apply_service.call(
                   order: @parent,
-                  amount: params[:amount].try(:to_f)
+                  amount: money_param(:amount, @parent.currency)
                 )
 
                 if result.success?

@@ -757,8 +757,10 @@ export class StoreClient {
       /**
        * Apply store credit to the cart
        * @param cartId - Cart prefixed ID
+       * @param amount - How much to apply, as a decimal string (`'10.00'`). Omit it to apply as much
+       *   as the cart can use.
        */
-      apply: (cartId: string, amount?: number, options?: RequestOptions): Promise<Cart> =>
+      apply: (cartId: string, amount?: string, options?: RequestOptions): Promise<Cart> =>
         this.request<Cart>('POST', `/carts/${cartId}/store_credits`, {
           ...options,
           body: amount ? { amount } : undefined,

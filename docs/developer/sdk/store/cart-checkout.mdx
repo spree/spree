@@ -170,7 +170,7 @@ const options = { spreeToken: cart.token };
 await client.carts.storeCredits.apply(cartId, undefined, options);
 
 // Apply specific amount of store credit
-await client.carts.storeCredits.apply(cartId, 25.00, options);
+await client.carts.storeCredits.apply(cartId, '25.00', options);
 
 // Remove store credit from order
 await client.carts.storeCredits.remove(cartId, options);
