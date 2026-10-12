@@ -3437,6 +3437,8 @@ paths:
                     country_name: United States
                     state_code: AL
                     state_text: AL
+                    country_iso: US
+                    state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
                   delivery_rates:
@@ -4138,6 +4140,8 @@ paths:
                     country_name: United States
                     state_code: AL
                     state_text: AL
+                    country_iso: US
+                    state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
                   delivery_rates:
@@ -6501,6 +6505,8 @@ paths:
                     country_name: United States
                     state_code: AL
                     state_text: AL
+                    country_iso: US
+                    state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
                   delivery_rates:
@@ -7848,6 +7854,8 @@ paths:
                       country_name: United States
                       state_code: AL
                       state_text: AL
+                      country_iso: US
+                      state_abbr: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
                     delivery_rates:
@@ -8172,6 +8180,8 @@ paths:
                     country_name: United States
                     state_code: AL
                     state_text: AL
+                    country_iso: US
+                    state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
                   delivery_rates:
@@ -12457,6 +12467,8 @@ paths:
                       country_name: United States
                       state_code: AL
                       state_text: AL
+                      country_iso: US
+                      state_abbr: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
                     delivery_rates:
@@ -12820,6 +12832,8 @@ paths:
                   country_name: United States
                   state_code: AL
                   state_text: AL
+                  country_iso: US
+                  state_abbr: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
   "/api/v3/store/customers/me/digital_links":
@@ -20156,6 +20170,10 @@ components:
         originator_type:
           type: string
           nullable: true
+        reimbursement_id:
+          type: string
+          nullable: true
+          deprecated: true
       required:
       - id
       - transaction_id
@@ -20164,6 +20182,7 @@ components:
       - refund_reason_id
       - originator_id
       - originator_type
+      - reimbursement_id
       x-typelizer: true
     ReturnLineItem:
       type: object
@@ -20731,6 +20750,14 @@ components:
         state_text:
           type: string
           nullable: true
+        country_iso:
+          type: string
+          nullable: true
+          deprecated: true
+        state_abbr:
+          type: string
+          nullable: true
+          deprecated: true
         pickup_ready_in_minutes:
           type: number
           nullable: true
@@ -20747,6 +20774,8 @@ components:
       - country_name
       - state_code
       - state_text
+      - country_iso
+      - state_abbr
       - pickup_ready_in_minutes
       - pickup_instructions
       x-typelizer: true

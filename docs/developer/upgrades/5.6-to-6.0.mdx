@@ -363,6 +363,8 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 | Removed from the Admin and Seller APIs | Use |
 |---|---|
 | Address `country_iso`, `state_abbr` (read and write) | `country_code`, `state_code` |
+| Stock location `country_iso`, `state_abbr` | `country_code`, `state_code` |
+| Refund `reimbursement_id` | `originator_id`, `originator_type` |
 | Address `zipcode` (write) | `postal_code` |
 | Admin cart `number` | `id` |
 | Admin market `country_isos` | `country_codes` |
@@ -1093,6 +1095,7 @@ A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefr
 | A property that "does not exist" in a `…Params` type | Request types now list exactly what the endpoint accepts | [Request types](#request-types-match-the-api) |
 | `ProductSort`, or a filter key | List filters and sort are typed | [List filters and sort](#list-filters-and-sort-are-typed) |
 | `number` is not assignable to `string` in a filter or amount | Money is a decimal string everywhere | Send `'20.00'`, not `20` ([Money](#money), [store credit](#store-credit-amounts-are-decimal-strings)) |
+| `name` or `description` "does not exist" on `Discount` | `Discount` now types the discount rows on items and fulfillments. The `discounts` list on carts and orders is unchanged and is typed `AppliedPromotion` | Import `AppliedPromotion` for `cart.discounts` and `order.discounts` |
 | A property that "does not exist" on `OrderGroup` | Completing a cart, or reading an order by its cart id, can return an order group | [Completing a cart can return an order group](#completing-a-cart-can-return-an-order-group) |
 
 ### List filters and sort are typed
@@ -1193,6 +1196,9 @@ These Store API fields keep working in 6.0 and are marked `@deprecated` in the S
 |---|---|
 | Address `country_iso`, read and written | `country_code` |
 | Address `state_abbr`, read and written | `state_code` |
+| Stock location `country_iso` | `country_code` |
+| Stock location `state_abbr` | `state_code` |
+| Refund `reimbursement_id` (always `null`: reimbursements are folded into returns) | `originator_id` with `originator_type` |
 | Company address `zipcode`, written | `postal_code` |
 | Cart `number` | `id` |
 | Market `country_isos` | `country_codes` |

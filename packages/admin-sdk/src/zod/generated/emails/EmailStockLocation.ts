@@ -11,6 +11,8 @@ export const EmailStockLocationSchema = z.object({
   country_name: z.string().nullable(),
   state_code: z.string().nullable(),
   state_text: z.string().nullable(),
+  country_iso: z.string().nullable(),
+  state_abbr: z.string().nullable(),
   pickup_ready_in_minutes: z.number().nullable(),
   pickup_instructions: z.string().nullable(),
 });
