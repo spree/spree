@@ -142,6 +142,12 @@ module Spree
               description: 'Only drafts and rejected listings are submitted; the rest are counted in `skipped_count`.'
           end
 
+          request_params 'ProductBulkDestroyParams', action: :bulk_destroy do |body|
+            body.attribute :ids, :array, of: :id,
+              required: true,
+              description: "Ids outside this seller's catalog are ignored; products the store refuses to delete are counted in `skipped_count`."
+          end
+
           request_params 'ProductBulkStatusParams', action: :bulk_status_update do |body|
             body.attribute :ids, :array, of: :id, required: true, example: ['prod_UkLWZg9DAJ']
             body.attribute :status, :string,

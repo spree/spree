@@ -83,6 +83,66 @@ RSpec.describe 'Seller Imports API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/seller/imports/{id}' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Import prefixed ID'
+
+    get 'Get an import' do
+      tags 'Imports'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        One of this seller's imports. Poll it while `status` is `completed_mapping`
+        or `processing`; `completed` and `failed` are final. An id belonging to
+        another seller answers `404`.
+      DESC
+
+      seller_sdk_example 'imports/get'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'import returned' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product_import.prefixed_id }
+
+        schema SwaggerSchemaHelpers.ref('Import')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['id']).to eq(product_import.prefixed_id)
+        end
+      end
+
+      response '404', "another seller's import" do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { create(:product_import, :for_seller, store: store).prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+
+    delete 'Delete an import' do
+      tags 'Imports'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "Deletes one of this seller's imports together with its rows. Products it already created are kept."
+
+      seller_sdk_example 'imports/delete'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '204', 'import deleted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product_import.prefixed_id }
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/seller/imports/{import_id}/rows' do
     parameter name: :import_id, in: :path, type: :string, required: true, description: 'Import prefixed ID'
 
@@ -146,6 +206,86 @@ RSpec.describe 'Seller Imports API', type: :request, swagger_doc: 'api-reference
 
         run_test! do |response|
           expect(JSON.parse(response.body)['status']).to eq('completed_mapping')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/imports/{id}/retry_failed_rows' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Import prefixed ID'
+
+    patch 'Retry failed rows' do
+      tags 'Imports'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Processes the rows that failed again, typically after fixing what they
+        referred to. The import goes back to `processing`; poll
+        `GET /imports/{id}` until it finishes. Returns 422 when the import has
+        no failed rows to retry.
+      DESC
+
+      seller_sdk_example 'imports/retry-failed-rows'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'retry queued' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) do
+          product_import.tap do |import|
+            import.update_columns(status: 'completed')
+            create(:import_row, import: import, row_number: 1, status: 'failed', validation_errors: 'Price is missing')
+          end.prefixed_id
+        end
+
+        schema SwaggerSchemaHelpers.ref('Import')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('processing')
+        end
+      end
+
+      response '422', 'no failed rows to retry' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product_import.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/seller/imports/{id}/download' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Import prefixed ID'
+
+    get 'Download the uploaded file' do
+      tags 'Imports'
+      produces 'text/csv'
+      security [bearer_auth: []]
+      description <<~DESC
+        Streams the CSV exactly as the seller uploaded it — a record of what was
+        imported.
+
+        The bytes are served by this endpoint rather than through a redirect,
+        so the seller's own session authorizes every download.
+      DESC
+
+      seller_sdk_example 'imports/download'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'CSV file' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product_import.prefixed_id }
+
+        schema type: :string, format: :binary
+
+        run_test! do |response|
+          expect(response.content_type).to include('text/csv')
         end
       end
     end

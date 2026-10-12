@@ -103,6 +103,35 @@ RSpec.describe 'Seller Returns API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/seller/orders/{order_id}/returns/{id}' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+    parameter name: :id, in: :path, type: :string, description: 'Prefixed return ID'
+
+    get 'Show a return' do
+      tags 'Returns'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "One return on one of this seller's orders, with the goods coming back and the reason given."
+
+      seller_sdk_example 'order-returns/get'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'return found' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { return_record.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Return'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['id']).to eq(return_record.prefixed_id)
+        end
+      end
+    end
+  end
+
   path '/api/v3/seller/orders/{order_id}/returns/{id}/approve' do
     parameter name: :order_id, in: :path, type: :string
     parameter name: :id, in: :path, type: :string
