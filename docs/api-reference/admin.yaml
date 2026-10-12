@@ -73225,6 +73225,10 @@ components:
           items:
             "$ref": "#/components/schemas/PurchaseOrderItemParams"
           description: Sending the list replaces whatever the order currently holds.
+        metadata:
+          type: object
+          additionalProperties: true
+          nullable: true
       required:
       - supplier_id
       - destination_location_id
@@ -74375,6 +74379,10 @@ components:
             "$ref": "#/components/schemas/StockTransferItemParams"
           description: A draft may open empty and gain lines as the merchant packs.
             Sending the list replaces whatever the draft currently holds.
+        metadata:
+          type: object
+          additionalProperties: true
+          nullable: true
       required:
       - source_location_id
       - destination_location_id

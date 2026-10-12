@@ -19,9 +19,10 @@ module Spree
       # @param expected_at [Date, nil]
       # @param reference [String, nil] the supplier's own order number
       # @param notes [String, nil]
+      # @param metadata [Hash, nil]
       # @param created_by [Object, nil]
       def perform(store:, supplier:, destination_location:, items: [], currency: nil,
-                  expected_at: nil, cancel_by: nil, reference: nil, notes: nil, created_by: nil)
+                  expected_at: nil, cancel_by: nil, reference: nil, notes: nil, metadata: nil, created_by: nil)
         super
 
         step :build_purchase_order
@@ -50,6 +51,7 @@ module Spree
           created_by: created_by,
           status: Spree::PurchaseOrder.default_status
         )
+        @purchase_order.metadata = metadata if metadata
 
         Array(items).each do |item|
           @purchase_order.items.build(

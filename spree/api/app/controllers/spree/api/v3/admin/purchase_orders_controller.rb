@@ -50,7 +50,7 @@ module Spree
                 example: '12.50',
                 description: 'What the merchant agreed to pay per unit.'
             end
-            body.attribute :metadata, :hash, nullable: true, only: :update
+            body.attribute :metadata, :hash, nullable: true
           end
 
           request_params 'ReceivableCloseParams', action: :close do |body|
@@ -156,6 +156,7 @@ module Spree
               cancel_by: params[:cancel_by],
               reference: params[:reference],
               notes: params[:notes],
+              metadata: metadata_from_params,
               created_by: try_spree_current_user
             }
           end
@@ -182,6 +183,12 @@ module Spree
           end
 
           private
+
+          # Merchant data, stored as sent: never through the prefixed-id decoding
+          # `permitted_params` applies.
+          def metadata_from_params
+            params.permit(*declared_permitted_attributes)[:metadata]&.to_h
+          end
 
           # Read through `current_store` rather than the model constant: a
           # supplier id belonging to another store must 404, which no ability

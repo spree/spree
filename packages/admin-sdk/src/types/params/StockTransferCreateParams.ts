@@ -13,4 +13,5 @@ export type StockTransferCreateParams = {
    * the draft currently holds.
    */
   items?: StockTransferItemParams[]
+  metadata?: Record<string, unknown> | null
 }
