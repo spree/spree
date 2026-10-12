@@ -165,7 +165,9 @@ steps:
       that has_secure_password reads directly only when unpeppered; the task
       aborts if Devise.pepper is set. Because Devise is gone in 6.0 a former
       pepper can't be introspected, so when Devise is absent the task aborts until
-      you confirm none was used with CONFIRM_NO_PEPPER=true. Peppered / SSO /
+      you confirm none was used with CONFIRM_NO_PEPPER=true. The check is skipped
+      when there are no passwords to copy (e.g. an empty spree_users table), so
+      new projects pass without the flag. Peppered / SSO /
       non-bcrypt installs keep a custom customer_class instead (see the 5.6-to-6.0
       upgrade guide) and skip this step.
 
