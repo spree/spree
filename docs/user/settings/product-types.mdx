@@ -1,37 +1,73 @@
 ---
 title: "Product Types"
-description: "Templates for the kinds of thing you sell — so a new pair of shoes starts with the right options, categories and fields already in place."
+description: "Learn how to use product types in Spree Commerce to pre-fill new products and control how they can be delivered."
 ---
 
-Merchants who sell more than one kind of thing end up repeating themselves. Every pair of shoes needs Size and Colour, belongs under Footwear, and wants a Material field. Every book needs an ISBN and an author.
+A product type is a template for products that share similar characteristics. A T-Shirt type carries the option types every shirt needs, the categories they belong in, the data fields associated with them, and the delivery profile they ship on. Create a product using that type, and all of these will be pre-configured.
 
-A product type captures that once. Creating a product from a type gives it the right option types, the right categories, the right delivery profile, and a form that asks for the fields that kind of product actually needs.
+Using product types doesn't just save time. It gives every product of a similar nature the same starting point. Left to themselves, one person might add a Size option and another adds Sizing, one fills in the fabric composition and another forgets, and six months later the catalog cannot be filtered or reported on properly because no two products agree on what they carry. A type settles those decisions once, so the twentieth product starts out matching the first, without anybody having to remember or check how the first was set up.
 
-Find them under **Settings → Product types**.
+That matters most when the catalog is large, or when more than one person adds to it. A product is free to differ from its type afterwards, so a type sets the standard rather than enforcing it. The exception is a custom field marked required, which is checked every time a product of that type is saved.
 
-## Creating a type
+To manage product types, navigate to **Settings → Product types**, under the **Shipping & delivery** group.
 
-Click **New product type**, name it — "Footwear", "Books" — and choose what it seeds:
+![The Product types list, showing each type and how many products carry it](/docs/images/user/settings/product-types/1-product-types-overview.png)
 
-| Setting | What a new product of this type gets |
-|---|---|
-| Option types | Its variant axes, such as Size and Colour |
-| Categories | Where it is filed by default |
-| Delivery profile | How it ships |
-| Custom fields | Which fields its edit form asks for, and which are marked required |
+## How to Create a Product Type
 
-## A type is a template, not a rule
+Click **Add product type**.
 
-This is the part that decides how to think about them. A type is applied **when a product is created**. After that, the product is its own record:
+![The New product type panel](/docs/images/user/settings/product-types/2-new-product-type.png)
 
-- Editing the type later does not change products already made from it. Add an option type to Footwear and existing shoes are untouched.
-- A product can be moved to a different type, or detached from its type, without losing anything.
-- **Required** on a custom field is advice to the person filling in the form, not a rule the server enforces.
+- **Name** - What the type is called, such as T-Shirt.
+- **Option types** - Added to products created with this type. Used to create variants.
+- **Categories** - Added to products created with this type.
+- **Delivery profile** - Stamped onto products created with this type, and what decides the delivery options offered at checkout. Choose **Store default profile**, or a specific [<u>delivery profile</u>](/user/settings/delivery-profiles) for goods that ship differently.
 
-If you do want to push a type's option types and categories onto the products that already carry it, use **Apply to products**. It previews how many products will change, and only ever *adds* — it never removes what a product already has.
+### Custom fields
 
-## Related
+At the foot of the panel you can attach [<u>custom fields</u>](/user/settings/custom-fields) to the template, so that every product of this type carries them.
 
-- [Creating Products](/user/products/creating-products) — choosing a type when a product is created
-- [Product Options](/user/manage-products/product-options) — the option types a product type seeds
-- [Custom Fields](/user/settings/custom-fields) — the field definitions a type can ask for
+Each field you attach can be marked **required**, which means a product of this type cannot be saved until somebody fills it in. That is the difference between hoping a field gets filled and knowing it has been.
+
+Drag the fields into the order you want. That order is the order they appear on the product form, so group them in a way that makes sense rather than leaving them in the order you happened to add them.
+
+<Note>Only custom fields that already exist can be attached here. Create them first in [<u>Custom Fields</u>](/user/settings/custom-fields), making sure to set **Applies to** to Products.</Note>
+
+Click **Create product type**.
+
+<Warning>Most of what a type carries is a starting point rather than a rule. Option types, categories and the delivery profile are copied onto a product as it is created, and the product is free to differ afterwards. Required custom fields are the exception: those are enforced every time the product is saved.</Warning>
+
+## How to Edit a Product Type
+
+Open the row menu and choose **Edit** to change the name, the option types, the categories, the delivery profile, or the custom fields.
+
+### What reaches products that already exist
+
+Editing a type does not rewrite the products already using it. What changes, and for whom, depends on what you edited:
+
+- **Option types and categories** shape products created from now on. Products that already carry the type keep what they have.
+- **The delivery profile** is stamped on at creation, so changing it never moves products that already carry the type.
+- **Custom fields** show on every product of that type immediately, including ones that already exist.
+
+<Warning>Marking a custom field required applies to every product of that type, not only new ones. An existing product missing that value cannot be saved again until somebody fills it in, so add a required field before the catalog is large, or expect to backfill data.</Warning>
+
+### Applying changes to existing products
+
+When you do want a change to reach products that already carry the type, use **Apply to existing products**. The button shows how many products it will affect.
+
+This adds the type's missing option types and categories to those products. Nothing is removed, so a product that has drifted from the template keeps whatever it gained along the way.
+
+<Note>This is additive only. It cannot be used to strip option types or categories from products that should no longer have them.</Note>
+
+## How to Delete a Product Type
+
+Open the row menu and choose **Delete**.
+
+<Warning>A type still used by products cannot be deleted. Move those products onto another type first, or the delete is refused.</Warning>
+
+## Further Reading
+
+- [<u>Delivery Profiles</u>](/user/settings/delivery-profiles) - The profiles a type can stamp onto products
+- [<u>Custom Fields</u>](/user/settings/custom-fields) - Fields that show on every product of a type
+- [<u>Product Options</u>](/user/manage-products/product-options) - The option types a product type carries
