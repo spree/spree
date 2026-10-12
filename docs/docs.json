@@ -445,6 +445,10 @@
       "destination": "/user/loyalty/store-credits"
     },
     {
+      "source": "/user/loyalty/store-credits-list",
+      "destination": "/user/loyalty/store-credits"
+    },
+    {
       "source": "/user/manage-products/stock-levels",
       "destination": "/user/inventory/stock-levels"
     },
@@ -1237,8 +1241,7 @@
                     "group": "Loyalty",
                     "pages": [
                       "user/loyalty/gift-cards",
-                      "user/loyalty/store-credits",
-                      "user/loyalty/store-credits-list"
+                      "user/loyalty/store-credits"
                     ],
                     "icon": "gift"
                   },
@@ -2892,8 +2895,7 @@
             "group": "Loyalty",
             "pages": [
               "user/loyalty/gift-cards",
-              "user/loyalty/store-credits",
-              "user/loyalty/store-credits-list"
+              "user/loyalty/store-credits"
             ]
           },
           {

@@ -1,19 +1,66 @@
 ---
-title: "Issue Store Credits"
-description: "Learn how to give a customer store credit, and take it back, in Spree Commerce."
+title: "Store Credits"
+description: "Learn how to give a customer store credit, track what your store owes, and edit or remove a balance in Spree Commerce."
 ---
 
 Sometimes you want to make something right for a customer without sending money back to their card: a parcel that arrived late, a damaged item they decided to keep, a price drop the week after they bought. Store credit is how you do that.
 
-Store credit is money your store owes one particular customer, held on their account. You issue it from the customer's own page, and the total your store owes across every customer is added up in the [<u>Store Credits List</u>](/user/loyalty/store-credits-list). Issuing credit adds a line to that customer's store credit and raises the balance shown at the top of their page, and it changes nothing else: their order count and total spent stay as they were, and no order, payment or stock is touched.
+Store credit is money your store owes one particular customer, held on their account and spendable at checkout straight away. It belongs to that account and cannot be passed to anyone else. If you want to give someone a code that any holder can type in at checkout, issue a gift card instead, see [<u>Gift Cards</u>](/user/loyalty/gift-cards).
 
-A store credit belongs to one customer's account. If you want to give someone a code that is typed in at checkout instead, issue a gift card, see [<u>Gift Cards</u>](/user/loyalty/gift-cards).
+Credit also arrives without you issuing it. Refunding a return, exchange or claim to credit rather than to the original payment puts it on the customer's account, and so does a customer redeeming a gift card. Every balance, however it arose, is a debt your books have to carry, which is why the list adds them up for you.
 
-To issue store credit, navigate to **Customers** in the admin dashboard and open the customer.
+Some B2B stores use store credit as the way an account pays, topping up a balance and drawing it down over time rather than paying per order.
 
-## Reviewing a Customer's Store Credit
+To review store credit, navigate to **Loyalty → Store Credits** in the admin dashboard. To see one customer's, open that customer under **Customers**.
 
-Every customer page has a **Store credit** card, and the summary across the top of the page carries a **Store credit** figure beside **Total spent** and **Orders**. A customer who has never had credit shows "No store credits issued" on the card. Once credit exists, the card title carries a count and lists one line per credit:
+## Reviewing Store Credits
+
+**Loyalty → Store Credits** shows every credit in your store on one page, with what you owe summarized above it.
+
+### Reading the Outstanding Balance
+
+Above the table sits one card per currency you have issued credit in, each showing three figures:
+
+| Figure | What it means |
+|---|---|
+| **Outstanding** | What is still owed. This is the number that belongs on your books as a liability. |
+| **Issued** | Everything ever put on a credit in that currency. |
+| **Used** | How much of it customers have already spent. |
+
+The cards follow whatever filter is active. With no filter they answer "what does the store owe". Filter by a customer and the same cards answer "what does this customer hold".
+
+<Note>A gift card a customer redeems becomes a store credit behind the scenes, so the Issued figure counts gift card money alongside credit you issued by hand.</Note>
+
+### Filtering and Searching
+
+The table can be narrowed by:
+
+| Filter | The question it answers |
+|---|---|
+| **Customer** | Who holds this credit |
+| **Standing** | Is there money left, or has it all been spent |
+| **Currency** | Which set of books this belongs to |
+| **Origin** | Did a gift card create it, or something else |
+| **Issued by** | Which staff member put it there |
+| **Created** | When it was issued |
+
+The search box matches the memo, the free-text reason written when a credit is issued or by the process that created it.
+
+### Where a Credit Came From
+
+The **Origin** column names what created the credit:
+
+- **Gift card** - A customer redeemed a gift card and the balance moved onto their account.
+- **Return**, **Exchange**, **Claim** - A post-sale process refunded to credit rather than to the original payment method.
+- **Issued by hand** - A staff member created it directly, usually as compensation or a goodwill gesture. The memo says why.
+
+### Opening a Credit
+
+Click a row to see the credit's full details and its ledger, every movement of the balance since it was issued, newest first. A credit is allocated when created, authorized when a customer starts a checkout with it, captured when that order is paid, and voided or credited back if the order is cancelled. **Open customer profile** at the bottom of the panel takes you to the customer who holds it.
+
+### Reviewing One Customer's Credit
+
+Every customer page has a **Store credit** card, and the summary across the top carries a **Store credit** figure beside **Total spent** and **Orders**. A customer who has never had credit shows "No store credits issued". Once credit exists, the card lists one line per credit:
 
 | Column | What it means |
 |---|---|
@@ -22,51 +69,66 @@ Every customer page has a **Store credit** card, and the summary across the top 
 | **Remaining** | What is still left to spend. |
 | **Memo** | The reason recorded when the credit was given. |
 
-Each line has its own menu at the end of the row, which is where you delete a credit. To see every credit across all your customers, and what your store owes in total, use the [<u>Store Credits List</u>](/user/loyalty/store-credits-list) under **Loyalty**.
+Each line has its own menu at the end of the row, holding the same **Edit** and **Delete** actions as the list.
 
 ## How to Issue Store Credit
 
-Click **Issue store credit** on the customer's **Store credit** card. A small form opens over the page with three fields:
+You can issue credit from either screen, and the form is the same but for one field.
+
+**From the Store Credits list**, click **Issue store credit** in the top-right corner. The form opens with a **Customer** field at the top: start typing an email address and pick the customer from the list.
+
+**From a customer's page**, click **Issue store credit** on their **Store credit** card. The customer is already known, so there is no **Customer** field.
+
+The rest of the form is the same either way:
 
 - **Amount** - How much credit to give. The form does not go through while it is blank.
-- **Currency** - The currency the credit is held in.
-- **Memo** - Why you are giving it, such as "Goodwill for a late delivery" or the complaint it settles. Anyone who looks at this balance later, including a colleague answering the customer, will want to know where the money came from.
-
-Fill in the form and click **Issue store credit**. The form closes, and without reloading the page the new line appears on the **Store credit** card and the **Store credit** figure at the top goes up by the amount you gave. The form and its button also fit a phone screen, so you can issue credit away from your desk.
+- **Currency** - The currency the credit is held in. It appears when your store sells in more than one.
+- **Memo** - Why you are giving it, such as "Goodwill for a late delivery" or the complaint it settles.
 
 ![The Issue store credit form filled in with an amount of 25 US dollars and a memo](/docs/images/user/loyalty/store-credits/1-issue-store-credit.png)
 
-The credit is recorded as issued by hand, together with the staff member who issued it, and both show on the credit's detail in the [<u>Store Credits List</u>](/user/loyalty/store-credits-list).
+Fill in the form and click **Issue store credit**. The form closes, and without reloading the page the new line appears on the **Store credit** card and the **Store credit** figure at the top goes up by the amount you gave. The balance is spendable immediately.
+
+The credit is recorded as issued by hand, together with the staff member who issued it, and both show on the credit's detail in the list.
 
 Write a memo every time. A balance nobody can explain is hard to defend when the customer, or your accountant, asks about it.
 
 ## How to Refund a Return as Store Credit
 
-The second way a customer gets store credit is through a return. When you refund a return, you choose whether the money goes back to the original payment or onto the customer's account as store credit.
+When you refund a return, you choose whether the money goes back to the original payment or onto the customer's account as store credit.
 
 1. Open the order, and once the returned items have been received, open the return's menu and choose **Refund**.
 2. Check the **Amount**, which starts at the return's refund total.
 3. Set **Refund to** to **Store credit**, then click **Refund**.
-4. The return is marked **Refunded**. On the customer's page a new line appears on the **Store credit** card, with a memo naming the return, and in the [<u>Store Credits List</u>](/user/loyalty/store-credits-list) its origin reads **Return**.
+4. The return is marked **Refunded**. A new line appears on the customer's **Store credit** card with a memo naming the return, and its origin in the list reads **Return**.
 
 The steps before the refund, creating, approving and receiving the return, are covered in [<u>Returns</u>](/user/orders/returns).
+
+## How to Edit Store Credit
+
+Open the menu at the end of the credit's row, on the list or on the customer's page, and choose **Edit**. The same action sits at the bottom of the credit's panel.
+
+- The **amount** and the **memo** can both be changed while none of the credit has been spent.
+- The **currency** can never be changed, on a new credit or an old one.
+- Once any of the credit has been spent, only the **memo** can be changed, because the money has already gone against an order.
 
 ## How to Delete Store Credit
 
 If a credit was given by mistake, for the wrong amount or to the wrong customer, delete it and issue a fresh one.
 
-1. On the customer's **Store credit** card, open the menu at the end of the credit's line and choose **Delete**.
+1. Open the menu at the end of the credit's row and choose **Delete**.
 2. A box asks you to confirm. Click **Delete**.
-3. The line disappears from the card, and the **Store credit** figure at the top of the page drops by the credit's amount. When it was the customer's only credit, the card goes back to "No store credits issued".
+3. The line disappears, and the **Store credit** figure on the customer's page drops by the credit's amount. When it was their only credit, the card goes back to "No store credits issued".
 
 ![The confirmation box asking whether to delete a store credit](/docs/images/user/loyalty/store-credits/2-confirm-delete.png)
 
-<Warning>Deleting a credit takes its whole amount off the customer's balance, and the line is gone from both their page and the Store Credits List. Make sure the customer has not been promised that money before you delete it.</Warning>
+A credit that has been partly or fully spent cannot be deleted, for the same reason its amount cannot be changed.
+
+<Warning>Deleting a credit takes its whole amount off the customer's balance, and the line is gone from both their page and the Store Credits list. Make sure the customer has not been promised that money before you delete it.</Warning>
 
 ## Further Reading
 
-- [<u>Store Credits List</u>](/user/loyalty/store-credits-list) - Every credit across all customers, what your store owes in total, and each credit's history
+- [<u>Gift Cards</u>](/user/loyalty/gift-cards) - Prepaid codes typed in at checkout, rather than credit held on one account
 - [<u>Customer Profiles</u>](/user/customers/customer-profile) - The rest of the customer page the Store credit card sits on
 - [<u>Returns</u>](/user/orders/returns) - Creating, approving and receiving a return before you refund it
 - [<u>Refunding Orders</u>](/user/orders/processing-orders) - Refunding to the original payment instead
-- [<u>Gift Cards</u>](/user/loyalty/gift-cards) - Prepaid codes typed in at checkout, rather than credit held on one account
