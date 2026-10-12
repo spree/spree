@@ -48,15 +48,15 @@ curl 'https://api.mystore.com/api/v3/store/products?q[search]=tote+bag&limit=12'
 
 ```typescript Store SDK
 const { data: products } = await client.products.list({
-  price_gte: 20,
-  price_lte: 100,
+  price_gte: '20',
+  price_lte: '100',
 })
 ```
 
 ```typescript Admin SDK
 const { data: products } = await adminClient.products.list({
-  price_gte: 20,
-  price_lte: 100,
+  price_gte: '20',
+  price_lte: '100',
 })
 ```
 
