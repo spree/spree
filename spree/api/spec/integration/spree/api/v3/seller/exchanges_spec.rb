@@ -29,6 +29,8 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
       security [bearer_auth: []]
       description "Goods swapped for different ones on one of this seller's orders."
 
+      seller_sdk_example 'order-exchanges/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       filter_parameters_for
 
@@ -61,6 +63,8 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
         they will send, so a variant belonging to another seller is not theirs
         to promise and reads as missing.
       DESC
+
+      seller_sdk_example 'order-exchanges/create'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -99,6 +103,8 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
         Records the goods coming back. Send the rows that actually arrived for
         a partial or damaged receipt; omit them to receive everything.
       DESC
+
+      seller_sdk_example 'order-exchanges/receive'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
@@ -141,6 +147,8 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
         time — which is why it takes a refund method.
       DESC
 
+      seller_sdk_example 'order-exchanges/fulfill'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
 
@@ -173,6 +181,8 @@ RSpec.describe 'Seller Exchanges API', type: :request, swagger_doc: 'api-referen
       produces 'application/json'
       security [bearer_auth: []]
       description 'Withdraws an exchange before the goods come back.'
+
+      seller_sdk_example 'order-exchanges/cancel'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)

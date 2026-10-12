@@ -20,6 +20,8 @@ RSpec.describe 'Seller Countries API', type: :request, swagger_doc: 'api-referen
         Unpaginated. An address dropdown needs all ~250 at once.
       DESC
 
+      seller_sdk_example 'countries/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'countries listed' do

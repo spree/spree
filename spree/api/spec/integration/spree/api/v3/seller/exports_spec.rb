@@ -31,6 +31,8 @@ RSpec.describe 'Seller Exports API', type: :request, swagger_doc: 'api-reference
         until `done` is true, then fetch `download_url`.
       DESC
 
+      seller_sdk_example 'exports/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -69,6 +71,8 @@ RSpec.describe 'Seller Exports API', type: :request, swagger_doc: 'api-reference
         Reads one of this seller's exports. Poll this until `done` is true,
         then fetch `download_url`.
       DESC
+
+      seller_sdk_example 'exports/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -111,6 +115,8 @@ RSpec.describe 'Seller Exports API', type: :request, swagger_doc: 'api-reference
         The bytes are served by this endpoint rather than through a redirect,
         so the seller's own session authorizes every download.
       DESC
+
+      seller_sdk_example 'exports/download'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

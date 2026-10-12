@@ -21,6 +21,8 @@ RSpec.describe 'Seller Account API', type: :request, swagger_doc: 'api-reference
         there is no answer spanning all of them.
       DESC
 
+      seller_sdk_example 'me/get', as: :user
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: false,
                 description: 'The seller to report capability for. Omit to list sellers without narrowing permissions.'
 
@@ -66,6 +68,8 @@ RSpec.describe 'Seller Account API', type: :request, swagger_doc: 'api-reference
         photo, or `null` to remove it; omit it to leave the current one alone.
         `email` is identity-bound and cannot be changed here.
       DESC
+
+      seller_sdk_example 'me/update', as: :user
 
       request_body_for
 

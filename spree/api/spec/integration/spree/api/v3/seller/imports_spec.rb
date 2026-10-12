@@ -22,6 +22,8 @@ RSpec.describe 'Seller Imports API', type: :request, swagger_doc: 'api-reference
       security [bearer_auth: []]
       description "This seller's product CSV imports, queued or finished. Another seller's imports are never listed."
 
+      seller_sdk_example 'imports/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -55,6 +57,8 @@ RSpec.describe 'Seller Imports API', type: :request, swagger_doc: 'api-reference
         `PATCH /imports/{id}/complete_mapping`. Imported products are created as drafts.
       DESC
 
+      seller_sdk_example 'imports/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -87,6 +91,8 @@ RSpec.describe 'Seller Imports API', type: :request, swagger_doc: 'api-reference
       produces 'application/json'
       security [bearer_auth: []]
       description "The rows of one of this seller's imports, each with its status and any validation errors."
+
+      seller_sdk_example 'imports/rows-list'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
@@ -122,6 +128,8 @@ RSpec.describe 'Seller Imports API', type: :request, swagger_doc: 'api-reference
         to accept the auto-assigned ones from the create response. Returns 422 when a
         required field is left unmapped (`details.missing_required_fields`).
       DESC
+
+      seller_sdk_example 'imports/complete-mapping'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)

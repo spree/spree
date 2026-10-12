@@ -25,6 +25,8 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
         alternatives. One per kind.
       DESC
 
+      seller_sdk_example 'tax-identifiers/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       filter_parameters_for
 
@@ -54,6 +56,8 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
         A number a registered validator refuses is rejected outright rather
         than stored, so a typo cannot reach an invoice.
       DESC
+
+      seller_sdk_example 'tax-identifiers/create'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -89,6 +93,8 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
         about the old one.
       DESC
 
+      seller_sdk_example 'tax-identifiers/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -105,6 +111,8 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
     delete 'Remove a tax registration' do
       tags 'Tax Identifiers'
       security [bearer_auth: []]
+
+      seller_sdk_example 'tax-identifiers/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -132,6 +140,8 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
         registry, so a stock install answers 422 here rather than queueing a
         check nobody can answer.
       DESC
+
+      seller_sdk_example 'tax-identifiers/validate'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

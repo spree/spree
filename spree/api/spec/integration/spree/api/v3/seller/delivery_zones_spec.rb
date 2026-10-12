@@ -26,6 +26,8 @@ RSpec.describe 'Seller Delivery Zones API', type: :request, swagger_doc: 'api-re
         asks for.
       DESC
 
+      seller_sdk_example 'delivery-zones/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :delivery_profile_id, in: :query, type: :string, required: false,
                 description: 'Only zones under this delivery profile'

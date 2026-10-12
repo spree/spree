@@ -34,6 +34,8 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         with — its size and weight are added to every rate.
       DESC
 
+      seller_sdk_example 'package-types/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :owner, in: :query, required: false, schema: { type: :string, enum: ['mine'] },
                 description: "Narrows the list to the seller's own packaging, leaving out the marketplace's shared rows"
@@ -70,6 +72,8 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         of their rows held the flag before — the marketplace's default is a
         different owner's row and is left alone.
       DESC
+
+      seller_sdk_example 'package-types/create'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -115,6 +119,8 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         marketplace row they may pack into.
       DESC
 
+      seller_sdk_example 'package-types/get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'package type found' do
@@ -150,6 +156,8 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         edit and answers 404.
       DESC
 
+      seller_sdk_example 'package-types/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -176,6 +184,8 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         refused — name another default first, or every parcel silently falls
         back to the marketplace's box.
       DESC
+
+      seller_sdk_example 'package-types/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

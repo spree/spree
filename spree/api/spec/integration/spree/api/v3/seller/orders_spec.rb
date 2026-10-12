@@ -30,6 +30,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         nobody's order.
       DESC
 
+      seller_sdk_example 'orders/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -69,6 +71,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         How the customer paid the marketplace is deliberately absent — that is
         between the buyer and the operator.
       DESC
+
+      seller_sdk_example 'orders/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -121,6 +125,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         what that order was paid, and a partial figure is a return.
       DESC
 
+      seller_sdk_example 'orders/cancel'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
 
@@ -157,6 +163,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         This is the only write against the order itself besides cancelling:
         nothing else about it, its totals included, is the seller's to change.
       DESC
+
+      seller_sdk_example 'orders/address-update'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -200,6 +208,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         the whole sale.
       DESC
 
+      seller_sdk_example 'orders/notes-get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'notes' do
@@ -225,6 +235,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         `internal_note` accepts HTML and is sanitized on save;
         `internal_note_html` reads it back.
       DESC
+
+      seller_sdk_example 'orders/notes-update'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -264,6 +276,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         Read-only: a seller picks one when cancelling, and the operator decides
         what the list holds. Retired reasons are left out.
       DESC
+
+      seller_sdk_example 'order-cancellation-reasons/list'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       filter_parameters_for

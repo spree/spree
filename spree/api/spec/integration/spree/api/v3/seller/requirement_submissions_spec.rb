@@ -38,6 +38,8 @@ RSpec.describe 'Seller Requirement Submissions API', type: :request, swagger_doc
         reviews comes back `pending`.
       DESC
 
+      seller_sdk_example 'requirement-submissions/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -81,6 +83,8 @@ RSpec.describe 'Seller Requirement Submissions API', type: :request, swagger_doc
         are identity and registration documents, so every read is authorized
         against the acting seller. Another seller's submission answers `404`.
       DESC
+
+      seller_sdk_example 'requirement-submissions/download'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

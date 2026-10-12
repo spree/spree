@@ -29,6 +29,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         whatever ids are sent.
       DESC
 
+      seller_sdk_example 'order-fulfillments/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       filter_parameters_for
 
@@ -71,6 +73,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         remainder splits onto a new one. Omit it to ship the lot.
       DESC
 
+      seller_sdk_example 'order-fulfillments/fulfill'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
 
@@ -106,6 +110,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         rates again from there, or pick a different one of its quoted rates.
       DESC
 
+      seller_sdk_example 'order-fulfillments/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -137,6 +143,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         A parcel this seller is not going to send after all. The goods go back
         on the shelf and the carrier is stood down.
       DESC
+
+      seller_sdk_example 'order-fulfillments/cancel'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -170,6 +178,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         splitting rewrites more than one.
       DESC
 
+      seller_sdk_example 'order-fulfillments/split'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -198,6 +208,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
       security [bearer_auth: []]
       description "The consignments of one of this seller's parcels, one per tracking number, with each carrier status."
 
+      seller_sdk_example 'order-deliveries/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -225,6 +237,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
       produces 'application/json'
       security [bearer_auth: []]
       description 'Adds a tracked consignment to the parcel: a second box, or a freight number covering several pallets.'
+
+      seller_sdk_example 'order-deliveries/create'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -257,6 +271,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
       security [bearer_auth: []]
       description 'Corrects the tracking number, carrier or link. A corrected number starts the carrier journey over.'
 
+      seller_sdk_example 'order-deliveries/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -286,6 +302,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
       produces 'application/json'
       security [bearer_auth: []]
       description "Every label bought or uploaded for one of this seller's parcels, refunded ones included."
+
+      seller_sdk_example 'order-labels/list'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
@@ -319,6 +337,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         Buying a label needs the marketplace's carrier account, so a request
         without a file is refused.
       DESC
+
+      seller_sdk_example 'order-labels/upload'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -356,6 +376,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         The carriers a tracking number can be pinned to, from the registry —
         so a carrier an extension adds appears without a client change.
       DESC
+
+      seller_sdk_example 'tracking-carriers/list'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

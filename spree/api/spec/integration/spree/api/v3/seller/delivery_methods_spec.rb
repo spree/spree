@@ -27,6 +27,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
         write against it is a 404.
       DESC
 
+      seller_sdk_example 'delivery-methods/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -63,6 +65,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
         seller prices their own rates and enters tracking numbers by hand,
         because carrier accounts belong to the marketplace.
       DESC
+
+      seller_sdk_example 'delivery-methods/create'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
@@ -106,6 +110,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       security [bearer_auth: []]
 
+      seller_sdk_example 'delivery-methods/get'
+
       response '200', 'delivery method found' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
@@ -123,6 +129,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       security [bearer_auth: []]
       description "Only the seller's own methods can be changed — a marketplace method shared with sellers is read-only."
+
+      seller_sdk_example 'delivery-methods/update'
 
       request_body_for
 
@@ -144,6 +152,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       tags 'Delivery Methods'
       security [bearer_auth: []]
 
+      seller_sdk_example 'delivery-methods/delete'
+
       response '204', 'delivery method retired' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
@@ -160,6 +170,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       security [bearer_auth: []]
       description 'The eligibility rules a seller may put on their own method, with the preference schema each form is rendered from.'
+
+      seller_sdk_example 'delivery-methods/rule-types'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -194,6 +206,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       tags 'Delivery Methods'
       produces 'application/json'
       security [bearer_auth: []]
+
+      seller_sdk_example 'delivery-methods/calculators'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

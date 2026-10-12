@@ -27,6 +27,8 @@ RSpec.describe 'Seller Password Resets API', type: :request, swagger_doc: 'api-r
         to webhook endpoints.
       DESC
 
+      seller_sdk_example 'auth/request-password-reset', as: :guest
+
       request_body_for
 
       response '202', 'reset requested' do
@@ -54,6 +56,8 @@ RSpec.describe 'Seller Password Resets API', type: :request, swagger_doc: 'api-r
         account holds. A token whose seller membership has since been revoked is
         refused exactly as an expired one.
       DESC
+
+      seller_sdk_example 'auth/reset-password', as: :guest
 
       parameter name: :id, in: :path, type: :string, description: 'The reset token from the emailed link'
       request_body_for

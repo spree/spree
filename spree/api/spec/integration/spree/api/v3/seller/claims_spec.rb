@@ -25,6 +25,8 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
       security [bearer_auth: []]
       description "Problems reported on one of this seller's orders."
 
+      seller_sdk_example 'order-claims/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       filter_parameters_for
 
@@ -58,6 +60,8 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
         catalogue — a rival's is not theirs to promise.
       DESC
 
+      seller_sdk_example 'order-claims/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -90,6 +94,8 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
       security [bearer_auth: []]
       description 'Accepts that the claim is good.'
 
+      seller_sdk_example 'order-claims/approve'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'claim approved' do
@@ -121,6 +127,8 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
         seller can never settle out of a sibling's money.
       DESC
 
+      seller_sdk_example 'order-claims/resolve'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for
 
@@ -151,6 +159,8 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
       security [bearer_auth: []]
       description 'Turns the claim down.'
 
+      seller_sdk_example 'order-claims/deny'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
 
@@ -178,6 +188,8 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
       produces 'application/json'
       security [bearer_auth: []]
       description 'Withdraws a claim that is no longer needed.'
+
+      seller_sdk_example 'order-claims/cancel'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       request_body_for(required: false)
@@ -208,6 +220,8 @@ RSpec.describe 'Seller Claims API', type: :request, swagger_doc: 'api-reference/
 
         Read-only: a seller picks from the operator's vocabulary.
       DESC
+
+      seller_sdk_example 'claim-reasons/list'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       filter_parameters_for

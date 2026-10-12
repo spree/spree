@@ -35,6 +35,8 @@ RSpec.describe 'Seller Balances API', type: :request, swagger_doc: 'api-referenc
         and there is nothing to page.
       DESC
 
+      seller_sdk_example 'balances/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'balances listed' do
