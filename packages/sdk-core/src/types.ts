@@ -170,3 +170,23 @@ export interface PreferenceSchema {
   properties: Record<string, PreferencePropertySchema>
   additionalProperties: false
 }
+
+/**
+ * One authentication provider the store accepts.
+ *
+ * `password` providers are driven by the login form; `redirect` providers send
+ * the browser to `authorization_url` and come back through the OAuth callback.
+ */
+export interface AuthProvider {
+  /** Registry key, e.g. "email" or "entra". Identifies the provider on login. */
+  key: string
+  kind: 'password' | 'redirect'
+  /** Button label for redirect providers. Absent for password providers. */
+  label?: string
+  /** Where to send the browser. Absent if the provider is misconfigured or unreachable. */
+  authorization_url?: string
+}
+
+export interface AuthProvidersResponse {
+  providers: AuthProvider[]
+}

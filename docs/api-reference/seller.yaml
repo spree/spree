@@ -365,7 +365,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 59
+                  name: Seller 75
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -487,7 +487,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 97
+                  name: Seller 113
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -560,8 +560,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 69
-                  slug: seller-69
+                  name: Seller 85
+                  slug: seller-85
                   status: approved
                 permissions:
                 - allow: true
@@ -831,8 +831,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 71
-                  slug: seller-71
+                  name: Seller 87
+                  slug: seller-87
                   status: approved
                 permissions: []
                 permission_keys: []
@@ -12564,7 +12564,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND_116
+                  code: UPS_GROUND_117
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12587,7 +12587,7 @@ paths:
                       currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND_117
+                  code: UPS_GROUND_118
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12756,7 +12756,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND_122
+                code: UPS_GROUND_123
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12813,7 +12813,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND_124
+                code: UPS_GROUND_125
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -13705,6 +13705,7 @@ paths:
             const response = await fetch(`https://your-store.com${submission.file_url}`, {
               headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
             })
+            if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
             const url = URL.createObjectURL(await response.blob())
             const link = Object.assign(document.createElement('a'), {
               href: url,
@@ -14411,8 +14412,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2683250
-                  slug: product-2683250
+                  name: Product 2793250
+                  slug: product-2793250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14625,8 +14626,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2716710
-                slug: product-2716710
+                name: Product 2826710
+                slug: product-2826710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14716,7 +14717,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2748212
+                slug: product-2858212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14791,6 +14792,298 @@ paths:
       responses:
         '204':
           description: product deleted
+  "/api/v3/seller/products/{id}/submit":
+    parameters:
+    - name: id
+      in: path
+      description: Product ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Submit a product for review
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: |
+        Asks the marketplace to put a product on sale. Whether a listing goes
+        live is the operator's decision, so a seller submits it for review
+        rather than setting its status. Only drafts and rejected listings can
+        be submitted.
+
+        Where the marketplace approves seller products automatically, the
+        product comes back already `active`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const product = await client.products.submit('prod_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product submitted
+          content:
+            application/json:
+              example:
+                id: prod_gbHJdmfrXB
+                name: Product 2887816
+                slug: product-2887816
+                meta_title:
+                meta_description:
+                meta_keywords:
+                variant_count: 1
+                available_on:
+                preorder_ships_at:
+                purchasable: true
+                preorder: false
+                in_stock: false
+                backorderable: true
+                available: false
+                description: Enim soluta recusandae id ea incidunt. Sed enim odit
+                  ullam fugit exercitationem reiciendis ipsam voluptates. Numquam
+                  consequuntur inventore quisquam libero dignissimos cum consectetur
+                  distinctio. A praesentium voluptate autem minus officia harum. Repellendus
+                  reiciendis aperiam inventore aliquam nulla incidunt laudantium.
+                  Placeat esse quaerat corrupti adipisci enim. Quam sapiente aperiam
+                  officia ea. Aperiam qui quibusdam dolorem sapiente fuga nemo vitae.
+                  Esse tenetur consequatur ut cumque in placeat impedit atque. Molestiae
+                  id animi nemo illum laborum rem. Voluptatibus quaerat laborum amet
+                  deserunt repellendus sapiente corporis. Distinctio nesciunt voluptates
+                  corrupti animi quae magni. Quod iusto necessitatibus dignissimos
+                  est voluptate quo voluptatum ab. Hic ad atque cum dolore exercitationem
+                  blanditiis accusamus. Ipsam eos sequi mollitia ea quibusdam ut excepturi
+                  officiis. Facilis reprehenderit quos odio commodi. Quo praesentium
+                  doloremque tempora ducimus magni dignissimos delectus distinctio.
+                  Facere totam officiis recusandae eaque illum. Porro facilis ducimus
+                  blanditiis voluptas occaecati quaerat voluptates. Architecto assumenda
+                  omnis recusandae eius atque temporibus.
+                description_html: |-
+                  Enim soluta recusandae id ea incidunt. Sed enim odit ullam fugit exercitationem reiciendis ipsam voluptates. Numquam consequuntur inventore quisquam libero dignissimos cum consectetur distinctio. A praesentium voluptate autem minus officia harum.
+                  Repellendus reiciendis aperiam inventore aliquam nulla incidunt laudantium. Placeat esse quaerat corrupti adipisci enim. Quam sapiente aperiam officia ea.
+                  Aperiam qui quibusdam dolorem sapiente fuga nemo vitae. Esse tenetur consequatur ut cumque in placeat impedit atque. Molestiae id animi nemo illum laborum rem.
+                  Voluptatibus quaerat laborum amet deserunt repellendus sapiente corporis. Distinctio nesciunt voluptates corrupti animi quae magni. Quod iusto necessitatibus dignissimos est voluptate quo voluptatum ab. Hic ad atque cum dolore exercitationem blanditiis accusamus. Ipsam eos sequi mollitia ea quibusdam ut excepturi officiis.
+                  Facilis reprehenderit quos odio commodi. Quo praesentium doloremque tempora ducimus magni dignissimos delectus distinctio. Facere totam officiis recusandae eaque illum. Porro facilis ducimus blanditiis voluptas occaecati quaerat voluptates. Architecto assumenda omnis recusandae eius atque temporibus.
+                default_variant_id: variant_gbHJdmfrXB
+                buy_box_variant_id: variant_gbHJdmfrXB
+                thumbnail_url:
+                tags: []
+                price:
+                  id: price_gbHJdmfrXB
+                  currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
+                  price_list_id:
+                original_price:
+                seller_id: sel_UkLWZg9DAJ
+                status: proposed
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Product"
+        '422':
+          description: product cannot be submitted
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Only a draft or a product needing changes can be submitted
+                    for review.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/seller/products/{id}/draft":
+    parameters:
+    - name: id
+      in: path
+      description: Product ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Move a product back to draft
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: |
+        Takes a listing down. Withdrawing your own product is not a review
+        decision, so it needs nobody's approval.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const product = await client.products.draft('prod_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product moved to draft
+          content:
+            application/json:
+              example:
+                id: prod_UkLWZg9DAJ
+                name: Product 290209
+                slug: product-290209
+                meta_title:
+                meta_description:
+                meta_keywords:
+                variant_count: 1
+                available_on:
+                preorder_ships_at:
+                purchasable: true
+                preorder: false
+                in_stock: false
+                backorderable: true
+                available: false
+                description: Pariatur quod numquam similique dicta excepturi inventore.
+                  Quia sapiente iure rerum voluptatem velit totam. Vero aperiam laborum
+                  mollitia voluptatum expedita impedit modi vel. Impedit nulla dolores
+                  natus ea doloremque minima consectetur consequuntur. Mollitia recusandae
+                  architecto quaerat quos quod dolor. Illo non officiis voluptatem
+                  voluptas eos itaque. Doloribus nostrum corporis reiciendis reprehenderit
+                  odit minus. Nostrum ullam aperiam dolor ipsa. Maxime officiis excepturi
+                  aspernatur delectus quos temporibus. Exercitationem a amet soluta
+                  harum aperiam neque corrupti doloremque. Culpa modi quibusdam assumenda
+                  voluptatibus ea distinctio porro unde. Distinctio expedita unde
+                  asperiores nihil debitis.
+                description_html: |-
+                  Pariatur quod numquam similique dicta excepturi inventore. Quia sapiente iure rerum voluptatem velit totam. Vero aperiam laborum mollitia voluptatum expedita impedit modi vel. Impedit nulla dolores natus ea doloremque minima consectetur consequuntur.
+                  Mollitia recusandae architecto quaerat quos quod dolor. Illo non officiis voluptatem voluptas eos itaque. Doloribus nostrum corporis reiciendis reprehenderit odit minus. Nostrum ullam aperiam dolor ipsa.
+                  Maxime officiis excepturi aspernatur delectus quos temporibus. Exercitationem a amet soluta harum aperiam neque corrupti doloremque. Culpa modi quibusdam assumenda voluptatibus ea distinctio porro unde. Distinctio expedita unde asperiores nihil debitis.
+                default_variant_id: variant_UkLWZg9DAJ
+                buy_box_variant_id: variant_UkLWZg9DAJ
+                thumbnail_url:
+                tags: []
+                price:
+                  id: price_UkLWZg9DAJ
+                  currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
+                  price_list_id:
+                original_price:
+                seller_id: sel_UkLWZg9DAJ
+                status: draft
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Product"
+  "/api/v3/seller/products/{id}/archive":
+    parameters:
+    - name: id
+      in: path
+      description: Product ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Archive a product
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: Retires a product the acting seller owns, taking it off sale without
+        deleting it.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const product = await client.products.archive('prod_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product archived
+          content:
+            application/json:
+              example:
+                id: prod_UkLWZg9DAJ
+                name: Product 2919405
+                slug: product-2919405
+                meta_title:
+                meta_description:
+                meta_keywords:
+                variant_count: 1
+                available_on:
+                preorder_ships_at:
+                purchasable: true
+                preorder: false
+                in_stock: false
+                backorderable: true
+                available: false
+                description: Incidunt mollitia fugiat doloremque amet suscipit. Voluptatem
+                  quidem ratione consequuntur ad fugiat sit. Quisquam libero officiis
+                  aliquam tempore adipisci eos neque quis. Consequuntur consectetur
+                  repudiandae nam modi amet neque. Alias iure amet cupiditate similique
+                  autem ea sed praesentium. Numquam consequuntur similique doloribus
+                  perferendis alias necessitatibus. Optio ratione delectus dolor laudantium
+                  similique. Eos itaque esse sint sed quaerat reprehenderit amet odit.
+                description_html: |-
+                  Incidunt mollitia fugiat doloremque amet suscipit. Voluptatem quidem ratione consequuntur ad fugiat sit. Quisquam libero officiis aliquam tempore adipisci eos neque quis. Consequuntur consectetur repudiandae nam modi amet neque.
+                  Alias iure amet cupiditate similique autem ea sed praesentium. Numquam consequuntur similique doloribus perferendis alias necessitatibus. Optio ratione delectus dolor laudantium similique. Eos itaque esse sint sed quaerat reprehenderit amet odit.
+                default_variant_id: variant_UkLWZg9DAJ
+                buy_box_variant_id: variant_UkLWZg9DAJ
+                thumbnail_url:
+                tags: []
+                price:
+                  id: price_UkLWZg9DAJ
+                  currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
+                  price_list_id:
+                original_price:
+                seller_id: sel_UkLWZg9DAJ
+                status: archived
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Product"
   "/api/v3/seller/products/bulk_submit":
     post:
       summary: Submit products for review
@@ -14882,6 +15175,52 @@ paths:
             schema:
               "$ref": "#/components/schemas/ProductBulkStatusParams"
         required: true
+  "/api/v3/seller/products/bulk_destroy":
+    delete:
+      summary: Delete products
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: |
+        Deletes a selection of the acting seller's products. Ids outside this
+        seller's catalog are ignored. A product the marketplace refuses to
+        delete is skipped: `product_count` is what was deleted, and
+        `skipped_count`, present only when something was skipped, is the rest.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const result = await client.products.bulkDestroy({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+          })
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: products deleted
+          content:
+            application/json:
+              example:
+                product_count: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ProductBulkDestroyParams"
+        required: true
   "/api/v3/seller/profile":
     get:
       summary: Get profile
@@ -14921,8 +15260,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 119
-                slug: seller-119
+                name: Seller 140
+                slug: seller-140
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15012,7 +15351,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-121
+                slug: seller-142
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15631,7 +15970,7 @@ paths:
             sellerId: 'sel_UkLWZg9DAJ',
           })
 
-          await client.invitations.revoke('inv_xxx')
+          await client.invitations.delete('inv_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15808,7 +16147,7 @@ paths:
             sellerId: 'sel_UkLWZg9DAJ',
           })
 
-          await client.team.remove('adm_xxx')
+          await client.team.delete('adm_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16143,6 +16482,67 @@ paths:
             schema:
               "$ref": "#/components/schemas/ClaimCreateParams"
         required: true
+  "/api/v3/seller/orders/{order_id}/claims/{id}":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Prefixed claim ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Show a claim
+      tags:
+      - Claims
+      security:
+      - bearer_auth: []
+      description: One problem reported on one of this seller's orders, with the items
+        it covers and the reason given.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const claim = await client.orders.claims.get('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim found
+          content:
+            application/json:
+              example:
+                id: claim_UkLWZg9DAJ
+                number: CLM1001
+                status: open
+                resolution:
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '0.00'
+                approved_at:
+                resolved_at:
+                denied_at:
+                canceled_at:
+                memo:
+              schema:
+                "$ref": "#/components/schemas/Claim"
   "/api/v3/seller/orders/{order_id}/claims/{id}/approve":
     parameters:
     - name: order_id
@@ -16668,6 +17068,126 @@ paths:
             schema:
               "$ref": "#/components/schemas/ExchangeCreateParams"
         required: true
+  "/api/v3/seller/orders/{order_id}/exchanges/{id}":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Prefixed exchange ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Show an exchange
+      tags:
+      - Exchanges
+      security:
+      - bearer_auth: []
+      description: One exchange on one of this seller's orders, with what is coming
+        back and what goes out in its place.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const exchange = await client.orders.exchanges.get('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: exchange found
+          content:
+            application/json:
+              example:
+                id: exch_UkLWZg9DAJ
+                number: EX1001
+                status: requested
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                price_difference: '9.99'
+                approved_at:
+                received_at:
+                fulfilled_at:
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Exchange"
+  "/api/v3/seller/orders/{order_id}/exchanges/{id}/approve":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Approve an exchange
+      tags:
+      - Exchanges
+      security:
+      - bearer_auth: []
+      description: Agrees to the swap, so the customer can send the original goods
+        back.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const exchange = await client.orders.exchanges.approve('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: exchange approved
+          content:
+            application/json:
+              example:
+                id: exch_UkLWZg9DAJ
+                number: EX1001
+                status: approved
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                price_difference: '9.99'
+                approved_at: '2026-01-15T12:00:00Z'
+                received_at:
+                fulfilled_at:
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Exchange"
   "/api/v3/seller/orders/{order_id}/exchanges/{id}/receive":
     parameters:
     - name: order_id
@@ -17048,6 +17568,7 @@ paths:
             const response = await fetch(`https://your-store.com${exp.download_url}`, {
               headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
             })
+            if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
             const url = URL.createObjectURL(await response.blob())
             const link = Object.assign(document.createElement('a'), {
               href: url,
@@ -17172,7 +17693,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 125
+                  delivery_method_name: UPS Ground 128
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17180,13 +17701,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2429315
-                    sku: SKU-324
+                    name: Product 2479315
+                    sku: SKU-331
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 125
+                    name: UPS Ground 128
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17295,7 +17816,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 126
+                delivery_method_name: UPS Ground 129
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17303,13 +17824,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 243961
-                  sku: SKU-325
+                  name: Product 248961
+                  sku: SKU-332
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 126
+                  name: UPS Ground 129
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17350,6 +17871,87 @@ paths:
       required: true
       schema:
         type: string
+    get:
+      summary: Show a fulfillment
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: 'One of this seller''s parcels: what it holds, where it ships from
+        and how it is tracked.'
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const fulfillment = await client.orders.fulfillments.get('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: fulfillment found
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: R1001-F1
+                status: unfulfilled
+                tracking: U10000
+                tracking_url:
+                fulfilled_at:
+                delivered_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                fulfillment_type: shipping
+                delivery_method_name: UPS Ground 130
+                stock_location_name: Melony Block
+                stock_location_id: sloc_UkLWZg9DAJ
+                fulfillment_items:
+                - id: fi_UkLWZg9DAJ
+                  quantity: 1
+                  line_item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  name: Product 2492065
+                  sku: SKU-333
+                  options_text: ''
+                selected_delivery_rate_id: dr_gbHJdmfrXB
+                delivery_rates:
+                - id: dr_gbHJdmfrXB
+                  name: UPS Ground 130
+                  selected: true
+                  cost: '10.00'
+                  total: '10.00'
+                  carrier:
+                  service_level:
+                  estimated_delivery_date:
+                  unpriced: false
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
+                labels: []
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
     patch:
       summary: Update tracking
       tags:
@@ -17398,7 +18000,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 127
+                delivery_method_name: UPS Ground 131
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17406,13 +18008,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2443170
-                  sku: SKU-326
+                  name: Product 2503170
+                  sku: SKU-334
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 127
+                  name: UPS Ground 131
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17498,7 +18100,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 128
+                delivery_method_name: UPS Ground 132
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17506,13 +18108,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2457276
-                  sku: SKU-327
+                  name: Product 2517276
+                  sku: SKU-335
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 128
+                  name: UPS Ground 132
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17601,7 +18203,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 129
+                  delivery_method_name: UPS Ground 133
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17609,13 +18211,13 @@ paths:
                     quantity: 1
                     line_item_id: li_gbHJdmfrXB
                     variant_id: variant_gbHJdmfrXB
-                    name: Product 2471765
-                    sku: SKU-329
+                    name: Product 2531765
+                    sku: SKU-337
                     options_text: ''
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   delivery_rates:
                   - id: dr_EfhxLZ9ck8
-                    name: UPS Ground 129
+                    name: UPS Ground 133
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17647,7 +18249,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 129
+                  delivery_method_name: UPS Ground 133
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17655,13 +18257,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2463520
-                    sku: SKU-328
+                    name: Product 2523520
+                    sku: SKU-336
                     options_text: ''
                   selected_delivery_rate_id: dr_VqXmZF31wY
                   delivery_rates:
                   - id: dr_VqXmZF31wY
-                    name: UPS Ground 129
+                    name: UPS Ground 133
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17889,6 +18491,57 @@ paths:
       required: true
       schema:
         type: string
+    get:
+      summary: Show a delivery
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: One consignment of one of this seller's parcels, with its tracking
+        number and carrier status.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const delivery = await client.orders.fulfillments.deliveries.get(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'dlv_UkLWZg9DAJ',
+          )
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: delivery found
+          content:
+            application/json:
+              example:
+                id: dlv_UkLWZg9DAJ
+                tracking_number: U10000
+                carrier:
+                carrier_name:
+                service:
+                status: pending
+                tracking_url:
+                estimated_delivery_at:
+                delivered_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                shipping_label_id:
+              schema:
+                "$ref": "#/components/schemas/Delivery"
     patch:
       summary: Correct a delivery
       tags:
@@ -17947,6 +18600,40 @@ paths:
             schema:
               "$ref": "#/components/schemas/DeliveryUpdateParams"
         required: true
+    delete:
+      summary: Delete a delivery
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: Removes a consignment entered by mistake. One that a label created
+        is refused — delete the label instead.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.orders.fulfillments.deliveries.delete(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'dlv_UkLWZg9DAJ',
+          )
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: delivery deleted
   "/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels":
     parameters:
     - name: order_id
@@ -18158,6 +18845,203 @@ paths:
             schema:
               "$ref": "#/components/schemas/ShippingLabelCreateParams"
         required: true
+  "/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: fulfillment_id
+      in: path
+      description: Prefixed fulfillment ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Prefixed shipping label ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Show a shipping label
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: One label on one of this seller's parcels, with the link to print
+        it.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const label = await client.orders.fulfillments.labels.get(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'lbl_UkLWZg9DAJ',
+          )
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: label found
+          content:
+            application/json:
+              example:
+                id: lbl_UkLWZg9DAJ
+                source: uploaded
+                status: purchased
+                carrier: ups
+                carrier_name: UPS
+                service: Ground
+                tracking_number: 1Z879E930346830008
+                currency: USD
+                format: pdf
+                external_id:
+                metadata: {}
+                refunded_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                owner_id: ful_UkLWZg9DAJ
+                owner_type: fulfillment
+                cost: '7.25'
+                integration_id:
+                file_pending: false
+                download_url: "/api/v3/seller/orders/or_UkLWZg9DAJ/fulfillments/ful_UkLWZg9DAJ/labels/lbl_UkLWZg9DAJ/download"
+              schema:
+                "$ref": "#/components/schemas/ShippingLabel"
+    delete:
+      summary: Delete an uploaded label
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: |
+        Removes a label uploaded by mistake, so the right one can be uploaded
+        in its place. A label the marketplace bought has postage to refund, so
+        only the operator can remove it.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.orders.fulfillments.labels.delete('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', 'lbl_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: label deleted
+  "/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}/download":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: fulfillment_id
+      in: path
+      description: Prefixed fulfillment ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Prefixed shipping label ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Download a shipping label
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: |
+        Streams the label file for printing.
+
+        Served through the API rather than from a storage URL, so the seller's
+        own session authorizes every download.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const label = await client.orders.fulfillments.labels.get(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'lbl_UkLWZg9DAJ',
+          )
+
+          if (label.download_url) {
+            // Labels are served through the API, so fetch with the session's token
+            // and seller, then drive the browser download for printing:
+            const response = await fetch(`https://your-store.com${label.download_url}`, {
+              headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
+            })
+            if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
+            const url = URL.createObjectURL(await response.blob())
+            const link = Object.assign(document.createElement('a'), {
+              href: url,
+              download: `label-${label.tracking_number ?? label.id}.${label.format ?? 'pdf'}`,
+            })
+            link.click()
+            URL.revokeObjectURL(url)
+          }
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: label file streamed
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
   "/api/v3/seller/tracking_carriers":
     get:
       summary: List tracking carriers
@@ -18906,6 +19790,247 @@ paths:
             schema:
               "$ref": "#/components/schemas/ImportCreateParams"
         required: true
+  "/api/v3/seller/imports/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Import prefixed ID
+      schema:
+        type: string
+    get:
+      summary: Get an import
+      tags:
+      - Imports
+      security:
+      - bearer_auth: []
+      description: |
+        One of this seller's imports. Poll it while `status` is `completed_mapping`
+        or `processing`; `completed` and `failed` are final. An id belonging to
+        another seller answers `404`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const productImport = await client.imports.get('imp_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: import returned
+          content:
+            application/json:
+              example:
+                id: imp_UkLWZg9DAJ
+                number: IM1001
+                rows_count: 0
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                type: products
+                status: pending
+                store_id: store_UkLWZg9DAJ
+                seller_id: sel_UkLWZg9DAJ
+                user_id: adm_UkLWZg9DAJ
+                processing_errors:
+                delimiter: ","
+                original_filename: products_import.csv
+                original_byte_size: 3627
+                original_file_url: "/api/v3/seller/imports/imp_UkLWZg9DAJ/download"
+                completed_rows_count: 0
+                failed_rows_count: 0
+                schema_fields:
+                - name: slug
+                  label: Slug
+                  required: true
+                - name: sku
+                  label: SKU
+                  required: true
+                - name: name
+                  label: Name
+                  required: true
+                - name: price
+                  label: Price
+                  required: true
+                - name: status
+                  label: Status
+                  required: false
+                - name: description
+                  label: Description
+                  required: false
+                - name: meta_title
+                  label: Meta Title
+                  required: false
+                - name: meta_description
+                  label: Meta Description
+                  required: false
+                - name: meta_keywords
+                  label: Meta Keywords
+                  required: false
+                - name: tags
+                  label: Tags
+                  required: false
+                - name: compare_at_price
+                  label: Compare at Price
+                  required: false
+                - name: currency
+                  label: Currency
+                  required: false
+                - name: width
+                  label: Width
+                  required: false
+                - name: height
+                  label: Height
+                  required: false
+                - name: depth
+                  label: Depth
+                  required: false
+                - name: dimensions_unit
+                  label: Dimensions Unit
+                  required: false
+                - name: weight
+                  label: Weight
+                  required: false
+                - name: weight_unit
+                  label: Weight Unit
+                  required: false
+                - name: available_on
+                  label: Available On
+                  required: false
+                - name: discontinue_on
+                  label: Discontinue On
+                  required: false
+                - name: track_inventory
+                  label: Track Inventory
+                  required: false
+                - name: inventory_count
+                  label: Inventory Count
+                  required: false
+                - name: inventory_backorderable
+                  label: Inventory Backorderable
+                  required: false
+                - name: stock_location
+                  label: Stock Location
+                  required: false
+                - name: tax_category
+                  label: Tax Category
+                  required: false
+                - name: product_type
+                  label: Product Type
+                  required: false
+                - name: hs_code
+                  label: HS Code
+                  required: false
+                - name: country_of_origin
+                  label: Country of Origin
+                  required: false
+                - name: customs_description
+                  label: Customs Description
+                  required: false
+                - name: carton
+                  label: Carton
+                  required: false
+                - name: units_per_carton
+                  label: Units per Carton
+                  required: false
+                - name: carton_weight
+                  label: Carton Weight
+                  required: false
+                - name: cartons_per_pallet
+                  label: Cartons per Pallet
+                  required: false
+                - name: image1_src
+                  label: Image 1 URL
+                  required: false
+                - name: image2_src
+                  label: Image 2 URL
+                  required: false
+                - name: image3_src
+                  label: Image 3 URL
+                  required: false
+                - name: option1_name
+                  label: Option 1 Name
+                  required: false
+                - name: option1_value
+                  label: Option 1 Value
+                  required: false
+                - name: option2_name
+                  label: Option 2 Name
+                  required: false
+                - name: option2_value
+                  label: Option 2 Value
+                  required: false
+                - name: option3_name
+                  label: Option 3 Name
+                  required: false
+                - name: option3_value
+                  label: Option 3 Value
+                  required: false
+                - name: category1
+                  label: Category 1
+                  required: false
+                - name: category2
+                  label: Category 2
+                  required: false
+                - name: category3
+                  label: Category 3
+                  required: false
+                csv_headers: []
+                sample_row: {}
+                mappings: []
+              schema:
+                "$ref": "#/components/schemas/Import"
+        '404':
+          description: another seller's import
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Import not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete an import
+      tags:
+      - Imports
+      security:
+      - bearer_auth: []
+      description: Deletes one of this seller's imports together with its rows. Products
+        it already created are kept.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.imports.delete('imp_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: import deleted
   "/api/v3/seller/imports/{import_id}/rows":
     parameters:
     - name: import_id
@@ -19418,6 +20543,281 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/ImportCompleteMappingParams"
+  "/api/v3/seller/imports/{id}/retry_failed_rows":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Import prefixed ID
+      schema:
+        type: string
+    patch:
+      summary: Retry failed rows
+      tags:
+      - Imports
+      security:
+      - bearer_auth: []
+      description: |
+        Processes the rows that failed again, typically after fixing what they
+        referred to. The import goes back to `processing`; poll
+        `GET /imports/{id}` until it finishes. Returns 422 when the import has
+        no failed rows to retry.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const productImport = await client.imports.retryFailedRows('imp_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: retry queued
+          content:
+            application/json:
+              example:
+                id: imp_UkLWZg9DAJ
+                number: IM1001
+                rows_count: 1
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                type: products
+                status: processing
+                store_id: store_UkLWZg9DAJ
+                seller_id: sel_UkLWZg9DAJ
+                user_id: adm_UkLWZg9DAJ
+                processing_errors:
+                delimiter: ","
+                original_filename: products_import.csv
+                original_byte_size: 3627
+                original_file_url: "/api/v3/seller/imports/imp_UkLWZg9DAJ/download"
+                completed_rows_count: 0
+                failed_rows_count: 1
+                schema_fields:
+                - name: slug
+                  label: Slug
+                  required: true
+                - name: sku
+                  label: SKU
+                  required: true
+                - name: name
+                  label: Name
+                  required: true
+                - name: price
+                  label: Price
+                  required: true
+                - name: status
+                  label: Status
+                  required: false
+                - name: description
+                  label: Description
+                  required: false
+                - name: meta_title
+                  label: Meta Title
+                  required: false
+                - name: meta_description
+                  label: Meta Description
+                  required: false
+                - name: meta_keywords
+                  label: Meta Keywords
+                  required: false
+                - name: tags
+                  label: Tags
+                  required: false
+                - name: compare_at_price
+                  label: Compare at Price
+                  required: false
+                - name: currency
+                  label: Currency
+                  required: false
+                - name: width
+                  label: Width
+                  required: false
+                - name: height
+                  label: Height
+                  required: false
+                - name: depth
+                  label: Depth
+                  required: false
+                - name: dimensions_unit
+                  label: Dimensions Unit
+                  required: false
+                - name: weight
+                  label: Weight
+                  required: false
+                - name: weight_unit
+                  label: Weight Unit
+                  required: false
+                - name: available_on
+                  label: Available On
+                  required: false
+                - name: discontinue_on
+                  label: Discontinue On
+                  required: false
+                - name: track_inventory
+                  label: Track Inventory
+                  required: false
+                - name: inventory_count
+                  label: Inventory Count
+                  required: false
+                - name: inventory_backorderable
+                  label: Inventory Backorderable
+                  required: false
+                - name: stock_location
+                  label: Stock Location
+                  required: false
+                - name: tax_category
+                  label: Tax Category
+                  required: false
+                - name: product_type
+                  label: Product Type
+                  required: false
+                - name: hs_code
+                  label: HS Code
+                  required: false
+                - name: country_of_origin
+                  label: Country of Origin
+                  required: false
+                - name: customs_description
+                  label: Customs Description
+                  required: false
+                - name: carton
+                  label: Carton
+                  required: false
+                - name: units_per_carton
+                  label: Units per Carton
+                  required: false
+                - name: carton_weight
+                  label: Carton Weight
+                  required: false
+                - name: cartons_per_pallet
+                  label: Cartons per Pallet
+                  required: false
+                - name: image1_src
+                  label: Image 1 URL
+                  required: false
+                - name: image2_src
+                  label: Image 2 URL
+                  required: false
+                - name: image3_src
+                  label: Image 3 URL
+                  required: false
+                - name: option1_name
+                  label: Option 1 Name
+                  required: false
+                - name: option1_value
+                  label: Option 1 Value
+                  required: false
+                - name: option2_name
+                  label: Option 2 Name
+                  required: false
+                - name: option2_value
+                  label: Option 2 Value
+                  required: false
+                - name: option3_name
+                  label: Option 3 Name
+                  required: false
+                - name: option3_value
+                  label: Option 3 Value
+                  required: false
+                - name: category1
+                  label: Category 1
+                  required: false
+                - name: category2
+                  label: Category 2
+                  required: false
+                - name: category3
+                  label: Category 3
+                  required: false
+                csv_headers: []
+                sample_row: {}
+                mappings: []
+              schema:
+                "$ref": "#/components/schemas/Import"
+        '422':
+          description: no failed rows to retry
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Import has no failed rows to retry
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/seller/imports/{id}/download":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Import prefixed ID
+      schema:
+        type: string
+    get:
+      summary: Download the uploaded file
+      tags:
+      - Imports
+      security:
+      - bearer_auth: []
+      description: |
+        Streams the CSV exactly as the seller uploaded it — a record of what was
+        imported.
+
+        The bytes are served by this endpoint rather than through a redirect,
+        so the seller's own session authorizes every download.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const productImport = await client.imports.get('imp_UkLWZg9DAJ')
+
+          if (productImport.original_file_url) {
+            // The uploaded file is served through the API, so fetch it with the
+            // session's token and seller, then drive the browser download:
+            const response = await fetch(`https://your-store.com${productImport.original_file_url}`, {
+              headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
+            })
+            if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
+            const url = URL.createObjectURL(await response.blob())
+            const link = Object.assign(document.createElement('a'), {
+              href: url,
+              download: productImport.original_filename ?? 'import.csv',
+            })
+            link.click()
+            URL.revokeObjectURL(url)
+          }
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
   "/api/v3/seller/orders":
     get:
       summary: List orders
@@ -19599,7 +20999,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 25495
+                    name: Product 26595
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -19608,7 +21008,7 @@ paths:
                     additional_tax_total: '0.00'
                     total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-336
+                    sku: SKU-349
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -19621,7 +21021,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 136
+                    delivery_method_name: UPS Ground 145
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -19629,13 +21029,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 25495
-                      sku: SKU-336
+                      name: Product 26595
+                      sku: SKU-349
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 136
+                      name: UPS Ground 145
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -19663,7 +21063,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 264 Lovely Street
+                    address1: 282 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -19683,7 +21083,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 263 Lovely Street
+                    address1: 281 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -19795,7 +21195,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2559755
+                  name: Product 2669755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -19804,7 +21204,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-337
+                  sku: SKU-350
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -19817,7 +21217,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 137
+                  delivery_method_name: UPS Ground 146
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -19825,13 +21225,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2559755
-                    sku: SKU-337
+                    name: Product 2669755
+                    sku: SKU-350
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 137
+                    name: UPS Ground 146
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -19859,7 +21259,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 266 Lovely Street
+                  address1: 284 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -19879,7 +21279,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 265 Lovely Street
+                  address1: 283 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -19991,7 +21391,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2586554
+                  name: Product 2696554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -20000,7 +21400,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-340
+                  sku: SKU-353
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -20013,7 +21413,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 140
+                  delivery_method_name: UPS Ground 149
                   stock_location_name: Savanna Hills
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -20021,13 +21421,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2586554
-                    sku: SKU-340
+                    name: Product 2696554
+                    sku: SKU-353
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 140
+                    name: UPS Ground 149
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -20055,7 +21455,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 272 Lovely Street
+                  address1: 290 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20075,7 +21475,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 271 Lovely Street
+                  address1: 289 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20177,7 +21577,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2595038
+                  name: Product 2705038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -20186,7 +21586,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-341
+                  sku: SKU-354
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -20199,7 +21599,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 141
+                  delivery_method_name: UPS Ground 150
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -20207,13 +21607,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2595038
-                    sku: SKU-341
+                    name: Product 2705038
+                    sku: SKU-354
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 141
+                    name: UPS Ground 150
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -20261,7 +21661,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 273 Lovely Street
+                  address1: 291 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20370,7 +21770,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2613962
+                  name: Product 2723962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -20379,7 +21779,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-343
+                  sku: SKU-356
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -20392,7 +21792,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 143
+                  delivery_method_name: UPS Ground 152
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -20400,13 +21800,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2613962
-                    sku: SKU-343
+                    name: Product 2723962
+                    sku: SKU-356
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 143
+                    name: UPS Ground 152
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -20434,7 +21834,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 278 Lovely Street
+                  address1: 296 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20454,7 +21854,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 277 Lovely Street
+                  address1: 295 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20540,7 +21940,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2625749
+                  name: Product 2735749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -20549,7 +21949,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-344
+                  sku: SKU-357
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -20562,7 +21962,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 144
+                  delivery_method_name: UPS Ground 153
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -20570,13 +21970,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2625749
-                    sku: SKU-344
+                    name: Product 2735749
+                    sku: SKU-357
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 144
+                    name: UPS Ground 153
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -20604,7 +22004,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 280 Lovely Street
+                  address1: 298 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -20624,7 +22024,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 279 Lovely Street
+                  address1: 297 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -21546,13 +22946,77 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 2817120 can be returned
+                  message: Only 1 of Product 2987120 can be returned
       requestBody:
         content:
           application/json:
             schema:
               "$ref": "#/components/schemas/ReturnCreateParams"
         required: true
+  "/api/v3/seller/orders/{order_id}/returns/{id}":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Prefixed return ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Show a return
+      tags:
+      - Returns
+      security:
+      - bearer_auth: []
+      description: One return on one of this seller's orders, with the goods coming
+        back and the reason given.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const orderReturn = await client.orders.returns.get('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return found
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: requested
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.00'
+                refund_tax_total: '0.00'
+                approved_at:
+                received_at:
+                refunded_at:
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+                refunded_total: '0.00'
+                refundable_total: '10.00'
+              schema:
+                "$ref": "#/components/schemas/Return"
   "/api/v3/seller/orders/{order_id}/returns/{id}/approve":
     parameters:
     - name: order_id
@@ -22149,7 +23613,7 @@ paths:
             sellerId: 'sel_UkLWZg9DAJ',
           })
 
-          await client.taxIdentifiers.remove('txi_xxx')
+          await client.taxIdentifiers.delete('txi_xxx')
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -30401,6 +31865,17 @@ components:
             is the rendering of what was stored.
           example: "<p>Orders leave the workshop within two working days.</p>"
           nullable: true
+    ProductBulkDestroyParams:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          description: Ids outside this seller's catalog are ignored; products the
+            store refuses to delete are counted in `skipped_count`.
+      required:
+      - ids
     ProductBulkStatusParams:
       type: object
       properties:

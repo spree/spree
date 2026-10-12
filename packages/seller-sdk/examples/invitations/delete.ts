@@ -7,5 +7,5 @@ const client = createSellerClient({
 })
 
 // region:example
-await client.invitations.revoke('inv_xxx')
+await client.invitations.delete('inv_xxx')
 // endregion:example

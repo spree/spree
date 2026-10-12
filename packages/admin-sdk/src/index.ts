@@ -1,6 +1,8 @@
 // Main client
 
 export type {
+  AuthProvider,
+  AuthProvidersResponse,
   FileUploadCreateParams,
   RequestOptions,
   RetryConfig,
@@ -20,8 +22,6 @@ export {
   sumMoney,
 } from '@spree/sdk-core'
 export type {
-  AuthProvider,
-  AuthProvidersResponse,
   AuthTokens,
   DashboardCounters,
   LoginCredentials,

@@ -7,5 +7,5 @@ const client = createSellerClient({
 })
 
 // region:example
-await client.team.remove('adm_xxx')
+await client.team.delete('adm_xxx')
 // endregion:example

@@ -20,6 +20,7 @@ if (exp.download_url) {
   const response = await fetch(`https://your-store.com${exp.download_url}`, {
     headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
   })
+  if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
   const url = URL.createObjectURL(await response.blob())
   const link = Object.assign(document.createElement('a'), {
     href: url,

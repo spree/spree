@@ -177,6 +177,108 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
     end
   end
 
+  path '/api/v3/seller/products/{id}/submit' do
+    parameter name: :id, in: :path, type: :string, description: 'Product ID'
+
+    patch 'Submit a product for review' do
+      tags 'Products'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Asks the marketplace to put a product on sale. Whether a listing goes
+        live is the operator's decision, so a seller submits it for review
+        rather than setting its status. Only drafts and rejected listings can
+        be submitted.
+
+        Where the marketplace approves seller products automatically, the
+        product comes back already `active`.
+      DESC
+
+      seller_sdk_example 'products/submit'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'product submitted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { create(:product, store: store, seller: seller, status: 'draft').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('proposed')
+        end
+      end
+
+      response '422', 'product cannot be submitted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/{id}/draft' do
+    parameter name: :id, in: :path, type: :string, description: 'Product ID'
+
+    patch 'Move a product back to draft' do
+      tags 'Products'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Takes a listing down. Withdrawing your own product is not a review
+        decision, so it needs nobody's approval.
+      DESC
+
+      seller_sdk_example 'products/draft'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'product moved to draft' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('draft')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/{id}/archive' do
+    parameter name: :id, in: :path, type: :string, description: 'Product ID'
+
+    patch 'Archive a product' do
+      tags 'Products'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description 'Retires a product the acting seller owns, taking it off sale without deleting it.'
+
+      seller_sdk_example 'products/archive'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'product archived' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('archived')
+        end
+      end
+    end
+  end
+
   path '/api/v3/seller/products/bulk_submit' do
     post 'Submit products for review' do
       tags 'Products'
@@ -228,6 +330,36 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
         let(:body) { { ids: [product.prefixed_id], status: 'archived' } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['product_count']).to eq(1)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/bulk_destroy' do
+    delete 'Delete products' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Deletes a selection of the acting seller's products. Ids outside this
+        seller's catalog are ignored. A product the marketplace refuses to
+        delete is skipped: `product_count` is what was deleted, and
+        `skipped_count`, present only when something was skipped, is the rest.
+      DESC
+
+      seller_sdk_example 'products/bulk-destroy'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'products deleted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:body) { { ids: [product.prefixed_id] } }
 
         run_test! do |response|
           expect(JSON.parse(response.body)['product_count']).to eq(1)

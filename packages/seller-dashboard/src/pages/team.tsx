@@ -175,7 +175,7 @@ function MemberRow({ member, lastOne }: { member: TeamMember; lastOne: boolean }
   const confirm = useConfirm()
 
   const remove = useMutation({
-    mutationFn: (id: string) => sellerClient().team.remove(id),
+    mutationFn: (id: string) => sellerClient().team.delete(id),
     onSuccess: () => {
       toastManager.add({ type: 'success', title: t('team.messages.removed') })
       void queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'team'] })
@@ -302,7 +302,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
   })
 
   const revoke = useMutation({
-    mutationFn: (id: string) => sellerClient().invitations.revoke(id),
+    mutationFn: (id: string) => sellerClient().invitations.delete(id),
     onSuccess: () => {
       toastManager.add({ type: 'success', title: t('team.messages.revoked') })
       void invalidate()

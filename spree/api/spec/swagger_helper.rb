@@ -325,9 +325,12 @@ RSpec.configure do |config|
     next unless respond_to?(:response) && response.present? && response.body.present?
 
     begin
+      # Parsed before the entry is created: a file download would otherwise
+      # leave an empty JSON media type on a response that never returns JSON.
+      example_body = JSON.parse(response.body, symbolize_names: true)
       content = response_metadata[:content] ||= {}
       content['application/json'] ||= {}
-      content['application/json'][:example] = JSON.parse(response.body, symbolize_names: true)
+      content['application/json'][:example] = example_body
     rescue JSON::ParserError
       # Skip if response body is not valid JSON
     end
