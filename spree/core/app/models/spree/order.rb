@@ -459,7 +459,7 @@ module Spree
     end
 
     def refunds_total
-      refunds.loaded? ? refunds.sum(&:amount) : refunds.sum(:amount)
+      read_association_in_memory?(:refunds) ? refunds.sum(0.to_d, &:amount) : refunds.sum(:amount)
     end
 
     # Checks if the order is partially refunded
@@ -708,7 +708,7 @@ module Spree
     #
     # @return [BigDecimal]
     def returned_items_refund_total
-      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if refunds.loaded?
+      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if read_association_in_memory?(:refunds)
 
       refunds.for_returned_items.sum(:amount)
     end

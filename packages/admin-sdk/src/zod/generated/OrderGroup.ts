@@ -9,8 +9,19 @@ export const OrderGroupSchema = z.object({
   number: z.string(),
   email: z.string().nullable(),
   currency: z.string(),
-  total: z.string().nullable(),
   item_total: z.string().nullable(),
+  discount_total: z.string().nullable(),
+  tax_total: z.string().nullable(),
+  included_tax_total: z.string().nullable(),
+  additional_tax_total: z.string().nullable(),
+  delivery_total: z.string().nullable(),
+  fee_total: z.string().nullable(),
+  gift_card_total: z.string().nullable(),
+  store_credit_total: z.string().nullable(),
+  total: z.string().nullable(),
+  amount_due: z.string().nullable(),
+  covered_by_store_credit: z.boolean(),
+  get payments() { return z.array(PaymentSchema); },
   fulfillment_status: z.string().nullable(),
   payment_status: z.string().nullable(),
   completed_at: z.string().nullable(),
@@ -25,7 +36,6 @@ export const OrderGroupSchema = z.object({
   store_owner_notification_delivered: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
-  get payments() { return z.array(PaymentSchema); },
 });
 
 export type OrderGroup = z.infer<typeof OrderGroupSchema>;

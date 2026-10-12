@@ -41,18 +41,6 @@ RSpec.shared_examples 'a purchase totals host' do
     end
   end
 
-  describe '#amount_due' do
-    it 'nets applied store credit and never goes negative' do
-      record = new_record(total: 100, payment_total: 40)
-
-      allow(record).to receive(:total_applied_store_credit).and_return(70)
-      expect(record.amount_due).to eq(0)
-
-      allow(record).to receive(:total_applied_store_credit).and_return(10)
-      expect(record.amount_due).to eq(50)
-    end
-  end
-
   describe '#fulfillment_discount' do
     it 'sums fulfillment-attached discounts as a positive amount' do
       record = new_record_with_line_items

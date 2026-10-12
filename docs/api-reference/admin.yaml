@@ -16617,8 +16617,19 @@ paths:
                   number: R1001
                   email: sylvie@rau.info
                   currency: USD
-                  total: '0.00'
                   item_total: '0.00'
+                  discount_total: '0.00'
+                  tax_total: '0.00'
+                  included_tax_total: '0.00'
+                  additional_tax_total: '0.00'
+                  delivery_total: '0.00'
+                  fee_total: '0.00'
+                  gift_card_total: '0.00'
+                  store_credit_total: '0.00'
+                  total: '0.00'
+                  amount_due: '0.00'
+                  covered_by_store_credit: false
+                  payments: []
                   fulfillment_status:
                   payment_status:
                   completed_at: '2026-01-15T12:00:00.000Z'
@@ -16633,7 +16644,6 @@ paths:
                   store_owner_notification_delivered: false
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  payments: []
                 meta:
                   page: 1
                   limit: 25
@@ -16713,18 +16723,18 @@ paths:
                 payment_status:
                 completed_at:
                 item_total: '50.00'
-                adjustment_total: "-5.00"
                 discount_total: "-5.00"
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '145.00'
-                gift_card_total: '0.00'
-                amount_due: '145.00'
                 delivery_total: '100.00'
                 fee_total: '0.00'
+                gift_card_total: '0.00'
                 store_credit_total: '0.00'
+                total: '145.00'
+                amount_due: '145.00'
                 covered_by_store_credit: false
+                adjustment_total: "-5.00"
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -17577,18 +17587,18 @@ paths:
                 payment_status:
                 completed_at:
                 item_total: '10.00'
-                adjustment_total: '0.00'
                 discount_total: '0.00'
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '110.00'
-                gift_card_total: '0.00'
-                amount_due: '60.00'
                 delivery_total: '100.00'
                 fee_total: '0.00'
+                gift_card_total: '0.00'
                 store_credit_total: '50.00'
+                total: '110.00'
+                amount_due: '60.00'
                 covered_by_store_credit: false
+                adjustment_total: '0.00'
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -17925,18 +17935,18 @@ paths:
                   payment_status:
                   completed_at:
                   item_total: '0.00'
-                  adjustment_total: '0.00'
                   discount_total: '0.00'
                   tax_total: '0.00'
                   included_tax_total: '0.00'
                   additional_tax_total: '0.00'
-                  total: '0.00'
-                  gift_card_total: '0.00'
-                  amount_due: '0.00'
                   delivery_total: '0.00'
                   fee_total:
+                  gift_card_total: '0.00'
                   store_credit_total: '0.00'
+                  total: '0.00'
+                  amount_due: '0.00'
                   covered_by_store_credit: false
+                  adjustment_total: '0.00'
                   gift_card:
                   market:
                     id: mkt_UkLWZg9DAJ
@@ -18150,18 +18160,18 @@ paths:
                 payment_status:
                 completed_at:
                 item_total: '0.00'
-                adjustment_total: '0.00'
                 discount_total: '0.00'
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '0.00'
-                gift_card_total: '0.00'
-                amount_due: '0.00'
                 delivery_total: '0.00'
                 fee_total: '0.00'
+                gift_card_total: '0.00'
                 store_credit_total: '0.00'
+                total: '0.00'
+                amount_due: '0.00'
                 covered_by_store_credit: false
+                adjustment_total: '0.00'
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -18306,18 +18316,18 @@ paths:
                 payment_status:
                 completed_at:
                 item_total: '0.00'
-                adjustment_total: '0.00'
                 discount_total: '0.00'
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '0.00'
-                gift_card_total: '0.00'
-                amount_due: '0.00'
                 delivery_total: '0.00'
                 fee_total:
+                gift_card_total: '0.00'
                 store_credit_total: '0.00'
+                total: '0.00'
+                amount_due: '0.00'
                 covered_by_store_credit: false
+                adjustment_total: '0.00'
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -18452,18 +18462,18 @@ paths:
                 payment_status: none
                 completed_at:
                 item_total: '0.00'
-                adjustment_total: '0.00'
                 discount_total: '0.00'
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '0.00'
-                gift_card_total: '0.00'
-                amount_due: '0.00'
                 delivery_total: '0.00'
                 fee_total: '0.00'
+                gift_card_total: '0.00'
                 store_credit_total: '0.00'
+                total: '0.00'
+                amount_due: '0.00'
                 covered_by_store_credit: false
+                adjustment_total: '0.00'
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -18650,18 +18660,18 @@ paths:
                 payment_status: paid
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
-                adjustment_total: '0.00'
                 discount_total: '0.00'
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '110.00'
-                gift_card_total: '0.00'
-                amount_due: '0.00'
                 delivery_total: '100.00'
                 fee_total: '0.00'
+                gift_card_total: '0.00'
                 store_credit_total: '0.00'
+                total: '110.00'
+                amount_due: '0.00'
                 covered_by_store_credit: false
+                adjustment_total: '0.00'
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -18828,18 +18838,18 @@ paths:
                 payment_status: none
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
-                adjustment_total: '0.00'
                 discount_total: '0.00'
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '110.00'
-                gift_card_total: '0.00'
-                amount_due: '0.00'
                 delivery_total: '100.00'
                 fee_total: '0.00'
+                gift_card_total: '0.00'
                 store_credit_total: '0.00'
+                total: '110.00'
+                amount_due: '0.00'
                 covered_by_store_credit: false
+                adjustment_total: '0.00'
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -18967,18 +18977,18 @@ paths:
                 payment_status:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
-                adjustment_total: '0.00'
                 discount_total: '0.00'
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '110.00'
-                gift_card_total: '0.00'
-                amount_due: '110.00'
                 delivery_total: '100.00'
                 fee_total: '0.00'
+                gift_card_total: '0.00'
                 store_credit_total: '0.00'
+                total: '110.00'
+                amount_due: '110.00'
                 covered_by_store_credit: false
+                adjustment_total: '0.00'
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -19100,18 +19110,18 @@ paths:
                 payment_status:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
-                adjustment_total: '0.00'
                 discount_total: '0.00'
                 tax_total: '0.00'
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
-                total: '110.00'
-                gift_card_total: '0.00'
-                amount_due: '110.00'
                 delivery_total: '100.00'
                 fee_total: '0.00'
+                gift_card_total: '0.00'
                 store_credit_total: '0.00'
+                total: '110.00'
+                amount_due: '110.00'
                 covered_by_store_credit: false
+                adjustment_total: '0.00'
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -52629,9 +52639,6 @@ components:
         item_total:
           type: string
           nullable: true
-        adjustment_total:
-          type: string
-          nullable: true
         discount_total:
           type: string
           nullable: true
@@ -52644,26 +52651,29 @@ components:
         additional_tax_total:
           type: string
           nullable: true
-        total:
-          type: string
-          nullable: true
-        gift_card_total:
-          type: string
-          nullable: true
-        amount_due:
-          type: string
-          nullable: true
         delivery_total:
           type: string
           nullable: true
         fee_total:
           type: string
           nullable: true
+        gift_card_total:
+          type: string
+          nullable: true
         store_credit_total:
+          type: string
+          nullable: true
+        total:
+          type: string
+          nullable: true
+        amount_due:
           type: string
           nullable: true
         covered_by_store_credit:
           type: boolean
+        adjustment_total:
+          type: string
+          nullable: true
         current_step:
           type: string
         completed_steps:
@@ -52736,18 +52746,18 @@ components:
       - warnings
       - coupon_code
       - item_total
-      - adjustment_total
       - discount_total
       - tax_total
       - included_tax_total
       - additional_tax_total
-      - total
-      - gift_card_total
-      - amount_due
       - delivery_total
       - fee_total
+      - gift_card_total
       - store_credit_total
+      - total
+      - amount_due
       - covered_by_store_credit
+      - adjustment_total
       - current_step
       - completed_steps
       - requirements
@@ -58868,12 +58878,45 @@ components:
           - ZWL
           - ZWN
           - ZWR
-        total:
-          type: string
-          nullable: true
         item_total:
           type: string
           nullable: true
+        discount_total:
+          type: string
+          nullable: true
+        tax_total:
+          type: string
+          nullable: true
+        included_tax_total:
+          type: string
+          nullable: true
+        additional_tax_total:
+          type: string
+          nullable: true
+        delivery_total:
+          type: string
+          nullable: true
+        fee_total:
+          type: string
+          nullable: true
+        gift_card_total:
+          type: string
+          nullable: true
+        store_credit_total:
+          type: string
+          nullable: true
+        total:
+          type: string
+          nullable: true
+        amount_due:
+          type: string
+          nullable: true
+        covered_by_store_credit:
+          type: boolean
+        payments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Payment"
         fulfillment_status:
           type: string
           nullable: true
@@ -58932,17 +58975,24 @@ components:
           type: string
         updated_at:
           type: string
-        payments:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Payment"
       required:
       - id
       - number
       - email
       - currency
-      - total
       - item_total
+      - discount_total
+      - tax_total
+      - included_tax_total
+      - additional_tax_total
+      - delivery_total
+      - fee_total
+      - gift_card_total
+      - store_credit_total
+      - total
+      - amount_due
+      - covered_by_store_credit
+      - payments
       - fulfillment_status
       - payment_status
       - completed_at
@@ -58957,7 +59007,6 @@ components:
       - store_owner_notification_delivered
       - created_at
       - updated_at
-      - payments
       x-typelizer: true
     OrderRoutingRule:
       type: object
@@ -59250,8 +59299,6 @@ components:
           nullable: true
         item_total:
           type: string
-        adjustment_total:
-          type: string
         discount_total:
           type: string
         tax_total:
@@ -59260,20 +59307,26 @@ components:
           type: string
         additional_tax_total:
           type: string
-        total:
-          type: string
-        gift_card_total:
-          type: string
-        amount_due:
-          type: string
         delivery_total:
           type: string
         fee_total:
           type: string
+        gift_card_total:
+          type: string
         store_credit_total:
+          type: string
+        total:
+          type: string
+        amount_due:
           type: string
         covered_by_store_credit:
           type: boolean
+        payments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Payment"
+        adjustment_total:
+          type: string
         items:
           type: array
           items:
@@ -59282,10 +59335,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Fulfillment"
-        payments:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Payment"
         billing_address:
           allOf:
           - "$ref": "#/components/schemas/Address"
@@ -59482,18 +59531,18 @@ components:
       - payment_status
       - completed_at
       - item_total
-      - adjustment_total
       - discount_total
       - tax_total
       - included_tax_total
       - additional_tax_total
-      - total
-      - gift_card_total
-      - amount_due
       - delivery_total
       - fee_total
+      - gift_card_total
       - store_credit_total
+      - total
+      - amount_due
       - covered_by_store_credit
+      - adjustment_total
       - gift_card
       - market
       - external_references

@@ -122,6 +122,27 @@ RSpec.describe 'v3 Store serializer price gating' do
     end
   end
 
+  describe Spree::Api::V3::OrderGroupSerializer do
+    let(:group) { create(:order_group, :with_parcels, store: store) }
+
+    before { create(:payment, order: nil, order_group: group, amount: group.reload.total, status: 'completed') }
+
+    it 'nulls the summary and the payment amounts for gated guests' do
+      hash = serialize(described_class, Spree::OrderGroup.find(group.id), hide: true)
+
+      expect(hash.values_at('total', 'amount_due', 'store_credit_total', 'gift_card_total')).to all(be_nil)
+      expect(hash['payments'].map { |payment| payment['amount'] }).to eq([nil])
+    end
+
+    # Written as every other amount is: to the currency's decimals.
+    it 'writes the store credit total as canonical money when not gated' do
+      hash = serialize(described_class, Spree::OrderGroup.find(group.id), hide: false)
+
+      expect(hash['store_credit_total']).to eq('0.00')
+      expect(hash['amount_due']).to eq('0.00')
+    end
+  end
+
   # Nested records embedded in a cart/order must honor hide_prices too, so a
   # gated guest can't recover amounts through discounts, payments, fulfillments,
   # or an applied gift card.

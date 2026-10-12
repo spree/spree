@@ -100,11 +100,14 @@ RSpec.describe 'API v3 money contract' do
   it 'leaves formatted money out of the Admin and Seller APIs, nested records included' do
     order = create(:completed_order_with_totals, store: store)
     variant = order.line_items.first.variant
+    group = create(:order_group, :with_parcels, store: store, sellers_count: 2)
+    create(:payment, order: nil, order_group: group, amount: group.reload.total)
     expand = { expand: %w[prices default_variant variants line_items] }
 
     found = {
       Spree::Api::V3::Admin::OrderSerializer => order,
       Spree::Api::V3::Seller::OrderSerializer => order,
+      Spree::Api::V3::Admin::OrderGroupSerializer => group,
       Spree::Api::V3::Admin::ProductSerializer => variant.product,
       Spree::Api::V3::Seller::ProductSerializer => variant.product,
       Spree::Api::V3::Admin::VariantSerializer => variant,

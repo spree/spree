@@ -374,7 +374,18 @@ module Spree
     #
     # @return [Boolean]
     def with_free_shipping_promotion?
+      return discounts.any?(&:promotion?) if read_association_in_memory?(:discounts)
+
       discounts.promotion.exists?
+    end
+
+    # What promotions took off this shipment's cost, as a negative amount.
+    #
+    # @return [BigDecimal]
+    def promotion_discount_total
+      return discounts.select(&:promotion?).sum(BigDecimal('0'), &:amount) if read_association_in_memory?(:discounts)
+
+      discounts.promotion.sum(:amount)
     end
 
     # Placement no longer moves physical stock — the units are promised in
@@ -701,7 +712,7 @@ module Spree
     #
     # @return [Spree::Delivery, nil]
     def primary_delivery
-      deliveries.first
+      read_association_in_memory?(:deliveries) ? deliveries.to_a.first : deliveries.first
     end
 
     # The primary delivery's tracking number. Read-only since 6.0: tracking is

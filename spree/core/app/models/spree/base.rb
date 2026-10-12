@@ -69,6 +69,18 @@ class Spree::Base < ApplicationRecord
     true
   end
 
+  # Whether to answer from an association's rows rather than a query of its
+  # own (a SUM, an EXISTS). True when the rows are loaded already, or when
+  # this record came from a list loaded with +preload_associations_lazily+:
+  # loading them then fetches the rows for the whole list in one query, where
+  # an aggregate would run once per record.
+  #
+  # @param name [Symbol] the association
+  # @return [Boolean]
+  def read_association_in_memory?(name)
+    association(name).loaded? || lazy_preload_context.present?
+  end
+
   # @see Spree.mysql? — the single definition; this reads it so a model can
   #   branch without reaching for the connection itself.
   def mysql_adapter?

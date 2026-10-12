@@ -663,7 +663,7 @@ module Spree
     def price_in(currency)
       currency = currency&.upcase
 
-      price = if prices.loaded? && prices.any?
+      price = if read_association_in_memory?(:prices) && prices.any?
                 prices.detect { |p| p.currency == currency && p.price_list_id.nil? }
               else
                 prices.base_prices.find_by(currency: currency)

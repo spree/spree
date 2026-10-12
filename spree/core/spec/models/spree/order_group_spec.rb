@@ -19,6 +19,65 @@ RSpec.describe Spree::OrderGroup, type: :model do
     end
   end
 
+  describe '#tax_total' do
+    # Each child's own tax, summed — and so equal to the two halves the group
+    # rolls up separately, which is what a summary adds beside them.
+    it 'is what the children were taxed, in the one figure a summary shows' do
+      create(:order, store: store, order_group: group, included_tax_total: 2, additional_tax_total: 3)
+      create(:order, store: store, order_group: group, seller: seller, included_tax_total: 1, additional_tax_total: 4)
+
+      group.reload
+
+      expect(group.tax_total).to eq(10)
+      expect(group.tax_total).to eq(group.included_tax_total + group.additional_tax_total)
+    end
+
+    it 'is zero when nothing was taxed' do
+      expect(create(:order_group, store: store).tax_total).to eq(0)
+    end
+  end
+
+  describe '#amount_due' do
+    let(:group) { create(:order_group, :with_parcels, store: store, sellers_count: 2) }
+    let(:total) { group.reload.total }
+
+    # Read through a fresh instance: a group memoizes its derived money, and
+    # validating a payment against one computes that before the payment it is
+    # about to hold exists.
+    def settled = described_class.find(group.id)
+
+    it 'is the whole purchase while nothing has been collected' do
+      expect(settled.amount_due).to eq(total)
+    end
+
+    it 'is nothing once the payment the group holds covers it' do
+      create(:payment, order: nil, order_group: group, amount: total, status: 'completed')
+
+      expect(settled.amount_due).to eq(0)
+    end
+
+    # Store credit is applied against the group, so only the group can take it
+    # off — a child reads no payments at all and would report the full amount.
+    # The credit is captured, so the 30 is already counted as paid; the card
+    # still owes the rest.
+    it 'counts captured store credit once while the rest is still owed' do
+      store_credit = create(:store_credit, store: store, customer: group.customer, amount: 30)
+      create(:store_credit_payment, order: nil, order_group: group, source: store_credit,
+                                    amount: 30, status: 'completed')
+      create(:payment, order: nil, order_group: group, amount: total - 30, status: 'pending')
+
+      expect(settled.amount_due).to eq(total - 30)
+    end
+
+    it 'takes applied store credit off, and never goes negative' do
+      store_credit = create(:store_credit, store: store, customer: group.customer, amount: total)
+      create(:store_credit_payment, order: nil, order_group: group, source: store_credit,
+                                    amount: total, status: 'completed')
+
+      expect(settled.amount_due).to eq(0)
+    end
+  end
+
   describe '#fulfillment_status' do
     it 'is nil while no child has one' do
       create(:order, store: store, order_group: group)

@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::RefundSerializer do
 
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
-      id amount transaction_id payment_id refund_reason_id originator_id originator_type
+      id amount transaction_id payment_id refund_reason_id originator_id originator_type reimbursement_id
     ])
   end
 
@@ -24,6 +24,11 @@ RSpec.describe Spree::Api::V3::RefundSerializer do
       expect(subject['originator_id']).to eq(return_record.prefixed_id)
       expect(subject['originator_type']).to eq('return')
     end
+  end
+
+  it 'keeps the deprecated reimbursement_id, always null, until 6.1' do
+    expect(subject['reimbursement_id']).to be_nil
+    expect(Spree::Api::V3::Admin::RefundSerializer.new(refund, params: base_params).to_h).not_to have_key('reimbursement_id')
   end
 
   it 'returns the prefixed id' do

@@ -61,6 +61,88 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
     end
 
+    # A basket that reached several sellers divided into one order per seller
+    # and the cart handle moved up to the group holding them, so no order
+    # carries it any more. The confirmation page asks with the handle it has
+    # and has to be given the whole purchase.
+    context 'with the cart handle after a checkout that split across sellers' do
+      let(:cart) { create(:cart_with_line_items, store: store) }
+      let!(:group) do
+        create(:order_group, :with_parcels, store: store, customer: nil, cart: cart, token: cart.token)
+      end
+
+      before do
+        cart.update_columns(completed_at: Time.current)
+        request.headers['x-spree-token'] = cart.token
+      end
+
+      it 'resolves the cart handle to the group' do
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(group.prefixed_id)
+        expect(json_response['number']).to eq(group.number)
+      end
+
+      it 'answers with every seller’s items rather than one order’s' do
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(json_response['orders'].size).to eq(2)
+        expect(json_response['orders'].sum { |order| order['items'].size }).to eq(2)
+      end
+
+      it 'sums the delivery the children were quoted' do
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(BigDecimal(json_response['delivery_total'])).
+          to eq(group.orders.sum(&:delivery_total))
+      end
+
+      it 'carries the payment the group was charged, which no child holds' do
+        payment = create(:payment, order: nil, order_group: group, amount: group.total)
+
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(json_response['payments'].map { |row| row['id'] }).to eq([payment.prefixed_id])
+        expect(json_response['orders'].flat_map { |order| order['payments'] }).to be_empty
+      end
+
+      # Completion hands the client a group id; re-reading with it must work
+      # the same way +carts#complete+ already accepts it on retry.
+      it 'resolves the group’s own id too' do
+        get :show, params: { id: group.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(group.prefixed_id)
+      end
+
+      it 'returns not found without the matching token' do
+        request.headers['x-spree-token'] = 'wrong-token'
+
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'runs no more queries for a checkout that reached more sellers' do
+        larger_cart = create(:cart_with_line_items, store: store)
+        larger_cart.update_columns(completed_at: Time.current)
+        create(:order_group, :with_parcels, store: store, customer: nil, cart: larger_cart,
+                                            token: larger_cart.token, sellers_count: 3)
+
+        count_queries = lambda do |handle, token|
+          request.headers['x-spree-token'] = token
+          queries = 0
+          counter = ->(*, payload) { queries += 1 unless payload[:name] == 'SCHEMA' || payload[:sql].match?(/\A(BEGIN|COMMIT|SAVEPOINT|RELEASE)/) }
+          ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') { get :show, params: { id: handle } }
+          queries
+        end
+
+        expect(count_queries.call(larger_cart.prefixed_id, larger_cart.token)).
+          to eq(count_queries.call(cart.prefixed_id, cart.token))
+      end
+    end
+
     context 'with spree token' do
       let(:guest_order) { create(:completed_order_with_totals, customer: nil, store: store) }
 

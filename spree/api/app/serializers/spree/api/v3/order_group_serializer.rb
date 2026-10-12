@@ -16,7 +16,10 @@ module Spree
 
         attributes :number, :email, :currency
 
-        money_attributes :total, :display_total, :item_total, :display_item_total
+        # Every figure is rolled up from the children, never prorated back
+        # down. The payments are the group's own: a split checkout pays once,
+        # against the group, so a child holds none.
+        include Spree::Api::V3::PurchaseSummary
 
         # Rolled up across the children rather than stored, so it can never
         # disagree with the orders it describes.
@@ -28,6 +31,12 @@ module Spree
 
         one :billing_address, resource: proc { Spree.api.address_serializer }
         one :shipping_address, resource: proc { Spree.api.address_serializer }
+
+        # The card itself is deliberately not nested here — the split copies it
+        # onto every child, so it is already in the payload, and a group this
+        # deep pushes the generated Zod schema past what TypeScript will
+        # serialize into a declaration file. `gift_card_total` is the figure a
+        # summary needs, and only the group can answer it.
 
         # The whole point of the group: the customer sees one purchase, and the
         # seller orders inside it are how it will arrive.

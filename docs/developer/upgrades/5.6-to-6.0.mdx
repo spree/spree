@@ -363,6 +363,8 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 | Removed from the Admin and Seller APIs | Use |
 |---|---|
 | Address `country_iso`, `state_abbr` (read and write) | `country_code`, `state_code` |
+| Stock location `country_iso`, `state_abbr` | `country_code`, `state_code` |
+| Refund `reimbursement_id` | `originator_id`, `originator_type` |
 | Address `zipcode` (write) | `postal_code` |
 | Admin cart `number` | `id` |
 | Admin market `country_isos` | `country_codes` |
@@ -1093,6 +1095,8 @@ A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefr
 | A property that "does not exist" in a `…Params` type | Request types now list exactly what the endpoint accepts | [Request types](#request-types-match-the-api) |
 | `ProductSort`, or a filter key | List filters and sort are typed | [List filters and sort](#list-filters-and-sort-are-typed) |
 | `number` is not assignable to `string` in a filter or amount | Money is a decimal string everywhere | Send `'20.00'`, not `20` ([Money](#money), [store credit](#store-credit-amounts-are-decimal-strings)) |
+| `name` or `description` "does not exist" on `Discount` | `Discount` now types the discount rows on items and fulfillments. The `discounts` list on carts and orders is unchanged and is typed `AppliedPromotion` | Import `AppliedPromotion` for `cart.discounts` and `order.discounts` |
+| A property that "does not exist" on `OrderGroup` | Completing a cart, or reading an order by its cart id, can return an order group | [Completing a cart can return an order group](#completing-a-cart-can-return-an-order-group) |
 
 ### List filters and sort are typed
 
@@ -1120,7 +1124,7 @@ Each `list()` method now takes the filters and sort fields its endpoint accepts.
 
 ### Completing a cart can return an order group
 
-`carts.complete()` returns `Order | OrderGroup`. In a marketplace, a cart holding several sellers' goods divides into one order per seller and returns the group. Narrow the result with `isOrderGroup` before reading order fields:
+`carts.complete()` returns `Order | OrderGroup`. In a marketplace, a cart holding several sellers' goods divides into one order per seller and returns the group. `orders.get()` does the same when given the cart's id, which is what an order confirmation page usually holds. Narrow the result with `isOrderGroup` before reading order fields:
 
 ```ts
 import { isOrderGroup } from '@spree/sdk'
@@ -1128,6 +1132,12 @@ import { isOrderGroup } from '@spree/sdk'
 const result = await client.carts.complete(cartId)
 const orders = isOrderGroup(result) ? result.orders : [result]
 ```
+
+An order group carries the same totals as an order (`item_total`, `delivery_total`, `discount_total`, `tax_total`, `fee_total`, `gift_card_total`, `store_credit_total`, `total`, `amount_due`) and the payments made at checkout, so one order summary component can render either.
+
+### Store credit no longer includes gift cards
+
+A gift card is redeemed as store credit. `store_credit_total` used to include that amount as well as `gift_card_total`, so a summary showing both rows took it off twice. It now holds only the store credit that is not from a gift card. A storefront that shows one row or the other keeps working, and one that shows both no longer deducts the gift card twice.
 
 ### Request types match the API
 
@@ -1186,6 +1196,9 @@ These Store API fields keep working in 6.0 and are marked `@deprecated` in the S
 |---|---|
 | Address `country_iso`, read and written | `country_code` |
 | Address `state_abbr`, read and written | `state_code` |
+| Stock location `country_iso` | `country_code` |
+| Stock location `state_abbr` | `state_code` |
+| Refund `reimbursement_id` (always `null`: reimbursements are folded into returns) | `originator_id` with `originator_type` |
 | Company address `zipcode`, written | `postal_code` |
 | Cart `number` | `id` |
 | Market `country_isos` | `country_codes` |
