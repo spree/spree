@@ -1,61 +1,61 @@
 ---
 title: "Issue a Gift Card"
-description: "Learn how to issue gift cards to customers in the Spree admin dashboard."
+description: "Learn how to issue a gift card to a customer in Spree Commerce."
 ---
 
-Gift cards are prepaid balances that can be redeemed like cash on future purchases. They’re commonly used for promotions, customer service gestures, loyalty rewards, or as products sold directly to customers.
+A gift card is a prepaid balance your customer spends later. People buy them as presents, and shops hand them out as a thank-you or to settle a complaint without a cash refund.
 
-In Spree, you can issue gift cards to individual customers or generate them in bulk for later distribution. This guide covers how to issue a gift card to a specific customer.
+Each card has a code and a balance. Your customer types the code at checkout, and the card pays what it can of the order. Clicking **Create gift card** in the dashboard makes the card ready to use at once.
+
+Store credit is the neighbour to know about. It sits on one customer's account rather than on a code, and you issue it from that customer's page. See [<u>Issue Store Credits</u>](/user/loyalty/store-credits).
+
+Keep your own note of why each card was given, whether it was sold, handed out as goodwill or offered in place of a refund.
+
+To issue gift cards, navigate to **Loyalty → Gift Cards** in the admin dashboard.
 
 ## How to Issue a Gift Card
 
-To issue a gift card, navigate to **Customers** in the admin dashboard.
+Click **New gift card** in the top-right corner of the Gift Cards list. A panel opens over the list with these fields:
 
-![How to issue a gift card to a customer in Spree Commerce](/docs/images/user/customers/gift-cards/1-customers-tab.png)
+![The New gift card panel filled in for one $50.00 card attached to a customer](/docs/images/user/loyalty/issue-gift-card/1-the-new-gift-card-panel-filled-in-for.png)
 
-Find and click the customer who should receive the gift card to open their customer profile.
+- **Quantity** - How many cards to issue. Leave it at 1 for a single card.
+- **Code** - What the customer types at checkout. Leave it blank and a 16-character code of letters and numbers is made for you.
+- **Amount** - The value of the card. It has to be more than zero, and the panel stays open with a message under **Amount** until it is.
+- **Currency** - The currency the balance is held in. Choose it with care, because the box is locked once the card is issued.
+- **Expires** - Shows **No expiry** until you pick a date from the calendar it opens.
+- **Customer (optional)** - The customer the card is for. Start typing their email to find them. Once issued, their email shows under the card's code in the list, so you can see at a glance who holds it.
 
-![Customer profile page in the Spree admin backend](/docs/images/user/customers/gift-cards/2-customer-profile.png)
+Fill in the panel and click **Create gift card**. The panel closes, a *Gift card created* message appears, and the new card sits at the top of the list as **Active**, with its full amount under **Remaining** and nothing under **Used**.
 
-Click the **three-dot menu** in the top right corner, and select **Add a Gift Card**.
+![The Gift Cards list after issuing a card, with the new card at the top and the customer's email under its code](/docs/images/user/loyalty/issue-gift-card/2-the-gift-cards-list-after-issuing-a.png)
 
-![Issuing a gift card to a customer in Spree Commerce](/docs/images/user/customers/gift-cards/3-add-gift-card.png)
+<Note>Issuing a card does not send it to anyone. Copy the code from the list and pass it on to the customer yourself.</Note>
 
-You’ll be redirected to the gift card creation form.
+### When Quantity is more than one
 
-## Configure the Gift Card
+Type a number above 1 in **Quantity** and the panel changes to suit a batch of cards. **Code** becomes **Prefix**, the **Customer (optional)** field goes away, and the button counts the cards, for example **Create 3 gift cards**.
 
-![Configuring a gift card in Spree Commerce](/docs/images/user/customers/gift-cards/4-gift-card-form.png)
+## How to Follow a Card Once It Is Spent
 
-Complete the following fields:
+Your customer types the code into the gift card or discount code box at checkout and clicks **Apply**. The order summary then shows the gift card as a line taken off the total, with the amount still to pay underneath. When the card covers the whole order, the payment step reads *No payment required*. When it covers part of it, the customer pays the rest another way.
 
-- **Code** - Leave blank to have Spree automatically generate a unique code, or enter one manually.
-- **Amount** - The value of the gift card.
-- **Currency** - Select the currency the gift card should be issued in.
-- **Expires At** - Optional expiration date. Leave blank for a non-expiring gift card.
+Back on the Gift Cards list, each card shows how much of it has gone:
 
-Click **Create** to issue the gift card. It will immediately appear in the customer’s **Gift Cards** section.
+| Column | What it means |
+|---|---|
+| **Amount** | What the card was worth when you issued it. |
+| **Used** | How much the customer has spent from it so far. |
+| **Remaining** | What is left to spend. |
+| **Expires** | A dash means the card was issued with **No expiry**. |
 
-## Edit a Gift Card
+| Status | What it means |
+|---|---|
+| **Active** | Issued, with its full amount still to spend. |
+| **Redeemed** | The whole amount has been spent. **Remaining** reads $0.00. |
 
-![Editing a gift card in the Spree Commerce admin dashboard](/docs/images/user/customers/gift-cards/5-edit-gift-card.png)
+## Further Reading
 
-To modify a gift card:
-
-1. Go to the customer’s profile
-2. Scroll to the **Gift Cards** subsection
-3. Click on the gift card to be redirected that gift card's form
-4. Click **Edit** in the Settings section 
-5. Make your changes and click **Update**
-
-## Delete a Gift Card
-
-![Deleting a gift card in Spree Commerce](/docs/images/user/customers/gift-cards/6-delete-gift-card.png)
-
-To delete a gift card:
-
-1. Go to the customer’s profile
-2. Scroll to the **Gift Cards** subsection
-3. Click on the gift card to be redirected to that gift card's form
-4. Click **three-dot menu** in the top-right corner
-5. Click **Delete**
+- [<u>Gift Cards</u>](/user/loyalty/gift-cards) - Reviewing, editing and deleting the cards you have issued
+- [<u>Issue Store Credits</u>](/user/loyalty/store-credits) - Giving a customer money back on their account instead of a code
+- [<u>Store Credits List</u>](/user/loyalty/store-credits-list) - Every prepaid balance your store owes, across all customers

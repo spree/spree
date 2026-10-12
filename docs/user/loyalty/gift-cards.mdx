@@ -1,103 +1,102 @@
 ---
 title: "Gift Cards"
-description: "Learn how to create individual or bulk gift cards in Spree Commerce."
+description: "Learn how to issue gift cards, follow their balances and redeem them on orders in Spree Commerce."
 ---
 
-Gift cards allow customers (or recipients) to redeem a prepaid balance at checkout. In Spree, you can create single gift cards for specific customers or generate batches of codes for broader distribution.
+A gift card is money paid to you up front, by a customer buying a present for someone, or given away by you as a goodwill gesture or a prize. Whoever holds it spends the value in your shop later.
 
-To get started, navigate to **Loyalty → Gift Cards** in the admin dashboard.
+Each card holds an amount in one currency. When a customer enters the code at checkout, the card pays what it can of the order, and anything left stays on the card for their next visit. Every card keeps a running record of how much has been spent and how much remains, so you always know what you still owe.
 
-![](/docs/images/user/promotions/gift-cards/1-gift-cards.png)
+Gift cards are not the same as store credit. Store credit is a balance you give one particular customer, from their profile or when you refund a return, and it is covered on the [<u>Store Credits List</u>](/user/loyalty/store-credits-list) page.
 
-Click **New Gift Card** in the top right corner.
+With a handful of cards a year, the list is a simple record of who holds what. Once you sell cards over the counter or give them out in batches for a campaign, it becomes the place you check before you honour a code and the record your accountant asks for at year end.
 
-![How to create gift cards in Spree Commerce](/docs/images/user/promotions/gift-cards/2-add-gift-cards.png)
+Gift cards sit with store credit under Loyalty rather than under Promotions. To manage gift cards, navigate to **Loyalty → Gift Cards** in the admin dashboard.
 
-You’ll be prompted to choose between:
+## Reviewing Your Gift Cards
 
-- **Gift Card** (single code)
-- **Gift Card Batch** (multiple codes generated at once)
+The list shows one row for every card you have issued, newest first.
 
-## Create a Single Gift Card
+![The Gift Cards list with one active card](/docs/images/user/loyalty/gift-cards/1-the-gift-cards-list-with-one-active-card.png)
 
-![Creating a single gift card in Spree Commerce](/docs/images/user/promotions/gift-cards/3-gift-form.png)
+| Column | What it means |
+|---|---|
+| **Code** | What the customer types at checkout. When the card belongs to a customer, their email address sits under the code. |
+| **Status** | Whether the card can still be spent. See the table below. |
+| **Amount** | What the card was worth when you issued it. |
+| **Used** | How much has been spent on orders so far. |
+| **Remaining** | What the card can still pay for. This is what you still owe on it. |
+| **Expires** | The last date the card is valid, or a dash when it never expires. |
 
-Selecting **Gift Card** opens the creation form.
+Type a code into the search box to check a card a customer has brought to you. The **Status** filter answers "which cards still have money on them", and **Add filter** narrows the list by currency, batch, customer, who issued the card, expiry date, or when the card was created or last changed.
 
-Complete the following fields:
+A card moves through these statuses as it is spent:
 
-- **Email (optional)** - Assign the gift card to a specific customer email, or leave blank to create an unassigned code.
-- **Code** - Leave blank to auto-generate a unique code, or enter one manually.
-- **Amount** (required) - The value of the gift card.
-- **Currency** (required) - The currency the card should be issued in.
-- **Expires At** - Optional expiration date. Leave blank for a non-expiring card.
+| Status | What it means |
+|---|---|
+| **Active** | Nothing has been spent yet. The full amount is available. |
+| **Partially redeemed** | Some of the value has been spent and the rest is still available. |
+| **Redeemed** | The whole amount has been spent. The card is kept on the list as a record, but nothing is left on it. |
 
-Click **Create** to issue the gift card. It will appear in the Gift Cards table and can be redeemed using the code at checkout.
+## How to Issue a Gift Card
 
-## Create a Gift Card Batch (Bulk Generation)
+Click **New gift card** in the top-right corner. A panel opens over the list with these fields:
 
-![Creating a batch of gift cards in the Spree Commerce dashboard](/docs/images/user/promotions/gift-cards/4-gift-card-batch.png)
+- **Quantity** - How many cards to issue. Leave it at 1 for a single card.
+- **Code** - The code the customer will type. Leave it blank and a code of sixteen letters and numbers is made for you. Type your own when you want something memorable for a campaign.
+- **Amount** - What the card is worth. The card cannot be created without an amount above zero.
+- **Currency** - The currency the card's value is held in.
+- **Expires** - Set a date if your gift card terms limit how long a card is valid. Leave it on **No expiry** otherwise.
+- **Customer (optional)** - The customer the card belongs to. Start typing their email address and pick them from the list.
 
-Selecting **Gift Card Batch** allows you to generate multiple codes at once.
+Fill in the panel and click **Create gift card**. The panel closes, a message confirms the card was created, and the new card is at the top of the list with its full amount under **Remaining**.
 
-The form includes the same core fields as a single gift card (excluding the Customer field), plus:
+![The new gift card at the top of the list, attached to a customer](/docs/images/user/loyalty/gift-cards/2-the-new-gift-card-at-the-top-of-the.png)
 
-- **Prefix** - Adds a custom prefix to each generated code (e.g., HOLIDAY-, VIP-).
-- **Codes Count** (required) - The total number of gift card codes to generate.
+Creating the card does not send it to anyone, so pass the code on to the customer yourself, by email, on a printed card or at the till. The code is all they need to spend it.
 
-Spree will automatically create the specified number of unique codes.
+## How to Check a Card's Balance
 
-After clicking **Create**, all generated gift cards will be added to the Gift Cards table.
+Click a card's code in the list, or open the row menu and choose **Edit**. A panel opens with the card's code as its title. Its **Usage** section shows what the card was worth, how much has been spent, what remains and which member of staff issued it.
 
-## Manage & Export Gift Cards
+![A gift card's panel showing its usage](/docs/images/user/loyalty/gift-cards/3-a-gift-card-s-panel-showing-its-usage.png)
 
-![How to manage gift cards in the Spree Commerce dashboard](/docs/images/user/promotions/gift-cards/5-manage-gift-cards.png)
+Once a card is fully spent, every box in the panel is greyed out and the panel is there to read.
 
-Once created, gift cards appear in the main table view under **Loyalty → Gift Cards**.
+## How Customers Redeem a Card at Checkout
 
-The table displays key information for each card, including:
+Customers spend a card in your shop's checkout. They type the code into the **Gift card or discount code** box in the order summary and click **Apply**. The summary then shows a gift card line taking the card's value off the order, and the amount still to pay underneath.
 
-- Code
-- Original amount
-- Amount of credit used
-- Currency
-- Expiration date
-- Assigned customer (if any)
+When the card covers the whole order, the payment section reads *No payment required* and the customer clicks **Place Order**. When the card covers only part of it, the customer picks a payment method for the rest, such as **Check**, and places the order. The order page then lists both payments, one for the card's share and one for the rest.
 
-This makes it easy to monitor usage and track remaining balances.
+![The checkout summary with a gift card paying part of the order and the rest due](/docs/images/user/loyalty/gift-cards/4-the-checkout-summary-with-a-gift-card.png)
 
-### Edit a Gift Card
+A card that is not attached to a customer can be spent by anyone who has the code, including a shopper checking out as a guest. A card with money left after an order keeps that balance, and the customer can use the same code again on a later order until nothing remains.
 
-![How to edit a gift card in the Spree Commerce dashboard](/docs/images/user/promotions/gift-cards/6-edit-gift-cards.png)
+On the order page in the admin dashboard, the **Discounts & Credit** card shows which gift card paid for the order and how much it covered.
 
-To edit a gift card:
+## How to Apply a Gift Card to a Draft Order
 
-1. Click on the gift card from the table
-2. In the **Settings** section, click **Edit**
-3. Update the necessary fields
-4. Click **Save**
+When your team builds an order on a customer's behalf, you can take a gift card as part of the payment.
 
-### Delete a Gift Card
+1. Open the draft order. In the **Discounts & Credit** card, click **Apply** next to **Gift card**.
+2. Type the card's code and click **Add**.
+3. The card's code and the amount it covers appear in the **Gift card** row, and the order's **Outstanding balance** drops by the same amount.
 
-![How to delete a gift card in the Spree Commerce dashboard](/docs/images/user/promotions/gift-cards/7-delete-gift-card.png)
+If the card does not cover the whole order, add a payment for the rest from the **Payments** card before you complete the order. If you add more items after applying the card, the card stays at the amount it covered when you applied it, and the extra is added to the outstanding balance.
 
-To delete a gift card:
+To take a card off a draft order, click **Remove** in the **Gift card** row and confirm with **Remove**. The order's outstanding balance goes back up, and the amount returns to the card's remaining balance.
 
-1. Open the gift card
-2. Click the **three-dot menu** in the top-right corner
-3. Select **Delete**
+## How to Delete a Gift Card
 
-### Export Gift Cards
+Open the row menu on the card and choose **Delete**, then confirm with **Delete**. The card disappears from the list.
 
-You can also:
+<Warning>Deleting a card erases it from your store's records rather than keeping it as a cancelled card. If the card still has a balance, that balance goes with it, so check **Remaining** first and settle up with the customer before you delete.</Warning>
 
-- Use **Filters** to narrow results
-- Sort columns
-- Customize visible columns
-- Click **Export** to export filtered records to CSV
+## Further Reading
 
-This is especially useful when distributing bulk-generated codes for marketing campaigns, partnerships, or seasonal promotions.
-
-## How to Redeem Gift Cards
-
-Customers can redeem a gift card at checkout by entering the gift card code into the Promotion field before completing their purchase.
+- [<u>Issue a Gift Card</u>](/user/loyalty/issue-gift-card) - Issuing a card in more detail
+- [<u>Store Credits List</u>](/user/loyalty/store-credits-list) - Balances you owe individual customers
+- [<u>Draft orders</u>](/user/orders/draft-orders) - Building an order for a customer, with a gift card as payment
+- [<u>Orders list and the order page</u>](/user/orders/orders) - Where a redeemed card shows on an order
+- [<u>Payments</u>](/user/settings/payments) - The payment methods customers use for anything a card does not cover
