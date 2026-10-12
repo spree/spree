@@ -77,7 +77,7 @@ This convention applies to all monetary fields across all resources, including b
 
 ### Amounts inside `preferences`
 
-Calculators and some promotion rules carry their amounts inside an untyped `preferences` object (`Record<string, unknown>`) rather than as top-level fields. The same canonical-string convention applies to the money-valued keys within that hash — they read back as strings and accept canonical decimal strings on write. The keys that are money:
+Calculators and rules carry their amounts inside a `preferences` object rather than as top-level fields. Each type lists its preferences with their types in `preference_schema` (from its `…/types` endpoint), and a preference of type `money` follows the same convention as every other amount: a decimal string, read back with the decimals of the record's `currency` preference. On write, a money preference that is not a decimal string, or has more decimals than its currency, is refused with `422` and `invalid_preferences`, naming the field (`/calculator/preferences/amount`). The money preferences Spree ships:
 
 | Resource | Money keys in `preferences` |
 |----------|------------------------------|
@@ -88,7 +88,7 @@ Calculators and some promotion rules carry their amounts inside an untyped `pref
 | **Calculator** `flat_rate` (shipping) | `amount`, `minimum_item_total`, `maximum_item_total` |
 | **Promotion Rule** `item_total` | `amount_min`, `amount_max` |
 
-Percentage keys (`percent`, `flat_percent`, `base_percent`) are rates: decimal strings too (`"10"`), with no fixed number of decimals. Weights (`minimum_weight`, `maximum_weight`) and quantities (`max_items`, `min_quantity`) are not money and stay numbers. Promotion actions (`create_adjustment`, `create_item_adjustments`) hold their money inside a nested `calculator.preferences`, per the calculator rows above.
+Read an extension's money preferences from `preference_schema` rather than from this table. Percentage keys (`percent`, `flat_percent`, `base_percent`) are rates: decimal strings too (`"10"`), with no fixed number of decimals. Weights (`minimum_weight`, `maximum_weight`) and quantities (`max_items`, `min_quantity`) are not money and stay numbers. Promotion actions (`create_adjustment`, `create_item_adjustments`) hold their money inside a nested `calculator.preferences`, per the calculator rows above.
 
 ## Rates and percentages
 

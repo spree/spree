@@ -52,7 +52,7 @@ module Spree
       # a unit price, so a per-item amount below a cent survives a round trip.
       # A money preference with no currency of its own, such as an order-total
       # rule that applies to any currency, keeps its exact decimal.
-      def self.wire_value(preferable, type, value)
+      def self.wire_value(preferable, key, type, value)
         case type
         when :password then mask(value)
         when :money
@@ -60,7 +60,7 @@ module Spree
           amount = value.is_a?(String) ? BigDecimal(value, exception: false) : value
           return value unless amount.is_a?(Numeric)
 
-          currency = preferable.try(:has_preference?, :currency) ? preferable.try(:preferred_currency) : nil
+          currency = preferable.money_preference_currency(key)
           currency.present? ? Spree::Money::Rounding.format(amount, currency, unit_price: true) : Spree::Money::Rounding.format_decimal(amount)
         else value
         end
@@ -89,7 +89,7 @@ module Spree
             if definition[:of] == :id
               prefixed_ids(value, definition)
             elsif %i[password money].include?(field[:type])
-              wire_value(preferable, field[:type], value)
+              wire_value(preferable, field[:key], field[:type], value)
             elsif definition[:keys] == :currency && definition[:values] == :money
               money_by_currency(preferable.wire_preference_value(value, definition))
             else

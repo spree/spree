@@ -70,6 +70,9 @@ module Spree::Preferences
     # @option options [String, Proc] :model the record class an `of: :id` list points at
     # @option options [Proc] :scope `->(owner) { relation }` the ids must be found in
     # @option options [Array, Proc] :choices the fixed set a value must come from
+    # @option options [Symbol] :currency where a `:money` preference's currency comes
+    #   from: another preference or a method of the record. Defaults to the
+    #   record's `currency` preference; with neither, the amount is in any currency.
     def preference(name, type, *args)
       name = name.to_sym
       secret = type == :password
@@ -80,7 +83,7 @@ module Spree::Preferences
 
       options = args.extract_options!
       options.assert_valid_keys(:default, :deprecated, :in, :choices, :internal, :nullable, :parse_on_set,
-                                :of, :keys, :values, :properties, :format, :model, :scope)
+                                :of, :keys, :values, :properties, :format, :model, :scope, :currency)
       if options.key?(:in)
         Spree::Deprecation.warn("`preference :#{name}, in:` is deprecated. Use `choices:` instead.")
         options[:choices] ||= options.delete(:in)
@@ -110,7 +113,8 @@ module Spree::Preferences
         properties: options[:properties],
         format: options[:format],
         model: options[:model],
-        scope: options[:scope]
+        scope: options[:scope],
+        currency: options[:currency]
       }
       PreferableClassMethods.declarations += 1
 
@@ -185,6 +189,7 @@ module Spree::Preferences
         raise ArgumentError, "Unknown format `#{options[:format]}` on preference `#{name}`"
       end
       raise ArgumentError, "`of: :id` needs `model:` on preference `#{name}`" if options[:of] == :id && options[:model].blank?
+      raise ArgumentError, "`currency:` applies to a :money preference, not `#{name}` (#{type})" if options[:currency] && type != :money
       raise ArgumentError, "`of: :object` needs `properties:` on preference `#{name}`" if options[:of] == :object && options[:properties].blank?
 
       missing = case type
