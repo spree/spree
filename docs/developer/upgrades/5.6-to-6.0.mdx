@@ -1201,7 +1201,7 @@ These Store API fields keep working in 6.0 and are marked `@deprecated` in the S
 ## For extension authors
 
 - **Don't reach for model business methods from services** — 6.0 code style writes behavior inline in service/workflow steps; models keep data, validations, predicates and persistence primitives. Extensions patching removed model methods (`finalize!` internals, updater hooks) should move to workflow hooks (`Spree.hooks.register('carts.complete.before_finalize') { |flow| ... }` — handlers receive the workflow instance) or event subscribers.
-- **Store-scoped data is single-owner.** `Product`, `Promotion` and `PaymentMethod` `belongs_to :store`; the `stores: [...]` writers are gone. Multi-store sharing lives in the `spree_multi_store` extension.
+- **Store-scoped data is single-owner.** `Product`, `Promotion` and `PaymentMethod` `belongs_to :store`; the `stores: [...]` writers are gone, they will work until 6.1 release with a deprecation warning
 - The Store API v3 contract is stable across the split — cart endpoints keep their shapes; `requirements` gains `code` (and renames the delivery entry's field/code to `delivery_method`, see above), and serializer `number` on carts is bridged as described above.
 
 <Warning>

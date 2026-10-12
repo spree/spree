@@ -1,21 +1,11 @@
 ---
 title: Translations
-description: Selling in more than one language — translating product content, and translating the interface around it.
+description: Selling in more than one language — translating content
 ---
 
-## Overview
-
-Two different things need translating, and they're handled separately because they belong to different people.
-
-**Your content** — product names, descriptions, category names — is written by whoever runs the store. Spree stores a version of each field per language.
-
-**The interface** — button labels, error messages, email wording — is written by Spree, and is already translated into dozens of languages by the community.
-
-<Info>
-Which languages a region gets is decided by its [Market](/developer/core-concepts/markets). A market sets the default locale alongside the currency, so a visitor from France lands on French prices and French copy without choosing anything.
-</Info>
-
-## Translating content
+<Note>
+  For Dashboard  UI translations see [Dashboard Customization: Translations](/developer/dashboard/customization/translations).
+</Note>
 
 Every translatable record keeps one row per language, so a product genuinely has a French name rather than a French name pasted over the English one.
 
@@ -121,49 +111,6 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/translations/batch' \
 </CodeGroup>
 
 Asking the API which resources are translatable means a translation tool doesn't need a hardcoded list that goes stale.
-
-## Translating the interface
-
-Spree's own text — transactional emails, API error messages and validation messages — ships translated into 43 languages besides English as part of Spree itself. There is nothing to install. A key that a language does not translate yet is shown in English.
-
-The admin dashboard carries its own translations, separate from these. See [Dashboard translations](/developer/dashboard/customization/translations).
-
-Regional variants such as `de-CH` or `pt-BR` hold only what differs from their base language and fall back to it. Regional English (`en-GB` and the like) falls back to `en`.
-
-### Using fewer languages
-
-Loading every language costs startup time and memory. An app that serves only some languages can list them, and Spree then loads only those, plus English:
-
-```ruby server/config/application.rb
-config.i18n.available_locales = [:en, :de, :fr]
-```
-
-### Changing a translation
-
-<Tip>
-To change what a customer email says, edit it in the dashboard under **Settings → Emails → Templates** instead. Edits apply per store and per language, and need no deploy. See [Templates merchants edit in the dashboard](/developer/customization/emails#templates-merchants-edit-in-the-dashboard) and the [Emails user guide](/user/settings/emails).
-</Tip>
-
-Locale files are for the text the dashboard does not edit: API error messages, checkout requirements, validation messages and staff emails. To change a word or add a language, add the key to a locale file in your app. Your file wins over the one Spree ships.
-
-```yaml server/config/locales/de.yml
-de:
-  spree:
-    checkout_requirements:
-      email_required: Bitte geben Sie Ihre E-Mail-Adresse ein
-```
-
-Every key lives under `spree`. To read one from your own Ruby code, use its full key:
-
-```ruby server/app/services/my_app/checkout_check.rb
-I18n.t('spree.checkout_requirements.email_required')
-```
-
-<Info>
-`Spree.t` still works in 6.0 but is deprecated and will be removed in 6.1. Use `I18n.t` with the full `spree.` key instead.
-</Info>
-
-Corrections to the translations Spree ships are welcome as pull requests to the locale files in the [Spree repository](https://github.com/spree/spree/tree/main/spree/core/config/locales).
 
 ## Related
 
