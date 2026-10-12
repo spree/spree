@@ -141,6 +141,7 @@ export { TaxExemptionCertificateSchema, type TaxExemptionCertificate } from './T
 export { TaxIdentifierSchema, type TaxIdentifier } from './TaxIdentifier';
 export { TaxLineSchema, type TaxLine } from './TaxLine';
 export { TaxRateSchema, type TaxRate } from './TaxRate';
+export { UpdateStatusSchema, type UpdateStatus } from './UpdateStatus';
 export { VariantSchema, type Variant } from './Variant';
 export { WebhookDeliverySchema, type WebhookDelivery } from './WebhookDelivery';
 export { WebhookEndpointSchema, type WebhookEndpoint } from './WebhookEndpoint';

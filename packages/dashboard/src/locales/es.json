@@ -6269,6 +6269,18 @@
       "every_language": {
         "notice": "Los clientes de todos los idiomas reciben esta versión hasta que publiques una para {{language}}."
       }
+    },
+    "updates": {
+      "available": "Spree {{version}} está disponible",
+      "running": "Estás usando Spree {{version}}."
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "open": "Notificaciones",
+      "open_unread": "Notificaciones, 1 sin leer",
+      "empty": "Estás al día.",
+      "view_on_github": "Ver en GitHub",
+      "release_notes_unavailable": "No se pudieron cargar las notas de la versión. Léelas en GitHub."
     }
   }
 }

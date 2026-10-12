@@ -186,6 +186,7 @@ export type { default as TaxExemptionCertificate } from './generated/TaxExemptio
 export type { default as TaxIdentifier } from './generated/TaxIdentifier'
 export type { default as TaxLine } from './generated/TaxLine'
 export type { default as TaxRate } from './generated/TaxRate'
+export type { default as UpdateStatus } from './generated/UpdateStatus'
 export type { default as Variant } from './generated/Variant'
 export type { default as WebhookDelivery } from './generated/WebhookDelivery'
 export type { default as WebhookEndpoint } from './generated/WebhookEndpoint'

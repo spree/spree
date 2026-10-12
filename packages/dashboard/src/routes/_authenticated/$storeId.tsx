@@ -8,6 +8,7 @@ import {
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
+import { Notifications } from '../../components/spree/notifications'
 import { ProfileDialog } from '../../components/spree/profile-dialog'
 import { useDashboardCounters } from '../../hooks/use-dashboard-counters'
 import { getAvailableUiLocales } from '../../i18n-setup'
@@ -63,6 +64,7 @@ function StoreShell({ inSettings }: { inSettings: boolean }) {
       inSettings={inSettings}
       uiLocales={UI_LOCALES}
       onEditProfile={() => setProfileOpen(true)}
+      notifications={<Notifications />}
     >
       <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
       <Outlet />

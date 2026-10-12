@@ -58,6 +58,29 @@ describe('me', () => {
   })
 })
 
+describe('updates', () => {
+  describe('get', () => {
+    it('GETs /updates and returns the update status', async () => {
+      server.use(
+        http.get(`${API_PREFIX}/updates`, () =>
+          HttpResponse.json({
+            current_version: '6.0.0',
+            enabled: true,
+            checked_at: '2026-10-03T04:00:00.000Z',
+            update_available: true,
+            latest_version: '6.0.1',
+            latest_release_url: 'https://github.com/spree/spree/releases/tag/v6.0.1',
+            latest_release_published_at: '2026-10-02T10:51:38.000Z',
+          }),
+        ),
+      )
+      const status = await createTestClient().updates.get()
+      expect(status.update_available).toBe(true)
+      expect(status.latest_version).toBe('6.0.1')
+    })
+  })
+})
+
 describe('reporting', () => {
   describe('query', () => {
     it('POSTs the query body to /reporting/query', async () => {

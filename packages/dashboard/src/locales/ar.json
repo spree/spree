@@ -6309,6 +6309,18 @@
       "every_language": {
         "notice": "يتلقى العملاء بكل اللغات هذه النسخة حتى تنشر نسخة باللغة {{language}}."
       }
+    },
+    "updates": {
+      "available": "الإصدار Spree {{version}} متاح",
+      "running": "أنت تستخدم Spree {{version}}."
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "open": "الإشعارات",
+      "open_unread": "الإشعارات، 1 غير مقروء",
+      "empty": "لا توجد إشعارات جديدة.",
+      "view_on_github": "عرض على GitHub",
+      "release_notes_unavailable": "تعذر تحميل ملاحظات الإصدار. اقرأها على GitHub بدلاً من ذلك."
     }
   }
 }

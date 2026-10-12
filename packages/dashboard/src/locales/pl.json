@@ -6337,6 +6337,18 @@
       "every_language": {
         "notice": "Klienci we wszystkich językach otrzymują tę wersję, dopóki nie opublikujesz wersji dla języka {{language}}."
       }
+    },
+    "updates": {
+      "available": "Dostępna jest wersja Spree {{version}}",
+      "running": "Używasz Spree {{version}}."
+    },
+    "notifications": {
+      "title": "Powiadomienia",
+      "open": "Powiadomienia",
+      "open_unread": "Powiadomienia, 1 nieprzeczytane",
+      "empty": "Wszystko przeczytane.",
+      "view_on_github": "Zobacz na GitHubie",
+      "release_notes_unavailable": "Nie udało się wczytać informacji o wydaniu. Przeczytaj je na GitHubie."
     }
   }
 }

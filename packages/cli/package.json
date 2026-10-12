@@ -13,9 +13,9 @@
   ],
   "scripts": {
     "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-starter.mjs templates/dashboard-starter && node ../../scripts/sync-starter.mjs templates/seller-dashboard-starter seller-dashboard-starter && tsup",
-    "dev": "tsup --watch",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "dev": "node scripts/bundle-spec.mjs && tsup --watch",
+    "test": "node scripts/bundle-spec.mjs && vitest run",
+    "typecheck": "node scripts/bundle-spec.mjs && tsc --noEmit",
     "lint": "biome check src tests",
     "lint:fix": "biome check --fix src tests",
     "format": "biome format --write src tests",

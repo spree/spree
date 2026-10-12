@@ -29518,6 +29518,71 @@ paths:
             schema:
               "$ref": "#/components/schemas/TranslationBatchParams"
         required: true
+  "/api/v3/admin/updates":
+    get:
+      summary: Check for a newer Spree release
+      tags:
+      - Settings
+      security:
+      - bearer_auth: []
+      description: |
+        Whether a newer Spree release exists. The server asks spreecloud.io
+        when it has no cached answer, for at most two seconds. A successful
+        answer is kept for a day; a failed check is retried after an hour, so
+        the call that retries it waits on it again. `checked_at` is null when
+        the update check is turned off. Available to signed-in admins who can
+        manage the store; a secret API key gets a 404.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+          })
+
+          // Needs a client created with `jwtToken`: a secret key is refused.
+          const status = await client.updates.get()
+          if (status.update_available) {
+            console.log(`Spree ${status.latest_version} is available: ${status.latest_release_url}`)
+          }
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /updates
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: update status
+          content:
+            application/json:
+              example:
+                current_version: 6.0.0.rc1
+                enabled: true
+                checked_at: '2026-10-03T04:00:00.000Z'
+                update_available: true
+                latest_version: 6.0.1
+                latest_release_url: https://github.com/spree/spree/releases/tag/v6.0.1
+                latest_release_published_at: '2026-10-02T10:51:38.000Z'
+              schema:
+                "$ref": "#/components/schemas/UpdateStatus"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/admin_users":
     get:
       summary: List staff
@@ -66852,6 +66917,36 @@ components:
       - store_id
       - country_code
       - state_code
+      x-typelizer: true
+    UpdateStatus:
+      type: object
+      properties:
+        current_version:
+          type: string
+        enabled:
+          type: boolean
+        checked_at:
+          type: string
+          nullable: true
+        update_available:
+          type: boolean
+        latest_version:
+          type: string
+          nullable: true
+        latest_release_url:
+          type: string
+          nullable: true
+        latest_release_published_at:
+          type: string
+          nullable: true
+      required:
+      - current_version
+      - enabled
+      - checked_at
+      - update_available
+      - latest_version
+      - latest_release_url
+      - latest_release_published_at
       x-typelizer: true
     Variant:
       type: object

@@ -697,6 +697,7 @@ import type {
   TranslatableResource,
   TranslationBatchEntry,
   TranslationCoverage,
+  UpdateStatus,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
@@ -1102,6 +1103,16 @@ export class AdminClient {
     /** Update the current admin's own profile (e.g. their UI language). */
     update: (params: MeUpdateParams, options?: RequestOptions): Promise<MeResponse> =>
       this.request<MeResponse>('PATCH', '/me', { ...options, body: params }),
+  }
+
+  readonly updates = {
+    /**
+     * Whether a newer Spree release exists, from the server's daily update
+     * check. Needs a client created with `jwtToken` for an admin who can
+     * manage the store; a secret key gets a 404.
+     */
+    get: (options?: RequestOptions): Promise<UpdateStatus> =>
+      this.request<UpdateStatus>('GET', '/updates', options),
   }
 
   // ============================================
