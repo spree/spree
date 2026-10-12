@@ -51,7 +51,7 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
-    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :placed,
+    publishes_events :address_changed, :approved, :canceled, :delivered, :fulfilled, :paid, :placed,
                      :resend_confirmation_email, :resend_digital_links_email
     publishes_event :completed, deprecated_alias_of: 'order.placed'
     publishes_event :shipped, deprecated_alias_of: 'order.fulfilled'
@@ -289,7 +289,15 @@ module Spree
     # @deprecated legacy writer — removed in 6.1
     alias shipments_attributes= fulfillments_attributes=
 
+    # The address slots as the API names them, which is how
+    # `order.address_changed` reports which ones changed.
+    ADDRESS_EVENT_FIELDS = { ship_address: 'shipping_address', bill_address: 'billing_address' }.freeze
+
     before_create :link_by_email
+    # Prepended so it runs before the address autosave writes the row.
+    before_save :collect_address_edits, prepend: true
+    after_save :collect_changed_addresses
+    after_rollback :forget_changed_addresses
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
     # Record-state deletion eligibility is enforced here, not in ability rules —
     # secret-key API requests never consult CanCanCan (Axis A/B split,
@@ -1191,6 +1199,66 @@ module Spree
     end
 
     private
+
+    # A placed order's address changes in three ways: another row is put in
+    # the slot (a seller's correction, or an address picked by id), or the row
+    # already there is edited and saved with the order, keeping its id.
+    # Collected on every save and published once on commit, so an update that
+    # saves the order several times in one transaction announces the change
+    # once.
+    def collect_address_edits
+      return if new_record? || status_in_database == 'draft'
+
+      @edited_addresses = ADDRESS_EVENT_FIELDS.filter_map do |slot, field|
+        address = association(slot).target if association(slot).loaded?
+        # Only what Address#== compares, so a geocode or a label is no change.
+        field if address&.persisted? && (address.changed - Spree::Address::EXCLUDED_KEYS_FOR_COMPARISON).any?
+      end
+    end
+
+    def collect_changed_addresses
+      return if previously_new_record? || status_before_last_save == 'draft'
+
+      replaced = ADDRESS_EVENT_FIELDS.filter_map { |slot, field| field if address_replaced?(slot) }
+      @changed_addresses = Array(@changed_addresses) | Array(@edited_addresses) | replaced
+      @edited_addresses = nil
+      schedule_address_changed if @changed_addresses.any?
+    end
+
+    # Published once the outermost transaction commits, from this object:
+    # Rails runs a record's own after_commit on only one copy per
+    # transaction, which may be another copy saved later (a touch through an
+    # association), and that copy holds no pending change.
+    def schedule_address_changed
+      return if @address_change_scheduled
+
+      @address_change_scheduled = true
+      ActiveRecord.after_all_transactions_commit { publish_address_changed }
+    end
+
+    # A different row in the slot counts only when it says something else:
+    # resending the same address can resolve to another row with equal
+    # contents, such as an address-book entry.
+    def address_replaced?(slot)
+      return false unless saved_change_to_attribute?("#{slot}_id")
+
+      previous = Spree::Address.find_by(id: attribute_before_last_save("#{slot}_id"))
+      previous.nil? || previous != public_send(slot)
+    end
+
+    def publish_address_changed
+      changed = @changed_addresses
+      forget_changed_addresses
+      return if changed.blank? || destroyed?
+
+      publish_event('order.address_changed', nil, { changed: changed })
+    end
+
+    def forget_changed_addresses
+      @changed_addresses = nil
+      @edited_addresses = nil
+      @address_change_scheduled = nil
+    end
 
     # An order placed in a split checkout owns no payments, so its money is
     # the sum of its shares of the group's instead — the same source

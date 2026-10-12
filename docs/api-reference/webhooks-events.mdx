@@ -62,13 +62,14 @@ These events were removed in Spree 6.0 and are no longer sent:
 
 ## Order Events
 
-Events: `order.created`, `order.updated`, `order.deleted`, `order.placed`, `order.approved`, `order.canceled`, `order.paid`, `order.fulfilled`, `order.delivered`, `order.resend_confirmation_email`, `order.resend_digital_links_email`
+Events: `order.created`, `order.updated`, `order.deleted`, `order.placed`, `order.approved`, `order.canceled`, `order.address_changed`, `order.paid`, `order.fulfilled`, `order.delivered`, `order.resend_confirmation_email`, `order.resend_digital_links_email`
 
 | Event | When it fires |
 |---|---|
 | `order.placed` | A customer completed checkout, or an admin placed a draft order |
 | `order.approved` | An admin approved an order that was flagged as risky |
 | `order.canceled` | The order was canceled |
+| `order.address_changed` | The shipping address, the billing address or both changed on a placed order |
 | `order.paid` | Payments cover the order total in full |
 | `order.fulfilled` | Every fulfillment on the order was handed over to the customer or carrier |
 | `order.delivered` | Every fulfillment on the order was delivered |
@@ -76,6 +77,8 @@ Events: `order.created`, `order.updated`, `order.deleted`, `order.placed`, `orde
 | `order.resend_digital_links_email` | An admin asked to send the download links again |
 
 The `metadata` of `order.placed` and `order.canceled` contains a `notify_customer` boolean. It is `false` when whoever placed or canceled the order asked for the customer not to be emailed.
+
+The `metadata` of `order.address_changed` contains `changed`, a list of the addresses that changed: `shipping_address`, `billing_address` or both. Draft orders and carts never publish it.
 
 Order payloads include nested `items`, `fulfillments`, `payments`, `discounts`, `fees`, `billing_address`, `shipping_address`, `gift_card`, and `market`.
 

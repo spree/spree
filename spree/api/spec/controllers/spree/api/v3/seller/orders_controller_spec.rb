@@ -117,6 +117,19 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(original.reload.address1).to eq(original_line)
     end
 
+    it 'announces that the shipping address changed' do
+      published = []
+      allow_any_instance_of(Spree::Order).to receive(:publish_event).and_wrap_original do |original, name, *rest|
+        published << rest.last[:changed] if name == 'order.address_changed'
+        original.call(name, *rest)
+      end
+
+      patch :address, params: { id: mine.prefixed_id, shipping_address: { address1: '9 Corrected Way' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(published).to eq([['shipping_address']])
+    end
+
     # The correction is this order's, not the buyer's account: their default
     # addresses and address book serve every later checkout.
     it "leaves the buyer's default addresses and address book alone" do

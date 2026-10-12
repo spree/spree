@@ -261,6 +261,46 @@ module Spree
           end
         end
 
+        context 'on a placed order' do
+          let(:order) { create(:completed_order_with_totals, store: store, customer: nil, email: 'guest@example.com') }
+          let(:published) { [] }
+
+          before do
+            allow(order).to receive(:publish_event).and_call_original
+            allow(order).to receive(:publish_event).with('order.address_changed', nil, anything) do |_name, _payload, metadata|
+              published << metadata[:changed]
+            end
+          end
+
+          context 'when the shipping address is replaced' do
+            let(:params) { { shipping_address: attributes_for(:address).merge(address1: '1 New Way') } }
+
+            it 'announces the shipping address change' do
+              expect(subject).to be_success
+              expect(published).to eq([['shipping_address']])
+            end
+          end
+
+          context 'when the billing address is replaced' do
+            let(:params) { { billing_address: attributes_for(:address).merge(address1: '2 Invoice Way') } }
+
+            it 'announces the billing address change' do
+              expect(subject).to be_success
+              expect(order.reload.bill_address.address1).to eq('2 Invoice Way')
+              expect(published).to eq([['billing_address']])
+            end
+          end
+
+          context 'when no address is sent' do
+            let(:params) { { customer_note: 'Leave at door' } }
+
+            it 'announces nothing' do
+              expect(subject).to be_success
+              expect(published).to be_empty
+            end
+          end
+        end
+
         # The admin controller sends the public names; the column names and the
         # Rails nested-attributes key stay accepted for existing callers.
         %i[shipping_address ship_address ship_address_attributes].each do |key|

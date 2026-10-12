@@ -151,6 +151,7 @@ type WebhookEventName =
   | 'newsletter_subscriber.unsubscribe_requested'
   | 'newsletter_subscriber.updated'
   | 'newsletter_subscriber.verified'
+  | 'order.address_changed'
   | 'order.approved'
   | 'order.canceled'
   | 'order.completed'
@@ -405,6 +406,7 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'newsletter_subscriber.unsubscribe_requested': NewsletterSubscriberRequestEventSchema,
   'newsletter_subscriber.updated': NewsletterSubscriberSchema,
   'newsletter_subscriber.verified': NewsletterSubscriberSchema,
+  'order.address_changed': OrderSchema,
   'order.approved': OrderSchema,
   'order.canceled': OrderSchema,
   'order.completed': OrderSchema,

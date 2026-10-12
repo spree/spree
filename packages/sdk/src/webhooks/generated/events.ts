@@ -160,6 +160,7 @@ export interface WebhookEventMap {
   'newsletter_subscriber.unsubscribe_requested': NewsletterSubscriberRequestEvent
   'newsletter_subscriber.updated': NewsletterSubscriber
   'newsletter_subscriber.verified': NewsletterSubscriber
+  'order.address_changed': Order
   'order.approved': Order
   'order.canceled': Order
   /** @deprecated Use `order.placed` instead. */

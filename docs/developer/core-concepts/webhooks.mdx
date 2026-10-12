@@ -205,7 +205,7 @@ Each webhook delivery sends a JSON payload with the following structure. The `da
 | `name` | Event name (e.g., `order.placed`) |
 | `created_at` | ISO8601 timestamp when event occurred |
 | `data` | Serialized resource data (V3 API format with [prefixed IDs](/api-reference/introduction)) |
-| `metadata` | Additional context: the Spree version, plus facts about the event itself, such as `notify_customer` |
+| `metadata` | Additional context: the Spree version, plus facts about the event itself, such as `notify_customer`, or `changed` on `order.address_changed` |
 
 Payloads carry what a customer could see, never back-office fields such as costs, internal notes or staff names. When an integration needs those, it fetches the record from the Admin API with the `id` in the payload, using a key scoped to what it may read.
 
@@ -400,6 +400,7 @@ Common webhook events include:
 | `order.placed` | A customer completed checkout |
 | `order.paid` | The order is fully paid |
 | `order.canceled` | The order was canceled |
+| `order.address_changed` | An address changed on a placed order; `metadata.changed` lists `shipping_address`, `billing_address` or both |
 | `order.fulfilled` | Everything on the order has shipped |
 | `fulfillment.fulfilled` | One parcel went out |
 | `payment.completed` | A payment succeeded |

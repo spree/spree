@@ -2066,4 +2066,101 @@ describe Spree::Order, type: :model do
       end
     end
   end
+
+  describe 'order.address_changed' do
+    let(:order) { create(:completed_order_with_totals, store: store) }
+    let(:published) { [] }
+
+    before do
+      allow(order).to receive(:publish_event).and_call_original
+      allow(order).to receive(:publish_event).with('order.address_changed', nil, anything) do |_name, _payload, metadata|
+        published << metadata[:changed]
+      end
+    end
+
+    it 'names the shipping address when another address takes its place' do
+      order.update!(ship_address: create(:address))
+
+      expect(published).to eq([['shipping_address']])
+    end
+
+    it 'names both addresses when both change' do
+      order.update!(ship_address: create(:address), bill_address: create(:address))
+
+      expect(published).to eq([%w[shipping_address billing_address]])
+    end
+
+    it 'notices the address row edited in place' do
+      order.bill_address.assign_attributes(address1: '99 Changed Street')
+      order.save!
+
+      expect(published).to eq([['billing_address']])
+    end
+
+    it 'announces a change once however many times the order is saved with it' do
+      Spree::Order.transaction do
+        order.update!(ship_address: create(:address))
+        order.touch
+        order.update!(special_instructions: 'Leave at the door')
+      end
+      order.update!(special_instructions: 'Ring twice')
+
+      expect(published).to eq([['shipping_address']])
+    end
+
+    it 'stays quiet when another row with the same address takes its place' do
+      order.update!(ship_address: order.ship_address.snapshot.tap(&:save!))
+
+      expect(published).to be_empty
+    end
+
+    it 'never announces a change that was rolled back' do
+      Spree::Order.transaction do
+        order.update!(ship_address: create(:address))
+        raise ActiveRecord::Rollback
+      end
+      order.reload.update!(special_instructions: 'Leave at the door')
+
+      expect(published).to be_empty
+    end
+
+    it 'leaves an address row saved on its own to whoever saved it' do
+      order.ship_address.update!(address1: '1 Direct Write')
+      order.update!(special_instructions: 'Leave at the door')
+
+      expect(published).to be_empty
+    end
+
+    it 'stays quiet when only a geocode of the address changed' do
+      order.bill_address.assign_attributes(latitude: 52.2, longitude: 21.0)
+      order.save!
+
+      expect(published).to be_empty
+    end
+
+    it 'announces from the copy that changed the address when another copy saves later' do
+      Spree::Order.transaction do
+        order.update!(ship_address: create(:address))
+        Spree::Order.find(order.id).touch
+      end
+
+      expect(published).to eq([['shipping_address']])
+    end
+
+    it 'stays quiet when no address changed' do
+      order.update!(special_instructions: 'Leave at the door')
+
+      expect(published).to be_empty
+    end
+
+    context 'on a draft order' do
+      let(:order) { create(:order, store: store, status: 'draft') }
+
+      it 'stays quiet' do
+        order.update!(ship_address: create(:address))
+
+        expect(published).to be_empty
+      end
+    end
+  end
 end
