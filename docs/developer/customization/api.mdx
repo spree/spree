@@ -83,6 +83,28 @@ The brand data is available via `?expand=brand`:
 GET /api/v3/store/products/prod_86Rf07xd4z?expand=brand
 ```
 
+### Adding a Field from an Extension
+
+Replacing a serializer works for your own application, but the setting holds one replacement. An extension that replaced `admin_product_serializer` would be silently undone by an application that replaces it too. An extension adds a read-only field to a core serializer instead, and supplies its own serializer for the field's value:
+
+```ruby server/config/initializers/my_extension.rb
+Rails.application.config.after_initialize do
+  Spree.api.extension_fields.register(
+    :admin_product_serializer, :warranty,
+    serializer: 'MyExtension::WarrantySerializer',
+    expand: true
+  )
+end
+```
+
+- **Registered by dependency key**, such as `admin_product_serializer`. If the application replaces that serializer, the field still renders on the replacement.
+- **`expand: true`** shows the field only when the request asks for it with `?expand=warranty`. Without it, the field is always shown. Nested expands reach the field's serializer, so `?expand=warranty.claims` passes `claims` on, the same way `?expand=variants.media` works. Lists apply the same expands to every item.
+- **The value** is the record itself by default. Pass `value: ->(product) { ... }` to hand the field's serializer something else.
+- **Names are unique per serializer.** Registering a name that the serializer or another extension already uses raises an error at boot.
+- **Not in the generated SDK types.** The extension that adds a field declares its TypeScript type.
+
+This is the read side of [adding an attribute to a core resource](#adding-an-attribute-to-a-core-resource), which makes a field writable.
+
 ### Serializer Dependency Keys
 
 Here are the most commonly customized v3 serializers:
