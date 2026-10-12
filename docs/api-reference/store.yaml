@@ -2190,8 +2190,6 @@ paths:
                   coupon_code:
                   item_total: '10.00'
                   display_item_total: "$10.00"
-                  adjustment_total: '0.00'
-                  display_adjustment_total: "$0.00"
                   discount_total: '0.00'
                   display_discount_total: "$0.00"
                   tax_total: '0.00'
@@ -2200,19 +2198,22 @@ paths:
                   display_included_tax_total: "$0.00"
                   additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  total: '10.00'
-                  display_total: "$10.00"
-                  gift_card_total: '0.00'
-                  display_gift_card_total: "$0.00"
-                  amount_due: '10.00'
-                  display_amount_due: "$10.00"
                   delivery_total: '0.00'
                   display_delivery_total: "$0.00"
                   fee_total: '0.00'
                   display_fee_total: "$0.00"
+                  gift_card_total: '0.00'
+                  display_gift_card_total: "$0.00"
                   store_credit_total: '0.00'
                   display_store_credit_total: "$0.00"
+                  total: '10.00'
+                  display_total: "$10.00"
+                  amount_due: '10.00'
+                  display_amount_due: "$10.00"
                   covered_by_store_credit: false
+                  payments: []
+                  adjustment_total: '0.00'
+                  display_adjustment_total: "$0.00"
                   current_step: address
                   completed_steps: []
                   requirements:
@@ -2272,7 +2273,6 @@ paths:
                     option_values: []
                     digital_links: []
                   fulfillments: []
-                  payments: []
                   billing_address:
                   shipping_address:
                   payment_methods: []
@@ -2311,8 +2311,6 @@ paths:
                   coupon_code:
                   item_total: '10.00'
                   display_item_total: "$10.00"
-                  adjustment_total: '0.00'
-                  display_adjustment_total: "$0.00"
                   discount_total: '0.00'
                   display_discount_total: "$0.00"
                   tax_total: '0.00'
@@ -2321,19 +2319,22 @@ paths:
                   display_included_tax_total: "$0.00"
                   additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  total: '10.00'
-                  display_total: "$10.00"
-                  gift_card_total: '0.00'
-                  display_gift_card_total: "$0.00"
-                  amount_due: '10.00'
-                  display_amount_due: "$10.00"
                   delivery_total: '0.00'
                   display_delivery_total: "$0.00"
                   fee_total: '0.00'
                   display_fee_total: "$0.00"
+                  gift_card_total: '0.00'
+                  display_gift_card_total: "$0.00"
                   store_credit_total: '0.00'
                   display_store_credit_total: "$0.00"
+                  total: '10.00'
+                  display_total: "$10.00"
+                  amount_due: '10.00'
+                  display_amount_due: "$10.00"
                   covered_by_store_credit: false
+                  payments: []
+                  adjustment_total: '0.00'
+                  display_adjustment_total: "$0.00"
                   current_step: address
                   completed_steps: []
                   requirements:
@@ -2393,7 +2394,6 @@ paths:
                     option_values: []
                     digital_links: []
                   fulfillments: []
-                  payments: []
                   billing_address:
                   shipping_address:
                   payment_methods: []
@@ -2503,8 +2503,6 @@ paths:
                 coupon_code:
                 item_total: '0.00'
                 display_item_total: "$0.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -2513,19 +2511,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '0.00'
-                display_total: "$0.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '0.00'
+                display_total: "$0.00"
+                amount_due: '0.00'
+                display_amount_due: "$0.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -2546,7 +2547,6 @@ paths:
                 fees: []
                 items: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -2664,8 +2664,6 @@ paths:
                 coupon_code:
                 item_total: '0.00'
                 display_item_total: "$0.00"
-                adjustment_total: '17.00'
-                display_adjustment_total: "$17.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -2674,19 +2672,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '17.00'
-                display_total: "$17.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '17.00'
-                display_amount_due: "$17.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '17.00'
                 display_fee_total: "$17.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '17.00'
+                display_total: "$17.00"
+                amount_due: '17.00'
+                display_amount_due: "$17.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '17.00'
+                display_adjustment_total: "$17.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -2725,7 +2726,6 @@ paths:
                   display_amount: "$12.00"
                 items: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -2847,8 +2847,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -2857,19 +2855,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '10.00'
-                display_amount_due: "$10.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '10.00'
+                display_amount_due: "$10.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -2925,7 +2926,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -3074,8 +3074,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -3084,19 +3082,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '10.00'
-                display_amount_due: "$10.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '10.00'
+                display_amount_due: "$10.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: delivery
                 completed_steps:
                 - address
@@ -3149,7 +3150,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments: []
                 billing_address:
                   id: addr_gbHJdmfrXB
                   label:
@@ -3306,8 +3306,6 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -3316,19 +3314,47 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '20.00'
-                display_total: "$20.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '20.00'
-                display_amount_due: "$20.00"
                 delivery_total: '10.00'
                 display_delivery_total: "$10.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '20.00'
+                display_total: "$20.00"
+                amount_due: '20.00'
+                display_amount_due: "$20.00"
                 covered_by_store_credit: false
+                payments:
+                - id: py_UkLWZg9DAJ
+                  payment_method_id: pm_UkLWZg9DAJ
+                  response_code: BGS-518d4ef9738e
+                  number: R1001-P1
+                  status: completed
+                  amount: '20.00'
+                  display_amount: "$20.00"
+                  source_type: credit_card
+                  source_id: card_UkLWZg9DAJ
+                  source:
+                    id: card_UkLWZg9DAJ
+                    brand: visa
+                    last4: '1111'
+                    month: 12
+                    year: 2027
+                    name: Spree Commerce
+                    default: false
+                    gateway_payment_profile_id:
+                  payment_method:
+                    id: pm_UkLWZg9DAJ
+                    name: Check 8
+                    description:
+                    type: check
+                    session_required: false
+                    source_required: false
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 discounts: []
                 fees: []
                 items:
@@ -3442,32 +3468,6 @@ paths:
                       digital: false
                       pickup: false
                       pickup_point: false
-                payments:
-                - id: py_UkLWZg9DAJ
-                  payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-518d4ef9738e
-                  number: R1001-P1
-                  status: completed
-                  amount: '20.00'
-                  display_amount: "$20.00"
-                  source_type: credit_card
-                  source_id: card_UkLWZg9DAJ
-                  source:
-                    id: card_UkLWZg9DAJ
-                    brand: visa
-                    last4: '1111'
-                    month: 12
-                    year: 2027
-                    name: Spree Commerce
-                    default: false
-                    gateway_payment_profile_id:
-                  payment_method:
-                    id: pm_UkLWZg9DAJ
-                    name: Check 8
-                    description:
-                    type: check
-                    session_required: false
-                    source_required: false
                 billing_address:
                   id: addr_uw2YK1rnl0
                   label:
@@ -3628,8 +3628,6 @@ paths:
                 coupon_code: big50
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -3638,19 +3636,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '10.00'
-                display_amount_due: "$10.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '10.00'
+                display_amount_due: "$10.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -3706,7 +3707,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -3823,8 +3823,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -3833,19 +3831,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '10.00'
-                display_amount_due: "$10.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '10.00'
+                display_amount_due: "$10.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -3901,7 +3902,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -4018,8 +4018,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -4028,19 +4026,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '20.00'
-                display_total: "$20.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '20.00'
-                display_amount_due: "$20.00"
                 delivery_total: '10.00'
                 display_delivery_total: "$10.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '20.00'
+                display_total: "$20.00"
+                amount_due: '20.00'
+                display_amount_due: "$20.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: payment
                 completed_steps:
                 - address
@@ -4168,7 +4169,6 @@ paths:
                       digital: false
                       pickup: false
                       pickup_point: false
-                payments: []
                 billing_address:
                 shipping_address:
                   id: addr_EfhxLZ9ck8
@@ -4309,8 +4309,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -4319,19 +4317,47 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '10.00'
-                display_gift_card_total: "$10.00"
-                amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
-                store_credit_total: '10.00'
-                display_store_credit_total: "-$10.00"
+                gift_card_total: '10.00'
+                display_gift_card_total: "$10.00"
+                store_credit_total: '0.00'
+                display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '0.00'
+                display_amount_due: "$0.00"
                 covered_by_store_credit: true
+                payments:
+                - id: py_UkLWZg9DAJ
+                  payment_method_id: pm_UkLWZg9DAJ
+                  response_code: 1-SC-20260115120000000000
+                  number: cart_UkLWZg9DAJ-P1
+                  status: checkout
+                  amount: '10.00'
+                  display_amount: "$10.00"
+                  source_type: store_credit
+                  source_id: credit_UkLWZg9DAJ
+                  source:
+                    id: credit_UkLWZg9DAJ
+                    amount: '10.00'
+                    amount_used: '0.00'
+                    amount_remaining: '10.00'
+                    display_amount: "$10.00"
+                    display_amount_used: "$0.00"
+                    display_amount_remaining: "$10.00"
+                    currency: USD
+                  payment_method:
+                    id: pm_UkLWZg9DAJ
+                    name: Store Credit
+                    description:
+                    type: store_credit
+                    session_required: false
+                    source_required: true
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -4383,32 +4409,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments:
-                - id: py_UkLWZg9DAJ
-                  payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260115120000000000
-                  number: cart_UkLWZg9DAJ-P1
-                  status: checkout
-                  amount: '10.00'
-                  display_amount: "$10.00"
-                  source_type: store_credit
-                  source_id: credit_UkLWZg9DAJ
-                  source:
-                    id: credit_UkLWZg9DAJ
-                    amount: '10.00'
-                    amount_used: '0.00'
-                    amount_remaining: '10.00'
-                    display_amount: "$10.00"
-                    display_amount_used: "$0.00"
-                    display_amount_remaining: "$10.00"
-                    currency: USD
-                  payment_method:
-                    id: pm_UkLWZg9DAJ
-                    name: Store Credit
-                    description:
-                    type: store_credit
-                    session_required: false
-                    source_required: true
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -4549,8 +4549,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -4559,19 +4557,47 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '10.00'
-                display_amount_due: "$10.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '10.00'
+                display_amount_due: "$10.00"
                 covered_by_store_credit: false
+                payments:
+                - id: py_UkLWZg9DAJ
+                  payment_method_id: pm_UkLWZg9DAJ
+                  response_code: 1-SC-20260115120000000000
+                  number: cart_UkLWZg9DAJ-P1
+                  status: invalid
+                  amount: '10.00'
+                  display_amount: "$10.00"
+                  source_type: store_credit
+                  source_id: credit_UkLWZg9DAJ
+                  source:
+                    id: credit_UkLWZg9DAJ
+                    amount: '10.00'
+                    amount_used: '0.00'
+                    amount_remaining: '10.00'
+                    display_amount: "$10.00"
+                    display_amount_used: "$0.00"
+                    display_amount_remaining: "$10.00"
+                    currency: USD
+                  payment_method:
+                    id: pm_UkLWZg9DAJ
+                    name: Store Credit
+                    description:
+                    type: store_credit
+                    session_required: false
+                    source_required: true
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -4627,32 +4653,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments:
-                - id: py_UkLWZg9DAJ
-                  payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260115120000000000
-                  number: cart_UkLWZg9DAJ-P1
-                  status: invalid
-                  amount: '10.00'
-                  display_amount: "$10.00"
-                  source_type: store_credit
-                  source_id: credit_UkLWZg9DAJ
-                  source:
-                    id: credit_UkLWZg9DAJ
-                    amount: '10.00'
-                    amount_used: '0.00'
-                    amount_remaining: '10.00'
-                    display_amount: "$10.00"
-                    display_amount_used: "$0.00"
-                    display_amount_remaining: "$10.00"
-                    currency: USD
-                  payment_method:
-                    id: pm_UkLWZg9DAJ
-                    name: Store Credit
-                    description:
-                    type: store_credit
-                    session_required: false
-                    source_required: true
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -4766,8 +4766,6 @@ paths:
                 coupon_code:
                 item_total: '29.99'
                 display_item_total: "$29.99"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -4776,19 +4774,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '29.99'
-                display_total: "$29.99"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '29.99'
-                display_amount_due: "$29.99"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '29.99'
+                display_total: "$29.99"
+                amount_due: '29.99'
+                display_amount_due: "$29.99"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -4875,7 +4876,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -5013,8 +5013,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -5023,19 +5021,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '10.00'
-                display_amount_due: "$10.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '10.00'
+                display_amount_due: "$10.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -5091,7 +5092,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -5193,8 +5193,6 @@ paths:
                 coupon_code:
                 item_total: '0.00'
                 display_item_total: "$0.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -5203,19 +5201,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '0.00'
-                display_total: "$0.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '0.00'
+                display_total: "$0.00"
+                amount_due: '0.00'
+                display_amount_due: "$0.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -5236,7 +5237,6 @@ paths:
                 fees: []
                 items: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -5800,8 +5800,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -5810,19 +5808,47 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '0.00'
-                display_amount_due: "$0.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '10.00'
                 display_store_credit_total: "-$10.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '0.00'
+                display_amount_due: "$0.00"
                 covered_by_store_credit: true
+                payments:
+                - id: py_UkLWZg9DAJ
+                  payment_method_id: pm_UkLWZg9DAJ
+                  response_code: 1-SC-20260115120000000000
+                  number: cart_UkLWZg9DAJ-P1
+                  status: checkout
+                  amount: '10.00'
+                  display_amount: "$10.00"
+                  source_type: store_credit
+                  source_id: credit_UkLWZg9DAJ
+                  source:
+                    id: credit_UkLWZg9DAJ
+                    amount: '50.00'
+                    amount_used: '0.00'
+                    amount_remaining: '50.00'
+                    display_amount: "$50.00"
+                    display_amount_used: "$0.00"
+                    display_amount_remaining: "$50.00"
+                    currency: USD
+                  payment_method:
+                    id: pm_UkLWZg9DAJ
+                    name: Store Credit 5
+                    description: Store Credit
+                    type: store_credit
+                    session_required: false
+                    source_required: true
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -5874,32 +5900,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments:
-                - id: py_UkLWZg9DAJ
-                  payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260115120000000000
-                  number: cart_UkLWZg9DAJ-P1
-                  status: checkout
-                  amount: '10.00'
-                  display_amount: "$10.00"
-                  source_type: store_credit
-                  source_id: credit_UkLWZg9DAJ
-                  source:
-                    id: credit_UkLWZg9DAJ
-                    amount: '50.00'
-                    amount_used: '0.00'
-                    amount_remaining: '50.00'
-                    display_amount: "$50.00"
-                    display_amount_used: "$0.00"
-                    display_amount_remaining: "$50.00"
-                    currency: USD
-                  payment_method:
-                    id: pm_UkLWZg9DAJ
-                    name: Store Credit 5
-                    description: Store Credit
-                    type: store_credit
-                    session_required: false
-                    source_required: true
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -6006,8 +6006,6 @@ paths:
                 coupon_code:
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -6016,19 +6014,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '10.00'
-                display_total: "$10.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '10.00'
-                display_amount_due: "$10.00"
                 delivery_total: '0.00'
                 display_delivery_total: "$0.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '10.00'
+                display_amount_due: "$10.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 current_step: address
                 completed_steps: []
                 requirements:
@@ -6084,7 +6085,6 @@ paths:
                   option_values: []
                   digital_links: []
                 fulfillments: []
-                payments: []
                 billing_address:
                 shipping_address:
                 payment_methods: []
@@ -6369,8 +6369,6 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '12.00'
-                display_adjustment_total: "$12.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -6379,19 +6377,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '122.00'
-                display_total: "$122.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '122.00'
-                display_amount_due: "$122.00"
                 delivery_total: '100.00'
                 display_delivery_total: "$100.00"
                 fee_total: '12.00'
                 display_fee_total: "$12.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '122.00'
+                display_total: "$122.00"
+                amount_due: '122.00'
+                display_amount_due: "$122.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '12.00'
+                display_adjustment_total: "$12.00"
                 discounts: []
                 fees:
                 - id: fee_UkLWZg9DAJ
@@ -6521,7 +6522,6 @@ paths:
                       digital: false
                       pickup: false
                       pickup_point: false
-                payments: []
                 billing_address:
                   id: addr_UkLWZg9DAJ
                   label:
@@ -7723,8 +7723,6 @@ paths:
                   completed_at: '2026-01-15T12:00:00.000Z'
                   item_total: '10.00'
                   display_item_total: "$10.00"
-                  adjustment_total: '0.00'
-                  display_adjustment_total: "$0.00"
                   discount_total: '0.00'
                   display_discount_total: "$0.00"
                   tax_total: '0.00'
@@ -7733,19 +7731,22 @@ paths:
                   display_included_tax_total: "$0.00"
                   additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  total: '110.00'
-                  display_total: "$110.00"
-                  gift_card_total: '0.00'
-                  display_gift_card_total: "$0.00"
-                  amount_due: '110.00'
-                  display_amount_due: "$110.00"
                   delivery_total: '100.00'
                   display_delivery_total: "$100.00"
                   fee_total: '0.00'
                   display_fee_total: "$0.00"
+                  gift_card_total: '0.00'
+                  display_gift_card_total: "$0.00"
                   store_credit_total: '0.00'
                   display_store_credit_total: "$0.00"
+                  total: '110.00'
+                  display_total: "$110.00"
+                  amount_due: '110.00'
+                  display_amount_due: "$110.00"
                   covered_by_store_credit: false
+                  payments: []
+                  adjustment_total: '0.00'
+                  display_adjustment_total: "$0.00"
                   discounts: []
                   fees: []
                   items:
@@ -7868,7 +7869,6 @@ paths:
                         digital: false
                         pickup: false
                         pickup_point: false
-                  payments: []
                   billing_address:
                     id: addr_EfhxLZ9ck8
                     label:
@@ -8047,8 +8047,6 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.00'
                 display_item_total: "$10.00"
-                adjustment_total: '0.00'
-                display_adjustment_total: "$0.00"
                 discount_total: '0.00'
                 display_discount_total: "$0.00"
                 tax_total: '0.00'
@@ -8057,19 +8055,22 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.00'
                 display_additional_tax_total: "$0.00"
-                total: '110.00'
-                display_total: "$110.00"
-                gift_card_total: '0.00'
-                display_gift_card_total: "$0.00"
-                amount_due: '110.00'
-                display_amount_due: "$110.00"
                 delivery_total: '100.00'
                 display_delivery_total: "$100.00"
                 fee_total: '0.00'
                 display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
                 store_credit_total: '0.00'
                 display_store_credit_total: "$0.00"
+                total: '110.00'
+                display_total: "$110.00"
+                amount_due: '110.00'
+                display_amount_due: "$110.00"
                 covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
                 discounts: []
                 fees: []
                 items:
@@ -8192,7 +8193,6 @@ paths:
                       digital: false
                       pickup: false
                       pickup_point: false
-                payments: []
                 billing_address:
                   id: addr_EfhxLZ9ck8
                   label:
@@ -12333,8 +12333,6 @@ paths:
                   completed_at: '2026-01-15T12:00:00.000Z'
                   item_total: '10.00'
                   display_item_total: "$10.00"
-                  adjustment_total: '0.00'
-                  display_adjustment_total: "$0.00"
                   discount_total: '0.00'
                   display_discount_total: "$0.00"
                   tax_total: '0.00'
@@ -12343,19 +12341,22 @@ paths:
                   display_included_tax_total: "$0.00"
                   additional_tax_total: '0.00'
                   display_additional_tax_total: "$0.00"
-                  total: '110.00'
-                  display_total: "$110.00"
-                  gift_card_total: '0.00'
-                  display_gift_card_total: "$0.00"
-                  amount_due: '110.00'
-                  display_amount_due: "$110.00"
                   delivery_total: '100.00'
                   display_delivery_total: "$100.00"
                   fee_total: '0.00'
                   display_fee_total: "$0.00"
+                  gift_card_total: '0.00'
+                  display_gift_card_total: "$0.00"
                   store_credit_total: '0.00'
                   display_store_credit_total: "$0.00"
+                  total: '110.00'
+                  display_total: "$110.00"
+                  amount_due: '110.00'
+                  display_amount_due: "$110.00"
                   covered_by_store_credit: false
+                  payments: []
+                  adjustment_total: '0.00'
+                  display_adjustment_total: "$0.00"
                   discounts: []
                   fees: []
                   items:
@@ -12477,7 +12478,6 @@ paths:
                         digital: false
                         pickup: false
                         pickup_point: false
-                  payments: []
                   billing_address:
                     id: addr_EfhxLZ9ck8
                     label:
@@ -14055,12 +14055,6 @@ components:
         display_item_total:
           type: string
           nullable: true
-        adjustment_total:
-          type: string
-          nullable: true
-        display_adjustment_total:
-          type: string
-          nullable: true
         discount_total:
           type: string
           nullable: true
@@ -14085,24 +14079,6 @@ components:
         display_additional_tax_total:
           type: string
           nullable: true
-        total:
-          type: string
-          nullable: true
-        display_total:
-          type: string
-          nullable: true
-        gift_card_total:
-          type: string
-          nullable: true
-        display_gift_card_total:
-          type: string
-          nullable: true
-        amount_due:
-          type: string
-          nullable: true
-        display_amount_due:
-          type: string
-          nullable: true
         delivery_total:
           type: string
           nullable: true
@@ -14115,14 +14091,42 @@ components:
         display_fee_total:
           type: string
           nullable: true
+        gift_card_total:
+          type: string
+          nullable: true
+        display_gift_card_total:
+          type: string
+          nullable: true
         store_credit_total:
           type: string
           nullable: true
         display_store_credit_total:
           type: string
           nullable: true
+        total:
+          type: string
+          nullable: true
+        display_total:
+          type: string
+          nullable: true
+        amount_due:
+          type: string
+          nullable: true
+        display_amount_due:
+          type: string
+          nullable: true
         covered_by_store_credit:
           type: boolean
+        payments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Payment"
+        adjustment_total:
+          type: string
+          nullable: true
+        display_adjustment_total:
+          type: string
+          nullable: true
         current_step:
           type: string
         completed_steps:
@@ -14164,10 +14168,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Fulfillment"
-        payments:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Payment"
         billing_address:
           allOf:
           - "$ref": "#/components/schemas/Address"
@@ -14210,8 +14210,6 @@ components:
       - coupon_code
       - item_total
       - display_item_total
-      - adjustment_total
-      - display_adjustment_total
       - discount_total
       - display_discount_total
       - tax_total
@@ -14220,19 +14218,22 @@ components:
       - display_included_tax_total
       - additional_tax_total
       - display_additional_tax_total
-      - total
-      - display_total
-      - gift_card_total
-      - display_gift_card_total
-      - amount_due
-      - display_amount_due
       - delivery_total
       - display_delivery_total
       - fee_total
       - display_fee_total
+      - gift_card_total
+      - display_gift_card_total
       - store_credit_total
       - display_store_credit_total
+      - total
+      - display_total
+      - amount_due
+      - display_amount_due
       - covered_by_store_credit
+      - payments
+      - adjustment_total
+      - display_adjustment_total
       - current_step
       - completed_steps
       - requirements
@@ -14245,7 +14246,6 @@ components:
       - fees
       - items
       - fulfillments
-      - payments
       - billing_address
       - shipping_address
       - payment_methods
@@ -18091,22 +18091,10 @@ components:
           - ZWL
           - ZWN
           - ZWR
-        total:
-          type: string
-          nullable: true
-        display_total:
-          type: string
-          nullable: true
         item_total:
           type: string
           nullable: true
         display_item_total:
-          type: string
-          nullable: true
-        delivery_total:
-          type: string
-          nullable: true
-        display_delivery_total:
           type: string
           nullable: true
         discount_total:
@@ -18133,6 +18121,12 @@ components:
         display_additional_tax_total:
           type: string
           nullable: true
+        delivery_total:
+          type: string
+          nullable: true
+        display_delivery_total:
+          type: string
+          nullable: true
         fee_total:
           type: string
           nullable: true
@@ -18145,20 +18139,30 @@ components:
         display_gift_card_total:
           type: string
           nullable: true
-        amount_due:
-          type: string
-          nullable: true
-        display_amount_due:
-          type: string
-          nullable: true
         store_credit_total:
           type: string
           nullable: true
         display_store_credit_total:
           type: string
           nullable: true
+        total:
+          type: string
+          nullable: true
+        display_total:
+          type: string
+          nullable: true
+        amount_due:
+          type: string
+          nullable: true
+        display_amount_due:
+          type: string
+          nullable: true
         covered_by_store_credit:
           type: boolean
+        payments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Payment"
         fulfillment_status:
           type: string
           nullable: true
@@ -18195,10 +18199,6 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Address"
           nullable: true
-        payments:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Payment"
         orders:
           type: array
           items:
@@ -18208,12 +18208,8 @@ components:
       - number
       - email
       - currency
-      - total
-      - display_total
       - item_total
       - display_item_total
-      - delivery_total
-      - display_delivery_total
       - discount_total
       - display_discount_total
       - tax_total
@@ -18222,21 +18218,25 @@ components:
       - display_included_tax_total
       - additional_tax_total
       - display_additional_tax_total
+      - delivery_total
+      - display_delivery_total
       - fee_total
       - display_fee_total
       - gift_card_total
       - display_gift_card_total
-      - amount_due
-      - display_amount_due
       - store_credit_total
       - display_store_credit_total
+      - total
+      - display_total
+      - amount_due
+      - display_amount_due
       - covered_by_store_credit
+      - payments
       - fulfillment_status
       - payment_status
       - completed_at
       - billing_address
       - shipping_address
-      - payments
       - orders
       x-typelizer: true
     Order:
@@ -18503,12 +18503,6 @@ components:
         display_item_total:
           type: string
           nullable: true
-        adjustment_total:
-          type: string
-          nullable: true
-        display_adjustment_total:
-          type: string
-          nullable: true
         discount_total:
           type: string
           nullable: true
@@ -18533,24 +18527,6 @@ components:
         display_additional_tax_total:
           type: string
           nullable: true
-        total:
-          type: string
-          nullable: true
-        display_total:
-          type: string
-          nullable: true
-        gift_card_total:
-          type: string
-          nullable: true
-        display_gift_card_total:
-          type: string
-          nullable: true
-        amount_due:
-          type: string
-          nullable: true
-        display_amount_due:
-          type: string
-          nullable: true
         delivery_total:
           type: string
           nullable: true
@@ -18563,14 +18539,42 @@ components:
         display_fee_total:
           type: string
           nullable: true
+        gift_card_total:
+          type: string
+          nullable: true
+        display_gift_card_total:
+          type: string
+          nullable: true
         store_credit_total:
           type: string
           nullable: true
         display_store_credit_total:
           type: string
           nullable: true
+        total:
+          type: string
+          nullable: true
+        display_total:
+          type: string
+          nullable: true
+        amount_due:
+          type: string
+          nullable: true
+        display_amount_due:
+          type: string
+          nullable: true
         covered_by_store_credit:
           type: boolean
+        payments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Payment"
+        adjustment_total:
+          type: string
+          nullable: true
+        display_adjustment_total:
+          type: string
+          nullable: true
         discounts:
           type: array
           items:
@@ -18587,10 +18591,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Fulfillment"
-        payments:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Payment"
         billing_address:
           allOf:
           - "$ref": "#/components/schemas/Address"
@@ -18631,8 +18631,6 @@ components:
       - completed_at
       - item_total
       - display_item_total
-      - adjustment_total
-      - display_adjustment_total
       - discount_total
       - display_discount_total
       - tax_total
@@ -18641,24 +18639,26 @@ components:
       - display_included_tax_total
       - additional_tax_total
       - display_additional_tax_total
-      - total
-      - display_total
-      - gift_card_total
-      - display_gift_card_total
-      - amount_due
-      - display_amount_due
       - delivery_total
       - display_delivery_total
       - fee_total
       - display_fee_total
+      - gift_card_total
+      - display_gift_card_total
       - store_credit_total
       - display_store_credit_total
+      - total
+      - display_total
+      - amount_due
+      - display_amount_due
       - covered_by_store_credit
+      - payments
+      - adjustment_total
+      - display_adjustment_total
       - discounts
       - fees
       - items
       - fulfillments
-      - payments
       - billing_address
       - shipping_address
       - gift_card

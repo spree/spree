@@ -75,13 +75,6 @@ module Spree
         outstanding_balance != 0
       end
 
-      # Balance still to collect after applied store credit, never negative.
-      #
-      # @return [BigDecimal]
-      def amount_due
-        [outstanding_balance - total_applied_store_credit, 0].max
-      end
-
       # @return [Boolean]
       def paid?
         total.positive? && payment_total >= total

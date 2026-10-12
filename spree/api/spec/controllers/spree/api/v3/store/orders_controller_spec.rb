@@ -123,6 +123,24 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:not_found)
       end
+
+      it 'runs no more queries for a checkout that reached more sellers' do
+        larger_cart = create(:cart_with_line_items, store: store)
+        larger_cart.update_columns(completed_at: Time.current)
+        create(:order_group, :with_parcels, store: store, customer: nil, cart: larger_cart,
+                                            token: larger_cart.token, sellers_count: 3)
+
+        count_queries = lambda do |handle, token|
+          request.headers['x-spree-token'] = token
+          queries = 0
+          counter = ->(*, payload) { queries += 1 unless payload[:name] == 'SCHEMA' || payload[:sql].match?(/\A(BEGIN|COMMIT|SAVEPOINT|RELEASE)/) }
+          ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') { get :show, params: { id: handle } }
+          queries
+        end
+
+        expect(count_queries.call(larger_cart.prefixed_id, larger_cart.token)).
+          to eq(count_queries.call(cart.prefixed_id, cart.token))
+      end
     end
 
     context 'with spree token' do

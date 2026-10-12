@@ -157,7 +157,7 @@ module Spree
     end
 
     def discount_amount
-      fulfillment.discounts.promotion.sum(:amount)
+      fulfillment.promotion_discount_total
     end
   end
 end

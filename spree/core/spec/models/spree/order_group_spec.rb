@@ -58,8 +58,17 @@ RSpec.describe Spree::OrderGroup, type: :model do
 
     # Store credit is applied against the group, so only the group can take it
     # off — a child reads no payments at all and would report the full amount.
-    # Counted once, never twice: the credit is also a completed payment, so the
-    # subtraction would go negative without the floor.
+    # The credit is captured, so the 30 is already counted as paid; the card
+    # still owes the rest.
+    it 'counts captured store credit once while the rest is still owed' do
+      store_credit = create(:store_credit, store: store, customer: group.customer, amount: 30)
+      create(:store_credit_payment, order: nil, order_group: group, source: store_credit,
+                                    amount: 30, status: 'completed')
+      create(:payment, order: nil, order_group: group, amount: total - 30, status: 'pending')
+
+      expect(settled.amount_due).to eq(total - 30)
+    end
+
     it 'takes applied store credit off, and never goes negative' do
       store_credit = create(:store_credit, store: store, customer: group.customer, amount: total)
       create(:store_credit_payment, order: nil, order_group: group, source: store_credit,

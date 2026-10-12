@@ -48,23 +48,24 @@ module Spree
             raise ActiveRecord::RecordNotFound.new(nil, Spree::Order.name)
           end
 
-          # `market` and `fulfillments` are the withdrawal deadline's inputs and
-          # the serializer emits it on every response, so they are preloaded
-          # here rather than through `collection_includes` — this controller
-          # loads through `find_order!`, which never touches a collection.
+          # Preloaded lazily, which `collection` would do for a list: this
+          # controller loads through `find_order!`, so it asks for it itself.
+          # Every association the serializer walks — items, parcels, their
+          # rates and discounts — is then fetched once for all the rows that
+          # need it, rather than once per row.
           def scope
             storefront_access_policy.
               scope(current_store.orders.complete, token: order_token).
-              includes(:market, :fulfillments)
+              preload_associations_lazily
           end
 
-          # A group renders its children through the same order serializer, so
-          # they need the same preloads — plus the payments, which a grouped
-          # checkout hangs off the group rather than off any one child.
+          # A group renders every child through the order serializer, so this
+          # matters most here: without it each seller in the checkout adds its
+          # own round of queries for the same associations.
           def group_scope
             storefront_access_policy.
               scope(current_store.order_groups, token: order_token).
-              includes(:payments, orders: [:market, :fulfillments])
+              preload_associations_lazily
           end
 
           def serializer_class

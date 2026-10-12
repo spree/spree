@@ -121,18 +121,6 @@ module Spree
 
     alias ship_total delivery_total
 
-    # Still to collect once applied store credit is taken off, never negative —
-    # {Spree::Purchase::Totals#amount_due} asked of a whole checkout.
-    #
-    # The credit comes off this record's payments, which is where a grouped
-    # checkout's live; a child asked the same question answers the full amount,
-    # because the rows it would read hang off the group instead.
-    #
-    # @return [BigDecimal]
-    def amount_due
-      [outstanding_balance - total_applied_store_credit, 0].max
-    end
-
     # Where the checkout was made from, carried on the children because they
     # are what the checkout produced.
     #
