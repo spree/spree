@@ -10,8 +10,8 @@ import type { ApplyReport, ConfigClient } from './types.js'
 interface LiveStore {
   default_country_code: string | null
   default_currency: string
-  preferred_unit_system?: string
-  preferred_weight_unit?: string
+  unit_system?: string
+  weight_unit?: string
 }
 
 const POUND_IN: Record<string, number> = { lb: 1, oz: 16, kg: 0.45359237, g: 453.59237 }
@@ -23,8 +23,8 @@ const POUND_IN: Record<string, number> = { lb: 1, oz: 16, kg: 0.45359237, g: 453
  * to the two decimals the API stores.
  */
 function boxVariables(store: LiveStore): Variables {
-  const metric = store.preferred_unit_system === 'metric'
-  const weightUnit = store.preferred_weight_unit ?? (metric ? 'kg' : 'lb')
+  const metric = store.unit_system === 'metric'
+  const weightUnit = store.weight_unit ?? (metric ? 'kg' : 'lb')
   const weight = Math.round(0.5 * (POUND_IN[weightUnit] ?? 1) * 100) / 100
   return {
     BOX_LENGTH: metric ? '30' : '12',

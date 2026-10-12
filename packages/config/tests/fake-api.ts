@@ -9,7 +9,7 @@ type Record_ = Record<string, unknown> & { id: string }
  */
 export class FakeApi implements ConfigClient {
   readonly collections = new Map<string, Record_[]>()
-  store: Record_ = { id: 'store_1', name: 'Shop', preferred_guest_checkout: true }
+  store: Record_ = { id: 'store_1', name: 'Shop', guest_checkout: true }
   scopes: string[] | null = ['write_all']
   readonly calls: {
     method: string

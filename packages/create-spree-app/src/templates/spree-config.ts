@@ -26,7 +26,8 @@ version: 1
 # channels:
 #   - code: wholesale
 #     name: Wholesale
-#     preferences: { storefront_access: login_required, guest_checkout: false }
+#     storefront_access: login_required
+#     guest_checkout: false
 
 # customer_groups:
 #   - name: Wholesale
