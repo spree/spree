@@ -149,7 +149,7 @@ delivery_methods:
       section: 'delivery_zones',
       key: 'Europe',
     })
-    expect(europe.payload.calculator_type).toBe('flat_rate')
+    expect((europe.payload.calculator as { type: string }).type).toBe('flat_rate')
     const broken = operations.find((operation) => operation.key === 'Broken')
     expect(broken?.kind).toBe('error')
     expect(broken?.message).toMatch(
@@ -160,14 +160,12 @@ delivery_methods:
 
   it('plans the store singleton as an update of its preferences', async () => {
     const api = new FakeApi()
-    const { config } = parseConfig(
-      'version: 1\nstore:\n  name: Acme\n  preferences: { guest_checkout: false }\n',
-    )
+    const { config } = parseConfig('version: 1\nstore:\n  name: Acme\n  guest_checkout: false\n')
     const plan = await planConfig(config, api)
     expect(kinds(plan)).toEqual({ 'store/store': 'update' })
     expect(planOperations(plan)[0].changes).toEqual([
       { attribute: 'name', from: 'Shop', to: 'Acme' },
-      { attribute: 'preferred_guest_checkout', from: true, to: false },
+      { attribute: 'guest_checkout', from: true, to: false },
     ])
   })
 
@@ -276,7 +274,7 @@ products:
       variants: [
         {
           sku: 'TEE',
-          prices: [{ currency: 'USD', amount: 29.99 }],
+          prices: [{ currency: 'USD', amount: '29.99' }],
           stock_levels: [
             { stock_location_id: api.all('/stock_locations')[0].id, count_on_hand: 100 },
           ],
@@ -499,7 +497,7 @@ describe('introspect', () => {
         active: true,
         default: true,
         stock_location_ids: [],
-        preferred_guest_checkout: true,
+        guest_checkout: true,
         created_at: 'x',
       },
     ])
@@ -513,12 +511,9 @@ describe('introspect', () => {
       {
         name: 'Standard EU',
         delivery_zone_id: api.all('/delivery_zones')[0].id,
-        calculator_type: 'flat_rate',
-        calculator_preferences: {
-          amount: '9.9',
-          currency: 'EUR',
-          minimum_item_total: null,
-          amounts: {},
+        calculator: {
+          type: 'flat_rate',
+          preferences: { amount: '9.9', currency: 'EUR', minimum_item_total: null, amounts: {} },
         },
       },
     ])
@@ -533,7 +528,7 @@ describe('introspect', () => {
           name: 'Online',
           active: true,
           default: true,
-          preferences: { guest_checkout: true },
+          guest_checkout: true,
         },
       ],
       delivery_zones: [{ name: 'Europe', countries: ['DE'] }],
@@ -697,7 +692,7 @@ products:
     await deployConfig(config, api)
     const create = api.calls.find((call) => call.method === 'POST' && call.path === '/products')
     expect((create?.body as { variants: Payload[] } | undefined)?.variants).toEqual([
-      { sku: 'TEE', prices: [{ currency: 'USD', compare_at_amount: 40 }] },
+      { sku: 'TEE', prices: [{ currency: 'USD', compare_at_amount: '40' }] },
     ])
   })
 

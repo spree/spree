@@ -14,6 +14,7 @@ import {
   type ProductTypeEntry,
   type VariantEntry,
 } from '../schema.js'
+import { decimalString } from '../spec.js'
 import type { LiveRecord } from '../types.js'
 import {
   FIRST_PARTY,
@@ -451,6 +452,29 @@ export const products: Section<ProductEntry, Product> = {
       params: { expand: PRODUCT_EXPAND.join(',') },
       body,
     })
+  },
+  async wire(payload) {
+    if (!Array.isArray(payload.variants)) return payload
+    return {
+      ...payload,
+      variants: (payload.variants as Payload[]).map((variant) => ({
+        ...variant,
+        ...(variant.cost_price !== undefined
+          ? { cost_price: decimalString(variant.cost_price) }
+          : {}),
+        ...(Array.isArray(variant.prices)
+          ? {
+              prices: (variant.prices as Payload[]).map((price) => ({
+                ...price,
+                ...(price.amount !== undefined ? { amount: decimalString(price.amount) } : {}),
+                ...(price.compare_at_amount !== undefined
+                  ? { compare_at_amount: decimalString(price.compare_at_amount) }
+                  : {}),
+              })),
+            }
+          : {}),
+      })),
+    }
   },
   async afterWrite(entry, live, _changes, ctx) {
     if (!entry.channels) return
