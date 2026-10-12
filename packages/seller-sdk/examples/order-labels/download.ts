@@ -15,11 +15,17 @@ const label = await client.orders.fulfillments.labels.get(
 
 if (label.download_url) {
   // Labels are served through the API, so fetch with the session's token
-  // and seller, then open the file for printing:
+  // and seller, then drive the browser download for printing:
   const response = await fetch(`https://your-store.com${label.download_url}`, {
     headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
   })
+  if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
   const url = URL.createObjectURL(await response.blob())
-  window.open(url)
+  const link = Object.assign(document.createElement('a'), {
+    href: url,
+    download: `label-${label.tracking_number ?? label.id}.${label.format ?? 'pdf'}`,
+  })
+  link.click()
+  URL.revokeObjectURL(url)
 }
 // endregion:example

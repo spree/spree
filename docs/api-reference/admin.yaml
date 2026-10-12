@@ -9872,7 +9872,6 @@ paths:
         '200':
           description: CSV file
           content:
-            application/json: {}
             text/csv:
               schema:
                 type: string
@@ -12429,7 +12428,6 @@ paths:
         '200':
           description: CSV template
           content:
-            application/json: {}
             text/csv:
               schema:
                 type: string
@@ -12720,7 +12718,6 @@ paths:
         '200':
           description: CSV file
           content:
-            application/json: {}
             text/csv:
               schema:
                 type: string
@@ -39515,8 +39512,6 @@ paths:
       responses:
         '200':
           description: document streamed
-          content:
-            application/json: {}
         '422':
           description: no document attached
           content:

@@ -527,6 +527,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         let(:fulfillment_id) { fulfillment.prefixed_id }
         let(:id) { create(:shipping_label, :uploaded, :with_file, owner: fulfillment, store: store).prefixed_id }
 
+        schema type: :string, format: :binary
+
         run_test! do |response|
           expect(response.body).to start_with('%PDF')
         end
