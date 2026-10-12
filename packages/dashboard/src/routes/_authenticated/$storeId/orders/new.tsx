@@ -47,11 +47,8 @@ import {
   NEW_ORDER_DEFAULTS,
   type NewOrderFormValues,
   newOrderFormSchema,
+  PO_DOCUMENT_ACCEPT,
 } from '../../../../schemas/order'
-
-/** What a purchase order plausibly arrives as — mirrors the server allowlist. */
-const PO_DOCUMENT_ACCEPT =
-  'application/pdf,image/jpeg,image/png,image/heic,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/new')({
   component: NewOrderPage,
