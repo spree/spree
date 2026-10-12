@@ -8,3 +8,4 @@ const client = createSellerClient({
 
 // region:example
 await client.products.delete('prod_UkLWZg9DAJ')
+// endregion:example

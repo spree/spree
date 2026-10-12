@@ -120,8 +120,12 @@ module CodeSamplesHelper
   end
 
   # Mirrors `sdk_example` for the Seller SDK — examples live under
-  # `packages/seller-sdk/examples/`. `as:` picks the client the sample starts
-  # from (see SELLER_SDK_CLIENT_INITS).
+  # `packages/seller-sdk/examples/`.
+  #
+  # @param name [String] the example's path under `examples/`, without `.ts`
+  # @param as [Symbol] the client the sample starts from: `:seller`, `:user`
+  #   or `:guest` (see SELLER_SDK_CLIENT_INITS)
+  # @return [Array<Hash>] the operation's code samples
   def seller_sdk_example(name, as: :seller)
     source = EXAMPLE_CACHE[[:seller, name]] ||= load_example_body(SELLER_SDK_EXAMPLES_ROOT, name, 'Seller SDK')
     code_samples(

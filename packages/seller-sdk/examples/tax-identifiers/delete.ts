@@ -8,3 +8,4 @@ const client = createSellerClient({
 
 // region:example
 await client.taxIdentifiers.remove('txi_xxx')
+// endregion:example

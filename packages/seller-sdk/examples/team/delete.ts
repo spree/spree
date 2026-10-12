@@ -8,3 +8,4 @@ const client = createSellerClient({
 
 // region:example
 await client.team.remove('adm_xxx')
+// endregion:example

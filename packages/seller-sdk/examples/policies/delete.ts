@@ -8,3 +8,4 @@ const client = createSellerClient({
 
 // region:example
 await client.policies.delete('returns-policy')
+// endregion:example

@@ -6,3 +6,4 @@ const client = createSellerClient({
 
 // region:example
 await client.auth.logout()
+// endregion:example

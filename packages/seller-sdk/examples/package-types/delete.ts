@@ -8,3 +8,4 @@ const client = createSellerClient({
 
 // region:example
 await client.packageTypes.delete('pkgtype_UkLWZg9DAJ')
+// endregion:example

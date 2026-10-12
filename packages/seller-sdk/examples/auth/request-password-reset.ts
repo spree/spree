@@ -9,3 +9,4 @@ await client.auth.requestPasswordReset({
   email: 'seller@example.com',
   redirect_url: 'https://sellers.your-store.com/reset-password',
 })
+// endregion:example
