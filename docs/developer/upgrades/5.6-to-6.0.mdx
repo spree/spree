@@ -1089,7 +1089,7 @@ A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefr
 | `string \| null` where a price or amount is read | Money fields are `null` for guests when the store hides prices | [Money can be null](#money-can-be-null) |
 | A property that "does not exist" in a `…Params` type | Request types now list exactly what the endpoint accepts | [Request types](#request-types-match-the-api) |
 | `ProductSort`, or a filter key | List filters and sort are typed | [List filters and sort](#list-filters-and-sort-are-typed) |
-| `number` is not assignable to `string` in a filter or amount | Money is a decimal string everywhere | Send `'20.00'`, not `20` ([Money](#money)) |
+| `number` is not assignable to `string` in a filter or amount | Money is a decimal string everywhere | Send `'20.00'`, not `20` ([Money](#money), [store credit](#store-credit-amounts-are-decimal-strings)) |
 
 ### List filters and sort are typed
 
@@ -1164,6 +1164,16 @@ const country = market.country_codes.find((code) => code === params.country.toUp
 ### Money can be null
 
 Every money field, including `display_*` amounts (a gift card's or store credit's `display_amount_remaining`, a delivery rate's `cost`), is typed `string | null`: it is `null` for a guest when the store hides prices (`prices_hidden`). Handle `null` where you format or add amounts, for example by showing nothing, or a "price on request" label.
+
+### Store credit amounts are decimal strings
+
+`carts.storeCredits.apply()` takes the amount as a decimal string, like every other money value. Leave the amount out to apply as much store credit as the cart can use:
+
+```ts
+await client.carts.storeCredits.apply(cartId, '25.00', options) // not 25
+```
+
+The endpoint (`POST /carts/:id/store_credits`) now refuses a JSON number with `422 invalid_money_format`, so a storefront that calls the API without the SDK must send a string too.
 
 ### Deprecated fields still work until 6.1
 
