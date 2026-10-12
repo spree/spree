@@ -16619,11 +16619,22 @@ paths:
                   currency: USD
                   total: '0.00'
                   item_total: '0.00'
+                  delivery_total: '0.00'
+                  discount_total: '0.00'
+                  tax_total: '0.00'
+                  included_tax_total: '0.00'
+                  additional_tax_total: '0.00'
+                  fee_total: '0.00'
+                  gift_card_total: '0.00'
+                  amount_due: '0.00'
+                  store_credit_total: '0'
+                  covered_by_store_credit: false
                   fulfillment_status:
                   payment_status:
                   completed_at: '2026-01-15T12:00:00.000Z'
                   billing_address:
                   shipping_address:
+                  payments: []
                   orders: []
                   customer_id: cust_UkLWZg9DAJ
                   cart_id:
@@ -16633,7 +16644,6 @@ paths:
                   store_owner_notification_delivered: false
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  payments: []
                 meta:
                   page: 1
                   limit: 25
