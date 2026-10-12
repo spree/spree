@@ -14,6 +14,12 @@
         "!$TURBO_ROOT$/packages/*-starter/{node_modules,dist,.turbo,.tanstack}/**",
         "!$TURBO_ROOT$/packages/*-starter/.env.local"
       ]
+    },
+    "test": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/docs/api-reference/admin.yaml"]
+    },
+    "typecheck": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/docs/api-reference/admin.yaml"]
     }
   }
 }
