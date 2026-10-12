@@ -639,6 +639,8 @@ These were deprecated in 5.x and are **gone now** — there is no bridge, so cal
 | `Store#supported_shipping_zones` | `#countries_with_shipping_coverage` |
 | `Spree.searcher_class` | `Spree.search_provider` |
 | `Spree.admin_user_class.spree_admin_created?` | `.spree_admin.exists?` |
+| `Spree::Admin::Updater` | `Spree::UpdateCheck` — the dashboard shows the update notice; see [Update Checks and Usage Data](/developer/deployment/usage-data) |
+| `Spree::Admin::RuntimeConfig.admin_updater_enabled` | `Spree::Config.update_check_enabled`, or `SPREE_UPDATE_CHECK_DISABLED=1` |
 | `BaseMailer#set_email_locale` | wrap the action body in `with_store_locale(store) { ... }` |
 | `Asset#styles`, `ImageMethods#generate_url`, `#original_url` | Active Storage variants with `cdn_image_url` |
 | `Spree::ImageMethods`, `Spree::NumberAsParam` (concerns) | deleted — `NumberAsParam` was already a no-op; prefixed IDs come from `Spree::PrefixedId` |

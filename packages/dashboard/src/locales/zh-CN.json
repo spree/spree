@@ -6256,6 +6256,18 @@
       "every_language": {
         "notice": "在您为{{language}}发布版本之前，所有语言的客户都会收到此版本。"
       }
+    },
+    "updates": {
+      "available": "Spree {{version}} 现已发布",
+      "running": "您正在使用 Spree {{version}}。"
+    },
+    "notifications": {
+      "title": "通知",
+      "open": "通知",
+      "open_unread": "通知，1 条未读",
+      "empty": "暂无新通知。",
+      "view_on_github": "在 GitHub 上查看",
+      "release_notes_unavailable": "无法加载版本说明，请前往 GitHub 查看。"
     }
   }
 }

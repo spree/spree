@@ -134,6 +134,8 @@ Links in emails use the host configured via [`SPREE_HOST`](#urls-and-hosts).
 | --- | --- | --- |
 | `RAILS_ENV` | `production` | Runtime environment — leave as `production` when deploying |
 | `RAILS_LOG_LEVEL` | `info` | Log level (`debug`, `info`, `warn`, `error`) |
+| `SPREE_TELEMETRY_DISABLED` | — | Set to `1` to stop the usage data the daily update check sends; the check keeps sending the version. `DO_NOT_TRACK=1` does the same. See [Update Checks and Usage Data](/developer/deployment/usage-data) |
+| `SPREE_UPDATE_CHECK_DISABLED` | — | Set to `1` to stop the daily update check entirely; the dashboard's update notice never appears |
 
 ## File Storage (S3 / Cloudflare R2)
 

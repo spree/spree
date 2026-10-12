@@ -255,6 +255,8 @@ Spree::Core::Engine.add_routes do
         # Self-service profile updates (e.g. the admin's own UI language)
         patch 'me', to: 'me#update'
 
+        resource :updates, only: :show
+
         # Store Settings
         resource :store, only: [:show, :update], controller: 'store' do
           get :data_sources
