@@ -3,105 +3,107 @@ title: "Gift Cards"
 description: "Learn how to issue gift cards, follow their balances and redeem them on orders in Spree Commerce."
 ---
 
-A gift card is money paid to you up front, by a customer buying a present for someone, or given away by you as a goodwill gesture or a prize. Whoever holds it spends the value in your shop later.
+A gift card holds a set amount of money that anyone with the code can spend in your shop. Each gift card carries a code, an amount in one currency, and a running balance.
 
-Each card holds an amount in one currency. When a customer enters the code at checkout, the card pays what it can of the order, and anything left stays on the card for their next visit. Every card keeps a running record of how much has been spent and how much remains, so you always know what you still owe.
+The customer types the code at checkout and the card pays the maximum amount it can for the order. If the gift card does not cover the full order total, the customer pays the remainder with another payment method. Any money left on the gift card after the order stays on the card, and the customer can spend it on a later order. A card's remaining balance falls every time the card is used, so the Gift Cards list always shows what your store still owes on each card.
 
-Gift cards are not the same as store credit. Store credit is a balance you give one particular customer, from their profile or when you refund a return, and it is covered on the [<u>Store Credits</u>](/user/loyalty/store-credits) page.
+Customers often buy gift cards as presents. Stores also hand gift cards out as prizes, as goodwill after an order went wrong, or as a thank-you to a regular customer. A gift card you sell is paid for before any stock leaves your warehouse. The person who redeems a gift card is often not the person who bought it, so a gift card can bring new customers into your shop.
 
-With a handful of cards a year, the list is a simple record of who holds what. Once you sell cards over the counter or give them out in batches for a campaign, it becomes the place you check before you honour a code and the record your accountant asks for at year end.
+Store credit is the closest alternative to a gift card. Store credit sits on one named customer's account rather than on a code, and only that customer can spend it. See [<u>Store Credits</u>](/user/loyalty/store-credits).
 
-Gift cards sit with store credit under Loyalty rather than under Promotions. To manage gift cards, navigate to **Loyalty → Gift Cards** in the admin dashboard.
+To manage gift cards, navigate to **Loyalty → Gift Cards** in the admin dashboard.
 
-## Reviewing Your Gift Cards
+## Reviewing Gift Cards
 
-The list shows one row for every card you have issued, newest first.
+The list shows one row for every gift card you have issued, newest first.
 
 ![The Gift Cards list with one active card](/docs/images/user/loyalty/gift-cards/1-gift-cards-overview.png)
 
 | Column | What it means |
 |---|---|
-| **Code** | What the customer types at checkout. When the card belongs to a customer, their email address sits under the code. |
-| **Status** | Whether the card can still be spent. See the table below. |
-| **Amount** | What the card was worth when you issued it. |
-| **Used** | How much has been spent on orders so far. |
-| **Remaining** | What the card can still pay for. This is what you still owe on it. |
-| **Expires** | The last date the card is valid, or a dash when it never expires. |
+| **Code** | What the customer types at checkout to apply the gift card. If the card belongs to a customer, their email address sits under the code. |
+| **Status** | Whether the gift card can still be spent. See the table below. |
+| **Amount** | What the gift card was worth when you issued it. |
+| **Used** | How much of the balance has been spent so far. |
+| **Remaining** | What the gift card can still pay for. This is what your store still owes on it. |
+| **Expires** | The last date the gift card is valid, or a dash if the card never expires. |
 
-Type a code into the search box to check a card a customer has brought to you. The **Status** filter answers "which cards still have money on them", and **Add filter** narrows the list by currency, batch, customer, who issued the card, expiry date, or when the card was created or last changed.
+Type a code into the search box to find one specific gift card. The **Status** filter narrows the list to cards that still have money on them. **Add filter** narrows the list by currency, batch, customer, who issued the card, expiry date, or when the card was created or last changed.
 
-A card moves through these statuses as it is spent:
+A gift card moves through these statuses as it is spent:
 
 | Status | What it means |
 |---|---|
 | **Active** | Nothing has been spent yet. The full amount is available. |
-| **Partially redeemed** | Some of the value has been spent and the rest is still available. |
-| **Redeemed** | The whole amount has been spent. The card is kept on the list as a record, but nothing is left on it. |
+| **Partially redeemed** | Some of the balance has been spent. The rest is still available. |
+| **Redeemed** | The whole amount has been spent. The gift card stays on the list as a record, but nothing is left on it. |
 
 ## How to Issue a Gift Card
 
 Click **New gift card** in the top-right corner. A panel opens over the list with these fields:
 
-- **Quantity** - How many cards to issue. Leave it at 1 for a single card.
-- **Code** - The code the customer will type. Leave it blank and a code of sixteen letters and numbers is made for you. Type your own when you want something memorable for a campaign.
-- **Amount** - What the card is worth. It has to be above zero, and the panel stays open with a message under **Amount** until it is.
-- **Currency** - The currency the card's value is held in. Choose it with care, because the box is locked once the card is issued.
-- **Expires** - Set a date if your gift card terms limit how long a card is valid. Leave it on **No expiry** otherwise.
-- **Customer (optional)** - The customer the card belongs to. Start typing their email address and pick them from the list.
+- **Quantity** - How many gift cards to issue. Leave **Quantity** at 1 to issue a single card.
+- **Code** - The code the customer types at checkout. Leave **Code** blank and a 16-character code is generated automatically. Enter your own code when you want something memorable for a campaign.
+- **Amount** - What the gift card is worth. **Amount** must be above zero, and the panel stays open with a message under the field until it is.
+- **Currency** - The currency the gift card's balance is held in. The currency cannot be changed after the card is created.
+- **Expires** - The last date the gift card can be used. Leave **Expires** on **No expiry** if your gift card terms do not limit how long a card is valid.
+- **Customer (optional)** - The customer the gift card belongs to. Start typing their email address and select them from the list.
 
 ![The New gift card panel filled in for one $50.00 card attached to a customer](/docs/images/user/loyalty/gift-cards/2-new-gift-card-form.png)
 
-Fill in the panel and click **Create gift card**. The panel closes, a *Gift card created* message appears, and the new card sits at the top of the list as **Active**, with its full amount under **Remaining** and nothing under **Used**.
+Click **Create gift card**. The new card appears at the top of the list as **Active**, with its full amount under **Remaining**.
 
-![The new gift card at the top of the list, attached to a customer](/docs/images/user/loyalty/gift-cards/3-new-gift-card.png)
+Creating a gift card does not send the code to anyone. Pass the code to the customer yourself, by email, on a printed card, or at the till. The code is all the customer needs in order to spend the balance.
 
-Creating the card does not send it to anyone, so pass the code on to the customer yourself, by email, on a printed card or at the till. The code is all they need to spend it.
+### How to Create a Batch of Cards
 
-### Issuing a Batch of Cards
+Enter a number above 1 in **Quantity** and the panel changes to suit a batch of cards. **Code** becomes **Prefix**, which is the text every code in the batch starts with. The **Customer (optional)** field is removed, because a batch cannot be attached to one customer. The button names the number of cards it will create, for example **Create 3 gift cards**.
 
-Type a number above 1 in **Quantity** and the panel changes to suit a batch. **Code** becomes **Prefix**, the **Customer (optional)** field goes away, and the button counts the cards, for example **Create 3 gift cards**. Use this for a campaign, a set of cards sold over the counter, or anything where the cards are not going to one named person.
+Use a batch for a campaign, for a set of cards sold over the counter, or for any cards that are not going to one named person.
 
 ## How to Check a Card's Balance
 
-Click a card's code in the list, or open the row menu and choose **Edit**. A panel opens with the card's code as its title. Its **Usage** section shows what the card was worth, how much has been spent, what remains and which member of staff issued it.
+Click a gift card's code in the list, or open the row menu and choose **Edit**. A panel opens with the card's code as its title. The **Usage** section of that panel shows what the card was worth, how much has been spent, how much remains, and which staff member issued it.
 
-![A gift card's panel showing its usage](/docs/images/user/loyalty/gift-cards/4-gift-card-detail.png)
+![A gift card's panel showing its usage](/docs/images/user/loyalty/gift-cards/3-gift-card-detail.png)
 
-Once a card is fully spent, every box in the panel is greyed out and the panel is there to read.
+Once a gift card is fully spent, every field in the panel is read-only.
 
 ## How Customers Redeem a Card at Checkout
 
-Customers spend a card in your shop's checkout. They type the code into the **Gift card or discount code** box in the order summary and click **Apply**. The summary then shows a gift card line taking the card's value off the order, and the amount still to pay underneath.
+The customer types the code into the **Gift card or discount code** box in the checkout order summary and clicks **Apply**. The order summary then shows a gift card line taking the card's balance off the order, with the amount still to pay underneath.
 
-When the card covers the whole order, the payment section reads *No payment required* and the customer clicks **Place Order**. When the card covers only part of it, the customer picks a payment method for the rest, such as **Check**, and places the order. The order page then lists both payments, one for the card's share and one for the rest.
+If the gift card covers the full order total, the payment section reads *No payment required* and the customer clicks **Place Order**. If the gift card covers only part of the order total, the customer selects a payment method for the remainder and places the order. The order then lists two payments, one for the gift card's share and one for the remainder.
 
-![The checkout summary with a gift card paying part of the order and the rest due](/docs/images/user/loyalty/gift-cards/5-checkout-summary.png)
+![The checkout summary with a gift card paying part of the order and the rest due](/docs/images/user/loyalty/gift-cards/4-checkout-summary.png)
 
-A card that is not attached to a customer can be spent by anyone who has the code, including a shopper checking out as a guest. A card with money left after an order keeps that balance, and the customer can use the same code again on a later order until nothing remains.
+A gift card that is not attached to a customer can be spent by anyone who has the code, including a shopper checking out as a guest. If a gift card has money left after an order, the customer can use the same code again on a later order until the balance reaches zero.
 
-On the order page in the admin dashboard, the **Discounts & Credit** card shows which gift card paid for the order and how much it covered.
+On the order page in the admin dashboard, the **Discounts & Credit** card names which gift card paid for the order and how much of the total it covered.
 
 ## How to Apply a Gift Card to a Draft Order
 
-When your team builds an order on a customer's behalf, you can take a gift card as part of the payment.
+When your team builds an order on a customer's behalf, a gift card can pay for part or all of that order.
 
 1. Open the draft order. In the **Discounts & Credit** card, click **Apply** next to **Gift card**.
-2. Type the card's code and click **Add**.
-3. The card's code and the amount it covers appear in the **Gift card** row, and the order's **Outstanding balance** drops by the same amount.
+2. Enter the gift card's code and click **Add**.
+3. The card's code and the amount it covers appear in the **Gift card** row, and the order's **Outstanding balance** drops by that amount.
 
-If the card does not cover the whole order, add a payment for the rest from the **Payments** card before you complete the order. If you add more items after applying the card, the card stays at the amount it covered when you applied it, and the extra is added to the outstanding balance.
+If the gift card does not cover the full order total, add a payment for the remainder from the **Payments** card before you complete the order.
 
-To take a card off a draft order, click **Remove** in the **Gift card** row and confirm with **Remove**. The order's outstanding balance goes back up, and the amount returns to the card's remaining balance.
+If you add more items to the draft order after applying the gift card, the amount the card covers does not change, and the cost of the new items is added to the outstanding balance.
+
+To take a gift card off a draft order, click **Remove** in the **Gift card** row and confirm with **Remove**. The order's outstanding balance goes back up by that amount, and the amount returns to the gift card's remaining balance.
 
 ## How to Delete a Gift Card
 
-Open the row menu on the card and choose **Delete**, then confirm with **Delete**. The card disappears from the list.
+Open the row menu on the gift card and choose **Delete**, then confirm with **Delete**. The gift card is removed from the list.
 
-<Warning>Deleting a card erases it from your store's records rather than keeping it as a cancelled card. If the card still has a balance, that balance goes with it, so check **Remaining** first and settle up with the customer before you delete.</Warning>
+<Warning>Deleting a gift card erases it from your store's records rather than keeping it as a canceled card. If the card still has a balance, that balance is erased with it, so check **Remaining** and settle up with the customer before you delete.</Warning>
 
 ## Further Reading
 
-- [<u>Store Credits</u>](/user/loyalty/store-credits) - Balances you owe individual customers
-- [<u>Draft orders</u>](/user/orders/draft-orders) - Building an order for a customer, with a gift card as payment
-- [<u>Orders list and the order page</u>](/user/orders/orders) - Where a redeemed card shows on an order
-- [<u>Payments</u>](/user/settings/payments) - The payment methods customers use for anything a card does not cover
+- [<u>Store Credits</u>](/user/loyalty/store-credits) - Balances your store owes individual customers
+- [<u>Draft Orders</u>](/user/orders/draft-orders) - Building an order for a customer, with a gift card as payment
+- [<u>Orders</u>](/user/orders/orders) - Where a redeemed gift card shows on an order
+- [<u>Payments</u>](/user/settings/payments) - The payment methods customers use for anything a gift card does not cover
