@@ -71055,12 +71055,6 @@ components:
           description: An amount in the order currency for a `flat` discount, or a
             percentage for a `percent` one.
           example: '10.00'
-        amount:
-          type: string
-          format: decimal
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          description: On create, an older spelling of `value`, read when `value`
-            is absent. On update, the new amount of the row.
         value_type:
           type: string
           enum:
@@ -71074,6 +71068,7 @@ components:
           nullable: true
       required:
       - label
+      - value
     DiscountUpdateParams:
       type: object
       properties:
@@ -71084,8 +71079,7 @@ components:
           type: string
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
-          description: On create, an older spelling of `value`, read when `value`
-            is absent. On update, the new amount of the row.
+          description: The new amount of the row, in the order currency.
     EmailTemplateDraftParams:
       type: object
       properties:

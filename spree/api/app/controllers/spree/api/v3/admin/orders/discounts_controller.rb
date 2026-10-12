@@ -14,11 +14,13 @@ module Spree
             request_params :discount do |body|
               body.attribute :label, :string, required: true, on: :create, example: 'Customer appeasement'
               body.attribute :value, :decimal,
+                required: true, on: :create,
                 only: :create,
                 example: '10.00',
                 description: 'An amount in the order currency for a `flat` discount, or a percentage for a `percent` one.'
               body.attribute :amount, :decimal,
-                description: 'On create, an older spelling of `value`, read when `value` is absent. On update, the new amount of the row.'
+                only: :update,
+                description: 'The new amount of the row, in the order currency.'
               body.attribute :value_type, :string,
                 only: :create,
                 choices: %w[flat percent],
@@ -35,9 +37,8 @@ module Spree
                 line_item = @parent.line_items.find_by_prefix_id!(params[:line_item_id]) if params[:line_item_id].present?
 
                 value_type = params[:value_type].presence || 'flat'
-                value_name = params[:value].present? ? :value : :amount
                 # A flat discount is money in the order's currency; a percentage is a rate.
-                value = value_type == 'percent' ? decimal_param(value_name) : money_param(value_name, @parent.currency)
+                value = value_type == 'percent' ? decimal_param(:value) : money_param(:value, @parent.currency)
 
                 result = Spree.order_discount_create_service.call(
                   order: @parent,

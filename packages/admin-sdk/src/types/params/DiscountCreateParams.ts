@@ -3,12 +3,7 @@
 export type DiscountCreateParams = {
   label: string
   /** An amount in the order currency for a `flat` discount, or a percentage for a `percent` one. */
-  value?: string
-  /**
-   * On create, an older spelling of `value`, read when `value` is absent. On update, the new amount
-   * of the row.
-   */
-  amount?: string
+  value: string
   /** Defaults to `flat`. */
   value_type?: 'flat' | 'percent'
   /**

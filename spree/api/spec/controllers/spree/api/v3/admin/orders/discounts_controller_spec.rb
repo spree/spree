@@ -44,6 +44,14 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
       expect(order.reload.total).to eq(original_total - 3)
     end
 
+    it 'takes the value only as `value`, not the retired `amount` spelling' do
+      expect do
+        post :create, params: { order_id: order.prefixed_id, label: 'Appeasement', amount: '3.00' }, as: :json
+      end.not_to(change { order.discounts.count })
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'distributes an order-level discount across line items' do
       post :create, params: {
         order_id: order.prefixed_id,
