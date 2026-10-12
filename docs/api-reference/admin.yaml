@@ -39305,6 +39305,8 @@ paths:
                 document_filename:
                 document_byte_size:
                 document_url:
+              schema:
+                "$ref": "#/components/schemas/TaxExemptionCertificate"
       requestBody:
         content:
           application/json:
@@ -65873,10 +65875,13 @@ components:
           nullable: true
         issued_at:
           type: string
+          nullable: true
         expires_at:
           type: string
+          nullable: true
         verified_at:
           type: string
+          nullable: true
         created_at:
           type: string
         updated_at:

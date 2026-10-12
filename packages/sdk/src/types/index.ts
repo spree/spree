@@ -10,7 +10,7 @@ import type {
   ProductSort,
 } from './filters.generated'
 import type { Cart as CartType } from './generated'
-import type { AddressCreateParams, CompanyAddressCreateParams, LineItemInputParams } from './params'
+import type { AddressUpdateParams, CompanyAddressUpdateParams, LineItemInputParams } from './params'
 
 export * from './filters.generated'
 // Re-export all generated types (unprefixed: Product, Order, etc.)
@@ -123,10 +123,10 @@ export type OrderListParams = ListParams<OrderFilters, OrderSort>
 export type LineItemInput = LineItemInputParams
 
 /** @deprecated Split by action: `AddressCreateParams` and `AddressUpdateParams`. Removed in 6.1. */
-export type AddressParams = AddressCreateParams
+export type AddressParams = AddressUpdateParams
 
 /** @deprecated Split by action: `CompanyAddressCreateParams` and `CompanyAddressUpdateParams`. Removed in 6.1. */
-export type CompanyAddressParams = CompanyAddressCreateParams
+export type CompanyAddressParams = CompanyAddressUpdateParams
 
 // Cart operations
 // Payments

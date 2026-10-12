@@ -119,6 +119,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
       response '200', 'certificate updated' do
         let(:body) { { issuing_authority: 'Finanzamt Berlin', expires_at: '2027-12-31T23:59:59Z' } }
 
+        schema '$ref' => '#/components/schemas/TaxExemptionCertificate'
+
         run_test! do |response|
           expect(JSON.parse(response.body)['issuing_authority']).to eq('Finanzamt Berlin')
         end

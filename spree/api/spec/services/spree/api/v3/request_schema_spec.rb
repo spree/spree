@@ -229,6 +229,12 @@ RSpec.describe Spree::Api::V3::RequestSchema do
       expect(schema.json_schema(:update)).not_to have_key(:required)
       expect(shared.json_schema).not_to have_key(:required)
       expect { declare { |body| body.require_attributes :missing } }.to raise_error(ArgumentError, /not an attribute/)
+
+      always = declare do |body|
+        body.include_attributes(described_class.new { |schema| schema.attribute :city, :string, required: true })
+        body.require_attributes :city, on: :create
+      end
+      expect(always.json_schema(:update)[:required]).to eq(['city'])
     end
 
     it 'rejects an :object without a shape' do

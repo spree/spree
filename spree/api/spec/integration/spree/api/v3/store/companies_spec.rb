@@ -248,6 +248,8 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
+        schema '$ref' => '#/components/schemas/Address'
+
         run_test! do |response|
           expect(JSON.parse(response.body)['label']).to eq('Northern Warehouse')
         end
@@ -278,6 +280,8 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         let(:body) { { label: 'Northern Warehouse', default_shipping: true } }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['label']).to eq('Northern Warehouse')

@@ -100,12 +100,14 @@ module Spree
             required == true || (required == :create && action == :create)
           end
 
-          # This field, required on `on` (`:create`) or always.
+          # This field, required on `on` (`:create`) or always. A field
+          # already required always stays required always.
           #
+          # @param on [Symbol, nil] `:create`, or nil for every action
           # @return [Field]
           def required_copy(on)
             copy = dup
-            copy.instance_variable_set(:@required, on || true)
+            copy.instance_variable_set(:@required, required == true ? true : on || true)
             copy
           end
 
@@ -238,6 +240,7 @@ module Spree
         #
         # @param names [Array<Symbol>]
         # @param on [Symbol, nil] `:create` to require them only when creating
+        # @return [void]
         def require_attributes(*names, on: nil)
           raise ArgumentError, '`on:` is :create' if on && on != :create
 

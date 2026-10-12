@@ -12053,6 +12053,8 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Address"
       requestBody:
         content:
           application/json:
@@ -12120,6 +12122,8 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Address"
       requestBody:
         content:
           application/json:

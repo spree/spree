@@ -114,7 +114,7 @@ export function listCatalogProductsPage(catalogId: string, page: number, limit =
 
 export interface CatalogSavePayload {
   /** Settings PATCH body; omitted when the form is clean. */
-  attributes?: CatalogCreateParams
+  attributes?: CatalogUpdateParams
   /** Staged assortment additions, flushed on Save. */
   addProductIds?: string[]
   /** Staged assortment removals, flushed on Save. */
