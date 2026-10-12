@@ -433,11 +433,19 @@
       "destination": "/user/loyalty/gift-cards"
     },
     {
+      "source": "/user/loyalty/issue-gift-card",
+      "destination": "/user/loyalty/gift-cards"
+    },
+    {
       "source": "/user/customers/issue-gift-card",
-      "destination": "/user/loyalty/issue-gift-card"
+      "destination": "/user/loyalty/gift-cards"
     },
     {
       "source": "/user/customers/assign-store-credits",
+      "destination": "/user/loyalty/store-credits"
+    },
+    {
+      "source": "/user/loyalty/store-credits-list",
       "destination": "/user/loyalty/store-credits"
     },
     {
@@ -1233,9 +1241,7 @@
                     "group": "Loyalty",
                     "pages": [
                       "user/loyalty/gift-cards",
-                      "user/loyalty/issue-gift-card",
-                      "user/loyalty/store-credits",
-                      "user/loyalty/store-credits-list"
+                      "user/loyalty/store-credits"
                     ],
                     "icon": "gift"
                   },
@@ -2889,9 +2895,7 @@
             "group": "Loyalty",
             "pages": [
               "user/loyalty/gift-cards",
-              "user/loyalty/issue-gift-card",
-              "user/loyalty/store-credits",
-              "user/loyalty/store-credits-list"
+              "user/loyalty/store-credits"
             ]
           },
           {
