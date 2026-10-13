@@ -1,5 +1,26 @@
 # @spree/seller-dashboard
 
+## 1.0.0-rc.3
+
+### Minor Changes
+
+- [#14856](https://github.com/spree/spree/pull/14856) [`05d6372`](https://github.com/spree/spree/commit/05d637294259a03b53e1849be6638bcb2b328d14) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Admin and Seller APIs no longer return `display_*` money fields, so their types drop them; format the amount with its currency instead. The dashboard and seller panel format every amount in the admin's own language. `formatMoney` writes a currency's ISO 4217 decimals and takes `{ unitPrice: true }` for up to four.
+
+- [#14866](https://github.com/spree/spree/pull/14866) [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `directUploads.create()` is replaced by `files.create()` and `files.upload()`, which uploads a file and resolves to a `signed_id` in one call, either straight to storage or in the request itself. The `signed_id` expires after a day. Every parameter that takes one is now named `signed_id` or `<slot>_signed_id` (`avatar_signed_id`, `logo_signed_id`, `attachment_signed_id`, `document_signed_id`, `file_signed_id`, `po_document_signed_id`, …). In `@spree/dashboard-core`, `useDirectUpload` becomes `useFileUpload({ visibility })`, and `signedIdParam` builds the three-state write for an image or document field.
+
+- [#14853](https://github.com/spree/spree/pull/14853) [`3001ebf`](https://github.com/spree/spree/commit/3001ebf19fa8c361f13a7d627384d4d86a829787) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Changed preferences to a typed contract. Every `/…/types` entry returns `schema`, the JSON Schema of the type's `preferences`, instead of `preference_schema`, and rows no longer repeat it; `PreferenceField` and `DeliveryPreferenceField` are replaced by `PreferenceSchema`. Each configurable family's settings are typed per `type` (`PromotionRulePreferencesMap`, `TypedPromotionRule`, …), and an extension adds its own by declaration merging. Store, channel, import and seller profile settings drop the `preferred_` prefix (`guest_checkout`, `timezone`, `delimiter`), the store's decimal settings are strings, and delivery methods read and write `calculator: { type, preferences }`. Preference writes are validated, refused with `invalid_preferences` and a JSON pointer per failing value. `paymentMethods.types()` lists every provider with `installed` set on those the store already has.
+
+### Patch Changes
+
+- [#14879](https://github.com/spree/spree/pull/14879) [`f184f25`](https://github.com/spree/spree/commit/f184f25097c94977eb930ac34dcbac98ff8ced7d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Methods that delete a record are named `delete` in both SDKs. In the Seller SDK, `taxIdentifiers.remove`, `team.remove` and `invitations.revoke` are now `taxIdentifiers.delete`, `team.delete` and `invitations.delete`. In the Admin SDK, `sellers.team.remove` and `sellers.invitations.remove` are now `sellers.team.delete` and `sellers.invitations.delete`. Methods that detach something from a cart or order (`remove`), or change a record without deleting it (`revoke`), keep their names.
+
+  Seller SDK types are corrected: `team.invite` returns the `Invitation`, and `auth.providers` returns `AuthProvidersResponse`.
+
+- Updated dependencies [[`05d6372`](https://github.com/spree/spree/commit/05d637294259a03b53e1849be6638bcb2b328d14), [`9728851`](https://github.com/spree/spree/commit/9728851b963a288e89f00ab85bcb993d3ebf5293), [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a), [`34b80f0`](https://github.com/spree/spree/commit/34b80f0db561300db3e6982543c7ec724e2f4c03), [`9b5911d`](https://github.com/spree/spree/commit/9b5911d12649671ce9896f28473a2940f9a1cba0), [`525959d`](https://github.com/spree/spree/commit/525959de11cf10af12fc0936f908ab3af000857f), [`3525c00`](https://github.com/spree/spree/commit/3525c00440076a17cce671f3e20801309d8ba586), [`f508a38`](https://github.com/spree/spree/commit/f508a389f7f09f5ca85bfa32a2dfcec9517ea1bf), [`f184f25`](https://github.com/spree/spree/commit/f184f25097c94977eb930ac34dcbac98ff8ced7d), [`a90a9cc`](https://github.com/spree/spree/commit/a90a9ccc68caff9349af1c0a888e6497f72d7228), [`90af080`](https://github.com/spree/spree/commit/90af080e5e3745423475ef9deef21f4dfc0bb71b), [`5c1eeee`](https://github.com/spree/spree/commit/5c1eeee6b5f2570c34271bcd8fd6c93fa6dbe36e), [`3001ebf`](https://github.com/spree/spree/commit/3001ebf19fa8c361f13a7d627384d4d86a829787), [`6990f37`](https://github.com/spree/spree/commit/6990f3730ffad5245dd116b458a7b8ceeb67d310)]:
+  - @spree/seller-sdk@1.0.0-rc.2
+  - @spree/dashboard-core@1.0.0-rc.3
+  - @spree/dashboard-ui@1.0.0-rc.3
+
 ## 1.0.0-rc.2
 
 ### Patch Changes

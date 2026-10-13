@@ -1,5 +1,27 @@
 # @spree/dashboard-core
 
+## 1.0.0-rc.3
+
+### Minor Changes
+
+- [#14856](https://github.com/spree/spree/pull/14856) [`05d6372`](https://github.com/spree/spree/commit/05d637294259a03b53e1849be6638bcb2b328d14) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Admin and Seller APIs no longer return `display_*` money fields, so their types drop them; format the amount with its currency instead. The dashboard and seller panel format every amount in the admin's own language. `formatMoney` writes a currency's ISO 4217 decimals and takes `{ unitPrice: true }` for up to four.
+
+- [#14859](https://github.com/spree/spree/pull/14859) [`9728851`](https://github.com/spree/spree/commit/9728851b963a288e89f00ab85bcb993d3ebf5293) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Plugins and host apps can now add pages outside a store, such as onboarding, sign-up and account pages. File routes go in the new `authenticatedRoutes` (signed-in users) or `publicRoutes` (anyone) directories of a plugin's `spree.dashboard` marker; registry routes take `scope: 'authenticated'` or `scope: 'public'` with a full URL path. Both mount at the root, outside the store layout, and a page that takes the path of a built-in page fails with an error naming it.
+
+  The signed-in landing page at `/` can be replaced through the new `store_selection` slot, for example with a list of stores and a way to create one, and the login page renders extra content, such as a sign-up link, from the new `login.after` slot.
+
+- [#14866](https://github.com/spree/spree/pull/14866) [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `directUploads.create()` is replaced by `files.create()` and `files.upload()`, which uploads a file and resolves to a `signed_id` in one call, either straight to storage or in the request itself. The `signed_id` expires after a day. Every parameter that takes one is now named `signed_id` or `<slot>_signed_id` (`avatar_signed_id`, `logo_signed_id`, `attachment_signed_id`, `document_signed_id`, `file_signed_id`, `po_document_signed_id`, …). In `@spree/dashboard-core`, `useDirectUpload` becomes `useFileUpload({ visibility })`, and `signedIdParam` builds the three-state write for an image or document field.
+
+### Patch Changes
+
+- [#14852](https://github.com/spree/spree/pull/14852) [`3525c00`](https://github.com/spree/spree/commit/3525c00440076a17cce671f3e20801309d8ba586) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Money fields are now shown and read in the number format of the person using the dashboard, whatever the currency or market: an admin whose dashboard is in German types `1.234,56` for dollars and euros alike. Previously the format followed the currency's market, which was ambiguous when two markets shared a currency. `useFormCurrencyLocale` and the panel client's `markets` entry are removed; use `useMoneyLocale()`.
+
+- [#14856](https://github.com/spree/spree/pull/14856) [`f508a38`](https://github.com/spree/spree/commit/f508a389f7f09f5ca85bfa32a2dfcec9517ea1bf) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Preferences of the new `money` type are shown with their currency's symbol in settings forms and as money in calculator summaries, instead of being guessed from the preference's name. `PreferenceField.type` documents the `money` type.
+
+- [#14854](https://github.com/spree/spree/pull/14854) [`90af080`](https://github.com/spree/spree/commit/90af080e5e3745423475ef9deef21f4dfc0bb71b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - List methods of documented endpoints now accept typed filter and sort parameters, generated from the filters each endpoint actually accepts; methods of endpoints the API reference does not document yet keep loose parameters. A misspelled filter, a filter the endpoint does not support, or an unknown sort field is now a type error instead of a request that silently returns the unfiltered list. `ProductListParams`, `CategoryListParams`, `CollectionListParams` and `OrderListParams` keep their names and are now generated; they no longer accept arbitrary keys. Filters an app adds through its own extensions can be sent unchecked inside `q` (`list({ q: { erp_id_eq: 'ERP-1' } })`), generated as declarations with `spree filters types`, or declared by hand by extending `<Resource>FilterExtensions` and `<Resource>SortExtensions`. The filter building blocks (`TextFilters`, `SortKey`, …) are exported for those declarations.
+
+  The dashboard's allowed-origins search, delivery zones by profile, and several filters and sorts on payment methods, sellers, option types, markets, custom field definitions and gift cards now take effect; the API used to ignore them.
+
 ## 1.0.0-rc.2
 
 ### Patch Changes
