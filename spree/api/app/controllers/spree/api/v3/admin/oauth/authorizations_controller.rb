@@ -94,7 +94,10 @@ module Spree
             # a standing credential at all. A staffer who cannot revoke an
             # agent should not be able to connect one.
             def require_connect_permission!
-              return if current_ability.can?(:update, Spree::OauthApplication)
+              # Narrowed too: connecting an agent is a write a delegated
+              # credential must hold in its own scopes, not merely inherit.
+              return if holds_permission?('write_oauth_applications') &&
+                        current_ability.can?(:update, Spree::OauthApplication)
 
               render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
@@ -151,10 +154,14 @@ module Spree
             # Every individual permission the merchant could hand over, which
             # is what the consent screen draws a row for.
             def grantable_scopes
-              held = current_ability.try(:permission_keys)&.map(&:to_s) || []
               requested = Spree.permissions.expand_keys(@pre_auth.scopes.to_a)
 
-              (requested & held).sort
+              # `staff_permission_keys` rather than the role's own keys: when
+              # the request arrived on a delegated credential it is already
+              # narrowed to that credential's scopes. Reading the role
+              # directly let an agent holding `read_products` approve itself
+              # a grant carrying everything its owner can do.
+              (requested & staff_permission_keys).sort
             end
 
 

@@ -156,6 +156,40 @@ RSpec.describe Spree::Api::V3::ParamsNormalizer do
       expect(result['items'].first['variant_id']).to eq(variant.id)
     end
 
+    # `category_ids` names `has_many :categories`, so the singular lookup
+    # found nothing and the id went through unchecked.
+    context 'inside a plural list' do
+      let(:product_controller) do
+        Class.new(ActionController::API) do
+          include Spree::Api::V3::ParamsNormalizer
+
+          public :resolve_prefixed_ids
+
+          def model_class
+            Spree::Product
+          end
+        end.new
+      end
+
+      it 'leaves an id of the wrong kind' do
+        product = create(:product)
+        hash = { 'category_ids' => [product.prefixed_id] }.with_indifferent_access
+
+        result = product_controller.resolve_prefixed_ids(hash)
+
+        expect(result['category_ids']).to eq([product.prefixed_id])
+      end
+
+      it 'decodes an id of the right kind' do
+        category = create(:category)
+        hash = { 'category_ids' => [category.prefixed_id] }.with_indifferent_access
+
+        result = product_controller.resolve_prefixed_ids(hash)
+
+        expect(result['category_ids']).to eq([category.id])
+      end
+    end
+
     it 'decodes a top-level association id of the right kind' do
       customer = create(:customer)
       hash = { 'customer_id' => customer.prefixed_id }.with_indifferent_access

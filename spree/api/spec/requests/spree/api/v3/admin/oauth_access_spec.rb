@@ -67,6 +67,24 @@ RSpec.describe 'Admin API OAuth access', type: :request do
       expect(product.reload.name).to eq('Espresso Machine')
     end
 
+    # The widest version of the same fault: the consent endpoint mints
+    # grants, so an agent that could reach it with its owner's whole role
+    # could approve itself anything that role can do — and a grant is a
+    # standing ceiling, not a one-off.
+    it 'cannot approve itself a grant wider than its own scopes' do
+      verifier = SecureRandom.urlsafe_base64(64)
+      challenge = Base64.urlsafe_encode64(Digest::SHA256.digest(verifier), padding: false)
+
+      post '/api/v3/admin/oauth/authorize',
+           params: { client_id: application.uid, redirect_uri: application.redirect_uri,
+                     response_type: 'code', scope: 'write_orders',
+                     code_challenge: challenge, code_challenge_method: 'S256' },
+           headers: { 'Authorization' => "Bearer #{token}" }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(Spree::OauthAccessGrant.where(application: application)).to be_empty
+    end
+
     # Several resources are guarded by a permission not named after them, so
     # a name derived from the resource type fell outside the catalog and went
     # unchecked — a read-only grant could rewrite an option type's or a

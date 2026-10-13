@@ -75,20 +75,17 @@ module Spree
       # their ability. A caller who may read orders but not products cannot
       # reach the product dimension here either.
       def unauthorized_members(query)
-        if context.user_principal?
-          forbidden = query.unreadable_subjects(context.ability).first
-          return if forbidden.nil?
+        # Asked of the context for every principal, not just a key.
+        #
+        # `context.ability` is the staff member's whole role, so a token
+        # granted `read_reports` and `read_orders` could group by the product
+        # dimension its merchant never consented to. `holds?` is the narrowed
+        # answer: a key's scopes, or a grant's, or the role when the person is
+        # acting directly.
+        missing = query.required_key_scopes.reject { |scope| context.holds?(scope) }
+        return if missing.empty?
 
-          { error: "You do not have permission to report on #{forbidden.to_s.demodulize.underscore.humanize.downcase}." }
-        else
-          # Through the context, so a key's scopes expand the one way the rest
-          # of the gate expands them — `has_scope?` treats `read_all` as
-          # granting scopes no staff key may actually hold.
-          missing = query.required_key_scopes.reject { |scope| context.holds?(scope) }
-          return if missing.empty?
-
-          { error: "This API key lacks the #{missing.to_sentence} scope." }
-        end
+        { error: "You do not have permission to report on #{missing.to_sentence.delete_prefix('read_').tr('_', ' ')}." }
       end
 
       # Totals first: most reporting questions are answered by them alone,
