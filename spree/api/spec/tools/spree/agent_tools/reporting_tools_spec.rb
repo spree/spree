@@ -111,4 +111,33 @@ RSpec.describe 'agent reporting tools' do
       expect(names).not_to include('query_report', 'describe_reporting')
     end
   end
+  # A dimension is a permission question, and a delegated credential answers
+  # it with its own scopes rather than its owner's whole role — otherwise a
+  # grant for reports and orders could group by products too.
+  describe 'a dimension the grant does not cover' do
+    let(:staff) { create(:admin_user) }
+    let(:narrow) do
+      Spree::AgentTools::Context.new(
+        store: store, user: staff, granted_scopes: %w[read_reports read_orders],
+        request_headers: agent_headers_for(staff)
+      )
+    end
+
+    it 'refuses to group by it' do
+      tool = Spree.agent_tools.available_for(narrow).find { |t| t.tool_name == 'query_report' }
+
+      result = tool.call(metrics: ['gross_sales'], dimensions: ['product'])
+
+      expect(result[:error]).to include('permission')
+      expect(result[:rows]).to be_nil
+    end
+
+    it 'still allows one the grant covers' do
+      tool = Spree.agent_tools.available_for(narrow).find { |t| t.tool_name == 'query_report' }
+
+      result = tool.call(metrics: ['gross_sales'], dimensions: ['completed_at'])
+
+      expect(result[:error]).to be_nil
+    end
+  end
 end

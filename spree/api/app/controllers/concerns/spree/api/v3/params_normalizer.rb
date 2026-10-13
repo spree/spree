@@ -144,7 +144,11 @@ module Spree
           return if key.nil? || owner.nil?
 
           name = key.to_s.sub(/_ids?\z/, '')
-          reflection = owner.try(:reflect_on_association, name)
+          # `category_ids` names `has_many :categories`, so the singular form
+          # finds nothing and the id went through unchecked — the same hole
+          # the singular `_id` case had.
+          reflection = owner.try(:reflect_on_association, name) ||
+                       owner.try(:reflect_on_association, name.pluralize)
           return if reflection.nil? || reflection.polymorphic?
 
           reflection.klass
