@@ -13,6 +13,7 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       supports_dry_run
       attribute :label, :string
       attribute :token, :string
+      attribute :product_id, :string
       validates :label, presence: true
       mask_attribute :token
       def collection = Spree::Product.order(:id)
@@ -57,6 +58,14 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       post :create, params: { task_name: 'TestMaintenance::Runs', arguments: {} }
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'passes an argument holding a prefixed id through as given' do
+      product = create(:product, store: store)
+
+      post :create, params: { task_name: 'TestMaintenance::Runs', arguments: { label: 'x', product_id: product.prefixed_id } }
+
+      expect(Spree::MaintenanceTaskRun.last.arguments['product_id']).to eq(product.prefixed_id)
     end
 
     it 'rejects an argument the task does not declare' do

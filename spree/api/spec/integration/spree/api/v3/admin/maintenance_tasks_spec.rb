@@ -131,16 +131,7 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          task_name: { type: :string, example: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods' },
-          arguments: { type: :object, example: {} },
-          dry_run: { type: :boolean, example: true },
-          csv_file: { type: :string, description: 'Signed id of an uploaded blob, for tasks whose rows come from a CSV' }
-        },
-        required: %w[task_name]
-      }
+      request_body_for
 
       response '201', 'maintenance task started' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

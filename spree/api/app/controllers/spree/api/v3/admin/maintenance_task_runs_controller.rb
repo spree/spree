@@ -13,19 +13,37 @@ module Spree
 
           scoped_resource :maintenance_tasks
 
+          request_params :maintenance_task_run do |body|
+            body.attribute :task_name, :string,
+              required: true, on: :create,
+              example: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+              description: 'The task to run, as `name` from `GET /maintenance_tasks`.'
+            body.attribute :arguments, :hash,
+              description: "Values for the task's declared parameters, keyed by parameter name. " \
+                           'A key the task does not declare is rejected.'
+            body.attribute :dry_run, :boolean,
+              description: 'Report what would change without writing. Honored only by tasks whose `supports_dry_run` is true.'
+            body.attribute :csv_file, :string,
+              description: 'The `signed_id` of an uploaded CSV, for tasks whose `csv` is true. Rejected by the rest.'
+          end
+
           # POST /api/v3/admin/maintenance_task_runs
           def create
             authorize! :create, Spree::MaintenanceTaskRun
 
+            # Not normalized: a task argument holding a prefixed id is the
+            # task's to resolve, and decoding it here would hand it a raw key.
+            body = params.permit(*declared_permitted_attributes)
+
             result = Spree::MaintenanceTasks::Start.call(
-              task_name: params[:task_name],
-              arguments: params[:arguments]&.to_unsafe_h || {},
-              dry_run: ActiveModel::Type::Boolean.new.cast(params[:dry_run]) || false,
+              task_name: body[:task_name],
+              arguments: body[:arguments]&.to_h || {},
+              dry_run: ActiveModel::Type::Boolean.new.cast(body[:dry_run]) || false,
               store: current_store,
               admin_user: try_spree_current_user,
               api_key: current_api_key,
               initiated_via: initiated_via,
-              csv_file: params[:csv_file].presence
+              csv_file: body[:csv_file].presence
             )
 
             if result.success?
