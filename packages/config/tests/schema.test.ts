@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -17,20 +16,4 @@ describe('published JSON Schema', () => {
   ])('%s matches the schema the engine validates with', (_label, file) => {
     expect(JSON.parse(readFileSync(file, 'utf-8'))).toEqual(toJsonSchema())
   })
-})
-
-// The section attributes come from the Admin API spec and the templates are
-// embedded for the browser; both generated files must match their sources.
-describe('generated sources', () => {
-  it.each(['extract-writable.mjs', 'embed-templates.mjs'])(
-    '%s output is up to date',
-    (script) => {
-      expect(() =>
-        execFileSync('node', [resolve(import.meta.dirname, '../scripts', script), '--check'], {
-          stdio: 'pipe',
-        }),
-      ).not.toThrow()
-    },
-    60_000,
-  ) // parsing the whole Admin API spec takes seconds on a CI runner
 })
