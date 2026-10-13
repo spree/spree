@@ -1703,6 +1703,10 @@
           "label": "Gutscheincode",
           "placeholder": "Optional"
         },
+        "currency": {
+          "help": "Wird durch den Markt festgelegt.",
+          "label": "Währung"
+        },
         "customer_note": {
           "label": "Kundennotiz (für Kunden sichtbar)"
         },
@@ -1714,10 +1718,12 @@
           "label": "Interne Notiz (nur Mitarbeiter)"
         },
         "locale": {
-          "label": "Sprache"
+          "label": "Sprache",
+          "help": "Wird für die E-Mails und Dokumente verwendet, die der Kunde erhält."
         },
         "market": {
-          "label": "Markt"
+          "label": "Markt",
+          "help": "Legt Preise und Steuern der Bestellung fest sowie die verfügbaren Währungen und Sprachen."
         },
         "order_group": {
           "label": "Einkauf",
@@ -3674,6 +3680,8 @@
           "section_billing": "Rechnung",
           "section_customer": "Kunde",
           "section_items": "Artikel",
+          "section_market": "Markt und Kanal",
+          "section_market_help": "Wenn Sie Markt, Kanal oder Währung ändern, werden die Artikel entfernt, da Verfügbarkeit und Preise davon abhängen.",
           "section_notes": "Notizen",
           "section_summary": "Zusammenfassung",
           "select_company": "Firma (optional)",

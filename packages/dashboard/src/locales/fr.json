@@ -1703,6 +1703,10 @@
           "label": "Code promo",
           "placeholder": "Facultatif"
         },
+        "currency": {
+          "help": "Définie par le marché.",
+          "label": "Devise"
+        },
         "customer_note": {
           "label": "Note du client (visible par le client)"
         },
@@ -1714,10 +1718,12 @@
           "label": "Note interne (personnel uniquement)"
         },
         "locale": {
-          "label": "Langue"
+          "label": "Langue",
+          "help": "Utilisée pour les e-mails et documents envoyés au client."
         },
         "market": {
-          "label": "Marché"
+          "label": "Marché",
+          "help": "Définit les prix et les taxes de la commande, ainsi que la devise et les langues disponibles."
         },
         "order_group": {
           "label": "Achat",
@@ -3674,6 +3680,8 @@
           "section_billing": "Facturation",
           "section_customer": "Client",
           "section_items": "Articles",
+          "section_market": "Marché et canal",
+          "section_market_help": "Changer de marché, de canal ou de devise vide les articles, car la disponibilité et les prix en dépendent.",
           "section_notes": "Notes",
           "section_summary": "Récapitulatif",
           "select_company": "Entreprise (facultatif)",

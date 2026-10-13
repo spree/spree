@@ -595,6 +595,7 @@ import type {
   TaxRateUpdateParams,
   TrackingCarrierOption,
   VariantCreateParams,
+  VariantSalesContextParams,
   VariantUpdateParams,
   WebhookEndpointCreateParams,
   WebhookEndpointDisableParams,
@@ -4963,12 +4964,22 @@ export class AdminClient {
 
   readonly variants = {
     list: (
-      params?: ListParams<VariantFilters, VariantSort>,
+      params?: ListParams<VariantFilters, VariantSort> & VariantSalesContextParams,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Variant>> =>
       this.request<PaginatedResponse<Variant>>('GET', '/variants', {
         ...options,
-        params: params ? transformListParams(params) : undefined,
+        // The sales context scopes and prices the list, so it stays out of the Ransack filters.
+        params: params
+          ? (({ market_id, channel_id, customer_id, company_id, currency, ...list }) => ({
+              ...transformListParams(list),
+              ...Object.fromEntries(
+                Object.entries({ market_id, channel_id, customer_id, company_id, currency }).filter(
+                  ([, value]) => value,
+                ),
+              ),
+            }))(params)
+          : undefined,
       }),
 
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Variant> =>

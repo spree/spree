@@ -1703,6 +1703,10 @@
           "label": "Coupon code",
           "placeholder": "Optional"
         },
+        "currency": {
+          "help": "Set by the market.",
+          "label": "Currency"
+        },
         "customer_note": {
           "label": "Customer note (visible to customer)"
         },
@@ -1714,10 +1718,12 @@
           "label": "Internal note (staff only)"
         },
         "locale": {
-          "label": "Locale"
+          "label": "Locale",
+          "help": "Used for the emails and documents the customer receives."
         },
         "market": {
-          "label": "Market"
+          "label": "Market",
+          "help": "Sets the order's pricing and taxes, and which currency and languages it can use."
         },
         "order_group": {
           "label": "Purchase",
@@ -3674,6 +3680,8 @@
           "section_billing": "Billing",
           "section_customer": "Customer",
           "section_items": "Items",
+          "section_market": "Market and channel",
+          "section_market_help": "Changing the market, channel or currency clears the items, because what can be sold and its price depend on them.",
           "section_notes": "Notes",
           "section_summary": "Summary",
           "select_company": "Company (optional)",
