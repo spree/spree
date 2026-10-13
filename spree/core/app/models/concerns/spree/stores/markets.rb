@@ -192,7 +192,7 @@ module Spree
       end
 
       def legacy_supported_locales_list
-        (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
+        (read_attribute(:supported_locales).to_s.split(',').map(&:strip) << default_locale).compact_blank.uniq.sort
       end
     end
   end

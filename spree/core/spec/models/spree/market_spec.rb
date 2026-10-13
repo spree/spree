@@ -51,6 +51,11 @@ RSpec.describe Spree::Market, type: :model do
   end
 
   describe '#supported_locales_list' do
+    it 'ignores blank entries in a comma-separated value' do
+      market = build(:market, default_locale: 'en', supported_locales: ' , fr, ')
+      expect(market.supported_locales_list).to eq(%w[en fr])
+    end
+
     it 'returns default_locale when supported_locales is blank' do
       market = build(:market, default_locale: 'en', supported_locales: nil)
       expect(market.supported_locales_list).to eq(['en'])

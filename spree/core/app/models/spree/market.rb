@@ -146,7 +146,7 @@ module Spree
     #
     # @return [Array<String>]
     def supported_locales_list
-      @supported_locales_list ||= (supported_locales.to_s.split(',').map(&:strip) << default_locale).compact.uniq.sort
+      @supported_locales_list ||= (supported_locales.to_s.split(',').map(&:strip) << default_locale).compact_blank.uniq.sort
     end
 
     # Accepts an Array of locale codes and persists them as a comma-separated
