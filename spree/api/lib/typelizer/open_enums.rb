@@ -10,9 +10,10 @@ module Typelizer
   #
   # ISO lists are the exception: a named type several serializers and the
   # request types share, but closed, since nothing outside the standard can
-  # add a country or a currency.
+  # add a country or a currency, and markets only accept the locales
+  # `Spree::Locales::ALL` lists.
   module OpenEnums
-    CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode].freeze
+    CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode].freeze
 
     module Property
       def enum_definition(...)

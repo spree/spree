@@ -1,4 +1,4 @@
-import type { CurrencyCode, Store } from '@spree/admin-sdk'
+import type { CurrencyCode, LocaleCode, Store } from '@spree/admin-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, type ReactNode, useContext, useEffect, useRef } from 'react'
 import { adminClient } from '../client'
@@ -21,13 +21,13 @@ interface StoreContextValue {
   isLoading: boolean
   currencies: CurrencyCode[]
   /** Locales this store is configured to translate content into. */
-  locales: string[]
+  locales: LocaleCode[]
   /** Every locale a merchant may translate content into — the full canonical
    *  set, independent of which locales the store currently uses. Drives locale
    *  pickers so a new locale can always be added. */
-  availableLocales: string[]
+  availableLocales: LocaleCode[]
   defaultCurrency: CurrencyCode
-  defaultLocale: string
+  defaultLocale: LocaleCode
   /** ISO country the store sells from — used to pre-fill new address forms. */
   defaultCountry: string
   /** IANA timezone for the store (e.g. `Europe/Berlin`). Falls back to the

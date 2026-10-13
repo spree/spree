@@ -859,7 +859,9 @@ paths:
                   name: Afghanistan
                   currency: AFN
                   locales:
-                  - en
+                  - ps
+                  - uz
+                  - tk
                 - code: AG
                   name: Antigua and Barbuda
                   currency: XCD
@@ -874,12 +876,12 @@ paths:
                   name: Albania
                   currency: ALL
                   locales:
-                  - en
+                  - sq
                 - code: AM
                   name: Armenia
                   currency: AMD
                   locales:
-                  - en
+                  - hy
                 - code: AO
                   name: Angola
                   currency: AOA
@@ -890,11 +892,13 @@ paths:
                   currency: ARS
                   locales:
                   - es
+                  - gn
                 - code: AS
                   name: American Samoa
                   currency: USD
                   locales:
                   - en
+                  - sm
                 - code: AT
                   name: Austria
                   currency: EUR
@@ -914,12 +918,15 @@ paths:
                   name: Azerbaijan
                   currency: AZN
                   locales:
-                  - en
+                  - az
+                  - hy
                 - code: BA
                   name: Bosnia and Herzegovina
                   currency: BAM
                   locales:
-                  - en
+                  - bs
+                  - hr
+                  - sr
                 - code: BB
                   name: Barbados
                   currency: BBD
@@ -929,7 +936,7 @@ paths:
                   name: Bangladesh
                   currency: BDT
                   locales:
-                  - en
+                  - bn
                 - code: BE
                   name: Belgium
                   currency: EUR
@@ -942,6 +949,7 @@ paths:
                   currency: XOF
                   locales:
                   - fr
+                  - ff
                 - code: BG
                   name: Bulgaria
                   currency: EUR
@@ -957,6 +965,7 @@ paths:
                   currency: BIF
                   locales:
                   - fr
+                  - rn
                 - code: BJ
                   name: Benin
                   currency: XOF
@@ -976,12 +985,14 @@ paths:
                   name: Brunei Darussalam
                   currency: BND
                   locales:
-                  - en
+                  - ms
                 - code: BO
                   name: Bolivia
                   currency: BOB
                   locales:
                   - es
+                  - ay
+                  - qu
                 - code: BQ
                   name: Bonaire, Sint Eustatius and Saba
                   currency: USD
@@ -1002,12 +1013,13 @@ paths:
                   name: Bhutan
                   currency: BTN
                   locales:
-                  - en
+                  - dz
                 - code: BW
                   name: Botswana
                   currency: BWP
                   locales:
                   - en
+                  - tn
                 - code: BY
                   name: Belarus
                   currency: BYN
@@ -1036,16 +1048,22 @@ paths:
                   currency: CDF
                   locales:
                   - fr
+                  - ln
+                  - kg
+                  - sw
+                  - lu
                 - code: CF
                   name: Central African Republic
                   currency: XAF
                   locales:
                   - fr
+                  - sg
                 - code: CG
                   name: Congo
                   currency: XAF
                   locales:
                   - fr
+                  - ln
                 - code: CH
                   name: Switzerland
                   currency: CHF
@@ -1053,6 +1071,7 @@ paths:
                   - de
                   - fr
                   - it
+                  - rm
                 - code: CI
                   name: Côte d'Ivoire
                   currency: XOF
@@ -1110,12 +1129,14 @@ paths:
                   locales:
                   - en
                   - zh-CN
+                  - ms
                 - code: CY
                   name: Cyprus
                   currency: EUR
                   locales:
                   - el
                   - tr
+                  - hy
                 - code: CZ
                   name: Czechia
                   currency: CZK
@@ -1173,6 +1194,7 @@ paths:
                   locales:
                   - en
                   - ar
+                  - ti
                 - code: ES
                   name: Spain
                   currency: EUR
@@ -1182,7 +1204,7 @@ paths:
                   name: Ethiopia
                   currency: ETB
                   locales:
-                  - en
+                  - am
                 - code: FI
                   name: Finland
                   currency: EUR
@@ -1194,6 +1216,8 @@ paths:
                   currency: FJD
                   locales:
                   - en
+                  - fj
+                  - hi
                 - code: FK
                   name: Falkland Islands (Malvinas)
                   currency: FKP
@@ -1208,7 +1232,7 @@ paths:
                   name: Faroe Islands
                   currency: DKK
                   locales:
-                  - en
+                  - fo
                 - code: FR
                   name: France
                   currency: EUR
@@ -1233,7 +1257,7 @@ paths:
                   name: Georgia
                   currency: GEL
                   locales:
-                  - en
+                  - ka
                 - code: GF
                   name: French Guiana
                   currency: EUR
@@ -1259,7 +1283,7 @@ paths:
                   name: Greenland
                   currency: DKK
                   locales:
-                  - en
+                  - kl
                 - code: GM
                   name: Gambia
                   currency: GMD
@@ -1270,6 +1294,7 @@ paths:
                   currency: GNF
                   locales:
                   - fr
+                  - ff
                 - code: GP
                   name: Guadeloupe
                   currency: EUR
@@ -1296,6 +1321,7 @@ paths:
                   currency: USD
                   locales:
                   - en
+                  - ch
                   - es
                 - code: GW
                   name: Guinea-Bissau
@@ -1322,12 +1348,13 @@ paths:
                   name: Croatia
                   currency: EUR
                   locales:
-                  - en
+                  - hr
                 - code: HT
                   name: Haiti
                   currency: HTG
                   locales:
                   - fr
+                  - ht
                 - code: HU
                   name: Hungary
                   currency: HUF
@@ -1343,20 +1370,24 @@ paths:
                   currency: EUR
                   locales:
                   - en
+                  - ga
                 - code: IL
                   name: Israel
                   currency: ILS
                   locales:
+                  - he
                   - ar
                 - code: IM
                   name: Isle of Man
                   currency: GBP
                   locales:
                   - en
+                  - gv
                 - code: IN
                   name: India
                   currency: INR
                   locales:
+                  - hi
                   - en
                 - code: IQ
                   name: Iraq
@@ -1372,7 +1403,7 @@ paths:
                   name: Iceland
                   currency: ISK
                   locales:
-                  - en
+                  - is
                 - code: IT
                   name: Italy
                   currency: EUR
@@ -1404,10 +1435,12 @@ paths:
                   currency: KES
                   locales:
                   - en
+                  - sw
                 - code: KG
                   name: Kyrgyzstan
                   currency: KGS
                   locales:
+                  - ky
                   - ru
                 - code: KH
                   name: Cambodia
@@ -1454,12 +1487,13 @@ paths:
                   name: Kazakhstan
                   currency: KZT
                   locales:
+                  - kk
                   - ru
                 - code: LA
                   name: Lao People's Democratic Republic
                   currency: LAK
                   locales:
-                  - en
+                  - lo
                 - code: LB
                   name: Lebanon
                   currency: LBP
@@ -1480,7 +1514,8 @@ paths:
                   name: Sri Lanka
                   currency: LKR
                   locales:
-                  - en
+                  - si
+                  - ta
                 - code: LR
                   name: Liberia
                   currency: LRD
@@ -1491,6 +1526,7 @@ paths:
                   currency: LSL
                   locales:
                   - en
+                  - st
                 - code: LT
                   name: Lithuania
                   currency: EUR
@@ -1502,6 +1538,7 @@ paths:
                   locales:
                   - fr
                   - de
+                  - lb
                 - code: LV
                   name: Latvia
                   currency: EUR
@@ -1531,7 +1568,10 @@ paths:
                   name: Montenegro
                   currency: EUR
                   locales:
-                  - en
+                  - sr
+                  - bs
+                  - sq
+                  - hr
                 - code: MF
                   name: Saint Martin (French part)
                   currency: EUR
@@ -1544,16 +1584,18 @@ paths:
                   currency: MGA
                   locales:
                   - fr
+                  - mg
                 - code: MH
                   name: Marshall Islands
                   currency: USD
                   locales:
                   - en
+                  - mh
                 - code: MK
                   name: North Macedonia
                   currency: MKD
                   locales:
-                  - en
+                  - mk
                 - code: ML
                   name: Mali
                   currency: XOF
@@ -1563,12 +1605,12 @@ paths:
                   name: Myanmar
                   currency: MMK
                   locales:
-                  - en
+                  - my
                 - code: MN
                   name: Mongolia
                   currency: MNT
                   locales:
-                  - en
+                  - mn
                 - code: MO
                   name: Macao
                   currency: MOP
@@ -1580,6 +1622,7 @@ paths:
                   currency: USD
                   locales:
                   - en
+                  - ch
                 - code: MQ
                   name: Martinique
                   currency: EUR
@@ -1600,6 +1643,7 @@ paths:
                   name: Malta
                   currency: EUR
                   locales:
+                  - mt
                   - en
                 - code: MU
                   name: Mauritius
@@ -1610,12 +1654,13 @@ paths:
                   name: Maldives
                   currency: MVR
                   locales:
-                  - en
+                  - dv
                 - code: MW
                   name: Malawi
                   currency: MWK
                   locales:
                   - en
+                  - ny
                 - code: MX
                   name: Mexico
                   currency: MXN
@@ -1625,6 +1670,7 @@ paths:
                   name: Malaysia
                   currency: MYR
                   locales:
+                  - ms
                   - en
                 - code: MZ
                   name: Mozambique
@@ -1636,6 +1682,7 @@ paths:
                   currency: NAD
                   locales:
                   - en
+                  - af
                 - code: NC
                   name: New Caledonia
                   currency: XPF
@@ -1671,6 +1718,7 @@ paths:
                   currency: NOK
                   locales:
                   - nb
+                  - nn
                 - code: NP
                   name: Nepal
                   currency: NPR
@@ -1681,6 +1729,7 @@ paths:
                   currency: AUD
                   locales:
                   - en
+                  - na
                 - code: NU
                   name: Niue
                   currency: NZD
@@ -1720,12 +1769,14 @@ paths:
                   name: Philippines
                   currency: PHP
                   locales:
+                  - tl
                   - en
                 - code: PK
                   name: Pakistan
                   currency: PKR
                   locales:
                   - en
+                  - ur
                 - code: PL
                   name: Poland
                   currency: PLN
@@ -1752,6 +1803,7 @@ paths:
                   currency: ILS
                   locales:
                   - ar
+                  - he
                   - en
                 - code: PT
                   name: Portugal
@@ -1768,6 +1820,7 @@ paths:
                   currency: PYG
                   locales:
                   - es
+                  - gn
                 - code: QA
                   name: Qatar
                   currency: QAR
@@ -1787,7 +1840,7 @@ paths:
                   name: Serbia
                   currency: RSD
                   locales:
-                  - en
+                  - sr
                 - code: RU
                   name: Russian Federation
                   currency: RUB
@@ -1797,6 +1850,7 @@ paths:
                   name: Rwanda
                   currency: RWF
                   locales:
+                  - rw
                   - en
                   - fr
                 - code: SA
@@ -1831,6 +1885,8 @@ paths:
                   currency: SGD
                   locales:
                   - en
+                  - ms
+                  - ta
                 - code: SH
                   name: Saint Helena, Ascension and Tristan da Cunha
                   currency: SHP
@@ -1840,12 +1896,12 @@ paths:
                   name: Slovenia
                   currency: EUR
                   locales:
-                  - sl-SI
+                  - sl
                 - code: SJ
                   name: Svalbard and Jan Mayen
                   currency: NOK
                   locales:
-                  - en
+                  - 'no'
                 - code: SK
                   name: Slovakia
                   currency: EUR
@@ -1870,6 +1926,7 @@ paths:
                   name: Somalia
                   currency: SOS
                   locales:
+                  - so
                   - ar
                 - code: SR
                   name: Suriname
@@ -1908,6 +1965,7 @@ paths:
                   currency: SZL
                   locales:
                   - en
+                  - ss
                 - code: TC
                   name: Turks and Caicos Islands
                   currency: USD
@@ -1933,6 +1991,7 @@ paths:
                   name: Tajikistan
                   currency: TJS
                   locales:
+                  - tg
                   - ru
                 - code: TK
                   name: Tokelau
@@ -1948,7 +2007,7 @@ paths:
                   name: Turkmenistan
                   currency: TMT
                   locales:
-                  - en
+                  - tk
                 - code: TN
                   name: Tunisia
                   currency: TND
@@ -1960,6 +2019,7 @@ paths:
                   currency: TOP
                   locales:
                   - en
+                  - to
                 - code: TR
                   name: Türkiye
                   currency: TRY
@@ -1984,6 +2044,7 @@ paths:
                   name: Tanzania
                   currency: TZS
                   locales:
+                  - sw
                   - en
                 - code: UA
                   name: Ukraine
@@ -1995,6 +2056,7 @@ paths:
                   currency: UGX
                   locales:
                   - en
+                  - sw
                 - code: US
                   name: United States
                   currency: USD
@@ -2009,12 +2071,13 @@ paths:
                   name: Uzbekistan
                   currency: UZS
                   locales:
-                  - en
+                  - uz
                 - code: VA
                   name: Holy See (Vatican City State)
                   currency: EUR
                   locales:
                   - it
+                  - la
                 - code: VC
                   name: Saint Vincent and the Grenadines
                   currency: XCD
@@ -2044,6 +2107,7 @@ paths:
                   name: Vanuatu
                   currency: VUV
                   locales:
+                  - bi
                   - en
                   - fr
                 - code: WF
@@ -2055,6 +2119,7 @@ paths:
                   name: Samoa
                   currency: WST
                   locales:
+                  - sm
                   - en
                 - code: YE
                   name: Yemen
@@ -2070,7 +2135,16 @@ paths:
                   name: South Africa
                   currency: ZAR
                   locales:
+                  - af
                   - en
+                  - nr
+                  - st
+                  - ss
+                  - tn
+                  - ts
+                  - ve
+                  - xh
+                  - zu
                 - code: ZM
                   name: Zambia
                   currency: ZMW
@@ -2081,6 +2155,8 @@ paths:
                   currency: USD
                   locales:
                   - en
+                  - sn
+                  - nd
   "/api/v3/admin/allowed_origins":
     get:
       summary: List allowed origins
@@ -28001,15 +28077,12 @@ paths:
               example:
                 data:
                 - code: de
-                  name: Deutsch
                   default: false
                   rtl: false
                 - code: en
-                  name: English
                   default: true
                   rtl: false
                 - code: fr
-                  name: Français
                   default: false
                   rtl: false
   "/api/v3/admin/store":
@@ -28183,9 +28256,12 @@ paths:
                 - en-GB
                 - en-IN
                 - en-NZ
+                - en-US
                 - eo
                 - es
                 - es-419
+                - es-CL
+                - es-EC
                 - es-MX
                 - et
                 - eu
@@ -28295,6 +28371,7 @@ paths:
                 - si
                 - sk
                 - sl
+                - sl-SI
                 - sm
                 - sn
                 - so
@@ -28522,9 +28599,12 @@ paths:
                 - en-GB
                 - en-IN
                 - en-NZ
+                - en-US
                 - eo
                 - es
                 - es-419
+                - es-CL
+                - es-EC
                 - es-MX
                 - et
                 - eu
@@ -28634,6 +28714,7 @@ paths:
                 - si
                 - sk
                 - sl
+                - sl-SI
                 - sm
                 - sn
                 - so
@@ -52627,6 +52708,209 @@ components:
         locale:
           type: string
           nullable: true
+          enum:
+          - aa
+          - ab
+          - ae
+          - af
+          - ak
+          - am
+          - an
+          - ar
+          - as
+          - av
+          - ay
+          - az
+          - ba
+          - be
+          - bg
+          - bh
+          - bi
+          - bm
+          - bn
+          - bo
+          - br
+          - bs
+          - ca
+          - ce
+          - ch
+          - co
+          - cr
+          - cs
+          - cu
+          - cv
+          - cy
+          - da
+          - de
+          - de-AT
+          - de-CH
+          - dv
+          - dz
+          - ee
+          - el
+          - en
+          - en-AU
+          - en-CA
+          - en-GB
+          - en-IN
+          - en-NZ
+          - en-US
+          - eo
+          - es
+          - es-419
+          - es-CL
+          - es-EC
+          - es-MX
+          - et
+          - eu
+          - fa
+          - ff
+          - fi
+          - fj
+          - fo
+          - fr
+          - fr-CA
+          - fy
+          - ga
+          - gd
+          - gl
+          - gn
+          - gu
+          - gv
+          - ha
+          - he
+          - hi
+          - ho
+          - hr
+          - ht
+          - hu
+          - hy
+          - hz
+          - ia
+          - id
+          - ie
+          - ig
+          - ii
+          - ik
+          - io
+          - is
+          - it
+          - iu
+          - ja
+          - jv
+          - ka
+          - kg
+          - ki
+          - kj
+          - kk
+          - kl
+          - km
+          - kn
+          - ko
+          - kr
+          - ks
+          - ku
+          - kv
+          - kw
+          - ky
+          - la
+          - lb
+          - lg
+          - li
+          - ln
+          - lo
+          - lt
+          - lu
+          - lv
+          - mg
+          - mh
+          - mi
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - mt
+          - my
+          - na
+          - nb
+          - nd
+          - ne
+          - ng
+          - nl
+          - nn
+          - 'no'
+          - nr
+          - nv
+          - ny
+          - oc
+          - oj
+          - om
+          - or
+          - os
+          - pa
+          - pi
+          - pl
+          - ps
+          - pt
+          - pt-BR
+          - pt-PT
+          - qu
+          - rm
+          - rn
+          - ro
+          - ru
+          - rw
+          - sa
+          - sc
+          - sd
+          - se
+          - sg
+          - si
+          - sk
+          - sl
+          - sl-SI
+          - sm
+          - sn
+          - so
+          - sq
+          - sr
+          - ss
+          - st
+          - su
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - ti
+          - tk
+          - tl
+          - tn
+          - to
+          - tr
+          - ts
+          - tt
+          - tw
+          - ty
+          - ug
+          - uk
+          - ur
+          - uz
+          - ve
+          - vi
+          - vo
+          - wa
+          - wo
+          - xh
+          - yi
+          - yo
+          - za
+          - zh-CN
+          - zh-HK
+          - zh-TW
+          - zu
         total_quantity:
           type: number
         warnings:
@@ -57958,6 +58242,223 @@ components:
       - cost_price
       - tax_category_id
       x-typelizer: true
+    Locale:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+          - aa
+          - ab
+          - ae
+          - af
+          - ak
+          - am
+          - an
+          - ar
+          - as
+          - av
+          - ay
+          - az
+          - ba
+          - be
+          - bg
+          - bh
+          - bi
+          - bm
+          - bn
+          - bo
+          - br
+          - bs
+          - ca
+          - ce
+          - ch
+          - co
+          - cr
+          - cs
+          - cu
+          - cv
+          - cy
+          - da
+          - de
+          - de-AT
+          - de-CH
+          - dv
+          - dz
+          - ee
+          - el
+          - en
+          - en-AU
+          - en-CA
+          - en-GB
+          - en-IN
+          - en-NZ
+          - en-US
+          - eo
+          - es
+          - es-419
+          - es-CL
+          - es-EC
+          - es-MX
+          - et
+          - eu
+          - fa
+          - ff
+          - fi
+          - fj
+          - fo
+          - fr
+          - fr-CA
+          - fy
+          - ga
+          - gd
+          - gl
+          - gn
+          - gu
+          - gv
+          - ha
+          - he
+          - hi
+          - ho
+          - hr
+          - ht
+          - hu
+          - hy
+          - hz
+          - ia
+          - id
+          - ie
+          - ig
+          - ii
+          - ik
+          - io
+          - is
+          - it
+          - iu
+          - ja
+          - jv
+          - ka
+          - kg
+          - ki
+          - kj
+          - kk
+          - kl
+          - km
+          - kn
+          - ko
+          - kr
+          - ks
+          - ku
+          - kv
+          - kw
+          - ky
+          - la
+          - lb
+          - lg
+          - li
+          - ln
+          - lo
+          - lt
+          - lu
+          - lv
+          - mg
+          - mh
+          - mi
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - mt
+          - my
+          - na
+          - nb
+          - nd
+          - ne
+          - ng
+          - nl
+          - nn
+          - 'no'
+          - nr
+          - nv
+          - ny
+          - oc
+          - oj
+          - om
+          - or
+          - os
+          - pa
+          - pi
+          - pl
+          - ps
+          - pt
+          - pt-BR
+          - pt-PT
+          - qu
+          - rm
+          - rn
+          - ro
+          - ru
+          - rw
+          - sa
+          - sc
+          - sd
+          - se
+          - sg
+          - si
+          - sk
+          - sl
+          - sl-SI
+          - sm
+          - sn
+          - so
+          - sq
+          - sr
+          - ss
+          - st
+          - su
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - ti
+          - tk
+          - tl
+          - tn
+          - to
+          - tr
+          - ts
+          - tt
+          - tw
+          - ty
+          - ug
+          - uk
+          - ur
+          - uz
+          - ve
+          - vi
+          - vo
+          - wa
+          - wo
+          - xh
+          - yi
+          - yo
+          - za
+          - zh-CN
+          - zh-HK
+          - zh-TW
+          - zu
+        default:
+          type: boolean
+        rtl:
+          type: boolean
+      required:
+      - code
+      - default
+      - rtl
+      x-typelizer: true
     Market:
       type: object
       properties:
@@ -58148,6 +58649,209 @@ components:
           - ZWR
         default_locale:
           type: string
+          enum:
+          - aa
+          - ab
+          - ae
+          - af
+          - ak
+          - am
+          - an
+          - ar
+          - as
+          - av
+          - ay
+          - az
+          - ba
+          - be
+          - bg
+          - bh
+          - bi
+          - bm
+          - bn
+          - bo
+          - br
+          - bs
+          - ca
+          - ce
+          - ch
+          - co
+          - cr
+          - cs
+          - cu
+          - cv
+          - cy
+          - da
+          - de
+          - de-AT
+          - de-CH
+          - dv
+          - dz
+          - ee
+          - el
+          - en
+          - en-AU
+          - en-CA
+          - en-GB
+          - en-IN
+          - en-NZ
+          - en-US
+          - eo
+          - es
+          - es-419
+          - es-CL
+          - es-EC
+          - es-MX
+          - et
+          - eu
+          - fa
+          - ff
+          - fi
+          - fj
+          - fo
+          - fr
+          - fr-CA
+          - fy
+          - ga
+          - gd
+          - gl
+          - gn
+          - gu
+          - gv
+          - ha
+          - he
+          - hi
+          - ho
+          - hr
+          - ht
+          - hu
+          - hy
+          - hz
+          - ia
+          - id
+          - ie
+          - ig
+          - ii
+          - ik
+          - io
+          - is
+          - it
+          - iu
+          - ja
+          - jv
+          - ka
+          - kg
+          - ki
+          - kj
+          - kk
+          - kl
+          - km
+          - kn
+          - ko
+          - kr
+          - ks
+          - ku
+          - kv
+          - kw
+          - ky
+          - la
+          - lb
+          - lg
+          - li
+          - ln
+          - lo
+          - lt
+          - lu
+          - lv
+          - mg
+          - mh
+          - mi
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - mt
+          - my
+          - na
+          - nb
+          - nd
+          - ne
+          - ng
+          - nl
+          - nn
+          - 'no'
+          - nr
+          - nv
+          - ny
+          - oc
+          - oj
+          - om
+          - or
+          - os
+          - pa
+          - pi
+          - pl
+          - ps
+          - pt
+          - pt-BR
+          - pt-PT
+          - qu
+          - rm
+          - rn
+          - ro
+          - ru
+          - rw
+          - sa
+          - sc
+          - sd
+          - se
+          - sg
+          - si
+          - sk
+          - sl
+          - sl-SI
+          - sm
+          - sn
+          - so
+          - sq
+          - sr
+          - ss
+          - st
+          - su
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - ti
+          - tk
+          - tl
+          - tn
+          - to
+          - tr
+          - ts
+          - tt
+          - tw
+          - ty
+          - ug
+          - uk
+          - ur
+          - uz
+          - ve
+          - vi
+          - vo
+          - wa
+          - wo
+          - xh
+          - yi
+          - yo
+          - za
+          - zh-CN
+          - zh-HK
+          - zh-TW
+          - zu
         tax_inclusive:
           type: boolean
         default:
@@ -58401,6 +59105,209 @@ components:
           type: array
           items:
             type: string
+            enum:
+            - aa
+            - ab
+            - ae
+            - af
+            - ak
+            - am
+            - an
+            - ar
+            - as
+            - av
+            - ay
+            - az
+            - ba
+            - be
+            - bg
+            - bh
+            - bi
+            - bm
+            - bn
+            - bo
+            - br
+            - bs
+            - ca
+            - ce
+            - ch
+            - co
+            - cr
+            - cs
+            - cu
+            - cv
+            - cy
+            - da
+            - de
+            - de-AT
+            - de-CH
+            - dv
+            - dz
+            - ee
+            - el
+            - en
+            - en-AU
+            - en-CA
+            - en-GB
+            - en-IN
+            - en-NZ
+            - en-US
+            - eo
+            - es
+            - es-419
+            - es-CL
+            - es-EC
+            - es-MX
+            - et
+            - eu
+            - fa
+            - ff
+            - fi
+            - fj
+            - fo
+            - fr
+            - fr-CA
+            - fy
+            - ga
+            - gd
+            - gl
+            - gn
+            - gu
+            - gv
+            - ha
+            - he
+            - hi
+            - ho
+            - hr
+            - ht
+            - hu
+            - hy
+            - hz
+            - ia
+            - id
+            - ie
+            - ig
+            - ii
+            - ik
+            - io
+            - is
+            - it
+            - iu
+            - ja
+            - jv
+            - ka
+            - kg
+            - ki
+            - kj
+            - kk
+            - kl
+            - km
+            - kn
+            - ko
+            - kr
+            - ks
+            - ku
+            - kv
+            - kw
+            - ky
+            - la
+            - lb
+            - lg
+            - li
+            - ln
+            - lo
+            - lt
+            - lu
+            - lv
+            - mg
+            - mh
+            - mi
+            - mk
+            - ml
+            - mn
+            - mr
+            - ms
+            - mt
+            - my
+            - na
+            - nb
+            - nd
+            - ne
+            - ng
+            - nl
+            - nn
+            - 'no'
+            - nr
+            - nv
+            - ny
+            - oc
+            - oj
+            - om
+            - or
+            - os
+            - pa
+            - pi
+            - pl
+            - ps
+            - pt
+            - pt-BR
+            - pt-PT
+            - qu
+            - rm
+            - rn
+            - ro
+            - ru
+            - rw
+            - sa
+            - sc
+            - sd
+            - se
+            - sg
+            - si
+            - sk
+            - sl
+            - sl-SI
+            - sm
+            - sn
+            - so
+            - sq
+            - sr
+            - ss
+            - st
+            - su
+            - sv
+            - sw
+            - ta
+            - te
+            - tg
+            - th
+            - ti
+            - tk
+            - tl
+            - tn
+            - to
+            - tr
+            - ts
+            - tt
+            - tw
+            - ty
+            - ug
+            - uk
+            - ur
+            - uz
+            - ve
+            - vi
+            - vo
+            - wa
+            - wo
+            - xh
+            - yi
+            - yo
+            - za
+            - zh-CN
+            - zh-HK
+            - zh-TW
+            - zu
         countries:
           type: array
           items:
@@ -59306,6 +60213,209 @@ components:
         locale:
           type: string
           nullable: true
+          enum:
+          - aa
+          - ab
+          - ae
+          - af
+          - ak
+          - am
+          - an
+          - ar
+          - as
+          - av
+          - ay
+          - az
+          - ba
+          - be
+          - bg
+          - bh
+          - bi
+          - bm
+          - bn
+          - bo
+          - br
+          - bs
+          - ca
+          - ce
+          - ch
+          - co
+          - cr
+          - cs
+          - cu
+          - cv
+          - cy
+          - da
+          - de
+          - de-AT
+          - de-CH
+          - dv
+          - dz
+          - ee
+          - el
+          - en
+          - en-AU
+          - en-CA
+          - en-GB
+          - en-IN
+          - en-NZ
+          - en-US
+          - eo
+          - es
+          - es-419
+          - es-CL
+          - es-EC
+          - es-MX
+          - et
+          - eu
+          - fa
+          - ff
+          - fi
+          - fj
+          - fo
+          - fr
+          - fr-CA
+          - fy
+          - ga
+          - gd
+          - gl
+          - gn
+          - gu
+          - gv
+          - ha
+          - he
+          - hi
+          - ho
+          - hr
+          - ht
+          - hu
+          - hy
+          - hz
+          - ia
+          - id
+          - ie
+          - ig
+          - ii
+          - ik
+          - io
+          - is
+          - it
+          - iu
+          - ja
+          - jv
+          - ka
+          - kg
+          - ki
+          - kj
+          - kk
+          - kl
+          - km
+          - kn
+          - ko
+          - kr
+          - ks
+          - ku
+          - kv
+          - kw
+          - ky
+          - la
+          - lb
+          - lg
+          - li
+          - ln
+          - lo
+          - lt
+          - lu
+          - lv
+          - mg
+          - mh
+          - mi
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - mt
+          - my
+          - na
+          - nb
+          - nd
+          - ne
+          - ng
+          - nl
+          - nn
+          - 'no'
+          - nr
+          - nv
+          - ny
+          - oc
+          - oj
+          - om
+          - or
+          - os
+          - pa
+          - pi
+          - pl
+          - ps
+          - pt
+          - pt-BR
+          - pt-PT
+          - qu
+          - rm
+          - rn
+          - ro
+          - ru
+          - rw
+          - sa
+          - sc
+          - sd
+          - se
+          - sg
+          - si
+          - sk
+          - sl
+          - sl-SI
+          - sm
+          - sn
+          - so
+          - sq
+          - sr
+          - ss
+          - st
+          - su
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - ti
+          - tk
+          - tl
+          - tn
+          - to
+          - tr
+          - ts
+          - tt
+          - tw
+          - ty
+          - ug
+          - uk
+          - ur
+          - uz
+          - ve
+          - vi
+          - vo
+          - wa
+          - wo
+          - xh
+          - yi
+          - yo
+          - za
+          - zh-CN
+          - zh-HK
+          - zh-TW
+          - zu
         total_quantity:
           type: number
         coupon_code:
@@ -65233,6 +66343,209 @@ components:
           - ZWR
         default_locale:
           type: string
+          enum:
+          - aa
+          - ab
+          - ae
+          - af
+          - ak
+          - am
+          - an
+          - ar
+          - as
+          - av
+          - ay
+          - az
+          - ba
+          - be
+          - bg
+          - bh
+          - bi
+          - bm
+          - bn
+          - bo
+          - br
+          - bs
+          - ca
+          - ce
+          - ch
+          - co
+          - cr
+          - cs
+          - cu
+          - cv
+          - cy
+          - da
+          - de
+          - de-AT
+          - de-CH
+          - dv
+          - dz
+          - ee
+          - el
+          - en
+          - en-AU
+          - en-CA
+          - en-GB
+          - en-IN
+          - en-NZ
+          - en-US
+          - eo
+          - es
+          - es-419
+          - es-CL
+          - es-EC
+          - es-MX
+          - et
+          - eu
+          - fa
+          - ff
+          - fi
+          - fj
+          - fo
+          - fr
+          - fr-CA
+          - fy
+          - ga
+          - gd
+          - gl
+          - gn
+          - gu
+          - gv
+          - ha
+          - he
+          - hi
+          - ho
+          - hr
+          - ht
+          - hu
+          - hy
+          - hz
+          - ia
+          - id
+          - ie
+          - ig
+          - ii
+          - ik
+          - io
+          - is
+          - it
+          - iu
+          - ja
+          - jv
+          - ka
+          - kg
+          - ki
+          - kj
+          - kk
+          - kl
+          - km
+          - kn
+          - ko
+          - kr
+          - ks
+          - ku
+          - kv
+          - kw
+          - ky
+          - la
+          - lb
+          - lg
+          - li
+          - ln
+          - lo
+          - lt
+          - lu
+          - lv
+          - mg
+          - mh
+          - mi
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - mt
+          - my
+          - na
+          - nb
+          - nd
+          - ne
+          - ng
+          - nl
+          - nn
+          - 'no'
+          - nr
+          - nv
+          - ny
+          - oc
+          - oj
+          - om
+          - or
+          - os
+          - pa
+          - pi
+          - pl
+          - ps
+          - pt
+          - pt-BR
+          - pt-PT
+          - qu
+          - rm
+          - rn
+          - ro
+          - ru
+          - rw
+          - sa
+          - sc
+          - sd
+          - se
+          - sg
+          - si
+          - sk
+          - sl
+          - sl-SI
+          - sm
+          - sn
+          - so
+          - sq
+          - sr
+          - ss
+          - st
+          - su
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - ti
+          - tk
+          - tl
+          - tn
+          - to
+          - tr
+          - ts
+          - tt
+          - tw
+          - ty
+          - ug
+          - uk
+          - ur
+          - uz
+          - ve
+          - vi
+          - vo
+          - wa
+          - wo
+          - xh
+          - yi
+          - yo
+          - za
+          - zh-CN
+          - zh-HK
+          - zh-TW
+          - zu
         default_country_code:
           type: string
           nullable: true
@@ -65592,10 +66905,416 @@ components:
           type: array
           items:
             type: string
+            enum:
+            - aa
+            - ab
+            - ae
+            - af
+            - ak
+            - am
+            - an
+            - ar
+            - as
+            - av
+            - ay
+            - az
+            - ba
+            - be
+            - bg
+            - bh
+            - bi
+            - bm
+            - bn
+            - bo
+            - br
+            - bs
+            - ca
+            - ce
+            - ch
+            - co
+            - cr
+            - cs
+            - cu
+            - cv
+            - cy
+            - da
+            - de
+            - de-AT
+            - de-CH
+            - dv
+            - dz
+            - ee
+            - el
+            - en
+            - en-AU
+            - en-CA
+            - en-GB
+            - en-IN
+            - en-NZ
+            - en-US
+            - eo
+            - es
+            - es-419
+            - es-CL
+            - es-EC
+            - es-MX
+            - et
+            - eu
+            - fa
+            - ff
+            - fi
+            - fj
+            - fo
+            - fr
+            - fr-CA
+            - fy
+            - ga
+            - gd
+            - gl
+            - gn
+            - gu
+            - gv
+            - ha
+            - he
+            - hi
+            - ho
+            - hr
+            - ht
+            - hu
+            - hy
+            - hz
+            - ia
+            - id
+            - ie
+            - ig
+            - ii
+            - ik
+            - io
+            - is
+            - it
+            - iu
+            - ja
+            - jv
+            - ka
+            - kg
+            - ki
+            - kj
+            - kk
+            - kl
+            - km
+            - kn
+            - ko
+            - kr
+            - ks
+            - ku
+            - kv
+            - kw
+            - ky
+            - la
+            - lb
+            - lg
+            - li
+            - ln
+            - lo
+            - lt
+            - lu
+            - lv
+            - mg
+            - mh
+            - mi
+            - mk
+            - ml
+            - mn
+            - mr
+            - ms
+            - mt
+            - my
+            - na
+            - nb
+            - nd
+            - ne
+            - ng
+            - nl
+            - nn
+            - 'no'
+            - nr
+            - nv
+            - ny
+            - oc
+            - oj
+            - om
+            - or
+            - os
+            - pa
+            - pi
+            - pl
+            - ps
+            - pt
+            - pt-BR
+            - pt-PT
+            - qu
+            - rm
+            - rn
+            - ro
+            - ru
+            - rw
+            - sa
+            - sc
+            - sd
+            - se
+            - sg
+            - si
+            - sk
+            - sl
+            - sl-SI
+            - sm
+            - sn
+            - so
+            - sq
+            - sr
+            - ss
+            - st
+            - su
+            - sv
+            - sw
+            - ta
+            - te
+            - tg
+            - th
+            - ti
+            - tk
+            - tl
+            - tn
+            - to
+            - tr
+            - ts
+            - tt
+            - tw
+            - ty
+            - ug
+            - uk
+            - ur
+            - uz
+            - ve
+            - vi
+            - vo
+            - wa
+            - wo
+            - xh
+            - yi
+            - yo
+            - za
+            - zh-CN
+            - zh-HK
+            - zh-TW
+            - zu
         available_locales:
           type: array
           items:
             type: string
+            enum:
+            - aa
+            - ab
+            - ae
+            - af
+            - ak
+            - am
+            - an
+            - ar
+            - as
+            - av
+            - ay
+            - az
+            - ba
+            - be
+            - bg
+            - bh
+            - bi
+            - bm
+            - bn
+            - bo
+            - br
+            - bs
+            - ca
+            - ce
+            - ch
+            - co
+            - cr
+            - cs
+            - cu
+            - cv
+            - cy
+            - da
+            - de
+            - de-AT
+            - de-CH
+            - dv
+            - dz
+            - ee
+            - el
+            - en
+            - en-AU
+            - en-CA
+            - en-GB
+            - en-IN
+            - en-NZ
+            - en-US
+            - eo
+            - es
+            - es-419
+            - es-CL
+            - es-EC
+            - es-MX
+            - et
+            - eu
+            - fa
+            - ff
+            - fi
+            - fj
+            - fo
+            - fr
+            - fr-CA
+            - fy
+            - ga
+            - gd
+            - gl
+            - gn
+            - gu
+            - gv
+            - ha
+            - he
+            - hi
+            - ho
+            - hr
+            - ht
+            - hu
+            - hy
+            - hz
+            - ia
+            - id
+            - ie
+            - ig
+            - ii
+            - ik
+            - io
+            - is
+            - it
+            - iu
+            - ja
+            - jv
+            - ka
+            - kg
+            - ki
+            - kj
+            - kk
+            - kl
+            - km
+            - kn
+            - ko
+            - kr
+            - ks
+            - ku
+            - kv
+            - kw
+            - ky
+            - la
+            - lb
+            - lg
+            - li
+            - ln
+            - lo
+            - lt
+            - lu
+            - lv
+            - mg
+            - mh
+            - mi
+            - mk
+            - ml
+            - mn
+            - mr
+            - ms
+            - mt
+            - my
+            - na
+            - nb
+            - nd
+            - ne
+            - ng
+            - nl
+            - nn
+            - 'no'
+            - nr
+            - nv
+            - ny
+            - oc
+            - oj
+            - om
+            - or
+            - os
+            - pa
+            - pi
+            - pl
+            - ps
+            - pt
+            - pt-BR
+            - pt-PT
+            - qu
+            - rm
+            - rn
+            - ro
+            - ru
+            - rw
+            - sa
+            - sc
+            - sd
+            - se
+            - sg
+            - si
+            - sk
+            - sl
+            - sl-SI
+            - sm
+            - sn
+            - so
+            - sq
+            - sr
+            - ss
+            - st
+            - su
+            - sv
+            - sw
+            - ta
+            - te
+            - tg
+            - th
+            - ti
+            - tk
+            - tl
+            - tn
+            - to
+            - tr
+            - ts
+            - tt
+            - tw
+            - ty
+            - ug
+            - uk
+            - ur
+            - uz
+            - ve
+            - vi
+            - vo
+            - wa
+            - wo
+            - xh
+            - yi
+            - yo
+            - za
+            - zh-CN
+            - zh-HK
+            - zh-TW
+            - zu
         logo_url:
           type: string
           nullable: true
@@ -69144,6 +70863,211 @@ components:
       - ZA
       - ZM
       - ZW
+    LocaleCode:
+      type: string
+      enum:
+      - aa
+      - ab
+      - ae
+      - af
+      - ak
+      - am
+      - an
+      - ar
+      - as
+      - av
+      - ay
+      - az
+      - ba
+      - be
+      - bg
+      - bh
+      - bi
+      - bm
+      - bn
+      - bo
+      - br
+      - bs
+      - ca
+      - ce
+      - ch
+      - co
+      - cr
+      - cs
+      - cu
+      - cv
+      - cy
+      - da
+      - de
+      - de-AT
+      - de-CH
+      - dv
+      - dz
+      - ee
+      - el
+      - en
+      - en-AU
+      - en-CA
+      - en-GB
+      - en-IN
+      - en-NZ
+      - en-US
+      - eo
+      - es
+      - es-419
+      - es-CL
+      - es-EC
+      - es-MX
+      - et
+      - eu
+      - fa
+      - ff
+      - fi
+      - fj
+      - fo
+      - fr
+      - fr-CA
+      - fy
+      - ga
+      - gd
+      - gl
+      - gn
+      - gu
+      - gv
+      - ha
+      - he
+      - hi
+      - ho
+      - hr
+      - ht
+      - hu
+      - hy
+      - hz
+      - ia
+      - id
+      - ie
+      - ig
+      - ii
+      - ik
+      - io
+      - is
+      - it
+      - iu
+      - ja
+      - jv
+      - ka
+      - kg
+      - ki
+      - kj
+      - kk
+      - kl
+      - km
+      - kn
+      - ko
+      - kr
+      - ks
+      - ku
+      - kv
+      - kw
+      - ky
+      - la
+      - lb
+      - lg
+      - li
+      - ln
+      - lo
+      - lt
+      - lu
+      - lv
+      - mg
+      - mh
+      - mi
+      - mk
+      - ml
+      - mn
+      - mr
+      - ms
+      - mt
+      - my
+      - na
+      - nb
+      - nd
+      - ne
+      - ng
+      - nl
+      - nn
+      - 'no'
+      - nr
+      - nv
+      - ny
+      - oc
+      - oj
+      - om
+      - or
+      - os
+      - pa
+      - pi
+      - pl
+      - ps
+      - pt
+      - pt-BR
+      - pt-PT
+      - qu
+      - rm
+      - rn
+      - ro
+      - ru
+      - rw
+      - sa
+      - sc
+      - sd
+      - se
+      - sg
+      - si
+      - sk
+      - sl
+      - sl-SI
+      - sm
+      - sn
+      - so
+      - sq
+      - sr
+      - ss
+      - st
+      - su
+      - sv
+      - sw
+      - ta
+      - te
+      - tg
+      - th
+      - ti
+      - tk
+      - tl
+      - tn
+      - to
+      - tr
+      - ts
+      - tt
+      - tw
+      - ty
+      - ug
+      - uk
+      - ur
+      - uz
+      - ve
+      - vi
+      - vo
+      - wa
+      - wo
+      - xh
+      - yi
+      - yo
+      - za
+      - zh-CN
+      - zh-HK
+      - zh-TW
+      - zu
     AddressInputParams:
       type: object
       properties:
@@ -71996,7 +73920,8 @@ components:
           description: ISO 4217 currency code.
           example: EUR
         default_locale:
-          type: string
+          allOf:
+          - "$ref": "#/components/schemas/LocaleCode"
           description: Locale used as the market default. Always part of `supported_locales`.
           example: de
         tax_inclusive:
@@ -72017,7 +73942,7 @@ components:
         supported_locales:
           type: array
           items:
-            type: string
+            "$ref": "#/components/schemas/LocaleCode"
           description: Locales available in this market. The default locale is always
             included.
           example:
@@ -72050,7 +73975,8 @@ components:
           description: ISO 4217 currency code.
           example: EUR
         default_locale:
-          type: string
+          allOf:
+          - "$ref": "#/components/schemas/LocaleCode"
           description: Locale used as the market default. Always part of `supported_locales`.
           example: de
         tax_inclusive:
@@ -72071,7 +73997,7 @@ components:
         supported_locales:
           type: array
           items:
-            type: string
+            "$ref": "#/components/schemas/LocaleCode"
           description: Locales available in this market. The default locale is always
             included.
           example:
@@ -72468,7 +74394,8 @@ components:
           type: string
           description: Defaults to the store primary channel when omitted.
         locale:
-          type: string
+          allOf:
+          - "$ref": "#/components/schemas/LocaleCode"
           example: en-US
         customer_note:
           type: string
@@ -72601,7 +74528,8 @@ components:
           type: string
           description: Defaults to the store primary channel when omitted.
         locale:
-          type: string
+          allOf:
+          - "$ref": "#/components/schemas/LocaleCode"
           example: en-US
         customer_note:
           type: string
@@ -74974,7 +76902,8 @@ components:
             the default market, the warehouse, the delivery zones and the currency.
           example: US
         locale:
-          type: string
+          allOf:
+          - "$ref": "#/components/schemas/LocaleCode"
           description: Storefront locale. Defaults to the country's own language.
           example: en
         currency:

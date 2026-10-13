@@ -18,8 +18,9 @@ module Spree
 
       # @param store [Spree::Store] the store to provision, already persisted
       # @param country [Spree::Country] where the shop ships from
-      # @param locale [String, nil] storefront locale; defaults to the
-      #   country's own language when Spree translates it, then English
+      # @param locale [String, nil] storefront locale, a code from
+      #   `Spree::Locales::ALL` (another spelling or region moves to the listed
+      #   one); defaults to the country's own language, then English
       # @param currency [String, nil] ISO 4217 code; defaults to the country's
       #   own currency. Merchants who ship from one country and price in
       #   another currency pass it explicitly.
@@ -55,21 +56,17 @@ module Spree
         found&.iso_code || country.default_currency.presence || 'USD'
       end
 
-      # An explicit locale is honored as given — a host app may ship its own
-      # translations. Only the *derived* default is filtered: falling back to
-      # a country's official language that Spree has no strings for would set
-      # a storefront to a language with nothing behind it, and it is not one
-      # the setup screen ever offers.
+      # A store's locale is a content locale, so it comes from
+      # `Spree::Locales::ALL` whether or not Spree ships translations for it:
+      # the storefront and dashboard carry their own. An explicit locale is
+      # kept when it is listed, or moved to its listed language (`en-IE`
+      # becomes `en`); one Spree cannot place, or none, gives the country's
+      # first official language Spree lists.
       def resolve_locale(requested, country)
-        return requested if requested.present?
+        listed = Spree::Locales.listed(requested)
+        return listed if listed
 
-        derived = country.default_locale.presence
-        return 'en' if derived.blank?
-
-        locales = Spree.available_locales
-        Spree.locale_for_language(derived, locales) ||
-          country.official_locales.lazy.filter_map { |language| Spree.locale_for_language(language, locales) }.first ||
-          'en'
+        [country.default_locale, *country.official_locales].lazy.filter_map { |language| Spree::Locales.for_language(language) }.first || 'en'
       end
 
       # The store's own country/currency/locale columns are not the source of

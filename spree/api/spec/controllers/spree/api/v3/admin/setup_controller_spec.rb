@@ -46,29 +46,15 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       expect(china['locales']).to eq(['zh-CN'])
     end
 
-    context "when only some of a country's languages are translated" do
-      before do
-        allow(Spree).to receive(:available_locales).and_return(%i[en de fr it pl])
-      end
+    # A store's locale is a content locale: the storefront and dashboard ship
+    # their own translations, so a language Spree has no strings for is
+    # still offered. Switzerland speaks Romansh, which Spree does not translate.
+    it "offers every official language, whether or not Spree translates it" do
+      get :countries, as: :json
 
-      # Offering a language Spree has no translations for would point a
-      # storefront at nothing — Switzerland speaks Romansh, Spree does not.
-      it 'drops languages that have no translations' do
-        get :countries, as: :json
+      switzerland = json_response['countries'].find { |country| country['code'] == 'CH' }
 
-        switzerland = json_response['countries'].find { |country| country['code'] == 'CH' }
-
-        expect(switzerland['locales']).to contain_exactly('de', 'fr', 'it')
-      end
-
-      it "falls back to English when none of a country's languages ship" do
-        get :countries, as: :json
-
-        # Eritrea speaks Tigrinya, which Spree does not translate.
-        eritrea = json_response['countries'].find { |country| country['code'] == 'ER' }
-
-        expect(eritrea['locales']).to eq(['en'])
-      end
+      expect(switzerland['locales']).to contain_exactly('de', 'fr', 'it', 'rm')
     end
 
     # Same posture as the rest of the flow: it exists only while the
@@ -190,6 +176,14 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(response).to have_http_status(:unprocessable_content)
         expect(@default_store.reload.setup_token).to be_present
         expect(Spree.admin_user_class.count).to eq(0)
+      end
+
+      it 'refuses a locale Spree cannot place and leaves the token usable' do
+        post :create, params: valid_params.merge(locale: 'english'), as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response.dig('error', 'details', 'locale')).to be_present
+        expect(@default_store.reload.setup_token).to be_present
       end
 
       it "defaults the currency to the country's own when none is given" do

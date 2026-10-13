@@ -77,7 +77,9 @@ module Spree
               inclusion: { in: ->(_market) { Spree.tax_providers.map(&:to_s) } },
               allow_blank: true
     validates :currency, presence: true
+    normalizes :default_locale, with: ->(value) { value.to_s.strip.presence }
     validates :default_locale, presence: true
+    validates_with Spree::LocaleCodesValidator, attributes: %i[default_locale supported_locales]
     validates :countries, presence: true
 
     #
@@ -145,7 +147,7 @@ module Spree
     #
     # @return [Array<String>]
     def supported_locales_list
-      @supported_locales_list ||= (supported_locales.to_s.split(',').map(&:strip) << default_locale).compact.uniq.sort
+      @supported_locales_list ||= (supported_locales.to_s.split(',').map(&:strip) << default_locale).compact_blank.uniq.sort
     end
 
     # Accepts an Array of locale codes and persists them as a comma-separated
@@ -156,7 +158,7 @@ module Spree
     # @param value [Array<String>, String, nil]
     def supported_locales=(value)
       @supported_locales_list = nil
-      normalized = value.is_a?(Array) ? value.compact.uniq.reject(&:blank?).join(',') : value
+      normalized = value.is_a?(Array) ? value.map { |code| code.to_s.strip }.reject(&:empty?).uniq.join(',') : value
       super(normalized)
     end
 

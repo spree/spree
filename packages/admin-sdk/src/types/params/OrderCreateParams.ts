@@ -2,6 +2,7 @@
 
 import type { AddressInputParams } from './AddressInputParams'
 import type { CurrencyCode } from '../generated'
+import type { LocaleCode } from '../generated'
 
 export type OrderCreateParams = {
   /**
@@ -21,7 +22,7 @@ export type OrderCreateParams = {
   market_id?: string
   /** Defaults to the store primary channel when omitted. */
   channel_id?: string
-  locale?: string
+  locale?: LocaleCode
   /** Public, customer-visible note. */
   customer_note?: string
   /** Staff-only note. Rich text HTML; reads come back as this plus `internal_note_html`. */

@@ -933,6 +933,16 @@ bundle exec rake spree:money:audit_capture_events
 
 </CodeGroup>
 
+## Locale codes come from a fixed list
+
+A market's `default_locale` and `supported_locales`, and the store's own `default_locale` and `supported_locales`, accept only the codes in `Spree::Locales::ALL`: every ISO 639-1 language (`en`, `de`) plus the regional variants commerce needs (`en-US`, `en-GB`, `pt-BR`, `zh-CN`). The match is exact, so `pt-br` is refused in favour of `pt-BR`. Any other value is answered with `422` naming the codes Spree does not support. Since an order's or cart's `locale` must be one its store supports, it comes from the list too once the store's locales do. Store setup, seeds and the markets migration move a code Spree does not list to its listed language (`en-IE` becomes `en`, `zh` becomes `zh-CN`).
+
+Values saved before the upgrade keep working until they are changed. If a market uses a code outside the list, change it to the listed spelling when you next edit it. The Store and Admin APIs publish the list as the `LocaleCode` type in the API reference and the SDK types.
+
+A store's locales are content locales, independent of the languages anything ships translation files for: every listed code is accepted for content (product names, descriptions and other translated fields), while messages in a language Spree has no translations for fall back to English. An app that sets `config.i18n.available_locales` keeps that list as the limit. Store setup no longer limits the languages it offers to the ones Spree translates, and refuses a `locale` it cannot place with `422`.
+
+Locale names move to the client. The `name` of a locale from `GET /locales` is deprecated in the Store API and removed in 6.1, and the Admin API no longer returns it: name a locale in the reader's language with `new Intl.DisplayNames([language], { type: 'language' }).of(code)`.
+
 ## Translations ship with Spree
 
 Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 43 languages besides English. Regional English (`en-GB` and the like) now falls back to `en`. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).

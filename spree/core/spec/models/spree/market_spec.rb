@@ -51,6 +51,11 @@ RSpec.describe Spree::Market, type: :model do
   end
 
   describe '#supported_locales_list' do
+    it 'ignores blank entries in a comma-separated value' do
+      market = build(:market, default_locale: 'en', supported_locales: ' , fr, ')
+      expect(market.supported_locales_list).to eq(%w[en fr])
+    end
+
     it 'returns default_locale when supported_locales is blank' do
       market = build(:market, default_locale: 'en', supported_locales: nil)
       expect(market.supported_locales_list).to eq(['en'])
@@ -97,6 +102,45 @@ RSpec.describe Spree::Market, type: :model do
       market.supported_locales = %w[fr de]
       market.save!
       expect(market.reload.read_attribute(:supported_locales)).to eq('fr,de')
+    end
+  end
+
+  describe 'locale validation' do
+    let(:market) { build(:market, store: store) }
+
+    it 'accepts listed locales' do
+      market.default_locale = 'pt-BR'
+      market.supported_locales = %w[en-US zh-TW]
+
+      expect(market).to be_valid
+    end
+
+    it 'strips spaces from the default locale and each supported locale' do
+      market.default_locale = ' de '
+      market.supported_locales = [' fr', 'en ']
+
+      expect([market.default_locale, market.read_attribute(:supported_locales)]).to eq(%w[de fr,en])
+    end
+
+    it 'rejects a default locale that is not listed, including one listed in another case' do
+      market.default_locale = 'pt-br'
+
+      expect(market).not_to be_valid
+      expect(market.errors[:default_locale]).to be_present
+    end
+
+    it 'rejects supported locales that are not listed, naming them' do
+      market.supported_locales = %w[fr xx yy]
+
+      expect(market).not_to be_valid
+      expect(market.errors.full_messages.join).to include('xx, yy')
+    end
+
+    it 'still saves a market whose stored locale predates the list when the locale does not change' do
+      market.save!
+      market.update_columns(default_locale: 'legacy', supported_locales: 'legacy')
+
+      expect(market.reload.update(name: 'Renamed')).to be(true)
     end
   end
 

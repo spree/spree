@@ -583,6 +583,19 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'locale validation' do
+    it 'accepts listed locales' do
+      expect(build(:store, default_locale: 'en-US', supported_locales: 'pt-BR,de')).to be_valid
+    end
+
+    it 'rejects locales that are not listed' do
+      store = build(:store, default_locale: 'english', supported_locales: 'fr,xx')
+
+      expect(store).not_to be_valid
+      expect(store.errors.attribute_names).to include(:default_locale, :supported_locales)
+    end
+  end
+
   describe '#supported_locales_list' do
     context 'with markets' do
       let!(:store) { create(:store, default_locale: 'en') }

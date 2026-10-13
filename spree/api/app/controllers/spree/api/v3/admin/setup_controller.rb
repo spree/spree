@@ -30,7 +30,7 @@ module Spree
               permit: false,
               example: 'US',
               description: 'ISO 3166-1 alpha-2 country the store sells from. It determines the default market, the warehouse, the delivery zones and the currency.'
-            body.attribute :locale, :string,
+            body.attribute :locale, :locale,
               permit: false,
               example: 'en',
               description: "Storefront locale. Defaults to the country's own language."
@@ -78,6 +78,7 @@ module Spree
             return render_setup_unavailable unless setup_token_usable?
             return render_missing_country if country.nil?
             return render_unknown_currency if unknown_currency?
+            return render_unknown_locale if unknown_locale?
 
             user = nil
             store = Spree::Store.default
@@ -161,6 +162,24 @@ module Spree
             )
           end
 
+          # Blank means "use the country's own language"; another spelling or a
+          # region Spree does not list moves to the listed locale, but a code
+          # Spree cannot place at all is refused before the token is spent.
+          def unknown_locale?
+            params[:locale].present? && Spree::Locales.listed(params[:locale]).nil?
+          end
+
+          def render_unknown_locale
+            message = "Unknown locale #{params[:locale]}"
+
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: message,
+              status: :unprocessable_content,
+              details: { locale: [message] }
+            )
+          end
+
           def country_payload(country)
             {
               code: country.iso,
@@ -170,17 +189,12 @@ module Spree
             }
           end
 
-          # A country's official languages, minus any Spree has no translations
-          # for — Switzerland speaks Romansh and Spree does not, so offering it
-          # would point a storefront at a language with nothing behind it.
-          # English closes the gap for countries whose languages all fall
-          # through, and is always offered alongside.
+          # A country's official languages, as the locales Spree lists for them
+          # (Switzerland gives de, fr, it and rm) — content locales, whether
+          # or not Spree ships translations, since the storefront and dashboard
+          # carry their own. English stands in for a country with none listed.
           def offerable_locales(country)
-            country.official_locales.filter_map { |language| Spree.locale_for_language(language, available_locales) }.presence || ['en']
-          end
-
-          def available_locales
-            @available_locales ||= Spree.available_locales
+            country.official_locales.filter_map { |language| Spree::Locales.for_language(language) }.uniq.presence || ['en']
           end
 
           # Token mismatch, spent token, and already-set-up all render the

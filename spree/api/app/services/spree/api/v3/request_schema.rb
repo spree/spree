@@ -42,7 +42,8 @@ module Spree
           any: {},
           # ISO codes, from the closed lists below.
           country: { type: :string },
-          currency: { type: :string }
+          currency: { type: :string },
+          locale: { type: :string }
         }.freeze
 
         # The ISO lists a `country` or `currency` field takes, published once
@@ -51,7 +52,8 @@ module Spree
         # a response is the type a request takes.
         CODE_LISTS = {
           country: ['CountryCode', -> { Spree::IsoData.country_codes }],
-          currency: ['CurrencyCode', -> { Spree::Money::Rounding::CURRENCY_CODES }]
+          currency: ['CurrencyCode', -> { Spree::Money::Rounding::CURRENCY_CODES }],
+          locale: ['LocaleCode', -> { Spree::Locales::ALL }]
         }.freeze
 
         ACTIONS = %i[create update].freeze

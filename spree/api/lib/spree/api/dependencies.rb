@@ -21,7 +21,7 @@ module Spree
            stock_transfer company company_membership company_invitation seller file_upload file_upload_target].freeze
 
       ADMIN_SERIALIZERS =
-        %i[country state applied_promotion discount tax_line cart delivery_zone delivery_profile
+        %i[country state locale applied_promotion discount tax_line cart delivery_zone delivery_profile
            delivery_origin_group integration delivery_method_rule delivery_zone_member fee consent_record customer
            data_request newsletter_subscriber order order_group product product_type
            product_type_custom_field_definition variant price price_history custom_field custom_field_definition

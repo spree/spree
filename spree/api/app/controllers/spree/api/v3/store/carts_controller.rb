@@ -25,7 +25,7 @@ module Spree
             schema.attribute :customer_note, :string, example: 'Leave at door'
             schema.attribute :market_id, :id
             schema.attribute :currency, :currency
-            schema.attribute :locale, :string
+            schema.attribute :locale, :locale
             schema.attribute :shipping_address_id, :id,
               description: 'An existing address to ship to.',
               example: 'addr_abc123'

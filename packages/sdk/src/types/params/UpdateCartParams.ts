@@ -3,13 +3,14 @@
 import type { CartAddressParams } from './CartAddressParams'
 import type { CurrencyCode } from '../generated'
 import type { LineItemInputParams } from './LineItemInputParams'
+import type { LocaleCode } from '../generated'
 
 export type UpdateCartParams = {
   email?: string
   customer_note?: string
   market_id?: string
   currency?: CurrencyCode
-  locale?: string
+  locale?: LocaleCode
   /** An existing address to ship to. */
   shipping_address_id?: string
   /** An existing address to bill. */

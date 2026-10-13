@@ -1,4 +1,4 @@
-import type { CountryCode, CurrencyCode } from '@spree/admin-sdk'
+import type { CountryCode, CurrencyCode, LocaleCode } from '@spree/admin-sdk'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
 
@@ -19,6 +19,14 @@ export function isCurrencyCode(value: unknown): value is CurrencyCode {
 }
 
 /**
+ * Whether a value has the shape of a locale code: an ISO 639-1 language,
+ * optionally with a region (`en`, `pt-BR`, `es-419`). See `isCountryCode`.
+ */
+export function isLocaleCode(value: unknown): value is LocaleCode {
+  return typeof value === 'string' && /^[a-z]{2,3}(-[A-Z0-9]{2,3})?$/.test(value)
+}
+
+/**
  * A required country field. A form that allows leaving it blank widens it
  * with `.or(z.literal(''))` and sends `value || null` (or `|| undefined`).
  */
@@ -29,4 +37,9 @@ export const countryCodeSchema = z.custom<CountryCode>(isCountryCode, {
 /** A required currency field. See `countryCodeSchema`. */
 export const currencyCodeSchema = z.custom<CurrencyCode>(isCurrencyCode, {
   error: () => i18n.t('admin.validation.currency_required'),
+})
+
+/** A required locale field. See `countryCodeSchema`. */
+export const localeCodeSchema = z.custom<LocaleCode>(isLocaleCode, {
+  error: () => i18n.t('admin.validation.locale_required'),
 })

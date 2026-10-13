@@ -2,6 +2,7 @@
 
 import type { CountryCode } from '../generated'
 import type { CurrencyCode } from '../generated'
+import type { LocaleCode } from '../generated'
 
 export type MarketUpdateParams = {
   /** Display name, unique within the store. */
@@ -9,7 +10,7 @@ export type MarketUpdateParams = {
   /** ISO 4217 currency code. */
   currency?: CurrencyCode
   /** Locale used as the market default. Always part of `supported_locales`. */
-  default_locale?: string
+  default_locale?: LocaleCode
   /** Display prices with tax included. */
   tax_inclusive?: boolean
   /**
@@ -22,7 +23,7 @@ export type MarketUpdateParams = {
   /** Sort order within the store; lower comes first. */
   position?: number
   /** Locales available in this market. The default locale is always included. */
-  supported_locales?: string[]
+  supported_locales?: LocaleCode[]
   /** ISO 3166-1 alpha-2 codes of the countries in this market. At least one is required. */
   country_codes?: CountryCode[]
 }

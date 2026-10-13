@@ -1471,6 +1471,7 @@
       },
       "country_required": "Country is required",
       "currency_required": "Currency is required",
+      "locale_required": "Language is required",
       "first_name_required": "First name is required",
       "invalid_email": "Enter a valid email",
       "invalid_email_or_password": "Invalid email or password",
