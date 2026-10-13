@@ -100,7 +100,7 @@ import { compareMoney, formatMoney, sumMoney } from '@spree/sdk'
 
 const order = await client.orders.get('or_abc123', {}, { token });
 
-formatMoney(order.total, order.currency, order.locale);          // "€129.99" for an order in euros, read in English
+formatMoney(order.total, order.currency, order.locale);          // "€129.99" for an order in euros, read in English; "" when null
 formatMoney(order.delivery_total, order.currency, order.locale); // "€10.00"
 
 // Calculate on the strings, exactly
@@ -112,7 +112,8 @@ const isFree = compareMoney(order.total, '0') === 0;
 const order = await response.json();
 
 const money = new Intl.NumberFormat(order.locale ?? 'en', { style: 'currency', currency: order.currency });
-element.textContent = money.format(order.total); // "€129.99"
+// An amount is null when prices are hidden from the shopper; Intl would show it as zero
+element.textContent = order.total === null ? '' : money.format(order.total); // "€129.99"
 
 // Calculate on the raw strings with a decimal library, never parseFloat:
 // 0.1 + 0.2 is 0.30000000000000004 as a JSON number.
@@ -144,8 +145,9 @@ const product = await (await fetch('/api/v3/store/products/spree-tote', {
   headers: { ...headers, 'X-Spree-Currency': market.currency, 'X-Spree-Locale': market.default_locale },
 })).json();
 
-const money = new Intl.NumberFormat(market.default_locale, { style: 'currency', currency: market.currency });
-element.textContent = money.format(product.price.amount); // "29,99 €"
+// A unit price may carry a fraction of a cent, so allow up to four decimals
+const money = new Intl.NumberFormat(market.default_locale, { style: 'currency', currency: market.currency, maximumFractionDigits: 4 });
+element.textContent = product.price.amount === null ? '' : money.format(product.price.amount); // "29,99 €"
 ```
 
 </CodeGroup>
