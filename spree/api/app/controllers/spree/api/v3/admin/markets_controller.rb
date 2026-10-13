@@ -22,7 +22,7 @@ module Spree
               required: true, on: :create,
               example: 'EUR',
               description: 'ISO 4217 currency code.'
-            body.attribute :default_locale, :string,
+            body.attribute :default_locale, :locale,
               required: true, on: :create,
               example: 'de',
               description: 'Locale used as the market default. Always part of `supported_locales`.'
@@ -34,7 +34,7 @@ module Spree
             body.attribute :default, :boolean,
               description: 'Setting true demotes the previous default market of the store.'
             body.attribute :position, :integer, description: 'Sort order within the store; lower comes first.'
-            body.attribute :supported_locales, :array, of: :string,
+            body.attribute :supported_locales, :array, of: :locale,
               example: %w[de en],
               description: 'Locales available in this market. The default locale is always included.'
             body.attribute :country_codes, :array, of: :country,

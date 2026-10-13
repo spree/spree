@@ -1486,6 +1486,7 @@
       },
       "country_required": "Kraj jest wymagany",
       "currency_required": "Waluta jest wymagana",
+      "locale_required": "Język jest wymagany",
       "first_name_required": "Imię jest wymagane",
       "invalid_email": "Wprowadź prawidłowy adres e-mail",
       "invalid_email_or_password": "Nieprawidłowy adres e-mail lub hasło",

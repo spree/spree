@@ -30,7 +30,7 @@ module Spree
               permit: false,
               example: 'US',
               description: 'ISO 3166-1 alpha-2 country the store sells from. It determines the default market, the warehouse, the delivery zones and the currency.'
-            body.attribute :locale, :string,
+            body.attribute :locale, :locale,
               permit: false,
               example: 'en',
               description: "Storefront locale. Defaults to the country's own language."

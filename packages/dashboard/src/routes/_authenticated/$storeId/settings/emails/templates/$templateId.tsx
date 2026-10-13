@@ -80,7 +80,8 @@ function EmailTemplateEditorPage() {
   const { permissions } = usePermissions()
   const canRead = permissions.can('read', Subject.EmailTemplate)
   const { defaultLocale } = useStore()
-  const [language, setLanguage] = useState(defaultLocale)
+  // Plain text, not a locale code: a version can also cover every language.
+  const [language, setLanguage] = useState<string>(defaultLocale)
   const [reloads, setReloads] = useState(0)
   const {
     data: template,

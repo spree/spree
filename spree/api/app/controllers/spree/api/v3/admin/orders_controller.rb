@@ -24,7 +24,7 @@ module Spree
             body.attribute :currency, :currency, example: 'USD'
             body.attribute :market_id, :id
             body.attribute :channel_id, :id, description: 'Defaults to the store primary channel when omitted.'
-            body.attribute :locale, :string, example: 'en-US'
+            body.attribute :locale, :locale, example: 'en-US'
             body.attribute :customer_note, :string, description: 'Public, customer-visible note.'
             body.attribute :internal_note, :string,
               description: 'Staff-only note. Rich text HTML; reads come back as this plus `internal_note_html`.'

@@ -18,5 +18,21 @@ RSpec.describe Spree::Locales do
     it 'has no duplicate codes' do
       expect(subject).to eq(subject.uniq)
     end
+
+    it "includes every locale Spree ships translations for, so the setup wizard's suggestions are valid" do
+      expect(Spree::SHIPPED_LOCALES.map(&:to_s) - subject).to eq([])
+    end
+  end
+
+  describe '.unlisted' do
+    it 'names the codes of a comma-separated list that are not listed, matching case exactly' do
+      expect([described_class.unlisted('en,pt-br,xx'), described_class.unlisted(nil)]).to eq([%w[pt-br xx], []])
+    end
+  end
+
+  describe '.for_language' do
+    it 'picks the language, or its first regional variant when only those are listed' do
+      expect([described_class.for_language('de'), described_class.for_language('zh'), described_class.for_language('xx')]).to eq(['de', 'zh-CN', nil])
+    end
   end
 end

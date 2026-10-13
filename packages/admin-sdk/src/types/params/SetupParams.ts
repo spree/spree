@@ -2,6 +2,7 @@
 
 import type { CountryCode } from '../generated'
 import type { CurrencyCode } from '../generated'
+import type { LocaleCode } from '../generated'
 
 export type SetupParams = {
   /** The one-time token from the install output. */
@@ -18,7 +19,7 @@ export type SetupParams = {
    */
   country_code: CountryCode
   /** Storefront locale. Defaults to the country's own language. */
-  locale?: string
+  locale?: LocaleCode
   /**
    * ISO 4217 currency. Defaults to the country's own currency: pass one only when the store prices
    * in something else.

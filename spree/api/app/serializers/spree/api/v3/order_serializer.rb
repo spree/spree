@@ -9,7 +9,7 @@ module Spree
                  channel_id: [:string, nullable: true], company_id: [:string, nullable: true],
                  company_name: [:string, nullable: true], po_number: [:string, nullable: true],
                  po_document_filename: [:string, nullable: true], po_document_byte_size: ['number | null'],
-                 currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], locale: [:string, nullable: true], total_quantity: :number,
+                 currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], locale: [:string, nullable: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
                  payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],

@@ -1614,6 +1614,7 @@
       },
       "country_required": "El país es obligatorio",
       "currency_required": "La moneda es obligatoria",
+      "locale_required": "El idioma es obligatorio",
       "first_name_required": "El nombre es obligatorio",
       "invalid_email": "Ingresá un email válido",
       "invalid_email_or_password": "Email o contraseña inválidos",

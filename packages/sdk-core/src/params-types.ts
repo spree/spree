@@ -28,10 +28,11 @@ export interface ParamsSpec {
 
 const isRequestSchema = (name: string) => name.endsWith('Params')
 
-// ISO code lists the request schemas reference by name. The response types
-// generated beside these files declare the same named types, so a request
-// imports them from there rather than repeating them.
-const SHARED_CODE_LISTS = new Set(['CountryCode', 'CurrencyCode'])
+// Code lists the request schemas reference by name: ISO countries and
+// currencies, and Spree's locales. The response types generated beside these
+// files declare the same named types, so a request imports them from there
+// rather than repeating them.
+const SHARED_CODE_LISTS = new Set(['CountryCode', 'CurrencyCode', 'LocaleCode'])
 
 function refName(ref: string): string {
   const name = ref.replace('#/components/schemas/', '')

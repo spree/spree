@@ -1469,6 +1469,7 @@
       },
       "country_required": "Le pays est requis",
       "currency_required": "La devise est requise",
+      "locale_required": "La langue est requise",
       "first_name_required": "Le prénom est obligatoire",
       "invalid_email": "Saisissez une adresse e-mail valide",
       "invalid_email_or_password": "E-mail ou mot de passe invalide",

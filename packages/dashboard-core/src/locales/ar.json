@@ -1469,6 +1469,7 @@
       },
       "country_required": "البلد مطلوب",
       "currency_required": "العملة مطلوبة",
+      "locale_required": "اللغة مطلوبة",
       "first_name_required": "الاسم الأول مطلوب",
       "invalid_email": "أدخل بريدًا إلكترونيًا صالحًا",
       "invalid_email_or_password": "بريد إلكتروني أو كلمة مرور غير صالحة",
