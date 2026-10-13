@@ -1,7 +1,9 @@
 module Spree
   module Seeds
     # Seeds only what has no Admin API by design: the store row, its immutable
-    # admin role, its first publishable key and the first admin. Everything a
+    # admin role, its first publishable key and, when ADMIN_EMAIL and
+    # ADMIN_PASSWORD are set, the first admin (otherwise first-run setup
+    # creates it). Everything a
     # store trades with — tax categories, channels, reasons, the warehouse,
     # delivery zones — is the configurator's store defaults, deployed once the
     # store knows where it sells from (docs/plans/6.0-cli-configurator.md).
