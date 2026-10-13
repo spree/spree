@@ -1,10 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { AuthProvider } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
-import { adminClient, Slot, useAuth } from '@spree/dashboard-core'
+import {
+  adminClient,
+  LOGIN_AFTER_SLOT,
+  type LoginAfterSlotContext,
+  Slot,
+  useAuth,
+} from '@spree/dashboard-core'
 import { Button, Input, Label, Skeleton } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { AuthShell } from '../components/spree/auth-shell'
@@ -30,6 +37,10 @@ function LoginPage() {
     isLoading: isLoadingProviders,
     isError: providersFailed,
   } = useAuthProviders()
+  const [lastAttempt, setLastAttempt] = useState<LoginAfterSlotContext>({
+    error: null,
+    email: null,
+  })
 
   if (isAuthenticated) return <Navigate to="/" replace />
 
@@ -49,9 +60,10 @@ function LoginPage() {
         redirectProviders={redirectProviders}
         isLoading={isLoadingProviders}
         failed={providersFailed}
+        onAttempt={setLastAttempt}
       />
 
-      <Slot name="login.after" />
+      <Slot<LoginAfterSlotContext> name={LOGIN_AFTER_SLOT} context={lastAttempt} />
     </AuthShell>
   )
 }
@@ -92,11 +104,13 @@ function ProviderOptions({
   redirectProviders,
   isLoading,
   failed,
+  onAttempt,
 }: {
   passwordProvider?: AuthProvider
   redirectProviders: AuthProvider[]
   isLoading: boolean
   failed: boolean
+  onAttempt: (attempt: LoginAfterSlotContext) => void
 }) {
   // Falling back to the password form would be the safer default for
   // availability, but it is the wrong one here: on an SSO-only store it renders
@@ -106,7 +120,7 @@ function ProviderOptions({
 
   return (
     <div className="grid gap-6">
-      {passwordProvider && <PasswordLoginForm />}
+      {passwordProvider && <PasswordLoginForm onAttempt={onAttempt} />}
 
       {passwordProvider && redirectProviders.length > 0 && <Divider />}
 
@@ -121,7 +135,7 @@ function ProviderOptions({
   )
 }
 
-function PasswordLoginForm() {
+function PasswordLoginForm({ onAttempt }: { onAttempt: (attempt: LoginAfterSlotContext) => void }) {
   const { t } = useTranslation()
   const { login, isLoading } = useAuth()
 
@@ -132,9 +146,11 @@ function PasswordLoginForm() {
   const { errors } = form.formState
 
   const onSubmit = async (data: LoginFormValues) => {
+    onAttempt({ error: null, email: data.email })
     try {
       await login(data.email, data.password)
     } catch (err) {
+      onAttempt({ error: err instanceof SpreeError ? err : null, email: data.email })
       // Surface the server's message (e.g. account lockout) — bad credentials and
       // lockout share a code, so the message is the only distinguishing signal.
       // Fall back to the generic string for network/unexpected errors.

@@ -1,4 +1,4 @@
-import type { AdminUser } from '@spree/admin-sdk'
+import type { AdminUser, SpreeError } from '@spree/admin-sdk'
 import type { ComponentType } from 'react'
 import { useSyncExternalStore } from 'react'
 
@@ -53,6 +53,23 @@ export interface NoStoreAccessSlotContext {
 export const STORE_SELECTION_SLOT = 'store_selection'
 
 export type StoreSelectionSlotContext = NoStoreAccessSlotContext
+
+/**
+ * Content below the sign-in options on the login page. Entries receive the
+ * outcome of the last password sign-in, so they can offer a next step for a
+ * specific failure — for example resending a confirmation email.
+ */
+export const LOGIN_AFTER_SLOT = 'login.after'
+
+export interface LoginAfterSlotContext {
+  /**
+   * The API's error for the last failed sign-in; `null` before one fails, while
+   * a new attempt runs, or when the request never reached the API.
+   */
+  error: SpreeError | null
+  /** The email the last sign-in was submitted with; `null` before the first attempt. */
+  email: string | null
+}
 
 // ============================================================================
 // Registry — module-singleton keyed by slot name
