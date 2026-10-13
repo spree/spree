@@ -14,10 +14,6 @@ module Spree
         Spree::Money::Rounding.format(group.cost, group.currency)
       end
 
-      attribute :display_cost do |group|
-        group.display_cost.to_s
-      end
-
       attribute :seller_names do |group|
         group.sellers.map(&:name)
       end

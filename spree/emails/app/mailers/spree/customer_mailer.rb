@@ -11,7 +11,7 @@ module Spree
 
       with_store_locale(store) do
         mail_template(
-          { customer: email_data(user, Spree.api.customer_serializer), reset_url: @reset_url },
+          { customer: email_data(user, Spree::Emails::CustomerSerializer), reset_url: @reset_url },
           to: user.email, store_url: store.storefront_url
         )
       end

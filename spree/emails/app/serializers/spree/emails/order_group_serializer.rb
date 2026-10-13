@@ -5,19 +5,15 @@ module Spree
     class OrderGroupSerializer < Spree::Api::V3::OrderGroupSerializer
       include Spree::Emails::PurchaseSummaryAttributes
 
-      typelize po_number: [:string, nullable: true], order_count: :number,
-               delivery_total: :string, display_delivery_total: :string,
-               additional_tax_total: :string, display_additional_tax_total: :string,
-               gift_card_total: :string, display_gift_card_total: :string
+      without_display_money
+
+      typelize po_number: [:string, nullable: true], order_count: :number, delivery_total: :string,
+               additional_tax_total: :string, gift_card_total: :string
 
       attributes :po_number
 
       attribute :order_count do |group|
         group.orders.size
-      end
-
-      attribute :display_delivery_total do |group|
-        group.display_delivery_total.to_s
       end
 
       attribute :delivery_total do |group|
@@ -28,16 +24,8 @@ module Spree
         Spree::Money::Rounding.format(group.additional_tax_total, group.currency)
       end
 
-      attribute :display_additional_tax_total do |group|
-        group.display_additional_tax_total.to_s
-      end
-
       attribute :gift_card_total do |group|
         Spree::Money::Rounding.format(group.gift_card_total, group.currency)
-      end
-
-      attribute :display_gift_card_total do |group|
-        group.display_gift_card_total.to_s
       end
 
       many :payments, resource: Spree::Emails::PaymentSerializer

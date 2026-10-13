@@ -9,15 +9,12 @@ export const EmailReturnSchema = z.object({
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
   refund_total: z.string().nullable(),
-  display_refund_total: z.string().nullable(),
   refund_tax_total: z.string().nullable(),
-  display_refund_tax_total: z.string().nullable(),
   approved_at: z.string().nullable(),
   received_at: z.string().nullable(),
   refunded_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
   refunded_total: z.string(),
-  display_refunded_total: z.string(),
   returned_items: z.array(EmailLineItemSchema),
 });
 

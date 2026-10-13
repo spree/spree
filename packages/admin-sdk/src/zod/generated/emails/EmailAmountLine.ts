@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 export const EmailAmountLineSchema = z.object({
   label: z.string().nullable(),
-  display_amount: z.string(),
   amount: z.string(),
 });
 

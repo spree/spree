@@ -26,9 +26,16 @@ module Spree
         #
         # @param surface [Symbol] :admin or :seller, whose price serializers to use
         def self.without_formatted_money(surface = :admin)
-          _attributes.delete_if { |key, _| key.to_s.start_with?('display_') && !FORMATTED_LABELS.include?(key.to_sym) }
+          without_display_money
           define_method(:price_serializer) { Spree.api.public_send(:"#{surface}_price_serializer") }
           define_method(:price_history_serializer) { Spree.api.public_send(:"#{surface}_price_history_serializer") }
+        end
+
+        # Drops the inherited display_* money attributes, keeping labels.
+        # Emails use it alone: their templates format amounts with the `money`
+        # Liquid filter.
+        def self.without_display_money
+          _attributes.delete_if { |key, _| key.to_s.start_with?('display_') && !FORMATTED_LABELS.include?(key.to_sym) }
         end
 
         # Declares money attributes, written as decimal strings with exactly
