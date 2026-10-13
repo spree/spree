@@ -91,7 +91,7 @@ RSpec.describe 'assistant authorization' do
   # workflow tool that replaced it.
   describe 'changes, through the workflow tool' do
     let(:tool) do
-      Spree.agent_tools.available_for(context).find { |candidate| candidate.tool_name == 'products_draft' }
+      Spree.admin_agent_tools.available_for(context).find { |candidate| candidate.tool_name == 'products_draft' }
     end
 
     it 'refuses a record the ability excludes' do
@@ -130,7 +130,7 @@ RSpec.describe 'assistant authorization' do
       end
 
       it 'creates without demanding permission over the store or the actor' do
-        tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'create_resource' }
+        tool = Spree.admin_agent_tools.available_for(context).find { |t| t.tool_name == 'create_resource' }
         result = tool.call(resource: 'products', attributes: { 'name' => "Agent Made #{SecureRandom.hex(3)}" })
 
         expect(result[:error]).to be_nil
@@ -138,7 +138,7 @@ RSpec.describe 'assistant authorization' do
       end
 
       it 'names the created record in the summary, not the store' do
-        tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'create_resource' }
+        tool = Spree.admin_agent_tools.available_for(context).find { |t| t.tool_name == 'create_resource' }
         result = tool.call(resource: 'products', attributes: { 'name' => 'Summary Subject' })
 
         expect(result[:summary]).to include('Summary Subject')
@@ -157,7 +157,7 @@ RSpec.describe 'assistant authorization' do
       end
 
       it 'refuses the create workflow' do
-        create_tool = Spree.agent_tools.available_for(context).
+        create_tool = Spree.admin_agent_tools.available_for(context).
                       find { |candidate| candidate.tool_name == 'create_resource' }
         result = create_tool.call(resource: 'products', attributes: { 'name' => 'Should Not Exist' })
 
@@ -177,7 +177,7 @@ RSpec.describe 'assistant authorization' do
       end
 
       it 'refuses the destroy workflow' do
-        destroy = Spree.agent_tools.available_for(context).
+        destroy = Spree.admin_agent_tools.available_for(context).
                   find { |candidate| candidate.tool_name == 'delete_resource' }
         result = destroy.call(resource: 'products', id: visible.prefixed_id)
 

@@ -1,5 +1,5 @@
 module Spree
-  # One entry in the agent-tool registry ({Spree.agent_tools}).
+  # One entry in the agent-tool registry ({Spree.admin_agent_tools}).
   #
   # A tool is a plain Spree object: a name, a description the model reads, a
   # JSON parameter schema, the permission key that gates it, whether it
@@ -31,6 +31,7 @@ class AgentTool
     class_attribute :declared_description, instance_accessor: false
     class_attribute :declared_permission, instance_accessor: false
     class_attribute :declared_mutating, instance_accessor: false, default: false
+    class_attribute :declared_audience, instance_accessor: false, default: :admin
     class_attribute :declared_params, instance_accessor: false, default: {}.freeze
 
     class << self
@@ -53,6 +54,22 @@ class AgentTool
       def permission(value = nil)
         self.declared_permission = value if value
         declared_permission
+      end
+
+      # Which surface this tool belongs to: `:admin` for the back office,
+      # `:store` for the storefront.
+      #
+      # Declared on the tool rather than inferred from the registry it was
+      # pushed into, so filing one in the wrong place is refused at
+      # registration. It matters most for the tools that carry no permission
+      # of their own — they are gated per resource, and a blank permission
+      # reads as "anyone may see this".
+      #
+      # @param value [Symbol, nil]
+      # @return [Symbol]
+      def audience(value = nil)
+        self.declared_audience = value.to_sym if value
+        declared_audience
       end
 
       # Declares that this tool changes store data, so the turn halts for

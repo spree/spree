@@ -11,7 +11,7 @@ RSpec.describe 'agent reporting tools' do
   let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(name)
-    Spree.agent_tools.available_for(context).find { |candidate| candidate.tool_name == name }
+    Spree.admin_agent_tools.available_for(context).find { |candidate| candidate.tool_name == name }
   end
 
   describe 'describe_reporting' do
@@ -106,7 +106,7 @@ RSpec.describe 'agent reporting tools' do
     let(:scopes) { ['read_products'] }
 
     it 'is not offered the reporting tools' do
-      names = Spree.agent_tools.available_for(context).map(&:tool_name)
+      names = Spree.admin_agent_tools.available_for(context).map(&:tool_name)
 
       expect(names).not_to include('query_report', 'describe_reporting')
     end
@@ -124,7 +124,7 @@ RSpec.describe 'agent reporting tools' do
     end
 
     it 'refuses to group by it' do
-      tool = Spree.agent_tools.available_for(narrow).find { |t| t.tool_name == 'query_report' }
+      tool = Spree.admin_agent_tools.available_for(narrow).find { |t| t.tool_name == 'query_report' }
 
       result = tool.call(metrics: ['gross_sales'], dimensions: ['product'])
 
@@ -133,7 +133,7 @@ RSpec.describe 'agent reporting tools' do
     end
 
     it 'still allows one the grant covers' do
-      tool = Spree.agent_tools.available_for(narrow).find { |t| t.tool_name == 'query_report' }
+      tool = Spree.admin_agent_tools.available_for(narrow).find { |t| t.tool_name == 'query_report' }
 
       result = tool.call(metrics: ['gross_sales'], dimensions: ['completed_at'])
 

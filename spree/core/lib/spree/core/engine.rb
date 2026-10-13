@@ -43,7 +43,8 @@ module Spree
                                :actor_classes,
                                :custom_fields,
                                :reporting,
-                               :agent_tools,
+                               :admin_agent_tools,
+                               :store_agent_tools,
                                :integrations,
                                :number_generators,
                                :subscribers,
@@ -162,9 +163,14 @@ module Spree
       # Seed the agent-tool registry before app initializers so applications
       # and extensions can register their own tools and expose their own
       # workflows in config/initializers (see docs/plans/6.0-mcp-server.md).
+      # One registry per surface, the way the authentication strategies are
+      # split: a storefront agent and a back-office agent share the tool
+      # machinery but never the catalog, and a staff tool reaching a customer
+      # would be offering the back office to the public.
       initializer 'spree.register.agent_tools', before: :load_config_initializers do |app|
-        app.config.spree.agent_tools = Spree::AgentTools::Registry.new
-        Spree::AgentTools::DefaultCatalog.install(app.config.spree.agent_tools)
+        app.config.spree.admin_agent_tools = Spree::AgentTools::Registry.new(audience: :admin)
+        app.config.spree.store_agent_tools = Spree::AgentTools::Registry.new(audience: :store)
+        Spree::AgentTools::DefaultCatalog.install(app.config.spree.admin_agent_tools)
       end
 
 

@@ -522,7 +522,8 @@ module Spree
   # either adapter. See docs/plans/6.0-mcp-server.md.
   #
   # @return [Spree::AgentTools::Registry]
-  singleton_class.delegate :agent_tools, :agent_tools=, to: :spree_config
+  singleton_class.delegate :admin_agent_tools, :admin_agent_tools=, to: :spree_config
+  singleton_class.delegate :store_agent_tools, :store_agent_tools=, to: :spree_config
 
   # The permission catalog — the grant vocabulary shared by staff roles and
   # secret API key scopes. Roles themselves are data (Spree::Role#permissions);

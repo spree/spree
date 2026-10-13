@@ -9,7 +9,7 @@ RSpec.describe 'agent generic record writes' do
   let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(name)
-    Spree.agent_tools.available_for(context).find { |candidate| candidate.tool_name == name }
+    Spree.admin_agent_tools.available_for(context).find { |candidate| candidate.tool_name == name }
   end
 
   describe 'update_resource' do
@@ -114,7 +114,7 @@ RSpec.describe 'agent generic record writes' do
   # attributes a resource accepts, so it has to answer that question.
   describe 'describe_resource and the write tools agree' do
     it 'lists the attributes a generic write accepts' do
-      described = Spree.agent_tools.available_for(context).
+      described = Spree.admin_agent_tools.available_for(context).
                   find { |candidate| candidate.tool_name == 'describe_resource' }.
                   call(resource: 'markets')[:resources].first
 
@@ -122,7 +122,7 @@ RSpec.describe 'agent generic record writes' do
     end
 
     it 'names the create and update tools separately' do
-      described = Spree.agent_tools.available_for(context).
+      described = Spree.admin_agent_tools.available_for(context).
                   find { |candidate| candidate.tool_name == 'describe_resource' }.
                   call(resource: 'products')[:resources].first
 
@@ -163,7 +163,7 @@ RSpec.describe 'agent generic record writes' do
     let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_all']) }
 
     it 'is not offered the write tools at all' do
-      names = Spree.agent_tools.available_for(context).map(&:tool_name)
+      names = Spree.admin_agent_tools.available_for(context).map(&:tool_name)
 
       expect(names).not_to include('create_resource', 'update_resource', 'delete_resource')
     end

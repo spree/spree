@@ -9,7 +9,7 @@ RSpec.describe 'agent workflow tool arguments' do
   let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(name)
-    Spree.agent_tools.available_for(context).find { |candidate| candidate.tool_name == name }
+    Spree.admin_agent_tools.available_for(context).find { |candidate| candidate.tool_name == name }
   end
 
   describe 'records named inside a list of rows' do
@@ -131,7 +131,7 @@ RSpec.describe 'agent workflow tool arguments' do
     it 'records an admin user, which the association does accept' do
       admin = create(:admin_user)
       admin_context = Spree::AgentTools::Context.new(store: store, user: admin, request_headers: agent_headers_for(admin))
-      admin_tool = Spree.agent_tools.available_for(admin_context).
+      admin_tool = Spree.admin_agent_tools.available_for(admin_context).
                    find { |candidate| candidate.tool_name == 'create_resource' }
 
       result = admin_tool.call(

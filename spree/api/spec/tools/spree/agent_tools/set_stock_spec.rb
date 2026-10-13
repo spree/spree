@@ -19,7 +19,7 @@ RSpec.describe 'agent stock setting' do
   end
 
   def tool(ctx = context)
-    Spree.agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'set_stock' }
+    Spree.admin_agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'set_stock' }
   end
 
   def row(**attributes)

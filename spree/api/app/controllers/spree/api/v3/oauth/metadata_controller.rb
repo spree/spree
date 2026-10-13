@@ -37,7 +37,7 @@ module Spree
               # than it accepts turns every connection into "The requested
               # scope is invalid".
               scopes_supported: Spree::Api::Oauth.staff_scope_keys,
-              resource_documentation: 'https://spreecommerce.org/docs/developer/agentic/admin-mcp'
+              resource_documentation: 'https://spreecommerce.org/docs/developer/mcp/overview'
             )
 
             render json: Spree.api.admin_oauth_protected_resource_serializer.new(document).to_h
