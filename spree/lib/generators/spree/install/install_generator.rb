@@ -111,11 +111,15 @@ module Spree
         # Sample-data imports need an admin as their owner. Without explicit
         # credentials the seed mints none (first-run setup does), so loading
         # now would raise mid-install.
-        if admin_account_available?
+        if !admin_account_available?
+          say_status :skipping, 'sample data (needs an admin account — finish setup, then run bin/rails spree:load_sample_data)'
+        elsif !store_provisioned?
+          # The store defaults are deployed through the Admin API, which this
+          # generator cannot do; sample data builds on them.
+          say_status :skipping, 'sample data (needs the store defaults — finish setup or run `spree config provision`, then run bin/rails spree:load_sample_data)'
+        else
           say_status :loading, 'sample data'
           rake 'spree:load_sample_data'
-        else
-          say_status :skipping, 'sample data (needs an admin account — finish setup, then run bin/rails spree:load_sample_data)'
         end
       else
         say_status :skipping, 'sample data (you can always run bin/rails spree:load_sample_data)'
@@ -171,6 +175,12 @@ module Spree
       return true if credentials
 
       Spree.admin_user_class.present? && Spree.admin_user_class.exists?
+    rescue StandardError
+      false
+    end
+
+    def store_provisioned?
+      Spree::Store.default&.provisioned? || false
     rescue StandardError
       false
     end

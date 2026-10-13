@@ -511,6 +511,8 @@ describe('introspect', () => {
       {
         name: 'Standard EU',
         delivery_zone_id: api.all('/delivery_zones')[0].id,
+        // The API's default provider, as it reads back: left out of the file.
+        fulfillment_provider: 'manual',
         calculator: {
           type: 'flat_rate',
           preferences: { amount: '9.9', currency: 'EUR', minimum_item_total: null, amounts: {} },

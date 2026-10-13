@@ -30,7 +30,7 @@ delivery_profiles:
 delivery_methods:
   - name: Digital Delivery
     delivery_profile: Digital
-    fulfillment_provider: Spree::FulfillmentProvider::Digital
+    fulfillment_provider: digital
     storefront_visible: true
     calculator:
       type: digital_delivery
