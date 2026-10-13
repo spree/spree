@@ -4,7 +4,6 @@ import { createContext, type ReactNode, useCallback, useContext, useMemo } from 
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
 import type { ActionName, SubjectName } from '../lib/permissions'
-import { useResourceKey } from '../lib/query-keys'
 import { useTenantId } from './tenant-provider'
 
 /**
@@ -35,8 +34,8 @@ interface PermissionContextValue {
   permissionKeys: string[]
   isLoading: boolean
   /**
-   * Reloads `/me`. Permissions are store-scoped (roles are held per store),
-   * so the store route calls this whenever the active store changes.
+   * Reloads `/me`. The seller panel calls this when the seller changes, since
+   * its provider is not told which seller is open.
    */
   refresh: () => Promise<void>
 }
@@ -94,16 +93,27 @@ const EMPTY_PERMISSIONS: Permissions = {
   isConditional: () => false,
 }
 
-export function PermissionProvider({ children }: { children: ReactNode }) {
+export function PermissionProvider({
+  tenantId,
+  children,
+}: {
+  /**
+   * The store (or seller) the panel is acting as. Roles are held per store,
+   * so this is part of the query key: opening another store loads its
+   * permissions instead of reusing the last one's. Pass it when the provider
+   * sits above the router, where the store route's `StoreProvider` is out of
+   * reach; without it the key falls back to `useTenantId()`.
+   */
+  tenantId?: string
+  children: ReactNode
+}) {
   const { isAuthenticated } = useAuth()
   const queryClient = useQueryClient()
-  // Store-scoped by construction: `useResourceKey` folds the tenant id in, so
-  // switching store changes the key and TanStack refetches on its own — no
-  // manual reload, and no chance of one store's rules being shown for another.
-  const queryKey = useResourceKey(PERMISSIONS_RESOURCE)
+  const contextTenantId = useTenantId()
+  const activeTenantId = tenantId ?? contextTenantId
 
   const query = useQuery({
-    queryKey,
+    queryKey: [PERMISSIONS_RESOURCE, activeTenantId],
     queryFn: () => getApiClient().fetchPermissions(),
     enabled: isAuthenticated,
     // Permissions change when an admin's role does, which is rare and happens
@@ -115,20 +125,15 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
   const rules = query.data?.rules ?? EMPTY_RULES
   const permissionKeys = query.data?.keys ?? EMPTY_KEYS
 
-  // `useResourceKey` returns a fresh array each render, so depending on it
-  // directly would give `refresh` a new identity every render — and a consumer
-  // holding it in an effect's dependencies would then re-run that effect
-  // forever. Depend on the tenant id (a string) and rebuild the key inside.
-  const tenantId = useTenantId()
   const refresh = useCallback(async () => {
-    const permissionsKey = [PERMISSIONS_RESOURCE, tenantId]
+    const permissionsKey = [PERMISSIONS_RESOURCE, activeTenantId]
     // A refresh asks for the rules as they stand now. A first fetch still in
     // flight was sent before — in the seller panel, before any seller was
     // chosen — and with nothing cached TanStack hands that same fetch back
     // rather than starting another, so it is cancelled first.
     await queryClient.cancelQueries({ queryKey: permissionsKey })
     await queryClient.invalidateQueries({ queryKey: permissionsKey })
-  }, [queryClient, tenantId])
+  }, [queryClient, activeTenantId])
 
   const permissions = useMemo(
     () => (rules.length > 0 ? buildPermissions(rules) : EMPTY_PERMISSIONS),

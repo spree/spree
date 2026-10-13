@@ -17,11 +17,12 @@ export function useRole(id: string) {
 /**
  * The permission catalog — the grant vocabulary shared by staff roles and API
  * key scopes. Static per server boot; store-keyed anyway so labels follow the
- * store's locale context.
+ * store's locale context. Not keyed `permissions`: that key holds the signed-in
+ * user's own permissions, cached per store by the permission provider.
  */
 export function usePermissionCatalog() {
   return useQuery({
-    queryKey: useResourceKey('permissions'),
+    queryKey: useResourceKey('permission-catalog'),
     queryFn: () => adminClient.permissions.list(),
     staleTime: 30 * 60 * 1000,
   })

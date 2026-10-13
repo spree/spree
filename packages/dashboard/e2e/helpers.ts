@@ -190,6 +190,14 @@ export const FIXTURE_SELLER_WRITER_EMAIL = 'e2e-panel-seller@example.com'
 export const FIXTURE_SELLER_PASSWORD = 'spree123'
 export const FIXTURE_PANEL_SELLER = 'E2E Panel Seller'
 
+/**
+ * Staff who run the default store and only read orders in the comma store, so
+ * switching between the two must change what the sidebar offers.
+ */
+export const FIXTURE_TWO_STORE_STAFF_EMAIL = 'e2e-two-stores@example.com'
+/** The comma store's name, as the store switcher lists it. */
+export const FIXTURE_COMMA_STORE_NAME = 'Winkel'
+
 /** The marketplace seller panel, its own app on its own origin (see playwright.config.ts). */
 export const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
 

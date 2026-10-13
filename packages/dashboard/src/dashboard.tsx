@@ -1,4 +1,4 @@
-import { AuthProvider, PermissionProvider, queryClient } from '@spree/dashboard-core'
+import { AuthProvider, queryClient } from '@spree/dashboard-core'
 import { ConfirmProvider, ThemeProvider, TooltipProvider } from '@spree/dashboard-ui'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { type AnyRouter, RouterProvider } from '@tanstack/react-router'
@@ -13,6 +13,7 @@ import './nav/default'
 import './nav/settings'
 import './search/create-actions'
 import './search/default'
+import { StorePermissionProvider } from './store-permission-provider'
 
 /**
  * The Spree admin app shell: provider stack + router, fully wired.
@@ -47,13 +48,13 @@ export function Dashboard({ router }: { router: AnyRouter }) {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <AuthProvider>
-            <PermissionProvider>
+            <StorePermissionProvider router={router}>
               <TooltipProvider>
                 <ConfirmProvider>
                   <RouterProvider router={router} />
                 </ConfirmProvider>
               </TooltipProvider>
-            </PermissionProvider>
+            </StorePermissionProvider>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
