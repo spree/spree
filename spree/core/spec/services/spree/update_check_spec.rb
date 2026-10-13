@@ -25,13 +25,15 @@ RSpec.describe Spree::UpdateCheck do
   end
 
   before do
+    allow(Rails.env).to receive(:test?).and_return(false)
+    with_env({})
     allow(Net::HTTP).to receive(:start).with('spreecloud.io', 443, hash_including(use_ssl: true, max_retries: 0, open_timeout: 1, read_timeout: 1)) { |*, **, &block| block.call(http) }
     allow(http).to receive(:get) { |path| @requested_path = path; response }
   end
 
   def with_env(values)
     allow(ENV).to receive(:[]).and_call_original
-    values.each { |name, value| allow(ENV).to receive(:[]).with(name).and_return(value) }
+    { 'CI' => nil }.merge(values).each { |name, value| allow(ENV).to receive(:[]).with(name).and_return(value) }
   end
 
   describe '.status' do
@@ -166,6 +168,22 @@ RSpec.describe Spree::UpdateCheck do
 
       it 'honours the setting' do
         allow(Spree::Config).to receive(:update_check_enabled).and_return(false)
+
+        expect(described_class.status.enabled).to be(false)
+        expect(Net::HTTP).not_to have_received(:start)
+      end
+    end
+
+    context 'when running tests' do
+      it 'sends nothing so test suites never reach spreecloud.io' do
+        allow(Rails.env).to receive(:test?).and_return(true)
+
+        expect(described_class.status.enabled).to be(false)
+        expect(Net::HTTP).not_to have_received(:start)
+      end
+
+      it 'sends nothing on a CI server, whatever the Rails environment' do
+        with_env('CI' => 'true')
 
         expect(described_class.status.enabled).to be(false)
         expect(Net::HTTP).not_to have_received(:start)

@@ -58,3 +58,5 @@ end
 ```
 
 Either way, turning a switch off wins over the other method: an environment variable cannot turn back on what the initializer turned off, and the reverse.
+
+The check never runs in the `test` environment or on a CI server (any machine with the `CI` environment variable set, which GitHub Actions, GitLab CI, CircleCI and most other services do), so test runs send nothing.

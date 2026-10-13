@@ -157,7 +157,7 @@ module Spree
       preference :track_inventory_levels, :boolean, default: true, deprecated: 'Set it on the store instead' # Determines whether to track on_hand values for variants / products.
       preference :track_price_history, :boolean, default: true, deprecated: 'Set it on the store instead' # Records price changes for Omnibus Directive compliance. Disable for non-EU stores.
       preference :price_history_retention_days, :integer, default: 30, deprecated: 'Set it on the store instead' # Days to retain price history records. Used by spree:price_history:prune rake task.
-      # SPREE_UPDATE_CHECK_DISABLED turns it off as well.
+      # SPREE_UPDATE_CHECK_DISABLED turns it off as well; it never runs in the test environment or on CI.
       preference :update_check_enabled, :boolean, default: true
       preference :use_user_locale, :boolean, default: true, deprecated: true
 
