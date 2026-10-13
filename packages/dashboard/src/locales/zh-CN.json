@@ -4094,30 +4094,32 @@
           "communication_title": "沟通",
           "commission_tax_title": "佣金税"
         },
-        "connected_apps": {
-          "title": "已连接的代理",
-          "subtitle": "团队成员授予此店铺访问权限的 AI 代理。撤销立即生效。",
+        "ai_agents": {
+          "title": "AI 代理",
+          "subtitle": "已连接到您商店的 AI 代理。连接 Claude、ChatGPT 等来管理您的商店",
           "empty": "尚未连接任何代理。",
           "revoke": "撤销访问权限",
           "table": {
-            "name": "代理",
             "access": "访问权限",
-            "authorized_by": "批准人",
-            "last_authorized": "最后授权时间",
             "status": "状态"
           },
           "revoke_confirm": {
             "title": "撤销访问权限？",
-            "message": "{{name}} 将立即停止工作。使用它的人需要重新连接。"
+            "message": "{{who}} 将立即失去对 {{name}} 的访问权限。其他人仍保持连接。"
           },
-          "status": {
-            "connected": "已连接",
-            "not_connected": "未连接"
+          "manage_connections": "管理连接",
+          "connections": {
+            "person": "成员",
+            "empty": "尚无人通过此代理连接。",
+            "unknown_person": "未知",
+            "count_one": "已连接 {{count}} 人",
+            "count_other": "已连接 {{count}} 人",
+            "connected": "连接时间"
           }
         },
         "oauth_clients": {
           "title": "OAuth 客户端",
-          "subtitle": "已在此店铺注册的 OAuth 客户端。连接请在“已连接的代理”中完成。",
+          "subtitle": "为此商店注册的 OAuth 客户端",
           "empty": "尚未注册任何客户端。",
           "register": "注册客户端",
           "table": {
@@ -5190,7 +5192,7 @@
         "package_types": "纸箱、外箱、托盘与集装箱",
         "suppliers": "你从谁那里采购库存，以及如何联系他们",
         "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税",
-        "connected_apps": "有权访问此店铺的 AI 代理",
+        "ai_agents": "有权访问此店铺的 AI 代理",
         "oauth_clients": "注册并配置 OAuth 客户端"
       },
       "groups": {
@@ -5230,7 +5232,7 @@
         "package_types": "包装类型",
         "suppliers": "供应商",
         "marketplace": "设置",
-        "connected_apps": "已连接的代理",
+        "ai_agents": "AI 代理",
         "oauth_clients": "OAuth 客户端"
       },
       "breadcrumbs": {

@@ -175,9 +175,11 @@ module Spree
                 :code_challenge, :code_challenge_method, :response_mode
               ).to_h.symbolize_keys.
                 merge(scope: known_scopes).
-                # Carried through raw: RFC 8707 allows one value or several,
-                # and Doorkeeper's own validator normalizes both shapes.
-                merge(resource: params[:resource])
+                # The audience the grant is written with. Resolved rather
+                # than carried through raw, so a client that names nothing —
+                # the indicator is optional and most omit it — still gets a
+                # grant bound to the Admin API instead of to nothing.
+                merge(resource: requested_resource)
             end
 
             # The requested scopes this server knows, with the rest dropped.
@@ -197,26 +199,20 @@ module Spree
 
             # The audiences the grant is bound to.
             #
-            # A client asking for the MCP endpoint is granted the Admin API
-            # alongside it, because an MCP tool call reaches data by
-            # dispatching to an Admin API operation — as the same grant, with
-            # the same scopes, so the ceiling the merchant approved is the one
-            # that applies. Without it the dispatched call carries a token
-            # bound to a path the Admin API does not serve, and every tool
-            # answers "authentication required".
+            # Every grant is bound to the Admin API, whatever the client
+            # asked for. The MCP endpoint lives inside that API and
+            # authenticates the same way, so one audience serves both — and
+            # a tool call, which reaches data by dispatching into the Admin
+            # API with this same token, is not left carrying a credential
+            # bound to a path the Admin API does not serve.
             #
-            # This widens the audience, not the authority: the scopes are
-            # unchanged, and a token for the Admin API alone is still refused
-            # at the MCP endpoint. RFC 8707 takes a list for exactly this —
-            # one grant, the surfaces it legitimately needs.
+            # The indicator a client sends is honoured for its origin only:
+            # a tunnel, a proxy or a custom domain has to appear in the
+            # audience as the client knows it.
             def requested_resource
-              requested = @pre_auth.resource_indicators.to_a
-              return requested.first if requested.empty?
+              requested = Array(params[:resource]).flat_map { |value| value.to_s.split }
 
-              mcp = Spree::Api::Oauth.resources[:mcp]
-              return requested.join(' ') unless requested.any? { |value| path_of(value) == mcp }
-
-              Spree::Api::Oauth.granted_audience(:mcp, origin_of(requested.first))
+              Spree::Api::Oauth.resource_identifier(:admin, origin_of(requested.first))
             end
 
             # The scheme and host the client was given — a tunnel, a proxy, a

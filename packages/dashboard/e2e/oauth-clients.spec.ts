@@ -1,7 +1,7 @@
 import { expect, type Page, test } from '@playwright/test'
 import { gotoIndex, login } from './helpers'
 
-const AGENTS_PATH = (storeId: string) => `/${storeId}/settings/connected-apps`
+const AGENTS_PATH = (storeId: string) => `/${storeId}/settings/ai-agents`
 const CLIENTS_PATH = (storeId: string) => `/${storeId}/settings/oauth-clients`
 const CONNECT_CTA = /connect an agent/i
 const REGISTER_CTA = /register a client/i
@@ -69,7 +69,7 @@ test.describe('before any agent has been connected', () => {
     await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
     await sheet.getByRole('button', { name: /^done$/i }).click()
 
-    await expect(page.getByRole('row', { name: /Claude/ })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('Claude').first()).toBeVisible({ timeout: 15_000 })
   })
 })
 
@@ -93,8 +93,8 @@ test.describe('connecting an agent', () => {
   })
 
   // Revoking keeps the registration so the same client can be connected
-  // again — which is exactly why the row has to say what changed.
-  test('says whether a registration is connected', async ({ page }) => {
+  // again — which is exactly why the card has to say who holds access now.
+  test('says who is connected through a registration', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
 
@@ -102,8 +102,10 @@ test.describe('connecting an agent', () => {
     await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
     await sheet.getByRole('button', { name: /^done$/i }).click()
 
-    // Registered but nobody has signed in through it yet.
-    await expect(page.getByText(/not connected/i).first()).toBeVisible({ timeout: 15_000 })
+    // Registered, but nobody has signed in through it yet.
+    await expect(page.getByText(/nobody is connected through this agent/i).first()).toBeVisible({
+      timeout: 15_000,
+    })
   })
 })
 
@@ -135,9 +137,7 @@ test.describe('connecting a client we do not know', () => {
     await expect(sheet.getByRole('tab')).toHaveCount(0)
 
     await sheet.getByRole('button', { name: /^done$/i }).click()
-    await expect(page.getByRole('row', { name: new RegExp(name) })).toBeVisible({
-      timeout: 15_000,
-    })
+    await expect(page.getByText(name).first()).toBeVisible({ timeout: 15_000 })
   })
 })
 

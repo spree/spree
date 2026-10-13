@@ -63,10 +63,26 @@ export function useDeleteOauthApplication() {
   })
 }
 
-export function useRevokeOauthApplication() {
+/**
+ * The people connected through one registered client. A store registers a
+ * client once and everyone connects to that same registration, so this is
+ * who actually holds access.
+ */
+export function useOauthApplicationTokens(applicationId: string | undefined) {
+  return useQuery({
+    queryKey: useResourceKey('oauth-application-tokens', applicationId ?? ''),
+    queryFn: () =>
+      adminClient.oauth.applications.tokens.list(applicationId as string, {
+        expand: ['owner'],
+      }),
+    enabled: Boolean(applicationId),
+  })
+}
+
+export function useRevokeOauthToken(applicationId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.oauth.applications.revoke(id),
-    invalidate: [['oauth-applications']],
+    mutationFn: (id) => adminClient.oauth.applications.tokens.delete(applicationId, id),
+    invalidate: [['oauth-applications'], ['oauth-application-tokens']],
     successMessage: false,
     // A failed revoke has no inline form to report into, and the row simply
     // staying put reads as success — so this one does toast.

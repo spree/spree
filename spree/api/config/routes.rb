@@ -249,8 +249,13 @@ Spree::Core::Engine.add_routes do
           # The OAuth clients registered against this store. Deleting one
           # removes the registration; revoking a connection is the nested
           # `tokens` resource, because that is what revoking deletes.
-          resources :applications do
-            resource :tokens, only: :destroy, controller: 'application_tokens'
+          #
+          # Tokens are plural and addressable: a store registers a client once
+          # and every staff member connects to that same registration, so the
+          # live tokens are who is connected. Revoking one has to cut off that
+          # person and leave their colleagues working.
+          resources :applications, except: :show do
+            resources :tokens, only: %i[index destroy], controller: 'application_tokens'
           end
         end
 

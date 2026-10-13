@@ -318,7 +318,14 @@ function ApiKeyRow({
 // usual table widths.
 const SCOPE_PREVIEW_COUNT = 3
 
-export function ScopeList({ scopes }: { scopes: string[] }) {
+export function ScopeList({
+  scopes,
+  previewCount = SCOPE_PREVIEW_COUNT,
+}: {
+  scopes: string[]
+  /** How many chips to show inline. Lower it where the row is tighter. */
+  previewCount?: number
+}) {
   const { t } = useTranslation()
   const { data: catalog } = usePermissionCatalog()
 
@@ -335,8 +342,8 @@ export function ScopeList({ scopes }: { scopes: string[] }) {
     return <span className="text-sm text-muted-foreground">—</span>
   }
 
-  const preview = scopes.slice(0, SCOPE_PREVIEW_COUNT)
-  const overflow = scopes.slice(SCOPE_PREVIEW_COUNT)
+  const preview = scopes.slice(0, previewCount)
+  const overflow = scopes.slice(previewCount)
 
   return (
     <div className="flex max-w-xs flex-wrap items-center gap-1">

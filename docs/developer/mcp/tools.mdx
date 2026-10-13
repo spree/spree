@@ -108,7 +108,12 @@ The catalog is deliberately not a mirror of the API's 500-odd operations — a t
 | `get_import_status` | — | read |
 | `create_export` | — | write |
 
-### Store setup
+### Creating, changing and deleting records
+
+Three tools cover every resource the Admin API can write — 38 of them, from
+products and orders to markets, tax rates and delivery methods — rather than
+one tool per resource. They dispatch to the real endpoint, so a resource whose
+controller runs a workflow gets that workflow.
 
 | Tool | Permission | |
 | --- | --- | --- |
@@ -116,6 +121,10 @@ The catalog is deliberately not a mirror of the API's 500-odd operations — a t
 | `update_resource` | — | write |
 | `delete_resource` | — | write |
 | `tax_exemption_certificates_verify` | `write_customers` | write |
+
+The dash is the point: each call is gated on the resource being written, so a
+grant holding `write_products` can create a product and is refused a market.
+Call `describe_resource` for what a resource accepts.
 
 
 ## Resources
@@ -141,11 +150,7 @@ Some things are out of reach whatever a grant holds.
 
 ## Writing records
 
-Three tools cover every resource the Admin API can write, rather than one tool per resource:
-
-- `create_resource`, `update_resource`, `delete_resource`
-
-They dispatch to the real endpoint, so a resource whose controller runs a workflow gets that workflow. Two things worth knowing:
+Two things worth knowing about the generic writes:
 
 **Nested records travel with their parent.** A product's variants carry their own options, prices and stock levels in the same write, so creating a product with two sized variants is one call rather than four. `describe_resource` reports what fits inside each list.
 

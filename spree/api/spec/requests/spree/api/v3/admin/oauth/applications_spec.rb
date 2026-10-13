@@ -103,18 +103,34 @@ RSpec.describe 'Admin connected applications', type: :request do
   end
 
   # Revoking and deleting are different operations on different things, which
-  # is why revoking is the nested tokens resource: it deletes the credentials,
-  # not the client.
-  describe 'revoking' do
-    it 'stops the application working without deleting its registration' do
-      raw = token_for(admin).plaintext_token
+  # is why revoking is the nested tokens resource: it deletes one person's
+  # credentials, not the client.
+  describe 'revoking one person' do
+    let(:colleague) { create(:admin_user) }
 
-      delete "/api/v3/admin/oauth/applications/#{application.prefixed_id}/tokens",
+    it 'stops that person without disconnecting their colleagues' do
+      mine = token_for(admin)
+      theirs = token_for(colleague)
+
+      delete "/api/v3/admin/oauth/applications/#{application.prefixed_id}/tokens/#{mine.prefixed_id}",
              headers: { 'X-Spree-API-Key' => api_key.plaintext_token }
 
       expect(response).to have_http_status(:no_content)
-      expect(Spree::OauthAccessToken.by_token(raw)).not_to be_accessible
+      expect(Spree::OauthAccessToken.by_token(mine.plaintext_token)).not_to be_accessible
+      expect(theirs.reload.revoked_at).to be_nil
       expect(store.oauth_applications.find_by(name: 'Claude')).to be_present
+    end
+
+    it 'lists who is connected, one entry per person' do
+      token_for(admin)
+      token_for(colleague)
+
+      get "/api/v3/admin/oauth/applications/#{application.prefixed_id}/tokens",
+          headers: { 'X-Spree-API-Key' => api_key.plaintext_token }
+
+      expect(response).to have_http_status(:ok)
+      owners = json_response['data'].map { |row| row['owner_id'] }
+      expect(owners).to contain_exactly(admin.prefixed_id, colleague.prefixed_id)
     end
   end
 

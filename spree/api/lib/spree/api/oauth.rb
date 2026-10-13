@@ -18,7 +18,7 @@ module Spree
       # Protected resources, each registered by the surface that owns it as a
       # path relative to this application's own origin.
       #
-      #   Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp')
+      #   Spree::Api::Oauth.register_resource(:admin, '/api/v3/admin')
       #
       # A path rather than a full URL because the identifier must equal the
       # URL the client was actually pointed at: the origin comes from the
@@ -61,21 +61,18 @@ module Spree
           resources.values.map { |path| "#{base}#{path}" }
         end
 
-        # The audiences a grant for one surface is bound to.
-        #
-        # An MCP grant carries the Admin API too, because a tool call reaches
-        # data by dispatching to an Admin API operation — as the same grant,
-        # with the same scopes. Widening the audience is not widening the
-        # authority: a token for the Admin API alone is still refused at the
-        # MCP endpoint.
-        #
         # @param key [Symbol]
-        # @param origin [String, nil] scheme and host the client used
-        # @return [String] space-separated indicators, as RFC 8707 takes them
-        def granted_audience(key, origin = nil)
-          keys = key.to_sym == :mcp ? %i[mcp admin] : [key.to_sym]
+        # @param path [String] absolute path this resource answers on
+        def register_resource(key, path)
+          resources[key.to_sym] = path
+        end
 
-          keys.filter_map { |name| resource_identifier(name, origin) }.uniq.join(' ')
+        # @param origin [String, nil] scheme and host the client used
+        # @return [Array<String>] every resource identifier this installation
+        #   serves
+        def resource_identifiers(origin = nil)
+          base = origin.presence || application_origin
+          resources.values.map { |path| "#{base}#{path}" }
         end
 
         # @param key [Symbol]

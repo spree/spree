@@ -4104,30 +4104,32 @@
           "communication_title": "Communication",
           "commission_tax_title": "Taxe sur la commission"
         },
-        "connected_apps": {
-          "title": "Agents connectés",
-          "subtitle": "Agents IA auxquels un membre de l'équipe a donné accès à cette boutique. La révocation prend effet immédiatement.",
+        "ai_agents": {
+          "title": "Agents IA",
+          "subtitle": "Agents IA connectés à votre boutique. Connectez Claude, ChatGPT et d'autres pour gérer votre boutique",
           "empty": "Aucun agent n'a encore été connecté.",
           "revoke": "Révoquer l’accès",
           "table": {
-            "name": "Agent",
             "access": "Accès",
-            "authorized_by": "Autorisé par",
-            "last_authorized": "Dernière autorisation",
             "status": "Statut"
           },
           "revoke_confirm": {
             "title": "Révoquer l’accès ?",
-            "message": "{{name}} cessera de fonctionner immédiatement. Toute personne qui l’utilise devra se connecter à nouveau."
+            "message": "{{who}} perdra immédiatement l'accès à {{name}}. Les autres restent connectés."
           },
-          "status": {
-            "connected": "Connecté",
-            "not_connected": "Non connecté"
+          "manage_connections": "Gérer les connexions",
+          "connections": {
+            "person": "Personne",
+            "empty": "Personne n'est connecté via cet agent.",
+            "unknown_person": "Inconnu",
+            "count_one": "{{count}} personne connectée",
+            "count_other": "{{count}} personnes connectées",
+            "connected": "Connecté"
           }
         },
         "oauth_clients": {
           "title": "Clients OAuth",
-          "subtitle": "Les clients OAuth enregistrés pour cette boutique. La connexion se fait depuis Agents connectés.",
+          "subtitle": "Les clients OAuth enregistrés pour cette boutique",
           "empty": "Aucun client enregistré.",
           "register": "Enregistrer un client",
           "table": {
@@ -5201,7 +5203,7 @@
         "package_types": "Cartons, palettes et conteneurs",
         "suppliers": "À qui vous achetez votre stock, et comment les joindre",
         "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission",
-        "connected_apps": "Agents IA ayant accès à cette boutique",
+        "ai_agents": "Agents IA ayant accès à cette boutique",
         "oauth_clients": "Enregistrer et configurer des clients OAuth"
       },
       "groups": {
@@ -5241,7 +5243,7 @@
         "package_types": "Types d'emballage",
         "suppliers": "Fournisseurs",
         "marketplace": "Paramètres",
-        "connected_apps": "Agents connectés",
+        "ai_agents": "Agents IA",
         "oauth_clients": "Clients OAuth"
       },
       "breadcrumbs": {

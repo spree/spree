@@ -59,11 +59,11 @@ import { Route as SellersSellerIdRouteImport } from './../../dashboard/src/route
 import { Route as SellersCommissionRatesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/sellers/commission-rates'
 import { Route as SellersTransfersRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/sellers/transfers'
 import { Route as SettingsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/index'
+import { Route as SettingsAiAgentsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/ai-agents'
 import { Route as SettingsAllowedOriginsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/allowed-origins'
 import { Route as SettingsApiKeysRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/api-keys'
 import { Route as SettingsChannelsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/channels'
 import { Route as SettingsCommissionRatesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/commission-rates'
-import { Route as SettingsConnectedAppsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/connected-apps'
 import { Route as SettingsCustomFieldDefinitionsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/custom-field-definitions'
 import { Route as SettingsIntegrationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/integrations'
 import { Route as SettingsMarketplaceRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/marketplace'
@@ -364,6 +364,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsAiAgentsRoute = SettingsAiAgentsRouteImport.update({
+  id: '/ai-agents',
+  path: '/ai-agents',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsAllowedOriginsRoute = SettingsAllowedOriginsRouteImport.update({
   id: '/allowed-origins',
   path: '/allowed-origins',
@@ -382,11 +387,6 @@ const SettingsChannelsRoute = SettingsChannelsRouteImport.update({
 const SettingsCommissionRatesRoute = SettingsCommissionRatesRouteImport.update({
   id: '/commission-rates',
   path: '/commission-rates',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsConnectedAppsRoute = SettingsConnectedAppsRouteImport.update({
-  id: '/connected-apps',
-  path: '/connected-apps',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsCustomFieldDefinitionsRoute =
@@ -691,11 +691,11 @@ export interface FileRoutesByFullPath {
   '/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/$storeId/sellers/commission-rates': typeof SellersCommissionRatesRoute
   '/$storeId/sellers/transfers': typeof SellersTransfersRoute
+  '/$storeId/settings/ai-agents': typeof SettingsAiAgentsRoute
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
-  '/$storeId/settings/connected-apps': typeof SettingsConnectedAppsRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
@@ -794,11 +794,11 @@ export interface FileRoutesByTo {
   '/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/$storeId/sellers/commission-rates': typeof SellersCommissionRatesRoute
   '/$storeId/sellers/transfers': typeof SellersTransfersRoute
+  '/$storeId/settings/ai-agents': typeof SettingsAiAgentsRoute
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
-  '/$storeId/settings/connected-apps': typeof SettingsConnectedAppsRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
@@ -901,11 +901,11 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/_authenticated/$storeId/sellers/commission-rates': typeof SellersCommissionRatesRoute
   '/_authenticated/$storeId/sellers/transfers': typeof SellersTransfersRoute
+  '/_authenticated/$storeId/settings/ai-agents': typeof SettingsAiAgentsRoute
   '/_authenticated/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/_authenticated/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/_authenticated/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/_authenticated/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
-  '/_authenticated/$storeId/settings/connected-apps': typeof SettingsConnectedAppsRoute
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/_authenticated/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
@@ -1008,11 +1008,11 @@ export interface FileRouteTypes {
     | '/$storeId/sellers/$sellerId'
     | '/$storeId/sellers/commission-rates'
     | '/$storeId/sellers/transfers'
+    | '/$storeId/settings/ai-agents'
     | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
     | '/$storeId/settings/commission-rates'
-    | '/$storeId/settings/connected-apps'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/marketplace'
@@ -1111,11 +1111,11 @@ export interface FileRouteTypes {
     | '/$storeId/sellers/$sellerId'
     | '/$storeId/sellers/commission-rates'
     | '/$storeId/sellers/transfers'
+    | '/$storeId/settings/ai-agents'
     | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
     | '/$storeId/settings/commission-rates'
-    | '/$storeId/settings/connected-apps'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/marketplace'
@@ -1217,11 +1217,11 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/sellers/$sellerId'
     | '/_authenticated/$storeId/sellers/commission-rates'
     | '/_authenticated/$storeId/sellers/transfers'
+    | '/_authenticated/$storeId/settings/ai-agents'
     | '/_authenticated/$storeId/settings/allowed-origins'
     | '/_authenticated/$storeId/settings/api-keys'
     | '/_authenticated/$storeId/settings/channels'
     | '/_authenticated/$storeId/settings/commission-rates'
-    | '/_authenticated/$storeId/settings/connected-apps'
     | '/_authenticated/$storeId/settings/custom-field-definitions'
     | '/_authenticated/$storeId/settings/integrations'
     | '/_authenticated/$storeId/settings/marketplace'
@@ -1645,6 +1645,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/ai-agents': {
+      id: '/_authenticated/$storeId/settings/ai-agents'
+      path: '/ai-agents'
+      fullPath: '/$storeId/settings/ai-agents'
+      preLoaderRoute: typeof SettingsAiAgentsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/allowed-origins': {
       id: '/_authenticated/$storeId/settings/allowed-origins'
       path: '/allowed-origins'
@@ -1671,13 +1678,6 @@ declare module '@tanstack/react-router' {
       path: '/commission-rates'
       fullPath: '/$storeId/settings/commission-rates'
       preLoaderRoute: typeof SettingsCommissionRatesRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/_authenticated/$storeId/settings/connected-apps': {
-      id: '/_authenticated/$storeId/settings/connected-apps'
-      path: '/connected-apps'
-      fullPath: '/$storeId/settings/connected-apps'
-      preLoaderRoute: typeof SettingsConnectedAppsRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/custom-field-definitions': {
@@ -2027,11 +2027,11 @@ declare module '@tanstack/react-router' {
 }
 
 interface SettingsRouteChildren {
+  SettingsAiAgentsRoute: typeof SettingsAiAgentsRoute
   SettingsAllowedOriginsRoute: typeof SettingsAllowedOriginsRoute
   SettingsApiKeysRoute: typeof SettingsApiKeysRoute
   SettingsChannelsRoute: typeof SettingsChannelsRoute
   SettingsCommissionRatesRoute: typeof SettingsCommissionRatesRoute
-  SettingsConnectedAppsRoute: typeof SettingsConnectedAppsRoute
   SettingsCustomFieldDefinitionsRoute: typeof SettingsCustomFieldDefinitionsRoute
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
   SettingsMarketplaceRoute: typeof SettingsMarketplaceRoute
@@ -2064,11 +2064,11 @@ interface SettingsRouteChildren {
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsAiAgentsRoute: SettingsAiAgentsRoute,
   SettingsAllowedOriginsRoute: SettingsAllowedOriginsRoute,
   SettingsApiKeysRoute: SettingsApiKeysRoute,
   SettingsChannelsRoute: SettingsChannelsRoute,
   SettingsCommissionRatesRoute: SettingsCommissionRatesRoute,
-  SettingsConnectedAppsRoute: SettingsConnectedAppsRoute,
   SettingsCustomFieldDefinitionsRoute: SettingsCustomFieldDefinitionsRoute,
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,
   SettingsMarketplaceRoute: SettingsMarketplaceRoute,
