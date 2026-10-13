@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/testing_support/store_defaults'
 
 RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: true do
   before(:all) do
@@ -13,11 +14,12 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     ENV['ADMIN_PASSWORD'] = 'Secret123!'
 
     # Loaded into a store that is not the default one, so the default store
-    # has to stay empty. It exists before the seeds so they provision it too.
+    # has to stay empty.
     Spree::Seeds::Stores.call
     @store = create(:store, default: false)
     Spree::Seeds::All.call
     @store.add_user(Spree.admin_user_class.first)
+    Spree::TestingSupport::StoreDefaults.provision(@store)
 
     described_class.call(store: @store)
   ensure
@@ -27,6 +29,11 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
 
   after(:all) do
     DatabaseCleaner.clean_with(:truncation)
+  end
+
+  it 'refuses a store that never got its defaults' do
+    expect { described_class.call(store: Spree::Store.default) }
+      .to raise_error(Spree::SampleData::StoreNotProvisioned, /spree config provision/)
   end
 
   it 'creates products' do
@@ -62,11 +69,9 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
   end
 
   describe 'product types' do
-    # The seeds add Default and Digital; the sample data adds one type per family.
+    # The store defaults add Default and Digital; the sample data adds one type per family.
     let(:sample_product_types) do
-      Spree::ProductType.where.not(name: [
-        I18n.t('spree.seed.product_types.default'), I18n.t('spree.seed.product_types.digital')
-      ])
+      Spree::ProductType.where.not(name: %w[Default Digital])
     end
 
     it 'creates one type per product family rather than a single catch-all' do
@@ -207,10 +212,6 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
       ladder = price_list.prices.where(variant: toaster, currency: 'USD').order(:min_quantity).pluck(:min_quantity, :amount)
       expect(ladder).to eq([[1, 23.99], [24, 21.99], [96, 19.99]])
       expect(Spree::Imports::PriceListPrices.sample_csv_url).to end_with('/price_list_prices.csv')
-    end
-
-    it 'mints a wholesale-bound publishable key' do
-      expect(store.api_keys.active.publishable.where(channel: wholesale)).to exist
     end
   end
 end

@@ -6,7 +6,7 @@ RSpec.describe 'Admin Saved Reports API', type: :request, swagger_doc: 'api-refe
   include_context 'API v3 Admin'
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
-  let!(:saved_report) { create(:saved_report, store: store, name: 'Sales by channel') }
+  let!(:saved_report) { create(:saved_report, store: store, name: 'Channel sales review') }
 
   path '/api/v3/admin/reporting/saved_reports' do
     get 'List saved reports' do
@@ -81,12 +81,12 @@ RSpec.describe 'Admin Saved Reports API', type: :request, swagger_doc: 'api-refe
 
       response '200', 'saved report updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: 'Sales by channel (monthly)', description: 'For the board pack' } }
+        let(:body) { { name: 'Channel sales review (monthly)', description: 'For the board pack' } }
 
         schema '$ref' => '#/components/schemas/SavedReport'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['name']).to eq('Sales by channel (monthly)')
+          expect(JSON.parse(response.body)['name']).to eq('Channel sales review (monthly)')
         end
       end
     end

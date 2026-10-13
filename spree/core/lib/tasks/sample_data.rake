@@ -8,6 +8,8 @@ namespace :spree do
             end
 
     Spree::SampleData::Loader.call(store: store)
+  rescue Spree::SampleData::StoreNotProvisioned => e
+    abort e.message
   end
 end
 

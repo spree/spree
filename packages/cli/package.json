@@ -56,6 +56,7 @@
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@spree/admin-sdk": "workspace:^",
+    "@spree/config": "workspace:^",
     "@spree/sdk-core": "workspace:*",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
@@ -65,5 +66,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "exports": {
+    ".": "./dist/index.js"
   }
 }

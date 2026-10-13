@@ -4,19 +4,6 @@
 # above a spend threshold, hidden below it.
 store = Spree::Current.store
 
-# The zones are created from the store's country at first-run setup, so an
-# install that has not been set up yet has none. Provision them here from
-# whatever country the store already names rather than abort — sample data
-# should be loadable on a bare seed.
-if store.delivery_zones.where(name: %w[Domestic International]).count < 2
-  Spree::Stores::ProvisionDefaults.call(
-    store: store,
-    country: store.default_country || Spree::Country.by_iso('US'),
-    locale: store.default_locale
-  )
-  store.reload
-end
-
 # A realistic shipping box (imperial units — the demo store is US): its weight
 # rides on every parcel and its dimensions feed dimensional-weight pricing,
 # without which carrier quotes under-price bulky-but-light items. Created only
@@ -54,10 +41,12 @@ end
 domestic = store.delivery_zones.find_by(name: 'Domestic')
 international = store.delivery_zones.find_by(name: 'International')
 
+# Created by the store defaults. A store whose default warehouse exists
+# without them (one made on demand before the defaults were deployed) is not
+# provisioned yet, so the background loader retries rather than exiting.
 if domestic.nil? || international.nil?
-  # abort, not exit: exit reports success and would silently skip the payment
-  # methods and promotions the loader still has to seed.
-  abort "Couldn't provision the Domestic/International delivery zones for this store."
+  raise Spree::SampleData::StoreNotProvisioned,
+        'This store has no Domestic and International delivery zones. Run `spree config provision`, then load sample data.'
 end
 
 currency = store.default_currency

@@ -83,6 +83,14 @@ test.describe
       await expect(page.getByRole('heading', { name: 'Getting Started' })).toBeVisible()
       await expect(page.getByText(merchant.storeName).first()).toBeVisible()
 
+      // Setup deployed the store defaults for the chosen country: a warehouse
+      // in Poland, and the reasons and tax categories every store starts with.
+      const storePath = new URL(page.url()).pathname.replace(/\/getting-started$/, '')
+      await page.goto(`${storePath}/settings/stock-locations`)
+      await expect(page.getByText('Shop location')).toBeVisible()
+      await page.goto(`${storePath}/settings/tax-categories`)
+      await expect(page.getByText('Non-taxable')).toBeVisible()
+
       await page.getByRole('button', { name: 'User menu' }).click()
       await page.getByRole('menuitem', { name: 'Log out' }).click()
       await expect(page).toHaveURL(/\/login/)

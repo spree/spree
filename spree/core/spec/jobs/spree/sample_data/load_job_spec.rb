@@ -17,6 +17,15 @@ RSpec.describe Spree::SampleData::LoadJob, type: :job do
     expect(loader).to have_received(:call).with(store: store)
   end
 
+  # Setup returns before the dashboard deploys the store defaults, so the
+  # job waits for them instead of failing.
+  it 'retries while the store is not provisioned yet' do
+    allow(loader).to receive(:call).and_raise(Spree::SampleData::StoreNotProvisioned)
+
+    expect { described_class.perform_now(create(:store).id) }
+      .to have_enqueued_job(described_class)
+  end
+
   it 'skips a store that no longer exists' do
     described_class.perform_now(0)
 
