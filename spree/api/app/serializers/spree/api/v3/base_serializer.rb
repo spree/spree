@@ -81,7 +81,7 @@ module Spree
         def self.display_money_type(name, nullable: true)
           amount = name.to_s.delete_prefix('display_')
           [:string, nullable: nullable,
-                    comment: "`#{amount}` formatted with its currency symbol in the request's language, for example `$29.99`.",
+                    comment: "`#{amount}` formatted with its currency symbol in the request's language.",
                     deprecated: "Format `#{amount}` with its currency instead. Removed in 6.1."]
         end
 

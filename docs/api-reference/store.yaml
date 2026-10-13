@@ -13822,7 +13822,7 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
       required:
       - id
@@ -14085,7 +14085,7 @@ components:
           type: string
           nullable: true
           description: "`item_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         discount_total:
           type: string
@@ -14096,7 +14096,7 @@ components:
           type: string
           nullable: true
           description: "`discount_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         tax_total:
           type: string
@@ -14106,7 +14106,7 @@ components:
           type: string
           nullable: true
           description: "`tax_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         included_tax_total:
           type: string
@@ -14117,7 +14117,7 @@ components:
           type: string
           nullable: true
           description: "`included_tax_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         additional_tax_total:
           type: string
@@ -14127,7 +14127,7 @@ components:
           type: string
           nullable: true
           description: "`additional_tax_total` formatted with its currency symbol
-            in the request's language, for example `$29.99`."
+            in the request's language."
           deprecated: true
         delivery_total:
           type: string
@@ -14137,7 +14137,7 @@ components:
           type: string
           nullable: true
           description: "`delivery_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         fee_total:
           type: string
@@ -14147,7 +14147,7 @@ components:
           type: string
           nullable: true
           description: "`fee_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         gift_card_total:
           type: string
@@ -14157,7 +14157,7 @@ components:
           type: string
           nullable: true
           description: "`gift_card_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         store_credit_total:
           type: string
@@ -14167,7 +14167,7 @@ components:
           type: string
           nullable: true
           description: "`store_credit_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         total:
           type: string
@@ -14178,7 +14178,7 @@ components:
           type: string
           nullable: true
           description: "`total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         amount_due:
           type: string
@@ -14188,7 +14188,7 @@ components:
           type: string
           nullable: true
           description: "`amount_due` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         covered_by_store_credit:
           type: boolean
@@ -14204,7 +14204,7 @@ components:
           type: string
           nullable: true
           description: "`adjustment_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         current_step:
           type: string
@@ -14467,7 +14467,7 @@ components:
           type: string
           nullable: true
           description: "`refund_amount` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         variant_id:
           type: string
@@ -14545,7 +14545,7 @@ components:
           type: string
           nullable: true
           description: "`refund_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         approved_at:
           type: string
@@ -15266,7 +15266,7 @@ components:
         display_available_store_credit_total:
           type: string
           description: "`available_store_credit_total` formatted with its currency
-            symbol in the request's language, for example `$29.99`."
+            symbol in the request's language."
           deprecated: true
         addresses:
           type: array
@@ -15464,31 +15464,31 @@ components:
           type: string
           nullable: true
           description: "`cost` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         display_total:
           type: string
           nullable: true
           description: "`total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         display_additional_tax_total:
           type: string
           nullable: true
           description: "`additional_tax_total` formatted with its currency symbol
-            in the request's language, for example `$29.99`."
+            in the request's language."
           deprecated: true
         display_included_tax_total:
           type: string
           nullable: true
           description: "`included_tax_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         display_tax_total:
           type: string
           nullable: true
           description: "`tax_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
@@ -15955,7 +15955,7 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
       required:
       - id
@@ -16059,7 +16059,7 @@ components:
           type: string
           nullable: true
           description: "`price_difference` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         approved_at:
           type: string
@@ -16156,7 +16156,7 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
       required:
       - id
@@ -16264,7 +16264,7 @@ components:
           type: string
           nullable: true
           description: "`cost` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         total:
           type: string
@@ -16273,7 +16273,7 @@ components:
           type: string
           nullable: true
           description: "`total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         discount_total:
           type: string
@@ -16282,7 +16282,7 @@ components:
           type: string
           nullable: true
           description: "`discount_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         additional_tax_total:
           type: string
@@ -16291,7 +16291,7 @@ components:
           type: string
           nullable: true
           description: "`additional_tax_total` formatted with its currency symbol
-            in the request's language, for example `$29.99`."
+            in the request's language."
           deprecated: true
         included_tax_total:
           type: string
@@ -16300,7 +16300,7 @@ components:
           type: string
           nullable: true
           description: "`included_tax_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         tax_total:
           type: string
@@ -16309,7 +16309,7 @@ components:
           type: string
           nullable: true
           description: "`tax_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         status:
           anyOf:
@@ -16817,19 +16817,19 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         display_amount_used:
           type: string
           nullable: true
           description: "`amount_used` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         display_amount_remaining:
           type: string
           nullable: true
           description: "`amount_remaining` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         expires_at:
           type: string
@@ -17230,7 +17230,7 @@ components:
           type: string
           nullable: true
           description: "`price` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         total:
           type: string
@@ -17241,7 +17241,7 @@ components:
           type: string
           nullable: true
           description: "`total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         adjustment_total:
           type: string
@@ -17251,7 +17251,7 @@ components:
           type: string
           nullable: true
           description: "`adjustment_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         additional_tax_total:
           type: string
@@ -17261,7 +17261,7 @@ components:
           type: string
           nullable: true
           description: "`additional_tax_total` formatted with its currency symbol
-            in the request's language, for example `$29.99`."
+            in the request's language."
           deprecated: true
         included_tax_total:
           type: string
@@ -17271,7 +17271,7 @@ components:
           type: string
           nullable: true
           description: "`included_tax_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         discount_total:
           type: string
@@ -17281,7 +17281,7 @@ components:
           type: string
           nullable: true
           description: "`discount_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         pre_tax_amount:
           type: string
@@ -17291,7 +17291,7 @@ components:
           type: string
           nullable: true
           description: "`pre_tax_amount` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         discounted_amount:
           type: string
@@ -17301,13 +17301,13 @@ components:
           type: string
           nullable: true
           description: "`discounted_amount` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         display_compare_at_amount:
           type: string
           nullable: true
           description: "`compare_at_amount` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         compare_at_amount:
           type: string
@@ -18277,7 +18277,7 @@ components:
           type: string
           nullable: true
           description: "`item_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         discount_total:
           type: string
@@ -18288,7 +18288,7 @@ components:
           type: string
           nullable: true
           description: "`discount_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         tax_total:
           type: string
@@ -18298,7 +18298,7 @@ components:
           type: string
           nullable: true
           description: "`tax_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         included_tax_total:
           type: string
@@ -18309,7 +18309,7 @@ components:
           type: string
           nullable: true
           description: "`included_tax_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         additional_tax_total:
           type: string
@@ -18319,7 +18319,7 @@ components:
           type: string
           nullable: true
           description: "`additional_tax_total` formatted with its currency symbol
-            in the request's language, for example `$29.99`."
+            in the request's language."
           deprecated: true
         delivery_total:
           type: string
@@ -18329,7 +18329,7 @@ components:
           type: string
           nullable: true
           description: "`delivery_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         fee_total:
           type: string
@@ -18339,7 +18339,7 @@ components:
           type: string
           nullable: true
           description: "`fee_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         gift_card_total:
           type: string
@@ -18349,7 +18349,7 @@ components:
           type: string
           nullable: true
           description: "`gift_card_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         store_credit_total:
           type: string
@@ -18359,7 +18359,7 @@ components:
           type: string
           nullable: true
           description: "`store_credit_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         total:
           type: string
@@ -18370,7 +18370,7 @@ components:
           type: string
           nullable: true
           description: "`total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         amount_due:
           type: string
@@ -18380,7 +18380,7 @@ components:
           type: string
           nullable: true
           description: "`amount_due` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         covered_by_store_credit:
           type: boolean
@@ -18731,7 +18731,7 @@ components:
           type: string
           nullable: true
           description: "`item_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         discount_total:
           type: string
@@ -18742,7 +18742,7 @@ components:
           type: string
           nullable: true
           description: "`discount_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         tax_total:
           type: string
@@ -18752,7 +18752,7 @@ components:
           type: string
           nullable: true
           description: "`tax_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         included_tax_total:
           type: string
@@ -18763,7 +18763,7 @@ components:
           type: string
           nullable: true
           description: "`included_tax_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         additional_tax_total:
           type: string
@@ -18773,7 +18773,7 @@ components:
           type: string
           nullable: true
           description: "`additional_tax_total` formatted with its currency symbol
-            in the request's language, for example `$29.99`."
+            in the request's language."
           deprecated: true
         delivery_total:
           type: string
@@ -18783,7 +18783,7 @@ components:
           type: string
           nullable: true
           description: "`delivery_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         fee_total:
           type: string
@@ -18793,7 +18793,7 @@ components:
           type: string
           nullable: true
           description: "`fee_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         gift_card_total:
           type: string
@@ -18803,7 +18803,7 @@ components:
           type: string
           nullable: true
           description: "`gift_card_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         store_credit_total:
           type: string
@@ -18813,7 +18813,7 @@ components:
           type: string
           nullable: true
           description: "`store_credit_total` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         total:
           type: string
@@ -18824,7 +18824,7 @@ components:
           type: string
           nullable: true
           description: "`total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         amount_due:
           type: string
@@ -18834,7 +18834,7 @@ components:
           type: string
           nullable: true
           description: "`amount_due` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         covered_by_store_credit:
           type: boolean
@@ -18850,7 +18850,7 @@ components:
           type: string
           nullable: true
           description: "`adjustment_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         discounts:
           type: array
@@ -19021,7 +19021,7 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         source_type:
           type: string
@@ -19573,7 +19573,7 @@ components:
         display_amount:
           type: string
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         recorded_at:
           type: string
@@ -19781,13 +19781,13 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         display_compare_at_amount:
           type: string
           nullable: true
           description: "`compare_at_amount` formatted with its currency symbol in
-            the request's language, for example `$29.99`."
+            the request's language."
           deprecated: true
         price_list_id:
           type: string
@@ -20467,7 +20467,7 @@ components:
           type: string
           nullable: true
           description: "`pre_tax_amount` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         included_tax_total:
           type: string
@@ -20482,7 +20482,7 @@ components:
           type: string
           nullable: true
           description: "`tax_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         refund_amount:
           type: string
@@ -20491,7 +20491,7 @@ components:
           type: string
           nullable: true
           description: "`refund_amount` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         variant_id:
           type: string
@@ -20567,7 +20567,7 @@ components:
           type: string
           nullable: true
           description: "`refund_total` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         refund_tax_total:
           type: string
@@ -20576,7 +20576,7 @@ components:
           type: string
           nullable: true
           description: "`refund_tax_total` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         approved_at:
           type: string
@@ -21184,7 +21184,7 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         created_at:
           type: string
@@ -21215,19 +21215,19 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         display_amount_used:
           type: string
           nullable: true
           description: "`amount_used` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
         display_amount_remaining:
           type: string
           nullable: true
           description: "`amount_remaining` formatted with its currency symbol in the
-            request's language, for example `$29.99`."
+            request's language."
           deprecated: true
         currency:
           type: string
@@ -21495,7 +21495,7 @@ components:
           type: string
           nullable: true
           description: "`amount` formatted with its currency symbol in the request's
-            language, for example `$29.99`."
+            language."
           deprecated: true
       required:
       - id
