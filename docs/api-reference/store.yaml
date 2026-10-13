@@ -1125,6 +1125,8 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
+                    amount_in_cents: 1999
+                    compare_at_amount_in_cents:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -1412,6 +1414,8 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
+                    amount_in_cents: 1999
+                    compare_at_amount_in_cents:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -1451,6 +1455,8 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
+                    amount_in_cents: 1999
+                    compare_at_amount_in_cents:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -1570,6 +1576,8 @@ paths:
                   currency: USD
                   amount: '19.99'
                   compare_at_amount:
+                  amount_in_cents: 1999
+                  compare_at_amount_in_cents:
                   display_amount: "$19.99"
                   display_compare_at_amount:
                   price_list_id:
@@ -1579,6 +1587,7 @@ paths:
                   id: _AXs1igzRC6
                   currency: USD
                   amount: '9.99'
+                  amount_in_cents: 999
                   display_amount: "$9.99"
                   recorded_at: '2025-12-31T12:00:00Z'
               schema:
@@ -2227,7 +2236,7 @@ paths:
                     message: Shipping address is required
                   - code: delivery_method_required
                     step: delivery
-                    field: delivery_method
+                    field: shipping_method
                     message: Select a delivery method for all fulfillments
                   - code: payment_required
                     step: payment
@@ -2348,7 +2357,7 @@ paths:
                     message: Shipping address is required
                   - code: delivery_method_required
                     step: delivery
-                    field: delivery_method
+                    field: shipping_method
                     message: Select a delivery method for all fulfillments
                   - code: payment_required
                     step: payment
@@ -2880,7 +2889,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 - code: payment_required
                   step: payment
@@ -3104,7 +3113,7 @@ paths:
                 requirements:
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 - code: payment_required
                   step: payment
@@ -3663,7 +3672,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 - code: payment_required
                   step: payment
@@ -3858,7 +3867,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 - code: payment_required
                   step: payment
@@ -4371,7 +4380,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 order_minimum:
                 order_minimum_shortfall:
@@ -4611,7 +4620,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 - code: payment_required
                   step: payment
@@ -4803,7 +4812,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 - code: payment_required
                   step: payment
@@ -5050,7 +5059,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 - code: payment_required
                   step: payment
@@ -5862,7 +5871,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 order_minimum:
                 order_minimum_shortfall:
@@ -6043,7 +6052,7 @@ paths:
                   message: Email address is required
                 - code: delivery_method_required
                   step: delivery
-                  field: delivery_method
+                  field: shipping_method
                   message: Select a delivery method for all fulfillments
                 - code: payment_required
                   step: payment
@@ -10817,6 +10826,8 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
+                    amount_in_cents: 1999
+                    compare_at_amount_in_cents:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -10901,6 +10912,8 @@ paths:
                     currency: USD
                     amount: '19.99'
                     compare_at_amount:
+                    amount_in_cents: 1999
+                    compare_at_amount_in_cents:
                     display_amount: "$19.99"
                     display_compare_at_amount:
                     price_list_id:
@@ -20589,6 +20602,10 @@ components:
         amount:
           type: string
           nullable: true
+        amount_in_cents:
+          type: number
+          nullable: true
+          deprecated: true
         display_amount:
           type: string
           description: "`amount` formatted with its currency symbol in the request's
@@ -20600,6 +20617,7 @@ components:
       - id
       - currency
       - amount
+      - amount_in_cents
       - display_amount
       - recorded_at
       x-typelizer: true
@@ -20796,6 +20814,14 @@ components:
         compare_at_amount:
           type: string
           nullable: true
+        amount_in_cents:
+          type: number
+          nullable: true
+          deprecated: true
+        compare_at_amount_in_cents:
+          type: number
+          nullable: true
+          deprecated: true
         display_amount:
           type: string
           nullable: true
@@ -20816,6 +20842,8 @@ components:
       - currency
       - amount
       - compare_at_amount
+      - amount_in_cents
+      - compare_at_amount_in_cents
       - display_amount
       - display_compare_at_amount
       - price_list_id
@@ -23414,6 +23442,10 @@ components:
         state_name:
           type: string
           description: The state name, for countries without predefined states.
+        quick_checkout:
+          type: boolean
+          description: Relaxes validation (name, phone, postal code, street), for
+            express checkouts that share a partial address.
         country_iso:
           type: string
           description: 'Deprecated: Use `country_code`. Removed in 6.1.'
@@ -23466,6 +23498,10 @@ components:
         state_name:
           type: string
           description: The state name, for countries without predefined states.
+        quick_checkout:
+          type: boolean
+          description: Relaxes validation (name, phone, postal code, street), for
+            express checkouts that share a partial address.
         country_iso:
           type: string
           description: 'Deprecated: Use `country_code`. Removed in 6.1.'
@@ -23505,7 +23541,8 @@ components:
           type: string
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
-          description: Defaults to as much as the cart can use.
+          description: Defaults to as much as the cart can use. A JSON number is still
+            read until 6.1, with a deprecation warning.
           example: '10.00'
     CartAddressParams:
       type: object
@@ -23543,6 +23580,10 @@ components:
         state_name:
           type: string
           description: The state name, for countries without predefined states.
+        quick_checkout:
+          type: boolean
+          description: Relaxes validation (name, phone, postal code, street), for
+            express checkouts that share a partial address.
         country_iso:
           type: string
           description: 'Deprecated: Use `country_code`. Removed in 6.1.'
@@ -23551,10 +23592,6 @@ components:
           type: string
           description: 'Deprecated: Use `state_code`. Removed in 6.1.'
           deprecated: true
-        quick_checkout:
-          type: boolean
-          description: Relaxes validation (name, phone, postal code, street), for
-            express checkouts that share a partial address.
     CompanyAddressCreateParams:
       type: object
       properties:

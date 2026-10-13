@@ -316,7 +316,7 @@ Spree::Checkout::Registry.add_requirement(
 
   The requirement appears in the Cart API's `requirements` array (so a storefront rendering the feed generically needs zero changes) *and* blocks completion. `register_step` adds whole steps (spliced into `checkout_steps` at `before:`/`after:` anchors); built-in steps are customized through `Registry.base_steps` — an ordered `{ name => applicability }` hash you can mutate directly (`base_steps.delete('confirm')`).
 - **The API `requirements` array now carries a stable `code`** on every entry (`email_required`, `out_of_stock`, `guest_checkout_not_allowed`, ...). Additive change — existing consumers keep working.
-- **The delivery requirement is keyed `delivery_method`, not `shipping_method`.** Its entry is now `{ step: 'delivery', field: 'delivery_method', code: 'delivery_method_required' }`. A storefront that renders the feed generically needs no change; one that keys off the field or code to highlight a specific input must switch both tokens. The `spree.checkout_requirements.shipping_method_required` translation key was renamed to `spree.checkout_requirements.delivery_method_required` — override it under the new key.
+- **The delivery requirement is keyed by its `code`, `delivery_method_required`.** Its entry is `{ step: 'delivery', field: 'shipping_method', code: 'delivery_method_required' }`. The `field` keeps its 5.6 name until 6.1, when it becomes `delivery_method`, so a 5.6 storefront that matches the field keeps working. Match the `code` instead, which does not change. The `spree.checkout_requirements.shipping_method_required` translation key was renamed to `spree.checkout_requirements.delivery_method_required` — override it under the new key.
 - **"Logic between steps" has no backend home by design.** Side effects hang off data writes (workflow hooks such as `Carts::Complete`'s `before_finalize` and `Carts::AddItem`'s `after_item_added`) and events (`cart.updated`, `order.placed`) — not step transitions.
 
 ## Statuses: derived, then persisted
@@ -915,7 +915,7 @@ Other changes that come with it:
 - **The Admin and Seller APIs no longer return `display_*` money fields.** Responses carry the amount (`"29.99"`) with its currency, and the client formats it in the reader's own language. Before 6.0 the server formatted a copy in the request's language, which could disagree with the editable amount beside it. Format with `Intl.NumberFormat` or your platform's equivalent. The Store API and webhook payloads keep their `display_*` money fields until 6.1, marked deprecated in the API reference and the SDK types; format the amount beside each one instead (`total` for `display_total`). Labels such as `display_name` are unchanged.
 - **Money preferences have their own type.** Calculator, rule and store preferences holding an amount (`amount`, `first_item`, `minimal_amount`, `amount_min`, `min_amount`, `default_minimum_payout_amount` and the like) are declared `:money` instead of `:decimal`, report `money` in `preference_schema`, and are written with the decimals of the calculator's currency (`"12.50"` rather than `"12.5"`). Declare your own extensions' amounts with `:money` so the dashboard shows their currency. A `:decimal` or `:money` preference now refuses text such as `"1,599.99"` instead of reading it as 1. Money preferences are checked by their type on write: a value that is not a decimal string, or has more decimals than its currency, is refused with `invalid_preferences` and a pointer to the field (`/calculator/preferences/amount`), rather than `invalid_money_format`.
 - **Rates are decimal strings, and tax rates are renamed.** Rates and percentages read and write as strings without trailing zeros. A tax rate's `amount` (a fraction) is now `rate`, and `amount_percentage` is `rate_percent`; `Spree::TaxRate#amount_percentage` keeps working with a warning until 6.1.
-- **`amount_in_cents` and `compare_at_amount_in_cents` are removed** from prices and price history. Read `amount`, and each currency's `decimal_places` (new on `GET /api/v3/store/currencies`) if you need minor units.
+- **`amount_in_cents` and `compare_at_amount_in_cents` are deprecated** on Store API prices and price history, and removed in 6.1. They still hold the amount in hundredths, which is wrong for currencies without two decimals. Read `amount`, and each currency's `decimal_places` (new on `GET /api/v3/store/currencies`) if you need minor units. The Admin and Seller APIs no longer return them.
 - **Money columns widen to `decimal(19,4)`.** They now hold a Kuwaiti dinar's third decimal, unit prices below a cent (`0.0125`), and very large amounts in currencies like the Vietnamese dong. No stored value changes. Totals, payments and refunds are still rounded to the currency's decimals; only unit prices (`price`, `compare_at_amount`, `cost_price`, `unit_cost`) keep up to four. The migration rewrites each money table while it runs, which locks `spree_orders`, `spree_line_items` and `spree_adjustments` for as long as that takes. If you cannot take that lock, widen those columns online first (add a `decimal(19,4)` shadow column, backfill it in batches, swap it in), and the migration skips any column already at `(19,4)`. Extensions with their own money tables, such as `spree_stripe_payment_intents` from the standalone Stripe gem, should widen theirs the same way.
 - **Payment gateways receive the amount with its currency.** `authorize`, `purchase`, `capture` and `credit` are called with a `Spree::Money` (amount and currency) instead of an integer in hundredths, which was wrong for yen and dinar. A gateway opts in with `self.accepts_money_amounts = true` and converts the amount to its provider's unit (Stripe's rules live in `SpreeStripe::Units`). A gateway that has not opted in still receives hundredths, with a deprecation warning, until 6.1. `Spree.payment_capture_workflow.call(amount:)` takes the amount in the currency's own units; an Integer is still read as hundredths, with a warning.
 - **Stripe refuses amounts it cannot take.** Stripe charges three-decimal currencies (Bahraini, Jordanian, Kuwaiti and Omani dinar, Tunisian dinar) only in steps of 0.010, and pays out Hungarian forint and New Taiwan dollars only in whole units. `spree_stripe` now raises a gateway error naming the rule, rather than rounding to a sum other than the one the order records.
@@ -995,7 +995,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `Order#remove_out_of_stock_items!` | cart-side only (`Spree::Carts::RemoveOutOfStockItems`) |
 | `Order#delivery_required?` (Order and Cart) | `#delivery_step_required?` — digital and pickup are deliveries too; this asks whether the customer must choose a delivery option |
 | `Order#requires_ship_address?` (Order and Cart) | `#shipping_address_required?` — decided by the selected delivery methods (`DeliveryMethod#requires_address?`); digital, pickup, and pickup-point deliveries need no customer address |
-| `requirements[].field` / `.code` `shipping_method` (Store API) | `delivery_method` / `delivery_method_required` — no bridge; clients keying off the delivery requirement must switch both tokens |
+| `requirements[].field` `shipping_method` (Store API) | `code` `delivery_method_required`; the field becomes `delivery_method` in 6.1 |
 | `Cart#number` (Store API field) | `id` — carts have no order-style number; the field mirrors the prefixed ID for one release |
 | `order.completed` event | `order.placed` |
 | Calling cart services with `order:` kwargs | `cart:` kwargs |
@@ -1101,12 +1101,11 @@ A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefr
 | Type error mentions | Cause | Fix |
 |---|---|---|
 | `CountryCode` or `CurrencyCode` | Country and currency codes are typed | [Country and currency codes](#country-and-currency-codes-are-typed) |
-| `amount_in_cents`, `compare_at_amount_in_cents` | Removed from prices | Read `amount` ([Money](#money)) |
 | `string \| null` where a price or amount is read | Money fields are `null` for guests when the store hides prices | [Money can be null](#money-can-be-null) |
 | A property that "does not exist" in a `…Params` type | Request types now list exactly what the endpoint accepts | [Request types](#request-types-match-the-api) |
 | `ProductSort`, or a filter key | List filters and sort are typed | [List filters and sort](#list-filters-and-sort-are-typed) |
 | `number` is not assignable to `string` in a filter or amount | Money is a decimal string everywhere | Send `'20.00'`, not `20` ([Money](#money), [store credit](#store-credit-amounts-are-decimal-strings)) |
-| `name` or `description` "does not exist" on `Discount` | `Discount` now types the discount rows on items and fulfillments. The `discounts` list on carts and orders is unchanged and is typed `AppliedPromotion` | Import `AppliedPromotion` for `cart.discounts` and `order.discounts` |
+| `string` is not assignable to `number` where the price filter's range is read | The price range's `min` and `max` are decimal strings | [The price filter's range is text](#the-price-filters-range-is-text) |
 | A property that "does not exist" on `OrderGroup` | Completing a cart, or reading an order by its cart id, can return an order group | [Completing a cart can return an order group](#completing-a-cart-can-return-an-order-group) |
 
 ### List filters and sort are typed
@@ -1197,7 +1196,45 @@ Every money field, including `display_*` amounts (a gift card's or store credit'
 await client.carts.storeCredits.apply(cartId, '25.00', options) // not 25
 ```
 
-The endpoint (`POST /carts/:id/store_credits`) now refuses a JSON number with `422 invalid_money_format`, so a storefront that calls the API without the SDK must send a string too.
+Passing a number still works until 6.1: the SDK marks that form `@deprecated`, and the endpoint (`POST /carts/:id/store_credits`) reads a JSON number through its text and logs a deprecation warning. From 6.1 the endpoint refuses a number with `422 invalid_money_format`, so a storefront that calls the API without the SDK must send a string too.
+
+### The price filter's range is text
+
+The price filter that `products.filters()` returns gives its range as decimal strings, like every other amount: `{ min: '9.99', max: '120.00' }`, where 5.6 sent numbers (`9.99`). `PriceRangeFilter` types them as strings, so a price slider that does arithmetic on `min` and `max`, or passes them to a slider component that expects numbers, now fails to compile (the first 2.0 release candidates still typed them as numbers). Use the SDK's `compareMoney` and `subtractMoney` for exact comparisons, and convert to a number only where the slider component needs one, for display:
+
+```ts
+import type { PriceRangeFilter } from '@spree/sdk'
+
+const range = filters.find((filter): filter is PriceRangeFilter => filter.type === 'price_range')
+const slider = range && { min: Number(range.min), max: Number(range.max) } // display only
+```
+
+Send the chosen bounds back as strings (`price_gte: '20.00'`), not the slider's numbers.
+
+### Status values changed
+
+The statuses of fulfillments and the payment and fulfillment statuses of orders use new values. This is not a type error, because status types accept any string, so search your code for the old values.
+
+**A fulfillment's `status`, and an order's `fulfillment_status`:**
+
+| 5.6 | 6.0 |
+|---|---|
+| `pending`, `ready` | `unfulfilled` |
+| `shipped` | `fulfilled` |
+| `canceled` | `canceled` |
+| (new) | `delivered`, once the customer has the parcel |
+
+An order's `fulfillment_status` also keeps `partial` and `backorder`.
+
+**An order's `payment_status`** is worked out from the payments and refunds on the order, so an old value can become more than one new value:
+
+| 5.6 | 6.0 |
+|---|---|
+| `balance_due` | `none` (nothing paid), `authorized` (authorized, not yet captured) or `partially_paid` |
+| `paid` | `paid`, or `partially_refunded` / `refunded` when the order has refunds |
+| `credit_owed` | `overcharged` |
+| `void` | `voided` |
+| `failed` | `none` |
 
 ### Deprecated fields still work until 6.1
 
@@ -1213,12 +1250,17 @@ These Store API fields keep working in 6.0 and are marked `@deprecated` in the S
 | Company address `zipcode`, written | `postal_code` |
 | Cart `number` | `id` |
 | Market `country_isos` | `country_codes` |
+| Price `amount_in_cents`, `compare_at_amount_in_cents`, and price history `amount_in_cents` | `amount`, `compare_at_amount` ([Money](#money)) |
+| A cart requirement's `field` `shipping_method` | Match its `code`, `delivery_method_required`; the field becomes `delivery_method` |
+| The `Discount` type for `cart.discounts` and `order.discounts` | `AppliedPromotion` |
+| A number passed to `carts.storeCredits.apply()` | A decimal string ([store credit](#store-credit-amounts-are-decimal-strings)) |
 
 ### Other Store API changes to check
 
 | Change | What to update | Details |
 |---|---|---|
-| Delivery requirement renamed | Match `delivery_method` (field) and `delivery_method_required` (code) instead of `shipping_method` | [Checkout without a state machine](#checkout-without-a-state-machine) |
+| Delivery requirement has a code | Match `delivery_method_required` (code); the `field` keeps `shipping_method` until 6.1 | [Checkout without a state machine](#checkout-without-a-state-machine) |
+| Status values | Map old fulfillment and payment statuses to the new ones | [Status values changed](#status-values-changed) |
 | Type values are short names | Compare `payment_source_type` with `credit_card`, and read custom field `field_type` | [Type values are short names](#type-values-are-short-names-not-class-names) |
 | Rich text comes in two shapes | Render `description_html` for markup; `description` is plain text | [Rich-text fields](#rich-text-fields-read-as-plain-text-plus-html) |
 | Payment source IDs | Stored `source_id` values change prefix from `ps_` to `psrc_` | [Payment source IDs](#payment-source-ids-use-the-psrc_-prefix) |

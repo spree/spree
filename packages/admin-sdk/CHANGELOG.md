@@ -1,5 +1,13 @@
 # @spree/admin-sdk
 
+## 1.0.0-rc.3
+
+### Patch Changes
+
+- Entries of `q` on every list method always stay inside `q`, even one named `page` or `sort`, and nested objects are sent in bracket form.
+
+  `sumMoney`, `subtractMoney`, `multiplyMoney` and `negateMoney` now write every result the same way: with the decimals their inputs carry, and at least the currency's when one is given (`sumMoney(['1.50', '2.50'])` is `"4.00"`, not `"4"`). Nothing is rounded away. `formatMoney` returns an empty string for a currency `Intl` does not know, falls back to the reader's language for a locale it does not know, and no longer shows a minus sign on an amount that rounds to zero.
+
 ## 1.0.0-rc.2
 
 ### Minor Changes

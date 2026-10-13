@@ -15,8 +15,6 @@ module Spree
             schema.attribute :id, :id,
               description: 'An existing address of the customer to use. The other fields are then ignored.'
             schema.include_attributes Spree::Api::V3::Store::AddressRequestSchema
-            schema.attribute :quick_checkout, :boolean,
-              description: 'Relaxes validation (name, phone, postal code, street), for express checkouts that share a partial address.'
           end
 
           # Creating and updating a cart accept the same fields.

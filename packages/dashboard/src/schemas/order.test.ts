@@ -201,7 +201,7 @@ describe('projections', () => {
       row({ removed: true, price: '99.0', quantity: 1 }),
     ]
 
-    expect(projectedSubtotal(items)).toBe('200')
+    expect(projectedSubtotal(items)).toBe('200.00')
   })
 
   // A partial sum rendered as a total is a wrong number stated confidently.

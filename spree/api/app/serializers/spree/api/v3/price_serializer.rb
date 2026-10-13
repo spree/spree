@@ -8,11 +8,21 @@ module Spree
         typelize display_amount: display_money_type(:display_amount),
                  display_compare_at_amount: display_money_type(:display_compare_at_amount),
                  currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
-                 price_list_id: [:string, nullable: true]
+                 price_list_id: [:string, nullable: true],
+                 amount_in_cents: [:number, nullable: true, deprecated: 'Use `amount`. Removed in 6.1.'],
+                 compare_at_amount_in_cents: [:number, nullable: true, deprecated: 'Use `compare_at_amount`. Removed in 6.1.']
 
         attributes :currency
 
         money_attributes :amount, :compare_at_amount, unit_price: true
+
+        attribute :amount_in_cents do |price|
+          price.amount_in_cents unless params[:hide_prices]
+        end
+
+        attribute :compare_at_amount_in_cents do |price|
+          price.compare_at_amount_in_cents unless params[:hide_prices]
+        end
 
         attribute :display_amount do |price|
           price.display_amount&.to_s

@@ -20,6 +20,8 @@ module Spree
             example: 'NY',
             description: 'ISO 3166-2 subdivision code without the country prefix, such as `CA` or `NY`.'
           attribute :state_name, :string, description: 'The state name, for countries without predefined states.'
+          attribute :quick_checkout, :boolean,
+            description: 'Relaxes validation (name, phone, postal code, street), for express checkouts that share a partial address.'
           attribute :country_iso, :string, deprecated: 'Use `country_code`. Removed in 6.1.'
           attribute :state_abbr, :string, deprecated: 'Use `state_code`. Removed in 6.1.'
         end

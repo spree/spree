@@ -24,14 +24,18 @@ function rescale(scaled: Scaled, scale: number): bigint {
   return scaled.units * 10n ** BigInt(scale - scaled.scale)
 }
 
-function write(units: bigint, scale: number, places = 0): string {
+function write(units: bigint, scale: number): string {
   const negative = units < 0n
   const digits = (negative ? -units : units).toString().padStart(scale + 1, '0')
-  const whole = scale > 0 ? digits.slice(0, -scale) : digits
-  let fraction = scale > 0 ? digits.slice(-scale) : ''
-  fraction = fraction.replace(/0+$/, '').padEnd(places, '0')
-  const text = fraction ? `${whole}.${fraction}` : whole
-  return negative && /[1-9]/.test(text) ? `-${text}` : text
+  const text = scale > 0 ? `${digits.slice(0, -scale)}.${digits.slice(-scale)}` : digits
+  return negative ? `-${text}` : text
+}
+
+// Results keep every decimal their inputs carry and, with a currency, at
+// least that currency's decimals, so "1.50" + "2.50" reads "4.00" and nothing
+// is ever rounded away.
+function resultScale(scales: number[], currency?: string): number {
+  return Math.max(0, currency ? decimalPlaces(currency) : 0, ...scales)
 }
 
 /**
@@ -63,20 +67,20 @@ export function isZeroMoney(value: string | null | undefined): boolean {
 }
 
 /**
- * Adds decimal strings exactly. Blank values count as zero. With a currency,
- * the result is written with that currency's decimals ("10.00").
+ * Adds decimal strings exactly. Blank values count as zero. The result keeps
+ * the most decimals any value has, and at least the currency's when one is
+ * given ("10.00").
  */
 export function sumMoney(values: Array<string | null | undefined>, currency?: string): string {
   const present = values
     .filter((value): value is string => value != null && value !== '')
     .map(parse)
-  const scale = Math.max(
-    0,
-    currency ? decimalPlaces(currency) : 0,
-    ...present.map((value) => value.scale),
+  const scale = resultScale(
+    present.map((value) => value.scale),
+    currency,
   )
   const total = present.reduce((sum, value) => sum + rescale(value, scale), 0n)
-  return write(total, scale, currency ? decimalPlaces(currency) : 0)
+  return write(total, scale)
 }
 
 /** a minus b, exactly. */
@@ -87,22 +91,28 @@ export function subtractMoney(a: string, b: string, currency?: string): string {
 /** The decimal string with its sign flipped. */
 export function negateMoney(value: string): string {
   const { units, scale } = parse(value)
-  return write(-units, scale, scale)
+  return write(-units, scale)
 }
 
-/** A decimal string times a whole quantity, exactly. */
+/**
+ * A decimal string times a whole quantity, exactly. A unit price with four
+ * decimals keeps them ("19.9990" × 3 = "59.9970"); round with the currency
+ * when displaying, through `formatMoney`.
+ */
 export function multiplyMoney(value: string, quantity: number, currency?: string): string {
   if (!Number.isInteger(quantity)) throw new Error(`Quantity must be a whole number: ${quantity}`)
 
-  const { units, scale } = parse(value)
-  return write(units * BigInt(quantity), scale, currency ? decimalPlaces(currency) : scale)
+  const parsed = parse(value)
+  const scale = resultScale([parsed.scale], currency)
+  return write(rescale(parsed, scale) * BigInt(quantity), scale)
 }
 
 /**
  * Formats a decimal-string amount ("1234.50") in a currency and locale. The
  * string goes to `Intl` as it is — `Intl` reads numeric strings exactly — so
  * the amount never passes through a JavaScript number. A missing or malformed
- * amount formats as an empty string.
+ * amount, or a currency `Intl` does not know, formats as an empty string; a
+ * locale it does not know falls back to the reader's own.
  *
  * @example formatMoney(order.total, order.currency, order.locale) // "€129.99"
  */
@@ -117,11 +127,31 @@ export function formatMoney(
   // The decimals come from the same ISO 4217 table the API writes amounts
   // with, so a dinar shows three and a yen none; a unit price keeps up to four.
   const places = decimalPlaces(currency)
-  // ES2023's Intl typings accept a numeric string; this package targets ES2022.
-  return new Intl.NumberFormat(locale ?? undefined, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: places,
-    maximumFractionDigits: options.unitPrice ? Math.max(places, 4) : places,
-  }).format(amount as unknown as number)
+  const maximumPlaces = options.unitPrice ? Math.max(places, 4) : places
+  // An amount that rounds to zero shows no minus sign ("-0.001" is "$0.00").
+  const shown =
+    amount.startsWith('-') && roundsToZero(amount.slice(1), maximumPlaces)
+      ? amount.slice(1)
+      : amount
+  const format = (formatLocale: string | undefined) =>
+    // ES2023's Intl typings accept a numeric string; this package targets ES2022.
+    new Intl.NumberFormat(formatLocale, {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: places,
+      maximumFractionDigits: maximumPlaces,
+    }).format(shown as unknown as number)
+
+  for (const formatLocale of locale ? [locale, undefined] : [undefined]) {
+    try {
+      return format(formatLocale)
+    } catch (error) {
+      if (!(error instanceof RangeError)) throw error
+    }
+  }
+  return ''
+}
+
+function roundsToZero(amount: string, places: number): boolean {
+  return compareMoney(amount, `0.${'0'.repeat(places)}5`) < 0
 }

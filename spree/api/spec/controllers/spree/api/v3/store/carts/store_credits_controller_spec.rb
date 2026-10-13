@@ -31,11 +31,14 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
         expect(order.reload.payments.store_credits.sum(:amount)).to eq(BigDecimal('5.05'))
       end
 
-      it 'refuses a JSON number: money is a decimal string' do
+      # 5.6 storefronts sent a number; it keeps working until 6.1.
+      it 'still applies a JSON number exactly, with a deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/JSON number is deprecated/)
+
         post :create, params: { cart_id: order.prefixed_id, amount: 5.05 }, as: :json
 
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']['code']).to eq('invalid_money_format')
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.payments.store_credits.sum(:amount)).to eq(BigDecimal('5.05'))
       end
 
       it 'refuses a localized amount' do

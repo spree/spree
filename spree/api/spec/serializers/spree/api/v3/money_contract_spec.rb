@@ -10,7 +10,7 @@ RSpec.describe 'API v3 money contract' do
 
   def money_name = /(\A|_)(amount|price|total|cost|fee|payout|discount|tax|revenue|balance|refund|credit|minimum|earned|payable|paid|pending|subtotal)(\z|_)/
   def rate_name = /(\A|_)(rate|percent|percentage)\z/
-  def not_money = /(\A|_)(id|ids|count|quantity|status|kind|type|code|label|name|at|unit|method|methods|provider|currency)\z|\Adisplay_|\Atotal_(quantity|units|cartons|on_hand)\z|delivery_count/
+  def not_money = /(\A|_)(id|ids|count|quantity|status|kind|type|code|label|name|at|unit|method|methods|provider|currency)\z|\Adisplay_|\Atotal_(quantity|units|cartons|on_hand)\z|delivery_count|_in_cents\z/
   def unit_price_keys = %w[price compare_at_amount cost_price unit_cost catalog_price original_price new_variant_price]
 
   # Walks a payload and yields every money- or rate-named scalar with the
