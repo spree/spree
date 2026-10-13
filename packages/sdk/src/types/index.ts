@@ -9,7 +9,19 @@ import type {
   ProductFilters,
   ProductSort,
 } from './filters.generated'
-import type { Cart as CartType } from './generated'
+import type {
+  AppliedPromotion,
+  Cart as CartType,
+  ProductFilterAvailability,
+  ProductFilterAvailabilityOption,
+  ProductFilterCategory,
+  ProductFilterCategoryOption,
+  ProductFilterOption,
+  ProductFilterOptionValue,
+  ProductFilterPriceRange,
+  ProductFilterSortOption,
+  ProductFilters as ProductFiltersResult,
+} from './generated'
 import type { AddressUpdateParams, CompanyAddressUpdateParams, LineItemInputParams } from './params'
 
 export * from './filters.generated'
@@ -38,7 +50,6 @@ export type {
   DeliveryRate,
   DigitalAsset,
   DigitalLink,
-  Discount,
   Fee,
   FreightSummary,
   Fulfillment,
@@ -122,8 +133,7 @@ export type CollectionListParams = ListParams<CollectionFilters, CollectionSort>
 
 export type OrderListParams = ListParams<OrderFilters, OrderSort>
 
-// Line item input for bulk cart/order operations
-/** @deprecated Renamed to `LineItemInputParams`. */
+/** @deprecated Renamed to `LineItemInputParams`. Removed in 6.1. */
 export type LineItemInput = LineItemInputParams
 
 /** @deprecated Split by action: `AddressCreateParams` and `AddressUpdateParams`. Removed in 6.1. */
@@ -132,76 +142,26 @@ export type AddressParams = AddressUpdateParams
 /** @deprecated Split by action: `CompanyAddressCreateParams` and `CompanyAddressUpdateParams`. Removed in 6.1. */
 export type CompanyAddressParams = CompanyAddressUpdateParams
 
-// Cart operations
-// Payments
-// Payment Sessions
-// Payment Setup Sessions
-// Product Filters types
-export interface FilterOption {
-  id: string
-  count: number
-}
+/** @deprecated Renamed to `AppliedPromotion`, the type of `cart.discounts` and `order.discounts`. Removed in 6.1. */
+export type Discount = AppliedPromotion
 
-export interface OptionFilterOption extends FilterOption {
-  name: string
-  label: string
-  position: number
-  color_code: string | null
-  image_url: string | null
-}
-
-export interface CategoryFilterOption {
-  id: string
-  name: string
-  permalink: string
-  count: number
-}
-
-export interface PriceRangeFilter {
-  id: 'price'
-  type: 'price_range'
-  min: number
-  max: number
-  currency: string
-}
-
-export interface AvailabilityFilter {
-  id: 'availability'
-  type: 'availability'
-  options: FilterOption[]
-}
-
-export interface OptionFilter {
-  id: string
-  type: 'option'
-  name: string
-  label: string
-  kind: string
-  options: OptionFilterOption[]
-}
-
-export interface CategoryFilter {
-  id: 'categories'
-  type: 'category'
-  options: CategoryFilterOption[]
-}
-
+// Product filters: the names storefronts import, kept as aliases of the generated types
+export type FilterOption = ProductFilterAvailabilityOption
+export type OptionFilterOption = ProductFilterOptionValue
+export type CategoryFilterOption = ProductFilterCategoryOption
+export type PriceRangeFilter = ProductFilterPriceRange
+export type AvailabilityFilter = ProductFilterAvailability
+export type OptionFilter = ProductFilterOption
+export type CategoryFilter = ProductFilterCategory
 export type ProductFilter = PriceRangeFilter | AvailabilityFilter | OptionFilter | CategoryFilter
-
-export interface SortOption {
-  id: string
-}
-
-export interface ProductFiltersResponse {
-  filters: ProductFilter[]
-  sort_options: SortOption[]
-  default_sort: string
-  total_count: number
-}
+export type SortOption = ProductFilterSortOption
+export type ProductFiltersResponse = ProductFiltersResult
 
 export interface ProductFiltersParams {
   category_id?: string
-  q?: Record<string, unknown>
+  collection_id?: string
+  /** The listing's active filters, so the counts describe the products it shows. */
+  q?: ProductFilters & Record<string, unknown>
 }
 
 // The building blocks of the generated filter types, for a declaration file

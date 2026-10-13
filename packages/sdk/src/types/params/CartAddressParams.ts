@@ -19,13 +19,13 @@ export type CartAddressParams = {
   state_code?: string
   /** The state name, for countries without predefined states. */
   state_name?: string
-  /** @deprecated Use `country_code`. Removed in 6.1. */
-  country_iso?: string
-  /** @deprecated Use `state_code`. Removed in 6.1. */
-  state_abbr?: string
   /**
    * Relaxes validation (name, phone, postal code, street), for express checkouts that share a
    * partial address.
    */
   quick_checkout?: boolean
+  /** @deprecated Use `country_code`. Removed in 6.1. */
+  country_iso?: string
+  /** @deprecated Use `state_code`. Removed in 6.1. */
+  state_abbr?: string
 }

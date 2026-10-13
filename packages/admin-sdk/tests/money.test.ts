@@ -9,6 +9,7 @@ import {
   isDecimalString,
   isZeroMoney,
   multiplyMoney,
+  negateMoney,
   subtractMoney,
   sumMoney,
 } from '../src'
@@ -39,6 +40,15 @@ describe('money helpers', () => {
     expect(sumMoney(['1.500', '0.005'], 'KWD')).toBe('1.505')
     expect(sumMoney(['100', '200'], 'JPY')).toBe('300')
     expect(sumMoney([null, '', '19.99'], 'USD')).toBe('19.99')
+  })
+
+  it('keeps the decimals its inputs carry', () => {
+    expect(sumMoney(['1.50', '2.50'])).toBe('4.00')
+    expect(subtractMoney('5.00', '1.00')).toBe('4.00')
+    expect(multiplyMoney('0.10', 3)).toBe('0.30')
+    expect(multiplyMoney('19.999', 3, 'USD')).toBe('59.997')
+    expect(multiplyMoney('5', 2, 'USD')).toBe('10.00')
+    expect(negateMoney('0.00')).toBe('0.00')
   })
 
   it('subtracts and multiplies exactly', () => {
@@ -77,5 +87,12 @@ describe('money helpers', () => {
     expect(formatMoney('0.0125', 'USD', 'en', { unitPrice: true })).toBe('$0.0125')
     expect(formatMoney('99999999999999999.99', 'USD', 'en')).toBe('$99,999,999,999,999,999.99')
     expect([formatMoney(null, 'USD'), formatMoney('1,99', 'USD')]).toEqual(['', ''])
+  })
+
+  it('formats without throwing on an unknown currency or locale', () => {
+    expect(formatMoney('10', '', 'en')).toBe('')
+    expect(formatMoney('10', 'USD', 'en_US')).toBe(formatMoney('10', 'USD'))
+    expect(formatMoney('-0.001', 'USD', 'en')).toBe('$0.00')
+    expect(formatMoney('-0.005', 'USD', 'en')).toBe('-$0.01')
   })
 })

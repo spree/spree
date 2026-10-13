@@ -1,5 +1,12 @@
 # @spree/seller-dashboard
 
+## 1.0.0-rc.4
+
+### Patch Changes
+
+- Updated dependencies:
+  - @spree/seller-sdk@1.0.0-rc.3
+
 ## 1.0.0-rc.3
 
 ### Minor Changes

@@ -74,7 +74,11 @@ module Spree
         # it is dropped rather than redacted for a gated guest: a requirement
         # with its numbers stripped tells them nothing they can act on.
         attribute :requirements do |order|
-          requirements = Spree::Checkout::Requirements.new(order).call
+          # 5.6 storefronts matched the delivery requirement by its field, so
+          # it keeps the old name until 6.1; `code` already carries the new one.
+          requirements = Spree::Checkout::Requirements.new(order).call.map do |requirement|
+            requirement[:field] == 'delivery_method' ? requirement.merge(field: 'shipping_method') : requirement
+          end
           next requirements unless params[:hide_prices]
 
           requirements.reject { |requirement| requirement[:code] == 'order_minimum_not_met' }

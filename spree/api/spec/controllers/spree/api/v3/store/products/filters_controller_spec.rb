@@ -191,6 +191,13 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
         expect(json_response['total_count']).to eq(1)
       end
+
+      it 'ignores a q that is not a hash' do
+        get :index, params: { q: '[object Object]' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['total_count']).to eq(3)
+      end
     end
 
     context 'without API key' do

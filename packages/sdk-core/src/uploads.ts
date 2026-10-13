@@ -1,5 +1,3 @@
-import SparkMD5 from 'spark-md5'
-
 /** What `POST /files` accepts as JSON, for a presigned upload. */
 export interface FileUploadCreateParams {
   filename: string
@@ -39,6 +37,8 @@ const MD5_CHUNK_SIZE = 2 * 1024 * 1024
 
 /** Base64-encoded MD5 digest of a file, read in chunks so large files stay out of memory. */
 export async function computeChecksum(file: Blob): Promise<string> {
+  // Loaded on first upload, so a client that never uploads never ships it.
+  const { default: SparkMD5 } = await import('spark-md5')
   const spark = new SparkMD5.ArrayBuffer()
   for (let start = 0; start < file.size; start += MD5_CHUNK_SIZE) {
     spark.append(await file.slice(start, start + MD5_CHUNK_SIZE).arrayBuffer())

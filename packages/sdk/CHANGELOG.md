@@ -1,5 +1,23 @@
 # @spree/sdk
 
+## 2.0.0-rc.3
+
+### Patch Changes
+
+- Fixed `products.filters()` sending its `q` filters as `[object Object]`, which the API answered with a server error; it now also takes `collection_id`. Entries of `q` on every list method always stay inside `q`, even one named `page` or `sort`, and nested objects are sent in bracket form.
+
+  Store API addresses accept `quick_checkout` everywhere a shopper writes one, in the address book as well as on a cart, so `AddressCreateParams`, `AddressUpdateParams` and the deprecated `AddressParams` carry it again, as `AddressParams` did in rc1.
+
+  The Store SDK no longer bundles the MD5 library used for file uploads, which it never performs.
+
+  `sumMoney`, `subtractMoney`, `multiplyMoney` and `negateMoney` now write every result the same way: with the decimals their inputs carry, and at least the currency's when one is given (`sumMoney(['1.50', '2.50'])` is `"4.00"`, not `"4"`). Nothing is rounded away. `formatMoney` returns an empty string for a currency `Intl` does not know, falls back to the reader's language for a locale it does not know, and no longer shows a minus sign on an amount that rounds to zero.
+
+  Store API prices bring back `amount_in_cents` and `compare_at_amount_in_cents`, and price history brings back `amount_in_cents`, marked `@deprecated` until 6.1 so a 5.6 storefront keeps working. Read `amount` and `compare_at_amount` instead.
+
+  `PriceRangeFilter` types the price filter's `min` and `max` as decimal strings, which is what the API sends; it said numbers. The product filter types (`PriceRangeFilter`, `OptionFilter`, `ProductFiltersResponse` and the rest) are now aliases of the generated ones, so they follow the API.
+
+  Bridges for 5.6 storefronts, each removed in 6.1: `carts.storeCredits.apply()` accepts a number again, marked `@deprecated`, and the API reads it with a deprecation warning; the cart's delivery requirement keeps `field: 'shipping_method'` (match its `code`, `delivery_method_required`); `Discount` is a deprecated alias of `AppliedPromotion`, the type of `cart.discounts` and `order.discounts`.
+
 ## 2.0.0-rc.2
 
 ### Minor Changes

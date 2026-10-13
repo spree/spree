@@ -6,6 +6,7 @@ module Spree
       module Admin
         class PriceHistorySerializer < V3::PriceHistorySerializer
           without_formatted_money
+          _attributes.delete(:amount_in_cents)
 
           typelize variant_id: :string,
                    price_id: :string,

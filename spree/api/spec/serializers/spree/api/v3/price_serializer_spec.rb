@@ -19,8 +19,7 @@ RSpec.describe Spree::Api::V3::PriceSerializer do
     end
 
     it 'includes nil compare_at fields when not set' do
-      expect(subject.values_at('compare_at_amount', 'display_compare_at_amount')).to all(be_nil)
-      expect(subject).not_to include('amount_in_cents', 'compare_at_amount_in_cents')
+      expect(subject.values_at('compare_at_amount', 'display_compare_at_amount', 'compare_at_amount_in_cents')).to all(be_nil)
     end
 
     it 'includes compare_at fields when set' do
@@ -29,6 +28,17 @@ RSpec.describe Spree::Api::V3::PriceSerializer do
         'compare_at_amount' => '29.99',
         'display_compare_at_amount' => '$29.99'
       )
+    end
+
+    # Deprecated until 6.1, so 5.6 storefronts reading them keep working.
+    it 'still answers to the deprecated amounts in cents' do
+      price.update!(compare_at_amount: 29.99)
+      expect(subject).to include('amount_in_cents' => 1999, 'compare_at_amount_in_cents' => 2999)
+    end
+
+    it 'hides the amounts in cents when prices are hidden' do
+      result = described_class.new(price, params: base_params.merge(hide_prices: true)).to_h
+      expect(result.values_at('amount', 'amount_in_cents', 'compare_at_amount_in_cents')).to all(be_nil)
     end
 
     it 'includes price_list_id when price list is set' do

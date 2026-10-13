@@ -166,6 +166,11 @@ describe('carts', () => {
       expect(result.id).toBe('cart_1')
     })
 
+    it('still accepts a number until 6.1', async () => {
+      const result = await client.carts.storeCredits.apply('cart_1', 25, opts)
+      expect(result.id).toBe('cart_1')
+    })
+
     it('removes store credit', async () => {
       const result = await client.carts.storeCredits.remove('cart_1', opts)
       expect(result.id).toBe('cart_1')

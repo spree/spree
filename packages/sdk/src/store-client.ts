@@ -108,6 +108,24 @@ import type {
   WishlistSort,
 } from './types/filters.generated'
 
+// The category and collection go at the top level; only the filters are Ransack params.
+function getFiltersParams(params: ProductFiltersParams = {}) {
+  const { q, ...scope } = params
+  return { ...scope, ...transformListParams({ q }) }
+}
+
+interface ApplyStoreCredit {
+  /**
+   * Apply store credit to the cart
+   * @param cartId - Cart prefixed ID
+   * @param amount - How much to apply, as a decimal string (`'10.00'`). Omit it to apply as much
+   *   as the cart can use.
+   */
+  (cartId: string, amount?: string, options?: RequestOptions): Promise<Cart>
+  /** @deprecated Pass the amount as a decimal string (`'25.00'`). A number is refused from 6.1. */
+  (cartId: string, amount: number, options?: RequestOptions): Promise<Cart>
+}
+
 export class StoreClient {
   /**
    * Low-level request function for calling custom API endpoints.
@@ -192,7 +210,7 @@ export class StoreClient {
     ): Promise<ProductFiltersResponse> =>
       this.request<ProductFiltersResponse>('GET', '/products/filters', {
         ...options,
-        params: params as Record<string, string | number | undefined>,
+        params: getFiltersParams(params),
       }),
   }
 
@@ -756,17 +774,11 @@ export class StoreClient {
      * Store credits
      */
     storeCredits: {
-      /**
-       * Apply store credit to the cart
-       * @param cartId - Cart prefixed ID
-       * @param amount - How much to apply, as a decimal string (`'10.00'`). Omit it to apply as much
-       *   as the cart can use.
-       */
-      apply: (cartId: string, amount?: string, options?: RequestOptions): Promise<Cart> =>
+      apply: ((cartId: string, amount?: string | number, options?: RequestOptions): Promise<Cart> =>
         this.request<Cart>('POST', `/carts/${cartId}/store_credits`, {
           ...options,
-          body: amount ? { amount } : undefined,
-        }),
+          body: amount != null && amount !== '' ? { amount } : undefined,
+        })) as ApplyStoreCredit,
 
       /**
        * Remove store credit from the cart

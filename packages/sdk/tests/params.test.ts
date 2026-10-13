@@ -14,6 +14,19 @@ describe('transformListParams', () => {
     })
   })
 
+  it('keeps every entry of q inside q, nested objects included', () => {
+    const result = transformListParams({
+      page: 2,
+      q: { page: 3, sort: 'name', g: { '0': { name_cont: 'shirt' } } },
+    })
+    expect(result).toEqual({
+      page: 2,
+      'q[page]': 3,
+      'q[sort]': 'name',
+      'q[g][0][name_cont]': 'shirt',
+    })
+  })
+
   it('prefers a typed filter over the same key in q', () => {
     const result = transformListParams({ name_cont: 'typed', q: { name_cont: 'raw' } })
     expect(result).toEqual({ 'q[name_cont]': 'typed' })
