@@ -23,10 +23,10 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rm -rf dist && node scripts/embed-templates.mjs && tsup && node scripts/emit-schema.mjs",
-    "dev": "tsup --watch",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "build": "rm -rf dist && pnpm generate && tsup && node scripts/emit-schema.mjs",
+    "dev": "pnpm generate && tsup --watch",
+    "test": "pnpm generate && vitest run",
+    "typecheck": "pnpm generate && tsc --noEmit",
     "lint": "biome check src tests",
     "lint:fix": "biome check --fix src tests",
     "format": "biome format --write src tests",

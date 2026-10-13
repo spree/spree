@@ -1,6 +1,6 @@
 // Embeds templates/*.yml into the package as strings, so the browser build
 // (the dashboard's setup screen) carries them without a file system.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -14,13 +14,5 @@ const content = [
   `export const COUNTRY_TEMPLATE = ${JSON.stringify(read('country.yml'))}`,
   '',
 ].join('\n')
-// --check: fail when the committed file is behind the templates.
-if (process.argv.includes('--check')) {
-  if (!existsSync(target) || readFileSync(target, 'utf-8') !== content) {
-    console.error(`${target} is out of date — run \`pnpm generate\` in packages/config`)
-    process.exit(1)
-  }
-} else {
-  writeFileSync(target, content)
-  console.log(`wrote ${target}`)
-}
+mkdirSync(dirname(target), { recursive: true })
+writeFileSync(target, content)
