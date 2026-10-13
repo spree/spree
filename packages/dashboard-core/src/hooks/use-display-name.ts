@@ -37,6 +37,14 @@ export function useDisplayName(type: Intl.DisplayNamesType) {
     } catch {
       formatter = undefined
     }
-    return (code: string) => formatter?.of(code)
+    // `of` throws a RangeError for a malformed code (a legacy `english`), so
+    // such a code reads as unnamed rather than breaking the page.
+    return (code: string) => {
+      try {
+        return formatter?.of(code)
+      } catch {
+        return undefined
+      }
+    }
   }, [locale, type])
 }

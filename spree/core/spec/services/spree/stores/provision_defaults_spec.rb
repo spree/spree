@@ -206,6 +206,16 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       end
     end
 
+    context 'when the given locale is one Spree cannot place' do
+      let(:locale) { 'xx' }
+
+      it "uses the country's own language" do
+        subject
+
+        expect(store.reload.default_market.default_locale).to eq('de')
+      end
+    end
+
     # Shipping from one country and pricing in another currency is ordinary —
     # a Polish merchant selling to the eurozone, say.
     context 'when a currency is given explicitly' do

@@ -59,10 +59,11 @@ module Spree
       # `Spree::Locales::ALL` whether or not Spree ships translations for it:
       # the storefront and dashboard carry their own. An explicit locale is
       # kept when it is listed, or moved to its listed language (`en-IE`
-      # becomes `en`); otherwise the country's first official language Spree
-      # lists.
+      # becomes `en`); one Spree cannot place, or none, gives the country's
+      # first official language Spree lists.
       def resolve_locale(requested, country)
-        return Spree::Locales.listed(requested) || 'en' if requested.present?
+        listed = Spree::Locales.listed(requested)
+        return listed if listed
 
         [country.default_locale, *country.official_locales].lazy.filter_map { |language| Spree::Locales.for_language(language) }.first || 'en'
       end
