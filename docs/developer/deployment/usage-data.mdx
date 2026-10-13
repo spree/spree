@@ -58,3 +58,5 @@ end
 ```
 
 Either way, turning a switch off wins over the other method: an environment variable cannot turn back on what the initializer turned off, and the reverse.
+
+The check never runs in the `test` environment, so test suites and CI runs send nothing.

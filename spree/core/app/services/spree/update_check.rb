@@ -34,9 +34,14 @@ module Spree
     LARGEST_BUCKET = '100k+'.freeze
 
     class << self
+      # Always false in the test environment, so test suites and CI runs never
+      # reach spreecloud.io; specs stub the request instead.
+      #
       # @return [Boolean] false when the operator turned the check off
       def enabled?
-        Spree::Config.update_check_enabled && !env_flag?('SPREE_UPDATE_CHECK_DISABLED')
+        !Rails.env.test? &&
+          Spree::Config.update_check_enabled &&
+          !env_flag?('SPREE_UPDATE_CHECK_DISABLED')
       end
 
       # When false, the check still runs but sends the running version only.
