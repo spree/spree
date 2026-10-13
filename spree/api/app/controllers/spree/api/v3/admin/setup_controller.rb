@@ -78,6 +78,7 @@ module Spree
             return render_setup_unavailable unless setup_token_usable?
             return render_missing_country if country.nil?
             return render_unknown_currency if unknown_currency?
+            return render_unknown_locale if unknown_locale?
 
             user = nil
             store = Spree::Store.default
@@ -158,6 +159,24 @@ module Spree
               message: message,
               status: :unprocessable_content,
               details: { currency: [message] }
+            )
+          end
+
+          # Blank means "use the country's own language"; another spelling or a
+          # region Spree does not list moves to the listed locale, but a code
+          # Spree cannot place at all is refused before the token is spent.
+          def unknown_locale?
+            params[:locale].present? && Spree::Locales.listed(params[:locale]).nil?
+          end
+
+          def render_unknown_locale
+            message = "Unknown locale #{params[:locale]}"
+
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: message,
+              status: :unprocessable_content,
+              details: { locale: [message] }
             )
           end
 

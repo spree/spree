@@ -18,8 +18,9 @@ module Spree
 
       # @param store [Spree::Store] the store to provision, already persisted
       # @param country [Spree::Country] where the shop ships from
-      # @param locale [String, nil] storefront locale; defaults to the
-      #   country's own language when Spree translates it, then English
+      # @param locale [String, nil] storefront locale, a code from
+      #   `Spree::Locales::ALL` (another spelling or region moves to the listed
+      #   one); defaults to the country's own language, then English
       # @param currency [String, nil] ISO 4217 code; defaults to the country's
       #   own currency. Merchants who ship from one country and price in
       #   another currency pass it explicitly.

@@ -178,6 +178,14 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(Spree.admin_user_class.count).to eq(0)
       end
 
+      it 'refuses a locale Spree cannot place and leaves the token usable' do
+        post :create, params: valid_params.merge(locale: 'english'), as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response.dig('error', 'details', 'locale')).to be_present
+        expect(@default_store.reload.setup_token).to be_present
+      end
+
       it "defaults the currency to the country's own when none is given" do
         post :create, params: valid_params.merge(country_code: 'DE'), as: :json
 

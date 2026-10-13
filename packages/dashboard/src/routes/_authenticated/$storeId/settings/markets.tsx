@@ -400,6 +400,7 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
         <span className="text-xs text-muted-foreground">
           {t('admin.fields.market.supported_locales.help')}
         </span>
+        <FieldError errors={[errors.supported_locales]} />
       </Field>
 
       <Field>

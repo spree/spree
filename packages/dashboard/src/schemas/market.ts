@@ -1,10 +1,5 @@
 import type { LocaleCode, MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
-import {
-  countryCodeSchema,
-  currencyCodeSchema,
-  isLocaleCode,
-  localeCodeSchema,
-} from '@spree/dashboard-core'
+import { countryCodeSchema, currencyCodeSchema } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import type { DefaultValues } from 'react-hook-form'
 import { z } from 'zod/v4'
@@ -12,8 +7,11 @@ import { z } from 'zod/v4'
 export const marketFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   currency: currencyCodeSchema,
-  default_locale: localeCodeSchema,
-  supported_locales: z.array(z.custom<LocaleCode>(isLocaleCode)),
+  // Only required here, not checked against the locale list: a market saved
+  // before the list was enforced keeps its locale until someone changes it,
+  // and the server names any changed code it does not list.
+  default_locale: z.string().min(1, { error: requiredMessage('market.default_locale') }),
+  supported_locales: z.array(z.string()),
   tax_inclusive: z.boolean(),
   default: z.boolean(),
   country_codes: z
@@ -39,10 +37,10 @@ export function marketValuesToParams(v: MarketFormValues): MarketCreateParams & 
   return {
     name: v.name,
     currency: v.currency,
-    default_locale: v.default_locale,
+    default_locale: v.default_locale as LocaleCode,
     // The default locale is always implicitly included server-side; strip
     // duplicates here so the request stays compact.
-    supported_locales: v.supported_locales.filter((l) => l !== v.default_locale),
+    supported_locales: v.supported_locales.filter((l) => l !== v.default_locale) as LocaleCode[],
     tax_inclusive: v.tax_inclusive,
     default: v.default,
     country_codes: v.country_codes,

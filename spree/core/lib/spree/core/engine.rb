@@ -158,21 +158,6 @@ module Spree
         Spree::Reporting::DefaultVocabulary.install(app.config.spree.reporting)
       end
 
-      # A store's content locales are the codes `Spree::Locales::ALL` lists,
-      # independent of the languages anything has translation files for: an
-      # API request sets I18n.locale (and so Mobility's) to its content
-      # locale, and both refuse a locale they do not know. Accepting every
-      # listed code lets content be stored and read in, say, Yoruba, while
-      # messages in it fall back along the i18n fallback chain to English.
-      # Mobility reads the app's configured list when there is one, so that
-      # list is widened too; which translation files load is unchanged.
-      config.after_initialize do |app|
-        listed = Spree::Locales::ALL.map(&:to_sym)
-        I18n.available_locales = I18n.available_locales | listed
-        configured = app.config.i18n.available_locales
-        app.config.i18n.available_locales = Array(configured).map(&:to_sym) | listed if configured.present?
-      end
-
       # Country and subdivision names are translated by the countries gem, which
       # only loads the locales it is told about. This runs after initialization
       # because Spree.available_locales reads i18n configuration that is not

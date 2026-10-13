@@ -126,6 +126,7 @@ export type { default as Integration } from './generated/Integration'
 export type { default as Invitation } from './generated/Invitation'
 export type { default as InvitationAcceptanceLink } from './generated/InvitationAcceptanceLink'
 export type { default as LineItem } from './generated/LineItem'
+export type { default as Locale } from './generated/Locale'
 export type { default as Market } from './generated/Market'
 export type { default as Media } from './generated/Media'
 export type { default as OptionType } from './generated/OptionType'
@@ -198,7 +199,6 @@ export type { default as WebhookEvent } from './generated/WebhookEvent'
 export type * from './preferences'
 // Hand-written translation-management types (controller-shaped, not generated)
 export type {
-  Locale,
   LocaleTranslations,
   ResourceTranslations,
   ResourceTranslationsNode,

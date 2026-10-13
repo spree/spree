@@ -58,17 +58,18 @@ module Spree
     end
 
     # A listed locale for a code from elsewhere (a host app's I18n config, a
-    # country's official language): the code itself when listed, otherwise
-    # the listed one for its language (`en-IE` gives `en`, `zh` gives
-    # `zh-CN`), or nil when Spree knows neither.
+    # country's official language, a legacy column): the listed spelling of
+    # the code itself (`en_US` and `pt-br` give `en-US` and `pt-BR`),
+    # otherwise the listed one for its language (`en-IE` gives `en`, `zh`
+    # gives `zh-CN`), or nil when Spree knows neither.
     #
     # @param code [String, Symbol, nil]
     # @return [String, nil]
     def self.listed(code)
-      code = code.to_s.strip
-      return code if ALL.include?(code)
+      code = code.to_s.strip.tr('_', '-')
+      return if code.empty?
 
-      for_language(code.split(/[-_]/).first) if code.present?
+      ALL.find { |listed| listed.casecmp?(code) } || for_language(code.split('-').first)
     end
 
     # The listed locale for an ISO 639-1 language: the language itself, or

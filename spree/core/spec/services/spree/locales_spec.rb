@@ -42,7 +42,11 @@ RSpec.describe Spree::Locales do
 
   describe '.listed' do
     it 'keeps a listed code and moves another to its listed language' do
-      expect(%w[pt-BR en-IE en_US zh].map { |code| described_class.listed(code) }).to eq(%w[pt-BR en en zh-CN])
+      expect(%w[pt-BR en-IE zh].map { |code| described_class.listed(code) }).to eq(%w[pt-BR en zh-CN])
+    end
+
+    it 'finds a listed code written with an underscore or in another case' do
+      expect(%w[en_US pt-br PT_BR].map { |code| described_class.listed(code) }).to eq(%w[en-US pt-BR pt-BR])
     end
 
     it 'gives nothing for a language Spree does not know, or a blank code' do
