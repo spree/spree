@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 2.3.1
+
+### Patch Changes
+
+- Released alongside Spree 6.0.0.rc2 and `@spree/cli` 3.3.0. No changes of its own.
+
 ## 2.3.0
 
 ### Minor Changes
