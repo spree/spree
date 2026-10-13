@@ -20,8 +20,13 @@ stock_locations:
     # A counter to collect from is what makes pickup real.
     pickup_enabled: true
 
+delivery_profiles:
+  # Created with the store itself; declared so the references below follow
+  # it if the merchant renamed it.
+  - name: General
+    default: true
+
 delivery_zones:
-  # The General profile is created with the store itself.
   - name: Domestic
     description: ${STORE_COUNTRY_NAME}
     delivery_profile: General
@@ -53,7 +58,7 @@ delivery_methods:
   # Collection at the counter: no zone, every pickup-enabled location.
   - name: Store Pickup
     delivery_profile: General
-    fulfillment_provider: Spree::FulfillmentProvider::Pickup
+    fulfillment_provider: pickup
     storefront_visible: true
     calculator:
       type: flat_rate
