@@ -28,6 +28,20 @@ RSpec.describe Spree::Locales do
     it 'names the codes of a comma-separated list that are not listed, matching case exactly' do
       expect([described_class.unlisted('en,pt-br,xx'), described_class.unlisted(nil)]).to eq([%w[pt-br xx], []])
     end
+
+    it 'ignores spaces and empty entries' do
+      expect(described_class.unlisted('en, de,,fr ')).to eq([])
+    end
+  end
+
+  describe '.listed' do
+    it 'keeps a listed code and moves another to its listed language' do
+      expect(%w[pt-BR en-IE en_US zh].map { |code| described_class.listed(code) }).to eq(%w[pt-BR en en zh-CN])
+    end
+
+    it 'gives nothing for a language Spree does not know, or a blank code' do
+      expect([described_class.listed('xx-YY'), described_class.listed(nil)]).to eq([nil, nil])
+    end
   end
 
   describe '.for_language' do

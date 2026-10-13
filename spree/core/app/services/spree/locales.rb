@@ -16,8 +16,9 @@ module Spree
     # English, Brazilian vs. European Portuguese, Simplified vs. Traditional
     # Chinese, etc.).
     #
-    # Markets and stores only accept codes from this list, so an order's or
-    # cart's locale (which must be one its store supports) is always one too.
+    # Markets and stores only accept codes from this list when their locales
+    # change, so an order's or cart's locale (which must be one its store
+    # supports) is one too, unless the store kept a value saved before that.
     ALL = %w[
       aa ab ae af ak am an ar as av ay az
       ba be bg bh bi bm bn bo br bs
@@ -53,7 +54,21 @@ module Spree
     # @param codes [String, nil] e.g. "en,pt-BR"
     # @return [Array<String>]
     def self.unlisted(codes)
-      codes.to_s.split(',') - ALL
+      codes.to_s.split(',').map(&:strip).reject(&:empty?) - ALL
+    end
+
+    # A listed locale for a code from elsewhere (a host app's I18n config, a
+    # country's official language): the code itself when listed, otherwise
+    # the listed one for its language (`en-IE` gives `en`, `zh` gives
+    # `zh-CN`), or nil when Spree knows neither.
+    #
+    # @param code [String, Symbol, nil]
+    # @return [String, nil]
+    def self.listed(code)
+      code = code.to_s.strip
+      return code if ALL.include?(code)
+
+      for_language(code.split(/[-_]/).first) if code.present?
     end
 
     # The listed locale for an ISO 639-1 language: the language itself, or

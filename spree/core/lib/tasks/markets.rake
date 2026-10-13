@@ -31,7 +31,8 @@ namespace :spree do
         market = store.markets.create!(
           name: primary_country&.name || 'Default',
           currency: iso_country&.currency_code || store.read_attribute(:default_currency) || 'USD',
-          default_locale: iso_country&.languages_official&.first || store.read_attribute(:default_locale) || 'en',
+          default_locale: Spree::Locales.listed(iso_country&.languages_official&.first) ||
+                          Spree::Locales.listed(store.read_attribute(:default_locale)) || 'en',
           default: true,
           countries: countries
         )

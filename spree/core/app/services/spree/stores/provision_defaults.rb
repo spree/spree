@@ -55,18 +55,19 @@ module Spree
         found&.iso_code || country.default_currency.presence || 'USD'
       end
 
-      # An explicit locale is honored as given — a host app may ship its own
-      # translations. Only the *derived* default is filtered: falling back to
-      # a country's official language that Spree has no strings for would set
-      # a storefront to a language with nothing behind it, and it is not one
-      # the setup screen ever offers.
+      # An explicit locale is kept when it is listed, or moved to its listed
+      # language (`en-IE` becomes `en`), since a market accepts nothing else.
+      # The *derived* default is also filtered to the languages Spree has
+      # strings for: falling back to a country's official language with
+      # nothing behind it would leave the storefront untranslated, and it is
+      # not one the setup screen ever offers.
       def resolve_locale(requested, country)
-        return requested if requested.present?
+        return Spree::Locales.listed(requested) || 'en' if requested.present?
 
         derived = country.default_locale.presence
         return 'en' if derived.blank?
 
-        locales = Spree.available_locales
+        locales = Spree.available_locales.map(&:to_s) & Spree::Locales::ALL
         Spree.locale_for_language(derived, locales) ||
           country.official_locales.lazy.filter_map { |language| Spree.locale_for_language(language, locales) }.first ||
           'en'

@@ -935,7 +935,7 @@ bundle exec rake spree:money:audit_capture_events
 
 ## Locale codes come from a fixed list
 
-A market's `default_locale` and `supported_locales`, and the store's own `default_locale` and `supported_locales`, accept only the codes in `Spree::Locales::ALL`: every ISO 639-1 language (`en`, `de`) plus the regional variants commerce needs (`en-US`, `en-GB`, `pt-BR`, `zh-CN`). The match is exact, so `pt-br` is refused in favour of `pt-BR`. Any other value is answered with `422` naming the codes Spree does not support. Since an order's or cart's `locale` must be one its store supports, it is always on the list too.
+A market's `default_locale` and `supported_locales`, and the store's own `default_locale` and `supported_locales`, accept only the codes in `Spree::Locales::ALL`: every ISO 639-1 language (`en`, `de`) plus the regional variants commerce needs (`en-US`, `en-GB`, `pt-BR`, `zh-CN`). The match is exact, so `pt-br` is refused in favour of `pt-BR`. Any other value is answered with `422` naming the codes Spree does not support. Since an order's or cart's `locale` must be one its store supports, it comes from the list too once the store's locales do. Store setup, seeds and the markets migration move a code Spree does not list to its listed language (`en-IE` becomes `en`, `zh` becomes `zh-CN`).
 
 Values saved before the upgrade keep working until they are changed. If a market uses a code outside the list, change it to the listed spelling when you next edit it. The Store and Admin APIs publish the list as the `LocaleCode` type in the API reference and the SDK types.
 

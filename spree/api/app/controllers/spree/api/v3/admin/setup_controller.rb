@@ -180,7 +180,7 @@ module Spree
           end
 
           def available_locales
-            @available_locales ||= Spree.available_locales
+            @available_locales ||= Spree.available_locales.map(&:to_s) & Spree::Locales::ALL
           end
 
           # Token mismatch, spent token, and already-set-up all render the

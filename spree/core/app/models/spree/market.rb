@@ -77,12 +77,8 @@ module Spree
               inclusion: { in: ->(_market) { Spree.tax_providers.map(&:to_s) } },
               allow_blank: true
     validates :currency, presence: true
-    # Checked only when a locale changes, so a market saved before the list
-    # was enforced can still be edited.
     validates :default_locale, presence: true
-    validates :default_locale, inclusion: { in: Spree::Locales::ALL }, allow_blank: true,
-                               if: :will_save_change_to_default_locale?
-    validate :supported_locales_must_be_listed, if: :will_save_change_to_supported_locales?
+    validates_with Spree::LocaleCodesValidator, attributes: %i[default_locale supported_locales]
     validates :countries, presence: true
 
     #
@@ -205,13 +201,6 @@ module Spree
     end
 
     private
-
-    def supported_locales_must_be_listed
-      unlisted = Spree::Locales.unlisted(supported_locales)
-      return if unlisted.empty?
-
-      errors.add(:supported_locales, I18n.t('spree.locales_not_listed', codes: unlisted.join(', ')))
-    end
 
     def last_in_store?
       !self.class.where(store_id: store_id).where.not(id: id).exists?

@@ -7,7 +7,7 @@ module Spree
         has_many :markets, class_name: 'Spree::Market', dependent: :destroy
         has_one :default_market, -> { default }, class_name: 'Spree::Market'
 
-        validate :locale_columns_must_be_listed
+        validates_with Spree::LocaleCodesValidator, attributes: %i[default_locale supported_locales]
 
         after_create :ensure_default_market
         after_update :sync_default_market_settings
@@ -147,7 +147,7 @@ module Spree
           markets.create!(
             name: country.name,
             currency: read_attribute(:default_currency) || iso_country&.currency_code || 'USD',
-            default_locale: read_attribute(:default_locale) || Spree::Locales.for_language(iso_country&.languages_official&.first) || 'en',
+            default_locale: read_attribute(:default_locale) || Spree::Locales.listed(iso_country&.languages_official&.first) || 'en',
             supported_locales: read_attribute(:supported_locales),
             default: true,
             bootstrap_default: true,
@@ -189,20 +189,6 @@ module Spree
         ([default_currency] + read_attribute(:supported_currencies).to_s.split(',')).uniq.map(&:to_s).map do |code|
           ::Money::Currency.find(code.strip)
         end.compact.sort_by { |currency| currency.iso_code == default_currency ? 0 : 1 }
-      end
-
-      # Reads the columns rather than #default_locale, which answers the
-      # default market's. Checked only when a column changes, so a store saved
-      # before the list was enforced can still be edited.
-      def locale_columns_must_be_listed
-        if will_save_change_to_default_locale?
-          code = read_attribute(:default_locale)
-          errors.add(:default_locale, :inclusion, value: code) if code.present? && Spree::Locales::ALL.exclude?(code)
-        end
-        return unless will_save_change_to_supported_locales?
-
-        unlisted = Spree::Locales.unlisted(read_attribute(:supported_locales))
-        errors.add(:supported_locales, I18n.t('spree.locales_not_listed', codes: unlisted.join(', '))) if unlisted.any?
       end
 
       def legacy_supported_locales_list
