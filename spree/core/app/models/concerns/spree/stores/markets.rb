@@ -7,6 +7,7 @@ module Spree
         has_many :markets, class_name: 'Spree::Market', dependent: :destroy
         has_one :default_market, -> { default }, class_name: 'Spree::Market'
 
+        normalizes :default_locale, with: ->(value) { value.to_s.strip.presence }
         validates_with Spree::LocaleCodesValidator, attributes: %i[default_locale supported_locales]
 
         after_create :ensure_default_market

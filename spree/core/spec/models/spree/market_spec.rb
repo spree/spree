@@ -115,6 +115,13 @@ RSpec.describe Spree::Market, type: :model do
       expect(market).to be_valid
     end
 
+    it 'strips spaces from the default locale and each supported locale' do
+      market.default_locale = ' de '
+      market.supported_locales = [' fr', 'en ']
+
+      expect([market.default_locale, market.read_attribute(:supported_locales)]).to eq(%w[de fr,en])
+    end
+
     it 'rejects a default locale that is not listed, including one listed in another case' do
       market.default_locale = 'pt-br'
 
