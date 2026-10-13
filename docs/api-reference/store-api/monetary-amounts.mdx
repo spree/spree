@@ -20,7 +20,7 @@ Every monetary field is a decimal string, with its currency on the record or on 
 }
 ```
 
-Format each amount for the customer reading it, in their own language. In JavaScript, pass the string to `Intl.NumberFormat`, which reads a numeric string exactly: `new Intl.NumberFormat('de', { style: 'currency', currency: 'EUR' }).format('1234.5')` gives `1.234,50 €`.
+Format each amount for the customer reading it, in their language and in the currency the amount is in. An order or cart carries both (`currency`, `locale`); before checkout, use the current market's (`currency`, `default_locale`) or the price's own `currency`. See [Working with Amounts](#working-with-amounts) for examples.
 
 <Warning>
 **The `display_*` fields are deprecated and will be removed in Spree 6.1.** Each monetary field still has a pre-formatted copy (`display_total` beside `total`), formatted in the request's language. Format the amount beside it instead. The API reference marks these fields as deprecated, and the SDK types strike them through. Labels such as `display_name` are not affected.
@@ -48,6 +48,12 @@ Each currency the store sells in (`GET /api/v3/store/currencies`) carries `decim
 
 ## Working with Amounts
 
+`Intl.NumberFormat` reads the decimal string exactly, so pass it the amount as it arrives, with the currency of the record it belongs to.
+
+### Order and cart totals
+
+An order carries its own `currency` and the `locale` the customer shopped in, so its receipt reads the same however the store changes later.
+
 <CodeGroup>
 
 ```typescript SDK
@@ -55,9 +61,10 @@ import { compareMoney, sumMoney } from '@spree/sdk'
 
 const order = await client.orders.get('or_abc123', {}, { token });
 
-// Format for display, in the customer's language
-const formatter = new Intl.NumberFormat(locale, { style: 'currency', currency: order.currency });
-formatter.format(order.total); // "$129.99" in English
+const money = new Intl.NumberFormat(order.locale ?? 'en', { style: 'currency', currency: order.currency });
+
+money.format(order.total);          // "€129.99" for an order in euros, read in English
+money.format(order.delivery_total); // "€10.00"
 
 // Calculate on the strings, exactly
 const subtotal = sumMoney(order.items.map((item) => item.total), order.currency); // "129.99"
@@ -65,14 +72,44 @@ const isFree = compareMoney(order.total, '0') === 0;
 ```
 
 ```javascript JavaScript
-const data = await response.json();
+const order = await response.json();
 
-// Format for display, in the customer's language
-element.textContent = new Intl.NumberFormat(locale, { style: 'currency', currency: data.currency })
-  .format(data.total); // "$129.99" in English
+const money = new Intl.NumberFormat(order.locale ?? 'en', { style: 'currency', currency: order.currency });
+element.textContent = money.format(order.total); // "€129.99"
 
 // Calculate on the raw strings with a decimal library, never parseFloat:
 // 0.1 + 0.2 is 0.30000000000000004 as a JSON number.
+```
+
+</CodeGroup>
+
+### Product prices
+
+Before there is a cart, prices are in the customer's market. Resolve the market once and format every price with it; each price also carries its own `currency`.
+
+<CodeGroup>
+
+```typescript SDK
+const market = await client.markets.resolve('DE');
+const money = new Intl.NumberFormat(market.default_locale, { style: 'currency', currency: market.currency });
+
+const product = await client.products.get('spree-tote', {}, { currency: market.currency, locale: market.default_locale });
+
+money.format(product.price.amount);            // "29,99 €"
+if (product.price.compare_at_amount) {
+  money.format(product.price.compare_at_amount); // "39,99 €"
+}
+```
+
+```javascript JavaScript
+const headers = { 'X-Spree-API-Key': 'pk_xxx' };
+const market = await (await fetch('/api/v3/store/markets/resolve?country=DE', { headers })).json();
+const product = await (await fetch('/api/v3/store/products/spree-tote', {
+  headers: { ...headers, 'X-Spree-Currency': market.currency, 'X-Spree-Locale': market.default_locale },
+})).json();
+
+const money = new Intl.NumberFormat(market.default_locale, { style: 'currency', currency: market.currency });
+element.textContent = money.format(product.price.amount); // "29,99 €"
 ```
 
 </CodeGroup>

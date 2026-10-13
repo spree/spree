@@ -48,8 +48,14 @@ module Spree
         # @param currency [Symbol, Proc] the record's reader for its currency,
         #   or a block taking the record
         # @param unit_price [Boolean]
-        def self.money_attributes(*names, currency: :currency, unit_price: false)
-          typelize(**names.index_with { |name| display_money?(name) ? display_money_type(name) : [:string, nullable: true] })
+        # @param descriptions [Hash{Symbol => String}] what each amount is, for
+        #   the API reference and the SDK types
+        def self.money_attributes(*names, currency: :currency, unit_price: false, descriptions: {})
+          typelize(**names.index_with do |name|
+            next display_money_type(name) if display_money?(name)
+
+            descriptions[name] ? [:string, nullable: true, comment: descriptions[name]] : [:string, nullable: true]
+          end)
 
           names.each do |name|
             formatted = display_money?(name)
@@ -73,8 +79,10 @@ module Spree
         # The type of a formatted money copy: deprecated in favour of the
         # amount it formats, which clients format in the reader's language.
         def self.display_money_type(name, nullable: true)
+          amount = name.to_s.delete_prefix('display_')
           [:string, nullable: nullable,
-                    deprecated: "Format `#{name.to_s.delete_prefix('display_')}` with its currency instead. Removed in 6.1."]
+                    comment: "`#{amount}` formatted with its currency symbol in the request's language, for example `$29.99`.",
+                    deprecated: "Format `#{amount}` with its currency instead. Removed in 6.1."]
         end
 
         # Declares rates and percentages, written as decimal strings without

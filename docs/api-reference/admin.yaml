@@ -52639,41 +52639,57 @@ components:
         item_total:
           type: string
           nullable: true
+          description: 'The line items: each price times its quantity, before discounts,
+            fees and delivery.'
         discount_total:
           type: string
           nullable: true
+          description: What promotions take off, as a negative amount. Manual discounts
+            are not included.
         tax_total:
           type: string
           nullable: true
+          description: All tax, both included in prices and added on top.
         included_tax_total:
           type: string
           nullable: true
+          description: Tax already included in the prices, as in a store whose prices
+            are tax-inclusive.
         additional_tax_total:
           type: string
           nullable: true
+          description: Tax added on top of the prices.
         delivery_total:
           type: string
           nullable: true
+          description: What delivery costs, before delivery discounts.
         fee_total:
           type: string
           nullable: true
+          description: Every fee charged, such as handling or a customs duty.
         gift_card_total:
           type: string
           nullable: true
+          description: What a gift card pays.
         store_credit_total:
           type: string
           nullable: true
+          description: What store credit pays, apart from gift cards.
         total:
           type: string
           nullable: true
+          description: 'What the customer pays in all: items, delivery, fees and added
+            tax, less discounts.'
         amount_due:
           type: string
           nullable: true
+          description: What is left to pay after payments and store credit.
         covered_by_store_credit:
           type: boolean
         adjustment_total:
           type: string
           nullable: true
+          description: Every discount, fee and added tax together, as one amount.
         current_step:
           type: string
         completed_steps:
@@ -57828,23 +57844,34 @@ components:
           type: string
         price:
           type: string
+          description: The price of one unit.
         total:
           type: string
+          description: 'What this line costs: price times quantity, with its discounts,
+            fees and added tax.'
         adjustment_total:
           type: string
+          description: This line's discounts, fees and added tax together.
         additional_tax_total:
           type: string
+          description: Tax added on top of the price.
         included_tax_total:
           type: string
+          description: Tax already included in the price.
         discount_total:
           type: string
+          description: What promotions take off this line, as a negative amount.
         pre_tax_amount:
           type: string
+          description: This line after discounts, without tax.
         discounted_amount:
           type: string
+          description: Price times quantity, after discounts.
         compare_at_amount:
           type: string
           nullable: true
+          description: The compare-at price times quantity, or null when the variant
+            has none.
         thumbnail_url:
           type: string
           nullable: true
@@ -58881,36 +58908,51 @@ components:
         item_total:
           type: string
           nullable: true
+          description: 'The line items: each price times its quantity, before discounts,
+            fees and delivery.'
         discount_total:
           type: string
           nullable: true
+          description: What promotions take off, as a negative amount. Manual discounts
+            are not included.
         tax_total:
           type: string
           nullable: true
+          description: All tax, both included in prices and added on top.
         included_tax_total:
           type: string
           nullable: true
+          description: Tax already included in the prices, as in a store whose prices
+            are tax-inclusive.
         additional_tax_total:
           type: string
           nullable: true
+          description: Tax added on top of the prices.
         delivery_total:
           type: string
           nullable: true
+          description: What delivery costs, before delivery discounts.
         fee_total:
           type: string
           nullable: true
+          description: Every fee charged, such as handling or a customs duty.
         gift_card_total:
           type: string
           nullable: true
+          description: What a gift card pays.
         store_credit_total:
           type: string
           nullable: true
+          description: What store credit pays, apart from gift cards.
         total:
           type: string
           nullable: true
+          description: 'What the customer pays in all: items, delivery, fees and added
+            tax, less discounts.'
         amount_due:
           type: string
           nullable: true
+          description: What is left to pay after payments and store credit.
         covered_by_store_credit:
           type: boolean
         payments:
@@ -59299,26 +59341,41 @@ components:
           nullable: true
         item_total:
           type: string
+          description: 'The line items: each price times its quantity, before discounts,
+            fees and delivery.'
         discount_total:
           type: string
+          description: What promotions take off, as a negative amount. Manual discounts
+            are not included.
         tax_total:
           type: string
+          description: All tax, both included in prices and added on top.
         included_tax_total:
           type: string
+          description: Tax already included in the prices, as in a store whose prices
+            are tax-inclusive.
         additional_tax_total:
           type: string
+          description: Tax added on top of the prices.
         delivery_total:
           type: string
+          description: What delivery costs, before delivery discounts.
         fee_total:
           type: string
+          description: Every fee charged, such as handling or a customs duty.
         gift_card_total:
           type: string
+          description: What a gift card pays.
         store_credit_total:
           type: string
+          description: What store credit pays, apart from gift cards.
         total:
           type: string
+          description: 'What the customer pays in all: items, delivery, fees and added
+            tax, less discounts.'
         amount_due:
           type: string
+          description: What is left to pay after payments and store credit.
         covered_by_store_credit:
           type: boolean
         payments:
@@ -59327,6 +59384,7 @@ components:
             "$ref": "#/components/schemas/Payment"
         adjustment_total:
           type: string
+          description: Every discount, fee and added tax together, as one amount.
         items:
           type: array
           items:
