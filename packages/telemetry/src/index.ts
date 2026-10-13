@@ -11,7 +11,7 @@
  * https://spreecommerce.org/docs/developer/deployment/usage-data
  */
 import { execFileSync, spawn } from 'node:child_process'
-import { createHmac, randomUUID } from 'node:crypto'
+import { createHmac, randomBytes, randomUUID } from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -52,6 +52,8 @@ type Config = Record<string, unknown>
 export interface TelemetrySettings {
   enabled?: boolean
   machineId?: string
+  /** Keys the project hash. Never sent, so the hash cannot be recomputed from a list of remotes. */
+  projectKey?: string
   noticeShown?: boolean
 }
 
@@ -145,10 +147,10 @@ function packageManager(env: Env): string | undefined {
   return ['pnpm', 'yarn', 'bun', 'npm'].find((name) => agent.startsWith(`${name}/`))
 }
 
-// The git remote, hashed with this machine's random id as the key: runs in one
-// project on one machine match, and hashing a list of public repository
-// addresses cannot find it.
-function projectId(cwd: string, machineId: string): string | undefined {
+// The git remote, hashed with a random key that never leaves this machine:
+// runs in one project on one machine match, and hashing a list of public
+// repository addresses cannot find it.
+function projectId(cwd: string, projectKey: string): string | undefined {
   try {
     const remote = execFileSync('git', ['config', '--get', 'remote.origin.url'], {
       cwd,
@@ -157,7 +159,7 @@ function projectId(cwd: string, machineId: string): string | undefined {
     })
       .toString()
       .trim()
-    return remote ? createHmac('sha256', machineId).update(remote).digest('hex') : undefined
+    return remote ? createHmac('sha256', projectKey).update(remote).digest('hex') : undefined
   } catch {
     return undefined
   }
@@ -288,9 +290,10 @@ export function trackCommand(input: {
 
   const settings = settingsFrom(config)
   const machineId = settings.machineId ?? randomUUID()
-  if (!settings.machineId || !settings.noticeShown) {
+  const projectKey = settings.projectKey ?? randomBytes(32).toString('hex')
+  if (!settings.machineId || !settings.projectKey || !settings.noticeShown) {
     try {
-      writeTelemetrySettings({ machineId, noticeShown: true }, env, config)
+      writeTelemetrySettings({ machineId, projectKey, noticeShown: true }, env, config)
     } catch {
       return null
     }
@@ -316,7 +319,9 @@ export function trackCommand(input: {
         durationMs: performance.now() - startedAt,
         machineId,
         projectId:
-          input.command === 'create' ? undefined : projectId(input.cwd ?? process.cwd(), machineId),
+          input.command === 'create'
+            ? undefined
+            : projectId(input.cwd ?? process.cwd(), projectKey),
         options,
         env,
       }),
