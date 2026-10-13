@@ -5,6 +5,7 @@ export type { RequestFn, RequestOptions, RetryConfig } from '@spree/sdk-core'
 export {
   compareMoney,
   decimalPlaces,
+  formatMoney,
   isDecimalString,
   isZeroMoney,
   multiplyMoney,

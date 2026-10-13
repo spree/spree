@@ -18,7 +18,46 @@ Every monetary field is returned as a decimal string, with its currency on the r
 }
 ```
 
-The Admin and Seller APIs return amounts only, with no `display_*` formatted copies: format them for the person reading them, in their own language. In JavaScript, pass the string to `Intl.NumberFormat` (`new Intl.NumberFormat('de', { style: 'currency', currency: 'EUR' }).format('1234.5')` gives `1.234,50 €`), which reads a numeric string exactly. Calculate with a decimal library rather than `parseFloat`: the SDK exports `sumMoney`, `subtractMoney`, `multiplyMoney`, `compareMoney` and `isZeroMoney`, which work on the strings exactly. The [Store API](/api-reference/store-api/monetary-amounts) and webhook payloads still carry `display_*` fields, deprecated and removed in 6.1; email templates format amounts with the `money` filter.
+The Admin and Seller APIs return amounts only, with no `display_*` formatted copies: format them for the person reading them, in their own language. Format and calculate with the SDK's [money helpers](#money-helpers); without the SDK, pass the string to `Intl.NumberFormat`, which reads a numeric string exactly, and calculate with a decimal library rather than `parseFloat`. The [Store API](/api-reference/store-api/monetary-amounts) and webhook payloads still carry `display_*` fields, deprecated and removed in 6.1; email templates format amounts with the `money` filter.
+
+## Money helpers
+
+`@spree/admin-sdk` and `@spree/seller-sdk` export helpers that work on the decimal strings directly. None of them turns an amount into a JavaScript number, so a sum or a comparison is exact.
+
+```typescript
+import {
+  compareMoney, decimalPlaces, formatMoney, isDecimalString, isZeroMoney,
+  multiplyMoney, negateMoney, subtractMoney, sumMoney,
+} from '@spree/admin-sdk'
+```
+
+### Displaying
+
+| Helper | What it does | Example |
+| --- | --- | --- |
+| `formatMoney(amount, currency, locale?, { unitPrice? })` | Formats an amount in a currency and language, with the currency's own decimal places. Pass `{ unitPrice: true }` for a unit price, which keeps up to four decimals. A missing or malformed amount gives an empty string. | `formatMoney('1234.5', 'EUR', 'de')` → `"1.234,50 €"`<br/>`formatMoney('1000', 'JPY', 'en')` → `"¥1,000"`<br/>`formatMoney('0.0125', 'USD', 'en', { unitPrice: true })` → `"$0.0125"` |
+| `decimalPlaces(currency)` | The number of decimals a currency's amounts are written with, from ISO 4217. An unknown code gives `2`. | `decimalPlaces('USD')` → `2`<br/>`decimalPlaces('JPY')` → `0`<br/>`decimalPlaces('KWD')` → `3` |
+
+### Calculating
+
+Pass a currency to write the result with that currency's decimal places. Without one, the result keeps only the decimals it needs.
+
+| Helper | What it does | Example |
+| --- | --- | --- |
+| `sumMoney(amounts, currency?)` | Adds amounts. Blank values (`null`, `undefined`, `""`) count as zero. | `sumMoney(['19.99', '10.01'], 'USD')` → `"30.00"`<br/>`sumMoney(['19.99', '10.01'])` → `"30"`<br/>`sumMoney(['0.1', '0.2'])` → `"0.3"` |
+| `subtractMoney(a, b, currency?)` | `a` minus `b`. | `subtractMoney('100.00', '29.99', 'USD')` → `"70.01"` |
+| `multiplyMoney(amount, quantity, currency?)` | An amount times a whole quantity, such as a unit price times the units. A quantity that is not a whole number throws. | `multiplyMoney('19.99', 3, 'USD')` → `"59.97"` |
+| `negateMoney(amount)` | The amount with its sign flipped. | `negateMoney('5.00')` → `"-5.00"` |
+
+### Comparing and checking
+
+| Helper | What it does | Example |
+| --- | --- | --- |
+| `compareMoney(a, b)` | `1` when `a` is larger, `-1` when it is smaller, `0` when they are equal, whatever their decimal places. | `compareMoney('10.00', '9.99')` → `1`<br/>`compareMoney('10', '10.00')` → `0` |
+| `isZeroMoney(amount)` | Whether an amount is zero. Blank counts as zero. | `isZeroMoney('0.00')` → `true`<br/>`isZeroMoney(null)` → `true`<br/>`isZeroMoney('0.01')` → `false` |
+| `isDecimalString(value)` | Whether a value is a canonical decimal string. | `isDecimalString('19.99')` → `true`<br/>`isDecimalString('1,99')` → `false`<br/>`isDecimalString(19.99)` → `false` |
+
+The calculating and comparing helpers throw on a value that is not a canonical decimal string, such as `"1,99"` or `"1e3"`, rather than guess what it means. Check input you did not get from the API with `isDecimalString` first.
 
 ## Writing
 

@@ -5,6 +5,7 @@ import { CURRENCY_EXPONENTS } from '../../sdk-core/src/currency-exponents'
 import {
   compareMoney,
   decimalPlaces,
+  formatMoney,
   isDecimalString,
   isZeroMoney,
   multiplyMoney,
@@ -66,5 +67,15 @@ describe('money helpers', () => {
       isDecimalString('1e3'),
     ]).toEqual([true, false, false, false])
     expect(() => sumMoney(['1,99'])).toThrow()
+  })
+
+  it('formats an amount in its currency and the reader’s language', () => {
+    expect(formatMoney('1234.5', 'USD', 'en')).toBe('$1,234.50')
+    expect(formatMoney('1234.5', 'EUR', 'de')).toBe('1.234,50\u00a0€')
+    expect(formatMoney('1000', 'JPY', 'en')).toBe('¥1,000')
+    expect(formatMoney('1.5', 'KWD', 'en')).toBe('KWD\u00a01.500')
+    expect(formatMoney('0.0125', 'USD', 'en', { unitPrice: true })).toBe('$0.0125')
+    expect(formatMoney('99999999999999999.99', 'USD', 'en')).toBe('$99,999,999,999,999,999.99')
+    expect([formatMoney(null, 'USD'), formatMoney('1,99', 'USD')]).toEqual(['', ''])
   })
 })
