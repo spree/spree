@@ -15158,6 +15158,7 @@ components:
           type: string
         name:
           type: string
+          deprecated: true
         states_required:
           type: boolean
         zipcode_required:
@@ -15394,8 +15395,10 @@ components:
           - ZWR
         name:
           type: string
+          deprecated: true
         symbol:
           type: string
+          deprecated: true
         decimal_places:
           type: number
       required:

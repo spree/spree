@@ -846,205 +846,168 @@ paths:
               example:
                 countries:
                 - code: AD
-                  name: Andorra
                   currency: EUR
                   locales:
                   - ca
                 - code: AE
-                  name: United Arab Emirates
                   currency: AED
                   locales:
                   - ar
                 - code: AF
-                  name: Afghanistan
                   currency: AFN
                   locales:
                   - ps
                   - uz
                   - tk
                 - code: AG
-                  name: Antigua and Barbuda
                   currency: XCD
                   locales:
                   - en
                 - code: AI
-                  name: Anguilla
                   currency: XCD
                   locales:
                   - en
                 - code: AL
-                  name: Albania
                   currency: ALL
                   locales:
                   - sq
                 - code: AM
-                  name: Armenia
                   currency: AMD
                   locales:
                   - hy
                 - code: AO
-                  name: Angola
                   currency: AOA
                   locales:
                   - pt
                 - code: AR
-                  name: Argentina
                   currency: ARS
                   locales:
                   - es
                   - gn
                 - code: AS
-                  name: American Samoa
                   currency: USD
                   locales:
                   - en
                   - sm
                 - code: AT
-                  name: Austria
                   currency: EUR
                   locales:
                   - de
                 - code: AU
-                  name: Australia
                   currency: AUD
                   locales:
                   - en
                 - code: AW
-                  name: Aruba
                   currency: AWG
                   locales:
                   - nl
                 - code: AZ
-                  name: Azerbaijan
                   currency: AZN
                   locales:
                   - az
                   - hy
                 - code: BA
-                  name: Bosnia and Herzegovina
                   currency: BAM
                   locales:
                   - bs
                   - hr
                   - sr
                 - code: BB
-                  name: Barbados
                   currency: BBD
                   locales:
                   - en
                 - code: BD
-                  name: Bangladesh
                   currency: BDT
                   locales:
                   - bn
                 - code: BE
-                  name: Belgium
                   currency: EUR
                   locales:
                   - nl
                   - fr
                   - de
                 - code: BF
-                  name: Burkina Faso
                   currency: XOF
                   locales:
                   - fr
                   - ff
                 - code: BG
-                  name: Bulgaria
                   currency: EUR
                   locales:
                   - bg
                 - code: BH
-                  name: Bahrain
                   currency: BHD
                   locales:
                   - ar
                 - code: BI
-                  name: Burundi
                   currency: BIF
                   locales:
                   - fr
                   - rn
                 - code: BJ
-                  name: Benin
                   currency: XOF
                   locales:
                   - fr
                 - code: BL
-                  name: Saint Barthélemy
                   currency: EUR
                   locales:
                   - fr
                 - code: BM
-                  name: Bermuda
                   currency: BMD
                   locales:
                   - en
                 - code: BN
-                  name: Brunei Darussalam
                   currency: BND
                   locales:
                   - ms
                 - code: BO
-                  name: Bolivia
                   currency: BOB
                   locales:
                   - es
                   - ay
                   - qu
                 - code: BQ
-                  name: Bonaire, Sint Eustatius and Saba
                   currency: USD
                   locales:
                   - nl
                   - en
                 - code: BR
-                  name: Brazil
                   currency: BRL
                   locales:
                   - pt
                 - code: BS
-                  name: Bahamas
                   currency: BSD
                   locales:
                   - en
                 - code: BT
-                  name: Bhutan
                   currency: BTN
                   locales:
                   - dz
                 - code: BW
-                  name: Botswana
                   currency: BWP
                   locales:
                   - en
                   - tn
                 - code: BY
-                  name: Belarus
                   currency: BYN
                   locales:
                   - be
                   - ru
                 - code: BZ
-                  name: Belize
                   currency: BZD
                   locales:
                   - en
                   - es
                 - code: CA
-                  name: Canada
                   currency: CAD
                   locales:
                   - en
                   - fr
                 - code: CC
-                  name: Cocos (Keeling) Islands
                   currency: AUD
                   locales:
                   - en
                 - code: CD
-                  name: Congo, The Democratic Republic of the
                   currency: CDF
                   locales:
                   - fr
@@ -1053,19 +1016,16 @@ paths:
                   - sw
                   - lu
                 - code: CF
-                  name: Central African Republic
                   currency: XAF
                   locales:
                   - fr
                   - sg
                 - code: CG
-                  name: Congo
                   currency: XAF
                   locales:
                   - fr
                   - ln
                 - code: CH
-                  name: Switzerland
                   currency: CHF
                   locales:
                   - de
@@ -1073,499 +1033,406 @@ paths:
                   - it
                   - rm
                 - code: CI
-                  name: Côte d'Ivoire
                   currency: XOF
                   locales:
                   - fr
                 - code: CK
-                  name: Cook Islands
                   currency: NZD
                   locales:
                   - en
                 - code: CL
-                  name: Chile
                   currency: CLP
                   locales:
                   - es
                 - code: CM
-                  name: Cameroon
                   currency: XAF
                   locales:
                   - en
                   - fr
                 - code: CN
-                  name: China
                   currency: CNY
                   locales:
                   - zh-CN
                 - code: CO
-                  name: Colombia
                   currency: COP
                   locales:
                   - es
                 - code: CR
-                  name: Costa Rica
                   currency: CRC
                   locales:
                   - es
                 - code: CU
-                  name: Cuba
                   currency: CUP
                   locales:
                   - es
                 - code: CV
-                  name: Cabo Verde
                   currency: CVE
                   locales:
                   - pt
                 - code: CW
-                  name: Curaçao
                   currency: XCG
                   locales:
                   - nl
                 - code: CX
-                  name: Christmas Island
                   currency: AUD
                   locales:
                   - en
                   - zh-CN
                   - ms
                 - code: CY
-                  name: Cyprus
                   currency: EUR
                   locales:
                   - el
                   - tr
                   - hy
                 - code: CZ
-                  name: Czechia
                   currency: CZK
                   locales:
                   - cs
                 - code: DE
-                  name: Germany
                   currency: EUR
                   locales:
                   - de
                 - code: DJ
-                  name: Djibouti
                   currency: DJF
                   locales:
                   - ar
                   - fr
                 - code: DK
-                  name: Denmark
                   currency: DKK
                   locales:
                   - da
                 - code: DM
-                  name: Dominica
                   currency: XCD
                   locales:
                   - en
                 - code: DO
-                  name: Dominican Republic
                   currency: DOP
                   locales:
                   - es
                 - code: DZ
-                  name: Algeria
                   currency: DZD
                   locales:
                   - ar
                 - code: EC
-                  name: Ecuador
                   currency: USD
                   locales:
                   - es
                 - code: EE
-                  name: Estonia
                   currency: EUR
                   locales:
                   - et
                 - code: EG
-                  name: Egypt
                   currency: EGP
                   locales:
                   - ar
                 - code: ER
-                  name: Eritrea
                   currency: ERN
                   locales:
                   - en
                   - ar
                   - ti
                 - code: ES
-                  name: Spain
                   currency: EUR
                   locales:
                   - es
                 - code: ET
-                  name: Ethiopia
                   currency: ETB
                   locales:
                   - am
                 - code: FI
-                  name: Finland
                   currency: EUR
                   locales:
                   - fi
                   - sv
                 - code: FJ
-                  name: Fiji
                   currency: FJD
                   locales:
                   - en
                   - fj
                   - hi
                 - code: FK
-                  name: Falkland Islands (Malvinas)
                   currency: FKP
                   locales:
                   - en
                 - code: FM
-                  name: Micronesia, Federated States of
                   currency: USD
                   locales:
                   - en
                 - code: FO
-                  name: Faroe Islands
                   currency: DKK
                   locales:
                   - fo
                 - code: FR
-                  name: France
                   currency: EUR
                   locales:
                   - fr
                 - code: GA
-                  name: Gabon
                   currency: XAF
                   locales:
                   - fr
                 - code: GB
-                  name: United Kingdom
                   currency: GBP
                   locales:
                   - en
                 - code: GD
-                  name: Grenada
                   currency: XCD
                   locales:
                   - en
                 - code: GE
-                  name: Georgia
                   currency: GEL
                   locales:
                   - ka
                 - code: GF
-                  name: French Guiana
                   currency: EUR
                   locales:
                   - fr
                 - code: GG
-                  name: Guernsey
                   currency: GBP
                   locales:
                   - en
                   - fr
                 - code: GH
-                  name: Ghana
                   currency: GHS
                   locales:
                   - en
                 - code: GI
-                  name: Gibraltar
                   currency: GIP
                   locales:
                   - en
                 - code: GL
-                  name: Greenland
                   currency: DKK
                   locales:
                   - kl
                 - code: GM
-                  name: Gambia
                   currency: GMD
                   locales:
                   - en
                 - code: GN
-                  name: Guinea
                   currency: GNF
                   locales:
                   - fr
                   - ff
                 - code: GP
-                  name: Guadeloupe
                   currency: EUR
                   locales:
                   - fr
                 - code: GQ
-                  name: Equatorial Guinea
                   currency: XAF
                   locales:
                   - es
                   - fr
                 - code: GR
-                  name: Greece
                   currency: EUR
                   locales:
                   - el
                 - code: GT
-                  name: Guatemala
                   currency: GTQ
                   locales:
                   - es
                 - code: GU
-                  name: Guam
                   currency: USD
                   locales:
                   - en
                   - ch
                   - es
                 - code: GW
-                  name: Guinea-Bissau
                   currency: XOF
                   locales:
                   - pt
                 - code: GY
-                  name: Guyana
                   currency: GYD
                   locales:
                   - en
                 - code: HK
-                  name: Hong Kong
                   currency: HKD
                   locales:
                   - en
                   - zh-CN
                 - code: HN
-                  name: Honduras
                   currency: HNL
                   locales:
                   - es
                 - code: HR
-                  name: Croatia
                   currency: EUR
                   locales:
                   - hr
                 - code: HT
-                  name: Haiti
                   currency: HTG
                   locales:
                   - fr
                   - ht
                 - code: HU
-                  name: Hungary
                   currency: HUF
                   locales:
                   - hu
                 - code: ID
-                  name: Indonesia
                   currency: IDR
                   locales:
                   - id
                 - code: IE
-                  name: Ireland
                   currency: EUR
                   locales:
                   - en
                   - ga
                 - code: IL
-                  name: Israel
                   currency: ILS
                   locales:
                   - he
                   - ar
                 - code: IM
-                  name: Isle of Man
                   currency: GBP
                   locales:
                   - en
                   - gv
                 - code: IN
-                  name: India
                   currency: INR
                   locales:
                   - hi
                   - en
                 - code: IQ
-                  name: Iraq
                   currency: IQD
                   locales:
                   - ar
                 - code: IR
-                  name: Iran
                   currency: IRR
                   locales:
                   - fa
                 - code: IS
-                  name: Iceland
                   currency: ISK
                   locales:
                   - is
                 - code: IT
-                  name: Italy
                   currency: EUR
                   locales:
                   - it
                 - code: JE
-                  name: Jersey
                   currency: GBP
                   locales:
                   - en
                   - fr
                 - code: JM
-                  name: Jamaica
                   currency: JMD
                   locales:
                   - en
                 - code: JO
-                  name: Jordan
                   currency: JOD
                   locales:
                   - ar
                 - code: JP
-                  name: Japan
                   currency: JPY
                   locales:
                   - ja
                 - code: KE
-                  name: Kenya
                   currency: KES
                   locales:
                   - en
                   - sw
                 - code: KG
-                  name: Kyrgyzstan
                   currency: KGS
                   locales:
                   - ky
                   - ru
                 - code: KH
-                  name: Cambodia
                   currency: KHR
                   locales:
                   - km
                 - code: KI
-                  name: Kiribati
                   currency: AUD
                   locales:
                   - en
                 - code: KM
-                  name: Comoros
                   currency: KMF
                   locales:
                   - ar
                   - fr
                 - code: KN
-                  name: Saint Kitts and Nevis
                   currency: XCD
                   locales:
                   - en
                 - code: KP
-                  name: North Korea
                   currency: KPW
                   locales:
                   - ko
                 - code: KR
-                  name: South Korea
                   currency: KRW
                   locales:
                   - ko
                 - code: KW
-                  name: Kuwait
                   currency: KWD
                   locales:
                   - ar
                 - code: KY
-                  name: Cayman Islands
                   currency: KYD
                   locales:
                   - en
                 - code: KZ
-                  name: Kazakhstan
                   currency: KZT
                   locales:
                   - kk
                   - ru
                 - code: LA
-                  name: Lao People's Democratic Republic
                   currency: LAK
                   locales:
                   - lo
                 - code: LB
-                  name: Lebanon
                   currency: LBP
                   locales:
                   - ar
                   - fr
                 - code: LC
-                  name: Saint Lucia
                   currency: XCD
                   locales:
                   - en
                 - code: LI
-                  name: Liechtenstein
                   currency: CHF
                   locales:
                   - de
                 - code: LK
-                  name: Sri Lanka
                   currency: LKR
                   locales:
                   - si
                   - ta
                 - code: LR
-                  name: Liberia
                   currency: LRD
                   locales:
                   - en
                 - code: LS
-                  name: Lesotho
                   currency: LSL
                   locales:
                   - en
                   - st
                 - code: LT
-                  name: Lithuania
                   currency: EUR
                   locales:
                   - lt
                 - code: LU
-                  name: Luxembourg
                   currency: EUR
                   locales:
                   - fr
                   - de
                   - lb
                 - code: LV
-                  name: Latvia
                   currency: EUR
                   locales:
                   - lv
                 - code: LY
-                  name: Libya
                   currency: LYD
                   locales:
                   - ar
                 - code: MA
-                  name: Morocco
                   currency: MAD
                   locales:
                   - ar
                 - code: MC
-                  name: Monaco
                   currency: EUR
                   locales:
                   - fr
                 - code: MD
-                  name: Moldova
                   currency: MDL
                   locales:
                   - ro
                 - code: ME
-                  name: Montenegro
                   currency: EUR
                   locales:
                   - sr
@@ -1573,566 +1440,461 @@ paths:
                   - sq
                   - hr
                 - code: MF
-                  name: Saint Martin (French part)
                   currency: EUR
                   locales:
                   - en
                   - fr
                   - nl
                 - code: MG
-                  name: Madagascar
                   currency: MGA
                   locales:
                   - fr
                   - mg
                 - code: MH
-                  name: Marshall Islands
                   currency: USD
                   locales:
                   - en
                   - mh
                 - code: MK
-                  name: North Macedonia
                   currency: MKD
                   locales:
                   - mk
                 - code: ML
-                  name: Mali
                   currency: XOF
                   locales:
                   - fr
                 - code: MM
-                  name: Myanmar
                   currency: MMK
                   locales:
                   - my
                 - code: MN
-                  name: Mongolia
                   currency: MNT
                   locales:
                   - mn
                 - code: MO
-                  name: Macao
                   currency: MOP
                   locales:
                   - zh-CN
                   - pt
                 - code: MP
-                  name: Northern Mariana Islands
                   currency: USD
                   locales:
                   - en
                   - ch
                 - code: MQ
-                  name: Martinique
                   currency: EUR
                   locales:
                   - fr
                 - code: MR
-                  name: Mauritania
                   currency: MRU
                   locales:
                   - ar
                   - fr
                 - code: MS
-                  name: Montserrat
                   currency: XCD
                   locales:
                   - en
                 - code: MT
-                  name: Malta
                   currency: EUR
                   locales:
                   - mt
                   - en
                 - code: MU
-                  name: Mauritius
                   currency: MUR
                   locales:
                   - en
                 - code: MV
-                  name: Maldives
                   currency: MVR
                   locales:
                   - dv
                 - code: MW
-                  name: Malawi
                   currency: MWK
                   locales:
                   - en
                   - ny
                 - code: MX
-                  name: Mexico
                   currency: MXN
                   locales:
                   - es
                 - code: MY
-                  name: Malaysia
                   currency: MYR
                   locales:
                   - ms
                   - en
                 - code: MZ
-                  name: Mozambique
                   currency: MZN
                   locales:
                   - pt
                 - code: NA
-                  name: Namibia
                   currency: NAD
                   locales:
                   - en
                   - af
                 - code: NC
-                  name: New Caledonia
                   currency: XPF
                   locales:
                   - fr
                 - code: NE
-                  name: Niger
                   currency: XOF
                   locales:
                   - fr
                 - code: NF
-                  name: Norfolk Island
                   currency: AUD
                   locales:
                   - en
                 - code: NG
-                  name: Nigeria
                   currency: NGN
                   locales:
                   - en
                 - code: NI
-                  name: Nicaragua
                   currency: NIO
                   locales:
                   - es
                 - code: NL
-                  name: Netherlands
                   currency: EUR
                   locales:
                   - nl
                 - code: 'NO'
-                  name: Norway
                   currency: NOK
                   locales:
                   - nb
                   - nn
                 - code: NP
-                  name: Nepal
                   currency: NPR
                   locales:
                   - ne
                 - code: NR
-                  name: Nauru
                   currency: AUD
                   locales:
                   - en
                   - na
                 - code: NU
-                  name: Niue
                   currency: NZD
                   locales:
                   - en
                 - code: NZ
-                  name: New Zealand
                   currency: NZD
                   locales:
                   - en
                 - code: OM
-                  name: Oman
                   currency: OMR
                   locales:
                   - ar
                 - code: PA
-                  name: Panama
                   currency: PAB
                   locales:
                   - es
                 - code: PE
-                  name: Peru
                   currency: PEN
                   locales:
                   - es
                 - code: PF
-                  name: French Polynesia
                   currency: XPF
                   locales:
                   - fr
                 - code: PG
-                  name: Papua New Guinea
                   currency: PGK
                   locales:
                   - en
                 - code: PH
-                  name: Philippines
                   currency: PHP
                   locales:
                   - tl
                   - en
                 - code: PK
-                  name: Pakistan
                   currency: PKR
                   locales:
                   - en
                   - ur
                 - code: PL
-                  name: Poland
                   currency: PLN
                   locales:
                   - pl
                 - code: PM
-                  name: Saint Pierre and Miquelon
                   currency: EUR
                   locales:
                   - fr
                 - code: PN
-                  name: Pitcairn
                   currency: NZD
                   locales:
                   - en
                 - code: PR
-                  name: Puerto Rico
                   currency: USD
                   locales:
                   - es
                   - en
                 - code: PS
-                  name: Palestine, State of
                   currency: ILS
                   locales:
                   - ar
                   - he
                   - en
                 - code: PT
-                  name: Portugal
                   currency: EUR
                   locales:
                   - pt
                 - code: PW
-                  name: Palau
                   currency: USD
                   locales:
                   - en
                 - code: PY
-                  name: Paraguay
                   currency: PYG
                   locales:
                   - es
                   - gn
                 - code: QA
-                  name: Qatar
                   currency: QAR
                   locales:
                   - ar
                 - code: RE
-                  name: Réunion
                   currency: EUR
                   locales:
                   - fr
                 - code: RO
-                  name: Romania
                   currency: RON
                   locales:
                   - ro
                 - code: RS
-                  name: Serbia
                   currency: RSD
                   locales:
                   - sr
                 - code: RU
-                  name: Russian Federation
                   currency: RUB
                   locales:
                   - ru
                 - code: RW
-                  name: Rwanda
                   currency: RWF
                   locales:
                   - rw
                   - en
                   - fr
                 - code: SA
-                  name: Saudi Arabia
                   currency: SAR
                   locales:
                   - ar
                 - code: SB
-                  name: Solomon Islands
                   currency: SBD
                   locales:
                   - en
                 - code: SC
-                  name: Seychelles
                   currency: SCR
                   locales:
                   - fr
                   - en
                 - code: SD
-                  name: Sudan
                   currency: SDG
                   locales:
                   - ar
                   - en
                 - code: SE
-                  name: Sweden
                   currency: SEK
                   locales:
                   - sv
                 - code: SG
-                  name: Singapore
                   currency: SGD
                   locales:
                   - en
                   - ms
                   - ta
                 - code: SH
-                  name: Saint Helena, Ascension and Tristan da Cunha
                   currency: SHP
                   locales:
                   - en
                 - code: SI
-                  name: Slovenia
                   currency: EUR
                   locales:
                   - sl
                 - code: SJ
-                  name: Svalbard and Jan Mayen
                   currency: NOK
                   locales:
                   - 'no'
                 - code: SK
-                  name: Slovakia
                   currency: EUR
                   locales:
                   - sk
                 - code: SL
-                  name: Sierra Leone
                   currency: SLE
                   locales:
                   - en
                 - code: SM
-                  name: San Marino
                   currency: EUR
                   locales:
                   - it
                 - code: SN
-                  name: Senegal
                   currency: XOF
                   locales:
                   - fr
                 - code: SO
-                  name: Somalia
                   currency: SOS
                   locales:
                   - so
                   - ar
                 - code: SR
-                  name: Suriname
                   currency: SRD
                   locales:
                   - nl
                 - code: SS
-                  name: South Sudan
                   currency: SSP
                   locales:
                   - ar
                   - en
                 - code: ST
-                  name: Sao Tome and Principe
                   currency: STN
                   locales:
                   - pt
                 - code: SV
-                  name: El Salvador
                   currency: USD
                   locales:
                   - es
                 - code: SX
-                  name: Sint Maarten (Dutch part)
                   currency: XCG
                   locales:
                   - nl
                   - en
                 - code: SY
-                  name: Syrian Arab Republic
                   currency: SYP
                   locales:
                   - ar
                 - code: SZ
-                  name: Eswatini
                   currency: SZL
                   locales:
                   - en
                   - ss
                 - code: TC
-                  name: Turks and Caicos Islands
                   currency: USD
                   locales:
                   - en
                 - code: TD
-                  name: Chad
                   currency: XAF
                   locales:
                   - ar
                   - fr
                 - code: TG
-                  name: Togo
                   currency: XOF
                   locales:
                   - fr
                 - code: TH
-                  name: Thailand
                   currency: THB
                   locales:
                   - th
                 - code: TJ
-                  name: Tajikistan
                   currency: TJS
                   locales:
                   - tg
                   - ru
                 - code: TK
-                  name: Tokelau
                   currency: NZD
                   locales:
                   - en
                 - code: TL
-                  name: Timor-Leste
                   currency: IDR
                   locales:
                   - pt
                 - code: TM
-                  name: Turkmenistan
                   currency: TMT
                   locales:
                   - tk
                 - code: TN
-                  name: Tunisia
                   currency: TND
                   locales:
                   - ar
                   - fr
                 - code: TO
-                  name: Tonga
                   currency: TOP
                   locales:
                   - en
                   - to
                 - code: TR
-                  name: Türkiye
                   currency: TRY
                   locales:
                   - tr
                 - code: TT
-                  name: Trinidad and Tobago
                   currency: TTD
                   locales:
                   - en
                 - code: TV
-                  name: Tuvalu
                   currency: AUD
                   locales:
                   - en
                 - code: TW
-                  name: Taiwan
                   currency: TWD
                   locales:
                   - zh-CN
                 - code: TZ
-                  name: Tanzania
                   currency: TZS
                   locales:
                   - sw
                   - en
                 - code: UA
-                  name: Ukraine
                   currency: UAH
                   locales:
                   - uk
                 - code: UG
-                  name: Uganda
                   currency: UGX
                   locales:
                   - en
                   - sw
                 - code: US
-                  name: United States
                   currency: USD
                   locales:
                   - en
                 - code: UY
-                  name: Uruguay
                   currency: UYU
                   locales:
                   - es
                 - code: UZ
-                  name: Uzbekistan
                   currency: UZS
                   locales:
                   - uz
                 - code: VA
-                  name: Holy See (Vatican City State)
                   currency: EUR
                   locales:
                   - it
                   - la
                 - code: VC
-                  name: Saint Vincent and the Grenadines
                   currency: XCD
                   locales:
                   - en
                 - code: VE
-                  name: Venezuela
                   currency: VES
                   locales:
                   - es
                 - code: VG
-                  name: Virgin Islands, British
                   currency: USD
                   locales:
                   - en
                 - code: VI
-                  name: Virgin Islands, U.S.
                   currency: USD
                   locales:
                   - en
                 - code: VN
-                  name: Vietnam
                   currency: VND
                   locales:
                   - vi
                 - code: VU
-                  name: Vanuatu
                   currency: VUV
                   locales:
                   - bi
                   - en
                   - fr
                 - code: WF
-                  name: Wallis and Futuna
                   currency: XPF
                   locales:
                   - fr
                 - code: WS
-                  name: Samoa
                   currency: WST
                   locales:
                   - sm
                   - en
                 - code: YE
-                  name: Yemen
                   currency: YER
                   locales:
                   - ar
                 - code: YT
-                  name: Mayotte
                   currency: EUR
                   locales:
                   - fr
                 - code: ZA
-                  name: South Africa
                   currency: ZAR
                   locales:
                   - af
@@ -2146,12 +1908,10 @@ paths:
                   - xh
                   - zu
                 - code: ZM
-                  name: Zambia
                   currency: ZMW
                   locales:
                   - en
                 - code: ZW
-                  name: Zimbabwe
                   currency: USD
                   locales:
                   - en
@@ -55136,8 +54896,6 @@ components:
           - ZW
         iso3:
           type: string
-        name:
-          type: string
         states_required:
           type: boolean
         zipcode_required:
@@ -55153,7 +54911,6 @@ components:
       required:
       - iso
       - iso3
-      - name
       - states_required
       - zipcode_required
       x-typelizer: true

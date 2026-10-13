@@ -63,7 +63,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
     () =>
       countries.map((country) => ({
         value: country.iso,
-        label: countryName({ iso: country.iso, iso3: country.iso3, name: country.name }),
+        label: countryName(country),
       })),
     [countries, countryName],
   )

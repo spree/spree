@@ -13,7 +13,7 @@ import type {
   AuthTokens,
   Balance,
   Claim,
-  CountryCode,
+  Country,
   Delivery,
   DeliveryMethod,
   DeliveryProfile,
@@ -1426,15 +1426,8 @@ export interface DeliveryMethodRuleType {
  */
 export type SellerExportType = 'orders' | 'products'
 
-/** A country as the address form needs it. */
-export interface SellerCountry {
-  iso: CountryCode
-  iso3: string
-  name: string
-  states_required?: boolean
-  zipcode_required?: boolean
-  states?: Array<{ abbr: string; name: string }>
-}
+/** A country as the address form needs it. Name it from `iso` with `Intl.DisplayNames`. */
+export type SellerCountry = Country
 
 /** Where to send a seller to set up how they get paid. */
 export interface PayoutAccountLink {

@@ -34,6 +34,7 @@ import {
   Subject,
   typeDescription,
   typeLabel,
+  useCountryDisplayName,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -853,12 +854,13 @@ function RuleRow({
 
 function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   const { t } = useTranslation()
+  const countryName = useCountryDisplayName()
   const parts: string[] = []
   const products = nameList(draft.products)
   const categories = nameList(draft.categories)
   const customers = nameList(draft.customers, customerLabel)
   const groups = nameList(draft.customer_groups)
-  const countries = nameList(draft.countries)
+  const countries = nameList(draft.countries, countryName)
   const channels = nameList(draft.channels)
   const markets = nameList(draft.markets)
   const optionValues = nameList(draft.option_values, optionValueLabel)
