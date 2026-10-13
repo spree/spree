@@ -19,6 +19,12 @@ RSpec.describe Spree::Locales do
       expect(subject).to eq(subject.uniq)
     end
 
+    it 'is accepted by I18n and Mobility even without translation files, falling back to English for messages' do
+      I18n.with_locale(:yo) do
+        Mobility.with_locale(:yo) { expect(I18n.t('spree.locale')).to eq('Locale') }
+      end
+    end
+
     it "includes every locale Spree ships translations for, so the setup wizard's suggestions are valid" do
       expect(Spree::SHIPPED_LOCALES.map(&:to_s) - subject).to eq([])
     end

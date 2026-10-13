@@ -939,6 +939,10 @@ A market's `default_locale` and `supported_locales`, and the store's own `defaul
 
 Values saved before the upgrade keep working until they are changed. If a market uses a code outside the list, change it to the listed spelling when you next edit it. The Store and Admin APIs publish the list as the `LocaleCode` type in the API reference and the SDK types.
 
+A store's locales are content locales, independent of the languages anything ships translation files for: every listed code is accepted for content (product names, descriptions and other translated fields), while messages in a language Spree has no translations for fall back to English. Store setup no longer limits the languages it offers to the ones Spree translates.
+
+Locale names move to the client. The `name` of a locale from `GET /locales` is deprecated in the Store API and removed in 6.1, and the Admin API no longer returns it: name a locale in the reader's language with `new Intl.DisplayNames([language], { type: 'language' }).of(code)`.
+
 ## Translations ship with Spree
 
 Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 43 languages besides English. Regional English (`en-GB` and the like) now falls back to `en`. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).

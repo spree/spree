@@ -1,32 +1,25 @@
 import type {
-  Locale,
   ResourceTranslations,
   TranslatableResource,
   TranslationCoverage,
 } from '@spree/admin-sdk'
-import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useDisplayName,
+  useResourceKey,
+  useResourceKeyBuilder,
+} from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
-/** The locales a merchant can translate content into (for nice display names). */
-export function useLocales() {
-  return useQuery<Locale[]>({
-    queryKey: useResourceKey('locales'),
-    queryFn: () => adminClient.locales.list(),
-  })
-}
-
 /**
- * Resolves a locale code to the display name the server reports for it,
- * falling back to the bare code while the locale list is still loading.
+ * Names a locale code in the admin's own language (`pt-BR` reads "Brazilian
+ * Portuguese"), falling back to the bare code where the browser has no name.
  */
 export function useLocaleName() {
-  const { data: locales } = useLocales()
+  const displayName = useDisplayName('language')
 
-  return useCallback(
-    (code: string) => locales?.find((locale) => locale.code === code)?.name ?? code,
-    [locales],
-  )
+  return useCallback((code: string) => displayName(code) ?? code, [displayName])
 }
 
 /**
