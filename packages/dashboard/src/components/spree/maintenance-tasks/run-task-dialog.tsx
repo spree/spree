@@ -1,5 +1,5 @@
 import type { MaintenanceTask } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, useDirectUpload } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, useFileUpload } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -39,7 +39,8 @@ export function RunTaskDialog({
   const { t } = useTranslation()
   const startMutation = useStartMaintenanceTask()
 
-  const uploadMutation = useDirectUpload()
+  // Private, like imports: a task's rows are data, never a public asset.
+  const uploadMutation = useFileUpload({ visibility: 'private' })
   const [csvFile, setCsvFile] = useState<File | null>(null)
   const [values, setValues] = useState<Record<string, unknown>>({})
   const [dryRun, setDryRun] = useState(false)
