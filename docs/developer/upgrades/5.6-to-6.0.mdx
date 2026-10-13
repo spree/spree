@@ -1098,6 +1098,8 @@ A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefr
 2. Match each error against the table below and apply its fix. Fix values where they come from (a context, a form, an API response), not with a cast at each call site.
 3. Search for the deprecated names in the [deprecated fields](#deprecated-fields-still-work-until-61) section and switch them, even where nothing fails to compile.
 
+To hand the upgrade to a coding agent, give it the [prompt below](#upgrade-with-a-coding-agent).
+
 | Type error mentions | Cause | Fix |
 |---|---|---|
 | `CountryCode` or `CurrencyCode` | Country and currency codes are typed | [Country and currency codes](#country-and-currency-codes-are-typed) |
@@ -1107,6 +1109,48 @@ A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefr
 | `number` is not assignable to `string` in a filter or amount | Money is a decimal string everywhere | Send `'20.00'`, not `20` ([Money](#money), [store credit](#store-credit-amounts-are-decimal-strings)) |
 | `string` is not assignable to `number` where the price filter's range is read | The price range's `min` and `max` are decimal strings | [The price filter's range is text](#the-price-filters-range-is-text) |
 | A property that "does not exist" on `OrderGroup` | Completing a cart, or reading an order by its cart id, can return an order group | [Completing a cart can return an order group](#completing-a-cart-can-return-an-order-group) |
+
+### Upgrade with a coding agent
+
+Copy this prompt into Claude Code, Cursor or another coding agent, opened in your storefront's repository. It covers what upgrading the Spree storefront itself turned up, including the changes that compile but behave differently.
+
+```text Prompt expandable
+Upgrade this storefront from Spree 5.6 to Spree 6.0: move it to @spree/sdk 2.x and remove every use of a Store API field, SDK name or webhook event that 6.0 deprecates for removal in 6.1.
+
+Read the "Upgrading a storefront" section of the upgrade guide first and keep it open (plain-text version):
+https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0.md
+
+Work on a new branch. Steps:
+
+1. Install the latest @spree/sdk 2.x and run the type checker. Fix each error at the place the value comes from (a context, a form, a data loader, an API response), not with a cast at each call site. The guide's table maps each error to its fix.
+
+2. Go through the guide's "Deprecated fields still work until 6.1" table and replace every entry, even where nothing fails to compile. Search the code for each name. When you finish, none of them may remain.
+
+3. Money:
+   - Replace display_* fields with formatMoney(amount, currency, locale) from @spree/sdk, in the reader's language. Pass { unitPrice: true } for unit prices (line item price, product and variant prices), which can carry up to four decimals.
+   - Payments, fulfillments, delivery rates and applied promotions carry no currency. Use the currency of the cart or order they belong to.
+   - formatMoney returns an empty string, never null, for a missing amount. Fallbacks written as `formatMoney(...) ?? "—"` never trigger; use `||`. Check every place that tested a display_* value for truthiness.
+   - Amounts are decimal strings and can be null when the store hides prices. Compare them with compareMoney or isZeroMoney. Never compare amount_in_cents, and never parse money into a float for arithmetic.
+   - A delivery rate whose cost is null has no price yet (a freight quote, for example). Do not show it as free, in a wallet payment sheet or anywhere else.
+
+4. Addresses: read and write country_code and state_code. If your form state uses the old names, rename the form fields to match the API. Type a cart's addresses as CartAddressParams and address book writes as AddressCreateParams or AddressUpdateParams. Country codes typed by a person or sent by a wallet are plain strings; convert them to CountryCode once, where they enter your code.
+
+5. Names: name countries, currencies and languages in the reader's language with Intl.DisplayNames, and sort them with Intl.Collator. Create one DisplayNames object per locale and reuse it; do not build one on every render or inside a sort comparison.
+
+6. Order groups: carts.complete() and orders.get() return Order | OrderGroup. In a marketplace, a cart holding several sellers' goods becomes one order per seller under a group. Narrow with isOrderGroup. Read totals, payments and addresses from the group, and items and fulfillments from group.orders. Remove casts that hide this, such as `as unknown as Cart`. Report a group as one purchase in analytics.
+
+7. Statuses: map the old values to the new ones using the guide's "Status values changed" tables. That covers fulfillment status, and an order's fulfillment_status and payment_status. Keep the old values mapped as well, because orders saved before the upgrade can still carry them. Add a translated label for every new value in every language the storefront ships. A status with no translation should show its own words, not a raw translation key.
+
+8. Gift cards and store credit: store_credit_total no longer includes what a gift card paid. Show the gift card and store credit rows independently, not one or the other.
+
+9. Webhooks: handle order.placed in place of order.completed, and order.fulfilled in place of order.shipped. Fulfillment status "shipped" is now "fulfilled" (or "delivered"). Type handlers by event name: WebhookEvent<"order.placed">. Update any documentation or environment examples that list the subscribed events.
+
+10. Filters: the price filter's min and max are decimal strings. Send amount filters as strings ("20.00"). Narrow a sort read from the URL to ProductSort where it is read. Match the cart's delivery requirement by its code, delivery_method_required.
+
+11. Update test fixtures and mocks to the 6.0 shapes. Run the type checker, linter, unit tests and end-to-end tests, and make them all pass.
+
+Do not change behaviour beyond what the upgrade requires, and keep every user-visible string translated. When done, list what you changed, and anything that needs a person, such as subscribing the webhook endpoint to the new event names before deploying.
+```
 
 ### List filters and sort are typed
 
@@ -1254,6 +1298,13 @@ These Store API fields keep working in 6.0 and are marked `@deprecated` in the S
 | A cart requirement's `field` `shipping_method` | Match its `code`, `delivery_method_required`; the field becomes `delivery_method` |
 | The `Discount` type for `cart.discounts` and `order.discounts` | `AppliedPromotion` |
 | A number passed to `carts.storeCredits.apply()` | A decimal string ([store credit](#store-credit-amounts-are-decimal-strings)) |
+| Every `display_*` money field (`display_total`, `display_price`, `display_amount`, …) | Format the amount beside it with its currency, with `formatMoney` ([Money](#money)) |
+| Country `name` | `new Intl.DisplayNames([language], { type: 'region' }).of(iso)` ([Locale codes](#locale-codes-come-from-a-fixed-list)) |
+| Currency `name` and `symbol` | `Intl.DisplayNames` with `{ type: 'currency' }`, and `formatMoney` for amounts |
+| Locale `name` | `new Intl.DisplayNames([language], { type: 'language' }).of(code)` |
+| The `AddressParams`, `CompanyAddressParams` and `LineItemInput` types | `CartAddressParams` for a cart, `AddressCreateParams` / `AddressUpdateParams` for the address book, and so on ([Request types](#request-types-match-the-api)) |
+| Webhook events `order.completed`, `order.shipped`, `shipment.shipped`, `shipment.canceled` | `order.placed`, `order.fulfilled`, `fulfillment.fulfilled`, `fulfillment.canceled`. Spree sends both names until 6.1; subscribe the endpoint to the new ones |
+| `WebhookEvent<Order>` (typed by its payload) | `WebhookEvent<'order.placed'>` (typed by its event name) |
 
 ### Other Store API changes to check
 

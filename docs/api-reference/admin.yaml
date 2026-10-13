@@ -29415,7 +29415,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.0.rc1
+                current_version: 6.0.0.rc3
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true
@@ -34007,7 +34007,7 @@ paths:
                   data:
                     message: This is a test webhook from Spree.
                   metadata:
-                    spree_version: 6.0.0.rc1
+                    spree_version: 6.0.0.rc3
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks/orders
   "/api/v3/admin/webhook_endpoints/{id}/enable":
@@ -34839,8 +34839,8 @@ paths:
                   group: order
                   credential_permission:
                   credential: false
-                  deprecated: false
-                  replaced_by:
+                  deprecated: true
+                  replaced_by: order.fulfilled
                 - name: order.updated
                   group: order
                   credential_permission:

@@ -172,6 +172,7 @@ export interface WebhookEventMap {
   'order.placed': Order
   'order.resend_confirmation_email': Order
   'order.resend_digital_links_email': Order
+  /** @deprecated Use `order.fulfilled` instead. */
   'order.shipped': Order
   'order.updated': Order
   'order_group.completed': OrderGroup
