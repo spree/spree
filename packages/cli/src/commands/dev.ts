@@ -18,7 +18,7 @@ import {
 } from '../dashboard-server.js'
 import { appServices, dockerCompose, hasProjectContainers, primeBundleVolume } from '../docker.js'
 import { ensureDashboardDevEnv } from './add.js'
-import { runFirstRunSetup } from './init.js'
+import { openBrowser, runFirstRunSetup, waitForHealthy } from './init.js'
 
 export function registerDevCommand(program: Command): void {
   program
@@ -26,7 +26,8 @@ export function registerDevCommand(program: Command): void {
     .description(
       'Run the app in the foreground — the API, plus the Admin Dashboard dev server when apps/dashboard exists; Ctrl+C stops them',
     )
-    .action(async () => {
+    .option('--no-open', 'skip opening the dashboard in the browser once it is ready')
+    .action(async (flags: { open: boolean }) => {
       const ctx = detectProject()
 
       if (hasMonorepoSpreePath(ctx.projectDir)) {
@@ -79,7 +80,7 @@ export function registerDevCommand(program: Command): void {
         }
         if (neverSetUp) {
           p.log.info('First run detected — completing setup automatically.')
-          await runFirstRunSetup({ sampleData: true, open: true })
+          await runFirstRunSetup({ sampleData: true, open: flags.open })
           return
         }
       }
@@ -128,6 +129,7 @@ export function registerDevCommand(program: Command): void {
       process.on('SIGINT', ignoreSigint)
       let result: { exitCode?: number }
       let dashboard: ReturnType<typeof startDashboardDevServer> = null
+      const stopWaiting = new AbortController()
       try {
         // Prime the shared bundle_cache volume with web alone first so the
         // foreground `up web worker` below doesn't race the cold-volume
@@ -145,6 +147,10 @@ export function registerDevCommand(program: Command): void {
         // the finally covers non-signal exits.
         dashboard = withDashboard ? startDashboardDevServer(ctx.projectDir) : null
 
+        if (flags.open) {
+          void openDashboardWhenReady(ctx.port, dashboard, stopWaiting.signal)
+        }
+
         result = await dockerCompose(
           ['up', ...(await appServices(ctx.projectDir))],
           ctx.projectDir,
@@ -154,6 +160,7 @@ export function registerDevCommand(program: Command): void {
           },
         )
       } finally {
+        stopWaiting.abort()
         dashboard?.stop()
         process.off('SIGINT', ignoreSigint)
       }
@@ -171,6 +178,28 @@ export function registerDevCommand(program: Command): void {
         `${withDashboard ? 'API + dashboard' : 'API'} stopped. Databases keep running — ${pc.bold('spree stop')} shuts everything down.`,
       )
     })
+}
+
+/**
+ * Opens the dashboard once the API answers its health check — the dashboard
+ * is unusable before then — and, with a dashboard app, once Vite reports its
+ * URL. Runs alongside the foreground stack; a stack that stops first, or an
+ * API that never becomes healthy, leaves the browser alone.
+ */
+async function openDashboardWhenReady(
+  port: number,
+  dashboard: ReturnType<typeof startDashboardDevServer>,
+  signal: AbortSignal,
+): Promise<void> {
+  try {
+    await waitForHealthy(port, signal)
+  } catch {
+    return
+  }
+  const url = dashboard ? await dashboard.url : `http://localhost:${port}/dashboard`
+  if (signal.aborted) return
+
+  await openBrowser(url)
 }
 
 /**

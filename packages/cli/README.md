@@ -15,7 +15,7 @@ Run from your Spree project directory:
 
 | Command | Description |
 |---------|-------------|
-| `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the Admin Dashboard dev server when `apps/dashboard` exists |
+| `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the Admin Dashboard dev server when `apps/dashboard` exists and opens the dashboard in the browser once it is ready (`--no-open` skips it) |
 | `spree stop` | Stop backend services |
 | `spree upgrade` | Upgrade Spree — the server (image or gems), `@spree/*` packages, migrations and data backfills |
 | `spree eject` | Switch from the prebuilt image to building from `backend/` |
