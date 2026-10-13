@@ -1114,6 +1114,8 @@ en:
           description: Convert zone-scoped tax rates to country and state codes
         taxons_to_categories_and_collections:
           description: Migrate taxons to categories and collections
+        upload_stores:
+          description: Record which store owns every uploaded file
         users_to_customers:
           description: Move users onto the gem-owned customer model
         zones_to_delivery_zones:

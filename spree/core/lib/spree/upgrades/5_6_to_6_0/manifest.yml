@@ -810,7 +810,7 @@ steps:
 
   - id: assign_upload_stores
     name: "Record which store owns every uploaded file"
-    task: "spree:uploads:assign_stores"
+    task_class: "Spree::MaintenanceTasks::Upgrade::UploadStores"
     notes: |
       Spree 6.0 records the store that owns every uploaded file, so a file from
       one store cannot be attached in another and storage can be measured and

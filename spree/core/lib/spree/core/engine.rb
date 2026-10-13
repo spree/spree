@@ -583,7 +583,8 @@ module Spree
           'Spree::MaintenanceTasks::Upgrade::CheckoutZonesToMarkets',
           'Spree::MaintenanceTasks::Upgrade::OrderCouponCodes',
           'Spree::MaintenanceTasks::Upgrade::ActorTypes',
-          'Spree::MaintenanceTasks::Upgrade::EncryptSecretPreferences'
+          'Spree::MaintenanceTasks::Upgrade::EncryptSecretPreferences',
+          'Spree::MaintenanceTasks::Upgrade::UploadStores'
         ]
 
         Rails.application.config.spree.validators.addresses = [
