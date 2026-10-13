@@ -25,7 +25,8 @@ function slim(property) {
 function dereference(schema) {
   const ref = schema?.$ref ?? (schema?.allOf?.length === 1 ? schema.allOf[0].$ref : undefined)
   if (!ref) return schema
-  return { ...spec.components.schemas[ref.split('/').pop()], nullable: schema.nullable }
+  const component = spec.components.schemas[ref.split('/').pop()]
+  return { ...component, nullable: schema.nullable ?? component.nullable }
 }
 
 function bodyOf(operation) {
