@@ -4,9 +4,21 @@ sidebarTitle: Quick start
 description: "Install the MCP server, connect an AI client and run the first conversation against your store."
 ---
 
-## Install the gem
+## Check it is installed
 
-The server ships as an optional gem. Add it and restart; there is nothing to configure.
+A new Spree store has the server already — `spree_mcp` is in the starter's
+`Gemfile`, so the endpoint is live the first time you boot:
+
+```text
+https://your-store.com/api/v3/admin/mcp
+```
+
+<Note>
+  Nothing to configure, and no migration for the server itself. The OAuth
+  tables ship with `spree_core` and arrive with Spree's other migrations.
+</Note>
+
+Upgrading an older store, or deliberately removed it? Add the gem back:
 
 <Tabs>
   <Tab title="Spree CLI">
@@ -25,14 +37,6 @@ The server ships as an optional gem. Add it and restart; there is nothing to con
   </Tab>
 </Tabs>
 
-The endpoint is then live:
-
-```text
-https://your-store.com/api/v3/admin/mcp
-```
-
-No migration is needed for the server itself. OAuth tables ship with `spree_core` and are installed with Spree's other migrations.
-
 ## Connect a client
 
 Paste the URL into your MCP client. It sends you to Spree, you sign in, and you approve what the agent may do.
@@ -45,6 +49,11 @@ Paste the URL into your MCP client. It sends you to Spree, you sign in, and you 
   </Tab>
   <Tab title="Claude Desktop / claude.ai">
     **Settings → Connectors → Add custom connector**, then paste the URL.
+
+    This client asks for a **Client ID** as well. Copy it from
+    **Settings → OAuth clients** in your Spree dashboard, where each
+    registered client shows one — it is public, and is what identifies the
+    connector to your store.
   </Tab>
   <Tab title="Cursor">
     ```json .cursor/mcp.json
