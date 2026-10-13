@@ -720,30 +720,32 @@
           "communication_title": "Comunicación",
           "commission_tax_title": "Impuesto sobre la comisión"
         },
-        "connected_apps": {
-          "title": "Agentes conectados",
-          "subtitle": "Agentes de IA a los que un miembro del equipo ha dado acceso a esta tienda. La revocación surte efecto de inmediato.",
+        "ai_agents": {
+          "title": "Agentes de IA",
+          "subtitle": "Agentes de IA conectados a tu tienda. Conecta Claude, ChatGPT y otros para gestionar tu tienda",
           "empty": "Aún no se ha conectado ningún agente.",
           "revoke": "Revocar acceso",
           "table": {
-            "name": "Agente",
             "access": "Acceso",
-            "authorized_by": "Aprobado por",
-            "last_authorized": "Última autorización",
             "status": "Estado"
           },
           "revoke_confirm": {
             "title": "¿Revocar el acceso?",
-            "message": "{{name}} dejará de funcionar de inmediato. Quien lo use tendrá que conectarse de nuevo."
+            "message": "{{who}} perderá el acceso a {{name}} de inmediato. El resto sigue conectado."
           },
-          "status": {
-            "connected": "Conectado",
-            "not_connected": "No conectado"
+          "manage_connections": "Gestionar conexiones",
+          "connections": {
+            "person": "Persona",
+            "empty": "Nadie está conectado mediante este agente.",
+            "unknown_person": "Desconocido",
+            "count_one": "{{count}} persona conectada",
+            "count_other": "{{count}} personas conectadas",
+            "connected": "Conectado"
           }
         },
         "oauth_clients": {
           "title": "Clientes OAuth",
-          "subtitle": "Los clientes OAuth registrados en esta tienda. La conexión se hace desde Agentes conectados.",
+          "subtitle": "Los clientes OAuth registrados para esta tienda",
           "empty": "Aún no hay clientes registrados.",
           "register": "Registrar un cliente",
           "table": {
@@ -4254,7 +4256,7 @@
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
         "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
-        "connected_apps": "Agentes de IA con acceso a esta tienda",
+        "ai_agents": "Agentes de IA con acceso a esta tienda",
         "oauth_clients": "Registrar y configurar clientes OAuth"
       },
       "groups": {
@@ -4294,7 +4296,7 @@
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
         "marketplace": "Configuración",
-        "connected_apps": "Agentes conectados",
+        "ai_agents": "Agentes de IA",
         "oauth_clients": "Clientes OAuth"
       },
       "breadcrumbs": {

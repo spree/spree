@@ -16,7 +16,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
   # What consent mints for an MCP client: the MCP endpoint and the Admin API,
   # because a tool call dispatches to an Admin API operation as the same
   # grant. A token naming only one surface is exercised below.
-  let(:resource) { Spree::Api::Oauth.granted_audience(:mcp) }
+  let(:resource) { Spree::Api::Oauth.resource_identifier(:admin) }
   let(:token) { oauth_token(scopes: scopes) }
 
   before { Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp') }
@@ -111,7 +111,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
 
       expect(response).to have_http_status(:unauthorized)
       expect(response.headers['WWW-Authenticate']).to include(
-        'resource_metadata="', '/api/v3/oauth/protected-resource/mcp'
+        'resource_metadata="', '/api/v3/oauth/protected-resource/admin'
       )
     end
 
@@ -192,13 +192,64 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       )
       raw = Spree::OauthAccessToken.create!(
         application: application, resource_owner: admin, scopes: 'read_products',
-        expires_in: 2.hours.to_i, resource: Spree::Api::Oauth.granted_audience(:mcp)
+        expires_in: 2.hours.to_i, resource: Spree::Api::Oauth.resource_identifier(:admin)
       ).plaintext_token
 
       body = post_with_token(raw)
 
       expect(response).to have_http_status(:ok)
       expect(body['result']['tools']).to be_present
+    end
+  end
+
+  # Everything else here hands the controller a token built in Ruby, which
+  # proved nothing about the audience a real grant carries: consent is what
+  # sets it, and it was setting nothing. This walks the sequence a client
+  # actually performs.
+  describe 'a client connecting for real' do
+    def connect(scope: 'read_products')
+      verifier = 'v' * 64
+      challenge = Base64.urlsafe_encode64(Digest::SHA256.digest(verifier), padding: false)
+      jwt = Spree::Api::V3::TestingSupport.generate_jwt(
+        admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
+      )
+
+      post '/api/v3/admin/oauth/authorize',
+           params: { client_id: application.uid, redirect_uri: application.redirect_uri,
+                     response_type: 'code', scope: scope,
+                     code_challenge: challenge, code_challenge_method: 'S256' },
+           headers: { 'Authorization' => "Bearer #{jwt}" }
+
+      redirect = JSON.parse(response.body)['redirect_uri']
+      code = Rack::Utils.parse_query(URI.parse(redirect).query)['code']
+
+      post '/oauth/token',
+           params: { grant_type: 'authorization_code', code: code, client_id: application.uid,
+                     redirect_uri: application.redirect_uri, code_verifier: verifier }
+
+      JSON.parse(response.body)['access_token']
+    end
+
+    it 'calls a tool with the token consent issued' do
+      raw = connect
+
+      body = post_rpc('tools/call',
+                      { name: 'search_resources', arguments: { 'resource' => 'products' } },
+                      headers: { 'Authorization' => "Bearer #{raw}" })
+
+      expect(response).to have_http_status(:ok)
+      expect(body.dig('result', 'isError')).to be(false)
+    end
+
+    # The call the tool makes on the caller's behalf runs as the same token,
+    # so a grant bound to the wrong audience leaves every tool answering
+    # "authentication required" while the endpoint itself looks healthy.
+    it 'reaches the Admin API with that same token' do
+      raw = connect
+
+      get '/api/v3/admin/products', headers: { 'Authorization' => "Bearer #{raw}" }
+
+      expect(response).to have_http_status(:ok)
     end
   end
 

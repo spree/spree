@@ -4140,30 +4140,32 @@
           "communication_title": "Komunikacja",
           "commission_tax_title": "Podatek od prowizji"
         },
-        "connected_apps": {
-          "title": "Połączone agenty",
-          "subtitle": "Agenty AI, którym członek zespołu dał dostęp do tego sklepu. Cofnięcie dostępu działa natychmiast.",
+        "ai_agents": {
+          "title": "Agenci AI",
+          "subtitle": "Agenci AI połączeni z Twoim sklepem. Podłącz Claude, ChatGPT i innych, aby zarządzać sklepem",
           "empty": "Nie połączono jeszcze żadnego agenta.",
           "revoke": "Odbierz dostęp",
           "table": {
-            "name": "Agent",
             "access": "Dostęp",
-            "authorized_by": "Zatwierdzone przez",
-            "last_authorized": "Ostatnia autoryzacja",
             "status": "Status"
           },
           "revoke_confirm": {
             "title": "Odebrać dostęp?",
-            "message": "{{name}} przestanie działać natychmiast. Każdy, kto z niej korzysta, będzie musiał połączyć się ponownie."
+            "message": "{{who}} natychmiast straci dostęp do {{name}}. Pozostali pozostaną połączeni."
           },
-          "status": {
-            "connected": "Połączony",
-            "not_connected": "Niepołączony"
+          "manage_connections": "Zarządzaj połączeniami",
+          "connections": {
+            "person": "Osoba",
+            "empty": "Nikt nie jest połączony przez tego agenta.",
+            "unknown_person": "Nieznany",
+            "count_one": "{{count}} połączona osoba",
+            "count_other": "{{count}} połączonych osób",
+            "connected": "Połączono"
           }
         },
         "oauth_clients": {
           "title": "Klienci OAuth",
-          "subtitle": "Klienci OAuth zarejestrowani w tym sklepie. Połączenie nawiązuje się w Połączonych agentach.",
+          "subtitle": "Klienci OAuth zarejestrowani dla tego sklepu",
           "empty": "Nie zarejestrowano jeszcze żadnego klienta.",
           "register": "Zarejestruj klienta",
           "table": {
@@ -5247,7 +5249,7 @@
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
         "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
-        "connected_apps": "Agenty AI z dostępem do tego sklepu",
+        "ai_agents": "Agenty AI z dostępem do tego sklepu",
         "oauth_clients": "Rejestrowanie i konfiguracja klientów OAuth"
       },
       "groups": {
@@ -5287,7 +5289,7 @@
         "package_types": "Rodzaje opakowań",
         "suppliers": "Dostawcy",
         "marketplace": "Ustawienia",
-        "connected_apps": "Połączone agenty",
+        "ai_agents": "Agenci AI",
         "oauth_clients": "Klienci OAuth"
       },
       "breadcrumbs": {

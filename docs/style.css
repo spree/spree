@@ -1,58 +1,65 @@
-/* Tables, styled after the dashboard's own: a filled header row, a subtle
-   rule between rows, and an outer border so a wide table reads as one block
-   rather than drifting columns. */
-.prose table,
+/* Tables, styled after the dashboard's: a filled header row, a rule between
+   rows and an outer border, so a wide table reads as one block rather than
+   drifting columns.
+   
+   `!important` throughout because Mintlify ships its own table rules and
+   loads this stylesheet before them. Fixed colours rather than CSS variables
+   for the same reason — the theme's own variables are not in scope here. */
 table {
-  border: 1px solid var(--gray-200, #e5e7eb);
-  border-radius: 0.5rem;
-  border-collapse: separate;
-  border-spacing: 0;
-  overflow: hidden;
+  border: 1px solid #d0d7de !important;
+  border-radius: 0.5rem !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden !important;
+  width: 100%;
 }
 
-.prose table thead,
 table thead {
-  background-color: var(--gray-50, #f9fafb);
+  background-color: #f3f4f6 !important;
 }
 
-.prose table th,
 table th {
-  font-weight: 400;
+  font-weight: 500 !important;
   text-align: left;
-  color: var(--gray-500, #6b7280);
-  padding: 0.625rem 0.875rem;
-  border-bottom: 1px solid var(--gray-200, #e5e7eb);
+  color: #4b5563 !important;
+  padding: 0.625rem 0.875rem !important;
+  border-bottom: 1px solid #d0d7de !important;
 }
 
-.prose table td,
+/* Vertical rules too, so columns in a wide table stay readable across. */
+table th + th,
+table td + td {
+  border-left: 1px solid #e8ebee !important;
+}
+
 table td {
-  padding: 0.75rem 0.875rem;
-  border-bottom: 1px solid var(--gray-100, #f3f4f6);
+  padding: 0.75rem 0.875rem !important;
+  border-bottom: 1px solid #e8ebee !important;
   vertical-align: middle;
 }
 
-.prose table tbody tr:last-child td,
 table tbody tr:last-child td {
-  border-bottom: 0;
+  border-bottom: 0 !important;
 }
 
-.dark .prose table,
 .dark table {
-  border-color: var(--gray-800, #1f2937);
+  border-color: #3d444d !important;
 }
 
-.dark .prose table thead,
 .dark table thead {
-  background-color: rgb(255 255 255 / 4%);
+  background-color: #21262d !important;
 }
 
-.dark .prose table th,
 .dark table th {
-  color: var(--gray-400, #9ca3af);
-  border-bottom-color: var(--gray-800, #1f2937);
+  color: #9198a1 !important;
+  border-bottom-color: #3d444d !important;
 }
 
-.dark .prose table td,
+.dark table th + th,
+.dark table td + td {
+  border-left-color: #2a3038 !important;
+}
+
 .dark table td {
-  border-bottom-color: rgb(255 255 255 / 6%);
+  border-bottom-color: #2a3038 !important;
 }

@@ -6363,3 +6363,24 @@ key principal there is wrong. The store comes from the token's application,
 so `X-Spree-Store-Id` is not consulted on this endpoint. `Spree::AgentTools::
 Context` keeps its `api_key:` principal — the dashboard assistant and any
 other adapter may still use it; only the MCP transport refuses one.
+
+## 2026-10-16 — One OAuth audience for the Admin API, MCP included
+
+The MCP endpoint had an audience of its own (`/api/v3/admin/mcp`) while the
+Admin API demanded `/api/v3/admin`. A tool call reaches data by dispatching
+into the Admin API carrying the caller's own token, so no single credential
+could satisfy both checks: every dispatched read and write answered
+"authentication required" while the endpoint itself looked healthy.
+
+A workaround minted both audiences for an MCP grant, but only on the consent
+preview — the action that writes the grant passed the client's raw `resource`
+through, and the indicator is optional, so real grants carried none at all.
+
+There is now one audience. `granted_audience` is gone, the MCP engine
+registers no resource, and the endpoint checks the Admin API's audience like
+every other admin surface. The scopes a merchant approves are the ceiling;
+the path a token names was buying nothing.
+
+The specs that missed this minted tokens in Ruby and dispatched with an admin
+JWT, so neither consent nor the OAuth dispatch path was ever exercised. The
+MCP suite now walks consent, token exchange and a tool call as a client does.

@@ -110,6 +110,18 @@ settingsNav.add({
 })
 
 settingsNav.add({
+  key: 'settings.ai-agents',
+  labelKey: 'admin.settings_nav.items.ai_agents',
+  descriptionKey: 'admin.settings_nav.descriptions.ai_agents',
+  keywords: ['oauth', 'agents', 'mcp', 'claude', 'assistant', 'integrations', 'revoke'],
+  path: '/ai-agents',
+  icon: BotIcon,
+  group: 'store',
+  position: 260,
+  subject: Subject.OauthApplication,
+})
+
+settingsNav.add({
   key: 'settings.channels',
   labelKey: 'admin.settings_nav.items.channels',
   descriptionKey: 'admin.settings_nav.descriptions.channels',
@@ -341,18 +353,6 @@ settingsNav.add({
   group: 'developer',
   position: 100,
   subject: Subject.ApiKey,
-})
-
-settingsNav.add({
-  key: 'settings.connected-apps',
-  labelKey: 'admin.settings_nav.items.connected_apps',
-  descriptionKey: 'admin.settings_nav.descriptions.connected_apps',
-  keywords: ['oauth', 'agents', 'mcp', 'integrations', 'revoke'],
-  path: '/connected-apps',
-  icon: BotIcon,
-  group: 'developer',
-  position: 150,
-  subject: Subject.OauthApplication,
 })
 
 settingsNav.add({

@@ -105,8 +105,8 @@ module Spree
           def oauth_challenge
             format(
               'Bearer realm="%<realm>s", resource_metadata="%<metadata>s"',
-              realm: Spree::Api::Oauth.resource_identifier(:mcp, request.base_url),
-              metadata: "#{request.base_url}/api/v3/oauth/protected-resource/mcp"
+              realm: Spree::Api::Oauth.resource_identifier(:admin, request.base_url),
+              metadata: "#{request.base_url}/api/v3/oauth/protected-resource/admin"
             )
           end
 
@@ -136,34 +136,19 @@ module Spree
           end
 
           # The token this request may actually act on: live, and issued for
-          # this endpoint. Named for the hook ScopedAuthorization reads, so a
+          # the Admin API. Named for the hook ScopedAuthorization reads, so a
           # grant narrows authority through the same path every admin
           # endpoint uses rather than only here.
+          #
+          # This endpoint shares the Admin API's audience rather than holding
+          # one of its own, because a tool call reaches data by dispatching
+          # into the Admin API carrying this very token. Two audiences on one
+          # credential could never both be satisfied.
           def current_oauth_token
             return @current_oauth_token if defined?(@current_oauth_token)
 
             token = bearer_access_token
-            @current_oauth_token = token if token&.accessible? && audience_matches?(token)
-          end
-
-          # Deliberately stricter than Doorkeeper's own
-          # `resource_indicators_match?`, which treats "neither side names a
-          # resource" as a match. Here an unbound token must be refused: the
-          # whole point of the audience is that a token minted for another
-          # resource cannot be replayed against this one, and a token with no
-          # audience cannot be shown to have been issued for this endpoint.
-          # Compared by path: a token minted through one hostname must keep
-          # working through another the same deployment answers on, while a
-          # token naming a different resource entirely is still refused.
-          def audience_matches?(token)
-            expected = Spree::Api::Oauth.resources[:mcp]
-            return false if expected.blank?
-
-            token.resource.to_s.split.any? do |indicator|
-              URI.parse(indicator).path == expected
-            rescue URI::InvalidURIError
-              false
-            end
+            @current_oauth_token = token if token&.accessible? && admin_audience_matches?(token)
           end
 
           def oauth_resource_owner

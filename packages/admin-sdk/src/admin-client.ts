@@ -655,6 +655,7 @@ import type {
   Locale,
   Market,
   Media,
+  OauthAccessToken,
   OauthApplication,
   OauthConsentRequest,
   OauthRedirect,
@@ -5975,9 +5976,6 @@ export class AdminClient {
           params: params ? transformListParams(params) : undefined,
         }),
 
-      get: (id: string, options?: RequestOptions): Promise<OauthApplication> =>
-        this.request<OauthApplication>('GET', `/oauth/applications/${id}`, options ?? {}),
-
       create: (
         params: { name: string; redirect_uri: string },
         options?: RequestOptions,
@@ -6002,11 +6000,32 @@ export class AdminClient {
         this.request<void>('DELETE', `/oauth/applications/${id}`, options ?? {}),
 
       /**
-       * Revokes every live token and grant an application holds, keeping the
-       * registration so a merchant can connect the same client again.
+       * The live access a connected client holds, one entry per person who
+       * connected it. A store registers a client once and everyone connects
+       * to that same registration, so this is who is actually connected.
        */
-      revoke: (id: string, options?: RequestOptions): Promise<void> =>
-        this.request<void>('DELETE', `/oauth/applications/${id}/tokens`, options ?? {}),
+      tokens: {
+        list: (
+          applicationId: string,
+          params?: ListParams,
+          options?: RequestOptions,
+        ): Promise<PaginatedResponse<OauthAccessToken>> =>
+          this.request<PaginatedResponse<OauthAccessToken>>(
+            'GET',
+            `/oauth/applications/${applicationId}/tokens`,
+            { ...(options ?? {}), params: params ? transformListParams(params) : undefined },
+          ),
+
+        /**
+         * Revokes one person's access, leaving their colleagues connected.
+         */
+        delete: (applicationId: string, id: string, options?: RequestOptions): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/oauth/applications/${applicationId}/tokens/${id}`,
+            options ?? {},
+          ),
+      },
     },
   }
 

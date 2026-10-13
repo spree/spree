@@ -13,6 +13,14 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
     )
   end
 
+  # One person's live access through that registration.
+  let(:connection) do
+    Spree::OauthAccessToken.create!(
+      application: application, resource_owner: admin_user, scopes: 'read_products',
+      expires_in: 2.hours.to_i, resource: Spree::Api::Oauth.resource_identifier(:mcp)
+    )
+  end
+
   path '/api/v3/admin/oauth/applications' do
     get 'List connected applications' do
       tags 'OAuth'
@@ -79,24 +87,6 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
   path '/api/v3/admin/oauth/applications/{id}' do
     parameter name: :id, in: :path, type: :string, required: true, description: 'Application ID'
 
-    get 'Get an application' do
-      tags 'OAuth'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      admin_scope :read, :oauth_applications
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true
-
-      response '200', 'application found' do
-        let(:id) { application.prefixed_id }
-
-        schema '$ref' => '#/components/schemas/OauthApplication'
-
-        run_test!
-      end
-    end
-
     patch 'Update an application' do
       tags 'OAuth'
       consumes 'application/json'
@@ -145,15 +135,43 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
     parameter name: :application_id, in: :path, type: :string, required: true,
               description: 'Application ID'
 
-    delete 'Revoke an application\'s access' do
+    get 'List who is connected' do
       tags 'OAuth'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        The off switch. Revokes every live token and grant this application
-        holds, so a client that still has a token stops working on its next
-        call. The registration itself stays, and a merchant can connect it
-        again.
+        A store registers a client once and every staff member connects to
+        that same registration, so this lists one entry per person who holds
+        access through it. Pass `expand=owner` for who they are.
+      DESC
+      admin_scope :read, :oauth_applications
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'connections listed' do
+        let(:application_id) { application.prefixed_id }
+
+        schema SwaggerSchemaHelpers.paginated('OauthAccessToken')
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/oauth/applications/{application_id}/tokens/{id}' do
+    parameter name: :application_id, in: :path, type: :string, required: true,
+              description: 'Application ID'
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Token ID'
+
+    delete 'Revoke one person\'s access' do
+      tags 'OAuth'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Cuts off one person and leaves their colleagues connected. The client
+        stops working for them on its next call; the registration stays, and
+        they can connect again.
       DESC
       admin_scope :write, :oauth_applications
 
@@ -162,6 +180,7 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
 
       response '204', 'access revoked' do
         let(:application_id) { application.prefixed_id }
+        let(:id) { connection.prefixed_id }
 
         run_test!
       end

@@ -4086,30 +4086,32 @@
           "communication_title": "Kommunikation",
           "commission_tax_title": "Steuer auf Provision"
         },
-        "connected_apps": {
-          "title": "Verbundene Agenten",
-          "subtitle": "KI-Agenten, denen ein Teammitglied Zugriff auf diesen Shop gegeben hat. Der Widerruf gilt sofort.",
+        "ai_agents": {
+          "title": "KI-Agenten",
+          "subtitle": "KI-Agenten, die mit Ihrem Store verbunden sind. Verbinden Sie Claude, ChatGPT und andere, um Ihren Store zu verwalten",
           "empty": "Es wurden noch keine Agenten verbunden.",
           "revoke": "Zugriff widerrufen",
           "table": {
-            "name": "Agent",
             "access": "Zugriff",
-            "authorized_by": "Genehmigt von",
-            "last_authorized": "Letzte Autorisierung",
             "status": "Status"
           },
           "revoke_confirm": {
             "title": "Zugriff widerrufen?",
-            "message": "{{name}} funktioniert ab sofort nicht mehr. Wer es nutzt, muss sich erneut verbinden."
+            "message": "{{who}} verliert sofort den Zugriff auf {{name}}. Alle anderen bleiben verbunden."
           },
-          "status": {
-            "connected": "Verbunden",
-            "not_connected": "Nicht verbunden"
+          "manage_connections": "Verbindungen verwalten",
+          "connections": {
+            "person": "Person",
+            "empty": "Niemand ist über diesen Agenten verbunden.",
+            "unknown_person": "Unbekannt",
+            "count_one": "{{count}} Person verbunden",
+            "count_other": "{{count}} Personen verbunden",
+            "connected": "Verbunden"
           }
         },
         "oauth_clients": {
           "title": "OAuth-Clients",
-          "subtitle": "Die für diesen Shop registrierten OAuth-Clients. Verbunden werden sie unter „Verbundene Agenten“.",
+          "subtitle": "Die für diesen Store registrierten OAuth-Clients",
           "empty": "Noch keine Clients registriert.",
           "register": "Client registrieren",
           "table": {
@@ -5183,7 +5185,7 @@
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
         "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
-        "connected_apps": "KI-Agenten mit Zugriff auf diesen Shop",
+        "ai_agents": "KI-Agenten mit Zugriff auf diesen Shop",
         "oauth_clients": "OAuth-Clients registrieren und konfigurieren"
       },
       "groups": {
@@ -5223,7 +5225,7 @@
         "package_types": "Verpackungsarten",
         "suppliers": "Lieferanten",
         "marketplace": "Einstellungen",
-        "connected_apps": "Verbundene Agenten",
+        "ai_agents": "KI-Agenten",
         "oauth_clients": "OAuth-Clients"
       },
       "breadcrumbs": {

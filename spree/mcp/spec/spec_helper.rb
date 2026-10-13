@@ -14,6 +14,8 @@ require 'database_cleaner/active_record'
 require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
+# Minting an admin JWT, so a spec can walk the consent flow a client performs.
+require 'spree/api/testing_support/v3/base'
 
 RSpec.configure do |config|
   config.color = true
