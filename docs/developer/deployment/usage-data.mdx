@@ -65,7 +65,7 @@ Nothing is sent for any other command, such as `spree api` or `spree exec`, when
 | `node_version`, `package_manager` | `24.4.0`, `pnpm` | The Node.js version and package manager. |
 | `os`, `arch`, `docker` | `darwin`, `arm64`, `false` | The operating system, processor type, and whether it ran inside Docker. |
 | `machine_id` | `2f1f2f60-9114-4b3a-…` | A random identifier created once on your machine. It is not derived from anything about you. |
-| `project_id` | `3f1c…` | A one-way hash of the project's git remote, keyed with your machine ID, so runs of one project on one machine can be grouped. The remote is never sent, and the hash cannot be matched against a list of public repositories. |
+| `project_id` | `3f1c…` | A one-way hash of the project's git remote, keyed with a random secret that never leaves your machine, so runs of one project on one machine can be grouped. The remote is never sent, and the hash cannot be matched against a list of public repositories. |
 | `options` | `storefront: true` | For `create-spree-app` only: the choices you made, such as including a storefront. |
 
 To turn it off on your machine:

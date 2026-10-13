@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { createHash } from 'node:crypto'
+import { createHash, createHmac } from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -121,7 +121,9 @@ describe('telemetry', () => {
     })
 
     it('stays silent when the settings cannot be saved, rather than reporting a new machine every run', () => {
-      fs.mkdirSync(path.join(home, 'spree'), { recursive: true, mode: 0o500 })
+      vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {
+        throw Object.assign(new Error('EACCES'), { code: 'EACCES' })
+      })
 
       expect(track('dev')).toBeNull()
       expect(stderr).not.toHaveBeenCalled()
@@ -184,7 +186,7 @@ describe('telemetry', () => {
       expect(sent[0]?.duration_ms).toBeGreaterThanOrEqual(0)
     })
 
-    it('hashes the git remote with the machine id, so it cannot be matched against public repositories', () => {
+    it('hashes the git remote with a key that is never sent, so it cannot be matched against public repositories', () => {
       const remote = 'https://github.com/acme/shop.git'
       execFileSync('git', ['init', '-q'], { cwd: home })
       execFileSync('git', ['remote', 'add', 'origin', remote], { cwd: home })
@@ -195,6 +197,10 @@ describe('telemetry', () => {
       const projectId = sent[0]?.project_id
       expect(projectId).toMatch(/^[0-9a-f]{64}$/)
       expect(projectId).not.toBe(createHash('sha256').update(remote).digest('hex'))
+      expect(projectId).not.toBe(
+        createHmac('sha256', String(sent[0]?.machine_id)).update(remote).digest('hex'),
+      )
+      expect(JSON.stringify(sent[0])).not.toContain(readTelemetrySettings(env).projectKey)
       expect(JSON.stringify(sent[0])).not.toContain('acme')
     })
 
