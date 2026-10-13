@@ -4,7 +4,7 @@ import type { SetupCountry } from '@spree/admin-sdk'
 // installed app, which leaves Base UI's CommonJS shim unconverted and stops
 // the dashboard from starting. The monorepo cannot show this: its workspace
 // links are treated as source.
-import { ALL_CURRENCY_CODES, useDisplayName } from '@spree/dashboard-core'
+import { ALL_CURRENCY_CODES, useCountryDisplayName, useDisplayName } from '@spree/dashboard-core'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -114,10 +114,20 @@ export interface StoreSetupFieldsProps<Values extends StoreSetupValues> {
  */
 export function StoreSetupFields<Values extends StoreSetupValues>({
   form,
-  countries,
+  countries: unsortedCountries,
   countriesPending = false,
 }: StoreSetupFieldsProps<Values>) {
   const { t } = useTranslation()
+  const countryName = useCountryDisplayName()
+  const nameOf = useCallback(
+    (country: SetupCountry) => countryName({ iso: country.code }),
+    [countryName],
+  )
+  // Sorted by the name the merchant reads, which the API cannot know.
+  const countries = useMemo(
+    () => [...unsortedCountries].sort((left, right) => nameOf(left).localeCompare(nameOf(right))),
+    [unsortedCountries, nameOf],
+  )
   // The generic form's errors are keyed by the caller's value type; these four
   // fields are guaranteed present by the StoreSetupValues constraint.
   const errors = form.formState.errors as FieldErrors<StoreSetupValues>
@@ -204,7 +214,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
               onValueChange={(country: SetupCountry | null) =>
                 handleCountryChange(country?.code ?? '')
               }
-              itemToStringLabel={(country: SetupCountry | null) => country?.name ?? ''}
+              itemToStringLabel={(country: SetupCountry | null) => (country ? nameOf(country) : '')}
               itemToStringValue={(country: SetupCountry | null) => country?.code ?? ''}
               disabled={countriesPending}
             >
@@ -216,7 +226,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                 {selectedCountry ? (
                   <>
                     <CountryFlag iso={selectedCountry.code} />
-                    <span className="truncate">{selectedCountry.name}</span>
+                    <span className="truncate">{nameOf(selectedCountry)}</span>
                   </>
                 ) : (
                   <ComboboxTriggerPlaceholder>
@@ -232,7 +242,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                     <ComboboxItem key={country.code} value={country}>
                       <span className="flex items-center gap-2">
                         <CountryFlag iso={country.code} />
-                        {country.name}
+                        {nameOf(country)}
                       </span>
                     </ComboboxItem>
                   )}

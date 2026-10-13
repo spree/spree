@@ -5,7 +5,8 @@ module Spree
         include Alba::Resource
         include Typelizer::DSL
 
-        typelize iso: [:string, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'], iso3: :string, name: :string,
+        typelize iso: [:string, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'], iso3: :string,
+                 name: [:string, deprecated: 'Name the country from `iso` with `Intl.DisplayNames` (type `region`). Removed in 6.1.'],
                  states_required: :boolean, zipcode_required: :boolean,
                  market: [:Market, nullable: true]
 

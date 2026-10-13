@@ -1,5 +1,5 @@
 import type { CountryCode, DeliveryZone } from '@spree/admin-sdk'
-import { useStore } from '@spree/dashboard-core'
+import { useCountryDisplayName, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
@@ -20,7 +20,7 @@ import {
 import { Link } from '@tanstack/react-router'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCountryNames, useCountryStates, useMarketCountries } from '../../../hooks/use-geography'
+import { useCountryStates, useMarketCountries } from '../../../hooks/use-geography'
 import type { DeliveryZoneMemberValues } from '../../../schemas/delivery-zone'
 import {
   type CountryRow,
@@ -49,7 +49,7 @@ export function DeliveryZoneRegionPicker({
   const { t } = useTranslation()
   const { storeId } = useStore()
   const { countries: marketCountries, isLoading } = useMarketCountries()
-  const countryNames = useCountryNames()
+  const countryName = useCountryDisplayName()
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<string[]>([])
   const [postalOpen, setPostalOpen] = useState(false)
@@ -63,7 +63,7 @@ export function DeliveryZoneRegionPicker({
     for (const country of marketCountries) {
       byIso.set(country.iso, {
         iso: country.iso,
-        name: country.name,
+        name: countryName(country),
         statesRequired: country.states_required,
         offMarket: false,
         claimed: claimed.countries.has(country.iso),
@@ -76,7 +76,7 @@ export function DeliveryZoneRegionPicker({
       if (byIso.has(iso)) continue
       byIso.set(iso, {
         iso,
-        name: countryNames.get(iso) ?? iso,
+        name: countryName({ iso }),
         statesRequired: selection.states.has(iso),
         offMarket: true,
         claimed: false,
@@ -84,7 +84,7 @@ export function DeliveryZoneRegionPicker({
     }
 
     return [...byIso.values()].sort((left, right) => left.name.localeCompare(right.name))
-  }, [marketCountries, countryNames, claimed, selection])
+  }, [marketCountries, countryName, claimed, selection])
 
   const visibleRows = useMemo(() => {
     const term = search.trim().toLowerCase()

@@ -365,29 +365,6 @@ module Spree
               },
               required: %w[status progress requirements]
             },
-            SellerCountry: {
-              type: :object,
-              description: "A country as the panel's address forms need it",
-              properties: {
-                iso: { type: :string, example: 'US' },
-                iso3: { type: :string, example: 'USA' },
-                name: { type: :string, example: 'United States' },
-                states_required: { type: :boolean, example: true },
-                zipcode_required: { type: :boolean, example: true },
-                states: {
-                  type: :array,
-                  items: {
-                    type: :object,
-                    properties: {
-                      abbr: { type: :string, example: 'CA' },
-                      name: { type: :string, example: 'California' }
-                    },
-                    required: %w[abbr name]
-                  }
-                }
-              },
-              required: %w[iso iso3 name]
-            },
             AuthProvidersResponse: {
               type: :object,
               description: 'Sign-in methods this marketplace offers sellers, for the login page',

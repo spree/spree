@@ -183,7 +183,6 @@ module Spree
           def country_payload(country)
             {
               code: country.iso,
-              name: country.name,
               currency: country.default_currency,
               locales: offerable_locales(country)
             }

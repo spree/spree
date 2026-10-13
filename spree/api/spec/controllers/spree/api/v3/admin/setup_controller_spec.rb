@@ -33,7 +33,6 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       countries = json_response['countries']
       switzerland = countries.find { |country| country['code'] == 'CH' }
 
-      expect(switzerland['name']).to eq('Switzerland')
       expect(switzerland['currency']).to eq('CHF')
       expect(switzerland['locales']).to include('de', 'fr', 'it')
     end

@@ -30,7 +30,7 @@ RSpec.describe 'Seller Countries API', type: :request, swagger_doc: 'api-referen
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/SellerCountry' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Country' } },
                  meta: {
                    type: :object,
                    properties: { count: { type: :integer, example: 250 } },

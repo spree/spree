@@ -616,7 +616,6 @@ export type PanelStockLocationCreateParams = PanelStockLocationParams & { name: 
 export interface PanelCountry {
   iso: CountryCode
   iso3: string
-  name: string
   states_required?: boolean
   zipcode_required?: boolean
   states?: Array<{ abbr: string; name: string }>

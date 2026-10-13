@@ -943,6 +943,8 @@ A store's locales are content locales, independent of the languages anything shi
 
 Locale names move to the client. The `name` of a locale from `GET /locales` is deprecated in the Store API and removed in 6.1, and the Admin API no longer returns it: name a locale in the reader's language with `new Intl.DisplayNames([language], { type: 'language' }).of(code)`.
 
+Country and currency names move to the client the same way. A country's `name` and a currency's `name` and `symbol` are deprecated in the Store API and removed in 6.1, and the Admin and Seller APIs no longer return a country's `name`: name a country with `new Intl.DisplayNames([language], { type: 'region' }).of(iso)` and a currency with `{ type: 'currency' }`, and format amounts (which places the symbol) with `formatMoney` or `Intl.NumberFormat`. The Admin and Seller country lists are ordered by ISO code; sort them by the name you display. State and region names stay on the API, since `Intl` has none for them.
+
 ## Translations ship with Spree
 
 Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 43 languages besides English. Regional English (`en-GB` and the like) now falls back to `en`. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).

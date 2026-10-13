@@ -2,7 +2,13 @@
 // Based on the Admin API OpenAPI specification
 
 import type { PaginationMeta, PreferenceSchema } from '@spree/sdk-core'
-import type { CountryCode, CurrencyCode, SellerRequirementStatus, StoreCredit } from './types'
+import type {
+  CountryCode,
+  CurrencyCode,
+  LocaleCode,
+  SellerRequirementStatus,
+  StoreCredit,
+} from './types'
 import type {
   CollectionRuleParams,
   CommissionRuleDraftParams,
@@ -169,11 +175,10 @@ export interface SetupStatus {
 export interface SetupCountry {
   /** ISO 3166-1 alpha-2 code, e.g. `CH`. */
   code: CountryCode
-  name: string
   /** ISO 4217 currency the store gets when this country is chosen, e.g. `CHF`. */
   currency: CurrencyCode | null
   /** Official languages, e.g. `['de', 'fr', 'it', 'rm']`. */
-  locales: string[]
+  locales: LocaleCode[]
 }
 
 /** Response of the public first-run setup country list. */

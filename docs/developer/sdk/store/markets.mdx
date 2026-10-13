@@ -20,7 +20,7 @@ markets.forEach(market => {
   market.tax_inclusive    // false
   market.default          // true
   market.supported_locales // ["en", "es"]
-  market.countries        // [{ iso: "US", name: "United States of America", ... }]
+  market.countries        // [{ iso: "US", iso3: "USA", ... }]
 })
 ```
 
@@ -118,11 +118,14 @@ Returns countries belonging to a specific market. Use this for address form coun
 ```typescript SDK
 const { data: countries } = await client.markets.countries.list('mkt_gbHJdmfrXB')
 
+// Name each country in the customer's language from its ISO code
+const countryName = new Intl.DisplayNames([locale], { type: 'region' })
+
 countries.forEach(country => {
-  country.iso              // "DE"
-  country.name             // "Germany"
-  country.states_required  // false
-  country.zipcode_required // true
+  country.iso                 // "DE"
+  countryName.of(country.iso) // "Germany" in English, "Deutschland" in German
+  country.states_required     // false
+  country.zipcode_required    // true
 })
 ```
 
@@ -145,7 +148,6 @@ const country = await client.markets.countries.get('mkt_gbHJdmfrXB', 'US', {
 })
 
 country.iso    // "US"
-country.name   // "United States of America"
 country.states // [{ id: "st_xxx", name: "New York", abbr: "NY" }, ...]
 ```
 
