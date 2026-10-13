@@ -52,10 +52,11 @@ spree init --no-open           # Skip opening browser
 
 ### `spree dev`
 
-Run the app in the foreground — streams web + worker logs; `Ctrl+C` stops them. The databases keep running for a fast next boot (`spree stop` shuts everything down).
+Run the app in the foreground — streams web + worker logs; `Ctrl+C` stops them. The databases keep running for a fast next boot (`spree stop` shuts everything down). The Admin Dashboard opens in your browser as soon as it is ready.
 
 ```bash
 spree dev
+spree dev --no-open            # Skip opening browser
 ```
 
 ### `spree stop`
