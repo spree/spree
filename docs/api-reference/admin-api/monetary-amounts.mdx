@@ -18,7 +18,7 @@ Every monetary field is returned as a decimal string, with its currency on the r
 }
 ```
 
-The Admin and Seller APIs return amounts only, with no `display_*` formatted copies: format them for the person reading them, in their own language. In JavaScript, pass the string to `Intl.NumberFormat` (`new Intl.NumberFormat('de', { style: 'currency', currency: 'EUR' }).format('1234.5')` gives `1.234,50 €`), which reads a numeric string exactly. Calculate with a decimal library rather than `parseFloat`: the SDK exports `sumMoney`, `subtractMoney`, `multiplyMoney`, `compareMoney` and `isZeroMoney`, which work on the strings exactly. The [Store API](/api-reference/store-api/monetary-amounts) keeps `display_*` fields for storefronts, and webhook payloads and email templates carry them too.
+The Admin and Seller APIs return amounts only, with no `display_*` formatted copies: format them for the person reading them, in their own language. In JavaScript, pass the string to `Intl.NumberFormat` (`new Intl.NumberFormat('de', { style: 'currency', currency: 'EUR' }).format('1234.5')` gives `1.234,50 €`), which reads a numeric string exactly. Calculate with a decimal library rather than `parseFloat`: the SDK exports `sumMoney`, `subtractMoney`, `multiplyMoney`, `compareMoney` and `isZeroMoney`, which work on the strings exactly. The [Store API](/api-reference/store-api/monetary-amounts) and webhook payloads still carry `display_*` fields, deprecated and removed in 6.1; email templates format amounts with the `money` filter.
 
 ## Writing
 
