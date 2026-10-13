@@ -1,5 +1,15 @@
 # @spree/cli
 
+## 3.3.0
+
+### Minor Changes
+
+- [#14866](https://github.com/spree/spree/pull/14866) [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree api upload <file>` uploads a file and prints the `signed_id` to pass to the endpoint that uses it. Add `--private` for documents, imports and digital products.
+
+- [#14854](https://github.com/spree/spree/pull/14854) [`0cb8656`](https://github.com/spree/spree/commit/0cb86561b020e0744e92b60afd10041dcccf0d17) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `spree filters types`, which writes TypeScript declarations for an app's own list filters and sort fields from its running backend (or from `bin/rails spree:api:filter_tables` output with `--from`), so the SDKs accept and autocomplete them.
+
+- [#14858](https://github.com/spree/spree/pull/14858) [`b5208d0`](https://github.com/spree/spree/commit/b5208d0ab283797445d8b350d100bcfa9070251b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree filters types` now writes declarations into every app under `apps/` in one run, each for the SDK that app uses. `--api` and `--out` write a single file for an app outside that layout.
+
 ## 3.2.2
 
 ### Patch Changes

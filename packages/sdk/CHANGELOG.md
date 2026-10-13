@@ -1,5 +1,49 @@
 # @spree/sdk
 
+## 2.0.0-rc.2
+
+### Minor Changes
+
+- [#14885](https://github.com/spree/spree/pull/14885) [`34b80f0`](https://github.com/spree/spree/commit/34b80f0db561300db3e6982543c7ec724e2f4c03) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `formatMoney(amount, currency, locale?, { unitPrice? })`, which formats a decimal-string amount in its currency and the reader's language with the currency's own decimal places, without passing it through a JavaScript number. The dashboard now uses the SDK's copy.
+
+- [#14887](https://github.com/spree/spree/pull/14887) [`9b5911d`](https://github.com/spree/spree/commit/9b5911d12649671ce9896f28473a2940f9a1cba0) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Country and currency names move to the client: the Store API's country `name` and currency `name` and `symbol` are deprecated (name them with `Intl.DisplayNames`, format amounts with `formatMoney`), and the Admin and Seller APIs no longer return a country's `name`. The seller SDK's `SellerCountry` is now the generated `Country` type, and the setup country list's `locales` are typed as `LocaleCode[]`. The dashboard and seller panel name and sort countries in the admin's own language.
+
+  In `@spree/dashboard-core`, `CountryOption` no longer has `name` and `countryFilter` is removed: name countries with `useCountryDisplayName` and sort them with the new `useSortByCountryName`, which collates in the admin's language.
+
+- [#14886](https://github.com/spree/spree/pull/14886) [`6034c11`](https://github.com/spree/spree/commit/6034c11340ddc997e0287935992cc603be3d756e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added the `LocaleCode` type: the locale codes Spree accepts (every ISO 639-1 language plus regional variants such as `en-US` and `pt-BR`). Order, cart and market locales, the store's default, supported and available locales, and the matching request params now use it. The dashboard validates locale fields with the new `localeCodeSchema`.
+
+  The Store API's locale `name` is deprecated (name a locale from its `code` with `Intl.DisplayNames`) and the Admin API no longer returns it, so the admin SDK's `Locale` type drops `name` and types `code` as `LocaleCode`; the dashboard names locales in the browser.
+
+- [#14852](https://github.com/spree/spree/pull/14852) [`525959d`](https://github.com/spree/spree/commit/525959de11cf10af12fc0936f908ab3af000857f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Money is a decimal string written to its currency's decimals, and Admin and Seller writes take money and rates only as decimal strings. Added `sumMoney`, `subtractMoney`, `multiplyMoney`, `negateMoney`, `compareMoney`, `isZeroMoney`, `isDecimalString` and `decimalPlaces` for exact arithmetic on those strings. Currencies carry `decimal_places`; prices no longer carry `amount_in_cents` or `compare_at_amount_in_cents`; tax rates read and write `rate` and `rate_percent` instead of `amount` and `amount_percentage`.
+
+- [#14877](https://github.com/spree/spree/pull/14877) [`8dbe607`](https://github.com/spree/spree/commit/8dbe607bdd0c66ecebadb383ea9765ba3a971cbd) Thanks [@KacperMekarski](https://github.com/KacperMekarski)! - `orders.get` now returns `Order | OrderGroup`. Called with the id of the cart a checkout was placed from, it returns the whole purchase: one order, or, when the checkout reached several sellers, the order group holding one order per seller. Narrow the result with `isOrderGroup` before reading order-only fields such as `items`. An order group now carries the same money summary as an order (delivery, discount, tax, fee, gift card and store credit totals, the amount still due) and its payments.
+
+  `store_credit_total` on carts, orders and order groups no longer includes what a gift card paid. That amount is reported only in `gift_card_total`, so a summary that shows both rows no longer deducts it twice. `amount_due` no longer subtracts store credit that has already been captured.
+
+- [#14873](https://github.com/spree/spree/pull/14873) [`f71fb8a`](https://github.com/spree/spree/commit/f71fb8ac5ef84ed969cde61b7d228452b1eb2428) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `carts.storeCredits.apply()` takes the amount as a decimal string (`'10.00'`), like every other money value; a number is no longer accepted.
+
+- [#14866](https://github.com/spree/spree/pull/14866) [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A cart's purchase order document is now set with `po_document_signed_id` instead of `po_document`.
+
+- [#14858](https://github.com/spree/spree/pull/14858) [`a90a9cc`](https://github.com/spree/spree/commit/a90a9ccc68caff9349af1c0a888e6497f72d7228) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Every filterable list method now takes typed filter and sort parameters, including returns, claims, exchanges, custom fields, digital links, payouts, imports and the rest that still accepted any key. The building block for custom field value filters is now `CustomFieldValueFilters`, so it no longer hides the generated filters for custom field lists. The product digital files list now pages by 25 as intended.
+
+- [#14854](https://github.com/spree/spree/pull/14854) [`90af080`](https://github.com/spree/spree/commit/90af080e5e3745423475ef9deef21f4dfc0bb71b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - List methods of documented endpoints now accept typed filter and sort parameters, generated from the filters each endpoint actually accepts; methods of endpoints the API reference does not document yet keep loose parameters. A misspelled filter, a filter the endpoint does not support, or an unknown sort field is now a type error instead of a request that silently returns the unfiltered list. `ProductListParams`, `CategoryListParams`, `CollectionListParams` and `OrderListParams` keep their names and are now generated; they no longer accept arbitrary keys. Filters an app adds through its own extensions can be sent unchecked inside `q` (`list({ q: { erp_id_eq: 'ERP-1' } })`), generated as declarations with `spree filters types`, or declared by hand by extending `<Resource>FilterExtensions` and `<Resource>SortExtensions`. The filter building blocks (`TextFilters`, `SortKey`, …) are exported for those declarations.
+
+  The dashboard's allowed-origins search, delivery zones by profile, and several filters and sorts on payment methods, sellers, option types, markets, custom field definitions and gift cards now take effect; the API used to ignore them.
+
+- [#14876](https://github.com/spree/spree/pull/14876) [`5c1eeee`](https://github.com/spree/spree/commit/5c1eeee6b5f2570c34271bcd8fd6c93fa6dbe36e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Request types that served both create and update are split by action, so creating marks what the API requires (a company's or tax rate's name, a tax registration's kind and value, an address's name, street, city and country) while updating takes any field. `AddressParams` and `CompanyAddressParams` in `@spree/sdk` stay as deprecated aliases until 6.1. The Admin SDK's `orders.payments.capture(orderId, id, params?, options?)` takes an optional `{ amount }` for a partial capture; request options move from the third argument to the fourth.
+
+  A tax exemption certificate's `issued_at`, `expires_at` and `verified_at` are typed `string | null`: a certificate that is still pending has no dates yet.
+
+- [#14871](https://github.com/spree/spree/pull/14871) [`6990f37`](https://github.com/spree/spree/commit/6990f3730ffad5245dd116b458a7b8ceeb67d310) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Request body types are now generated from the API itself, so every create, update and action method takes exactly the fields its endpoint accepts. Fields the API never accepted are gone from the types, and fields it accepted but the types left out are added. Renamed types keep their old names as deprecated aliases (for example `VariantPrice` is now `PriceParams`, `LineItemInput` is now `LineItemInputParams`). The dashboard now saves the store's digital download limits, which the API used to drop.
+
+  Country and currency codes are typed as the closed `CountryCode` and `CurrencyCode` unions in both requests and responses. Deprecated fields are marked `@deprecated` in the types; the Store SDK keeps them until 6.1, while the Admin and Seller SDKs drop them (address `country_iso`/`state_abbr`, cart `number`, market `country_isos`, import `owner_type`/`owner_id`, payment method `auto_capture`).
+
+### Patch Changes
+
+- [#14885](https://github.com/spree/spree/pull/14885) [`34b80f0`](https://github.com/spree/spree/commit/34b80f0db561300db3e6982543c7ec724e2f4c03) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Marked the Store API's `display_*` money fields as deprecated. Format the amount beside each one with its currency instead (`total` for `display_total`); the fields are removed in 6.1.
+
+- [#14877](https://github.com/spree/spree/pull/14877) [`8dbe607`](https://github.com/spree/spree/commit/8dbe607bdd0c66ecebadb383ea9765ba3a971cbd) Thanks [@KacperMekarski](https://github.com/KacperMekarski)! - Stock locations bring back `country_iso` and `state_abbr`, and refunds bring back `reimbursement_id` (always `null`), all marked `@deprecated` until 6.1 so a 5.6 storefront keeps compiling. `AppliedPromotion`, `Fee`, `TaxLine` and `Delivery`, which carts, orders and their items already carry, are now exported from the package root.
+
 ## 2.0.0-rc.1
 
 ### Minor Changes
