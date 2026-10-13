@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # The registry is a public extension point, and
-# docs/developer/agentic/admin-mcp.mdx tells an author to write exactly this
+# docs/developer/mcp/custom-tools.mdx tells an author to write exactly this
 # tool. Documentation that does not compile is worse than none, so the example
 # is pinned here — change one and this fails until the other follows.
 RSpec.describe 'the extension path the docs describe' do
@@ -25,16 +25,16 @@ RSpec.describe 'the extension path the docs describe' do
         { summary: "#{sku}: #{stock} available", sku: sku, available: stock }
       end
     end)
-    Spree.agent_tools << 'MyShop::AgentTools::SupplierStock'
+    Spree.admin_agent_tools << 'MyShop::AgentTools::SupplierStock'
   end
 
   it 'is offered to a key holding the permission' do
-    names = Spree.agent_tools.available_for(context).map(&:tool_name)
+    names = Spree.admin_agent_tools.available_for(context).map(&:tool_name)
     expect(names).to include('supplier_stock')
   end
 
   it 'answers and refuses as documented' do
-    tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'supplier_stock' }
+    tool = Spree.admin_agent_tools.available_for(context).find { |t| t.tool_name == 'supplier_stock' }
     expect(tool.call(sku: 'BS-1')[:summary]).to eq('BS-1: 42 available')
     expect(tool.call(sku: 'NOPE')[:error]).to include('NOPE')
   end
@@ -43,6 +43,6 @@ RSpec.describe 'the extension path the docs describe' do
     other = create(:api_key, :secret, store: store, scopes: ['read_products'])
     ctx = Spree::AgentTools::Context.new(store: store, api_key: other, request_headers: agent_headers_for_key(other))
 
-    expect(Spree.agent_tools.available_for(ctx).map(&:tool_name)).not_to include('supplier_stock')
+    expect(Spree.admin_agent_tools.available_for(ctx).map(&:tool_name)).not_to include('supplier_stock')
   end
 end

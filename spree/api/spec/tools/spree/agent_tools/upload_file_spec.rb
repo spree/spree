@@ -8,7 +8,7 @@ RSpec.describe 'agent file upload' do
   let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(ctx = context)
-    Spree.agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'upload_file' }
+    Spree.admin_agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'upload_file' }
   end
 
   # Text as text, which is the default now: a model has to emit every byte

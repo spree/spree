@@ -1,0 +1,163 @@
+---
+title: "Tool Reference"
+sidebarTitle: Tools
+description: "Every tool the MCP server offers, what it is for and which permission it needs."
+---
+
+58 tools ship with the server. An agent is only ever shown the ones its grant permits, so a connection approved for products alone sees roughly a dozen.
+
+The catalog is deliberately not a mirror of the API's 500-odd operations — a tool list that size makes a model worse at choosing, not better. Tools cover the operations a merchant asks for by name; everything else is reached through the three generic ones under [store setup](#store-setup).
+
+<Note>
+  The **Permission** column is what a grant must hold for the tool to be offered. A dash means the tool carries no permission of its own and is gated per resource instead: `search_resources` is offered to everyone, but only lists resources the grant can read.
+
+  The last column says whether the tool reads or writes. A write asks your client to confirm before it runs.
+</Note>
+
+### Finding and reading
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `describe_resource` | — | read |
+| `search_resources` | — | read |
+| `get_resource` | — | read |
+
+### Reporting
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `describe_reporting` | `read_reports` | read |
+| `query_report` | `read_reports` | read |
+
+### Catalog
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `products_activate` | `write_products` | write |
+| `products_draft` | `write_products` | write |
+| `products_archive` | `write_products` | write |
+| `products_approve` | `write_products` | write |
+| `products_reject` | `write_products` | write |
+| `variants_create` | `write_products` | write |
+| `variants_update` | `write_products` | write |
+| `catalogs_activate` | `write_products` | write |
+| `catalogs_deactivate` | `write_products` | write |
+| `price_lists_activate` | `write_products` | write |
+| `price_lists_deactivate` | `write_products` | write |
+| `curate_products` | — | write |
+
+### Orders and payments
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `orders_cancel` | `write_orders` | write |
+| `orders_complete` | `write_orders` | write |
+| `payments_capture` | `write_payments` | write |
+| `payments_void` | `write_payments` | write |
+| `refunds_create` | `write_refunds` | write |
+
+### Fulfilment
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `fulfillments_create` | `write_fulfillments` | write |
+| `fulfillments_mark_delivered` | `write_fulfillments` | write |
+| `deliveries_update_tracking` | `write_orders` | write |
+| `shipping_labels_purchase` | `write_orders` | write |
+| `shipping_labels_refund` | `write_orders` | write |
+
+### Stock and purchasing
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `set_stock` | `write_stock` | write |
+| `stock_transfers_mark_draft` | `write_stock` | write |
+| `stock_transfers_mark_ready` | `write_stock` | write |
+| `stock_transfers_mark_in_transit` | `write_stock` | write |
+| `stock_transfers_receive` | `write_stock` | write |
+| `stock_transfers_cancel` | `write_stock` | write |
+| `stock_transfers_close` | `write_stock` | write |
+| `purchase_orders_mark_draft` | `write_purchasing` | write |
+| `purchase_orders_mark_ordered` | `write_purchasing` | write |
+| `purchase_orders_receive` | `write_purchasing` | write |
+| `purchase_orders_cancel` | `write_purchasing` | write |
+| `purchase_orders_close` | `write_purchasing` | write |
+
+### Sellers
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `sellers_invite` | `write_sellers` | write |
+| `sellers_approve` | `write_sellers` | write |
+| `sellers_reject` | `write_sellers` | write |
+| `sellers_suspend` | `write_sellers` | write |
+| `sellers_reopen_onboarding` | `write_sellers` | write |
+| `seller_requirement_submissions_accept` | `write_sellers` | write |
+| `seller_requirement_submissions_reject` | `write_sellers` | write |
+| `seller_requirement_submissions_waive` | `write_sellers` | write |
+
+### Files
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `upload_file` | `write_products` | write |
+| `media_create` | `write_media` | write |
+| `create_import` | — | write |
+| `propose_import_mapping` | — | write |
+| `describe_import_mapping` | — | read |
+| `get_import_status` | — | read |
+| `create_export` | — | write |
+
+### Store setup
+
+| Tool | Permission | |
+| --- | --- | --- |
+| `create_resource` | — | write |
+| `update_resource` | — | write |
+| `delete_resource` | — | write |
+| `tax_exemption_certificates_verify` | `write_customers` | write |
+
+
+## Resources
+
+Beyond tools, the server offers MCP **resources** — files a client can fetch rather than operations it can run.
+
+| Resource | What it is |
+| --- | --- |
+| `spree+export://<id>` | A finished export, as CSV. Reading one costs the same permission as reading the records in it. |
+
+A product's media, an order's purchase order and an import's own file are things an agent *puts* there rather than reads back, so they are uploads rather than resources.
+
+## What no tool will do
+
+Some things are out of reach whatever a grant holds.
+
+- **Credentials.** API keys, integrations, webhook endpoints and gift card codes are never returned by any tool. A gift card code is the money itself, and an integration's settings are where provider credentials live.
+- **Minting another credential.** A grant cannot create API keys, roles, staff accounts or another OAuth client — so an agent can never widen its own reach.
+- **Erasing a customer.** GDPR erasure is irreversible and is not something to put behind a single confirmation prompt. Do it in the dashboard.
+- **Order editing.** Adding line items, discounts and fees to an existing order runs through paths that are not yet workflows. Cancelling, refunding and fulfilling all work today.
+
+25 further workflows are excluded for reasons a contract spec enforces, so one cannot be exposed by accident.
+
+## Writing records
+
+Three tools cover every resource the Admin API can write, rather than one tool per resource:
+
+- `create_resource`, `update_resource`, `delete_resource`
+
+They dispatch to the real endpoint, so a resource whose controller runs a workflow gets that workflow. Two things worth knowing:
+
+**Nested records travel with their parent.** A product's variants carry their own options, prices and stock levels in the same write, so creating a product with two sized variants is one call rather than four. `describe_resource` reports what fits inside each list.
+
+**A list replaces rather than appends.** Sending one variant leaves a product with one variant. Send every row you want to keep.
+
+## See also
+
+<CardGroup cols={2}>
+  <Card title="Permissions and consent" icon="shield-check" href="/developer/mcp/permissions">
+    What a merchant approves and how a grant is bounded.
+  </Card>
+  <Card title="Custom tools" icon="puzzle-piece" href="/developer/mcp/custom-tools">
+    Add your own, or expose a workflow your extension ships.
+  </Card>
+</CardGroup>

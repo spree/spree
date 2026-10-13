@@ -108,7 +108,7 @@ module Spree
         # @param context [Spree::AgentTools::Context]
         # @return [Array<Class<MCP::Tool>>]
         def tools_for(context)
-          Spree.agent_tools.available_for(context).map { |tool| ToolAdapter.build(tool) }
+          Spree.admin_agent_tools.available_for(context).map { |tool| ToolAdapter.build(tool) }
         end
       end
     end

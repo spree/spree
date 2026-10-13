@@ -12,7 +12,7 @@ RSpec.describe 'agent tools that consume an upload' do
   end
 
   def tool(name, ctx = context)
-    Spree.agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == name }
+    Spree.admin_agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == name }
   end
 
   # Text as text. A model emits every byte of its arguments, so base64 is

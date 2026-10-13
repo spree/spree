@@ -9,7 +9,7 @@ RSpec.describe 'agent product curation' do
   let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
 
   def tool(ctx = context)
-    Spree.agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'curate_products' }
+    Spree.admin_agent_tools.available_for(ctx).find { |candidate| candidate.tool_name == 'curate_products' }
   end
 
   describe 'the derived set of parents' do

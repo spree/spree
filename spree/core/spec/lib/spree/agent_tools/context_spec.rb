@@ -46,8 +46,8 @@ RSpec.describe Spree::AgentTools::Context do
     end
 
     it 'offers only the tools the grant covers' do
-      expect(Spree.agent_tools.available_for(context).size).
-        to be < Spree.agent_tools.available_for(unrestricted).size
+      expect(Spree.admin_agent_tools.available_for(context).size).
+        to be < Spree.admin_agent_tools.available_for(unrestricted).size
     end
   end
 

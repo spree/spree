@@ -1,0 +1,59 @@
+---
+title: "MCP Server"
+sidebarTitle: Overview
+description: "Your store hosts a Model Context Protocol server, so an AI client can operate it in plain language under the same permissions as the API."
+---
+
+Spree can host a [Model Context Protocol](https://modelcontextprotocol.io) server of its own, so an MCP client — Claude Desktop, claude.ai, Claude Code, Cursor, an in-house agent — can work in your store by talking to it: find products, answer "what did we sell in Germany last month", cancel an order, mark a shipment delivered, add a market.
+
+It runs inside your Spree application. There is no separate service to deploy, and every request goes through the same tenancy, permission and validation rules as the API itself. An agent does exactly what the person who connected it allows, and nothing else.
+
+## The endpoint
+
+```text
+https://your-store.com/api/v3/admin/mcp
+```
+
+The back office: the catalog, orders, reporting and store setup, for staff and the agents they connect.
+
+<Note>
+  A storefront endpoint, for agents acting on a customer's behalf, is not built yet. The machinery is shared and the catalogs are separate, so it arrives as an addition rather than a rework — see [what is not here yet](#what-is-not-here-yet).
+</Note>
+
+## How it fits together
+
+An MCP client speaks JSON-RPC to one endpoint. Behind it:
+
+- **Tools** are what the agent can do — one per operation, named for the merchant's language rather than the API's. [The reference](/developer/mcp/tools) lists all 58.
+- **Resources** are files the client can fetch. Finished exports, as CSV.
+- **Consent** decides what any of it reaches. A merchant signs in and approves specific permissions; the agent is never offered a tool outside them.
+
+Every tool reaches data by making a real API request inside the process — the same routing, authentication, record-level authorization and serialization an external client gets. A guard added to the API protects agents without anyone copying it into the tool layer.
+
+## Getting started
+
+<CardGroup cols={2}>
+  <Card title="Quick start" icon="rocket" href="/developer/mcp/quick-start">
+    Install the gem, connect a client, run the first conversation.
+  </Card>
+  <Card title="Tool reference" icon="wrench" href="/developer/mcp/tools">
+    All 58 tools, what each is for and which permission it needs.
+  </Card>
+  <Card title="Permissions and consent" icon="shield-check" href="/developer/mcp/permissions">
+    What a merchant approves, how a grant is bounded, revoking access.
+  </Card>
+  <Card title="Custom tools" icon="puzzle-piece" href="/developer/mcp/custom-tools">
+    Register your own, and expose a workflow an extension adds.
+  </Card>
+</CardGroup>
+
+## What it is not
+
+**Not the documentation server.** The [docs MCP server](/developer/agentic/mcp) lets an agent read Spree's documentation while writing code against it. This one operates a live store. They are unrelated and you can use both.
+
+**Not a replacement for the API.** An agent is good at a merchant's request in words. A scheduled job, a data pipeline or a storefront should call the [Admin API](/api-reference/admin) or the [`spree api` CLI](/developer/cli/admin-api) directly.
+
+## What is not here yet
+
+- **A storefront endpoint.** Tools for a customer-facing agent — browsing, carts, order status — need a customer principal and their own catalog.
+- **Product status moves.** Activating, drafting and archiving a product run inside the Spree process rather than through an endpoint, because the Admin API has none for them yet.

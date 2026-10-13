@@ -54542,6 +54542,94 @@ paths:
       responses:
         '204':
           description: supplier deleted
+<<<<<<< HEAD
+=======
+  "/api/v3/oauth/protected-resource/{resource_key}":
+    parameters:
+    - name: resource_key
+      in: path
+      required: true
+      description: Which protected surface, e.g. `mcp`
+      schema:
+        type: string
+    get:
+      summary: Discover the authorization server
+      tags:
+      - OAuth
+      description: |
+        RFC 9728. A client given a URL it cannot reach unauthenticated reads
+        this to learn which authorization server guards it and which
+        permissions that server accepts.
+
+        Unauthenticated by design: a client has to read it before it holds
+        anything.
+      responses:
+        '200':
+          description: metadata
+          content:
+            application/json:
+              example:
+                resource: http://www.example.com/api/v3/admin/mcp
+                authorization_servers:
+                - http://www.example.com
+                scopes_supported:
+                - read_dashboard
+                - read_reports
+                - write_reports
+                - read_orders
+                - write_orders
+                - read_payments
+                - write_payments
+                - read_fulfillments
+                - write_fulfillments
+                - read_refunds
+                - write_refunds
+                - read_products
+                - write_products
+                - read_product_types
+                - write_product_types
+                - read_publishing
+                - write_publishing
+                - read_media
+                - write_media
+                - read_categories
+                - write_categories
+                - read_collections
+                - write_collections
+                - read_stock
+                - write_stock
+                - read_purchasing
+                - write_purchasing
+                - read_customers
+                - write_customers
+                - read_sellers
+                - write_sellers
+                - read_commissions
+                - write_commissions
+                - read_payouts
+                - write_payouts
+                - read_gift_cards
+                - write_gift_cards
+                - read_store_credits
+                - write_store_credits
+                - read_promotions
+                - write_promotions
+                - read_settings
+                - write_settings
+                - read_delivery_methods
+                - write_delivery_methods
+                - read_package_types
+                - write_package_types
+                - read_email_templates
+                - write_email_templates
+                bearer_methods_supported:
+                - header
+                resource_documentation: https://spreecommerce.org/docs/developer/mcp/overview
+              schema:
+                "$ref": "#/components/schemas/OauthProtectedResource"
+        '404':
+          description: no such protected surface
+>>>>>>> a2726dc670 (Changed the MCP docs into a section of their own)
 servers:
 - url: http://{defaultHost}
   variables:

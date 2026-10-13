@@ -699,6 +699,10 @@
     {
       "source": "/user/orders/creating-orders",
       "destination": "/user/orders/draft-orders"
+    },
+    {
+      "source": "/developer/agentic/admin-mcp",
+      "destination": "/developer/mcp/overview"
     }
   ],
   "contextual": {
@@ -807,11 +811,21 @@
                       "developer/agentic/overview",
                       "developer/agentic/agent-skills",
                       "developer/agentic/mcp",
-                      "developer/agentic/admin-mcp",
                       "developer/agentic/llm-docs",
                       "developer/cli/admin-api"
                     ],
                     "icon": "sparkles"
+                  },
+                  {
+                    "group": "MCP Server",
+                    "pages": [
+                      "developer/mcp/overview",
+                      "developer/mcp/quick-start",
+                      "developer/mcp/tools",
+                      "developer/mcp/permissions",
+                      "developer/mcp/custom-tools"
+                    ],
+                    "icon": "plug"
                   },
                   {
                     "group": "Tutorial",
@@ -2649,7 +2663,6 @@
                   "developer/agentic/overview",
                   "developer/agentic/agent-skills",
                   "developer/agentic/mcp",
-                  "developer/agentic/admin-mcp",
                   "developer/agentic/llm-docs"
                 ]
               }

@@ -67,6 +67,31 @@ RSpec.describe 'Admin API OAuth access', type: :request do
       expect(product.reload.name).to eq('Espresso Machine')
     end
 
+    # Reporting gates each dimension on the scope for the data it exposes,
+    # so a grant for reports alone must not reach customer names, emails and
+    # spend by grouping on them.
+    it 'cannot report on a dimension outside its scopes' do
+      post '/api/v3/admin/reporting/query',
+           params: { metrics: ['net_sales'], dimensions: ['customer'] }.to_json,
+           headers: { 'Authorization' => "Bearer #{token_for('read_reports', resource: '/api/v3/admin')}",
+                      'CONTENT_TYPE' => 'application/json' }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(JSON.parse(response.body).dig('error', 'message')).to include('read_customers')
+    end
+
+    # And the vocabulary it is offered matches, so it is not told to ask for
+    # something it would be refused.
+    it 'is not offered a dimension it may not use' do
+      get '/api/v3/admin/reporting/schema',
+          headers: { 'Authorization' => "Bearer #{token_for('read_reports', resource: '/api/v3/admin')}" }
+
+      names = JSON.parse(response.body)['dimensions'].map { |dimension| dimension['name'] }
+
+      expect(names).to include('completed_at')
+      expect(names).not_to include('customer')
+    end
+
     # The widest version of the same fault: the consent endpoint mints
     # grants, so an agent that could reach it with its owner's whole role
     # could approve itself anything that role can do — and a grant is a

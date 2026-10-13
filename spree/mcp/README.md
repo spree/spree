@@ -16,9 +16,9 @@ scopes decide which tools the model is offered, so an agent is never told about
 a capability its credential does not carry.
 
 This gem is a protocol adapter and nothing more. The tools, their schemas and
-the permissions gating them live in `spree_core` as `Spree.agent_tools`, which
+the permissions gating them live in `spree_core` as `Spree.admin_agent_tools`, which
 means an extension registers a tool without depending on this gem, and the
 dashboard assistant offers the same tools over a different transport.
 
-See the [documentation](https://spreecommerce.org/docs/developer/agentic/admin-mcp)
+See the [documentation](https://spreecommerce.org/docs/developer/mcp/overview)
 and `docs/plans/6.0-mcp-server.md`.
