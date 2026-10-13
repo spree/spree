@@ -13821,6 +13821,9 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
       required:
       - id
       - promotion_id
@@ -14076,69 +14079,117 @@ components:
         item_total:
           type: string
           nullable: true
+          description: 'The line items: each price times its quantity, before discounts,
+            fees and delivery.'
         display_item_total:
           type: string
           nullable: true
+          description: "`item_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         discount_total:
           type: string
           nullable: true
+          description: What promotions take off, as a negative amount. Manual discounts
+            are not included.
         display_discount_total:
           type: string
           nullable: true
+          description: "`discount_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         tax_total:
           type: string
           nullable: true
+          description: All tax, both included in prices and added on top.
         display_tax_total:
           type: string
           nullable: true
+          description: "`tax_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
+          description: Tax already included in the prices, as in a store whose prices
+            are tax-inclusive.
         display_included_tax_total:
           type: string
           nullable: true
+          description: "`included_tax_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
+          description: Tax added on top of the prices.
         display_additional_tax_total:
           type: string
           nullable: true
+          description: "`additional_tax_total` formatted with its currency symbol
+            in the request's language."
+          deprecated: true
         delivery_total:
           type: string
           nullable: true
+          description: What delivery costs, before delivery discounts.
         display_delivery_total:
           type: string
           nullable: true
+          description: "`delivery_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         fee_total:
           type: string
           nullable: true
+          description: Every fee charged, such as handling or a customs duty.
         display_fee_total:
           type: string
           nullable: true
+          description: "`fee_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         gift_card_total:
           type: string
           nullable: true
+          description: What a gift card pays.
         display_gift_card_total:
           type: string
           nullable: true
+          description: "`gift_card_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         store_credit_total:
           type: string
           nullable: true
+          description: What store credit pays, apart from gift cards.
         display_store_credit_total:
           type: string
           nullable: true
+          description: "`store_credit_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         total:
           type: string
           nullable: true
+          description: 'What the customer pays in all: items, delivery, fees and added
+            tax, less discounts.'
         display_total:
           type: string
           nullable: true
+          description: "`total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         amount_due:
           type: string
           nullable: true
+          description: What is left to pay after payments and store credit.
         display_amount_due:
           type: string
           nullable: true
+          description: "`amount_due` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         covered_by_store_credit:
           type: boolean
         payments:
@@ -14148,9 +14199,13 @@ components:
         adjustment_total:
           type: string
           nullable: true
+          description: Every discount, fee and added tax together, as one amount.
         display_adjustment_total:
           type: string
           nullable: true
+          description: "`adjustment_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         current_step:
           type: string
         completed_steps:
@@ -14411,6 +14466,9 @@ components:
         display_refund_amount:
           type: string
           nullable: true
+          description: "`refund_amount` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         variant_id:
           type: string
           nullable: true
@@ -14486,6 +14544,9 @@ components:
         display_refund_total:
           type: string
           nullable: true
+          description: "`refund_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         approved_at:
           type: string
           nullable: true
@@ -15204,6 +15265,9 @@ components:
           type: string
         display_available_store_credit_total:
           type: string
+          description: "`available_store_credit_total` formatted with its currency
+            symbol in the request's language."
+          deprecated: true
         addresses:
           type: array
           items:
@@ -15399,18 +15463,33 @@ components:
         display_cost:
           type: string
           nullable: true
+          description: "`cost` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         display_total:
           type: string
           nullable: true
+          description: "`total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         display_additional_tax_total:
           type: string
           nullable: true
+          description: "`additional_tax_total` formatted with its currency symbol
+            in the request's language."
+          deprecated: true
         display_included_tax_total:
           type: string
           nullable: true
+          description: "`included_tax_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         display_tax_total:
           type: string
           nullable: true
+          description: "`tax_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
       required:
@@ -15875,6 +15954,9 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
       required:
       - id
       - label
@@ -15976,6 +16058,9 @@ components:
         display_price_difference:
           type: string
           nullable: true
+          description: "`price_difference` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         approved_at:
           type: string
           nullable: true
@@ -16070,6 +16155,9 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
       required:
       - id
       - label
@@ -16175,36 +16263,54 @@ components:
         display_cost:
           type: string
           nullable: true
+          description: "`cost` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         total:
           type: string
           nullable: true
         display_total:
           type: string
           nullable: true
+          description: "`total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         discount_total:
           type: string
           nullable: true
         display_discount_total:
           type: string
           nullable: true
+          description: "`discount_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
         display_additional_tax_total:
           type: string
           nullable: true
+          description: "`additional_tax_total` formatted with its currency symbol
+            in the request's language."
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
         display_included_tax_total:
           type: string
           nullable: true
+          description: "`included_tax_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         tax_total:
           type: string
           nullable: true
         display_tax_total:
           type: string
           nullable: true
+          description: "`tax_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         status:
           anyOf:
           - type: string
@@ -16710,12 +16816,21 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         display_amount_used:
           type: string
           nullable: true
+          description: "`amount_used` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         display_amount_remaining:
           type: string
           nullable: true
+          description: "`amount_remaining` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         expires_at:
           type: string
           nullable: true
@@ -17110,57 +17225,95 @@ components:
         price:
           type: string
           nullable: true
+          description: The price of one unit.
         display_price:
           type: string
           nullable: true
+          description: "`price` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         total:
           type: string
           nullable: true
+          description: 'What this line costs: price times quantity, with its discounts,
+            fees and added tax.'
         display_total:
           type: string
           nullable: true
+          description: "`total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         adjustment_total:
           type: string
           nullable: true
+          description: This line's discounts, fees and added tax together.
         display_adjustment_total:
           type: string
           nullable: true
+          description: "`adjustment_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
+          description: Tax added on top of the price.
         display_additional_tax_total:
           type: string
           nullable: true
+          description: "`additional_tax_total` formatted with its currency symbol
+            in the request's language."
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
+          description: Tax already included in the price.
         display_included_tax_total:
           type: string
           nullable: true
+          description: "`included_tax_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         discount_total:
           type: string
           nullable: true
+          description: What promotions take off this line, as a negative amount.
         display_discount_total:
           type: string
           nullable: true
+          description: "`discount_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         pre_tax_amount:
           type: string
           nullable: true
+          description: This line after discounts, without tax.
         display_pre_tax_amount:
           type: string
           nullable: true
+          description: "`pre_tax_amount` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         discounted_amount:
           type: string
           nullable: true
+          description: Price times quantity, after discounts.
         display_discounted_amount:
           type: string
           nullable: true
+          description: "`discounted_amount` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         display_compare_at_amount:
           type: string
           nullable: true
+          description: "`compare_at_amount` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         compare_at_amount:
           type: string
           nullable: true
+          description: The compare-at price times quantity, or null when the variant
+            has none.
         thumbnail_url:
           type: string
           nullable: true
@@ -18118,69 +18271,117 @@ components:
         item_total:
           type: string
           nullable: true
+          description: 'The line items: each price times its quantity, before discounts,
+            fees and delivery.'
         display_item_total:
           type: string
           nullable: true
+          description: "`item_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         discount_total:
           type: string
           nullable: true
+          description: What promotions take off, as a negative amount. Manual discounts
+            are not included.
         display_discount_total:
           type: string
           nullable: true
+          description: "`discount_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         tax_total:
           type: string
           nullable: true
+          description: All tax, both included in prices and added on top.
         display_tax_total:
           type: string
           nullable: true
+          description: "`tax_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
+          description: Tax already included in the prices, as in a store whose prices
+            are tax-inclusive.
         display_included_tax_total:
           type: string
           nullable: true
+          description: "`included_tax_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
+          description: Tax added on top of the prices.
         display_additional_tax_total:
           type: string
           nullable: true
+          description: "`additional_tax_total` formatted with its currency symbol
+            in the request's language."
+          deprecated: true
         delivery_total:
           type: string
           nullable: true
+          description: What delivery costs, before delivery discounts.
         display_delivery_total:
           type: string
           nullable: true
+          description: "`delivery_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         fee_total:
           type: string
           nullable: true
+          description: Every fee charged, such as handling or a customs duty.
         display_fee_total:
           type: string
           nullable: true
+          description: "`fee_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         gift_card_total:
           type: string
           nullable: true
+          description: What a gift card pays.
         display_gift_card_total:
           type: string
           nullable: true
+          description: "`gift_card_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         store_credit_total:
           type: string
           nullable: true
+          description: What store credit pays, apart from gift cards.
         display_store_credit_total:
           type: string
           nullable: true
+          description: "`store_credit_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         total:
           type: string
           nullable: true
+          description: 'What the customer pays in all: items, delivery, fees and added
+            tax, less discounts.'
         display_total:
           type: string
           nullable: true
+          description: "`total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         amount_due:
           type: string
           nullable: true
+          description: What is left to pay after payments and store credit.
         display_amount_due:
           type: string
           nullable: true
+          description: "`amount_due` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         covered_by_store_credit:
           type: boolean
         payments:
@@ -18524,69 +18725,117 @@ components:
         item_total:
           type: string
           nullable: true
+          description: 'The line items: each price times its quantity, before discounts,
+            fees and delivery.'
         display_item_total:
           type: string
           nullable: true
+          description: "`item_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         discount_total:
           type: string
           nullable: true
+          description: What promotions take off, as a negative amount. Manual discounts
+            are not included.
         display_discount_total:
           type: string
           nullable: true
+          description: "`discount_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         tax_total:
           type: string
           nullable: true
+          description: All tax, both included in prices and added on top.
         display_tax_total:
           type: string
           nullable: true
+          description: "`tax_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
+          description: Tax already included in the prices, as in a store whose prices
+            are tax-inclusive.
         display_included_tax_total:
           type: string
           nullable: true
+          description: "`included_tax_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
+          description: Tax added on top of the prices.
         display_additional_tax_total:
           type: string
           nullable: true
+          description: "`additional_tax_total` formatted with its currency symbol
+            in the request's language."
+          deprecated: true
         delivery_total:
           type: string
           nullable: true
+          description: What delivery costs, before delivery discounts.
         display_delivery_total:
           type: string
           nullable: true
+          description: "`delivery_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         fee_total:
           type: string
           nullable: true
+          description: Every fee charged, such as handling or a customs duty.
         display_fee_total:
           type: string
           nullable: true
+          description: "`fee_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         gift_card_total:
           type: string
           nullable: true
+          description: What a gift card pays.
         display_gift_card_total:
           type: string
           nullable: true
+          description: "`gift_card_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         store_credit_total:
           type: string
           nullable: true
+          description: What store credit pays, apart from gift cards.
         display_store_credit_total:
           type: string
           nullable: true
+          description: "`store_credit_total` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         total:
           type: string
           nullable: true
+          description: 'What the customer pays in all: items, delivery, fees and added
+            tax, less discounts.'
         display_total:
           type: string
           nullable: true
+          description: "`total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         amount_due:
           type: string
           nullable: true
+          description: What is left to pay after payments and store credit.
         display_amount_due:
           type: string
           nullable: true
+          description: "`amount_due` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         covered_by_store_credit:
           type: boolean
         payments:
@@ -18596,9 +18845,13 @@ components:
         adjustment_total:
           type: string
           nullable: true
+          description: Every discount, fee and added tax together, as one amount.
         display_adjustment_total:
           type: string
           nullable: true
+          description: "`adjustment_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         discounts:
           type: array
           items:
@@ -18767,6 +19020,9 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         source_type:
           type: string
           nullable: true
@@ -19316,6 +19572,9 @@ components:
           nullable: true
         display_amount:
           type: string
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         recorded_at:
           type: string
       required:
@@ -19521,9 +19780,15 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         display_compare_at_amount:
           type: string
           nullable: true
+          description: "`compare_at_amount` formatted with its currency symbol in
+            the request's language."
+          deprecated: true
         price_list_id:
           type: string
           nullable: true
@@ -20201,6 +20466,9 @@ components:
         display_pre_tax_amount:
           type: string
           nullable: true
+          description: "`pre_tax_amount` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
@@ -20213,12 +20481,18 @@ components:
         display_tax_total:
           type: string
           nullable: true
+          description: "`tax_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         refund_amount:
           type: string
           nullable: true
         display_refund_amount:
           type: string
           nullable: true
+          description: "`refund_amount` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         variant_id:
           type: string
           nullable: true
@@ -20292,12 +20566,18 @@ components:
         display_refund_total:
           type: string
           nullable: true
+          description: "`refund_total` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         refund_tax_total:
           type: string
           nullable: true
         display_refund_tax_total:
           type: string
           nullable: true
+          description: "`refund_tax_total` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         approved_at:
           type: string
           nullable: true
@@ -20903,6 +21183,9 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         created_at:
           type: string
       required:
@@ -20931,12 +21214,21 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         display_amount_used:
           type: string
           nullable: true
+          description: "`amount_used` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
         display_amount_remaining:
           type: string
           nullable: true
+          description: "`amount_remaining` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
         currency:
           type: string
           enum:
@@ -21202,6 +21494,9 @@ components:
         display_amount:
           type: string
           nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
       required:
       - id
       - label

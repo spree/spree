@@ -23,7 +23,20 @@ module Spree
                            :gift_card_total, :display_gift_card_total,
                            :store_credit_total, :display_store_credit_total,
                            :total, :display_total,
-                           :amount_due, :display_amount_due
+                           :amount_due, :display_amount_due,
+                           descriptions: {
+                             item_total: 'The line items: each price times its quantity, before discounts, fees and delivery.',
+                             discount_total: 'What promotions take off, as a negative amount. Manual discounts are not included.',
+                             tax_total: 'All tax, both included in prices and added on top.',
+                             included_tax_total: 'Tax already included in the prices, as in a store whose prices are tax-inclusive.',
+                             additional_tax_total: 'Tax added on top of the prices.',
+                             delivery_total: 'What delivery costs, before delivery discounts.',
+                             fee_total: 'Every fee charged, such as handling or a customs duty.',
+                             gift_card_total: 'What a gift card pays.',
+                             store_credit_total: 'What store credit pays, apart from gift cards.',
+                             total: 'What the customer pays in all: items, delivery, fees and added tax, less discounts.',
+                             amount_due: 'What is left to pay after payments and store credit.'
+                           }
 
           attribute :covered_by_store_credit, &:covered_by_store_credit?
 

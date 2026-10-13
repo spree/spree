@@ -20,6 +20,7 @@ export { getParams, resolveRetryConfig } from './helpers'
 export {
   compareMoney,
   decimalPlaces,
+  formatMoney,
   isDecimalString,
   isZeroMoney,
   multiplyMoney,

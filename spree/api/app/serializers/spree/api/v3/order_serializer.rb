@@ -64,7 +64,8 @@ module Spree
         # Nulled for gated (prices_hidden) guests, consistent with cart and
         # catalog price hiding.
         include Spree::Api::V3::PurchaseSummary
-        money_attributes :adjustment_total, :display_adjustment_total
+        money_attributes :adjustment_total, :display_adjustment_total,
+                         descriptions: { adjustment_total: 'Every discount, fee and added tax together, as one amount.' }
 
         many :order_promotions, key: :discounts, resource: proc { Spree.api.applied_promotion_serializer }
         # Itemized charges (duties, surcharges, COD, handling) — see the cart

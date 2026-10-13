@@ -5,8 +5,8 @@ module Spree
       # Represents a resolved/calculated price for storefront display
       # Can represent either a calculated price (with price list resolution) or a base price
       class PriceSerializer < BaseSerializer
-        typelize display_amount: [:string, nullable: true],
-                 display_compare_at_amount: [:string, nullable: true],
+        typelize display_amount: display_money_type(:display_amount),
+                 display_compare_at_amount: display_money_type(:display_compare_at_amount),
                  currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  price_list_id: [:string, nullable: true]
 

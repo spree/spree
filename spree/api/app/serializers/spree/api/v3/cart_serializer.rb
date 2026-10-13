@@ -59,7 +59,8 @@ module Spree
         # Nulled for gated (prices_hidden) guests so the cart can't leak the
         # prices that product/variant serializers already withhold.
         include Spree::Api::V3::PurchaseSummary
-        money_attributes :adjustment_total, :display_adjustment_total
+        money_attributes :adjustment_total, :display_adjustment_total,
+                         descriptions: { adjustment_total: 'Every discount, fee and added tax together, as one amount.' }
 
         attribute :current_step do |order|
           order.current_checkout_step

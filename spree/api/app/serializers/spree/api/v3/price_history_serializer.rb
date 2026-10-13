@@ -4,7 +4,7 @@ module Spree
   module Api
     module V3
       class PriceHistorySerializer < BaseSerializer
-        typelize display_amount: :string,
+        typelize display_amount: display_money_type(:display_amount, nullable: false),
                  currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  recorded_at: :string
 

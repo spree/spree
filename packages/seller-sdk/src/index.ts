@@ -10,6 +10,7 @@ export type {
 export {
   compareMoney,
   decimalPlaces,
+  formatMoney,
   isDecimalString,
   isZeroMoney,
   multiplyMoney,

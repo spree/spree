@@ -97,3 +97,31 @@ export function multiplyMoney(value: string, quantity: number, currency?: string
   const { units, scale } = parse(value)
   return write(units * BigInt(quantity), scale, currency ? decimalPlaces(currency) : scale)
 }
+
+/**
+ * Formats a decimal-string amount ("1234.50") in a currency and locale. The
+ * string goes to `Intl` as it is — `Intl` reads numeric strings exactly — so
+ * the amount never passes through a JavaScript number. A missing or malformed
+ * amount formats as an empty string.
+ *
+ * @example formatMoney(order.total, order.currency, order.locale) // "€129.99"
+ */
+export function formatMoney(
+  amount: string | null | undefined,
+  currency: string,
+  locale?: string | null,
+  options: { unitPrice?: boolean } = {},
+): string {
+  if (!isDecimalString(amount)) return ''
+
+  // The decimals come from the same ISO 4217 table the API writes amounts
+  // with, so a dinar shows three and a yen none; a unit price keeps up to four.
+  const places = decimalPlaces(currency)
+  // ES2023's Intl typings accept a numeric string; this package targets ES2022.
+  return new Intl.NumberFormat(locale ?? undefined, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: places,
+    maximumFractionDigits: options.unitPrice ? Math.max(places, 4) : places,
+  }).format(amount as unknown as number)
+}

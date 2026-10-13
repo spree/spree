@@ -8,20 +8,23 @@ All monetary values in the Store API are returned as **decimal strings**, never 
 
 ## Response Format
 
-Every monetary field has a corresponding `display_` field that includes currency formatting:
+Every monetary field is a decimal string, with its currency on the record or on the record it belongs to (an order's line items, payments and fulfillments are in the order's currency):
 
 ```json
 {
+  "currency": "USD",
   "total": "129.99",
-  "display_total": "$129.99",
   "item_total": "99.99",
-  "display_item_total": "$99.99",
   "delivery_total": "10.00",
-  "display_delivery_total": "$10.00",
-  "tax_total": "20.00",
-  "display_tax_total": "$20.00"
+  "tax_total": "20.00"
 }
 ```
+
+Format each amount for the customer reading it, in their language and in the currency the amount is in. An order or cart carries both (`currency`, `locale`); before checkout, use the current market's (`currency`, `default_locale`) or the price's own `currency`. See [Working with Amounts](#working-with-amounts) for examples.
+
+<Warning>
+**The `display_*` fields are deprecated and will be removed in Spree 6.1.** Each monetary field still has a pre-formatted copy (`display_total` beside `total`), formatted in the request's language. Format the amount beside it instead. The API reference marks these fields as deprecated, and the SDK types strike them through. Labels such as `display_name` are not affected.
+</Warning>
 
 ## Affected Types
 
@@ -41,20 +44,64 @@ Rates, such as a tax line's `rate`, are decimal strings too, without trailing ze
 
 ## Currency decimal places
 
-Each currency the store sells in (`GET /api/v3/store/currencies`) carries `decimal_places`, from ISO 4217: `2` for USD and EUR, `0` for JPY, `3` for KWD. Every amount in that currency is written with that many decimals.
+Each currency the store sells in (`GET /api/v3/store/currencies`) carries `decimal_places`, from ISO 4217: `2` for USD and EUR, `0` for JPY, `3` for KWD. Every amount in that currency is written with that many decimals. The SDK knows the same table, so `decimalPlaces(currency)` answers without a request.
+
+## Money helpers
+
+`@spree/sdk` exports helpers that work on the decimal strings directly. None of them turns an amount into a JavaScript number, so a sum or a comparison is exact.
+
+```typescript
+import {
+  compareMoney, decimalPlaces, formatMoney, isDecimalString, isZeroMoney,
+  multiplyMoney, negateMoney, subtractMoney, sumMoney,
+} from '@spree/sdk'
+```
+
+### Displaying
+
+| Helper | What it does | Example |
+| --- | --- | --- |
+| `formatMoney(amount, currency, locale?, { unitPrice? })` | Formats an amount in a currency and language, with the currency's own decimal places. Pass `{ unitPrice: true }` for a unit price, which keeps up to four decimals. A missing or malformed amount gives an empty string. | `formatMoney('1234.5', 'EUR', 'de')` → `"1.234,50 €"`<br/>`formatMoney('1000', 'JPY', 'en')` → `"¥1,000"`<br/>`formatMoney('0.0125', 'USD', 'en', { unitPrice: true })` → `"$0.0125"` |
+| `decimalPlaces(currency)` | The number of decimals a currency's amounts are written with, from ISO 4217. An unknown code gives `2`. | `decimalPlaces('USD')` → `2`<br/>`decimalPlaces('JPY')` → `0`<br/>`decimalPlaces('KWD')` → `3` |
+
+### Calculating
+
+Pass a currency to write the result with that currency's decimal places. Without one, the result keeps only the decimals it needs.
+
+| Helper | What it does | Example |
+| --- | --- | --- |
+| `sumMoney(amounts, currency?)` | Adds amounts. Blank values (`null`, `undefined`, `""`) count as zero. | `sumMoney(['19.99', '10.01'], 'USD')` → `"30.00"`<br/>`sumMoney(['19.99', '10.01'])` → `"30"`<br/>`sumMoney(['0.1', '0.2'])` → `"0.3"` |
+| `subtractMoney(a, b, currency?)` | `a` minus `b`. | `subtractMoney('100.00', '29.99', 'USD')` → `"70.01"` |
+| `multiplyMoney(amount, quantity, currency?)` | An amount times a whole quantity, such as a unit price times the units. A quantity that is not a whole number throws. | `multiplyMoney('19.99', 3, 'USD')` → `"59.97"` |
+| `negateMoney(amount)` | The amount with its sign flipped. | `negateMoney('5.00')` → `"-5.00"` |
+
+### Comparing and checking
+
+| Helper | What it does | Example |
+| --- | --- | --- |
+| `compareMoney(a, b)` | `1` when `a` is larger, `-1` when it is smaller, `0` when they are equal, whatever their decimal places. | `compareMoney('10.00', '9.99')` → `1`<br/>`compareMoney('10', '10.00')` → `0` |
+| `isZeroMoney(amount)` | Whether an amount is zero. Blank counts as zero. | `isZeroMoney('0.00')` → `true`<br/>`isZeroMoney(null)` → `true`<br/>`isZeroMoney('0.01')` → `false` |
+| `isDecimalString(value)` | Whether a value is a canonical decimal string. | `isDecimalString('19.99')` → `true`<br/>`isDecimalString('1,99')` → `false`<br/>`isDecimalString(19.99)` → `false` |
+
+The calculating and comparing helpers throw on a value that is not a canonical decimal string, such as `"1,99"` or `"1e3"`, rather than guess what it means. Check input you did not get from the API with `isDecimalString` first.
 
 ## Working with Amounts
+
+Format an amount with the SDK's [`formatMoney`](#money-helpers). It writes the currency's own decimal places (none for yen, three for dinar) and never turns the amount into a JavaScript number. Without the SDK, pass the decimal string straight to `Intl.NumberFormat`, which reads it exactly.
+
+### Order and cart totals
+
+An order carries its own `currency` and the `locale` the customer shopped in, so its receipt reads the same however the store changes later.
 
 <CodeGroup>
 
 ```typescript SDK
+import { compareMoney, formatMoney, sumMoney } from '@spree/sdk'
+
 const order = await client.orders.get('or_abc123', {}, { token });
 
-import { compareMoney, sumMoney } from '@spree/sdk'
-
-// Raw string values
-order.total;         // "129.99"
-order.display_total; // "$129.99"
+formatMoney(order.total, order.currency, order.locale);          // "€129.99" for an order in euros, read in English; "" when null
+formatMoney(order.delivery_total, order.currency, order.locale); // "€10.00"
 
 // Calculate on the strings, exactly
 const subtotal = sumMoney(order.items.map((item) => item.total), order.currency); // "129.99"
@@ -62,10 +109,11 @@ const isFree = compareMoney(order.total, '0') === 0;
 ```
 
 ```javascript JavaScript
-const data = await response.json();
+const order = await response.json();
 
-// Use display fields for rendering
-element.textContent = data.display_total; // "$129.99"
+const money = new Intl.NumberFormat(order.locale ?? 'en', { style: 'currency', currency: order.currency });
+// An amount is null when prices are hidden from the shopper; Intl would show it as zero
+element.textContent = order.total === null ? '' : money.format(order.total); // "€129.99"
 
 // Calculate on the raw strings with a decimal library, never parseFloat:
 // 0.1 + 0.2 is 0.30000000000000004 as a JSON number.
@@ -73,6 +121,37 @@ element.textContent = data.display_total; // "$129.99"
 
 </CodeGroup>
 
+### Product prices
+
+Before there is a cart, prices are in the customer's market. Resolve the market once and format every price with it; each price also carries its own `currency`.
+
+<CodeGroup>
+
+```typescript SDK
+import { formatMoney } from '@spree/sdk'
+
+const market = await client.markets.resolve('DE');
+const product = await client.products.get('spree-tote', {}, { currency: market.currency, locale: market.default_locale });
+
+// A price is a unit price, which may carry a fraction of a cent
+formatMoney(product.price.amount, market.currency, market.default_locale, { unitPrice: true });            // "29,99 €"
+formatMoney(product.price.compare_at_amount, market.currency, market.default_locale, { unitPrice: true }); // "39,99 €", or "" when there is none
+```
+
+```javascript JavaScript
+const headers = { 'X-Spree-API-Key': 'pk_xxx' };
+const market = await (await fetch('/api/v3/store/markets/resolve?country=DE', { headers })).json();
+const product = await (await fetch('/api/v3/store/products/spree-tote', {
+  headers: { ...headers, 'X-Spree-Currency': market.currency, 'X-Spree-Locale': market.default_locale },
+})).json();
+
+// A unit price may carry a fraction of a cent, so allow up to four decimals
+const money = new Intl.NumberFormat(market.default_locale, { style: 'currency', currency: market.currency, maximumFractionDigits: 4 });
+element.textContent = product.price.amount === null ? '' : money.format(product.price.amount); // "29,99 €"
+```
+
+</CodeGroup>
+
 <Tip>
-Use `display_*` fields for rendering prices in the UI — they are pre-formatted with the correct currency symbol and decimal places based on the order's currency. Calculate on the raw strings with the SDK's `sumMoney`, `subtractMoney`, `multiplyMoney` and `compareMoney`, which work on decimal strings exactly.
+Never convert an amount to a JavaScript number: `0.1 + 0.2` is `0.30000000000000004`. Calculate and display with the [money helpers](#money-helpers) instead.
 </Tip>
