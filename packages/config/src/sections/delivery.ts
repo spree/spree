@@ -303,8 +303,7 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
     ) as DeliveryMethodEntry
     if (entry.storefront_visible === true) delete entry.storefront_visible
     if (entry.available_to_sellers === false) delete entry.available_to_sellers
-    if (entry.fulfillment_provider === 'Spree::FulfillmentProvider::Manual')
-      delete entry.fulfillment_provider
+    if (entry.fulfillment_provider === 'manual') delete entry.fulfillment_provider
     if (live.delivery_profile_id) {
       const profile = await ctx.keyOf('delivery_profiles', String(live.delivery_profile_id))
       if (profile) entry.delivery_profile = profile

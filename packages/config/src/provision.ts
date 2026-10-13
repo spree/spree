@@ -5,7 +5,7 @@ import { parseConfig, type Variables } from './load.js'
 import { type PlannedRun, planConfig } from './plan.js'
 import type { SpreeConfig } from './schema.js'
 import { ORDERED_SECTIONS, SECTIONS } from './sections/index.js'
-import type { ApplyReport, ConfigClient } from './types.js'
+import type { ApplyReport, ConfigClient, SectionName } from './types.js'
 
 interface LiveStore {
   default_country_code: string | null
@@ -53,9 +53,7 @@ function merge(...configs: SpreeConfig[]): SpreeConfig {
  * Drops the defaults an installation cannot hold: a host app may unregister a
  * seller requirement kind or a payment method type, and the store's other
  * defaults must not fail on its account. Sections whose entries are typed
- * declare where their registered types are listed. A payment method list
- * omits types the store already has, which is harmless: those are left
- * alone anyway.
+ * declare where their registered types are listed.
  */
 async function withoutUnregistered(
   config: SpreeConfig,
@@ -77,39 +75,63 @@ async function withoutUnregistered(
   return filtered as SpreeConfig
 }
 
-/** Sections with one default record, and the attribute the API reads it back as. */
-const SINGLE_DEFAULTS = [
-  { section: 'tax_categories', live: 'is_default' },
-  { section: 'stock_locations', live: 'default' },
-  { section: 'package_types', live: 'default' },
-] as const
+type Entry = Record<string, unknown>
 
 /**
- * Leaves out a default the store already has another of. Matching is by
- * name, so a merchant who renamed the default tax category, warehouse or box
- * would otherwise get a second one that takes the default flag from theirs.
+ * Defaults a store holds one of, and whether a live record already is it.
+ * Everything else is matched by name, so a merchant who renamed the default
+ * tax category, warehouse, box or delivery profile, the digital profile or
+ * the store credit method would otherwise get a second one.
  */
-async function withoutCompetingDefaults(
+const ONE_PER_STORE: { section: SectionName; holds: (entry: Entry, record: Entry) => boolean }[] = [
+  { section: 'tax_categories', holds: (entry, record) => !!entry.default && !!record.is_default },
+  { section: 'stock_locations', holds: (entry, record) => !!entry.default && !!record.default },
+  { section: 'package_types', holds: (entry, record) => !!entry.default && !!record.default },
+  {
+    section: 'delivery_profiles',
+    holds: (entry, record) =>
+      (!!entry.default && !!record.default) ||
+      (entry.kind === 'digital' && record.kind === 'digital'),
+  },
+  { section: 'payment_methods', holds: (entry, record) => entry.type === record.type },
+]
+
+/**
+ * Leaves out each default the store already holds under whatever name, and
+ * points the template's references to a left-out delivery profile at the
+ * store's own.
+ */
+async function withoutHeldDefaults(
   config: SpreeConfig,
   client: ConfigClient,
 ): Promise<SpreeConfig> {
-  const declared = SINGLE_DEFAULTS.filter(({ section }) =>
-    (config[section] as { default?: boolean }[] | undefined)?.some((entry) => entry.default),
+  const rules = ONE_PER_STORE.filter(
+    ({ section }) => (config[section] as Entry[] | undefined)?.length,
   )
-  const taken = await Promise.all(
-    declared.map(async ({ section, live }) => {
+  const live = await Promise.all(
+    rules.map(({ section }) => {
       const { path, listParams } = SECTIONS[section]
-      const records = await listAll(client, path, listParams ?? {})
-      return records.some((record) => record[live] === true)
+      return listAll(client, path, listParams ?? {})
     }),
   )
   const filtered: Record<string, unknown> = { ...config }
-  declared.forEach(({ section }, index) => {
-    if (!taken[index]) return
-    filtered[section] = (config[section] as { default?: boolean }[]).filter(
-      (entry) => !entry.default,
-    )
+  const profileNames = new Map<string, string>()
+  rules.forEach(({ section, holds }, index) => {
+    filtered[section] = (config[section] as Entry[]).filter((entry) => {
+      const held = live[index].find((record) => holds(entry, record))
+      if (held && section === 'delivery_profiles')
+        profileNames.set(String(entry.name), String(held.name))
+      return !held
+    })
   })
+  for (const [section, entries] of Object.entries(filtered)) {
+    if (!Array.isArray(entries)) continue
+    filtered[section] = entries.map((entry: Entry) =>
+      typeof entry.delivery_profile === 'string' && profileNames.has(entry.delivery_profile)
+        ? { ...entry, delivery_profile: profileNames.get(entry.delivery_profile) }
+        : entry,
+    )
+  }
   return filtered as SpreeConfig
 }
 
@@ -146,7 +168,7 @@ export async function storeDefaults(
     parseConfig(STORE_DEFAULTS, variables).config,
     ...(withCountry ? [parseConfig(COUNTRY_TEMPLATE, variables).config] : []),
   )
-  return withoutCompetingDefaults(await withoutUnregistered(defaults, client), client)
+  return withoutHeldDefaults(await withoutUnregistered(defaults, client), client)
 }
 
 /**

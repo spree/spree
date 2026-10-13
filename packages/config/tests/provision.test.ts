@@ -192,6 +192,30 @@ describe('provisionStore', () => {
     expect(api.all('/package_types').map((box) => box.name)).toEqual(['Our box'])
   })
 
+  it('reuses a renamed store credit method and delivery profiles', async () => {
+    const api = new FakeApi()
+    polishStore(api)
+    api.seed('/delivery_profiles', [
+      { name: 'Shipping', kind: 'shipping', default: true },
+      { name: 'Downloads', kind: 'digital', default: false },
+    ])
+    api.seed('/payment_methods', [{ name: 'Gift balance', type: 'store_credit' }])
+
+    await provisionStore(api)
+
+    expect(api.all('/payment_methods').map((method) => method.name)).toEqual(['Gift balance'])
+    const profiles = api.all('/delivery_profiles')
+    expect(profiles.map((profile) => profile.name)).toEqual(['Shipping', 'Downloads'])
+    const profileOf = (name: string) =>
+      profiles.find(
+        (profile) =>
+          profile.id ===
+          api.all('/delivery_methods').find((method) => method.name === name)?.delivery_profile_id,
+      )?.name
+    expect(profileOf('Digital Delivery')).toBe('Downloads')
+    expect(profileOf('Standard')).toBe('Shipping')
+  })
+
   // The API takes amounts as canonical decimal strings and refuses numbers.
   it('sends the amounts the templates write as numbers as decimal strings', async () => {
     const api = new FakeApi()
