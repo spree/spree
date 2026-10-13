@@ -56,12 +56,15 @@ module Spree
       private
 
       def build_order
+        market = resolve_market if @params[:market_id].present?
+
         attrs = {
           customer: @customer,
           created_by: @created_by,
           email: @params[:email] || @customer&.email,
-          currency: @params[:currency].presence&.upcase || @store.default_currency,
-          locale: @params[:locale] || Spree::Current.locale,
+          market: market,
+          currency: @params[:currency].presence&.upcase || market&.currency || @store.default_currency,
+          locale: @params[:locale].presence || market&.default_locale || Spree::Current.locale,
           customer_note: @params[:customer_note],
           po_number: @params[:po_number],
           internal_note: @params[:internal_note],
@@ -74,7 +77,6 @@ module Spree
         # signed id, so it assigns like any other attribute.
         attrs[:po_document_signed_id] = @params[:po_document_signed_id] if @params[:po_document_signed_id].present?
 
-        attrs[:market] = resolve_market if @params[:market_id].present?
         attrs[:channel] = resolve_channel if @params[:channel_id].present?
         attrs[:company] = resolve_company if @params[:company_id].present?
         attrs[:preferred_stock_location] = resolve_preferred_stock_location if @params[:preferred_stock_location_id].present?

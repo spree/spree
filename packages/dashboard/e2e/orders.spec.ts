@@ -92,6 +92,19 @@ test.describe('new order', () => {
     })
   })
 
+  test('picking a market switches the currency and language to that market', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+
+    await expect(page.locator('#order-currency')).toContainText('EUR')
+    await expect(page.locator('#order-currency')).toBeDisabled()
+    await expect(page.locator('#order-locale')).toContainText('DE')
+  })
+
   // The motivating case for this form: a purchase order arrives by email and
   // the merchant keys the order in, reference and paperwork together.
   test('carries a PO number and its document onto the created order', async ({ page }) => {

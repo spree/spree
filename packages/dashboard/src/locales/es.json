@@ -353,6 +353,8 @@
           "section_billing": "Facturación",
           "section_customer": "Cliente",
           "section_items": "Artículos",
+          "section_market": "Mercado y canal",
+          "section_market_help": "Cambiar el mercado, el canal o la moneda vacía los artículos, porque la disponibilidad y los precios dependen de ellos.",
           "section_notes": "Notas",
           "section_summary": "Resumen",
           "select_company": "Empresa (opcional)",
@@ -1541,6 +1543,10 @@
           "label": "Código de cupón",
           "placeholder": "Opcional"
         },
+        "currency": {
+          "help": "La define el mercado.",
+          "label": "Moneda"
+        },
         "customer_note": {
           "label": "Nota del cliente (visible para el cliente)"
         },
@@ -1550,6 +1556,14 @@
         },
         "internal_note": {
           "label": "Nota interna (solo staff)"
+        },
+        "locale": {
+          "help": "Se usa en los correos y documentos que recibe el cliente.",
+          "label": "Idioma"
+        },
+        "market": {
+          "help": "Define los precios e impuestos del pedido, y qué moneda e idiomas puede usar.",
+          "label": "Mercado"
         },
         "order_group": {
           "label": "Compra",

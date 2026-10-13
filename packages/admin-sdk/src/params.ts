@@ -446,6 +446,18 @@ export interface StoreCreditListResponse {
   meta: StoreCreditListMeta
 }
 
+/**
+ * The draft order a variant search serves: only variants that buyer can be
+ * sold on the channel are listed, priced as they would pay in the market.
+ */
+export type VariantSalesContextParams = {
+  market_id?: string
+  channel_id?: string
+  customer_id?: string
+  company_id?: string
+  currency?: string
+}
+
 export type EmailTemplateLanguageParams = {
   /** A language code, or `any` (the default) for the version every language uses. */
   language?: string

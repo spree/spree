@@ -101,6 +101,42 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
       end
     end
 
+    context "with a draft order's sales context" do
+      let(:wholesale_channel) { create(:channel, store: store) }
+      let!(:wholesale_product) do
+        create(:product, store: store).tap { |p| create(:product_publication, product: p, channel: wholesale_channel) }
+      end
+
+      it 'lists only products published on the channel' do
+        get :index, params: { channel_id: wholesale_channel.prefixed_id }, as: :json
+
+        product_ids = json_response['data'].map { |v| v['product_id'] }
+        expect(product_ids).to include(wholesale_product.prefixed_id)
+        expect(product_ids).not_to include(product.prefixed_id)
+      end
+
+      context 'and a market' do
+        let(:market) { create(:market, :eu, store: store) }
+
+        before { wholesale_product.default_variant.set_price('EUR', 20) }
+
+        it "prices in the market's currency and skips products without a price in it" do
+          get :index, params: { channel_id: wholesale_channel.prefixed_id, market_id: market.prefixed_id }, as: :json
+
+          rows = json_response['data']
+          expect(rows.map { |v| v['product_id'] }).to eq([wholesale_product.prefixed_id])
+          expect(rows.first['price']['currency']).to eq('EUR')
+        end
+      end
+
+      it 'refuses a channel from another store' do
+        foreign_channel = create(:channel, store: create(:store))
+        get :index, params: { channel_id: foreign_channel.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'without authentication' do
       let(:headers) { {} }
 

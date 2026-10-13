@@ -1519,6 +1519,10 @@
           "label": "Kod kuponu",
           "placeholder": "Opcjonalnie"
         },
+        "currency": {
+          "help": "Ustalana przez rynek.",
+          "label": "Waluta"
+        },
         "customer_note": {
           "label": "Notatka klienta (widoczna dla klienta)"
         },
@@ -1528,6 +1532,14 @@
         },
         "internal_note": {
           "label": "Notatka wewnętrzna (tylko dla personelu)"
+        },
+        "locale": {
+          "help": "Używany w e-mailach i dokumentach wysyłanych do klienta.",
+          "label": "Język"
+        },
+        "market": {
+          "help": "Określa ceny i podatki zamówienia oraz dostępną walutę i języki.",
+          "label": "Rynek"
         },
         "order_group": {
           "label": "Zakup",
@@ -3480,6 +3492,8 @@
           "section_billing": "Rozliczenie",
           "section_customer": "Klient",
           "section_items": "Pozycje",
+          "section_market": "Rynek i kanał",
+          "section_market_help": "Zmiana rynku, kanału lub waluty usuwa pozycje, ponieważ dostępność i ceny od nich zależą.",
           "section_notes": "Notatki",
           "section_summary": "Podsumowanie",
           "select_company": "Firma (opcjonalnie)",

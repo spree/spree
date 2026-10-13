@@ -65,6 +65,26 @@ module Spree
         end
       end
 
+      context 'with a market' do
+        let(:market) { create(:market, :eu, store: store) }
+        let(:params) { { email: 'new@example.com', market_id: market.prefixed_id } }
+
+        it "takes the market's currency and default locale" do
+          order = subject.value
+          expect(order.market).to eq(market)
+          expect(order.currency).to eq('EUR')
+          expect(order.locale).to eq('de')
+        end
+
+        context 'and an explicit locale' do
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, locale: 'en' } }
+
+          it 'keeps the given locale' do
+            expect(subject.value.locale).to eq('en')
+          end
+        end
+      end
+
       context 'with items but no shipping address' do
         let(:params) do
           {

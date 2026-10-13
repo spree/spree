@@ -263,6 +263,7 @@ module Spree
             currency: current_currency,
             store: current_store,
             user: current_user,
+            company: params[:company],
             quantity: quantity
           )
         end

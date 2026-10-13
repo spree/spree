@@ -1496,6 +1496,10 @@
           "label": "优惠码",
           "placeholder": "可选"
         },
+        "currency": {
+          "help": "由市场决定。",
+          "label": "货币"
+        },
         "customer_note": {
           "label": "客户备注（客户可见）"
         },
@@ -1505,6 +1509,14 @@
         },
         "internal_note": {
           "label": "内部备注（仅员工可见）"
+        },
+        "locale": {
+          "help": "用于发送给客户的邮件和文档。",
+          "label": "语言"
+        },
+        "market": {
+          "help": "决定订单的价格和税费，以及可用的货币和语言。",
+          "label": "市场"
         },
         "order_group": {
           "label": "本次购买",
@@ -3432,6 +3444,8 @@
           "section_billing": "账单",
           "section_customer": "客户",
           "section_items": "商品",
+          "section_market": "市场和渠道",
+          "section_market_help": "更改市场、渠道或货币会清空商品，因为可售范围和价格取决于它们。",
           "section_notes": "备注",
           "section_summary": "概览",
           "select_company": "公司（可选）",
