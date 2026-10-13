@@ -132,7 +132,7 @@ jobs:
       # `pnpm publish` does in release.yml.
       - name: Pack packages
         run: |
-          for pkg in core admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli docs; do
+          for pkg in core admin-sdk seller-sdk config dashboard-ui dashboard-core dashboard seller-dashboard cli; do
             pnpm --dir "packages/$pkg" pack --pack-destination "$RUNNER_TEMP/tarballs"
           done
 
