@@ -36,8 +36,28 @@ export type CountryOption = { iso: CountryCode; iso3: string }
 export function useCountryDisplayName() {
   const displayName = useDisplayName('region')
   return useCallback(
-    (country: Pick<CountryOption, 'iso'>) => displayName(country.iso) ?? country.iso,
+    (country: { iso: string }) => displayName(country.iso) ?? country.iso,
     [displayName],
+  )
+}
+
+/**
+ * Sorts any list of countries by the name the admin reads, collated in the
+ * admin's language (a Swedish admin sees Österrike after Zimbabwe). Each name
+ * is resolved once per sort. The API cannot do this: it answers in ISO order
+ * and does not know the reader's language.
+ */
+export function useSortByCountryName() {
+  const countryName = useCountryDisplayName()
+  const { i18n } = useTranslation()
+  const collator = useMemo(() => new Intl.Collator(i18n.language), [i18n.language])
+  return useCallback(
+    <T,>(items: readonly T[], isoOf: (item: T) => string): T[] =>
+      items
+        .map((item) => ({ item, name: countryName({ iso: isoOf(item) }) }))
+        .sort((left, right) => collator.compare(left.name, right.name))
+        .map(({ item }) => item),
+    [countryName, collator],
   )
 }
 
@@ -85,13 +105,14 @@ function CountryRow({ country, label }: { country: CountryOption; label: string 
  */
 function useCountryOptions(): CountryOption[] {
   const { countries } = useCountries()
-  const countryName = useCountryDisplayName()
+  const sortByName = useSortByCountryName()
   return useMemo(
     () =>
-      countries
-        .map((c) => ({ iso: c.iso, iso3: c.iso3 }))
-        .sort((left, right) => countryName(left).localeCompare(countryName(right))),
-    [countries, countryName],
+      sortByName(
+        countries.map((c) => ({ iso: c.iso, iso3: c.iso3 })),
+        (c) => c.iso,
+      ),
+    [countries, sortByName],
   )
 }
 

@@ -1,6 +1,7 @@
 import type { Country, State } from '@spree/admin-sdk'
-import { adminClient, useCountryDisplayName, useResourceKey } from '@spree/dashboard-core'
+import { adminClient, useResourceKey, useSortByCountryName } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 /**
  * Every country the store actually sells into, unioned across its markets and
@@ -15,17 +16,16 @@ export function useMarketCountries() {
     staleTime: 1000 * 60 * 30,
   })
 
-  const byIso = new Map<string, Country>()
-  for (const market of data?.data ?? []) {
-    for (const country of market.countries ?? []) {
-      if (!byIso.has(country.iso)) byIso.set(country.iso, country)
+  const sortByName = useSortByCountryName()
+  const countries = useMemo(() => {
+    const byIso = new Map<string, Country>()
+    for (const market of data?.data ?? []) {
+      for (const country of market.countries ?? []) {
+        if (!byIso.has(country.iso)) byIso.set(country.iso, country)
+      }
     }
-  }
-
-  const countryName = useCountryDisplayName()
-  const countries = [...byIso.values()].sort((left, right) =>
-    countryName(left).localeCompare(countryName(right)),
-  )
+    return sortByName([...byIso.values()], (country) => country.iso)
+  }, [data, sortByName])
 
   return { countries, isLoading }
 }

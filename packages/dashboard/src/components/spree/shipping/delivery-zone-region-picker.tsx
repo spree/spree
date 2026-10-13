@@ -1,5 +1,5 @@
 import type { CountryCode, DeliveryZone } from '@spree/admin-sdk'
-import { useCountryDisplayName, useStore } from '@spree/dashboard-core'
+import { useCountryDisplayName, useSortByCountryName, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
@@ -50,6 +50,7 @@ export function DeliveryZoneRegionPicker({
   const { storeId } = useStore()
   const { countries: marketCountries, isLoading } = useMarketCountries()
   const countryName = useCountryDisplayName()
+  const sortByName = useSortByCountryName()
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<string[]>([])
   const [postalOpen, setPostalOpen] = useState(false)
@@ -83,8 +84,8 @@ export function DeliveryZoneRegionPicker({
       })
     }
 
-    return [...byIso.values()].sort((left, right) => left.name.localeCompare(right.name))
-  }, [marketCountries, countryName, claimed, selection])
+    return sortByName([...byIso.values()], (row) => row.iso)
+  }, [marketCountries, countryName, sortByName, claimed, selection])
 
   const visibleRows = useMemo(() => {
     const term = search.trim().toLowerCase()

@@ -4,7 +4,12 @@ import type { SetupCountry } from '@spree/admin-sdk'
 // installed app, which leaves Base UI's CommonJS shim unconverted and stops
 // the dashboard from starting. The monorepo cannot show this: its workspace
 // links are treated as source.
-import { ALL_CURRENCY_CODES, useCountryDisplayName, useDisplayName } from '@spree/dashboard-core'
+import {
+  ALL_CURRENCY_CODES,
+  useCountryDisplayName,
+  useDisplayName,
+  useSortByCountryName,
+} from '@spree/dashboard-core'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -119,14 +124,15 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
 }: StoreSetupFieldsProps<Values>) {
   const { t } = useTranslation()
   const countryName = useCountryDisplayName()
+  const sortByName = useSortByCountryName()
   const nameOf = useCallback(
     (country: SetupCountry) => countryName({ iso: country.code }),
     [countryName],
   )
   // Sorted by the name the merchant reads, which the API cannot know.
   const countries = useMemo(
-    () => [...unsortedCountries].sort((left, right) => nameOf(left).localeCompare(nameOf(right))),
-    [unsortedCountries, nameOf],
+    () => sortByName(unsortedCountries, (country) => country.code),
+    [unsortedCountries, sortByName],
   )
   // The generic form's errors are keyed by the caller's value type; these four
   // fields are guaranteed present by the StoreSetupValues constraint.
