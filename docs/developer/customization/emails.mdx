@@ -78,7 +78,7 @@ Besides [Liquid's standard filters](https://shopify.github.io/liquid/filters/abs
 | `t` | `{{ 'order_mailer.confirm_email.dear_customer' \| t: name: order.customer_name }}` | A Spree translation, with its placeholders filled in |
 | `raw` | `{{ product.description_html \| raw }}` | Prints the value without escaping. See below |
 
-Amounts arrive as decimal strings (`total`, `amount`, `price`), so format them with `money`: `{{ order.total | money }}`. It writes the amount in the email's currency and in the customer's language, the same way for every template. The `display_*` fields (`display_total`, `display_amount`) still arrive, so templates customized before 6.0 keep working, but the default templates no longer use them and new templates should not either.
+Amounts arrive as decimal strings (`total`, `amount`, `price`), so format them with `money`: `{{ order.total | money }}`. It writes the amount in the email's currency and in the customer's language, the same way for every template.
 
 ## Escaping
 

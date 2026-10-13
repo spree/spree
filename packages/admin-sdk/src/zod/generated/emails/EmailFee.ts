@@ -8,7 +8,6 @@ export const EmailFeeSchema = z.object({
   line_item_id: z.string().nullable(),
   fulfillment_id: z.string().nullable(),
   amount: z.string().nullable(),
-  display_amount: z.string().nullable(),
 });
 
 export type EmailFee = z.infer<typeof EmailFeeSchema>;

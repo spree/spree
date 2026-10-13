@@ -18,11 +18,6 @@ export const EmailDeliveryRateSchema = z.object({
   estimated_delivery_date: z.string().nullable(),
   unpriced: z.boolean(),
   freight_summary: EmailFreightSummarySchema.nullable(),
-  display_cost: z.string().nullable(),
-  display_total: z.string().nullable(),
-  display_additional_tax_total: z.string().nullable(),
-  display_included_tax_total: z.string().nullable(),
-  display_tax_total: z.string().nullable(),
   delivery_method: EmailDeliveryMethodSchema,
 });
 

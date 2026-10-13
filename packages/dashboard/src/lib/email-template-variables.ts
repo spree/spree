@@ -1,6 +1,6 @@
 import type {
   Company,
-  Customer,
+  EmailCustomer,
   EmailFulfillment,
   EmailOrder,
   EmailOrderGroup,
@@ -8,6 +8,7 @@ import type {
   EmailStore,
 } from '@spree/admin-sdk'
 import {
+  EmailCustomerSchema,
   EmailFulfillmentSchema,
   EmailOrderGroupSchema,
   EmailOrderSchema,
@@ -145,11 +146,11 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
   ],
   'spree.digital_asset_mailer.files_ready_email': [order, variable('downloads'), resend],
   'spree.customer_mailer.password_reset_email': [
-    variable('customer', [
-      'first_name',
-      'last_name',
-      'email',
-    ] as const satisfies FieldsOf<Customer>),
+    variable(
+      'customer',
+      ['first_name', 'last_name', 'email'] as const satisfies FieldsOf<EmailCustomer>,
+      EmailCustomerSchema,
+    ),
     variable('reset_url'),
   ],
   'spree.customer_mailer.data_export_email': [variable('download_url'), variable('expires_at')],

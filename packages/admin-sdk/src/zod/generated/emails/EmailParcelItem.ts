@@ -11,8 +11,6 @@ export const EmailParcelItemSchema = z.object({
   options_text: z.string().nullable(),
   price: z.string(),
   amount: z.string(),
-  display_price: z.string(),
-  display_amount: z.string(),
 });
 
 export type EmailParcelItem = z.infer<typeof EmailParcelItemSchema>;

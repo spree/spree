@@ -31,14 +31,6 @@ module Spree
       attribute :amount do |item|
         Spree::Money::Rounding.format(item.line_item.price * item.quantity, item.line_item.currency)
       end
-
-      attribute :display_price do |item|
-        item.line_item.display_price.to_s
-      end
-
-      attribute :display_amount do |item|
-        Spree::Money.new(item.line_item.price * item.quantity, currency: item.line_item.currency).to_s
-      end
     end
   end
 end

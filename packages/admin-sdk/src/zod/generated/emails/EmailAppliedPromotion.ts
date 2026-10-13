@@ -8,7 +8,6 @@ export const EmailAppliedPromotionSchema = z.object({
   description: z.string().nullable(),
   code: z.string().nullable(),
   amount: z.string().nullable(),
-  display_amount: z.string().nullable(),
 });
 
 export type EmailAppliedPromotion = z.infer<typeof EmailAppliedPromotionSchema>;
