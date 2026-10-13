@@ -76,6 +76,9 @@ packages/cli/templates/seller-dashboard-starter
 # The CLI's offline Admin API spec, generated from docs/api-reference/admin.yaml
 # before every build, test, type check and dev run (see bundle-spec.mjs)
 packages/cli/src/generated
+# The configurator's writable attributes and embedded store default templates,
+# generated before every build, test, type check and dev run
+packages/config/src/generated
 .claude/worktrees
 *.tsbuildinfo
 .claude/scheduled_tasks.lock
