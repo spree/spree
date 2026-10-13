@@ -46236,8 +46236,8 @@ paths:
             application/json:
               example:
                 data:
-                - id: sq_UkLWZg9DAJ
-                  name: Sales by channel
+                - id: sq_C9SrJgpzQ4
+                  name: Channel sales review
                   description:
                   query:
                     metrics:
@@ -46250,14 +46250,390 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   user_id:
                   author_name:
+                - id: sq_s18jaGonyx
+                  name: Failed payments
+                  description: Charges that failed over the last four weeks, by payment
+                    method.
+                  query:
+                    metrics:
+                    - payments_failed
+                    - payments_count
+                    dimensions:
+                    - payment_method
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-payments_failed"
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_vEmzDoNU0H
+                  name: First-time vs returning
+                  description: Sales split between first-time and returning buyers
+                    over the last four weeks.
+                  query:
+                    metrics:
+                    - total_sales
+                    - orders
+                    - customers
+                    dimensions:
+                    - customer_type
+                    time_range:
+                      preset: last_4_weeks
+                    compare: previous_period
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_gbHJdmfrXB
+                  name: Net sales over time
+                  description: Weekly gross sales, discounts, returns and net sales
+                    over the last twelve months.
+                  query:
+                    metrics:
+                    - gross_sales
+                    - discounts
+                    - returns
+                    - net_sales
+                    dimensions:
+                    - name: completed_at
+                      grain: week
+                    time_range:
+                      preset: last_12_months
+                    compare: previous_period
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_PQNMcnNFWw
+                  name: Orders by fulfillment status
+                  description: Order counts and sales grouped by fulfillment status
+                    over the last four weeks.
+                  query:
+                    metrics:
+                    - orders
+                    - total_sales
+                    dimensions:
+                    - fulfillment_status
+                    time_range:
+                      preset: last_4_weeks
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_L3pHOn63Vw
+                  name: Orders by payment status
+                  description: Order counts and sales grouped by payment status over
+                    the last four weeks.
+                  query:
+                    metrics:
+                    - orders
+                    - total_sales
+                    dimensions:
+                    - payment_status
+                    time_range:
+                      preset: last_4_weeks
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_ed6l8wVqSM
+                  name: Payments by method
+                  description: What each payment method took, net of refunds, over
+                    the last four weeks.
+                  query:
+                    metrics:
+                    - net_payments
+                    - payments_count
+                    dimensions:
+                    - payment_method
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-net_payments"
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_HOVtlDrOmL
+                  name: Payments over time
+                  description: Daily payments taken and refunded over the last four
+                    weeks, compared with the previous period.
+                  query:
+                    metrics:
+                    - payments_received
+                    - payments_refunded
+                    - net_payments
+                    dimensions:
+                    - name: paid_at
+                      grain: day
+                    time_range:
+                      preset: last_4_weeks
+                    compare: previous_period
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_98FqgRua4h
+                  name: Product margin
+                  description: Products ranked by gross profit over the last four
+                    weeks, with cost and margin.
+                  query:
+                    metrics:
+                    - net_sales
+                    - cost_of_goods
+                    - gross_profit
+                    - gross_margin
+                    dimensions:
+                    - product
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-gross_profit"
+                    limit: 20
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_xhoCpeNMWu
+                  name: Returns over time
+                  description: Monthly refunds over the last twelve months, compared
+                    with the previous period.
+                  query:
+                    metrics:
+                    - returns
+                    - orders
+                    dimensions:
+                    - name: completed_at
+                      grain: month
+                    time_range:
+                      preset: last_12_months
+                    compare: previous_period
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_EfhxLZ9ck8
+                  name: Sales by channel
+                  description: Sales and orders per sales channel over the last four
+                    weeks.
+                  query:
+                    metrics:
+                    - total_sales
+                    - orders
+                    dimensions:
+                    - channel
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-total_sales"
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_uw2YK1rnl0
+                  name: Sales by country
+                  description: Sales and orders by shipping country over the last
+                    four weeks.
+                  query:
+                    metrics:
+                    - total_sales
+                    - orders
+                    dimensions:
+                    - country
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-total_sales"
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_VqXmZF31wY
+                  name: Sales by market
+                  description: Sales and orders per market over the last four weeks.
+                  query:
+                    metrics:
+                    - total_sales
+                    - orders
+                    dimensions:
+                    - market
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-total_sales"
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_UkLWZg9DAJ
+                  name: Sales over time
+                  description: Daily sales, orders and average order value for the
+                    last four weeks, compared with the previous period.
+                  query:
+                    metrics:
+                    - total_sales
+                    - orders
+                    - average_order_value
+                    dimensions:
+                    - name: completed_at
+                      grain: day
+                    time_range:
+                      preset: last_4_weeks
+                    compare: previous_period
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_ROeNhrwyV9
+                  name: Sell-through by variant
+                  description: Units shipped against units received per variant over
+                    the last four weeks.
+                  query:
+                    metrics:
+                    - units_shipped
+                    - units_received
+                    - sell_through
+                    dimensions:
+                    - moved_variant
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-units_shipped"
+                    limit: 20
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_2KY5XM6frI
+                  name: Seller payouts
+                  description: What each seller earned last month, after the marketplace
+                    commission.
+                  query:
+                    metrics:
+                    - net_sales
+                    - commission
+                    - seller_payout
+                    - units_sold
+                    dimensions:
+                    - seller
+                    time_range:
+                      preset: last_month
+                    sort: "-seller_payout"
+                    limit: 50
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_GZUcnUYI5A
+                  name: Stock movement over time
+                  description: Weekly units received and shipped over the last twelve
+                    months.
+                  query:
+                    metrics:
+                    - units_received
+                    - units_shipped
+                    dimensions:
+                    - name: moved_at
+                      grain: week
+                    time_range:
+                      preset: last_12_months
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_AXs1igzRC6
+                  name: Top categories
+                  description: Best-selling categories by net sales over the last
+                    four weeks.
+                  query:
+                    metrics:
+                    - net_sales
+                    - units_sold
+                    dimensions:
+                    - category
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-net_sales"
+                    limit: 20
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_p6klVeMgbn
+                  name: Top companies
+                  description: Organisations ranked by spend over the last four weeks.
+                  query:
+                    metrics:
+                    - total_sales
+                    - orders
+                    dimensions:
+                    - company
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-total_sales"
+                    limit: 20
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_nJqfPa3Cpe
+                  name: Top customers
+                  description: Customers ranked by spend over the last four weeks.
+                  query:
+                    metrics:
+                    - total_sales
+                    - orders
+                    dimensions:
+                    - customer
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-total_sales"
+                    limit: 20
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
+                - id: sq_OIJLhNcSbf
+                  name: Top products
+                  description: Best-selling products by net sales over the last four
+                    weeks.
+                  query:
+                    metrics:
+                    - net_sales
+                    - units_sold
+                    dimensions:
+                    - product
+                    time_range:
+                      preset: last_4_weeks
+                    sort: "-net_sales"
+                    limit: 20
+                  seeded: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  user_id:
+                  author_name:
                 meta:
                   page: 1
                   limit: 25
-                  count: 1
+                  count: 21
                   pages: 1
                   from: 1
-                  to: 1
-                  in: 1
+                  to: 21
+                  in: 21
                   previous:
                   next:
               schema:
@@ -46300,7 +46676,7 @@ paths:
           content:
             application/json:
               example:
-                id: sq_gbHJdmfrXB
+                id: sq_YHETxCGlb0
                 name: Orders by channel
                 description: Weekly review
                 query:
@@ -46355,8 +46731,8 @@ paths:
           content:
             application/json:
               example:
-                id: sq_UkLWZg9DAJ
-                name: Sales by channel (monthly)
+                id: sq_C9SrJgpzQ4
+                name: Channel sales review (monthly)
                 description: For the board pack
                 query:
                   metrics:
