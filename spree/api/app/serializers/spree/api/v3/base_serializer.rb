@@ -35,7 +35,7 @@ module Spree
         # Emails use it alone: their templates format amounts with the `money`
         # Liquid filter.
         def self.without_display_money
-          _attributes.delete_if { |key, _| key.to_s.start_with?('display_') && !FORMATTED_LABELS.include?(key.to_sym) }
+          _attributes.delete_if { |key, _| display_money?(key) }
         end
 
         # Declares money attributes, written as decimal strings with exactly
@@ -49,19 +49,32 @@ module Spree
         #   or a block taking the record
         # @param unit_price [Boolean]
         def self.money_attributes(*names, currency: :currency, unit_price: false)
-          typelize(**names.index_with { [:string, nullable: true] })
+          typelize(**names.index_with { |name| display_money?(name) ? display_money_type(name) : [:string, nullable: true] })
 
           names.each do |name|
+            formatted = display_money?(name)
             attribute(name) do |object|
               next if params[:hide_prices]
 
               value = object.public_send(name)
-              next value if name.to_s.start_with?('display_') || value.nil?
+              next value if formatted || value.nil?
 
               code = currency.is_a?(Proc) ? currency.call(object) : object.public_send(currency)
               Spree::Money::Rounding.format(value, code, unit_price: unit_price)
             end
           end
+        end
+
+        # A formatted money copy, as opposed to a label such as +display_name+.
+        def self.display_money?(name)
+          name.to_s.start_with?('display_') && !FORMATTED_LABELS.include?(name.to_sym)
+        end
+
+        # The type of a formatted money copy: deprecated in favour of the
+        # amount it formats, which clients format in the reader's language.
+        def self.display_money_type(name, nullable: true)
+          [:string, nullable: nullable,
+                    deprecated: "Format `#{name.to_s.delete_prefix('display_')}` with its currency instead. Removed in 6.1."]
         end
 
         # Declares rates and percentages, written as decimal strings without

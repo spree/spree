@@ -13821,6 +13821,7 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
       required:
       - id
       - promotion_id
@@ -14079,66 +14080,77 @@ components:
         display_item_total:
           type: string
           nullable: true
+          deprecated: true
         discount_total:
           type: string
           nullable: true
         display_discount_total:
           type: string
           nullable: true
+          deprecated: true
         tax_total:
           type: string
           nullable: true
         display_tax_total:
           type: string
           nullable: true
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
         display_included_tax_total:
           type: string
           nullable: true
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
         display_additional_tax_total:
           type: string
           nullable: true
+          deprecated: true
         delivery_total:
           type: string
           nullable: true
         display_delivery_total:
           type: string
           nullable: true
+          deprecated: true
         fee_total:
           type: string
           nullable: true
         display_fee_total:
           type: string
           nullable: true
+          deprecated: true
         gift_card_total:
           type: string
           nullable: true
         display_gift_card_total:
           type: string
           nullable: true
+          deprecated: true
         store_credit_total:
           type: string
           nullable: true
         display_store_credit_total:
           type: string
           nullable: true
+          deprecated: true
         total:
           type: string
           nullable: true
         display_total:
           type: string
           nullable: true
+          deprecated: true
         amount_due:
           type: string
           nullable: true
         display_amount_due:
           type: string
           nullable: true
+          deprecated: true
         covered_by_store_credit:
           type: boolean
         payments:
@@ -14151,6 +14163,7 @@ components:
         display_adjustment_total:
           type: string
           nullable: true
+          deprecated: true
         current_step:
           type: string
         completed_steps:
@@ -14411,6 +14424,7 @@ components:
         display_refund_amount:
           type: string
           nullable: true
+          deprecated: true
         variant_id:
           type: string
           nullable: true
@@ -14486,6 +14500,7 @@ components:
         display_refund_total:
           type: string
           nullable: true
+          deprecated: true
         approved_at:
           type: string
           nullable: true
@@ -15204,6 +15219,7 @@ components:
           type: string
         display_available_store_credit_total:
           type: string
+          deprecated: true
         addresses:
           type: array
           items:
@@ -15399,18 +15415,23 @@ components:
         display_cost:
           type: string
           nullable: true
+          deprecated: true
         display_total:
           type: string
           nullable: true
+          deprecated: true
         display_additional_tax_total:
           type: string
           nullable: true
+          deprecated: true
         display_included_tax_total:
           type: string
           nullable: true
+          deprecated: true
         display_tax_total:
           type: string
           nullable: true
+          deprecated: true
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
       required:
@@ -15875,6 +15896,7 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
       required:
       - id
       - label
@@ -15976,6 +15998,7 @@ components:
         display_price_difference:
           type: string
           nullable: true
+          deprecated: true
         approved_at:
           type: string
           nullable: true
@@ -16070,6 +16093,7 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
       required:
       - id
       - label
@@ -16175,36 +16199,42 @@ components:
         display_cost:
           type: string
           nullable: true
+          deprecated: true
         total:
           type: string
           nullable: true
         display_total:
           type: string
           nullable: true
+          deprecated: true
         discount_total:
           type: string
           nullable: true
         display_discount_total:
           type: string
           nullable: true
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
         display_additional_tax_total:
           type: string
           nullable: true
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
         display_included_tax_total:
           type: string
           nullable: true
+          deprecated: true
         tax_total:
           type: string
           nullable: true
         display_tax_total:
           type: string
           nullable: true
+          deprecated: true
         status:
           anyOf:
           - type: string
@@ -16710,12 +16740,15 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
         display_amount_used:
           type: string
           nullable: true
+          deprecated: true
         display_amount_remaining:
           type: string
           nullable: true
+          deprecated: true
         expires_at:
           type: string
           nullable: true
@@ -17113,51 +17146,60 @@ components:
         display_price:
           type: string
           nullable: true
+          deprecated: true
         total:
           type: string
           nullable: true
         display_total:
           type: string
           nullable: true
+          deprecated: true
         adjustment_total:
           type: string
           nullable: true
         display_adjustment_total:
           type: string
           nullable: true
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
         display_additional_tax_total:
           type: string
           nullable: true
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
         display_included_tax_total:
           type: string
           nullable: true
+          deprecated: true
         discount_total:
           type: string
           nullable: true
         display_discount_total:
           type: string
           nullable: true
+          deprecated: true
         pre_tax_amount:
           type: string
           nullable: true
         display_pre_tax_amount:
           type: string
           nullable: true
+          deprecated: true
         discounted_amount:
           type: string
           nullable: true
         display_discounted_amount:
           type: string
           nullable: true
+          deprecated: true
         display_compare_at_amount:
           type: string
           nullable: true
+          deprecated: true
         compare_at_amount:
           type: string
           nullable: true
@@ -18121,66 +18163,77 @@ components:
         display_item_total:
           type: string
           nullable: true
+          deprecated: true
         discount_total:
           type: string
           nullable: true
         display_discount_total:
           type: string
           nullable: true
+          deprecated: true
         tax_total:
           type: string
           nullable: true
         display_tax_total:
           type: string
           nullable: true
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
         display_included_tax_total:
           type: string
           nullable: true
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
         display_additional_tax_total:
           type: string
           nullable: true
+          deprecated: true
         delivery_total:
           type: string
           nullable: true
         display_delivery_total:
           type: string
           nullable: true
+          deprecated: true
         fee_total:
           type: string
           nullable: true
         display_fee_total:
           type: string
           nullable: true
+          deprecated: true
         gift_card_total:
           type: string
           nullable: true
         display_gift_card_total:
           type: string
           nullable: true
+          deprecated: true
         store_credit_total:
           type: string
           nullable: true
         display_store_credit_total:
           type: string
           nullable: true
+          deprecated: true
         total:
           type: string
           nullable: true
         display_total:
           type: string
           nullable: true
+          deprecated: true
         amount_due:
           type: string
           nullable: true
         display_amount_due:
           type: string
           nullable: true
+          deprecated: true
         covered_by_store_credit:
           type: boolean
         payments:
@@ -18527,66 +18580,77 @@ components:
         display_item_total:
           type: string
           nullable: true
+          deprecated: true
         discount_total:
           type: string
           nullable: true
         display_discount_total:
           type: string
           nullable: true
+          deprecated: true
         tax_total:
           type: string
           nullable: true
         display_tax_total:
           type: string
           nullable: true
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
         display_included_tax_total:
           type: string
           nullable: true
+          deprecated: true
         additional_tax_total:
           type: string
           nullable: true
         display_additional_tax_total:
           type: string
           nullable: true
+          deprecated: true
         delivery_total:
           type: string
           nullable: true
         display_delivery_total:
           type: string
           nullable: true
+          deprecated: true
         fee_total:
           type: string
           nullable: true
         display_fee_total:
           type: string
           nullable: true
+          deprecated: true
         gift_card_total:
           type: string
           nullable: true
         display_gift_card_total:
           type: string
           nullable: true
+          deprecated: true
         store_credit_total:
           type: string
           nullable: true
         display_store_credit_total:
           type: string
           nullable: true
+          deprecated: true
         total:
           type: string
           nullable: true
         display_total:
           type: string
           nullable: true
+          deprecated: true
         amount_due:
           type: string
           nullable: true
         display_amount_due:
           type: string
           nullable: true
+          deprecated: true
         covered_by_store_credit:
           type: boolean
         payments:
@@ -18599,6 +18663,7 @@ components:
         display_adjustment_total:
           type: string
           nullable: true
+          deprecated: true
         discounts:
           type: array
           items:
@@ -18767,6 +18832,7 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
         source_type:
           type: string
           nullable: true
@@ -19316,6 +19382,7 @@ components:
           nullable: true
         display_amount:
           type: string
+          deprecated: true
         recorded_at:
           type: string
       required:
@@ -19521,9 +19588,11 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
         display_compare_at_amount:
           type: string
           nullable: true
+          deprecated: true
         price_list_id:
           type: string
           nullable: true
@@ -20201,6 +20270,7 @@ components:
         display_pre_tax_amount:
           type: string
           nullable: true
+          deprecated: true
         included_tax_total:
           type: string
           nullable: true
@@ -20213,12 +20283,14 @@ components:
         display_tax_total:
           type: string
           nullable: true
+          deprecated: true
         refund_amount:
           type: string
           nullable: true
         display_refund_amount:
           type: string
           nullable: true
+          deprecated: true
         variant_id:
           type: string
           nullable: true
@@ -20292,12 +20364,14 @@ components:
         display_refund_total:
           type: string
           nullable: true
+          deprecated: true
         refund_tax_total:
           type: string
           nullable: true
         display_refund_tax_total:
           type: string
           nullable: true
+          deprecated: true
         approved_at:
           type: string
           nullable: true
@@ -20903,6 +20977,7 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
         created_at:
           type: string
       required:
@@ -20931,12 +21006,15 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
         display_amount_used:
           type: string
           nullable: true
+          deprecated: true
         display_amount_remaining:
           type: string
           nullable: true
+          deprecated: true
         currency:
           type: string
           enum:
@@ -21202,6 +21280,7 @@ components:
         display_amount:
           type: string
           nullable: true
+          deprecated: true
       required:
       - id
       - label
