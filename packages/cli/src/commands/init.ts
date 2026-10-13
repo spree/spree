@@ -257,7 +257,9 @@ export async function runFirstRunSetup(flags: {
       // With the dashboard, wait for Vite to report ready (it auto-bumps the
       // port when 5173 is taken) so the browser opens the real URL. Without
       // one, open the built-in dashboard the summary names.
-      const dashboardUrl = dashboard ? await dashboard.url : setupBase
+      const dashboardUrl = dashboard
+        ? ((await dashboard.url) ?? `http://localhost:${DASHBOARD_PORT}`)
+        : setupBase
       // No admin was seeded, so the dashboard would only show a login form
       // nobody can pass — open first-run setup instead and land the operator
       // on the account form directly.

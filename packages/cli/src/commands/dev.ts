@@ -183,8 +183,9 @@ export function registerDevCommand(program: Command): void {
 /**
  * Opens the dashboard once the API answers its health check — the dashboard
  * is unusable before then — and, with a dashboard app, once Vite reports its
- * URL. Runs alongside the foreground stack; a stack that stops first, or an
- * API that never becomes healthy, leaves the browser alone.
+ * URL. Runs alongside the foreground stack; a stack that stops first, an
+ * API that never becomes healthy, or a dashboard that never reports ready
+ * leaves the browser alone.
  */
 async function openDashboardWhenReady(
   port: number,
@@ -197,7 +198,7 @@ async function openDashboardWhenReady(
     return
   }
   const url = dashboard ? await dashboard.url : `http://localhost:${port}/dashboard`
-  if (signal.aborted) return
+  if (!url || signal.aborted) return
 
   await openBrowser(url)
 }
