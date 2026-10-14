@@ -11,16 +11,20 @@ module Typelizer
   # ISO lists are the exception: a named type several serializers and the
   # request types share, but closed, since nothing outside the standard can
   # add a country or a currency, and markets only accept the locales
-  # `Spree::Locales::ALL` lists.
+  # `Spree::Locales::ALL` lists. The SDKs define them once, as values and
+  # types, in `@spree/sdk-core` (generated from the API reference by
+  # `pnpm generate:iso-codes`), so each SDK's `Enums.ts` re-exports that
+  # definition instead of carrying a copy of the list.
   module OpenEnums
     CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode].freeze
 
     module Property
       def enum_definition(...)
         definition = super
-        return definition if CLOSED_TYPE_NAMES.include?(enum_type_name)
+        return definition unless definition
+        return "type { #{enum_type_name} } from '@spree/sdk-core'" if CLOSED_TYPE_NAMES.include?(enum_type_name)
 
-        definition && "#{definition} | (string & {})"
+        "#{definition} | (string & {})"
       end
     end
 

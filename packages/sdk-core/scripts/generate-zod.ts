@@ -89,6 +89,8 @@ function topLevelDeclarations(body: string): string[] {
 }
 
 // Named enums (`Enums.ts`) are open string unions, so they validate as plain strings.
+// The ISO code lists it re-exports from sdk-core do too: responses are not where a
+// server and an SDK built against a different list should disagree.
 const enumTypeNames = new Set<string>()
 const generatedTypeNames = new Set<string>()
 
@@ -380,8 +382,8 @@ function generateFolder(typesDir: string, zodDir: string): void {
 
   const enumsFile = path.join(typesDir, 'Enums.ts')
   if (fs.existsSync(enumsFile)) {
-    for (const m of fs.readFileSync(enumsFile, 'utf-8').matchAll(/^export type (\w+) =/gm)) {
-      enumTypeNames.add(m[1])
+    for (const m of fs.readFileSync(enumsFile, 'utf-8').matchAll(/^export type (?:(\w+) =|\{ (\w+) \} from)/gm)) {
+      enumTypeNames.add(m[1] ?? m[2])
     }
   }
 
