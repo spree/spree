@@ -382,7 +382,9 @@ function generateFolder(typesDir: string, zodDir: string): void {
 
   const enumsFile = path.join(typesDir, 'Enums.ts')
   if (fs.existsSync(enumsFile)) {
-    for (const m of fs.readFileSync(enumsFile, 'utf-8').matchAll(/^export type (?:(\w+) =|\{ (\w+) \} from)/gm)) {
+    for (const m of fs
+      .readFileSync(enumsFile, 'utf-8')
+      .matchAll(/^export type (?:(\w+) =|\{ (\w+) \} from)/gm)) {
       enumTypeNames.add(m[1] ?? m[2])
     }
   }
