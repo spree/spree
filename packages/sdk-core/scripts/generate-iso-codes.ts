@@ -50,6 +50,16 @@ const LISTS = [
   },
 ] as const
 
+// `Intl.DisplayNames#of` throws on a code it considers malformed; the bare code
+// is the fallback name then.
+const displayName = (displayNames: Intl.DisplayNames, code: string) => {
+  try {
+    return displayNames.of(code) ?? code
+  } catch {
+    return code
+  }
+}
+
 // A locale's region needs a property name an identifier can use: `pt-BR` → `pt_BR`.
 const keyFor = (code: string) =>
   /^[A-Za-z_][A-Za-z0-9_]*$/.test(code) ? code : code.replace(/-/g, '_')
@@ -62,7 +72,7 @@ const sections = LISTS.map(({ name, summary, displayNames }) => {
     .sort()
     .map(
       (code) =>
-        `  /** ${existingNames.get(code) ?? displayNames.of(code) ?? code} */\n  ${keyFor(code)}: '${code}',`,
+        `  /** ${existingNames.get(code) ?? displayName(displayNames, code)} */\n  ${keyFor(code)}: '${code}',`,
     )
     .join('\n')
 

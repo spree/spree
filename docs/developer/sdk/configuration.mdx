@@ -102,10 +102,10 @@ This applies to all monetary fields across all types: `Order`, `LineItem`, `Fulf
 
 ## Country, Currency and Locale Codes <Since version="6.0" />
 
-`CountryCode`, `CurrencyCode` and `LocaleCode` list every code Spree accepts. Each one is both a type and a set of values, so you can autocomplete a code, loop over the list, or check a value. Your editor shows each code's name, for example "US Dollar" for `CurrencyCode.USD`. The Store, Admin and Seller SDKs all export them.
+`CountryCode`, `CurrencyCode` and `LocaleCode` list every code Spree accepts. Each one is both a type and a set of values, so you can autocomplete a code or loop over the list. Your editor shows each code's name, for example "US Dollar" for `CurrencyCode.USD`. The Store, Admin and Seller SDKs all export them.
 
 ```typescript
-import { CountryCode, CurrencyCode, LocaleCode, isCountryCode } from '@spree/sdk';
+import { CountryCode, CurrencyCode, LocaleCode } from '@spree/sdk';
 
 client.setCurrency(CurrencyCode.EUR);
 client.setLocale(LocaleCode.pt_BR); // 'pt-BR'
@@ -115,14 +115,9 @@ const country: CountryCode = 'DE';
 
 // Every currency, for a picker
 const currencies = Object.values(CurrencyCode);
-
-// Check a value from a URL or a form before sending it
-if (isCountryCode(searchParams.get('country'))) {
-  // ...
-}
 ```
 
-Locale keys use an underscore where the code has a dash (`LocaleCode.es_419` is `'es-419'`). `isCountryCode`, `isCurrencyCode` and `isLocaleCode` accept only listed codes, written exactly as the API returns them.
+Locale keys use an underscore where the code has a dash (`LocaleCode.es_419` is `'es-419'`). The lists match the Spree release your SDK version belongs to. The server still decides which codes it accepts, so let it validate input rather than rejecting a value that is missing from these lists.
 
 ## TypeScript Support
 

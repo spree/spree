@@ -1,19 +1,34 @@
 import { CurrencyCode } from '@spree/admin-sdk'
 
+// Replaced currencies Spree still accepts so orders priced in them stay
+// valid, but which no merchant should pick for new pricing.
+const RETIRED_CURRENCY_CODES: ReadonlySet<string> = new Set([
+  'BYR',
+  'CUC',
+  'EEK',
+  'HRK',
+  'LTL',
+  'LVL',
+  'MRO',
+  'MTL',
+  'SKK',
+  'SLL',
+  'STD',
+  'TMM',
+  'VEF',
+  'ZMK',
+  'ZWD',
+  'ZWL',
+  'ZWN',
+  'ZWR',
+])
+
 /**
- * Every currency still in circulation that Spree accepts. Used for contexts
- * where the merchant can pick *any* currency (a market's currency) rather than
- * one the store already supports. Spree's list keeps retired currencies (EEK,
- * BYR) so old orders stay valid; the runtime's own list drops them, so a
- * merchant is not offered one for new pricing. Runtimes without
- * `Intl.supportedValuesOf` get Spree's full list.
+ * Every currency Spree accepts that is still in use. Used for contexts where
+ * the merchant can pick *any* currency (a market's currency) rather than one
+ * the store already supports. The list ships with the SDK, so a currency a
+ * newer server adds appears once the dashboard is upgraded with it.
  */
-export const ALL_CURRENCY_CODES: readonly CurrencyCode[] = (() => {
-  const all = Object.values(CurrencyCode)
-  try {
-    const current = new Set(Intl.supportedValuesOf('currency'))
-    return all.filter((code) => current.has(code))
-  } catch {
-    return all
-  }
-})()
+export const ALL_CURRENCY_CODES: readonly CurrencyCode[] = Object.values(CurrencyCode).filter(
+  (code) => !RETIRED_CURRENCY_CODES.has(code),
+)

@@ -6,6 +6,7 @@ on:
     paths:
       - "packages/**"
       - "spree/api/app/**"
+      - "spree/api/lib/typelizer/**"
       - "spree/core/app/**"
       - "docs/developer/**"
       - "docs/api-reference/**"
@@ -19,6 +20,7 @@ on:
     paths:
       - "packages/**"
       - "spree/api/app/**"
+      - "spree/api/lib/typelizer/**"
       - "spree/core/app/**"
       - "docs/developer/**"
       - "docs/api-reference/**"

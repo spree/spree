@@ -5,11 +5,11 @@ import { z } from 'zod/v4'
 /**
  * Whether a value has the shape of an ISO 3166-1 alpha-2 country code.
  *
- * Shape only, unlike the SDK's `isCountryCode`: the connected server holds the
- * authoritative list and rejects a code it does not know, while the SDK's copy
- * is fixed when it is built. Checking against that copy would hide or reject a
- * code an older or newer server accepts. This is the one place a plain string
- * becomes a `CountryCode`.
+ * Shape only: the connected server holds the authoritative list and rejects
+ * a code it does not know, while the SDK's `CountryCode` list is fixed when it
+ * is built. Checking against that copy would hide or reject a code an older or
+ * newer server accepts. This is the one place a plain string becomes a
+ * `CountryCode`.
  */
 export function isCountryCode(value: unknown): value is CountryCode {
   return typeof value === 'string' && /^[A-Z]{2}$/.test(value)

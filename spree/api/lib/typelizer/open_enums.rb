@@ -26,6 +26,16 @@ module Typelizer
 
         "#{definition} | (string & {})"
       end
+
+      # Typelizer skips rewriting a file whose digest is unchanged, and the
+      # digest covers a property's values but not the definition above. Folding
+      # the re-export in makes a checkout that still carries the old inline
+      # list regenerate.
+      def fingerprint
+        return super unless CLOSED_TYPE_NAMES.include?(enum_type_name)
+
+        [super, enum_definition].inspect
+      end
     end
 
     module Schema
