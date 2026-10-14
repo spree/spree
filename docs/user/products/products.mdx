@@ -1,0 +1,102 @@
+---
+title: "Products"
+description: "Learn how to review your catalog, control which products are on sale, change many products at once and export them in Spree Commerce."
+---
+
+The Products page lists everything you sell, one row per product, with its status, its stock, its price and the seller who supplies it. Open any row to edit that product.
+
+Alongside orders, this is one of the screens your team will have open most often. It is where you cab check what's currently on sale, search for products that customers are asking about, and open product forms to update prices, descriptions, and images.
+
+The list shows your catalog, but much of what makes up a product is set elsewhere. The sizes and colors a product comes in are set up under [<u>Options</u>](/user/products/options), its images and videos live in [<u>Media</u>](/user/products/media), and the groups customers browse by are [<u>Categories</u>](/user/products/categories) and [<u>Collections</u>](/user/products/collections). What this page adds is the view across all of them at once: narrowing the list to find what you need, and changing many products together rather than one at a time.
+
+To manage products, navigate to **Products** in the admin dashboard.
+
+## Reviewing Products
+
+![The products list, showing one row per product with its status, inventory and price](/docs/images/user/products/products/1-products-overview.png)
+
+The list shows one row per product:
+
+| Column | What it means |
+|---|---|
+| **Name** | The product's name, with its image beside it. |
+| **Status** | Whether the product is **Active**, **Draft** or **Archived**. See [How to Take a Product Off Sale](#how-to-take-a-product-off-sale) below. |
+| **Inventory** | Whether the product is in stock, and how many variants it has. |
+| **Price** | What the product sells for. |
+| **Seller** | Which seller supplies the product, if you run a marketplace. |
+
+You can add or remove columns to suit what you are working on. Click the columns icon above the list and tick the ones you want: SKU, tags, sales channels, product type, and when a product was created or last updated are all available alongside the five above.
+
+![The columns picker open above the products list, with the available columns listed](/docs/images/user/products/products/2-columns.png)
+
+**Sort** orders the list by name, status, price, or either of those dates, ascending or descending.
+
+Type into the search box to find a product by name. The **Status** filter narrows the list to products of one status, so it finds your archived products as readily as your active ones. **Add filter** narrows the list by price, tags, seller, categories, sales channels, product type, and when a product was created or last updated.
+
+The menu at the end of each row holds three actions: **Edit** opens the product, **Duplicate** creates a copy of it, and **Delete** removes it.
+
+<Note>The list's order can change as you update products, so a product you were about to work on may move further down. When you are working through a batch, pick products by name rather than by their place in the list.</Note>
+
+### Product Statuses
+
+Every product has one of three statuses, and its status decides whether customers can find it and buy it. A product you create starts as **Draft**, so nothing reaches your customers until you are ready.
+
+| Status | What it means |
+|---|---|
+| **Active** | On sale. Customers can open the product's page and add it to their cart, on every sales channel it is listed on. |
+| **Draft** | Not yet on sale. Customers who follow a link to the product see a page saying the product was not found, and the product cannot be added to a cart. |
+| **Archived** | No longer on sale. Customers see the same not-found page as for a draft, and the product cannot be added to a cart. |
+
+Draft and archived products stay in the products list, with their status beside the name, and they still count towards the total at the foot of the list. Use **Draft** for a product you are still preparing and **Archived** for one you have stopped selling, so the **Status** filter tells the two apart later.
+
+A product's status is set in the **Status** box on its own page, followed by **Save product**. Underneath it, **Publishing** shows each sales channel the product is listed on and whether customers can see it there. Click **Manage** to tick or untick the sales channels, then **Done**.
+
+![A product's page with its status set to Archived, and Publishing showing it hidden on both sales channels](/docs/images/user/products/products/3-product-status.png)
+
+<Note>Setting a product to **Active** does not by itself put it in front of customers. The product also has to be listed on a sales channel, which is what **Publishing** shows you.</Note>
+
+To change the status of several products in one go, use **Set status…** from the bulk actions menu, described below.
+
+## How to Perform Bulk Actions on Products
+
+Tick the box at the start of each product row you want to change. The header row then shows how many products you have ticked, followed by the actions. Ticking the box in the header row ticks every product on the page you are looking at.
+
+![The products list with several products ticked and the bulk actions shown above them](/docs/images/user/products/products/4-bulk-actions.png)
+
+| Action | What it does |
+|---|---|
+| **Set status…** | Changes the status of every ticked product. |
+| **Add to categories…** and **Remove from categories…** | Puts the ticked products into, or takes them out of, the categories you pick. |
+| **Add to collections** | Adds the ticked products to the collections you pick. Only manual collections are offered, because an automatic collection fills itself from its rules. A product already in a collection stays in it once. |
+| **Add to sales channels…** and **Remove from sales channels…** | Lists the ticked products on, or takes them off, the sales channels you pick. Both are under **More actions**. |
+| **Add tags…** and **Remove tags…** | Adds the tags you pick to every ticked product, or removes them. Both are under **More actions**. |
+| **Delete** | Removes the ticked products. Under **More actions**. |
+
+1. Tick the products you want to change, and check the count before you proceed.
+2. Click the action, or click **More actions** for the sales channel, tag and delete actions.
+3. Pick the categories, collections, sales channels or tags. The confirm button stays disabled until you have picked at least one.
+4. Click **Add** or **Remove**. The ticks are cleared, ready for your next batch.
+
+<Note>Unlike categories, collections and sales channels, a tag does not have to exist before you apply it. Type the tag's full name and press Enter to create it and add it to the ticked products in one step.</Note>
+
+<Warning>Deleting products cannot be undone. If you only want to stop selling them, set their status to **Archived** instead, which keeps them in your list so you can bring them back later.</Warning>
+
+## Importing and Exporting Products
+
+Two buttons above the list move products between your store and a CSV file.
+
+**Import** reads a CSV file into your store, creating products that are new and updating ones that already exist. Use it to bring a catalog across from another system, or to change many products in a spreadsheet and load the result back.
+
+**Export** writes your catalog out to a CSV file. Use it for a price review, a report, or a copy to keep.
+
+Both are covered in [<u>Import & Export</u>](/user/products/import-and-export), including what the file holds and how its columns map to your products.
+
+## Further Reading
+
+- [<u>Adding Products</u>](/user/products/adding-products) - Creating a product and filling in its details
+- [<u>Variants</u>](/user/products/variants) - Products that come in more than one size or color
+- [<u>Import & Export</u>](/user/products/import-and-export) - What the export file holds, and loading products back in
+- [<u>Options</u>](/user/products/options) - Setting up sizes, colors and other choices
+- [<u>Media</u>](/user/products/media) - Every image and video in your store
+- [<u>Sales Channels</u>](/user/settings/sales-channels) - The places your products are listed
+- [<u>Categories</u>](/user/products/categories) and [<u>Collections</u>](/user/products/collections) - Grouping products for your customers

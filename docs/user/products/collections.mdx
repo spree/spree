@@ -1,64 +1,96 @@
 ---
 title: "Collections"
-description: "Group products for merchandising — by hand or from rules that keep the group up to date."
+description: "Learn how to group products by hand or by rule in Spree Commerce."
 ---
 
-Collections are flat groups of products used for merchandising: "Summer 2025", "Best Sellers", "Gifts Under $50". Unlike [Categories](/user/products/categories), they have no hierarchy and a product can belong to as many as you like.
+A collection is a group of products shown together, such as a bestsellers shelf, a summer edit or a gift guide. Collections are a flat list rather than a tree, so a collection has no parent and no children.
 
-The useful part is that a collection can fill itself. Set rules once, and products join and leave as their tags, price or availability change — no list to maintain.
+A collection is filled in one of two ways. A **manual** collection holds the products you pick yourself. An **automatic** collection fills itself from rules you set, such as every product carrying a certain tag, and keeps itself up to date as your catalog changes. A collection also sets the order its products appear in, which a category does not.
 
-To manage collections, open the **Collections** tab of the admin dashboard, found under Products.
+Collections and [<u>categories</u>](/user/products/categories) are easy to confuse, and they do different jobs. Categories are the browsing tree customers navigate, filled by hand. Collections are the groups you assemble to sell, which can cut straight across that tree and can fill themselves. A product keeps its categories whatever collections it joins, and deleting a collection leaves its products in your catalog.
 
-## Create a collection
+With a handful of products, picking favorites by hand is often enough. As the catalog grows, rules save the most work, because nobody has to remember to add each new product to each group.
 
-Click **New Collection**, give it a name, and save. You will land on the collection editor, where you decide how its products are chosen.
+To manage collections, navigate to **Products → Collections** in the admin dashboard.
 
-## Choosing the products
+## Reviewing Collections
 
-A collection is either curated by hand or driven by rules. The switch is **Set members automatically from rules**.
+![The Collections list with two automatic collections and one manual one](/docs/images/user/products/collections/1-collections-overview.png)
 
-<Tabs>
-  <Tab title="Curated by hand">
-    Leave the switch off and pick products yourself with **Add products**. Search, tick the ones you want, and they are added when you save.
+The list shows one row per collection.
 
-    Use this when the grouping is an editorial decision — a homepage feature, a gift guide — that no rule could express.
+| Column | What it means |
+|---|---|
+| **Name** | The collection's name, with the slug it uses in its web address beneath. |
+| **Kind** | **Manual** if you pick the products, **Automatic** if rules pick them. |
+| **Sorting** | The order the collection's products appear in. |
+| **Products** | How many products are in the collection right now. |
 
-    You can also set the order products appear in. Choose **Manual** sorting and drag rows into place; any other sort order is applied for you.
-  </Tab>
-  <Tab title="Filled from rules">
-    Turn the switch on and describe what belongs. Products matching the rules appear immediately and refresh on their own afterwards.
+Use the **Kind** filter to see only manual or only automatic collections. Click a collection's name to open it, or use the row menu for **Edit** and **Delete**.
 
-    Choose whether products must match **all** conditions or **any** of them, then add one or more rules:
+## How to Create a Manual Collection
 
-    | Rule | Matches products that |
-    |---|---|
-    | Tag | carry a given product tag |
-    | On sale | are marked down — a compare-at price is set |
-    | Available on | were published within a date range |
+![The New collection form, with its name, description, default sorting and the rules switch](/docs/images/user/products/collections/2-new-collection-form.png)
 
-    Each rule takes a condition — *is equal to*, *is not equal to*, *contains*, *does not contain* — and a value.
+A manual collection suits a group you want to choose yourself, such as a featured shelf or a gift guide.
 
-    The product list becomes read-only: the rules own membership, so there is nothing to curate by hand.
-  </Tab>
-</Tabs>
+1. Click **New collection** and enter a **Name**. **Save** is disabled until you do.
+2. Leave **Set members automatically from rules** switched off.
+3. Set **Default sorting** to the order the products should appear in, which can be manual, best selling, newest, price or name. A new collection starts on **Manual**.
+4. Click **Save**.
+5. In the **Products** card, click **Add products**, search your catalog, tick what you want, and click **Add**.
+6. Click **Save** again.
 
-<Note>
-Switching a collection from rules back to hand-picked clears nothing, but the products it had been matching are no longer members until you add them. Decide which way a collection works before you build a storefront page around it.
-</Note>
+<Warning>Closing the **Add products** window does not save anything. The products join the collection only when you click **Save** afterwards.</Warning>
 
-## Storefront listing
+With **Default sorting** set to **Manual**, drag the products in the card to set the order customers see.
 
-Collections have their own page on the storefront, so each one gets a name, description, images and search engine listing settings — the same fields a category has. The slug is what appears in the URL.
+## How to Create an Automatic Collection
 
-## Translations
+![An automatic collection with two tag rules set to match any condition](/docs/images/user/products/collections/3-automatic-collection.png)
 
-If your store sells in more than one language, collection names and descriptions can be translated. See [Translations](/user/translations/translations).
+An automatic collection is worth setting up for any group you would otherwise keep up to date by hand.
 
-## Categories or collections?
+Click **New collection**, enter a **Name**, and turn on **Set members automatically from rules**. The **Membership** card then holds one rule, built from three parts:
 
-Both group products, and stores normally use both.
+| Part | What it does |
+|---|---|
+| **Rule** | What the rule looks at. |
+| **Condition** | How it compares, such as **is equal to** or **is not equal to**. |
+| **Value** | What it compares against. Every rule needs one before the collection will save. |
 
-- **Categories** are the shelves — a browsable tree a customer navigates. Fashion → Men → Footwear.
-- **Collections** cut across the shelves — everything on sale, everything new this season, everything under $50.
+Three kinds of rule are available:
 
-A pair of trainers sits in one place in the category tree and may appear in several collections at once.
+- **Tag** - Matches the tags on a product. The value is the tag, written exactly as it is on your products. Whole tags only, so `cord` does not match a product tagged `cordless`.
+- **On sale** - Matches whether a product is on sale. Use **is equal to** with `true` to gather what is on sale, or **is not equal to** with `true` for everything else.
+- **Available on** - Matches products that became available within a number of days, so a value of `30` gathers what arrived in the last month. This is how a New Arrivals collection keeps itself current.
+
+Click **Add rule** for a second rule, and **Remove rule** to take one away. Then click **Save**, and the **Products** card lists every product matching the rules.
+
+### Matching All Conditions or Any Condition
+
+With two or more rules, **Products must match** decides how they combine.
+
+- **all conditions** keeps only products passing every rule, so the collection narrows with each rule you add.
+- **any condition** takes products passing at least one rule, so it widens.
+
+A `compact` tag rule and a `fan` tag rule gave one product on **all conditions** and six on **any condition**. Change the setting and save, and the product list updates straight away.
+
+## How to Add a Product to an Automatic Collection
+
+Products are not added to an automatic collection directly. Give the product what the rules look for instead: for a tag collection, open the product, type the tag into its **Tags** box, and click **Save product**.
+
+<Note>Changing a collection's own rules updates its products as soon as you save. Changing a product updates the collections it belongs to a short while later, so reload a collection you already have open to see the new count.</Note>
+
+## How to Delete a Collection
+
+Choose **Delete** from the collection's row menu and confirm.
+
+The products that were in it are untouched apart from no longer belonging to it, so deleting a collection is a safe way to retire a seasonal group.
+
+## Further Reading
+
+- [<u>Categories</u>](/user/products/categories) - The browsing tree customers navigate
+- [<u>Adding Products</u>](/user/products/adding-products) - Where you add the tags automatic collections look for
+- [<u>Products</u>](/user/products/products) - Adding many products to a collection at once
+- [<u>Media</u>](/user/products/media) - The images a collection shows
