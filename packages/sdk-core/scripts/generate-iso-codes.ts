@@ -5,9 +5,14 @@ import { parse } from 'yaml'
 // Writes the country, currency and locale code lists every SDK exports, from
 // the closed `CountryCode` / `CurrencyCode` / `LocaleCode` schemas in the Store
 // API reference — the server's own lists. Each code is documented with its
-// English name, so editors show "United States dollar" when hovering `USD`:
+// English name, so editors show "US Dollar" when hovering `USD`:
 //
 //   pnpm generate:iso-codes
+//
+// A name comes from the runtime's `Intl.DisplayNames` only the first time its
+// code appears; after that it is read back from the generated file. Names
+// differ between Node versions, so this keeps the output the same on every
+// machine and lets CI check it.
 
 type Spec = { components: { schemas: Record<string, { enum?: string[] }> } }
 
@@ -16,6 +21,15 @@ const spec = parse(
   fs.readFileSync(path.join(root, 'docs/api-reference/store.yaml'), 'utf8'),
 ) as Spec
 const outputPath = path.resolve(import.meta.dirname, '../src/iso-codes.generated.ts')
+
+// Names already written, keyed by code (the three lists never share a code).
+const existingNames = new Map<string, string>()
+if (fs.existsSync(outputPath)) {
+  const previous = fs.readFileSync(outputPath, 'utf8')
+  for (const [, name, code] of previous.matchAll(/\/\*\* (.+) \*\/\n {2}\S+: '([^']+)',/g)) {
+    existingNames.set(code, name)
+  }
+}
 
 const LISTS = [
   {
@@ -46,7 +60,10 @@ const sections = LISTS.map(({ name, summary, displayNames }) => {
 
   const entries = [...codes]
     .sort()
-    .map((code) => `  /** ${displayNames.of(code) ?? code} */\n  ${keyFor(code)}: '${code}',`)
+    .map(
+      (code) =>
+        `  /** ${existingNames.get(code) ?? displayNames.of(code) ?? code} */\n  ${keyFor(code)}: '${code}',`,
+    )
     .join('\n')
 
   return `/** ${summary} */

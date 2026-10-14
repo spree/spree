@@ -43,7 +43,7 @@ describe('ISO code lists', () => {
     const expected = referenceCodes(api, schema)
 
     expect(expected.length).toBeGreaterThan(0)
-    expect(Object.values(list).sort()).toEqual(expected)
+    expect(Object.values(list).sort(), 'Run `pnpm generate:iso-codes`').toEqual(expected)
   })
 
   it('name each code by its standard value', () => {

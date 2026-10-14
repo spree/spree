@@ -2,4 +2,4 @@
 "@spree/dashboard": patch
 ---
 
-Country, currency and locale fields now accept only codes Spree supports, so a mistyped code shows an error before saving. Every currency picker shows the full currency list on every browser.
+Currency pickers that offer every currency now show the full list on every browser, limited to currencies Spree accepts.
