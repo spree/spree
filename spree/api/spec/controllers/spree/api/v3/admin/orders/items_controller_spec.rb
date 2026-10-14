@@ -164,6 +164,17 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       expect(json_response['external_references']).to eq('oms' => 'LINE-1')
     end
 
+    it 'checks access to the order before a known key turns a create into an update' do
+      line_item.set_external_id('oms', 'LINE-1')
+      allow(controller).to receive(:authorize_parent!).and_raise(CanCan::AccessDenied)
+
+      post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 5,
+                              external_references: { oms: 'LINE-1' } }, as: :json
+
+      expect(response).to have_http_status(:forbidden)
+      expect(line_item.reload.quantity).to eq(1)
+    end
+
     it 'records the key a connector sends' do
       patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id,
                                external_references: { oms: 'LINE-2' } }, as: :json
