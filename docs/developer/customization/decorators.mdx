@@ -66,7 +66,7 @@ end
 ```
 
 - **It only adds.** A concern that would replace a method, a column's attribute or an association the model already has, or one another extension added, is refused at boot with an error naming both. A decorator would overwrite it without a word. To change what an existing method does, a decorator is still the tool.
-- **The configured user classes** are named `:user` and `:admin_user`, since their class names vary: `Spree.model_extensions.add(:user, 'MyExtension::UserWarranties')`.
+- **The configured customer and admin user classes** are named `:customer` and `:admin_user`, since their class names vary: `Spree.model_extensions.add(:customer, 'MyExtension::CustomerWarranties')`.
 - **It survives code reloading.** Spree includes the concerns again whenever development reloads the models.
 - **`Spree.model_extensions.for('Spree::Product')`** lists what is registered for a model.
 

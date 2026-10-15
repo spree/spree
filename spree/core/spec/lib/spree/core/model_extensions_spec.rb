@@ -71,14 +71,14 @@ RSpec.describe Spree::ModelExtensions do
     expect(reloaded).to include(ModelExtensionsSpecWarranty)
   end
 
-  it 'resolves the configured user classes' do
+  it 'resolves the configured customer class' do
     user_class = Class.new(Spree.customer_class)
     allow(Spree).to receive(:customer_class).and_return(user_class)
-    registry.add(:user, 'ModelExtensionsSpecWarranty')
+    registry.add(:customer, 'ModelExtensionsSpecWarranty')
     registry.apply
 
     expect(user_class).to include(ModelExtensionsSpecWarranty)
-    expect(registry.for(:user)).to eq(['ModelExtensionsSpecWarranty'])
+    expect(registry.for(:customer)).to eq(['ModelExtensionsSpecWarranty'])
   end
 
   it 'lists what is registered for a model' do
@@ -111,6 +111,15 @@ RSpec.describe Spree::ModelExtensions do
       clash = concern { class_methods { def available = none } }
 
       expect { registry.add('ModelExtensionsSpecProduct', clash.name) }.to raise_error(described_class::Conflict, /available/)
+    end
+
+    # Rails generates column methods on first use, so the column is what is checked.
+    it 'refuses an association named like a column' do
+      # Generated again on next use, as after a fresh boot.
+      Spree::Product.undefine_attribute_methods
+      clash = concern { included { has_one :promotionable, class_name: 'Spree::Variant', foreign_key: :product_id } }
+
+      expect { registry.add('ModelExtensionsSpecProduct', clash.name) }.to raise_error(described_class::Conflict, /promotionable/)
     end
 
     it 'refuses an association named like a method the model has' do

@@ -14,21 +14,21 @@ module Spree
   #
   # @example
   #   Spree.model_extensions.add('Spree::Product', 'MyExtension::ProductWarranty')
-  #   Spree.model_extensions.add(:user, 'MyExtension::UserWarranties')
+  #   Spree.model_extensions.add(:customer, 'MyExtension::CustomerWarranties')
   class ModelExtensions
     class Conflict < StandardError; end
 
-    # The configured user classes, which an extension cannot know by name.
-    USER_MODELS = { user: -> { Spree.customer_class }, admin_user: -> { Spree.admin_user_class } }.freeze
+    # The configured customer and admin user classes, which an extension cannot know by name.
+    USER_MODELS = { customer: -> { Spree.customer_class }, admin_user: -> { Spree.admin_user_class } }.freeze
 
     def initialize
       @extensions = Hash.new { |hash, key| hash[key] = [] }
       @prepared = false
     end
 
-    # @param model [String, Symbol] the model's class name, e.g. +'Spree::Product'+, or +:user+ / +:admin_user+
+    # @param model [String, Symbol] the model's class name, e.g. +'Spree::Product'+, or +:customer+ / +:admin_user+
     # @param extension [String, Module] the concern to include
-    # @raise [ArgumentError] for a symbol other than +:user+ and +:admin_user+
+    # @raise [ArgumentError] for a symbol other than +:customer+ and +:admin_user+
     # @raise [Conflict] when the concern would shadow something the model already has
     # @return [void]
     def add(model, extension)
@@ -59,7 +59,7 @@ module Spree
       return model.to_s unless model.is_a?(Symbol)
       return model if USER_MODELS.key?(model)
 
-      raise ArgumentError, "#{model} is not a model: pass its class name, or :user or :admin_user"
+      raise ArgumentError, "#{model} is not a model: pass its class name, or :customer or :admin_user"
     end
 
     def resolve(key)
@@ -80,7 +80,7 @@ module Spree
       # are only known once it has run: one it declared or redeclared there
       # must not take a name the model already answers to.
       declared = model.reflections.reject { |name, reflection| reflections[name].equal?(reflection) }.keys
-      shadowed = declared.find { |name| reflections.key?(name) || existing.include?(name.to_sym) }
+      shadowed = declared.find { |name| reflections.key?(name) || existing.include?(name.to_sym) || attribute?(model, name) }
       raise_conflict(model, extension, shadowed) if shadowed
     end
 
