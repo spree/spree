@@ -1426,23 +1426,34 @@ describe Spree::Store, type: :model, without_global_store: true do
         end
       end
 
-      # The setup screen only ever offers languages Spree translates, so a
-      # derived default must land in the same set — otherwise an API client
-      # omitting `locale` gets a storefront language with no strings behind it.
+      context 'when the given locale is not one Spree lists' do
+        let(:locale) { 'de-LU' }
+
+        it 'uses its listed language, since a market accepts nothing else' do
+          subject
+
+          expect(store.reload.default_market.default_locale).to eq('de')
+        end
+      end
+
+      context 'when the given locale is one Spree cannot place' do
+        let(:locale) { 'xx' }
+
+        it "uses the country's own language" do
+          subject
+
+          expect(store.reload.default_market.default_locale).to eq('de')
+        end
+      end
+
+      # A store's locale is a content locale: the country's own language is
+      # used whether or not Spree ships translations for it.
       context "when the country's own language has no translations" do
         let(:locale) { nil }
         let(:country) { Spree::Country.by_iso('AL') } # Albania → Albanian
 
-        before { allow(Spree).to receive(:available_locales).and_return(%i[en de fr]) }
-
-        it 'falls back to English rather than the untranslated language' do
+        it 'uses that language' do
           subject
-
-          expect(store.reload.default_market.default_locale).to eq('en')
-        end
-
-        it 'still honors a locale the caller asked for outright' do
-          store.relocate(country: country, locale: 'sq')
 
           expect(store.reload.default_market.default_locale).to eq('sq')
         end

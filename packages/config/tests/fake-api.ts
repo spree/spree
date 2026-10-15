@@ -42,13 +42,6 @@ export class FakeApi implements ConfigClient {
       if (method === 'PATCH') this.store = { ...this.store, ...(options.body as object) }
       return this.store as T
     }
-    const country = path.match(/^\/countries\/([A-Z]{2})$/)
-    if (method === 'GET' && country) {
-      return (this.all('/countries').find((record) => record.iso === country[1]) ?? {
-        iso: country[1],
-        name: country[1],
-      }) as T
-    }
     if (method === 'GET') return this.list(path, options.params ?? {}) as T
     if (method === 'POST' && path === '/products/bulk_add_to_channels')
       return this.publish(options.body, true) as T
