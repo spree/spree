@@ -41,6 +41,7 @@ module Spree
           order_not_found: 'order_not_found',
           order_cannot_complete: 'order_cannot_complete',
           discount_not_editable: 'discount_not_editable',
+          order_not_editable: 'order_not_editable',
 
           # Line item errors
           line_item_not_found: 'line_item_not_found',
@@ -150,7 +151,8 @@ module Spree
           base_symbols = (errors.details[:base] || []).pluck(:error)
           return ERROR_CODES[:price_override_not_allowed] if base_symbols.include?(:price_override_not_allowed)
           return ERROR_CODES[:invalid_price] if base_symbols.include?(:invalid_price)
-          return ERROR_CODES[:invalid_quantity] if base_symbols.include?(:quantity_rule_violated)
+          return ERROR_CODES[:invalid_quantity] if base_symbols.intersect?(%i[quantity_rule_violated below_shipped_quantity])
+          return ERROR_CODES[:order_not_editable] if base_symbols.include?(:order_fully_fulfilled)
 
           default
         end
