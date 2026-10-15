@@ -33,8 +33,8 @@ RSpec.describe Spree::Api::ExtensionFields do
       expect(render['warranty_text']).to eq('Two years')
     end
 
-    it 'takes its value from the record when told how' do
-      registry.attribute(:admin_product_serializer, method: :warranty_months, value: ->(record) { record.name.length })
+    it 'takes a value supplied for its name' do
+      registry.attribute(:admin_product_serializer, :warranty_months, value: ->(record) { record.name.length })
 
       expect(render['warranty_months']).to eq(6)
     end
@@ -120,7 +120,7 @@ RSpec.describe Spree::Api::ExtensionFields do
   end
 
   it "never leaks a parent serializer's field into a subclass" do
-    registry.attribute(:product_serializer, method: :warranty_text, value: ->(_record) { 'Two years' })
+    registry.attribute(:product_serializer, :warranty_text, value: ->(_record) { 'Two years' })
     render(Spree.api.product_serializer)
     subclass = Class.new(Spree::Api::V3::ProductSerializer)
 
@@ -144,6 +144,14 @@ RSpec.describe Spree::Api::ExtensionFields do
       registry.attribute(:admin_product_serializer, method: :warranty)
 
       expect { registry.attribute(:seller_product_serializer, method: :warranty) }.not_to raise_error
+    end
+
+    it 'needs either a name with a value or method: for an attribute' do
+      expect { registry.attribute(:admin_product_serializer) }.to raise_error(ArgumentError, /name or method:/)
+      expect { registry.attribute(:admin_product_serializer, :warranty_text) }.to raise_error(ArgumentError, /needs value:/)
+      expect do
+        registry.attribute(:admin_product_serializer, method: :warranty_text, value: ->(_record) {})
+      end.to raise_error(ArgumentError, /takes no value:/)
     end
 
     it 'needs exactly one of one: and many: for an association' do

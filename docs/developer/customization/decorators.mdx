@@ -9,6 +9,7 @@ description: Use Spree decorators to add or modify behavior on core models, cont
   - **[Events & Subscribers](/developer/core-concepts/events)** - For reacting to model changes (after save, create, update, delete)
   - **[Webhooks](/developer/core-concepts/webhooks)** - For notifying external services when events occur
   - **[Dependencies](/developer/customization/dependencies)** - For swapping out services, serializers, and abilities
+  - **[Model extensions](#adding-to-a-model-without-a-decorator)** - For adding methods, associations, validations, and scopes to core models
   - **[Dashboard Navigation](/developer/dashboard/customization/navigation)** - For adding menu items
   - **[Dashboard Slots](/developer/dashboard/customization/slots)** - For adding your own UI to an existing dashboard screen
   - **[Dashboard Tables](/developer/dashboard/customization/tables)** - For customizing list views
@@ -28,14 +29,48 @@ Before reaching for a decorator, check if your use case is better served by a mo
 | Add a section to a dashboard form | View decorator/override | [Slots](/developer/dashboard/customization/slots) |
 | Narrow what an endpoint returns | Overriding an action | Controller decorator overriding `scope` |
 | Accept a new attribute on write | Controller decorator | `Model.additional_permitted_attributes +=` |
-| Add association to core model | - | Decorator (still appropriate) |
-| Add validation to core model | - | Decorator (still appropriate) |
-| Add new method to core model | - | Decorator (still appropriate) |
+| Add association to core model | Model decorator | [Model extensions](#adding-to-a-model-without-a-decorator) |
+| Add validation or scope to core model | Model decorator | [Model extensions](#adding-to-a-model-without-a-decorator) |
+| Add new method to core model | Model decorator | [Model extensions](#adding-to-a-model-without-a-decorator) |
 | Make a new column [filterable](/developer/core-concepts/search-filtering) | - | Decorator (still appropriate) |
 
 <Info>
-  Decorators are still appropriate for **structural changes** like adding associations, validations, scopes, and new methods to models. Use modern alternatives for **behavioral changes** like callbacks, hooks, and side effects.
+  Add associations, validations, scopes and new methods to core models with [model extensions](#adding-to-a-model-without-a-decorator). Use the other alternatives for **behavioral changes** like callbacks, hooks, and side effects. A decorator is left for **changing what an existing method does**, which nothing else covers.
 </Info>
+
+## Adding to a Model Without a Decorator
+
+An extension writes an ordinary concern and registers it against the core model by name. Spree includes it in the model:
+
+```ruby server/app/models/my_extension/product_warranty.rb
+module MyExtension
+  module ProductWarranty
+    extend ActiveSupport::Concern
+
+    included do
+      has_one :warranty, class_name: 'MyExtension::Warranty', dependent: :destroy
+      scope :with_warranty, -> { joins(:warranty) }
+    end
+
+    def warranty_text
+      warranty&.summary
+    end
+  end
+end
+```
+
+```ruby server/config/initializers/my_extension.rb
+Rails.application.config.after_initialize do
+  Spree.model_extensions.add('Spree::Product', 'MyExtension::ProductWarranty')
+end
+```
+
+- **It only adds.** A concern that would replace a method, a column's attribute or an association the model already has, or one another extension added, is refused at boot with an error naming both. A decorator would overwrite it without a word. To change what an existing method does, a decorator is still the tool.
+- **The configured user classes** are named `:user` and `:admin_user`, since their class names vary: `Spree.model_extensions.add(:user, 'MyExtension::UserWarranties')`.
+- **It survives code reloading.** Spree includes the concerns again whenever development reloads the models.
+- **`Spree.model_extensions.for('Spree::Product')`** lists what is registered for a model.
+
+A method added this way can be shown in API responses with an [extension field](/developer/customization/api#adding-a-field-from-an-extension).
 
 ## Overview
 

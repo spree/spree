@@ -91,15 +91,26 @@ module Spree
         @class_readers = {}
       end
 
+      # Either names the record's method that gives the value, or names the
+      # field and supplies its value:
+      #
+      #   attribute(:admin_product_serializer, method: :warranty_text)
+      #   attribute(:admin_product_serializer, :warranty_months, value: ->(product) { ... })
+      #
       # @param dependency [Symbol] the serializer's dependency name, e.g. +:admin_product_serializer+
-      # @param method [Symbol, String] the response key, and the record's method that gives the value
+      # @param name [Symbol, String, nil] the response key of a field whose value is given by +value+
+      # @param method [Symbol, String, nil] the response key, and the record's method that gives the value
       # @param expand [Boolean] true to show the field only when the request expands it
-      # @param value [#call, nil] gives the value from the record instead of calling +method+ on it
-      # @raise [ArgumentError] when the dependency is not a serializer
+      # @param value [#call, nil] gives the value from the record; required with +name+, refused with +method+
+      # @raise [ArgumentError] when the dependency is not a serializer, or the name and value do not match up
       # @raise [DuplicateField] when the serializer already has a field of that name
       # @return [void]
-      def attribute(dependency, method:, expand: false, value: nil)
-        add(dependency, Attribute.new(name: method.to_sym, expand: expand, value: value))
+      def attribute(dependency, name = nil, method: nil, expand: false, value: nil)
+        raise ArgumentError, 'Pass either a name or method:' unless name.present? ^ method.present?
+        raise ArgumentError, 'A named attribute needs value:' if name.present? && value.nil?
+        raise ArgumentError, 'An attribute reading method: takes no value:' if method.present? && value
+
+        add(dependency, Attribute.new(name: (name || method).to_sym, expand: expand, value: value))
       end
 
       # @param dependency [Symbol] the serializer's dependency name, e.g. +:admin_product_serializer+

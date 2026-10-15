@@ -613,6 +613,13 @@ module Spree
         end
       end
 
+      # The same contexts, for the concerns extensions add to core models.
+      initializer 'spree.model_extensions.schedule_apply', after: :load_config_initializers do |app|
+        app.config.after_initialize do
+          Spree.model_extensions.apply
+        end
+      end
+
       # A hook registered against a key no workflow declares would never fire
       # and never say so. Checking after eager load turns that typo into a
       # boot failure. Skipped when eager loading is off (development,
@@ -629,6 +636,10 @@ module Spree
 
         ActsAsTaggableOn::Tag.include(Spree::RansackableAttributes)
         ActsAsTaggableOn::Tag.whitelisted_ransackable_attributes = %w[id name]
+
+        # Reloading makes new model classes, which have none of the
+        # extensions' concerns yet.
+        Spree.model_extensions.apply
 
         # Reset and re-activate event subscribers on code reload
         # activate! will register all subscribers from Spree.subscribers
