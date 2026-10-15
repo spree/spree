@@ -3822,7 +3822,6 @@
           "logo_dimensions_help": "Recommandé : 204 × 104 pixels.",
           "section_addresses": "Adresses e-mail",
           "section_delivery": "Distribution",
-          "section_logo": "Logo",
           "subtitle": "Adresses d'expéditeur, notifications et logo intégré aux e-mails transactionnels.",
           "title": "Paramètres d'e-mail",
           "branding": {

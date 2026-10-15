@@ -3812,7 +3812,6 @@
           "logo_dimensions_help": "推荐：204×104 像素。",
           "section_addresses": "邮件地址",
           "section_delivery": "发送",
-          "section_logo": "徽标",
           "subtitle": "发件人地址、通知，以及嵌入在交易邮件中的徽标。",
           "title": "邮件设置",
           "branding": {

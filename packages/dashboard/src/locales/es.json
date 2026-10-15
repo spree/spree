@@ -467,7 +467,6 @@
           "logo_dimensions_help": "Recomendado: 204×104 píxeles.",
           "section_addresses": "Direcciones de email",
           "section_delivery": "Entrega",
-          "section_logo": "Logo",
           "subtitle": "Direcciones de remitente, notificaciones y el logo incorporado en los emails transaccionales.",
           "title": "Configuración de email",
           "branding": {

@@ -25,6 +25,10 @@ module Spree
             Spree::Emails::Branding::COLORS.each { |name| branding.attribute name, :string, nullable: true }
             branding.attribute :font, :string, nullable: true, choices: Spree::Emails::Branding::FONTS.keys
           end
+          attribute :mailer_logo_signed_id, :string,
+            nullable: true,
+            permit: false,
+            description: 'An unsaved email logo: the signed id of an uploaded image, or null to preview without one.'
         end
       end
     end

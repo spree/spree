@@ -73043,6 +73043,11 @@ components:
               nullable: true
           description: Unsaved colors and font to preview, named like the store's
             `email_*` settings.
+        mailer_logo_signed_id:
+          type: string
+          description: 'An unsaved email logo: the signed id of an uploaded image,
+            or null to preview without one.'
+          nullable: true
     EmailTemplateRestoreParams:
       type: object
       properties:

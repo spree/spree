@@ -223,14 +223,14 @@ test.describe('store settings — general', () => {
 })
 
 test.describe('store settings — emails', () => {
-  test('hides addresses + logo cards when consumer emails are turned off', async ({ page }) => {
+  test('hides addresses + branding cards when consumer emails are turned off', async ({ page }) => {
     const creds = await login(page)
     await page.goto(EMAILS_PATH(creds.store_id))
     await expect(page.getByRole('heading', { name: /^email settings$/i })).toBeVisible({
       timeout: 15_000,
     })
 
-    // The logo card always shows the reusable ImageUploadField's upload CTA —
+    // The branding card always shows the logo's upload CTA —
     // use that as a proxy for the card's presence. The CardTitle is rendered as
     // a `<div>` so `role=heading` doesn't apply, and matching plain text would
     // collide with other strings.
@@ -247,7 +247,7 @@ test.describe('store settings — emails', () => {
     await expect(page.locator('#store-mail-from-address')).toBeVisible()
     await expect(uploadCta).toBeVisible()
 
-    // Toggle off → address + logo cards disappear.
+    // Toggle off → address + branding cards disappear.
     await consumerEmailsToggle.click()
     await expect(page.locator('#store-mail-from-address')).toHaveCount(0)
     await expect(uploadCta).toHaveCount(0)
