@@ -678,11 +678,15 @@ en:
     cart_already_updated: The cart has already been updated.
     cart_completion_in_progress: The cart is being completed. Please retry in a moment.
     cart_line_item:
+      below_shipped_quantity:
+        one: Can't go below %{count} shipped unit
+        other: Can't go below %{count} shipped units
       currency_unavailable: "%{li_name} is not available in %{currency}"
       delivery_unavailable: "%{li_name} cannot be delivered to the selected address"
       discontinued: "%{li_name} was removed because it was discontinued"
       invalid_price: Price must be a non-negative number
       not_orderable: "%{li_name} is not available to order. Remove it to continue."
+      order_fully_fulfilled: This order is fully fulfilled and can no longer be edited.
       out_of_stock: "%{li_name} was removed because it was sold out"
       price_override_not_allowed: Prices cannot be changed on a placed order — use fees or discounts instead
       pricing_unavailable: Prices could not be confirmed. Please try again.

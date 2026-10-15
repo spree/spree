@@ -82,8 +82,10 @@ RSpec.describe Spree::SellerTransfers::Reverse do
     end
 
     context 'when only part of a line comes back' do
+      # Written straight to the row: the order has shipped, so an edit through
+      # the model is refused, and only the line's figures matter here.
       before do
-        line_item.update!(price: 24, quantity: 3)
+        line_item.update_columns(price: 24, quantity: 3)
         Spree::CommissionLine.for_line_items.update_all(amount: 7.2, total: 7.2)
       end
 

@@ -92,20 +92,24 @@ module Spree
     #
     # first unshipped that already includes this variant
     # first unshipped that's leaving from a stock_location that stocks this variant
+    #
+    # An untracked variant ships from any location, but never in a parcel of
+    # the other kind: a physical item in a digital delivery is never sent.
     def determine_target_fulfillment
       target_fulfillment = order.fulfillments.detect do |shipment|
         shipment.ready_or_pending? && shipment.include?(variant)
       end
 
       target_fulfillment || order.fulfillments.detect do |shipment|
-        shipment.ready_or_pending? && variant.stock_location_ids.include?(shipment.stock_location_id)
+        shipment.ready_or_pending? && shipment.digital? == variant.digital? &&
+          (!variant.should_track_inventory? || variant.stock_location_ids.include?(shipment.stock_location_id))
       end
     end
 
     def add_to_shipment(shipment, quantity)
-      if shipment.nil?
-        shipment = order.rebuild_fulfillments!.first
-      elsif variant.should_track_inventory?
+      return add_to_new_fulfillments(quantity) if shipment.nil?
+
+      if variant.should_track_inventory?
         on_hand, back_order = shipment.stock_location.fill_status(variant, quantity)
 
         shipment.set_up_inventory('on_hand', variant, order, line_item, on_hand)
@@ -120,6 +124,26 @@ module Spree
         shipment.stock_location.allocate(variant, quantity, shipment)
       end
 
+      quantity
+    end
+
+    # No open fulfillment can take the units, so they get one of their own,
+    # charged like any parcel added to a placed order. Rebuilding instead would
+    # delete the order's fulfillments, shipped ones included.
+    def add_to_new_fulfillments(quantity)
+      unit = Spree::FulfillmentItem.new(
+        order_id: order.id, line_item_id: line_item.id, variant_id: variant.id,
+        quantity: quantity, status: 'on_hand'
+      )
+
+      fulfillments = order.pack_new_units!([unit], audience: Spree::DeliveryMethod::BACKOFFICE)
+      if fulfillments.nil?
+        line_item.errors.add(:quantity, :selected_quantity_not_available,
+                             message: I18n.t('spree.selected_quantity_not_available', item: variant.name.inspect))
+        raise ActiveRecord::RecordInvalid, line_item
+      end
+
+      fulfillments.each(&:update_amounts)
       quantity
     end
 
