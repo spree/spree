@@ -883,4 +883,11 @@ describe Spree::LineItem, type: :model do
       end
     end
   end
+
+  describe 'external references' do
+    let(:other_store) { create(:store) }
+    let(:record) { create(:order_with_line_items, line_items_count: 1, store: other_store).line_items.first }
+
+    it_behaves_like 'files external references under its store'
+  end
 end

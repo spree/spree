@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :li  # Spree-specific: line item
 
     include Spree::HasCustomFields
+    include Spree::HasExternalReferences
     include Spree::Metadata
 
     publishes_lifecycle_events

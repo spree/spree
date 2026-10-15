@@ -23,6 +23,7 @@ export const ReturnSchema = z.object({
   canceled_at: z.string().nullable(),
   reason: ReturnReasonSchema.optional(),
   return_line_items: z.array(ReturnLineItemSchema).optional(),
+  external_references: z.record(z.string(), z.string()),
   memo: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),

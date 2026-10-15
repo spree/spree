@@ -155,4 +155,11 @@ RSpec.describe Spree::Return do
       expect { return_record.reload.to_package }.not_to change { fulfillment_item.reload.quantity }
     end
   end
+
+  describe 'external references' do
+    let(:other_store) { create(:store) }
+    let(:record) { create(:return, store: other_store, order: create(:shipped_order, store: other_store)) }
+
+    it_behaves_like 'files external references under its store'
+  end
 end

@@ -5,6 +5,7 @@ module Spree
     include Spree::DerivedNumber
     derives_number infix: 'F'
     include Spree::HasCustomFields
+    include Spree::HasExternalReferences
     include Spree::Metadata
     include Spree::StorePreferences
     if defined?(Spree::Security::Shipments)

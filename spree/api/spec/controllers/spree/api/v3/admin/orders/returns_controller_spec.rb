@@ -78,6 +78,33 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(json_response['id']).to eq(return_record.prefixed_id)
       expect(json_response['refund_total']).to be_present
     end
+
+    it 'finds the return by the key the refunding system knows it by' do
+      return_record = create_return
+      return_record.set_external_id('oms', 'REFUND-1')
+
+      get :show, params: { order_id: order.prefixed_id, id: 'external:oms:REFUND-1' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(return_record.prefixed_id)
+      expect(json_response['external_references']).to eq('oms' => 'REFUND-1')
+    end
+
+    it 'updates rather than re-creating when the refunding system replays a known key' do
+      return_record = create_return
+      return_record.set_external_id('oms', 'REFUND-1')
+
+      expect do
+        post :create, params: {
+          order_id: order.prefixed_id, memo: 'Replayed',
+          items: [{ fulfillment_item_id: fulfillment_item.prefixed_id, quantity: 1 }],
+          external_references: { oms: 'REFUND-1' }
+        }, as: :json
+      end.not_to change(Spree::Return, :count)
+
+      expect(response).to have_http_status(:ok)
+      expect(return_record.reload.memo).to eq('Replayed')
+    end
   end
 
   describe 'PATCH #update' do

@@ -1065,4 +1065,11 @@ describe Spree::Fulfillment, type: :model do
       expect(shipment.reload.tracking).to eq('OTHER-1')
     end
   end
+
+  describe 'external references' do
+    let(:other_store) { create(:store) }
+    let(:record) { create(:order_ready_to_ship, store: other_store).fulfillments.first }
+
+    it_behaves_like 'files external references under its store'
+  end
 end

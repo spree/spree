@@ -20,6 +20,7 @@ module Spree
             scoped_resource :orders
 
             request_params :return do |body|
+              body.external_references
               body.attribute :items, :array,
                 required: true, on: :create,
                 only: :create,
@@ -87,6 +88,12 @@ module Spree
 
             def permitted_params
               params.permit(*permitted_attributes)
+            end
+
+            # A replayed create runs the update action, and the units coming
+            # back are fixed once the return exists.
+            def normalize_upsert_params!
+              params.delete(:items)
             end
 
             private

@@ -3,6 +3,8 @@ module Spree
     module V3
       module Admin
         class FulfillmentSerializer < V3::FulfillmentSerializer
+          include Concerns::ExternalReferencesAttribute
+
           without_formatted_money
 
           # The Admin API has no guest gating — money fields inherited from the

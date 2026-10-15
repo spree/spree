@@ -891,6 +891,16 @@ describe Spree::Order, type: :model do
   end
 
   describe '#rebuild_fulfillments!' do
+    it 'drops the external references of the fulfillments it replaces' do
+      order = create(:order_ready_to_ship, store: store)
+      old = order.fulfillments.first
+      old.set_external_id('wms', 'SHIP-1')
+
+      order.rebuild_fulfillments!
+
+      expect(Spree::ExternalReference.where(resource_type: 'Spree::Fulfillment', resource_id: old.id)).to be_empty
+    end
+
     context 'has unassociated inventory units' do
       let!(:inventory_unit) { create(:fulfillment_item, order: subject) }
 
