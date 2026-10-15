@@ -11,9 +11,9 @@ function polishStore(api: FakeApi) {
     weight_unit: 'kg',
   }
   api.seed('/countries', [
-    { id: 'PL', iso: 'PL', name: 'Poland' },
-    { id: 'DE', iso: 'DE', name: 'Germany' },
-    { id: 'US', iso: 'US', name: 'United States' },
+    { id: 'PL', iso: 'PL' },
+    { id: 'DE', iso: 'DE' },
+    { id: 'US', iso: 'US' },
   ])
   api.seed(
     '/seller_requirements/types',

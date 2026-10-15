@@ -157,10 +157,10 @@ export async function storeDefaults(
   const store = await client.request<LiveStore>('GET', '/store')
   const country = store.default_country_code
   if (!country) throw new Error('the store has no country yet; finish first-run setup first')
-  const { name } = await client.request<{ name: string }>('GET', `/countries/${country}`)
   const variables: Variables = {
     STORE_COUNTRY: country,
-    STORE_COUNTRY_NAME: name,
+    // The API names countries by code only; default names are English.
+    STORE_COUNTRY_NAME: new Intl.DisplayNames(['en'], { type: 'region' }).of(country) ?? country,
     STORE_CURRENCY: store.default_currency,
     ...boxVariables(store),
   }
