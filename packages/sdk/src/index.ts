@@ -3,11 +3,14 @@
 export type { RequestFn, RequestOptions, RetryConfig } from '@spree/sdk-core'
 // Request infrastructure (re-export from sdk-core)
 export {
+  CountryCode,
+  CurrencyCode,
   compareMoney,
   decimalPlaces,
   formatMoney,
   isDecimalString,
   isZeroMoney,
+  LocaleCode,
   multiplyMoney,
   negateMoney,
   SpreeError,

@@ -6,6 +6,7 @@ on:
     paths:
       - "packages/**"
       - "spree/api/app/**"
+      - "spree/api/lib/typelizer/**"
       - "spree/core/app/**"
       - "docs/developer/**"
       - "docs/api-reference/**"
@@ -19,6 +20,7 @@ on:
     paths:
       - "packages/**"
       - "spree/api/app/**"
+      - "spree/api/lib/typelizer/**"
       - "spree/core/app/**"
       - "docs/developer/**"
       - "docs/api-reference/**"
@@ -95,6 +97,17 @@ jobs:
           if [ -n "$(git status --porcelain -- 'packages/*/src/types/params')" ]; then
             git diff -- 'packages/*/src/types/params'
             echo "::error::SDK request types are out of date. Run 'pnpm generate:params' and commit the result."
+            exit 1
+          fi
+
+      # The country, currency and locale lists come from the closed code
+      # schemas in the Store API reference.
+      - name: Check SDK code lists are up to date
+        run: |
+          pnpm generate:iso-codes
+          if [ -n "$(git status --porcelain -- packages/sdk-core/src/iso-codes.generated.ts)" ]; then
+            git diff -- packages/sdk-core/src/iso-codes.generated.ts
+            echo "::error::SDK code lists are out of date. Run 'pnpm generate:iso-codes' and commit the result."
             exit 1
           fi
 

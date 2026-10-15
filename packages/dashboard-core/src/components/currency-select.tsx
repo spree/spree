@@ -103,9 +103,8 @@ export function CurrencySelect({
 
   // Union of the option list and the current value so editing a record whose
   // currency isn't in the list (a store-supported list that later narrowed)
-  // never silently drops the selection. An empty `options` (e.g. a runtime
-  // without `Intl.supportedValuesOf` yields an empty `ALL_CURRENCY_CODES`)
-  // falls back to the store's currencies rather than an empty picker.
+  // never silently drops the selection. An empty `options` falls back to the
+  // store's currencies rather than an empty picker.
   const items = useMemo(() => {
     const base = options?.length ? options : currencies
     return isCurrencyCode(value) && !base.includes(value) ? [value, ...base] : base

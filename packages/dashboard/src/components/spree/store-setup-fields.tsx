@@ -32,39 +32,6 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { Controller, type FieldErrors, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-/**
- * Enough of ISO 4217 to stay useful on runtimes without
- * `Intl.supportedValuesOf` — the country's own currency is prepended to
- * whichever list is used, so the recommendation is never missing.
- */
-const FALLBACK_CURRENCY_CODES = [
-  'USD',
-  'EUR',
-  'GBP',
-  'CHF',
-  'PLN',
-  'SEK',
-  'NOK',
-  'DKK',
-  'CZK',
-  'RON',
-  'CAD',
-  'AUD',
-  'NZD',
-  'JPY',
-  'CNY',
-  'HKD',
-  'SGD',
-  'INR',
-  'BRL',
-  'MXN',
-  'ZAR',
-  'AED',
-  'TRY',
-  'ILS',
-  'KRW',
-]
-
 /** `PLN — Polish Zloty`, with the name in the admin UI language. */
 function useCurrencyLabel() {
   const currencyName = useDisplayName('currency')
@@ -177,8 +144,9 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
   // pricing in a currency other than the local one is one scroll away.
   const currencyOptions = useMemo(() => {
     const recommended = selectedCountry?.currency
-    const all = ALL_CURRENCY_CODES.length > 0 ? ALL_CURRENCY_CODES : FALLBACK_CURRENCY_CODES
-    return recommended ? [recommended, ...all.filter((code) => code !== recommended)] : all
+    return recommended
+      ? [recommended, ...ALL_CURRENCY_CODES.filter((code) => code !== recommended)]
+      : ALL_CURRENCY_CODES
   }, [selectedCountry])
 
   // The store most likely sells from wherever it is being set up, so a region

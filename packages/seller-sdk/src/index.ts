@@ -8,11 +8,14 @@ export type {
 } from '@spree/sdk-core'
 // Request infrastructure (re-exported from sdk-core)
 export {
+  CountryCode,
+  CurrencyCode,
   compareMoney,
   decimalPlaces,
   formatMoney,
   isDecimalString,
   isZeroMoney,
+  LocaleCode,
   multiplyMoney,
   negateMoney,
   SpreeError,
