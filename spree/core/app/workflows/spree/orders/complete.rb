@@ -134,16 +134,7 @@ module Spree
       def finalize_fulfillments
         order.fulfillments.each do |fulfillment|
           fulfillment.finalize!
-          allocate_fulfillment_stock(fulfillment)
-        end
-      end
-
-      def allocate_fulfillment_stock(fulfillment)
-        fulfillment.manifest.each do |item|
-          next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
-
-          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
+          fulfillment.allocate_stock!
         end
       end
 
