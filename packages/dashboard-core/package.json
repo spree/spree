@@ -76,10 +76,10 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@tailwindcss/vite": "^4.2.4",
-    "date-fns": "^4.1.0",
+    "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
-    "lucide-react": "^1.47.0",
-    "zod": "^4.4.3"
+    "lucide-react": "^1.56.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",
@@ -87,8 +87,8 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tsup": "^8.5.1",
-    "typescript": "~6.0.3",
-    "vite": "^8.0.16",
-    "vitest": "^4.1.5"
+    "typescript": "~7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
   }
 }
