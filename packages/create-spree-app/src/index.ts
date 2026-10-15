@@ -18,6 +18,8 @@ const program = new Command()
   .option('--seller-dashboard', 'include the marketplace seller dashboard')
   .option('--no-seller-dashboard', 'skip the marketplace seller dashboard')
   .option('--no-storefront', 'skip Next.js storefront setup')
+  .option('--agent-skills', 'install the Spree agent skills without asking')
+  .option('--no-agent-skills', 'skip installing the Spree agent skills')
   // Deprecated: the dashboard is included by default. Hidden, kept so
   // existing scripts keep working.
   .addOption(new Option('--react-dashboard').hideHelp())
@@ -46,6 +48,7 @@ const program = new Command()
         noSellerDashboard:
           flags.sellerDashboard === undefined ? undefined : flags.sellerDashboard === false,
         noDashboard: flags.dashboard === false,
+        noAgentSkills: flags.agentSkills === undefined ? undefined : flags.agentSkills === false,
         noStart: flags.start === false ? true : undefined,
         packageManager,
       })

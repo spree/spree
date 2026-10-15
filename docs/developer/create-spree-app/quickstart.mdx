@@ -13,8 +13,9 @@ npx create-spree-app@latest my-store
 The CLI walks you through an interactive setup:
 
 1. Include **Next.js Storefront** (default: yes)
-2. Optionally load **sample data** (products, categories, images)
-3. Optionally **start Docker services** immediately
+2. Include the **Seller Panel**, for marketplaces (default: yes)
+3. Install the **[Spree agent skills](/developer/agentic/agent-skills)**, which teach AI coding agents how to work with Spree (default: yes)
+4. **Start Docker services** immediately (default: yes)
 
 Once complete, your store is running at [http://localhost:3000](http://localhost:3000) — setup pulls the latest Spree image, seeds the database, and configures API keys, then prints a summary with your admin credentials and keys. If you skipped starting services, the first `pnpm dev` completes setup automatically.
 
@@ -39,6 +40,8 @@ npx create-spree-app@latest my-store --no-seller-dashboard --no-storefront --no-
 | `--seller-dashboard` | Include the marketplace seller panel without asking |
 | `--no-seller-dashboard` | Skip the marketplace seller panel |
 | `--no-storefront` | Skip Next.js storefront setup |
+| `--agent-skills` | Install the Spree agent skills without asking |
+| `--no-agent-skills` | Skip installing the Spree agent skills |
 | `--no-start` | Don't start Docker services after scaffolding |
 | `--port <number>` | Port for the Spree backend (default: `3000`) |
 | `--use-npm` | Use npm as package manager |
@@ -76,12 +79,13 @@ my-store/
 ├── .dockerignore             # Keeps the production build context to sources
 ├── .gitignore
 ├── package.json              # Scripts and the pinned @spree/cli
+├── .agents/skills/           # Spree agent skills (unless --no-agent-skills)
 ├── AGENTS.md                 # Instructions for coding agents
-├── CLAUDE.md                 # Project layout and conventions
+├── CLAUDE.md                 # Imports AGENTS.md for Claude Code
 └── README.md                 # How to run everything
 ```
 
-**`server/` is the only part that is Spree's.** The apps under `apps/` are ordinary Vite and Next.js projects you own — restyle, restructure or replace them without forking anything. Each carries its own instructions (`server/CLAUDE.md`, `apps/dashboard/AGENTS.md`), which is also what a coding agent reads.
+**`server/` is the only part that is Spree's.** The apps under `apps/` are ordinary Vite and Next.js projects you own — restyle, restructure or replace them without forking anything. Each carries its own instructions for coding agents (`server/AGENTS.md`, `apps/dashboard/AGENTS.md`).
 
 ### What's in docker-compose.yml
 

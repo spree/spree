@@ -7,6 +7,7 @@ interface PromptFlags {
   noStorefront?: boolean
   noSellerDashboard?: boolean
   noDashboard?: boolean
+  noAgentSkills?: boolean
   noStart?: boolean
   packageManager?: PackageManager
 }
@@ -68,6 +69,22 @@ export async function runPrompts(
     sellerDashboard = sellerResult
   }
 
+  let agentSkills: boolean
+  if (flags.noAgentSkills !== undefined) {
+    agentSkills = !flags.noAgentSkills
+  } else {
+    const skillsResult = await p.confirm({
+      message: `Install Spree agent skills?\n${pc.dim('Teaches AI coding agents (Claude Code, Codex, Cursor, Copilot and others) how to work with Spree')}`,
+      initialValue: true,
+    })
+
+    if (p.isCancel(skillsResult)) {
+      p.cancel('Setup cancelled.')
+      process.exit(0)
+    }
+    agentSkills = skillsResult
+  }
+
   let start: boolean
   if (flags.noStart !== undefined) {
     start = !flags.noStart
@@ -89,6 +106,7 @@ export async function runPrompts(
     storefront,
     dashboard,
     sellerDashboard,
+    agentSkills,
     start,
     packageManager: flags.packageManager ?? 'npm',
   }

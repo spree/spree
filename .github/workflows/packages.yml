@@ -151,7 +151,7 @@ jobs:
         run: |
           CLI_TARBALL=$(ls "$RUNNER_TEMP"/tarballs/spree-cli-*.tgz)
           SPREE_CLI_VERSION="file:$CLI_TARBALL" node packages/create-spree-app/dist/index.js "$RUNNER_TEMP/app" \
-            --no-start --no-storefront --seller-dashboard --use-pnpm
+            --no-start --no-storefront --seller-dashboard --no-agent-skills --use-pnpm
 
       # The apps pin @spree/* to npm ranges. Overriding every package with its
       # tarball also replaces the copies other @spree/* packages depend on.

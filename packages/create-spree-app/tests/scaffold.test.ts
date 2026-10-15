@@ -350,6 +350,69 @@ describe('scaffold (no-start)', () => {
     )
   })
 
+  it('writes AGENTS.md with CLAUDE.md importing it', async () => {
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    expect(fs.readFileSync(path.join(projectDir, 'AGENTS.md'), 'utf-8')).toContain(
+      'Run everything through the Spree CLI',
+    )
+    expect(fs.readFileSync(path.join(projectDir, 'CLAUDE.md'), 'utf-8')).toBe('@AGENTS.md\n')
+  })
+
+  it('installs the agent skills when chosen', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: false,
+      agentSkills: true,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+      'npx',
+      ['--yes', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes'],
+      expect.objectContaining({ cwd: path.resolve(projectDir) }),
+    )
+  })
+
+  // Skills are a convenience: a failed install must not stop first-run setup.
+  it('continues to first-run setup when the agent skills fail to install', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
+    vi.mocked(execa).mockImplementation((async (_command: string, args: string[]) => {
+      if (args.includes('skills')) throw new Error('network down')
+    }) as never)
+
+    await scaffold({
+      directory: getTempProjectDir(),
+      storefront: false,
+      dashboard: false,
+      agentSkills: true,
+      start: true,
+      packageManager: 'pnpm',
+      port: 3000,
+    })
+
+    const init = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[1] === 'init')
+    expect(init).toBeDefined()
+    vi.mocked(execa).mockReset()
+  })
+
   it('rejects non-empty directory', async () => {
     const projectDir = getTempProjectDir()
     fs.mkdirSync(projectDir, { recursive: true })

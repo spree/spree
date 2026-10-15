@@ -17,7 +17,7 @@ Spree ships first-class tooling for AI-assisted development. Whether you use Cla
 
 <CardGroup cols={2}>
   <Card title="Agent Skills" icon="graduation-cap" href="/developer/agentic/agent-skills">
-    25 skills teaching agents Spree's conventions, customization patterns, and upgrade flows — installable into 60+ agent tools, plus a Claude Code plugin with slash commands and safety hooks.
+    Skills teaching agents Spree's conventions, customization patterns, and upgrade flows — installable into 60+ agent tools, plus a Claude Code plugin with slash commands and safety hooks.
   </Card>
   <Card title="Docs MCP Server" icon="plug" href="/developer/agentic/mcp">
     Connect your agent to the Spree documentation MCP server to search and read the latest docs while building.
@@ -32,8 +32,8 @@ Spree ships first-class tooling for AI-assisted development. Whether you use Cla
 
 ## A typical agentic workflow
 
-1. **Scaffold** a project with `npx create-spree-app@latest my-store` — it generates a `CLAUDE.md`, installs `@spree/docs` for local reference, and wires up the CLI.
-2. **Install the agent skills** with `npx skills add spree/agent-skills` so your agent knows the decision tree for customizations (subscriber vs decorator vs dependency injection vs generator) before it writes a line of code.
+1. **Scaffold** a project with `npx create-spree-app@latest my-store` — it generates an `AGENTS.md`, installs `@spree/docs` for local reference, and wires up the CLI.
+2. **Keep the agent skills** the scaffold offers to install (or add them later with `npx skills add spree/agent-skills`) so your agent knows the decision tree for customizations (subscriber vs decorator vs dependency injection vs generator) before it writes a line of code.
 3. **Connect the docs MCP server** so questions the skills don't cover get answered from the live documentation.
 4. **Let the agent work** — generate an API resource (`spree generate api_resource Brand name:string`), customize checkout, integrate a payment provider, or run an upgrade with `spree upgrade`.
 
