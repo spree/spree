@@ -72,8 +72,8 @@ RSpec.describe Spree::ModelExtensions do
   end
 
   it 'resolves the configured user classes' do
-    user_class = Class.new(Spree.user_class)
-    allow(Spree).to receive(:user_class).and_return(user_class)
+    user_class = Class.new(Spree.customer_class)
+    allow(Spree).to receive(:customer_class).and_return(user_class)
     registry.add(:user, 'ModelExtensionsSpecWarranty')
     registry.apply
 

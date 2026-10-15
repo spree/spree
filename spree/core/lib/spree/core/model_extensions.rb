@@ -19,7 +19,7 @@ module Spree
     class Conflict < StandardError; end
 
     # The configured user classes, which an extension cannot know by name.
-    USER_MODELS = { user: -> { Spree.user_class }, admin_user: -> { Spree.admin_user_class } }.freeze
+    USER_MODELS = { user: -> { Spree.customer_class }, admin_user: -> { Spree.admin_user_class } }.freeze
 
     def initialize
       @extensions = Hash.new { |hash, key| hash[key] = [] }
