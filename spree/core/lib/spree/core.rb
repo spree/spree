@@ -539,6 +539,16 @@ module Spree
     @ransack ||= RansackConfiguration.new
   end
 
+  # Concerns extensions add to core models, instead of decorating them.
+  #
+  # @example
+  #   Spree.model_extensions.add('Spree::Product', 'MyExtension::ProductWarranty')
+  #
+  # @return [Spree::ModelExtensions]
+  def self.model_extensions
+    @model_extensions ||= ModelExtensions.new
+  end
+
   class << self
     # Dynamic methods for core dependencies
     #
@@ -655,6 +665,7 @@ require 'spree/core/preferences/invalid_preferences'
 require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'
+require 'spree/core/model_extensions'
 require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/price_resolution'

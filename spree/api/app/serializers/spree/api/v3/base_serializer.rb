@@ -224,6 +224,20 @@ module Spree
 
         private
 
+        # Adds the fields extensions registered for this class
+        # (Spree.api.extension_fields), read from the registry on every
+        # render as Spree.ransack is, so nothing is copied onto the class. A
+        # field never replaces an attribute the serializer writes itself.
+        def attributes_to_hash(object, hash)
+          super
+          Spree.api.extension_fields.for(self.class).each do |field|
+            next if @_attributes.key?(field.name)
+
+            set_key_and_attribute_body_from(object, field.name, field.reader, hash)
+          end
+          hash
+        end
+
         # Override Alba's fetch_attribute to automatically inject nested expand params
         # into child serializers via nested_params.
         # Uses `key` (the public API name, e.g. :categories) for expand lookup,

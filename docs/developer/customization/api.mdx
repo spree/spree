@@ -83,6 +83,40 @@ The brand data is available via `?expand=brand`:
 GET /api/v3/store/products/prod_86Rf07xd4z?expand=brand
 ```
 
+### Adding a Field from an Extension
+
+Replacing a serializer works for your own application, but the setting holds one replacement. An extension that replaced `admin_product_serializer` would be silently undone by an application that replaces it too. An extension adds read-only fields to a core serializer instead: an **attribute**, written as it is, or an **association**, a related record or a list of them written by the extension's own serializer:
+
+```ruby server/config/initializers/my_extension.rb
+Rails.application.config.after_initialize do
+  Spree.api.extension_fields.attribute(:admin_product_serializer, method: :warranty_text)
+
+  Spree.api.extension_fields.association(
+    :admin_product_serializer,
+    one: :warranty,
+    serializer: 'MyExtension::WarrantySerializer',
+    expand: true
+  )
+
+  Spree.api.extension_fields.association(
+    :admin_product_serializer,
+    many: :warranty_claims,
+    serializer: 'MyExtension::ClaimSerializer',
+    expand: true
+  )
+end
+```
+
+- **The name** is the response key and the record's method that gives the value: `method:` for an attribute, `one:` or `many:` for an association. `one: :warranty` writes `product.warranty` with the given serializer; `many: :warranty_claims` writes each of `product.warranty_claims`. An extension adds such methods to core models with [model extensions](/developer/customization/decorators#adding-to-a-model-without-a-decorator).
+- **A simple computed value** needs no method: name the field and pass `value:`, as in `attribute(:admin_product_serializer, :warranty_months, value: ->(product) { ... })`. An association takes `value:` the same way, beside its `one:` or `many:`.
+- **Registered by dependency key**, such as `admin_product_serializer`. If the application replaces that serializer with one that inherits from a core serializer, as shown above, the field still renders on the replacement.
+- **`expand: true`** shows the field only when the request asks for it with `?expand=warranty`. Without it, the field is always shown. An association's nested expands reach its serializer, so `?expand=warranty.claims` passes `claims` on, the same way `?expand=variants.media` works. Lists apply the same expands to every item.
+- **Associations read on lists are batched** when they are Active Record associations, as core ones are. A value computed by `value:` is read for each record.
+- **Names are unique per serializer.** Registering a name that the serializer or another extension already uses raises an error at boot.
+- **Not in the generated SDK types.** The extension that adds a field declares its TypeScript type.
+
+This is the read side of [adding an attribute to a core resource](#adding-an-attribute-to-a-core-resource), which makes a field writable.
+
 ### Serializer Dependency Keys
 
 Here are the most commonly customized v3 serializers:
