@@ -3,7 +3,9 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
+import { installAgentSkills } from './agent-skills.js'
 import {
+  AGENT_SKILLS_REPO,
   DASHBOARD_PORT,
   DOCS_MCP_URL,
   SELLER_DASHBOARD_PORT,
@@ -12,7 +14,7 @@ import {
 import { scaffoldApp } from './dashboard.js'
 import { downloadServer } from './server.js'
 import { installRootDeps, scaffoldStorefront } from './storefront.js'
-import { agentsMdContent, rootClaudeMdContent } from './templates/claude-md.js'
+import { agentsMdContent, claudeMdContent } from './templates/agents-md.js'
 import { dependabotContent } from './templates/dependabot.js'
 import { envContent } from './templates/env.js'
 import { dockerignoreContent, gitignoreContent } from './templates/gitignore.js'
@@ -104,7 +106,6 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   )
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
   fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
-  fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
 
   s.stop('Project structure created.')
 
@@ -165,20 +166,33 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     ),
   )
   fs.writeFileSync(
-    path.join(projectDir, 'CLAUDE.md'),
-    rootClaudeMdContent(
-      storefrontReady,
-      dashboardReady,
-      options.packageManager,
-      sellerDashboardReady,
-    ),
+    path.join(projectDir, 'AGENTS.md'),
+    agentsMdContent(storefrontReady, dashboardReady, options.packageManager, sellerDashboardReady),
   )
+  fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), claudeMdContent())
   const githubDir = path.join(projectDir, '.github')
   fs.mkdirSync(githubDir, { recursive: true })
   fs.writeFileSync(
     path.join(githubDir, 'dependabot.yml'),
     dependabotContent(storefrontReady, dashboardReady, sellerDashboardReady),
   )
+
+  // A failed install warns and continues, like the apps: skills are a
+  // convenience, never a reason to stop before Phase 4.
+  let agentSkillsReady = false
+  if (options.agentSkills) {
+    s.start('Installing Spree agent skills...')
+    try {
+      await installAgentSkills(projectDir, options.packageManager)
+      agentSkillsReady = true
+      s.stop('Spree agent skills installed.')
+    } catch (err) {
+      s.stop('Spree agent skills were not installed.')
+      p.log.warn(
+        `Install them later with ${pc.bold(`${dlxCommand(options.packageManager)} skills add ${AGENT_SKILLS_REPO}`)}.\n${errorMessage(err)}`,
+      )
+    }
+  }
 
   // Phase 4: Initialize and start services
   if (options.start) {
@@ -221,6 +235,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       storefrontReady,
       dashboardReady,
       sellerDashboardReady,
+      agentSkillsReady,
       options.packageManager,
     )
   }
@@ -232,6 +247,7 @@ function printSuccessWithoutDocker(
   hasStorefront: boolean,
   hasDashboard: boolean,
   hasSellerDashboard: boolean,
+  hasAgentSkills: boolean,
   pm: PackageManager,
 ): void {
   const run = runCommand(pm)
@@ -292,11 +308,19 @@ function printSuccessWithoutDocker(
     `  ${run} spree eject`,
     `  ${pc.dim('# Then edit server/ — the Rails API app (Gemfile, app/, config/)')}`,
     '',
-    `${pc.bold('Agent skills (optional)')}`,
-    `  ${dlxCommand(pm)} skills add spree/agent-skills`,
-    `  ${pc.dim('# Adds 23 Spree skills to whichever AI agent(s) you use')}`,
-    `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
-    '',
+  )
+
+  if (!hasAgentSkills) {
+    lines.push(
+      `${pc.bold('Agent skills (optional)')}`,
+      `  ${dlxCommand(pm)} skills add ${AGENT_SKILLS_REPO}`,
+      `  ${pc.dim('# Teaches whichever AI agents you use how to work with Spree')}`,
+      `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
+      '',
+    )
+  }
+
+  lines.push(
     `${pc.bold('Spree docs MCP server (optional)')}`,
     `  claude mcp add --transport http spree-docs ${DOCS_MCP_URL}`,
     `  ${pc.dim('# Lets your AI agent search the latest Spree docs. Other agents:')}`,

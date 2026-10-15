@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { rootClaudeMdContent } from '../src/templates/claude-md'
+import { agentsMdContent, claudeMdContent } from '../src/templates/agents-md'
 import { dependabotContent } from '../src/templates/dependabot'
 import { envContent, storefrontEnvContent } from '../src/templates/env'
 import { gitignoreContent } from '../src/templates/gitignore'
@@ -218,30 +218,45 @@ describe('readmeContent', () => {
   })
 })
 
-describe('rootClaudeMdContent', () => {
+describe('agentsMdContent', () => {
   it('lists apps/dashboard when the dashboard is included', () => {
-    const content = rootClaudeMdContent(true, true)
+    const content = agentsMdContent(true, true)
     expect(content).toContain('`apps/dashboard/`')
     // Each app carries its own instructions; the root file points at them.
+    expect(content).toContain('server/AGENTS.md')
     expect(content).toContain('apps/dashboard/AGENTS.md')
     expect(content).toContain('apps/seller-dashboard/AGENTS.md')
   })
 
-  it('renders commands for the chosen package manager', () => {
-    const content = rootClaudeMdContent(true, true, 'pnpm')
-    expect(content).toContain('pnpm run dev')
+  it('renders CLI commands for the chosen package manager', () => {
+    const content = agentsMdContent(true, true, 'pnpm')
+    expect(content).toContain('pnpm spree dev')
     expect(content).toContain('pnpm spree api get products')
     expect(content).not.toContain('npx spree')
   })
 
+  // Agents must drive the stack through the CLI, never through Rails
+  // binaries or the root package.json shortcuts.
+  it('forbids running Rails commands directly', () => {
+    const content = agentsMdContent(false)
+    expect(content).toContain('Never run `bin/rails`')
+    expect(content).toContain("Don't use the `package.json` scripts")
+  })
+
   it('omits apps/dashboard by default', () => {
-    expect(rootClaudeMdContent(true)).not.toContain('apps/dashboard')
+    expect(agentsMdContent(true)).not.toContain('apps/dashboard')
   })
 
   it('omits the seller panel when it was not installed', () => {
-    const content = rootClaudeMdContent(true, true, 'pnpm', false)
+    const content = agentsMdContent(true, true, 'pnpm', false)
     expect(content).toContain('apps/dashboard/AGENTS.md')
     expect(content).not.toContain('apps/seller-dashboard')
+  })
+})
+
+describe('claudeMdContent', () => {
+  it('imports AGENTS.md', () => {
+    expect(claudeMdContent()).toBe('@AGENTS.md\n')
   })
 })
 
