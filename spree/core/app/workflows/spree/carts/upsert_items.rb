@@ -213,6 +213,13 @@ module Spree
         end
       end
 
+      def reject_line(index, item, line_item)
+        failure(line_item) unless partial_success?
+
+        warn(index, item, line_item.errors.details.values.flatten.first&.dig(:error) || :invalid,
+             line_item.errors.full_messages.to_sentence)
+      end
+
       def unsupplyable?(item)
         @unsupplyable_variant_ids.include?(item.variant.id)
       end
@@ -224,7 +231,7 @@ module Spree
           line_item = Spree.line_item_by_variant_finder.new.execute(owner: cart, variant: item.variant)
 
           if item.remove?
-            line_item&.destroy!
+            reject_line(index, item, line_item) if line_item && !line_item.destroy
             next
           end
 
@@ -323,10 +330,7 @@ module Spree
         # would roll back every other line, which is exactly what a customer
         # restoring a saved cart must not lose.
         unless line_item.save
-          failure(line_item) unless partial_success?
-
-          warn(index, item, line_item.errors.details.values.flatten.first&.dig(:error) || :invalid,
-               line_item.errors.full_messages.to_sentence)
+          reject_line(index, item, line_item)
           return
         end
 

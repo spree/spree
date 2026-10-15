@@ -16,7 +16,7 @@ module Spree
           items: [{ variant_id: line_item.variant_id, quantity: 0 }]
         )
 
-        result.success? ? success(line_item) : failure(line_item, result.error)
+        result.success? ? success(line_item) : failure(line_item, result.error.value)
       end
     end
   end

@@ -395,6 +395,25 @@ module Spree
       fulfillment_items.finalize_units!
     end
 
+    # Promises the stock for everything this fulfillment holds. Without it
+    # dispatch writes no movement, because an unallocated fulfillment looks
+    # like one created before typed movements, and the goods leave the shelf
+    # unrecorded.
+    #
+    # @return [void]
+    def allocate_stock!
+      items = manifest.select { |item| item.variant.track_inventory? && item.quantity.positive? }
+      return if items.empty?
+
+      # Lowest id first, as StockLocation#stock_level reads.
+      stock_levels = stock_location.stock_levels.where(variant_id: items.map { |item| item.variant.id }).order(:id).
+                     group_by(&:variant_id).transform_values(&:first)
+
+      items.each do |item|
+        stock_location.allocate(item.variant, item.quantity, self, stock_level: stock_levels[item.variant.id])
+      end
+    end
+
     # Units this fulfillment still holds a promise for, keyed by variant id:
     # what was allocated to it, less anything since released or shipped
     # against it. A fulfillment has one origin, so a variant maps to exactly

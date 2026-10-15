@@ -939,6 +939,23 @@ module Spree
       end
     end
 
+    # Packs units added after placement into fulfillments of their own and
+    # promises their stock. Unlike {#rebuild_fulfillments!} it leaves every
+    # existing fulfillment alone, shipped ones included.
+    #
+    # @param units [Array<Spree::FulfillmentItem>] unsaved units, built by id
+    # @param audience [String] who the new fulfillments are quoted for
+    # @return [Array<Spree::Fulfillment>, nil] the new fulfillments, or nil
+    #   when stock cannot cover every unit, in which case nothing is saved
+    def pack_new_units!(units, audience: Spree::DeliveryMethod::STOREFRONT)
+      added = Spree::Stock::Coordinator.new(self, units, audience: audience).fulfillments
+      return if added.flat_map(&:fulfillment_items).sum(&:quantity) != units.sum(&:quantity)
+
+      self.fulfillments += added
+      added.each(&:allocate_stock!)
+      added
+    end
+
     # Resolves the routing strategy from the channel override first, then the
     # store default. Only a registered Spree::OrderRouting::Strategy::Base
     # subclass is used; any other value (an unregistered/typo'd class, or a

@@ -4,9 +4,11 @@ module Spree
       attr_reader   :order, :inventory_units
       attr_accessor :unallocated_inventory_units
 
-      def initialize(order, inventory_units = nil)
+      # @param audience [String] who the packages are quoted for
+      def initialize(order, inventory_units = nil, audience: DeliveryMethod::STOREFRONT)
         @order = order
         @inventory_units = inventory_units || InventoryUnitBuilder.new(order).units
+        @audience = audience
       end
 
       def fulfillments
@@ -106,7 +108,7 @@ module Spree
 
       def estimate_packages(packages)
         packages.each do |package|
-          package.delivery_rates = estimator.delivery_rates(package)
+          package.delivery_rates = estimator.delivery_rates(package, @audience)
         end
         packages
       end

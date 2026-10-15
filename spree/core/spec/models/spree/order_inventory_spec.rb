@@ -155,6 +155,38 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
+  # Rebuilding instead would delete the shipped fulfillment with its units.
+  context 'when no unshipped fulfillment can take an added unit' do
+    let(:order) { create(:shipped_order) }
+    let(:shipped) { order.fulfillments.first }
+
+    before do
+      line_item.update_column(:quantity, line_item.quantity + 1)
+      line_item.reload
+    end
+
+    it 'ships it in a new, priced fulfillment and leaves the shipped one alone' do
+      shipped_units = shipped.fulfillment_items.sum(:quantity)
+      subject.verify
+
+      added = order.fulfillments.reload - [shipped]
+      expect(shipped.reload).to be_fulfilled
+      expect(shipped.fulfillment_items.sum(:quantity)).to eq(shipped_units)
+      expect(added.size).to eq(1)
+      expect(added.first.fulfillment_items.sum(:quantity)).to eq(1)
+      expect(added.first.cost).to be_positive
+      expect(added.first.allocated_quantities[line_item.variant_id]).to eq(1)
+    end
+
+    it 'refuses when no location can pack the unit' do
+      line_item.variant.stock_levels.delete_all
+
+      expect { subject.verify }.to raise_error(ActiveRecord::RecordInvalid)
+      expect(line_item.errors.details[:quantity]).to include(error: :selected_quantity_not_available)
+      expect(order.fulfillments.reload).to contain_exactly(shipped)
+    end
+  end
+
   context 'when order has too many inventory units' do
     before do
       line_item.quantity = 3

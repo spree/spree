@@ -135,21 +135,7 @@ module Spree
       def finalize_fulfillments
         order.fulfillments.each do |fulfillment|
           fulfillment.finalize!
-          allocate_fulfillment_stock(fulfillment)
-        end
-      end
-
-      def allocate_fulfillment_stock(fulfillment)
-        items = fulfillment.manifest.select { |item| item.variant.track_inventory? && item.quantity.positive? }
-        return if items.empty?
-
-        stock_location = fulfillment.stock_location
-        # Lowest id first, as StockLocation#stock_level reads.
-        stock_levels = stock_location.stock_levels.where(variant_id: items.map { |item| item.variant.id }).order(:id).
-                       group_by(&:variant_id).transform_values(&:first)
-
-        items.each do |item|
-          stock_location.allocate(item.variant, item.quantity, fulfillment, stock_level: stock_levels[item.variant.id])
+          fulfillment.allocate_stock!
         end
       end
 

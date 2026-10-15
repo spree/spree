@@ -71,12 +71,15 @@ module Spree
 
     validates_with Spree::Stock::AvailabilityValidator, if: -> { variant.present? }
     validate :ensure_proper_currency, if: -> { owner.present? }
+    validate :ensure_order_editable, if: -> { new_record? || will_save_change_to_quantity? }
 
     # Order-side only: a cart's fulfillment items are built by the Stock
     # Coordinator and copied at completion, so `owner` would be wrong here.
     # Removing an item from a placed order must drain its units and restock —
     # `removing: true` keeps verify from re-adding units mid-destroy.
     before_destroy :verify_order_inventory_before_destroy, if: -> { order.present? }
+    # Prepended so a refused removal drains nothing first.
+    before_destroy :ensure_order_editable_before_destroy, prepend: true
 
     after_save :update_inventory
     after_save :update_adjustments
@@ -482,6 +485,37 @@ module Spree
       return unless owner
 
       owner.tax_provider.estimate(owner, [self], **owner.tax_estimate_inputs)
+    end
+
+    # Shipped goods are facts: once every live parcel has gone out the order's
+    # items stay as they are, and before that a line cannot fall below the
+    # units it has already shipped. The dashboard's edit screen applies the
+    # same two rules.
+    def ensure_order_editable(target_quantity = quantity)
+      return unless order&.completed?
+
+      if order_fully_fulfilled?
+        errors.add(:base, :order_fully_fulfilled, message: I18n.t('spree.cart_line_item.order_fully_fulfilled'))
+      elsif target_quantity < (shipped = shipped_quantity)
+        errors.add(:base, :below_shipped_quantity, message: I18n.t('spree.cart_line_item.below_shipped_quantity', count: shipped))
+      end
+    end
+
+    def ensure_order_editable_before_destroy
+      ensure_order_editable(0)
+      throw(:abort) if errors.any?
+    end
+
+    # Read from the parcels, not the status rollup, which calls a mix of
+    # fulfilled and delivered parcels `partial`.
+    def order_fully_fulfilled?
+      live = order.fulfillments.reject(&:canceled?)
+      live.any? && live.all? { |fulfillment| fulfillment.fulfilled? || fulfillment.delivered? }
+    end
+
+    def shipped_quantity
+      fulfillment_items.where(replacement: false).joins(:fulfillment).
+        merge(Spree::Fulfillment.fulfilled_or_delivered).sum(:quantity)
     end
 
     def ensure_proper_currency
