@@ -18,6 +18,7 @@ export async function installAgentSkills(projectDir: string, pm: PackageManager)
   await execa(
     command,
     [...runnerArgs, 'skills', 'add', AGENT_SKILLS_REPO, '--skill', '*', '--yes'],
-    { cwd: projectDir, stdio: 'ignore' },
+    // A stalled download must fail, so the scaffold can warn and move on.
+    { cwd: projectDir, stdio: 'ignore', timeout: 120_000 },
   )
 }
