@@ -187,6 +187,8 @@ A placed order is meant to stay put. Its items and prices are written when the c
 
 Where admin edits are allowed, totals are re-added from the order's existing rows rather than worked out again from scratch. Editing an order must never quietly re-apply today's promotions and hand the customer a different discount than the one they accepted.
 
+Shipped goods are facts. Once every parcel on an order has shipped, its items can no longer be added, changed or removed, and the Admin API refuses the edit with the `order_not_editable` error code. On a partly shipped order a line cannot go below the units it has already shipped, and a line with shipped units cannot be removed (`invalid_quantity`). An edit leaves the shipped parcels as they are: an added unit joins a parcel that has not shipped yet, or, when none can take it, ships in a new parcel of its own with its own delivery charge. See [Fulfillments](/developer/core-concepts/fulfillments).
+
 ## Money on an order
 
 Tax, discounts and fees are kept as separate records, so you can ask what tax was charged without picking through a mixed list. See [Order totals](/developer/core-concepts/order-totals).
