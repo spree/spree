@@ -614,7 +614,59 @@
     },
     {
       "source": "/user/manage-products/product-metafields",
-      "destination": "/user/manage-products/custom-product-fields"
+      "destination": "/user/products/custom-product-fields"
+    },
+    {
+      "source": "/user/manage-products/search-products",
+      "destination": "/user/products/products"
+    },
+    {
+      "source": "/user/manage-products/bulk-product-operations",
+      "destination": "/user/products/products"
+    },
+    {
+      "source": "/user/products/creating-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/editing-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/cloning-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/deleting-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/editing-multi-variant-products",
+      "destination": "/user/products/variants"
+    },
+    {
+      "source": "/user/manage-products/import-products",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/export-products",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/multi-currency-import-export",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/product-options",
+      "destination": "/user/products/options"
+    },
+    {
+      "source": "/user/manage-products/product-import-file-template",
+      "destination": "/user/products/import-template"
+    },
+    {
+      "source": "/user/manage-products/custom-product-fields",
+      "destination": "/user/products/custom-product-fields"
     }
   ],
   "contextual": {
@@ -1146,21 +1198,16 @@
                     "group": "Products",
                     "icon": "package",
                     "pages": [
-                      "user/products/creating-products",
-                      "user/products/editing-products",
-                      "user/products/editing-multi-variant-products",
-                      "user/products/cloning-products",
-                      "user/products/deleting-products",
-                      "user/manage-products/search-products",
-                      "user/manage-products/bulk-product-operations",
+                      "user/products/products",
+                      "user/products/adding-products",
+                      "user/products/variants",
+                      "user/products/options",
+                      "user/products/media",
                       "user/products/categories",
                       "user/products/collections",
-                      "user/manage-products/product-options",
-                      "user/manage-products/custom-product-fields",
-                      "user/manage-products/import-products",
-                      "user/manage-products/export-products",
-                      "user/manage-products/product-import-file-template",
-                      "user/manage-products/multi-currency-import-export"
+                      "user/products/custom-product-fields",
+                      "user/products/import-and-export",
+                      "user/products/import-template"
                     ]
                   },
                   {
@@ -2802,21 +2849,16 @@
             "group": "Products",
             "icon": "package",
             "pages": [
-              "user/products/creating-products",
-              "user/products/editing-products",
-              "user/products/editing-multi-variant-products",
-              "user/products/cloning-products",
-              "user/products/deleting-products",
-              "user/manage-products/search-products",
-              "user/manage-products/bulk-product-operations",
+              "user/products/products",
+              "user/products/adding-products",
+              "user/products/variants",
+              "user/products/options",
+              "user/products/media",
               "user/products/categories",
               "user/products/collections",
-              "user/manage-products/product-options",
-              "user/manage-products/product-metafields",
-              "user/manage-products/import-products",
-              "user/manage-products/export-products",
-              "user/manage-products/product-import-file-template",
-              "user/manage-products/multi-currency-import-export"
+              "user/products/custom-product-fields",
+              "user/products/import-and-export",
+              "user/products/import-template"
             ]
           },
           {
