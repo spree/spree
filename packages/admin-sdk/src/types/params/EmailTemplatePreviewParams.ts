@@ -20,4 +20,6 @@ export type EmailTemplatePreviewParams = {
     heading_color?: string | null
     font?: 'inter' | 'system' | 'helvetica' | 'georgia' | 'roboto' | 'lato' | 'merriweather' | null
   }
+  /** An unsaved email logo: the signed id of an uploaded image, or null to preview without one. */
+  mailer_logo_signed_id?: string | null
 }

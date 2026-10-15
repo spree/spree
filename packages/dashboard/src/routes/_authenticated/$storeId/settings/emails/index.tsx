@@ -277,16 +277,7 @@ function EmailSettingsForm({ store }: { store: Store }) {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t('admin.pages.settings.emails.section_logo')}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <LogoField form={form} initialLogoUrl={store.mailer_logo_url} />
-                  </CardContent>
-                </Card>
-
-                <BrandingCard form={form} />
+                <BrandingCard form={form} logoUrl={store.mailer_logo_url} />
               </>
             )}
           </>
@@ -328,7 +319,13 @@ function LogoField({
   )
 }
 
-function BrandingCard({ form }: { form: ReturnType<typeof useForm<StoreEmailsFormValues>> }) {
+function BrandingCard({
+  form,
+  logoUrl,
+}: {
+  form: ReturnType<typeof useForm<StoreEmailsFormValues>>
+  logoUrl: string | null
+}) {
   const { t } = useTranslation()
   const { permissions } = usePermissions()
   const { errors } = form.formState
@@ -345,6 +342,7 @@ function BrandingCard({ form }: { form: ReturnType<typeof useForm<StoreEmailsFor
       </CardHeader>
       <CardContent className="grid gap-6 lg:grid-cols-2">
         <FieldGroup>
+          <LogoField form={form} initialLogoUrl={logoUrl} />
           {EMAIL_BRANDING_COLORS.map((color) => {
             const name = `email_${color}` as const
             return (
@@ -407,7 +405,7 @@ function BrandingCard({ form }: { form: ReturnType<typeof useForm<StoreEmailsFor
 function BrandingPreview({ form }: { form: ReturnType<typeof useForm<StoreEmailsFormValues>> }) {
   const { t } = useTranslation()
   const preview = useEmailTemplatePreview(BRANDING_PREVIEW_TEMPLATE)
-  const [accent, background, card, text, heading, font] = useWatch({
+  const [accent, background, card, text, heading, font, logoSignedId, logoCleared] = useWatch({
     control: form.control,
     name: [
       'email_accent_color',
@@ -416,24 +414,31 @@ function BrandingPreview({ form }: { form: ReturnType<typeof useForm<StoreEmails
       'email_text_color',
       'email_heading_color',
       'email_font',
+      'mailer_logo_signed_id',
+      'mailer_logo_cleared',
     ],
   })
-  const branding = useDebouncedValue(
+  // Saving resets the logo fields, which changes the params and re-renders
+  // the preview with the logo the store now has.
+  const params = useDebouncedValue(
     JSON.stringify({
-      accent_color: accent,
-      background_color: background,
-      card_color: card,
-      text_color: text,
-      heading_color: heading,
-      font,
+      branding: {
+        accent_color: accent,
+        background_color: background,
+        card_color: card,
+        text_color: text,
+        heading_color: heading,
+        font,
+      },
+      ...signedIdParam('mailer_logo', logoSignedId, logoCleared),
     }),
     PREVIEW_DELAY_MS,
   )
   const { mutate } = preview
 
   useEffect(() => {
-    mutate({ branding: JSON.parse(branding) })
-  }, [branding, mutate])
+    mutate(JSON.parse(params))
+  }, [params, mutate])
 
   // No customer emails installed, so there is nothing to preview.
   if (preview.error instanceof SpreeError && preview.error.status === 404) return null

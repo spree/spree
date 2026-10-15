@@ -37,4 +37,34 @@ describe Spree::EmailTemplates::Preview do
     expect(email.subject).to eq('Only the subject changed')
     expect(email.html).to include(store.name)
   end
+
+  describe 'an unsaved logo' do
+    let(:blob) { ActiveStorage::Blob.create_and_upload!(io: File.open(file_fixture('icon_256x256.png')), filename: 'unsaved-logo.png') }
+
+    it 'shows an uploaded logo the store does not have yet' do
+      preview = described_class.new(store: store, key: editable_key, mailer_logo_signed_id: blob.signed_id)
+      preview.call
+
+      expect(preview.variables['store']['logo_url']).to include('unsaved-logo')
+      expect(store.reload.mailer_logo).not_to be_attached
+    end
+
+    it 'shows the email without the logo once it is removed' do
+      store = create(:store)
+      store.mailer_logo.attach(blob)
+      preview = described_class.new(store: store, key: editable_key, mailer_logo_cleared: true)
+      preview.call
+
+      expect(preview.variables['store']['logo_url']).to be_nil
+      expect(store.reload.mailer_logo).to be_attached
+    end
+
+    it 'refuses a file saving the store would refuse' do
+      document = ActiveStorage::Blob.create_and_upload!(io: StringIO.new('%PDF-1.4'), filename: 'logo.pdf',
+                                                        content_type: 'application/pdf')
+
+      expect { described_class.new(store: store, key: editable_key, mailer_logo_signed_id: document.signed_id).call }.
+        to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
 end
