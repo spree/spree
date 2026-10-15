@@ -183,6 +183,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       expect(line_item.reload.external_id_for('oms')).to eq('LINE-2')
     end
 
+    context 'on a fully fulfilled order' do
+      let!(:order) { create(:shipped_order, store: store) }
+      let!(:line_item) { order.line_items.first }
+
+      it 'refuses with order_not_editable' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('order_not_editable')
+        expect(line_item.reload.quantity).to eq(1)
+      end
+    end
+
     context 'with a negotiated price' do
       subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: '7.20' }, as: :json }
 
@@ -281,6 +294,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
     it 'removes the line item' do
       subject
       expect(response).to have_http_status(:no_content)
+    end
+
+    context 'on a fully fulfilled order' do
+      let!(:order) { create(:shipped_order, store: store) }
+      let!(:line_item) { order.line_items.first }
+
+      it 'refuses with order_not_editable and keeps the line' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('order_not_editable')
+        expect(order.line_items.reload).to include(line_item)
+      end
     end
   end
 end
