@@ -90,7 +90,7 @@ describe('rootPackageJsonContent', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     // The floor must admit every CLI capability the scaffold calls — the
     // seller-dashboard component landed in 3.0.
-    expect(pkg.dependencies['@spree/cli']).toBe('^3.0.0')
+    expect(pkg.dependencies['@spree/cli']).toBe('^3.4.0')
   })
 
   it('includes convenience scripts using spree cli', () => {
@@ -251,11 +251,6 @@ describe('agentsMdContent', () => {
     const content = agentsMdContent(true, true, 'pnpm', false)
     expect(content).toContain('apps/dashboard/AGENTS.md')
     expect(content).not.toContain('apps/seller-dashboard')
-  })
-
-  it('points agents at the docs MCP server only when it is configured', () => {
-    expect(agentsMdContent(true, true, 'pnpm', true, true)).toContain('`spree-docs` MCP server')
-    expect(agentsMdContent(true, true, 'pnpm', true, false)).not.toContain('spree-docs')
   })
 })
 

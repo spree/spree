@@ -368,7 +368,7 @@ describe('scaffold (no-start)', () => {
     expect(fs.readFileSync(path.join(projectDir, 'CLAUDE.md'), 'utf-8')).toBe('@AGENTS.md\n')
   })
 
-  it('installs the agent skills when chosen', async () => {
+  it('delegates the agent setup to `spree add ai`, passing what was declined', async () => {
     const { execa } = await import('execa')
     vi.mocked(execa).mockClear()
     const projectDir = getTempProjectDir()
@@ -377,7 +377,8 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: false,
       dashboard: false,
-      agentSkills: true,
+      agentSkills: false,
+      docsMcp: true,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -385,62 +386,36 @@ describe('scaffold (no-start)', () => {
 
     expect(vi.mocked(execa)).toHaveBeenCalledWith(
       'npx',
-      ['--yes', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes'],
+      ['spree', 'add', 'ai', '--quiet', '--no-skills'],
       expect.objectContaining({ cwd: path.resolve(projectDir) }),
     )
   })
 
-  it('connects each coding agent to the docs MCP server when chosen', async () => {
-    const projectDir = getTempProjectDir()
+  it('skips the agent setup when both halves are declined', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
 
     await scaffold({
-      directory: projectDir,
+      directory: getTempProjectDir(),
       storefront: false,
       dashboard: false,
-      docsMcp: true,
-      start: false,
-      packageManager: 'npm',
-      port: 3000,
-    })
-
-    const read = (file: string) => JSON.parse(fs.readFileSync(path.join(projectDir, file), 'utf-8'))
-    expect(read('.mcp.json').mcpServers['spree-docs'].url).toBe(
-      'https://spreecommerce.org/docs/mcp',
-    )
-    expect(read('.cursor/mcp.json').mcpServers['spree-docs'].url).toBe(
-      'https://spreecommerce.org/docs/mcp',
-    )
-    expect(read('.vscode/mcp.json').servers['spree-docs']).toEqual({
-      type: 'http',
-      url: 'https://spreecommerce.org/docs/mcp',
-    })
-    expect(fs.readFileSync(path.join(projectDir, 'AGENTS.md'), 'utf-8')).toContain('spree-docs')
-  })
-
-  it('writes no MCP config when the docs MCP server is declined', async () => {
-    const projectDir = getTempProjectDir()
-
-    await scaffold({
-      directory: projectDir,
-      storefront: false,
-      dashboard: false,
+      agentSkills: false,
       docsMcp: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
     })
 
-    expect(fs.existsSync(path.join(projectDir, '.mcp.json'))).toBe(false)
-    expect(fs.existsSync(path.join(projectDir, '.cursor'))).toBe(false)
-    expect(fs.existsSync(path.join(projectDir, '.vscode'))).toBe(false)
+    const addAi = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[2] === 'ai')
+    expect(addAi).toBeUndefined()
   })
 
-  // Skills are a convenience: a failed install must not stop first-run setup.
-  it('continues to first-run setup when the agent skills fail to install', async () => {
+  // Agent setup is a convenience: a failure must not stop first-run setup.
+  it('continues to first-run setup when the agent setup fails', async () => {
     const { execa } = await import('execa')
     vi.mocked(execa).mockClear()
     vi.mocked(execa).mockImplementation((async (_command: string, args: string[]) => {
-      if (args.includes('skills')) throw new Error('network down')
+      if (args.includes('ai')) throw new Error('network down')
     }) as never)
 
     await scaffold({

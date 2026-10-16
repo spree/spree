@@ -1,5 +1,5 @@
 import type { PackageManager } from '../types.js'
-import { dlxCommand, runCommand } from '../utils.js'
+import { runCommand } from '../utils.js'
 
 /**
  * Root CLAUDE.md for a generated project. Claude Code reads CLAUDE.md, not
@@ -18,7 +18,6 @@ export function agentsMdContent(
   hasDashboard = false,
   pm: PackageManager = 'pnpm',
   hasSellerDashboard = hasDashboard,
-  hasDocsMcp = false,
 ): string {
   const spree = `${runCommand(pm)} spree`
   const lines = [
@@ -137,27 +136,11 @@ export function agentsMdContent(
     '',
     'Read these files when you need Spree-specific guidance.',
     '',
-  )
-
-  if (hasDocsMcp) {
-    lines.push(
-      '### Searching the docs',
-      '',
-      'The `spree-docs` MCP server (configured in `.mcp.json`, `.cursor/mcp.json` and',
-      '`.vscode/mcp.json`) searches the latest published Spree docs. Use it when you do not',
-      'know which page covers a topic, then read the page from the local files above. The',
-      'server can be ahead of the Spree version this project runs — when the two disagree,',
-      'the local files are right for this project.',
-      '',
-    )
-  }
-
-  lines.push(
     '## Spree agent skills',
     '',
     'The official Spree skills cover API conventions, the data model, events, testing,',
     'security, deployment, the Admin Dashboard and the storefront. If `.agents/skills/`',
-    `is missing, install them with \`${dlxCommand(pm)} skills add spree/agent-skills\`.`,
+    `is missing, install them with \`${spree} add ai\`.`,
     '',
   )
 

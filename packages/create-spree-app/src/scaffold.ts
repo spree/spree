@@ -3,14 +3,8 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { installAgentSkills } from './agent-skills.js'
-import {
-  AGENT_SKILLS_REPO,
-  DASHBOARD_PORT,
-  DOCS_MCP_URL,
-  SELLER_DASHBOARD_PORT,
-  STOREFRONT_REPO,
-} from './constants.js'
+import { setupAgents } from './agents.js'
+import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT, STOREFRONT_REPO } from './constants.js'
 import { scaffoldApp } from './dashboard.js'
 import { downloadServer } from './server.js'
 import { installRootDeps, scaffoldStorefront } from './storefront.js'
@@ -18,12 +12,10 @@ import { agentsMdContent, claudeMdContent } from './templates/agents-md.js'
 import { dependabotContent } from './templates/dependabot.js'
 import { envContent } from './templates/env.js'
 import { dockerignoreContent, gitignoreContent } from './templates/gitignore.js'
-import { docsMcpConfigFiles } from './templates/mcp-config.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
 import {
-  dlxCommand,
   generateEncryptionKeys,
   generateSecretKeyBase,
   installCommand,
@@ -168,21 +160,9 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   )
   fs.writeFileSync(
     path.join(projectDir, 'AGENTS.md'),
-    agentsMdContent(
-      storefrontReady,
-      dashboardReady,
-      options.packageManager,
-      sellerDashboardReady,
-      options.docsMcp,
-    ),
+    agentsMdContent(storefrontReady, dashboardReady, options.packageManager, sellerDashboardReady),
   )
   fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), claudeMdContent())
-  if (options.docsMcp) {
-    for (const [file, content] of Object.entries(docsMcpConfigFiles())) {
-      fs.mkdirSync(path.dirname(path.join(projectDir, file)), { recursive: true })
-      fs.writeFileSync(path.join(projectDir, file), content)
-    }
-  }
   const githubDir = path.join(projectDir, '.github')
   fs.mkdirSync(githubDir, { recursive: true })
   fs.writeFileSync(
@@ -190,20 +170,23 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     dependabotContent(storefrontReady, dashboardReady, sellerDashboardReady),
   )
 
-  // A failed install warns and continues, like the apps: skills are a
+  // Runs after AGENTS.md exists, which `spree add ai` points at the docs
+  // server. A failure warns and continues, like the apps: agent setup is a
   // convenience, never a reason to stop before Phase 4.
-  let agentSkillsReady = false
-  if (options.agentSkills) {
-    s.start('Installing Spree agent skills...')
+  let agentsReady = options.agentSkills && options.docsMcp
+  if (options.agentSkills || options.docsMcp) {
+    s.start('Setting up AI coding agents...')
     try {
-      await installAgentSkills(projectDir, options.packageManager)
-      agentSkillsReady = true
-      s.stop('Spree agent skills installed.')
+      await setupAgents(projectDir, {
+        skills: options.agentSkills,
+        mcp: options.docsMcp,
+        packageManager: options.packageManager,
+      })
+      s.stop('AI coding agents set up.')
     } catch (err) {
-      s.stop('Spree agent skills were not installed.')
-      p.log.warn(
-        `Install them later with ${pc.bold(`${dlxCommand(options.packageManager)} skills add ${AGENT_SKILLS_REPO}`)}.\n${errorMessage(err)}`,
-      )
+      agentsReady = false
+      s.stop('AI coding agents were only partly set up.')
+      p.log.warn(errorMessage(err))
     }
   }
 
@@ -241,8 +224,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     // No dashboard line here — with the dashboard chosen, `spree init`'s
     // summary already leads with it (served at /dashboard, plus the
     // customize command).
-    const agentHints = agentSetupHints(options.packageManager, agentSkillsReady, options.docsMcp)
-    if (agentHints.length > 0) p.note(agentHints.join('\n'), 'AI coding agents')
+    if (!agentsReady) p.note(agentSetupHint(options.packageManager).join('\n'), 'AI coding agents')
   } else {
     printSuccessWithoutDocker(
       projectName,
@@ -250,8 +232,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       storefrontReady,
       dashboardReady,
       sellerDashboardReady,
-      agentSkillsReady,
-      options.docsMcp,
+      agentsReady,
       options.packageManager,
     )
   }
@@ -263,8 +244,7 @@ function printSuccessWithoutDocker(
   hasStorefront: boolean,
   hasDashboard: boolean,
   hasSellerDashboard: boolean,
-  hasAgentSkills: boolean,
-  hasDocsMcp: boolean,
+  agentsReady: boolean,
   pm: PackageManager,
 ): void {
   const run = runCommand(pm)
@@ -327,8 +307,7 @@ function printSuccessWithoutDocker(
     '',
   )
 
-  const agentHints = agentSetupHints(pm, hasAgentSkills, hasDocsMcp)
-  if (agentHints.length > 0) lines.push(...agentHints, '')
+  if (!agentsReady) lines.push(...agentSetupHint(pm), '')
 
   lines.push(
     `${pc.bold('Join our Discord')}`,
@@ -341,34 +320,14 @@ function printSuccessWithoutDocker(
   p.note(lines.join('\n'), 'Project created!')
 }
 
-/** How to add whichever agent conveniences the scaffold did not set up. */
-function agentSetupHints(
-  pm: PackageManager,
-  hasAgentSkills: boolean,
-  hasDocsMcp: boolean,
-): string[] {
-  const lines: string[] = []
-
-  if (!hasAgentSkills) {
-    lines.push(
-      `${pc.bold('Agent skills (optional)')}`,
-      `  ${dlxCommand(pm)} skills add ${AGENT_SKILLS_REPO}`,
-      `  ${pc.dim('# Teaches whichever AI agents you use how to work with Spree')}`,
-      `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
-    )
-  }
-
-  if (!hasDocsMcp) {
-    if (lines.length > 0) lines.push('')
-    lines.push(
-      `${pc.bold('Spree docs MCP server (optional)')}`,
-      `  claude mcp add --transport http --scope project spree-docs ${DOCS_MCP_URL}`,
-      `  ${pc.dim('# Lets your AI agent search the latest Spree docs. Other agents:')}`,
-      `  ${pc.dim('# https://spreecommerce.org/docs/developer/agentic/mcp')}`,
-    )
-  }
-
-  return lines
+/** How to finish the agent setup the scaffold skipped or could not complete. */
+function agentSetupHint(pm: PackageManager): string[] {
+  return [
+    `${pc.bold('AI coding agents (optional)')}`,
+    `  ${runCommand(pm)} spree add ai`,
+    `  ${pc.dim('# Installs the Spree agent skills and connects your agent to the Spree docs')}`,
+    `  ${pc.dim('# Safe to re-run; --no-skills or --no-mcp sets up only one of the two')}`,
+  ]
 }
 
 function errorMessage(err: unknown): string {

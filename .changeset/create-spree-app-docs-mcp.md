@@ -1,5 +1,6 @@
 ---
 "create-spree-app": minor
+"@spree/cli": minor
 ---
 
-New projects now connect Claude Code, Cursor and VS Code to the Spree docs MCP server, so coding agents can search the latest Spree docs. The agent skills question now covers both and reads "Set up AI coding agents?"; `--docs-mcp` / `--no-docs-mcp` answer the docs half on their own. Projects that skip either one see how to add it later, including when services were started.
+Added `spree add ai`, which installs the Spree agent skills and connects Claude Code, Cursor and VS Code to the Spree docs MCP server, so existing projects can get the same AI agent setup as new ones. It keeps the servers a project's config files already list and is safe to re-run. New projects now run it during setup: the agent skills question reads "Set up AI coding agents?" and covers both, and `--docs-mcp` / `--no-docs-mcp` answer the docs half on their own.

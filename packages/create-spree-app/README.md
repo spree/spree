@@ -15,7 +15,9 @@ npx create-spree-app my-store
 | `--no-seller-dashboard` | Skip the marketplace seller panel (also available later via `spree add seller-dashboard`) |
 | `--no-storefront` | Skip Next.js storefront setup |
 | `--agent-skills` | Install the Spree agent skills without asking |
-| `--no-agent-skills` | Skip installing the Spree agent skills |
+| `--no-agent-skills` | Skip installing the Spree agent skills (also available later via `spree add ai`) |
+| `--docs-mcp` | Connect coding agents to the Spree docs MCP server without asking |
+| `--no-docs-mcp` | Skip connecting coding agents to the Spree docs MCP server (also available later via `spree add ai`) |
 | `--no-start` | Don't start Docker services (the first `dev` run completes setup instead) |
 | `--port <number>` | Port for the Spree backend (default: `3000`) |
 | `--use-npm` / `--use-yarn` / `--use-pnpm` | Package manager (auto-detected from how you run the command) |
