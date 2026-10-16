@@ -96,42 +96,6 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
     end
   end
 
-  path '/api/v3/admin/companies/{company_id}/tax_exemption_certificates/reason_codes' do
-    let(:company_id) { company.prefixed_id }
-    let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-
-    parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-    parameter name: :Authorization, in: :header, type: :string, required: true
-    parameter name: :company_id, in: :path, type: :string, required: true
-
-    get 'List tax exemption reason codes' do
-      tags 'Companies'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description <<~DESC
-        The reasons a merchant may record as a certificate's `reason_code`, grouped by the tax provider
-        whose engine understands them. Each installed provider registers its own codes; with none
-        installed, one group with a `null` provider holds a neutral default list.
-      DESC
-      admin_scope :read, :customers
-
-      admin_sdk_example 'tax-exemption-certificates/reason-codes'
-
-      response '200', 'reason codes found' do
-        schema type: :object,
-               required: %w[data],
-               properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/TaxExemptionReasonCodeGroup' } }
-               }
-
-        run_test! do |response|
-          groups = JSON.parse(response.body)['data']
-          expect(groups.first['reason_codes']).to include({ 'value' => 'resale', 'label' => 'Resale' })
-        end
-      end
-    end
-  end
-
   path '/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}' do
     let(:company_id) { company.prefixed_id }
     let(:id) { certificate.prefixed_id }

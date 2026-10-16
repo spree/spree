@@ -1794,7 +1794,7 @@
         }
       },
       "reason_code": {
-        "help": "Wird als Verwendungszweck an die Steuerberechnung übergeben.",
+        "help": "Die hier angebotenen Gründe verwalten Sie unter Einstellungen → Gründe.",
         "label": "Grund"
       },
       "role": {
@@ -4755,12 +4755,16 @@
         "help": "Was bei der Lieferung schiefging – beschädigt, fehlend oder falscher Artikel.",
         "title": "Reklamationsgründe"
       },
+      "code_engine_help": "Ihre Steuerberechnung entscheidet anhand dieses Codes über die Befreiung. Wählen Sie den Code, den sie für diesen Grund vorsieht.",
+      "code_help": "Eine kurze Kennung, die Nachweise speichern. In Ihrem Shop eindeutig.",
+      "code_locked_help": "Nachweise speichern diesen Code, daher kann er nicht geändert werden. Benennen Sie stattdessen den Grund um.",
+      "code_placeholder": "z. B. resale",
       "create_description": "Gründe erscheinen als Auswahl, wenn Mitarbeitende eine Rücksendung, Reklamation oder Rückerstattung anlegen.",
       "delete_confirm": {
         "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn.",
         "title": "Grund löschen?"
       },
-      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen, Erstattungen und Stornierungen wählt.",
+      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen, Erstattungen, Stornierungen und Steuerbefreiungen wählt.",
       "edit_sheet_title": "Grund bearbeiten",
       "empty": "Noch keine Gründe",
       "in_use": "In Verwendung",
@@ -4783,6 +4787,10 @@
       "return": {
         "help": "Warum ein Kunde etwas zurückschickt. Gilt für Rücksendungen und Umtausch.",
         "title": "Rücksendegründe"
+      },
+      "tax_exemption": {
+        "help": "Warum ein Unternehmen steuerfrei einkauft. Wird auf seinen Befreiungsnachweisen festgehalten; der Code geht an Ihre Steuerberechnung.",
+        "title": "Gründe für Steuerbefreiungen"
       },
       "title": "Rücksendungen & Gründe"
     },
@@ -5542,14 +5550,7 @@
       },
       "never_expires": "Läuft nicht ab",
       "no_document": "Kein Dokument hinterlegt",
-      "reason_codes": {
-        "agricultural": "Landwirtschaft",
-        "charitable": "Gemeinnützig",
-        "educational": "Bildung",
-        "government": "Behörde",
-        "manufacturing": "Produktion",
-        "resale": "Wiederverkauf"
-      },
+      "no_reasons": "Noch keine Befreiungsgründe. Fügen Sie sie unter Einstellungen → Gründe hinzu.",
       "revoke_action": "Widerrufen",
       "revoke_confirm": {
         "message": "Bescheinigung {{number}} gilt dann nicht mehr für neue Bestellungen. Sie bleibt als Nachweis erhalten.",

@@ -1833,7 +1833,7 @@
         }
       },
       "reason_code": {
-        "help": "Se vuelve el código de uso de entidad del motor de impuestos.",
+        "help": "Gestiona los motivos que se ofrecen aquí en Configuración → Motivos.",
         "label": "Motivo"
       },
       "role": {
@@ -4958,14 +4958,7 @@
       },
       "never_expires": "No vence",
       "no_document": "Sin documento adjunto",
-      "reason_codes": {
-        "agricultural": "Agrícola",
-        "charitable": "Benéfico",
-        "educational": "Educativo",
-        "government": "Gubernamental",
-        "manufacturing": "Manufactura",
-        "resale": "Reventa"
-      },
+      "no_reasons": "Aún no hay motivos de exención. Añádelos en Configuración → Motivos.",
       "revoke_action": "Revocar",
       "revoke_confirm": {
         "message": "El certificado {{number}} deja de aplicar a pedidos nuevos. Queda archivado como registro.",
@@ -5297,12 +5290,16 @@
         "help": "Qué salió mal con una entrega: artículo dañado, faltante o equivocado.",
         "title": "Motivos de reclamo"
       },
+      "code_engine_help": "Tu motor de impuestos decide la exención por este código, así que elige el que define para este motivo.",
+      "code_help": "Un identificador corto que registran los certificados. Único en tu tienda.",
+      "code_locked_help": "Hay certificados que registran este código, así que no puede cambiar. Cambia el nombre del motivo en su lugar.",
+      "code_placeholder": "p. ej. resale",
       "create_description": "Los motivos aparecen en un desplegable cuando el staff abre una devolución, un reclamo o un reembolso.",
       "delete_confirm": {
         "message": "{{name}} ya no se ofrecerá. Los registros que ya lo usan lo conservan.",
         "title": "¿Eliminar motivo?"
       },
-      "description": "Los vocabularios de los que elige tu equipo al manejar devoluciones, reclamos, reembolsos y cancelaciones.",
+      "description": "Las listas que usa tu equipo al gestionar devoluciones, reclamaciones, reembolsos, cancelaciones y exenciones de impuestos.",
       "edit_sheet_title": "Editar motivo",
       "empty": "Todavía no hay motivos",
       "in_use": "En uso",
@@ -5325,6 +5322,10 @@
       "return": {
         "help": "Por qué un cliente devuelve algo. Lo comparten devoluciones y cambios.",
         "title": "Motivos de devolución"
+      },
+      "tax_exemption": {
+        "help": "Por qué una empresa compra sin impuestos. Se registra en sus certificados de exención; el código es lo que recibe tu motor de impuestos.",
+        "title": "Motivos de exención de impuestos"
       },
       "title": "Devoluciones y motivos"
     },

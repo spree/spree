@@ -44,6 +44,13 @@ RSpec.describe SpreeAvalara::TaxProvider do
     expect(described_class.unsupported_capabilities).to eq([])
   end
 
+  # A merchant adding an exemption reason is offered the codes AvaTax reads.
+  it 'offers its entity use codes as exemption reason codes' do
+    codes = described_class.to_api_hash(@default_store)[:exemption_reason_codes]
+
+    expect(codes).to include({ value: 'G', label: 'RESALE' })
+  end
+
   it 'writes one row per priced line' do
     provider.estimate(cart)
 

@@ -1812,7 +1812,7 @@
         }
       },
       "reason_code": {
-        "help": "Przekazywany do naliczania podatku jako kod przeznaczenia.",
+        "help": "Powody dostępne tutaj ustawisz w Ustawienia → Powody.",
         "label": "Powód"
       },
       "role": {
@@ -4819,12 +4819,16 @@
         "help": "Co poszło nie tak z dostawą — uszkodzony, brakujący lub zły towar.",
         "title": "Powody reklamacji"
       },
+      "code_engine_help": "Silnik podatkowy rozstrzyga o zwolnieniu na podstawie tego kodu, więc wybierz kod, który definiuje dla tego powodu.",
+      "code_help": "Krótki identyfikator zapisywany na zaświadczeniach. Unikalny w sklepie.",
+      "code_locked_help": "Zaświadczenia zapisują ten kod, więc nie można go zmienić. Zamiast tego zmień nazwę powodu.",
+      "code_placeholder": "np. resale",
       "create_description": "Powody pojawiają się na liście przy tworzeniu zwrotu, reklamacji lub zwrotu pieniędzy.",
       "delete_confirm": {
         "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują.",
         "title": "Usunąć powód?"
       },
-      "description": "Listy powodów, z których korzysta zespół przy zwrotach, reklamacjach, refundacjach i anulowaniach.",
+      "description": "Listy powodów, z których korzysta zespół przy zwrotach, reklamacjach, refundacjach, anulowaniach i zwolnieniach z podatku.",
       "edit_sheet_title": "Edytuj powód",
       "empty": "Brak powodów",
       "in_use": "W użyciu",
@@ -4847,6 +4851,10 @@
       "return": {
         "help": "Dlaczego klient odsyła towar. Wspólne dla zwrotów i wymian.",
         "title": "Powody zwrotu"
+      },
+      "tax_exemption": {
+        "help": "Dlaczego firma kupuje bez podatku. Zapisywany na jej zaświadczeniach o zwolnieniu; kod trafia do silnika podatkowego.",
+        "title": "Powody zwolnienia z podatku"
       },
       "title": "Zwroty i powody"
     },
@@ -5608,14 +5616,7 @@
       },
       "never_expires": "Bez daty wygaśnięcia",
       "no_document": "Brak załączonego dokumentu",
-      "reason_codes": {
-        "agricultural": "Rolnictwo",
-        "charitable": "Organizacja charytatywna",
-        "educational": "Edukacja",
-        "government": "Instytucja publiczna",
-        "manufacturing": "Produkcja",
-        "resale": "Odsprzedaż"
-      },
+      "no_reasons": "Brak powodów zwolnienia. Dodaj je w Ustawienia → Powody.",
       "revoke_action": "Unieważnij",
       "revoke_confirm": {
         "message": "Certyfikat {{number}} przestanie obowiązywać dla nowych zamówień. Pozostanie zapisany jako dokumentacja.",

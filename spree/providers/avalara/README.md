@@ -51,9 +51,13 @@ can move one region at a time.
 
 ## How exemptions reach Avalara
 
-Company tax exemption certificates recorded in Spree are translated into Avalara entity use codes and
-sent with the sale. A reason Avalara does not define is sent as OTHER/CUSTOM, and the reason you
-recorded is kept on the tax row.
+Company tax exemption certificates recorded in Spree are sent with the sale, each with the code of the
+exemption reason it records. Exemption reasons are your store's own list, managed under
+**Settings → Reasons**: give each one an Avalara entity use code (`G` for resale, `A` for federal
+government, …) and name it however you like. The dashboard offers Avalara's codes when you add one.
+
+A reason whose code Avalara does not define is sent as OTHER/CUSTOM, and the reason you recorded is kept
+on the tax row.
 
 ## Upgrading from `spree_avatax_official`
 
@@ -64,8 +68,9 @@ bin/rails spree_avalara:upgrade
 Idempotent, and not needed on a fresh install. It retypes your existing integration (credentials carry
 over untouched), turns legacy `spree_users.vat_id` values into buyer tax registrations, deletes the
 synthesized "AvaTax Official Tax Rate" rows — left behind, Spree's own engine would read them as real
-configuration — and points markets that name no engine at Avalara. A market where you chose an engine
-explicitly, including Spree's own, is never rewritten.
+configuration — points markets that name no engine at Avalara, and gives each connected store an
+exemption reason per Avalara entity use code, as the legacy extension's code table did. A market where
+you chose an engine explicitly, including Spree's own, is never rewritten.
 
 A legacy `vat_id` that no longer validates is reported rather than migrated, so you can reconcile the
 list; until then that buyer is charged as a consumer, which is the safe direction.

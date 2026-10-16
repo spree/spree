@@ -1,3 +1,13 @@
+## 2026-10-16: Tax exemption reasons are a store-owned model
+
+**Context:** The reasons a merchant records on a tax exemption certificate came from a code registry: six values hard-coded in core, replaced by the vocabulary of whichever tax provider gem registered one. Spree's own tax engine never reads the reason, so for most stores it was a label the merchant could not rename, translate or extend, unlike every other reason list.
+
+**Decision:** `Spree::TaxExemptionReason` is a store-owned model (`name`, `code`, `active`), managed beside return, claim, refund and order-cancellation reasons through `/api/v3/admin/tax_exemption_reasons`. A certificate keeps its `reason_code` string, which must name an active reason of its store when set. A tax provider declares the codes its engine understands (`exemption_reason_codes`, published on `/tax_providers`) so the dashboard can offer them, but it does not own the list. The registry, the default list in core and the `…/tax_exemption_certificates/reason_codes` endpoint are removed.
+
+**Consequences:** Seeds give each store six neutral reasons; the Avalara upgrade task adds one per Avalara entity use code. A provider whose engine reads reason codes adds `exemption_reason_codes` rather than registering a list.
+
+**Plan:** `6.0-avalara-provider-gem.md`.
+
 ## 2026-10-10: One upload endpoint, store-owned blobs, and `<slot>_signed_id` everywhere
 
 **Context:** Files reached Spree through `/direct_uploads`, which copied Active Storage's nested request and minted references that never expired, and nothing recorded which store a blob belonged to. Endpoints that took those references named them seven different ways.

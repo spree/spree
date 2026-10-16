@@ -805,6 +805,30 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/companies/comp_xxx/tax_identi
 
 When a sale is for a company, the company's registration takes precedence over the buyer's own, because the invoice is addressed to the business.
 
+### Exemption reasons
+
+A certificate's `reason_code` must be the `code` of one of the store's active tax exemption reasons. A new store has six neutral ones (`resale`, `government`, `charitable`, `educational`, `manufacturing`, `agricultural`). Add your own to give a reason your wording, or to use the codes your tax service reads — Avalara decides an exemption by its entity use code, so a reason there carries a code such as `G` (resale). `taxProviders.list()` returns the codes each tax service understands as `exemption_reason_codes`.
+
+<CodeGroup>
+
+```typescript Admin SDK
+const reason = await adminClient.taxExemptionReasons.create({
+  name: 'Reseller (wholesale)',
+  code: 'G',
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/tax_exemption_reasons' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "name": "Reseller (wholesale)", "code": "G" }'
+```
+
+</CodeGroup>
+
+A reason's code is fixed once a certificate records it. Rename the reason, or turn off `active` to stop offering it; certificates that already record it keep it.
+
 ### Exemption certificates
 
 A certificate starts `pending` and exempts nothing until staff verify it. Scope it to the country or state that issued it, or leave both empty for one that holds everywhere.

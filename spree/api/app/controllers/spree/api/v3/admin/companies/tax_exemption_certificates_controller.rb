@@ -14,7 +14,7 @@ module Spree
                 example: 'DE-RESALE-7'
               body.attribute :reason_code, :string, required: true, on: :create,
                 example: 'resale',
-                description: "Becomes the tax provider's entity use code."
+                description: "The `code` of one of the store's active tax exemption reasons. The tax provider receives it."
               body.attribute :issuing_authority, :string, nullable: true, example: 'Finanzamt Berlin'
               body.attribute :issued_at, :datetime, nullable: true
               body.attribute :expires_at, :datetime, nullable: true
@@ -31,13 +31,6 @@ module Spree
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions have to be listed alongside the custom ones.
             before_action :set_resource, only: [:show, :update, :destroy, :verify, :revoke, :download]
-
-            # GET .../tax_exemption_certificates/reason_codes
-            def reason_codes
-              groups = Spree::TaxExemptionReasonCodeGroup.all
-
-              render json: { data: Spree.api.admin_tax_exemption_reason_code_group_serializer.new(groups).to_h }
-            end
 
             # PATCH /api/v3/admin/companies/:company_id/tax_exemption_certificates/:id/verify
             def verify
@@ -84,7 +77,7 @@ module Spree
             # read scope and the :show ability rather than being classed as a
             # write because it isn't index or show. Without this a key holding
             # read_customers is refused its own certificate.
-            READ_ACTIONS = %w[index show download reason_codes].freeze
+            READ_ACTIONS = %w[index show download].freeze
 
             def read_actions
               READ_ACTIONS

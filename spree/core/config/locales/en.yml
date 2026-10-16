@@ -429,6 +429,14 @@ en:
           attributes:
             company:
               must_be_legal_entity: must be a legal entity, not a division
+            reason_code:
+              not_offered: is not a tax exemption reason this store offers
+        spree/tax_exemption_reason:
+          attributes:
+            base:
+              in_use: is recorded on tax exemption certificates and cannot be deleted
+            code:
+              in_use: cannot change while tax exemption certificates record it
         spree/tax_identifier:
           attributes:
             company:

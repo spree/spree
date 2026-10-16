@@ -14,13 +14,6 @@ module SpreeAvalara
       Spree.integrations << 'SpreeAvalara::Integration' unless Spree.integrations.include?('SpreeAvalara::Integration')
       Spree.tax_providers << SpreeAvalara::TaxProvider unless Spree.tax_providers.include?(SpreeAvalara::TaxProvider)
       Spree.hooks.register('carts.complete.validate', 'SpreeAvalara::ValidateCheckoutAddress')
-
-      # The exemption reasons AvaTax understands, offered to a merchant
-      # recording a certificate. Merged rather than assigned, so another
-      # provider's vocabulary survives.
-      Spree.tax_exemption_reason_codes = Spree.tax_exemption_reason_codes.to_h.merge(
-        SpreeAvalara::TaxProvider.display_name => SpreeAvalara::EntityUseCodes::ALL
-      )
     end
   end
 end

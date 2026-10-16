@@ -26,6 +26,12 @@ module SpreeAvalara
       'Avalara AvaTax'
     end
 
+    # AvaTax decides an exemption by its entity use code, so these are the
+    # codes a merchant's exemption reasons should store.
+    def self.exemption_reason_codes
+      EntityUseCodes::ALL
+    end
+
     # Fails closed on a service failure — an Avalara that refuses or cannot be
     # reached raises, because silently under-collecting is a liability the
     # merchant discovers in a filing.

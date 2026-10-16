@@ -174,6 +174,34 @@ RSpec.describe 'spree_avalara:upgrade' do
     end
   end
 
+  describe 'exemption reasons' do
+    let(:store) { @default_store }
+
+    it 'gives a connected store one per entity use code, keeping its own' do
+      create(:avalara_integration, :active, store: store)
+      store.tax_exemption_reasons.create!(code: 'G', name: 'Reseller (wholesale)')
+
+      upgrader.call
+
+      codes = store.tax_exemption_reasons.pluck(:code)
+      expect(codes).to include(*SpreeAvalara::EntityUseCodes::ALL.keys.excluding('TAXABLE'))
+      expect(codes).not_to include('TAXABLE')
+      expect(store.tax_exemption_reasons.find_by(code: 'G').name).to eq('Reseller (wholesale)')
+    end
+
+    it 'runs twice without adding a second set' do
+      create(:avalara_integration, :active, store: store)
+
+      upgrader.call
+
+      expect { upgrader.call }.not_to change(store.tax_exemption_reasons, :count)
+    end
+
+    it 'leaves a store with no connected integration alone' do
+      expect { upgrader.call }.not_to change(Spree::TaxExemptionReason, :count)
+    end
+  end
+
   describe 'a fresh install' do
     it 'runs as a no-op' do
       expect { upgrader.call }.not_to raise_error

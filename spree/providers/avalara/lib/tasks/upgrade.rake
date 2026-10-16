@@ -35,6 +35,7 @@ module SpreeAvalara
       report_preserved_exemption_data
       say "  synthesized tax rates deleted: #{delete_synthesized_tax_rates}"
       say "  markets pointed at Avalara: #{point_markets_at_avalara}"
+      say "  tax exemption reasons added: #{create_exemption_reasons}"
       say
       say '  Legacy schema is left in place. Once you have checked the result, drop it with:'
       say '    bin/rails spree_avalara:upgrade:drop_legacy_schema'
@@ -160,6 +161,27 @@ module SpreeAvalara
       name = ENV.fetch('AVATAX_TAX_RATE_NAME', 'AvaTax Official Tax Rate')
 
       Spree::TaxRate.where(name: name).destroy_all.size
+    end
+
+    # The legacy extension kept Avalara's entity use codes in an editable table
+    # merchants picked from; each store connected to Avalara gets them as tax
+    # exemption reasons instead. Found by code, so a reason the merchant already
+    # added or renamed is left alone. TAXABLE is not a reason to be exempt.
+    def create_exemption_reasons
+      created = 0
+
+      Spree::Store.find_each do |store|
+        next if SpreeAvalara::Integration.active_for(store).nil?
+
+        SpreeAvalara::EntityUseCodes::ALL.except('TAXABLE').each do |code, label|
+          next if store.tax_exemption_reasons.exists?(code: code)
+
+          store.tax_exemption_reasons.create!(code: code, name: "#{label.capitalize} (#{code})")
+          created += 1
+        end
+      end
+
+      created
     end
 
     # Only where nothing is set. The legacy extension was store-global, so a

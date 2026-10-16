@@ -41,6 +41,16 @@ module Spree
         name.demodulize.titleize
       end
 
+      # The exemption reason codes this engine understands, `{ code => label }`,
+      # offered to a merchant adding a {Spree::TaxExemptionReason}. Nil for an
+      # engine that does not read the code, Spree's own included: any code a
+      # merchant chooses is then as good as another.
+      #
+      # @return [Hash{String => String}, nil]
+      def self.exemption_reason_codes
+        nil
+      end
+
       # The declared limits with the strings a merchant can act on. A capability
       # with no translation degrades to its humanized key rather than a missing
       # translation, so an extension that declares one without shipping strings
@@ -69,6 +79,7 @@ module Spree
           name: display_name,
           available: available_for_store?(store),
           unsupported_capabilities: unsupported_capability_details,
+          exemption_reason_codes: exemption_reason_codes&.map { |code, label| { value: code.to_s, label: label.to_s } },
           default: name == Spree.default_tax_provider.to_s
         }
       end
