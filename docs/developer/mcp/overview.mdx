@@ -17,7 +17,7 @@ https://your-store.com/api/v3/admin/mcp
 The back office: the catalog, orders, reporting and store setup, for staff and the agents they connect.
 
 <Note>
-  A storefront endpoint, for agents acting on a customer's behalf, is not built yet. The machinery is shared and the catalogs are separate, so it arrives as an addition rather than a rework — see [what is not here yet](#what-is-not-here-yet).
+  One endpoint, one audience. The tools an agent is offered here are the back office's, and a merchant's grant is measured against their own staff permissions — so an agent reaches exactly what the person who connected it can reach.
 </Note>
 
 ## How it fits together
@@ -52,9 +52,3 @@ Every tool reaches data by making a real API request inside the process — the 
 **Not the documentation server.** The [docs MCP server](/developer/agentic/mcp) lets an agent read Spree's documentation while writing code against it. This one operates a live store. They are unrelated and you can use both.
 
 **Not a replacement for the API.** An agent is good at a merchant's request in words. A scheduled job, a data pipeline or a storefront should call the [Admin API](/api-reference/admin) or the [`spree api` CLI](/developer/cli/admin-api) directly.
-
-## What is not here yet
-
-- **A storefront endpoint.** Tools for a customer-facing agent — browsing, carts, order status — need a customer principal and their own catalog.
-- **Order editing.** Adding line items, discounts and fees to an existing order runs through paths that are not yet workflows, so no tool offers it. Cancelling, refunding and fulfilling all work today.
-- **Product status moves.** Activating, drafting and archiving a product run inside the Spree process rather than through an endpoint, because the Admin API has none for them yet.
