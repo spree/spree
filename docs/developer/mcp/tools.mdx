@@ -133,7 +133,7 @@ Beyond tools, the server offers MCP **resources** — files a client can fetch r
 
 | Resource | What it is |
 | --- | --- |
-| `spree+export://<id>` | A finished export, as CSV. Reading one costs the same permission as reading the records in it. |
+| `spree+export://<id>` | A finished export, as CSV. Reading one costs the same permission as reading the records in it, and an export of gift cards or coupon codes is never readable here. |
 
 A product's media, an order's purchase order and an import's own file are things an agent *puts* there rather than reads back, so they are uploads rather than resources.
 
@@ -144,7 +144,7 @@ Some things are out of reach whatever a grant holds.
 - **Credentials.** API keys, integrations, webhook endpoints and gift card codes are never returned by any tool. A gift card code is the money itself, and an integration's settings are where provider credentials live.
 - **Minting another credential.** A grant cannot create API keys, roles, staff accounts or another OAuth client — so an agent can never widen its own reach.
 - **Erasing a customer.** GDPR erasure is irreversible and is not something to put behind a single confirmation prompt. Do it in the dashboard.
-- **Order editing.** Adding line items, discounts and fees to an existing order runs through paths that are not yet workflows. Cancelling, refunding and fulfilling all work today.
+- **Codes that spend money.** A gift card or coupon export carries live codes, so no tool creates or reads one. Download it from the dashboard.
 
 25 further workflows are excluded for reasons a contract spec enforces, so one cannot be exposed by accident.
 
