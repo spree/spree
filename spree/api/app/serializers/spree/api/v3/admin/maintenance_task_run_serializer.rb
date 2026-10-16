@@ -28,13 +28,16 @@ module Spree
                    active: :boolean,
                    store_id: [:string, nullable: true],
                    parent_run_id: [:string, nullable: true],
+                   admin_user_id: [:string, nullable: true],
                    started_at: [:string, nullable: true],
-                   ended_at: [:string, nullable: true],
-                   admin_user: '{ id: string; email: string; first_name: string | null; last_name: string | null } | null'
+                   ended_at: [:string, nullable: true]
 
-          attributes :task_name, :status, :dry_run, :initiated_via, :cursor,
+          attributes :status, :dry_run, :initiated_via, :cursor,
                      :tick_count, :tick_total, :error_class, :error_message,
                      :started_at, :ended_at, :created_at, :updated_at
+
+          # The task's short name, as `GET /maintenance_tasks` lists it.
+          attribute :task_name, &:task_api_type
 
           attribute :progress, &:progress
 
@@ -72,19 +75,14 @@ module Spree
             run.parent_run&.prefixed_id
           end
 
-          # Who fired it. Embedded rather than referenced: a run list is read
-          # to answer "who ran what", and a second request per row for a name
-          # would make that the slowest page in the dashboard.
-          attribute :admin_user do |run|
-            next nil if run.admin_user.nil?
-
-            {
-              id: run.admin_user.prefixed_id,
-              email: run.admin_user.email,
-              first_name: run.admin_user.first_name,
-              last_name: run.admin_user.last_name
-            }
+          attribute :admin_user_id do |run|
+            run.admin_user&.prefixed_id
           end
+
+          # Who fired it. Pass `expand=admin_user` for the record itself.
+          one :admin_user,
+              resource: proc { Spree.api.admin_admin_user_serializer },
+              if: proc { expand?('admin_user') }
         end
       end
     end

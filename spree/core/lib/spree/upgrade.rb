@@ -72,7 +72,7 @@ module Spree
     # 5.6, and showing every step of every manifest ever written is worse than
     # showing the one boundary that is almost certainly right. The fallback is
     # a guess and is reported as one — `completed_boundary_known?` is false —
-    # so callers can offer the older steps rather than hide them.
+    # so callers can say where the older steps are run rather than hide them.
     #
     # @return [String, nil]
     def self.completed_boundary
@@ -126,8 +126,9 @@ module Spree
     end
 
     # Steps of manifests below the completed boundary — the ones a fresh or
-    # already-upgraded installation does not need. Offered rather than hidden
-    # when the boundary was assumed rather than recorded.
+    # already-upgraded installation does not need. When the boundary was
+    # assumed rather than recorded the dashboard says so, and points a store
+    # that skipped a release at the command line, which still runs them.
     #
     # @return [Array<Hash>]
     def self.superseded_steps

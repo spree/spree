@@ -1,9 +1,9 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { AdminUserSchema } from './AdminUser';
 
 export const MaintenanceTaskRunSchema = z.object({
   id: z.string(),
-  task_name: z.string(),
   status: z.string(),
   dry_run: z.boolean(),
   initiated_via: z.string(),
@@ -16,6 +16,7 @@ export const MaintenanceTaskRunSchema = z.object({
   ended_at: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
+  task_name: z.string(),
   progress: z.number().nullable(),
   duration: z.number().nullable(),
   tallies: z.record(z.string(), z.number()),
@@ -26,7 +27,8 @@ export const MaintenanceTaskRunSchema = z.object({
   active: z.boolean(),
   store_id: z.string().nullable(),
   parent_run_id: z.string().nullable(),
-  admin_user: z.object({ id: z.string(), email: z.string(), first_name: z.string().nullable(), last_name: z.string().nullable() }).nullable(),
+  admin_user_id: z.string().nullable(),
+  admin_user: AdminUserSchema.optional(),
 });
 
 export type MaintenanceTaskRun = z.infer<typeof MaintenanceTaskRunSchema>;

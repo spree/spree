@@ -148,9 +148,11 @@ Skip rows the catalog no longer matches rather than failing the whole run. A spr
 
 ```bash
 bin/rails spree:maintenance_tasks:list
-bin/rails "spree:maintenance_tasks:perform[BackfillSupplierCodes]"
-ARGS='percentage=10 mode=increase' DRY_RUN=1 bin/rails "spree:maintenance_tasks:perform[RepriceCategory]"
+bin/rails "spree:maintenance_tasks:perform[backfill_supplier_codes]"
+ARGS='percentage=10 mode=increase' DRY_RUN=1 bin/rails "spree:maintenance_tasks:perform[reprice_category]"
 ```
+
+A task is named by its class name, underscored: `BackfillSupplierCodes` is `backfill_supplier_codes` on the command line, in the Admin API and in the dashboard. The short name is how the API identifies the task, so two registered tasks must not share one. Override `self.api_type` to keep it stable if you rename the class.
 
 A command-line run writes the same run record a dashboard run does. There is no back door.
 

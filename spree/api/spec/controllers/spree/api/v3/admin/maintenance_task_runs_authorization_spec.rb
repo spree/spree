@@ -39,17 +39,10 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     # The point of the separate key: broad data permissions elsewhere must not
     # add up to permission to run bulk rewrites.
     it 'cannot start a run' do
-      post :create, params: { task_name: 'TestMaintenance::Authorized' }
+      post :create, params: { task_name: 'authorized' }
 
       expect(response).to have_http_status(:forbidden)
       expect(Spree::MaintenanceTaskRun.where(status: 'enqueued')).to be_empty
-    end
-
-    it 'cannot cancel a run' do
-      patch :cancel, params: { id: run.prefixed_id }
-
-      expect(response).to have_http_status(:forbidden)
-      expect(run.reload).to be_running
     end
   end
 
@@ -63,16 +56,9 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     end
 
     it 'cannot start a run' do
-      post :create, params: { task_name: 'TestMaintenance::Authorized' }
+      post :create, params: { task_name: 'authorized' }
 
       expect(response).to have_http_status(:forbidden)
-    end
-
-    it 'cannot pause a run' do
-      patch :pause, params: { id: run.prefixed_id }
-
-      expect(response).to have_http_status(:forbidden)
-      expect(run.reload).to be_running
     end
 
     # A backtrace names internal paths and class names — detail that belongs
@@ -95,16 +81,9 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       # Nothing may be in flight: one run per task is the rule.
       run.update!(status: 'succeeded')
 
-      post :create, params: { task_name: 'TestMaintenance::Authorized' }
+      post :create, params: { task_name: 'authorized' }
 
       expect(response).to have_http_status(:created)
-    end
-
-    it 'can cancel a run' do
-      patch :cancel, params: { id: run.prefixed_id }
-
-      expect(response).to have_http_status(:ok)
-      expect(run.reload).to be_cancelling
     end
 
     it 'sees error backtraces' do

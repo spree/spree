@@ -33,6 +33,7 @@ module Spree
   class MaintenanceTask
     include ActiveModel::Model
     include ActiveModel::Attributes
+    extend Spree::ApiTyped
 
     # Never rendered back to a caller. Masked arguments are still persisted —
     # a run has to be reproducible — but the API, dashboard and CLI all read
@@ -144,6 +145,15 @@ module Spree
         return nil if name.blank?
 
         registered_classes.find { |klass| klass.name == name.to_s }
+      end
+
+      # The registered task an API caller names. Matches the short name only,
+      # so a Ruby class name arriving over the API is an unknown task.
+      #
+      # @param api_type [String] e.g. "capture_methods"
+      # @return [Class, nil]
+      def find_by_api_type(api_type)
+        Spree::ApiTyped.find(Spree.maintenance_tasks, api_type)
       end
 
       # The parameter schema the dashboard renders a form from. Mirrors the

@@ -57,12 +57,30 @@ module Spree
     scope :terminal, -> { where(status: TERMINAL_STATUSES) }
 
     self.whitelisted_ransackable_attributes = %w[task_name status dry_run initiated_via created_at]
+
+    # Filtered by the task's short name, which is what responses carry; the
+    # column holds its class name. A partial value (`task_name_cont=capture`)
+    # is camelized so a search still matches part of the stored name.
+    ransacker :task_name, formatter: ->(value) {
+      Spree::MaintenanceTask.find_by_api_type(value)&.name || value.to_s.camelize
+    } do |parent|
+      parent.table[:task_name]
+    end
     self.whitelisted_ransackable_associations = %w[admin_user store]
 
     # @return [Class, nil] the registered task class, or nil when the task has
     #   been removed from the registry since the run was created
     def task_class
       Spree::MaintenanceTask.find_registered(task_name)
+    end
+
+    # The task's short name, as the API and the dashboard identify it. A task
+    # that is no longer registered is shortened the same way rather than
+    # loaded from the stored string.
+    #
+    # @return [String]
+    def task_api_type
+      task_class&.api_type || task_name.to_s.demodulize.underscore
     end
 
     def active?
@@ -80,8 +98,11 @@ module Spree
       paused? || errored?
     end
 
+    # A run already `cancelling` stays cancelable: cancelling it again records
+    # it as cancelled outright, which is how an operator clears a run whose
+    # worker died before it could observe the first request.
     def cancelable?
-      active? && !cancelling?
+      active?
     end
 
     # @return [Float, nil] 0.0..1.0, or nil when the task could not count its
@@ -92,8 +113,10 @@ module Spree
       [tick_count.to_f / tick_total, 1.0].min
     end
 
+    # Seconds of work. Time since the last checkpoint counts only while a
+    # worker holds the run — a paused or queued run is not working.
     def duration
-      return time_running if ended_at.present? || started_at.blank?
+      return time_running unless status.in?(%w[running pausing cancelling]) && started_at.present?
 
       time_running + (Time.current - (updated_at || started_at))
     end
@@ -101,12 +124,16 @@ module Spree
     # Arguments with masked values replaced, for anything that renders a run:
     # the API, the dashboard and the CLI all read through here so a secret
     # passed as a task parameter is never echoed back.
+    #
+    # Which values are secret is declared on the task class, so once a task is
+    # unregistered nothing says which are safe to show: every value is masked.
     def display_arguments
       values = arguments.presence || {}
-      masked = task_class.respond_to?(:masked_attributes) ? task_class.masked_attributes : []
+      klass = task_class
 
       values.each_with_object({}) do |(key, value), result|
-        result[key] = masked.include?(key.to_s) ? Spree::MaintenanceTask::MASKED_VALUE : value
+        masked = klass.nil? || klass.masked_attributes.include?(key.to_s)
+        result[key] = masked ? Spree::MaintenanceTask::MASKED_VALUE : value
       end
     end
   end

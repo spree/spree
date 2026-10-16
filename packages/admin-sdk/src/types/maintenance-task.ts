@@ -18,7 +18,7 @@ export interface MaintenanceTaskParameter {
 }
 
 export interface MaintenanceTask {
-  /** The Ruby class name, which is also the identifier used to fetch and run it. */
+  /** The task's short name (`capture_methods`), used to fetch and run it. */
   name: string
   description: string | null
   parameters: MaintenanceTaskParameter[]

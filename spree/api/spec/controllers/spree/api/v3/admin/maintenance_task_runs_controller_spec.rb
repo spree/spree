@@ -29,14 +29,14 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
   after { Spree.maintenance_tasks.delete('TestMaintenance::Runs') }
 
   describe 'POST #create' do
-    let(:valid_params) { { task_name: 'TestMaintenance::Runs', arguments: { label: 'nightly' } } }
+    let(:valid_params) { { task_name: 'runs', arguments: { label: 'nightly' } } }
 
     it 'starts a run and enqueues the runner' do
       expect { post :create, params: valid_params }.to have_enqueued_job(Spree::MaintenanceTasks::RunJob)
 
       expect(response).to have_http_status(:created)
       expect(json_response['status']).to eq('enqueued')
-      expect(json_response['task_name']).to eq('TestMaintenance::Runs')
+      expect(json_response['task_name']).to eq('runs')
     end
 
     it 'records who fired it and the store they were in' do
@@ -55,7 +55,7 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     end
 
     it 'rejects arguments the task refuses' do
-      post :create, params: { task_name: 'TestMaintenance::Runs', arguments: {} }
+      post :create, params: { task_name: 'runs', arguments: {} }
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -63,21 +63,29 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     it 'passes an argument holding a prefixed id through as given' do
       product = create(:product, store: store)
 
-      post :create, params: { task_name: 'TestMaintenance::Runs', arguments: { label: 'x', product_id: product.prefixed_id } }
+      post :create, params: { task_name: 'runs', arguments: { label: 'x', product_id: product.prefixed_id } }
 
       expect(Spree::MaintenanceTaskRun.last.arguments['product_id']).to eq(product.prefixed_id)
     end
 
     it 'rejects an argument the task does not declare' do
-      post :create, params: { task_name: 'TestMaintenance::Runs', arguments: { label: 'x', nope: '1' } }
+      post :create, params: { task_name: 'runs', arguments: { label: 'x', nope: '1' } }
 
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'rejects a task that is not registered' do
-      post :create, params: { task_name: 'Nope::Task' }
+      post :create, params: { task_name: 'nope' }
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    # A class name never crosses the API, in either direction.
+    it 'rejects a task named by its class name' do
+      post :create, params: valid_params.merge(task_name: 'TestMaintenance::Runs')
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Spree::MaintenanceTaskRun.count).to eq(0)
     end
 
     it 'refuses a second run while one is in flight' do
@@ -91,7 +99,7 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     # A run is reproducible only if it kept what it was given, but the value
     # must never travel back out.
     it 'masks sensitive arguments in the response' do
-      post :create, params: { task_name: 'TestMaintenance::Runs',
+      post :create, params: { task_name: 'runs',
                               arguments: { label: 'nightly', token: 'secret' } }
 
       expect(json_response['arguments']['token']).to eq(Spree::MaintenanceTask::MASKED_VALUE)
@@ -112,9 +120,25 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     it 'filters by task name' do
       create(:maintenance_task_run, task_name: 'Other::Task', status: 'succeeded')
 
-      get :index, params: { q: { task_name_eq: 'TestMaintenance::Runs' } }
+      get :index, params: { q: { task_name_eq: 'runs' } }
 
-      expect(json_response['data'].map { |entry| entry['task_name'] }.uniq).to eq(['TestMaintenance::Runs'])
+      expect(json_response['data'].map { |entry| entry['task_name'] }.uniq).to eq(['runs'])
+    end
+
+    it 'finds runs by part of the task name' do
+      get :index, params: { q: { task_name_cont: 'run' } }
+
+      expect(json_response['data'].map { |entry| entry['id'] }).to include(run.prefixed_id)
+    end
+
+    it 'embeds who started a run when asked to' do
+      run.update!(admin_user: admin_user)
+
+      get :index, params: { expand: 'admin_user' }
+
+      entry = json_response['data'].find { |candidate| candidate['id'] == run.prefixed_id }
+      expect(entry['admin_user_id']).to eq(admin_user.prefixed_id)
+      expect(entry['admin_user']['email']).to eq(admin_user.email)
     end
 
     # A backfill walks every store's data, so a run fired from one store is
@@ -140,57 +164,6 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       expect(json_response['progress']).to eq(0.25)
       expect(json_response['tick_count']).to eq(5)
       expect(json_response['active']).to be(true)
-    end
-  end
-
-  describe 'PATCH #pause' do
-    let(:run) { create(:maintenance_task_run, task_name: 'TestMaintenance::Runs', status: 'running') }
-
-    it 'asks the runner to stop' do
-      patch :pause, params: { id: run.prefixed_id }
-
-      expect(response).to have_http_status(:ok)
-      expect(run.reload).to be_pausing
-    end
-
-    it 'refuses to pause a finished run' do
-      run.update!(status: 'succeeded')
-
-      patch :pause, params: { id: run.prefixed_id }
-
-      expect(response).to have_http_status(:unprocessable_content)
-    end
-  end
-
-  describe 'PATCH #cancel' do
-    let(:run) { create(:maintenance_task_run, task_name: 'TestMaintenance::Runs', status: 'running') }
-
-    it 'asks the runner to stop for good' do
-      patch :cancel, params: { id: run.prefixed_id }
-
-      expect(run.reload).to be_cancelling
-    end
-  end
-
-  describe 'PATCH #resume' do
-    let(:run) do
-      create(:maintenance_task_run, task_name: 'TestMaintenance::Runs', status: 'paused', cursor: '42')
-    end
-
-    it 'enqueues the run again from its cursor' do
-      expect { patch :resume, params: { id: run.prefixed_id } }.
-        to have_enqueued_job(Spree::MaintenanceTasks::RunJob)
-
-      expect(run.reload).to be_enqueued
-      expect(run.cursor).to eq('42')
-    end
-
-    it 'refuses to resume a cancelled run' do
-      run.update!(status: 'cancelled')
-
-      patch :resume, params: { id: run.prefixed_id }
-
-      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
@@ -225,20 +198,20 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     end
 
     it 'keeps the uploaded file on the run' do
-      post :create, params: { task_name: 'TestMaintenance::FromCsv', csv_file: signed_id }
+      post :create, params: { task_name: 'from_csv', csv_file: signed_id }
 
       expect(response).to have_http_status(:created)
       expect(Spree::MaintenanceTaskRun.last.csv_file).to be_attached
     end
 
     it 'refuses a run with no file' do
-      post :create, params: { task_name: 'TestMaintenance::FromCsv' }
+      post :create, params: { task_name: 'from_csv' }
 
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'refuses an invalid signed id rather than failing the request' do
-      post :create, params: { task_name: 'TestMaintenance::FromCsv', csv_file: 'not-a-signed-id' }
+      post :create, params: { task_name: 'from_csv', csv_file: 'not-a-signed-id' }
 
       expect(response).to have_http_status(:unprocessable_content)
     end

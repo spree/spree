@@ -7,6 +7,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
 
 const RUN_POLL_INTERVAL_MS = 2000
 
@@ -35,31 +36,40 @@ export function useMaintenanceTasks() {
 /**
  * One run, polled while the runner is working.
  *
- * A finished run invalidates the task list so the card it came from stops
- * showing a run in flight, and the run history so the row's status is current.
- * A maintenance task writes records outside any tracked mutation, so nothing
- * else would ever mark those caches stale.
+ * When a run this hook watched finishes, the task list, the run history and
+ * the upgrade steps are marked stale: a maintenance task writes records
+ * outside any tracked mutation, so nothing else would. Done in an effect on
+ * the status changing, never from `refetchInterval` — that runs again on every
+ * fetch, and the run history key covers this query too, so invalidating from
+ * there refetches this run and invalidates again without end.
  */
 export function useMaintenanceTaskRun(id: string | undefined) {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: useResourceKey('maintenance-task-runs', id),
-    queryFn: () => adminClient.maintenanceTaskRuns.get(id as string),
+    queryFn: () => adminClient.maintenanceTaskRuns.get(id as string, { expand: ['admin_user'] }),
     enabled: !!id,
-    refetchInterval: (query) => {
-      if (isRunActive(query.state.data?.status)) return RUN_POLL_INTERVAL_MS
-
-      // The run just reached a terminal status on this tick.
-      if (query.state.data) {
-        queryClient.invalidateQueries({ queryKey: buildKey('maintenance-tasks') })
-        queryClient.invalidateQueries({ queryKey: buildKey('maintenance-task-runs') })
-        queryClient.invalidateQueries({ queryKey: buildKey('upgrade-steps') })
-      }
-      return false
-    },
+    refetchInterval: (query) =>
+      isRunActive(query.state.data?.status) ? RUN_POLL_INTERVAL_MS : false,
   })
+
+  const status = query.data?.status
+  const previousStatus = useRef(status)
+
+  useEffect(() => {
+    const finished =
+      isRunActive(previousStatus.current) && status !== undefined && !isRunActive(status)
+    previousStatus.current = status
+    if (!finished) return
+
+    queryClient.invalidateQueries({ queryKey: buildKey('maintenance-tasks') })
+    queryClient.invalidateQueries({ queryKey: buildKey('maintenance-task-runs') })
+    queryClient.invalidateQueries({ queryKey: buildKey('upgrade-steps') })
+  }, [status, queryClient, buildKey])
+
+  return query
 }
 
 /**
@@ -112,8 +122,14 @@ function useRunControl(action: 'pause' | 'resume' | 'cancel', messageKey: string
     invalidate: [['maintenance-tasks'], ['maintenance-task-runs'], ['upgrade-steps']],
     successMessage: i18n.t(`admin.maintenance_tasks.messages.${messageKey}`),
     errorMessage: i18n.t('admin.errors.generic'),
+    // Merged rather than replaced: the control endpoints return the run
+    // without the embedded admin user the detail query asked for.
     onSuccess: (run) => {
-      queryClient.setQueryData(buildKey('maintenance-task-runs', run.id), run)
+      queryClient.setQueryData<MaintenanceTaskRun>(
+        buildKey('maintenance-task-runs', run.id),
+        (cached) =>
+          cached ? { ...cached, ...run, admin_user: run.admin_user ?? cached.admin_user } : run,
+      )
     },
   })
 }

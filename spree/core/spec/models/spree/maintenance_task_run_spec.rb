@@ -34,9 +34,9 @@ RSpec.describe Spree::MaintenanceTaskRun do
       expect(build(:maintenance_task_run, status: 'succeeded')).not_to be_resumable
     end
 
-    it 'can be cancelled while active but not once cancelling is under way' do
+    it 'can be cancelled while active, including once cancelling is under way' do
       expect(build(:maintenance_task_run, status: 'running')).to be_cancelable
-      expect(build(:maintenance_task_run, status: 'cancelling')).not_to be_cancelable
+      expect(build(:maintenance_task_run, status: 'cancelling')).to be_cancelable
       expect(build(:maintenance_task_run, status: 'succeeded')).not_to be_cancelable
     end
   end
@@ -53,6 +53,37 @@ RSpec.describe Spree::MaintenanceTaskRun do
     # A collection that grows mid-run would otherwise report over 100%.
     it 'never exceeds one' do
       expect(build(:maintenance_task_run, tick_count: 30, tick_total: 20).progress).to eq(1.0)
+    end
+  end
+
+  describe '#duration' do
+    let(:started_at) { 2.hours.ago }
+
+    it 'counts the time since the last checkpoint while a worker holds the run' do
+      run = build(:maintenance_task_run, status: 'running', time_running: 30, started_at: started_at,
+                                         updated_at: 10.seconds.ago)
+
+      expect(run.duration).to be_within(1).of(40)
+    end
+
+    # A run paused overnight did 30 seconds of work, not twelve hours.
+    it 'stops counting while the run is paused' do
+      run = build(:maintenance_task_run, status: 'paused', time_running: 30, started_at: started_at,
+                                         updated_at: 1.hour.ago)
+
+      expect(run.duration).to eq(30)
+    end
+  end
+
+  describe '#task_api_type' do
+    it 'is the short name the API identifies the task by' do
+      run = build(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods')
+
+      expect(run.task_api_type).to eq('capture_methods')
+    end
+
+    it 'is shortened the same way for a task that is no longer registered' do
+      expect(build(:maintenance_task_run, task_name: 'Gone::OldTask').task_api_type).to eq('old_task')
     end
   end
 
@@ -79,6 +110,16 @@ RSpec.describe Spree::MaintenanceTaskRun do
 
     # The stored value is the run's own record of what it did, and a rerun
     # needs it — masking is a display concern only.
+    # Which values are secret is declared on the class, so once it is gone
+    # nothing says which values are safe to show.
+    it 'hides every value once the task is no longer registered' do
+      run = build(:maintenance_task_run, task_name: 'MaskedArgumentTask',
+                                         arguments: { 'token' => 'secret', 'label' => 'visible' })
+      Spree.maintenance_tasks.delete('MaskedArgumentTask')
+
+      expect(run.display_arguments.values).to all(eq(Spree::MaintenanceTask::MASKED_VALUE))
+    end
+
     it 'leaves the stored arguments untouched' do
       run = build(:maintenance_task_run, task_name: 'MaskedArgumentTask', arguments: { 'token' => 'secret' })
       run.display_arguments

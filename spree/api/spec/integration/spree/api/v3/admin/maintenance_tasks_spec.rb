@@ -18,7 +18,7 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
         (see `docs/plans/6.0-maintenance-tasks.md`).
 
         A task is a deployed class rather than a record, so it is identified by
-        its class name. Each entry carries the `parameters` schema a run form is
+        its short `name` (`capture_methods`). Each entry carries the `parameters` schema a run form is
         built from, whether it `supports_dry_run`, whether its rows come from a
         `csv` upload, and how its last run went.
       DESC
@@ -75,7 +75,7 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :'q[task_name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by task name (contains)'
+                description: 'Filter by task name (contains), e.g. `capture`'
       parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
                 description: 'Filter by status (enqueued, running, paused, succeeded, errored, cancelled, …)'
       parameter name: :sort, in: :query, type: :string, required: false,
@@ -136,7 +136,7 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
       response '201', 'maintenance task started' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
-          { task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods', dry_run: true }
+          { task_name: 'capture_methods', dry_run: true }
         end
 
         schema '$ref' => '#/components/schemas/MaintenanceTaskRun'
@@ -150,7 +150,7 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
 
       response '422', 'task is not registered' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { task_name: 'Nope::Task' } }
+        let(:body) { { task_name: 'nope' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -211,10 +211,111 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
     end
   end
 
-  path '/api/v3/admin/maintenance_task_runs/{id}/cancel' do
-    parameter name: :id, in: :path, type: :string, description: 'Maintenance task run ID'
+  path '/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/pause' do
+    parameter name: :maintenance_task_run_id, in: :path, type: :string, description: 'Maintenance task run ID'
 
-    patch 'Cancel a maintenance task run' do
+    post 'Pause a maintenance task run' do
+      tags 'Maintenance Tasks'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Asks a running run to stop at its next checkpoint, keeping its place
+        so it can be resumed. The runner records the outcome: a running run
+        reports `pausing` here and `paused` once it has stopped. A run that has
+        not started yet pauses straight away.
+      DESC
+      admin_scope :write, :maintenance_tasks
+
+      admin_sdk_example 'maintenance-task-runs/pause'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+
+      response '200', 'maintenance task run pausing' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:maintenance_task_run) do
+          create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+                                        status: 'running')
+        end
+        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/MaintenanceTaskRun'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('pausing')
+        end
+      end
+
+      response '422', 'maintenance task run cannot be paused' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:maintenance_task_run) do
+          create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+                                        status: 'succeeded')
+        end
+        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/resumption' do
+    parameter name: :maintenance_task_run_id, in: :path, type: :string, description: 'Maintenance task run ID'
+
+    post 'Resume a maintenance task run' do
+      tags 'Maintenance Tasks'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Starts a paused or failed run again from where it stopped. A failed
+        run's recorded error is cleared, since the run now describes the new
+        attempt.
+      DESC
+      admin_scope :write, :maintenance_tasks
+
+      admin_sdk_example 'maintenance-task-runs/resume'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+
+      response '200', 'maintenance task run resumed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:maintenance_task_run) do
+          create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+                                        status: 'paused')
+        end
+        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/MaintenanceTaskRun'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('enqueued')
+        end
+      end
+
+      response '422', 'maintenance task run cannot be resumed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:maintenance_task_run) do
+          create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+                                        status: 'cancelled')
+        end
+        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/cancellation' do
+    parameter name: :maintenance_task_run_id, in: :path, type: :string, description: 'Maintenance task run ID'
+
+    post 'Cancel a maintenance task run' do
       tags 'Maintenance Tasks'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -223,8 +324,8 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
 
         Cancelling is not a rollback — work already committed stays committed.
         What a cancelled run keeps is its cursor, so an operator can see how
-        far it got. Use `pause` instead to stop a run that should be resumed
-        later, and `resume` to pick a paused or failed run back up.
+        far it got. A run that is still `cancelling` because its worker has
+        gone is cancelled outright by a second request.
       DESC
       admin_scope :write, :maintenance_tasks
 
@@ -240,13 +341,11 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
           create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
                                         status: 'running')
         end
-        let(:id) { maintenance_task_run.prefixed_id }
+        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
 
         schema '$ref' => '#/components/schemas/MaintenanceTaskRun'
 
         run_test! do |response|
-          # The service records the request; the runner records the outcome, so
-          # a running run reports `cancelling` rather than `cancelled` here.
           expect(JSON.parse(response.body)['status']).to eq('cancelling')
         end
       end
@@ -257,7 +356,7 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
           create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
                                         status: 'succeeded')
         end
-        let(:id) { maintenance_task_run.prefixed_id }
+        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

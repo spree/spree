@@ -27,18 +27,23 @@ module Spree
         # included.
         @run = Spree::MaintenanceTaskRun.find_by(id: run_id)
         return if @run.nil?
-        return unless @run.status.in?(%w[enqueued running interrupted])
+        # `pausing` and `cancelling` are let through: a job re-queued after its
+        # worker stopped is the only execution that will ever answer them.
+        return unless @run.status.in?(%w[enqueued running interrupted pausing cancelling])
 
         @task_class = @run.task_class
         return unfindable_task if @task_class.nil?
 
         Spree::Current.store = @run.store
-        @task = @task_class.new(@run.arguments.presence || {})
-        @task.run = @run
         @inline = inline
         @execution_started_at = Time.current
         @time_running_before = @run.time_running.to_f
-        resume_after_time_slice
+        prepare
+        return if @halted
+
+        check_operator_request
+        return if @halted
+        return refuse_duplicate if duplicate_run?
 
         step :start
         # Seeded from the row rather than from the continuation: the row
@@ -65,6 +70,38 @@ module Spree
         publish('started')
       rescue StandardError => e
         record_error(e)
+      end
+
+      # Outside the steps, so an error here would never reach the rescues
+      # below: a run whose arguments no longer fit its task (a deploy removed
+      # a parameter) would stay queued forever, or be resumed by Continuations
+      # without end. Recorded as a failure instead.
+      def prepare
+        @task = @task_class.new(@run.arguments.presence || {})
+        @task.run = @run
+        resume_after_time_slice
+      rescue StandardError => e
+        record_error(e)
+      end
+
+      # One run per task is checked when a run is created, but two requests
+      # can both pass that check before either is saved. The older run wins,
+      # so the outcome does not depend on which worker picks a job up first.
+      def duplicate_run?
+        return false unless run.enqueued?
+
+        run.class.active.where(task_name: run.task_name).where(run.class.arel_table[:id].lt(run.id)).exists?
+      end
+
+      def refuse_duplicate
+        run.update_columns(
+          status: 'cancelled',
+          ended_at: Time.current,
+          error_class: 'Spree::MaintenanceTasks::AlreadyRunning',
+          error_message: "#{run.task_api_type} was already running, so this run did not start",
+          updated_at: Time.current
+        )
+        publish('cancelled')
       end
 
       # Continuations skip `start` once it has completed, so an execution
@@ -313,7 +350,7 @@ module Spree
           error_backtrace: cleaned_backtrace(error),
           updated_at: Time.current
         )
-        task.after_error(error)
+        task&.after_error(error)
         publish('errored')
         Rails.error.report(error, handled: true)
         @halted = true
@@ -344,6 +381,7 @@ module Spree
       # execution so repeated writes within one execution stay accurate.
       def merged_tallies
         @tally_baseline ||= (run.tallies || {}).dup
+        return @tally_baseline.dup if task.nil?
 
         task.tallies.each_with_object(@tally_baseline.dup) do |(key, value), result|
           result[key] = result.fetch(key, 0) + value

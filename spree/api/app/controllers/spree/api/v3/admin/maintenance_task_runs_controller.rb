@@ -6,8 +6,8 @@ module Spree
         # (docs/plans/6.0-maintenance-tasks.md).
         #
         # No destroy: a run is the audit record of work that touched merchant
-        # data, so it is never removed through the API. Stopping one is
-        # `cancel`.
+        # data, so it is never removed through the API. Stopping one is a
+        # cancellation (MaintenanceTaskRuns::CancellationsController).
         class MaintenanceTaskRunsController < ResourceController
           include ActiveStorage::SetCurrent
 
@@ -16,7 +16,7 @@ module Spree
           request_params :maintenance_task_run do |body|
             body.attribute :task_name, :string,
               required: true, on: :create,
-              example: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+              example: 'capture_methods',
               description: 'The task to run, as `name` from `GET /maintenance_tasks`.'
             body.attribute :arguments, :hash,
               description: "Values for the task's declared parameters, keyed by parameter name. " \
@@ -36,7 +36,7 @@ module Spree
             body = params.permit(*declared_permitted_attributes)
 
             result = Spree::MaintenanceTasks::Start.call(
-              task_name: body[:task_name],
+              api_type: body[:task_name].to_s,
               arguments: body[:arguments]&.to_h || {},
               dry_run: ActiveModel::Type::Boolean.new.cast(body[:dry_run]) || false,
               store: current_store,
@@ -51,21 +51,6 @@ module Spree
             else
               render_validation_error(result.error)
             end
-          end
-
-          # PATCH /api/v3/admin/maintenance_task_runs/:id/pause
-          def pause
-            run_control(Spree::MaintenanceTasks::Pause)
-          end
-
-          # PATCH /api/v3/admin/maintenance_task_runs/:id/resume
-          def resume
-            run_control(Spree::MaintenanceTasks::Resume)
-          end
-
-          # PATCH /api/v3/admin/maintenance_task_runs/:id/cancel
-          def cancel
-            run_control(Spree::MaintenanceTasks::Cancel)
           end
 
           protected
@@ -87,7 +72,7 @@ module Spree
           end
 
           def collection_includes
-            [:admin_user, :store]
+            [{ admin_user: [{ spree_roles: :resource }, { avatar_attachment: :blob }] }, :store]
           end
 
           # A backtrace names internal paths and class names, so it rides with
@@ -97,19 +82,6 @@ module Spree
           end
 
           private
-
-          def run_control(service)
-            @resource = find_resource
-            authorize_resource!(@resource, :update)
-
-            result = service.call(run: @resource)
-
-            if result.success?
-              render json: serialize_resource(result.value)
-            else
-              render_validation_error(result.error)
-            end
-          end
 
           # An invalid signed id is the caller's mistake, not a server fault —
           # the same 422 the imports upload path returns.

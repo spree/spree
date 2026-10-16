@@ -85,11 +85,16 @@ RSpec.describe 'maintenance task run control' do
       end
     end
 
+    # The way out when the worker that should answer the first request is
+    # gone: the run would otherwise stay active and block its task.
     context 'when already cancelling' do
       let(:status) { 'cancelling' }
 
-      it 'is refused rather than repeated' do
-        expect(described_class.call(run: run)).to be_failure
+      it 'cancels outright' do
+        result = described_class.call(run: run).value
+
+        expect(result).to be_cancelled
+        expect(result).not_to be_active
       end
     end
   end

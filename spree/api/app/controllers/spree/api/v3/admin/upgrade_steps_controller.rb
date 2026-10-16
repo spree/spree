@@ -76,7 +76,7 @@ module Spree
               from: step['from'],
               to: step['to'],
               docs: step['docs'],
-              task_name: task_name,
+              task_name: Spree::MaintenanceTask.find_registered(task_name)&.api_type || task_name.demodulize.underscore,
               # A rake-backed step runs inside the generic wrapper, so the id it
               # was invoked with is what distinguishes one run from another.
               arguments: step['task_class'] ? {} : { step_id: step['id'] },

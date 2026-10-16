@@ -4,7 +4,7 @@
 # is audited exactly like an operator's (docs/plans/6.0-maintenance-tasks.md).
 #
 #   bin/rake spree:maintenance_tasks:list
-#   bin/rake "spree:maintenance_tasks:perform[Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets]"
+#   bin/rake "spree:maintenance_tasks:perform[backfill_order_markets]"
 #   ARGS='market_id=mkt_1 batch_size=200' DRY_RUN=1 bin/rake "spree:maintenance_tasks:perform[...]"
 namespace :spree do
   namespace :maintenance_tasks do
@@ -18,7 +18,7 @@ namespace :spree do
       end
 
       tasks.each do |task_class|
-        puts "  #{task_class.name}"
+        puts "  #{task_class.api_type} (#{task_class.name})"
         puts "    #{task_class.resolved_description}" if task_class.resolved_description.present?
 
         task_class.parameters_schema.each do |parameter|
@@ -34,8 +34,11 @@ namespace :spree do
       task_name = args[:task_name] || ENV['TASK']
       abort '  Pass a task name: rake "spree:maintenance_tasks:perform[Your::Task]"' if task_name.blank?
 
+      # Either the class name or the short name the dashboard shows.
+      lookup = Spree::MaintenanceTask.find_registered(task_name) ? { task_name: task_name } : { api_type: task_name }
+
       result = Spree::MaintenanceTasks::Start.call(
-        task_name: task_name,
+        **lookup,
         arguments: Spree::MaintenanceTasks::ArgumentParser.parse(ENV['ARGS']),
         dry_run: ENV['DRY_RUN'] == '1',
         initiated_via: 'cli',

@@ -36,13 +36,13 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTasksController, type: :control
 
       expect(response).to have_http_status(:ok)
       names = json_response['data'].map { |task| task['name'] }
-      expect(names).to include('TestMaintenance::Backfill')
+      expect(names).to include('backfill')
     end
 
     it 'describes each task well enough to render its form' do
       get :index
 
-      task = json_response['data'].find { |entry| entry['name'] == 'TestMaintenance::Backfill' }
+      task = json_response['data'].find { |entry| entry['name'] == 'backfill' }
       expect(task['description']).to eq('Backfill the thing')
       expect(task['supports_dry_run']).to be(true)
 
@@ -59,8 +59,8 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTasksController, type: :control
     it 'marks the tasks that are upgrade manifest steps' do
       get :index
 
-      upgrade = json_response['data'].find { |entry| entry['name'].include?('MaintenanceTasks::Upgrade::') }
-      own = json_response['data'].find { |entry| entry['name'] == 'TestMaintenance::Backfill' }
+      upgrade = json_response['data'].find { |entry| entry['name'] == 'capture_methods' }
+      own = json_response['data'].find { |entry| entry['name'] == 'backfill' }
 
       expect(upgrade['upgrade_step']).to be(true)
       expect(own['upgrade_step']).to be(false)
@@ -69,7 +69,7 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTasksController, type: :control
     it 'flags masked parameters so the form never echoes them back' do
       get :index
 
-      task = json_response['data'].find { |entry| entry['name'] == 'TestMaintenance::Backfill' }
+      task = json_response['data'].find { |entry| entry['name'] == 'backfill' }
       token = task['parameters'].find { |parameter| parameter['name'] == 'token' }
 
       expect(token['masked']).to be(true)
@@ -80,7 +80,7 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTasksController, type: :control
 
       get :index
 
-      task = json_response['data'].find { |entry| entry['name'] == 'TestMaintenance::Backfill' }
+      task = json_response['data'].find { |entry| entry['name'] == 'backfill' }
       expect(task['last_run']['id']).to eq(run.prefixed_id)
       expect(task['active_run']['id']).to eq(run.prefixed_id)
     end
@@ -90,22 +90,23 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTasksController, type: :control
 
       get :index
 
-      task = json_response['data'].find { |entry| entry['name'] == 'TestMaintenance::Backfill' }
+      task = json_response['data'].find { |entry| entry['name'] == 'backfill' }
       expect(task['active_run']).to be_nil
       expect(task['last_run']).to be_present
     end
   end
 
   describe 'GET #show' do
-    it 'finds a task by its class name' do
-      get :show, params: { id: 'TestMaintenance::Backfill' }
+    it 'finds a task by its short name' do
+      get :show, params: { id: 'backfill' }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data']['name']).to eq('TestMaintenance::Backfill')
+      expect(json_response['data']['name']).to eq('backfill')
     end
 
-    it '404s for a class that is not registered' do
-      get :show, params: { id: 'Nope::Task' }
+    # The short name is the task's only identifier on the API.
+    it '404s for the class name of a registered task' do
+      get :show, params: { id: 'TestMaintenance::Backfill' }
 
       expect(response).to have_http_status(:not_found)
     end

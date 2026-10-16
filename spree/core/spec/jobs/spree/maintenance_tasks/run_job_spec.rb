@@ -217,6 +217,62 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
     end
   end
 
+  # A worker that stops mid-run leaves the run `running` and its job back in
+  # the queue. An operator who clicks Pause or Cancel in that gap writes the
+  # request, and the re-queued job is the only thing left to answer it.
+  describe 'a request written while the job waited in the queue' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    {
+      'pausing' => 'paused',
+      'cancelling' => 'cancelled'
+    }.each do |requested, settled|
+      it "settles #{requested} as #{settled} without doing more work" do
+        run = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask', arguments: { 'label' => 'x' },
+                                            status: requested, started_at: 1.minute.ago)
+
+        described_class.perform_now(run.id)
+
+        expect(run.reload.status).to eq(settled)
+        expect(SpecMaintenanceTask.processed).to be_empty
+      end
+    end
+  end
+
+  # A deploy can remove a parameter while a run waits; the run must fail
+  # where an operator sees it rather than stay queued and block the task.
+  describe 'arguments the task no longer accepts' do
+    it 'fails the run instead of leaving it queued' do
+      run = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask',
+                                          arguments: { 'label' => 'x', 'removed' => '1' })
+
+      expect { described_class.perform_now(run.id) }.not_to raise_error
+
+      expect(run.reload).to be_errored
+      expect(run.error_class).to eq('ActiveModel::UnknownAttributeError')
+      expect(run).not_to be_active
+    end
+  end
+
+  # Two requests can both pass Start's one-run-per-task check before either
+  # row is saved.
+  describe 'two runs of one task created together' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    it 'cancels the newer one before it does any work' do
+      older = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask', arguments: { 'label' => 'x' })
+      newer = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask', arguments: { 'label' => 'x' })
+
+      described_class.perform_now(newer.id)
+      described_class.perform_now(older.id)
+
+      expect(newer.reload).to be_cancelled
+      expect(newer.error_class).to eq('Spree::MaintenanceTasks::AlreadyRunning')
+      expect(older.reload).to be_succeeded
+      expect(SpecMaintenanceTask.processed).to match_array(products.map(&:id))
+    end
+  end
+
   describe 'a task removed from the registry' do
     it 'fails the run rather than retrying forever' do
       run = start_run

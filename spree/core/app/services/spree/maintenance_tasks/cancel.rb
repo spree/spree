@@ -4,6 +4,11 @@ module Spree
     # runner records the outcome; a run that has not started yet is cancelled
     # outright, since no execution will ever observe the request.
     #
+    # Cancelling a run that is already `cancelling` also cancels it outright.
+    # That is the way out when the worker that should have observed the first
+    # request is gone: a run the runner never comes back to would otherwise
+    # stay active and block every new run of its task.
+    #
     # Cancelling is not a rollback — work already committed stays committed.
     # What a cancelled run keeps is its cursor, so an operator can see exactly
     # how far it got.

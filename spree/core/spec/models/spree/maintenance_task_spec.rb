@@ -31,6 +31,25 @@ RSpec.describe Spree::MaintenanceTask do
     end
   end
 
+  describe 'short names' do
+    it 'names a task by its demodulized, underscored class' do
+      expect(Spree::MaintenanceTasks::Upgrade::CaptureMethods.api_type).to eq('capture_methods')
+    end
+
+    it 'finds a registered task by its short name but not by its class name' do
+      expect(described_class.find_by_api_type('capture_methods')).to eq(Spree::MaintenanceTasks::Upgrade::CaptureMethods)
+      expect(described_class.find_by_api_type('Spree::MaintenanceTasks::Upgrade::CaptureMethods')).to be_nil
+    end
+
+    # The short name is the only identifier the API has, so two registered
+    # tasks sharing one would make one of them unreachable.
+    it 'is unique across the tasks core ships' do
+      names = described_class.registered_classes.map(&:api_type)
+
+      expect(names.size).to eq(names.uniq.size)
+    end
+  end
+
   describe 'the parameter schema' do
     before do
       stub_const('SchemaSpecTask', Class.new(described_class) do

@@ -1,15 +1,11 @@
 import type { MaintenanceTaskParameter } from '@spree/admin-sdk'
 
 /**
- * The last segment of a task's class name, for places where the full
- * namespace is noise — `Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets`
- * reads as "Backfill order markets" in a table cell.
+ * A task's short name as a label — `backfill_order_markets` reads as
+ * "Backfill order markets" in a table cell.
  */
 export function taskShortName(taskName: string): string {
-  const leaf = taskName.split('::').pop() ?? taskName
-  return leaf
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/^./, (character) => character.toUpperCase())
+  return taskName.replaceAll('_', ' ').replace(/^./, (character) => character.toUpperCase())
 }
 
 /**

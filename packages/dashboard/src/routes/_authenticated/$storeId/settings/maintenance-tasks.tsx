@@ -157,7 +157,12 @@ function MaintenanceTasksPage() {
           <ResourceTable
             tableKey="maintenance-task-runs"
             queryKey="maintenance-task-runs"
-            queryFn={(params) => adminClient.maintenanceTaskRuns.list(params)}
+            queryFn={(params) =>
+              adminClient.maintenanceTaskRuns.list({
+                ...(params as Record<string, unknown>),
+                expand: ['admin_user'],
+              })
+            }
             searchParams={search}
           />
         </TabsContent>

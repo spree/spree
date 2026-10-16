@@ -8,7 +8,8 @@ module Spree
         #
         # Tasks are classes rather than records, so this controller does not
         # inherit the resource CRUD: there is nothing to create or destroy, and
-        # a task is addressed by its class name rather than an id.
+        # a task is addressed by its short name (`capture_methods`) rather than
+        # an id.
         class MaintenanceTasksController < BaseController
           scoped_resource :maintenance_tasks
 
@@ -20,13 +21,10 @@ module Spree
           end
 
           # GET /api/v3/admin/maintenance_tasks/:id
-          # The id is the task's class name — Ruby constants are already the
-          # stable identifier here, and minting a second one would only add a
-          # lookup table to keep in sync.
           def show
             authorize! :read, :maintenance_task
 
-            task_class = Spree::MaintenanceTask.find_registered(params[:id])
+            task_class = Spree::MaintenanceTask.find_by_api_type(params[:id])
             raise ActiveRecord::RecordNotFound if task_class.nil?
 
             render json: { data: present(task_class) }
@@ -36,7 +34,7 @@ module Spree
 
           def present(task_class)
             {
-              name: task_class.name,
+              name: task_class.api_type,
               description: task_class.resolved_description,
               parameters: task_class.parameters_schema,
               supports_dry_run: task_class.dry_run_supported,

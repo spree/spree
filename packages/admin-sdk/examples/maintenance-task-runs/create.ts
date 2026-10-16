@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const run = await client.maintenanceTaskRuns.create({
-  task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+  task_name: 'capture_methods',
   dry_run: true,
 })
 

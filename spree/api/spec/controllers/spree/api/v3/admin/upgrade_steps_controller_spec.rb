@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
 
       step = json_response['data'].find { |entry| entry['id'] == 'migrate_capture_methods' }
 
-      expect(step['task_name']).to eq('Spree::MaintenanceTasks::Upgrade::CaptureMethods')
+      expect(step['task_name']).to eq('capture_methods')
       expect(step['arguments']).to eq({})
     end
 
@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
       get :index
 
       wrapper = json_response['data'].find do |entry|
-        entry['task_name'] == 'Spree::MaintenanceTasks::UpgradeStep' && !entry['superseded']
+        entry['task_name'] == 'upgrade_step' && !entry['superseded']
       end
 
       expect(wrapper['arguments']['step_id']).to eq(wrapper['id'])
@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
 
       taxon_step = json_response['data'].find { |entry| entry['id'] == 'taxon_store_id' }
       other_step = json_response['data'].find do |entry|
-        entry['task_name'] == 'Spree::MaintenanceTasks::UpgradeStep' && entry['id'] != 'taxon_store_id'
+        entry['task_name'] == 'upgrade_step' && entry['id'] != 'taxon_store_id'
       end
 
       expect(taxon_step['last_run']).to be_present

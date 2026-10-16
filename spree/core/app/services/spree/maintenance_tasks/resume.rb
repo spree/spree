@@ -17,7 +17,7 @@ module Spree
         return failure(run, unknown_task_error(run)) if run.task_class.nil?
 
         conflicting = Spree::MaintenanceTaskRun.active.where.not(id: run.id).find_by(task_name: run.task_name)
-        return failure(conflicting, already_running_error(run.task_name)) if conflicting
+        return failure(conflicting, already_running_error(run.task_api_type)) if conflicting
 
         run.update!(
           status: 'enqueued',
@@ -43,7 +43,7 @@ module Spree
       end
 
       def unknown_task_error(run)
-        build_error("#{run.task_name} is no longer a registered maintenance task")
+        build_error("#{run.task_api_type} is no longer a registered maintenance task")
       end
 
       def already_running_error(task_name)

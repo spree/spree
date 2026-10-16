@@ -4472,7 +4472,7 @@ export class AdminClient {
    * each entry carrying the `parameters` schema a run form is built from,
    * whether it `supports_dry_run`, and its `active_run` / `last_run`.
    *
-   * A task is addressed by its class name, so pass that to `get()` — not an id.
+   * A task is addressed by its short `name` (`capture_methods`), so pass that to `get()`.
    */
   readonly maintenanceTasks = {
     list: (options?: RequestOptions): Promise<{ data: MaintenanceTask[] }> =>
@@ -4525,8 +4525,15 @@ export class AdminClient {
         params: params ? transformListParams(params) : undefined,
       }),
 
-    get: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
-      this.request<MaintenanceTaskRun>('GET', `/maintenance_task_runs/${id}`, options),
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('GET', `/maintenance_task_runs/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
 
     create: (
       params: MaintenanceTaskRunCreateParams,
@@ -4538,13 +4545,17 @@ export class AdminClient {
       }),
 
     pause: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
-      this.request<MaintenanceTaskRun>('PATCH', `/maintenance_task_runs/${id}/pause`, options),
+      this.request<MaintenanceTaskRun>('POST', `/maintenance_task_runs/${id}/pause`, options),
 
     resume: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
-      this.request<MaintenanceTaskRun>('PATCH', `/maintenance_task_runs/${id}/resume`, options),
+      this.request<MaintenanceTaskRun>('POST', `/maintenance_task_runs/${id}/resumption`, options),
 
     cancel: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
-      this.request<MaintenanceTaskRun>('PATCH', `/maintenance_task_runs/${id}/cancel`, options),
+      this.request<MaintenanceTaskRun>(
+        'POST',
+        `/maintenance_task_runs/${id}/cancellation`,
+        options,
+      ),
   }
 
   // ============================================

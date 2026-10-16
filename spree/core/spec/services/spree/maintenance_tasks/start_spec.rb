@@ -37,6 +37,18 @@ RSpec.describe Spree::MaintenanceTasks::Start do
     expect(run.initiated_via).to eq('dashboard')
   end
 
+  it 'finds a task by its short name' do
+    run = described_class.call(api_type: 'start_spec_task', arguments: { 'label' => 'x' }).value
+
+    expect(run.task_name).to eq('StartSpecTask')
+  end
+
+  it 'does not take a class name as a short name' do
+    result = described_class.call(api_type: 'StartSpecTask', arguments: { 'label' => 'x' })
+
+    expect(result).to be_failure
+  end
+
   it 'refuses a task that is not registered' do
     result = described_class.call(task_name: 'Nope::Task')
 
