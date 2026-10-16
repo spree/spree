@@ -252,6 +252,11 @@ describe('agentsMdContent', () => {
     expect(content).toContain('apps/dashboard/AGENTS.md')
     expect(content).not.toContain('apps/seller-dashboard')
   })
+
+  it('points agents at the docs MCP server only when it is configured', () => {
+    expect(agentsMdContent(true, true, 'pnpm', true, true)).toContain('`spree-docs` MCP server')
+    expect(agentsMdContent(true, true, 'pnpm', true, false)).not.toContain('spree-docs')
+  })
 })
 
 describe('claudeMdContent', () => {

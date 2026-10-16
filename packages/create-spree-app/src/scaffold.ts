@@ -18,6 +18,7 @@ import { agentsMdContent, claudeMdContent } from './templates/agents-md.js'
 import { dependabotContent } from './templates/dependabot.js'
 import { envContent } from './templates/env.js'
 import { dockerignoreContent, gitignoreContent } from './templates/gitignore.js'
+import { docsMcpConfigFiles } from './templates/mcp-config.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
@@ -167,9 +168,21 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   )
   fs.writeFileSync(
     path.join(projectDir, 'AGENTS.md'),
-    agentsMdContent(storefrontReady, dashboardReady, options.packageManager, sellerDashboardReady),
+    agentsMdContent(
+      storefrontReady,
+      dashboardReady,
+      options.packageManager,
+      sellerDashboardReady,
+      options.docsMcp,
+    ),
   )
   fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), claudeMdContent())
+  if (options.docsMcp) {
+    for (const [file, content] of Object.entries(docsMcpConfigFiles())) {
+      fs.mkdirSync(path.dirname(path.join(projectDir, file)), { recursive: true })
+      fs.writeFileSync(path.join(projectDir, file), content)
+    }
+  }
   const githubDir = path.join(projectDir, '.github')
   fs.mkdirSync(githubDir, { recursive: true })
   fs.writeFileSync(
@@ -228,6 +241,8 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     // No dashboard line here — with the dashboard chosen, `spree init`'s
     // summary already leads with it (served at /dashboard, plus the
     // customize command).
+    const agentHints = agentSetupHints(options.packageManager, agentSkillsReady, options.docsMcp)
+    if (agentHints.length > 0) p.note(agentHints.join('\n'), 'AI coding agents')
   } else {
     printSuccessWithoutDocker(
       projectName,
@@ -236,6 +251,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       dashboardReady,
       sellerDashboardReady,
       agentSkillsReady,
+      options.docsMcp,
       options.packageManager,
     )
   }
@@ -248,6 +264,7 @@ function printSuccessWithoutDocker(
   hasDashboard: boolean,
   hasSellerDashboard: boolean,
   hasAgentSkills: boolean,
+  hasDocsMcp: boolean,
   pm: PackageManager,
 ): void {
   const run = runCommand(pm)
@@ -310,22 +327,10 @@ function printSuccessWithoutDocker(
     '',
   )
 
-  if (!hasAgentSkills) {
-    lines.push(
-      `${pc.bold('Agent skills (optional)')}`,
-      `  ${dlxCommand(pm)} skills add ${AGENT_SKILLS_REPO}`,
-      `  ${pc.dim('# Teaches whichever AI agents you use how to work with Spree')}`,
-      `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
-      '',
-    )
-  }
+  const agentHints = agentSetupHints(pm, hasAgentSkills, hasDocsMcp)
+  if (agentHints.length > 0) lines.push(...agentHints, '')
 
   lines.push(
-    `${pc.bold('Spree docs MCP server (optional)')}`,
-    `  claude mcp add --transport http spree-docs ${DOCS_MCP_URL}`,
-    `  ${pc.dim('# Lets your AI agent search the latest Spree docs. Other agents:')}`,
-    `  ${pc.dim('# https://spreecommerce.org/docs/developer/agentic/mcp')}`,
-    '',
     `${pc.bold('Join our Discord')}`,
     `  https://discord.spreecommerce.org`,
     '',
@@ -334,6 +339,36 @@ function printSuccessWithoutDocker(
   )
 
   p.note(lines.join('\n'), 'Project created!')
+}
+
+/** How to add whichever agent conveniences the scaffold did not set up. */
+function agentSetupHints(
+  pm: PackageManager,
+  hasAgentSkills: boolean,
+  hasDocsMcp: boolean,
+): string[] {
+  const lines: string[] = []
+
+  if (!hasAgentSkills) {
+    lines.push(
+      `${pc.bold('Agent skills (optional)')}`,
+      `  ${dlxCommand(pm)} skills add ${AGENT_SKILLS_REPO}`,
+      `  ${pc.dim('# Teaches whichever AI agents you use how to work with Spree')}`,
+      `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
+    )
+  }
+
+  if (!hasDocsMcp) {
+    if (lines.length > 0) lines.push('')
+    lines.push(
+      `${pc.bold('Spree docs MCP server (optional)')}`,
+      `  claude mcp add --transport http --scope project spree-docs ${DOCS_MCP_URL}`,
+      `  ${pc.dim('# Lets your AI agent search the latest Spree docs. Other agents:')}`,
+      `  ${pc.dim('# https://spreecommerce.org/docs/developer/agentic/mcp')}`,
+    )
+  }
+
+  return lines
 }
 
 function errorMessage(err: unknown): string {

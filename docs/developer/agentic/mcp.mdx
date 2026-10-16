@@ -70,5 +70,5 @@ The server exposes two tools: full-text **search** across the documentation, and
 | **[Agent skills](/developer/agentic/agent-skills)** | Conventions and how-to knowledge the agent should apply without searching at all |
 
 <Note>
-  In create-spree-app projects the generated `AGENTS.md` already points agents at the local `@spree/docs` package first — MCP complements it for anything newer than your installed docs version.
+  [create-spree-app](/developer/create-spree-app/quickstart) projects come connected: the scaffold writes `.mcp.json`, `.cursor/mcp.json` and `.vscode/mcp.json` (skip them with `--no-docs-mcp`), so Claude Code, Cursor and VS Code pick up the server — Claude Code asks you to approve it the first time. The generated `AGENTS.md` tells agents to search here and read pages from the local `@spree/docs` package, which matches the Spree version the project runs.
 </Note>
