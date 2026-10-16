@@ -80,6 +80,8 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :commissions
 
+      admin_sdk_example 'commission_lines/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 

@@ -362,6 +362,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'products/bulk-add-to-collections'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       request_body_for
@@ -393,6 +395,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Detaches each product in `ids` from every collection in `collection_ids`.'
       admin_scope :write, :products
+
+      admin_sdk_example 'products/bulk-remove-from-collections'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -597,6 +601,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         sent back to the seller, who can fix the product and submit it again.
       DESC
       admin_scope :write, :products
+
+      admin_sdk_example 'products/reject'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

@@ -76,6 +76,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       description 'Updates a delivery method. Only the attributes sent change.'
       admin_scope :write, :settings
 
+      admin_sdk_example 'delivery-methods/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -120,6 +122,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       security [api_key: [], bearer_auth: []]
       description 'Returns the areas delivery methods ship to, each made of countries, states or postal code ranges.'
       admin_scope :read, :settings
+
+      admin_sdk_example 'delivery-zones/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -187,6 +191,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       description 'Updates a delivery zone. Sending `members` replaces the whole member list; leaving it out keeps the current members.'
       admin_scope :write, :settings
 
+      admin_sdk_example 'delivery-zones/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -225,6 +231,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       description 'Returns the conditions a delivery method must meet to be offered at checkout, such as an order total or weight range.'
       admin_scope :read, :settings
 
+      admin_sdk_example 'delivery-methods/rules-list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :delivery_method_id, in: :path, type: :string, required: true
@@ -255,6 +263,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
         values its schema declares.
       DESC
       admin_scope :write, :settings
+
+      admin_sdk_example 'delivery-methods/rules-create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -298,6 +308,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       security [api_key: [], bearer_auth: []]
       description "Changes a rule's settings or turns it off. Its `type` is fixed once created."
       admin_scope :write, :settings
+
+      admin_sdk_example 'delivery-methods/rules-update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

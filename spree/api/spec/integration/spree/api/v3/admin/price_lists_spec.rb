@@ -374,6 +374,8 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       DESC
       admin_scope :read, :products
 
+      admin_sdk_example 'price-lists/products/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :price_list_id, in: :path, type: :string, required: true
@@ -420,6 +422,8 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       description 'Adds products to the list in bulk, materializing a placeholder price per variant and store currency. Already-present products are skipped.'
       admin_scope :write, :products
 
+      admin_sdk_example 'price-lists/products/create'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :price_list_id, in: :path, type: :string, required: true
@@ -444,6 +448,8 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Removes products from the list in bulk, hard-deleting their price rows. Ids that are not members are ignored.'
       admin_scope :write, :products
+
+      admin_sdk_example 'price-lists/products/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

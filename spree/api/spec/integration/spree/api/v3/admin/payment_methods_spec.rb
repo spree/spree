@@ -47,6 +47,8 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       DESC
       admin_scope :write, :settings
 
+      admin_sdk_example 'payment-methods/create'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       request_body_for
@@ -153,6 +155,8 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       security [api_key: [], bearer_auth: []]
       description 'Updates a payment method. Its `type` is fixed once created.'
       admin_scope :write, :settings
+
+      admin_sdk_example 'payment-methods/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

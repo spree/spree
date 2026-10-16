@@ -146,6 +146,8 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :purchasing
 
+      admin_sdk_example 'purchase-orders/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -188,6 +190,8 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       DESC
       admin_scope :write, :purchasing
 
+      admin_sdk_example 'purchase-orders/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -228,6 +232,8 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
         the merchant has.
       DESC
       admin_scope :write, :purchasing
+
+      admin_sdk_example 'purchase-orders/mark-ordered'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -445,6 +451,8 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
         A `reason` is appended to the order's notes.
       DESC
       admin_scope :write, :purchasing
+
+      admin_sdk_example 'purchase-orders/cancel'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

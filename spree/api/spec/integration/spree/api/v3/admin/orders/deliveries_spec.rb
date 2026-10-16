@@ -89,6 +89,8 @@ RSpec.describe 'Admin Deliveries API', type: :request, swagger_doc: 'api-referen
       description 'Corrects the tracking number, carrier or link. A corrected number starts the carrier journey over.'
       admin_scope :write, :fulfillments
 
+      admin_sdk_example 'order-deliveries/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -114,6 +116,8 @@ RSpec.describe 'Admin Deliveries API', type: :request, swagger_doc: 'api-referen
       security [{ api_key: [], bearer_auth: [] }]
       description 'Removes a hand-entered consignment. One a label minted is refused — refund the label instead.'
       admin_scope :write, :fulfillments
+
+      admin_sdk_example 'order-deliveries/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
