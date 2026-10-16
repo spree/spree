@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Nie wybrano adresu"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Ścieżka nawigacji",

@@ -20,7 +20,7 @@ module Spree
             body.attribute :customer_id, :id
             body.attribute :use_customer_default_address, :boolean,
               only: :create,
-              description: "With `customer_id`, copies the customer's saved billing and shipping addresses onto the order."
+              description: "Copies the saved default billing and shipping addresses onto the order. An order for a company takes that company's defaults, inherited from its parent nodes when it holds none of its own; otherwise it takes the customer's."
             body.attribute :currency, :currency, example: 'USD'
             body.attribute :market_id, :id
             body.attribute :channel_id, :id, description: 'Defaults to the store primary channel when omitted.'
@@ -35,10 +35,10 @@ module Spree
               description: "The `signed_id` of the buyer's purchase order, from `files.upload()` with `visibility: 'private'`. Null removes the document the order carries."
             body.attribute :shipping_address_id, :id,
               only: :create,
-              description: 'An existing address of the customer.'
+              description: "An existing address from the customer's address book, or from the address book of the company the order is for."
             body.attribute :billing_address_id, :id,
               only: :create,
-              description: 'An existing address of the customer.'
+              description: "An existing address from the customer's address book, or from the address book of the company the order is for."
             body.attribute :preferred_stock_location_id, :id,
               description: "Stock location to prefer for fulfillment. Order Routing's built-in preferred-location rule ranks it first; routing falls back to the next rule when the location can't cover the cart."
             body.attribute :company_id, :id,

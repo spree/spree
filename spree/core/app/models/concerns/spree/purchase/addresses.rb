@@ -90,6 +90,50 @@ module Spree
         use_shipping.in?([true, 'true', '1'])
       end
 
+      # The address behind an id a client may select, or nil when the id names
+      # one this purchase has no business shipping to. Takes a prefixed id or a
+      # raw primary key, so the services that resolve a client-supplied id and
+      # the writers below share one rule rather than each inventing their own.
+      #
+      # Two books qualify. The buyer's own is the ordinary case. The company's
+      # is the B2B one: a purchase for a node ships to that node's sites, and
+      # to its ancestors' — the same self-and-ancestors chain the node's
+      # default address is prefilled from, so a division can pick the
+      # headquarters address it already inherits.
+      #
+      # Standing is not re-checked here: a cart cannot name a company its
+      # customer lacks standing over, so reaching this point already means the
+      # buyer may act for the node.
+      #
+      # @param id [Integer, String, nil]
+      # @return [Spree::Address, nil]
+      def selectable_address(id)
+        address = ::Spree::Address.find_by_param(id) || ::Spree::Address.find_by(id: id)
+        return nil if address.nil?
+
+        return address if customer_id.present? && address.customer_owned? && address.owner_id == customer_id
+
+        company = resolved_company
+        return nil if company.nil? || address.owner_type != 'Spree::Company'
+
+        company.self_and_ancestors.any? { |node| node.id == address.owner_id } ? address : nil
+      end
+
+      # Everything a checkout address picker may offer for this purchase: the
+      # buyer's own book plus the book of the company it is for, that node's
+      # own entries and the ones it inherits. The listing counterpart of
+      # {#selectable_address}, so what a picker shows is exactly what the
+      # writers accept.
+      #
+      # @return [ActiveRecord::Relation<Spree::Address>]
+      def selectable_addresses
+        books = []
+        books << ::Spree::Address.not_deleted.where(owner_type: ::Spree.customer_class.to_s, owner_id: customer_id) if customer_id.present?
+        books << resolved_company&.address_book
+
+        books.compact.reduce { |left, right| left.or(right) } || ::Spree::Address.none
+      end
+
       # Fills any blank bill/ship address from the customer's valid saved
       # defaults. The ship address is skipped when no physical delivery is
       # required, so shipping-address validations never fire on digital-only
@@ -185,33 +229,6 @@ module Spree
         line_items.includes(variant: [:delivery_profile, { product: :delivery_profile }]).any? do |line_item|
           profile_requires_address[line_item.variant&.resolved_delivery_profile]
         end
-      end
-
-      # The address behind an id a client may select, or nil when the id names
-      # one this purchase has no business shipping to.
-      #
-      # Two books qualify. The buyer's own is the ordinary case. The company's
-      # is the B2B one: a purchase for a node ships to that node's sites, and
-      # to its ancestors' — the same self-and-ancestors chain the node's
-      # default address is prefilled from, so a division can pick the
-      # headquarters address it already inherits.
-      #
-      # Standing is not re-checked here: a cart cannot name a company its
-      # customer lacks standing over, so reaching this point already means the
-      # buyer may act for the node.
-      #
-      # @param id [Integer, String, nil]
-      # @return [Spree::Address, nil]
-      def selectable_address(id)
-        address = ::Spree::Address.find_by(id: id)
-        return nil if address.nil?
-
-        return address if customer_id.present? && address.customer_owned? && address.owner_id == customer_id
-
-        company = resolved_company
-        return nil if company.nil? || address.owner_type != 'Spree::Company'
-
-        company.self_and_ancestors.any? { |node| node.id == address.owner_id } ? address : nil
       end
 
       # Reuse never reaches past what the buyer already owns: a signed-in buyer

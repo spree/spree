@@ -575,6 +575,29 @@ export class StoreClient {
       this.request<Order | OrderGroup>('POST', `/carts/${cartId}/complete`, options),
 
     /**
+     * Nested resource: the addresses this cart may be shipped or billed to —
+     * the buyer's own book, plus the book of the company the cart is for and
+     * the sites that company inherits from the ones above it. Every address
+     * listed here is accepted as `shipping_address_id` or `billing_address_id`
+     * on the cart.
+     */
+    addresses: {
+      /**
+       * List the addresses this cart may use
+       * @param cartId - Cart prefixed ID
+       */
+      list: (
+        cartId: string,
+        params?: ListParams<AddressFilters, AddressSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Address>> =>
+        this.request<PaginatedResponse<Address>>('GET', `/carts/${cartId}/addresses`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+    },
+
+    /**
      * Nested resource: Line items
      */
     items: {

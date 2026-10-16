@@ -13,7 +13,7 @@ module Spree
 
           CART_ADDRESS = Spree::Api::V3::RequestSchema.shape('CartAddressParams') do |schema|
             schema.attribute :id, :id,
-              description: 'An existing address of the customer to use. The other fields are then ignored.'
+              description: "An existing address from the buyer's address book, or from the book of the company the cart is for. The other fields are then ignored."
             schema.include_attributes Spree::Api::V3::Store::AddressRequestSchema
           end
 
@@ -25,10 +25,10 @@ module Spree
             schema.attribute :currency, :currency
             schema.attribute :locale, :locale
             schema.attribute :shipping_address_id, :id,
-              description: 'An existing address to ship to.',
+              description: "An existing address to ship to, from the buyer's address book or from the book of the company the cart is for. List both with `GET /store/carts/:id/addresses`.",
               example: 'addr_abc123'
             schema.attribute :billing_address_id, :id,
-              description: 'An existing address to bill.',
+              description: "An existing address to bill, from the buyer's address book or from the book of the company the cart is for. List both with `GET /store/carts/:id/addresses`.",
               example: 'addr_def456'
             schema.attribute :preferred_stock_location_id, :id
             schema.attribute :company_id, :id, nullable: true, description: <<~TEXT.squish

@@ -3475,15 +3475,20 @@
         "drafts_title": "Wersje robocze zamówień",
         "new": {
           "add_line_item": "Dodaj pozycję",
+          "address_help": "Zostaw adres niewybrany, aby wpisać go później w zamówieniu. Zamówienie firmowe może korzystać z lokalizacji tej firmy oraz tych, które dziedziczy.",
+          "company_addresses": "Adresy firmy",
           "company_help": "Przypisz to zamówienie do firmy. Lista klientów pokaże wtedy tylko osoby, które mogą dla niej kupować.",
+          "customer_addresses": "Adresy klienta",
           "search_variant": "Szukaj wariantu…",
           "section_billing": "Rozliczenie",
           "section_customer": "Klient",
           "section_items": "Pozycje",
           "section_notes": "Notatki",
           "section_summary": "Podsumowanie",
+          "select_billing_address": "Adres rozliczeniowy",
           "select_company": "Firma (opcjonalnie)",
           "select_customer": "Wybierz klienta",
+          "select_shipping_address": "Adres dostawy",
           "title": "Nowe zamówienie"
         }
       },

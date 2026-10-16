@@ -342,6 +342,7 @@ module Spree
     # @return [Spree::Address]
     def snapshot
       dup.tap do |copy|
+        copy.company = company if business_owned?
         copy.owner = nil
         copy.label = nil
         copy.deleted_at = nil

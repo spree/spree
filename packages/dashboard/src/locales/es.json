@@ -348,15 +348,20 @@
         "drafts_title": "Pedidos en borrador",
         "new": {
           "add_line_item": "Agregar línea de pedido",
+          "address_help": "Deja una dirección sin elegir para introducirla en el pedido más adelante. Un pedido de empresa puede usar las sedes de esa empresa y las que hereda.",
+          "company_addresses": "Direcciones de la empresa",
           "company_help": "Vinculá este pedido a una empresa. La lista de clientes mostrará solo a quienes puedan comprar para ella.",
+          "customer_addresses": "Direcciones del cliente",
           "search_variant": "Buscar variante…",
           "section_billing": "Facturación",
           "section_customer": "Cliente",
           "section_items": "Artículos",
           "section_notes": "Notas",
           "section_summary": "Resumen",
+          "select_billing_address": "Dirección de facturación",
           "select_company": "Empresa (opcional)",
           "select_customer": "Seleccionar cliente",
+          "select_shipping_address": "Dirección de envío",
           "title": "Nuevo pedido"
         }
       },

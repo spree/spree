@@ -11,6 +11,8 @@ import {
   ResourceCombobox,
 } from '@spree/dashboard-core'
 import {
+  type AddressOptionGroup,
+  AddressSelect,
   Button,
   Card,
   CardContent,
@@ -41,8 +43,8 @@ import { useTranslation } from 'react-i18next'
 import { ChannelSelect } from '../../../../components/spree/channel-select'
 import { CompanyComboboxOption } from '../../../../components/spree/company-combobox-option'
 import { useChannels } from '../../../../hooks/use-channels'
-import { companyAutocompleteProps } from '../../../../hooks/use-companies'
-import { customerAutocompleteProps } from '../../../../hooks/use-customers'
+import { companyAutocompleteProps, useCompanyAddresses } from '../../../../hooks/use-companies'
+import { customerAutocompleteProps, useCustomerAddresses } from '../../../../hooks/use-customers'
 import {
   NEW_ORDER_DEFAULTS,
   type NewOrderFormValues,
@@ -71,6 +73,8 @@ function NewOrderPage() {
   const [company, setCompany] = useState<Company | null>(null)
   const [items, setItems] = useState<PendingItem[]>([])
   const [useDefaultAddress, setUseDefaultAddress] = useState(true)
+  const [shippingAddressId, setShippingAddressId] = useState('')
+  const [billingAddressId, setBillingAddressId] = useState('')
   const [poDocument, setPoDocument] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   // The signed id does not exist until the upload resolves, so submitting
   // during one would create the order without the document.
@@ -89,6 +93,37 @@ function NewOrderPage() {
   const { data: channelsData } = useChannels()
   const channels = channelsData?.data ?? []
 
+  // Both books the order will accept an address from. The company's listing
+  // already carries the sites inherited from the companies above it, so the
+  // picker offers exactly what the order would take.
+  const { data: customerAddressData } = useCustomerAddresses(
+    useDefaultAddress ? undefined : customer?.id,
+  )
+  const { data: companyAddressData } = useCompanyAddresses(
+    useDefaultAddress ? undefined : company?.id,
+    1,
+    50,
+  )
+
+  function clearPickedAddresses() {
+    setShippingAddressId('')
+    setBillingAddressId('')
+  }
+
+  const addressGroups: AddressOptionGroup[] = [
+    {
+      key: 'company',
+      heading: company?.name ?? t('admin.pages.orders.new.company_addresses'),
+      addresses: companyAddressData?.data ?? [],
+    },
+    {
+      key: 'customer',
+      heading:
+        customer?.full_name || customer?.email || t('admin.pages.orders.new.customer_addresses'),
+      addresses: customerAddressData?.data ?? [],
+    },
+  ]
+
   const createMutation = useMutation({
     mutationFn: (values: NewOrderFormValues) => {
       const payload: Record<string, unknown> = {
@@ -96,11 +131,15 @@ function NewOrderPage() {
       }
       if (customer) {
         payload.customer_id = customer.id
-        payload.use_customer_default_address = useDefaultAddress
       } else if (values.email) {
         payload.email = values.email
       }
       if (company) payload.company_id = company.id
+      if (customer || company) payload.use_customer_default_address = useDefaultAddress
+      if (!useDefaultAddress) {
+        if (shippingAddressId) payload.shipping_address_id = shippingAddressId
+        if (billingAddressId) payload.billing_address_id = billingAddressId
+      }
       if (values.internal_note) payload.internal_note = values.internal_note
       if (values.customer_note) payload.customer_note = values.customer_note
       if (values.po_number) payload.po_number = values.po_number
@@ -205,8 +244,13 @@ function NewOrderPage() {
                         // A customer already chosen may have no standing for the
                         // new company, and silently sending that pair would
                         // attach the order to a business this person cannot buy
-                        // for. Clearing is the honest reset.
-                        if (record?.id !== company?.id) setCustomer(null)
+                        // for. Clearing is the honest reset — and so is dropping
+                        // the picked addresses, which belong to the books the
+                        // old pair opened and would be refused by the new one.
+                        if (record?.id !== company?.id) {
+                          setCustomer(null)
+                          clearPickedAddresses()
+                        }
                       }}
                       renderOption={(company) => <CompanyComboboxOption company={company} />}
                     />
@@ -217,7 +261,10 @@ function NewOrderPage() {
                     <ResourceCombobox<Customer>
                       {...customerAutocompleteProps('customer-picker', company?.id)}
                       value={customer?.id}
-                      onChange={(_id, record) => setCustomer(record)}
+                      onChange={(_id, record) => {
+                        setCustomer(record)
+                        clearPickedAddresses()
+                      }}
                       renderOption={(c) => (
                         <div>
                           <div className="font-medium">{c.email}</div>
@@ -245,11 +292,42 @@ function NewOrderPage() {
                   )}
                 </FieldGroup>
 
-                {customer && (
+                {(customer || company) && (
                   <div className="mt-4 flex items-center gap-3">
                     <Switch checked={useDefaultAddress} onCheckedChange={setUseDefaultAddress} />
                     <span className="text-sm">{t('admin.orders.new.use_default_addresses')}</span>
                   </div>
+                )}
+
+                {/* Picking a company opens its sites here, including the ones
+                    it inherits from the companies above it — the same list the
+                    order itself accepts an address from. */}
+                {(customer || company) && !useDefaultAddress && (
+                  <FieldGroup className="mt-4">
+                    <Field>
+                      <FieldLabel htmlFor="order-shipping-address">
+                        {t('admin.pages.orders.new.select_shipping_address')}
+                      </FieldLabel>
+                      <AddressSelect
+                        id="order-shipping-address"
+                        value={shippingAddressId}
+                        onValueChange={setShippingAddressId}
+                        groups={addressGroups}
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="order-billing-address">
+                        {t('admin.pages.orders.new.select_billing_address')}
+                      </FieldLabel>
+                      <AddressSelect
+                        id="order-billing-address"
+                        value={billingAddressId}
+                        onValueChange={setBillingAddressId}
+                        groups={addressGroups}
+                      />
+                    </Field>
+                    <FieldDescription>{t('admin.pages.orders.new.address_help')}</FieldDescription>
+                  </FieldGroup>
                 )}
               </CardContent>
             </Card>

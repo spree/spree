@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Keine Adresse ausgewählt"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Breadcrumb",

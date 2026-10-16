@@ -15,7 +15,9 @@ export type OrderCreateParams = {
   email?: string
   customer_id?: string
   /**
-   * With `customer_id`, copies the customer's saved billing and shipping addresses onto the order.
+   * Copies the saved default billing and shipping addresses onto the order. An order for a company
+   * takes that company's defaults, inherited from its parent nodes when it holds none of its own;
+   * otherwise it takes the customer's.
    */
   use_customer_default_address?: boolean
   currency?: CurrencyCode
@@ -37,9 +39,15 @@ export type OrderCreateParams = {
    * `visibility: 'private'`. Null removes the document the order carries.
    */
   po_document_signed_id?: string | null
-  /** An existing address of the customer. */
+  /**
+   * An existing address from the customer's address book, or from the address book of the company
+   * the order is for.
+   */
   shipping_address_id?: string
-  /** An existing address of the customer. */
+  /**
+   * An existing address from the customer's address book, or from the address book of the company
+   * the order is for.
+   */
   billing_address_id?: string
   /**
    * Stock location to prefer for fulfillment. Order Routing's built-in preferred-location rule

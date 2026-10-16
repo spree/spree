@@ -266,6 +266,89 @@ module Spree
       end
     end
 
+    describe 'addresses on an order for a company' do
+      let(:company) { create(:company, store: store) }
+      let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+      let(:headquarters) { create(:company_address, owner: company) }
+
+      it 'accepts a site from the company address book' do
+        result = described_class.call(
+          store: store, customer: user,
+          params: { company_id: company.prefixed_id, shipping_address_id: headquarters.prefixed_id }
+        )
+
+        expect(result).to be_success
+        expect(result.value.ship_address_id).to eq(headquarters.id)
+      end
+
+      it 'accepts a site the purchase node inherits from its parent' do
+        result = described_class.call(
+          store: store, customer: user,
+          params: { company_id: division.prefixed_id, shipping_address_id: headquarters.prefixed_id }
+        )
+
+        expect(result).to be_success
+        expect(result.value.ship_address_id).to eq(headquarters.id)
+      end
+
+      it 'refuses a site belonging to another company' do
+        outsider = create(:company_address, owner: create(:company, store: store))
+
+        result = described_class.call(
+          store: store, customer: user,
+          params: { company_id: company.prefixed_id, shipping_address_id: outsider.prefixed_id }
+        )
+
+        expect(result).to be_success
+        expect(result.value.ship_address_id).to be_nil
+      end
+
+      describe 'use_customer_default_address' do
+        let(:headquarters) { create(:company_address, owner: company, first_name: 'Dana', last_name: 'Reyes') }
+
+        before do
+          company.update!(default_bill_address: headquarters, default_ship_address: headquarters)
+        end
+
+        it 'copies the company defaults rather than the buyer\'s own' do
+          user.update!(bill_address: create(:address, customer: user), ship_address: create(:address, customer: user))
+
+          result = described_class.call(
+            store: store, customer: user,
+            params: { company_id: company.prefixed_id, use_customer_default_address: true }
+          )
+
+          expect(result).to be_success
+          expect(result.value.ship_address.address1).to eq(headquarters.address1)
+          expect(result.value.ship_address_id).not_to eq(headquarters.id)
+        end
+
+        # Inherited for prefill the same way it is for selection.
+        it 'reaches the parent node\'s default when the division holds none' do
+          result = described_class.call(
+            store: store, customer: user,
+            params: { company_id: division.prefixed_id, use_customer_default_address: true }
+          )
+
+          expect(result).to be_success
+          expect(result.value.bill_address.address1).to eq(headquarters.address1)
+        end
+
+        it 'leaves the slots empty rather than falling back to the buyer' do
+          company.update!(default_bill_address: nil, default_ship_address: nil)
+          user.update!(bill_address: create(:address, customer: user))
+
+          result = described_class.call(
+            store: store, customer: user,
+            params: { company_id: company.prefixed_id, use_customer_default_address: true }
+          )
+
+          expect(result).to be_success
+          expect(result.value.bill_address).to be_nil
+        end
+      end
+    end
+
     # Same signed-id state as the storefront's, one step further along: without
     # handling this it is an unhandled 500 on the Admin API.
     describe 'a purchase order document whose upload never completed' do

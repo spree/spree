@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Ninguna dirección seleccionada"
+    },
     "components": {
       "address_block": {
         "not_provided": "No proporcionado"

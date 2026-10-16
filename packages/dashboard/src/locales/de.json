@@ -3437,15 +3437,20 @@
         "drafts_title": "Bestellentwürfe",
         "new": {
           "add_line_item": "Position hinzufügen",
+          "address_help": "Lassen Sie eine Adresse frei, um sie später in der Bestellung einzugeben. Eine Firmenbestellung kann die Standorte dieser Firma und die geerbten Standorte verwenden.",
+          "company_addresses": "Firmenadressen",
           "company_help": "Diese Bestellung einem Unternehmen zuordnen. Die Kundenliste zeigt dann nur Personen, die dafür einkaufen dürfen.",
+          "customer_addresses": "Kundenadressen",
           "search_variant": "Variante suchen…",
           "section_billing": "Rechnung",
           "section_customer": "Kunde",
           "section_items": "Artikel",
           "section_notes": "Notizen",
           "section_summary": "Zusammenfassung",
+          "select_billing_address": "Rechnungsadresse",
           "select_company": "Firma (optional)",
           "select_customer": "Kunde auswählen",
+          "select_shipping_address": "Lieferadresse",
           "title": "Neue Bestellung"
         }
       },

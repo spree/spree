@@ -3427,15 +3427,20 @@
         "drafts_title": "草稿订单",
         "new": {
           "add_line_item": "添加订单项",
+          "address_help": "不选择地址则可在订单创建后再填写。公司订单可使用该公司的地址及其继承的地址。",
+          "company_addresses": "公司地址",
           "company_help": "将此订单关联到某个公司。客户列表随后只显示可为其采购的人员。",
+          "customer_addresses": "客户地址",
           "search_variant": "搜索变体…",
           "section_billing": "账单",
           "section_customer": "客户",
           "section_items": "商品",
           "section_notes": "备注",
           "section_summary": "概览",
+          "select_billing_address": "账单地址",
           "select_company": "公司（可选）",
           "select_customer": "选择客户",
+          "select_shipping_address": "收货地址",
           "title": "新建订单"
         }
       },

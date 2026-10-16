@@ -160,6 +160,20 @@ RSpec.shared_examples 'an addresses host' do
         expect(record.ship_address_id).to eq(company_address.id)
       end
 
+      it 'accepts an address from the company book for billing too' do
+        record.company = company
+        record.bill_address_id = company_address.id
+
+        expect(record.bill_address_id).to eq(company_address.id)
+      end
+
+      it 'refuses another company\'s book for billing' do
+        record.company = company
+        record.bill_address_id = create(:company_address, owner: create(:company, store: store)).id
+
+        expect(record.bill_address_id).to be_nil
+      end
+
       # The same self-and-ancestors chain the node's default address is
       # prefilled from: a division may ship to the headquarters it inherits.
       it 'accepts an address from an ancestor of the purchase node' do
@@ -200,6 +214,66 @@ RSpec.shared_examples 'an addresses host' do
         record.ship_address_id = create(:company_address, owner: division).id
 
         expect(record.ship_address_id).to be_nil
+      end
+    end
+  end
+
+  describe '#selectable_address' do
+    let(:own_address) { create(:address, customer: user) }
+
+    it 'accepts a prefixed id as well as a raw one' do
+      expect(record.selectable_address(own_address.prefixed_id)).to eq(own_address)
+      expect(record.selectable_address(own_address.id)).to eq(own_address)
+    end
+
+    it 'answers nil for a blank id' do
+      expect(record.selectable_address(nil)).to be_nil
+      expect(record.selectable_address('')).to be_nil
+    end
+
+    it 'answers nil for another customer\'s address' do
+      expect(record.selectable_address(create(:address, customer: create(:user)).id)).to be_nil
+    end
+  end
+
+  describe '#selectable_addresses' do
+    let!(:own_address) { create(:address, customer: user) }
+    let!(:foreign_address) { create(:address, customer: create(:user)) }
+
+    it 'lists the buyer\'s own book and nobody else\'s' do
+      expect(record.selectable_addresses).to include(own_address)
+      expect(record.selectable_addresses).not_to include(foreign_address)
+    end
+
+    it 'is empty for a guest' do
+      expect(guest_record.selectable_addresses).to be_empty
+    end
+
+    context 'when the purchase is for a company' do
+      let(:company) { create(:company, store: store) }
+      let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+      let!(:headquarters_address) { create(:company_address, owner: company) }
+      let!(:division_address) { create(:company_address, owner: division) }
+
+      before do
+        create(:company_membership, company: company, customer: user)
+        record.company = division
+      end
+
+      it 'adds the node\'s own sites and the ones it inherits' do
+        expect(record.selectable_addresses).to include(own_address, headquarters_address, division_address)
+      end
+
+      it 'omits a company the purchase is not for' do
+        other_address = create(:company_address, owner: create(:company, store: store))
+
+        expect(record.selectable_addresses).not_to include(other_address)
+      end
+
+      it 'omits a retired site' do
+        headquarters_address.update_column(:deleted_at, Time.current)
+
+        expect(record.selectable_addresses).not_to include(headquarters_address)
       end
     end
   end
