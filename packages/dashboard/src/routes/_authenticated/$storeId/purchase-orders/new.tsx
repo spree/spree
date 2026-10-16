@@ -4,6 +4,7 @@ import {
   EMPTY_PURCHASE_ORDER,
   PurchaseOrderForm,
   type PurchaseOrderFormValues,
+  type PurchaseOrderSubmitValues,
 } from '../../../../components/spree/purchase-order-form'
 import { useCreatePurchaseOrder } from '../../../../hooks/use-purchase-orders'
 import { prefilledLines, prefilledVariantSchema } from '../../../../lib/prefilled-variant'
@@ -28,7 +29,7 @@ function NewPurchaseOrderPage() {
     lines: prefilledLines(search, true),
   }
 
-  async function handleSubmit(values: PurchaseOrderFormValues) {
+  async function handleSubmit(values: PurchaseOrderSubmitValues) {
     // The hook toasts the refusal; navigating would hide it.
     const purchaseOrder = await createMutation
       .mutateAsync({

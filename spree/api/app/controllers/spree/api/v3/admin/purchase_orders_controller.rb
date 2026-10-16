@@ -47,6 +47,7 @@ module Spree
               item.attribute :variant_id, :id, required: true, example: 'variant_1234567890'
               item.attribute :quantity_ordered, :integer, required: true, example: 100
               item.attribute :unit_cost, :decimal,
+                required: true,
                 example: '12.50',
                 description: 'What the merchant agreed to pay per unit.'
             end

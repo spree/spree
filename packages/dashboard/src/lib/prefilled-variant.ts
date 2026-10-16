@@ -34,7 +34,7 @@ export function prefilledLines(search: PrefilledVariantSearch, withCost: boolean
         thumbnail_url: search.thumbnail_url ?? null,
       },
       quantity: 1,
-      unitCost: withCost ? '0.00' : undefined,
+      unitCost: withCost ? '' : undefined,
     },
   ]
 }

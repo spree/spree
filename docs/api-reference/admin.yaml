@@ -75998,6 +75998,7 @@ components:
       required:
       - variant_id
       - quantity_ordered
+      - unit_cost
     PurchaseOrderUpdateParams:
       type: object
       properties:
