@@ -27,8 +27,6 @@ export type {
   DeliveryRateProviderCatalogEntry,
   DeliveryRateProviderOption,
   FulfillmentProviderOption,
-  TaxExemptionReasonCode,
-  TaxExemptionReasonCodeGroup,
 } from './fulfillment-providers'
 // Admin-specific generated types
 export type { default as Actor } from './generated/Actor'
@@ -189,6 +187,8 @@ export type { default as StoreCreditEvent } from './generated/StoreCreditEvent'
 export type { default as Supplier } from './generated/Supplier'
 export type { default as TaxCategory } from './generated/TaxCategory'
 export type { default as TaxExemptionCertificate } from './generated/TaxExemptionCertificate'
+export type { default as TaxExemptionReasonCode } from './generated/TaxExemptionReasonCode'
+export type { default as TaxExemptionReasonCodeGroup } from './generated/TaxExemptionReasonCodeGroup'
 export type { default as TaxIdentifier } from './generated/TaxIdentifier'
 export type { default as TaxLine } from './generated/TaxLine'
 export type { default as TaxRate } from './generated/TaxRate'

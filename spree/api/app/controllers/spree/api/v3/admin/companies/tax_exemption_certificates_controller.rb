@@ -32,26 +32,11 @@ module Spree
             # standard actions have to be listed alongside the custom ones.
             before_action :set_resource, only: [:show, :update, :destroy, :verify, :revoke, :download]
 
-            # The vocabulary offered when nothing is registered, so a store with
-            # no tax provider installed still has something to pick from. Core
-            # holds no opinion beyond this: a provider registers the codes its
-            # own engine understands.
-            DEFAULT_REASON_CODES = {
-              'resale' => 'Resale',
-              'government' => 'Government',
-              'charitable' => 'Charitable',
-              'educational' => 'Educational',
-              'manufacturing' => 'Manufacturing',
-              'agricultural' => 'Agricultural'
-            }.freeze
-
             # GET .../tax_exemption_certificates/reason_codes
-            #
-            # Grouped by the provider that understands them, so a merchant with
-            # two engines installed can tell the vocabularies apart rather than
-            # picking a code the engine calculating their tax has never heard of.
             def reason_codes
-              render json: { data: reason_code_groups }
+              groups = Spree::TaxExemptionReasonCodeGroup.all
+
+              render json: { data: Spree.api.admin_tax_exemption_reason_code_group_serializer.new(groups).to_h }
             end
 
             # PATCH /api/v3/admin/companies/:company_id/tax_exemption_certificates/:id/verify
@@ -143,26 +128,6 @@ module Spree
                        end
 
               authorize!(mapped, resource)
-            end
-
-            private
-
-            def reason_code_groups
-              registered = Spree.tax_exemption_reason_codes.presence
-              return [{ provider: nil, reason_codes: wire_codes(DEFAULT_REASON_CODES) }] if registered.blank?
-
-              registered.map do |provider, codes|
-                { provider: provider.to_s, reason_codes: wire_codes(codes) }
-              end
-            end
-
-            # A provider may register either a hash of code to label, or a bare
-            # list of codes when the code is the label.
-            def wire_codes(codes)
-              case codes
-              when Hash then codes.map { |value, label| { value: value.to_s, label: label.to_s } }
-              else Array(codes).map { |value| { value: value.to_s, label: value.to_s } }
-              end
             end
           end
         end

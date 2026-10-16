@@ -39177,6 +39177,87 @@ paths:
             schema:
               "$ref": "#/components/schemas/TaxExemptionCertificateCreateParams"
         required: true
+  "/api/v3/admin/companies/{company_id}/tax_exemption_certificates/reason_codes":
+    parameters:
+    - name: x-spree-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: company_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List tax exemption reason codes
+      tags:
+      - Companies
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The reasons a merchant may record as a certificate's `reason_code`, grouped by the tax provider
+        whose engine understands them. Each installed provider registers its own codes; with none
+        installed, one group with a `null` provider holds a neutral default list.
+
+
+        **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: groups } =
+            await client.companies.taxExemptionCertificates.reasonCodes('comp_UkLWZg9DAJ')
+
+          // One group per installed tax provider; record a code from the group of the
+          // provider that calculates this store's tax.
+          const reasonCodes = groups.flatMap((group) => group.reason_codes)
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /companies/{company_id}/tax_exemption_certificates/reason_codes
+      responses:
+        '200':
+          description: reason codes found
+          content:
+            application/json:
+              example:
+                data:
+                - provider:
+                  reason_codes:
+                  - value: resale
+                    label: Resale
+                  - value: government
+                    label: Government
+                  - value: charitable
+                    label: Charitable
+                  - value: educational
+                    label: Educational
+                  - value: manufacturing
+                    label: Manufacturing
+                  - value: agricultural
+                    label: Agricultural
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/TaxExemptionReasonCodeGroup"
   "/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}":
     parameters:
     - name: x-spree-api-key
@@ -67842,6 +67923,35 @@ components:
       - document_filename
       - document_byte_size
       - document_url
+      x-typelizer: true
+    TaxExemptionReasonCodeGroup:
+      type: object
+      properties:
+        provider:
+          type: string
+          nullable: true
+          description: The tax provider that understands these codes, e.g. `Avalara
+            AvaTax`; null for the default list.
+        reason_codes:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TaxExemptionReasonCode"
+      required:
+      - provider
+      - reason_codes
+      x-typelizer: true
+    TaxExemptionReasonCode:
+      type: object
+      properties:
+        value:
+          type: string
+          description: Stored on the certificate as `reason_code`, e.g. `G` or `resale`.
+        label:
+          type: string
+          description: What the merchant reads, as the provider names it.
+      required:
+      - value
+      - label
       x-typelizer: true
     TaxIdentifier:
       type: object
