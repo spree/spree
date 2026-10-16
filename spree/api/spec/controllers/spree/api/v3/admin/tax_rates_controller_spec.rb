@@ -7,7 +7,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
 
   let!(:tax_category) { create(:tax_category) }
   let!(:germany) { Spree::Country.by_iso('DE') }
-  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country_code: germany&.iso, amount: 0.19, included_in_price: true) }
+  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country_code: germany&.iso, amount: 0.19) }
 
   before { request.headers.merge!(headers) }
 
@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
       expect(json_response['rate']).to eq('0.19')
       expect(json_response['rate_percent']).to eq('19')
       expect(json_response).not_to have_key('amount')
-      expect(json_response['included_in_price']).to be(true)
+      expect(json_response).not_to have_key('included_in_price')
       expect(json_response['tax_category_id']).to eq(tax_category.prefixed_id)
       expect(json_response['country_code']).to eq('DE')
       expect(json_response['state_code']).to be_nil
@@ -44,7 +44,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
 
   describe 'POST #create' do
     let(:create_params) do
-      { name: 'German VAT', rate: '0.19', included_in_price: true,
+      { name: 'German VAT', rate: '0.19',
         tax_category_id: tax_category.prefixed_id, country_code: 'DE' }
     end
 

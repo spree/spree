@@ -456,7 +456,6 @@ export type TaxLineFields = Filter.TextFilters<'country_code' | 'provider_id' | 
 export type TaxRateFields = Filter.RangeFilters<'amount' | 'created_at' | 'rate' | 'updated_at'>
   & Filter.TextFilters<'country_code' | 'name' | 'state_code'>
   & Filter.IdFilters<'id' | 'tax_category_id'>
-  & Filter.BooleanFilters<'included_in_price'>
 
 export type VariantFields = Filter.IdFilters<'carton_package_type_id' | 'id' | 'product_id'>
   & Filter.RangeFilters<'carton_weight' | 'cost_price' | 'created_at' | 'deleted_at' | 'depth' | 'discontinue_on' | 'height' | 'updated_at' | 'weight' | 'width'>
@@ -2565,7 +2564,7 @@ export type TaxRateFilters = TaxRateFields
   & Filter.OrFilters
   & TaxRateFilterExtensions
 
-export type TaxRateSort = Filter.SortKey<'amount' | 'country_code' | 'created_at' | 'id' | 'included_in_price' | 'name' | 'rate' | 'state_code' | 'tax_category_id' | 'updated_at' | (keyof TaxRateSortExtensions & string)>
+export type TaxRateSort = Filter.SortKey<'amount' | 'country_code' | 'created_at' | 'id' | 'name' | 'rate' | 'state_code' | 'tax_category_id' | 'updated_at' | (keyof TaxRateSortExtensions & string)>
 
 /**
  * Filters your app adds to Variant lists. Generate them with `spree filters types`,
