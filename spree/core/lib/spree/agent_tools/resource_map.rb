@@ -117,8 +117,20 @@ module Spree
 
             # A row's shape is published as a component too, so the array
             # points at one rather than describing its items inline.
-            row = Spree::Api::AgentWriteSchemas.resolve_schema(schema['items'])&.dig('properties')
-            shapes[name.to_s] = row.keys.sort if row.is_a?(Hash) && row.any?
+            row = Spree::Api::AgentWriteSchemas.resolve_schema(schema['items'])
+            properties = row&.dig('properties')
+            next unless properties.is_a?(Hash) && properties.any?
+
+            # Names alone left an agent to guess: it sent a number where the
+            # endpoint wanted a decimal string, and omitted a field the model
+            # requires, learning both from a 422. The type and the
+            # requirement are already in the published schema.
+            required = Array(row['required'])
+            shapes[name.to_s] = properties.keys.sort.map do |field|
+              { 'name' => field,
+                'type' => properties.dig(field, 'type'),
+                'required' => required.include?(field) }
+            end
           end
         rescue StandardError
           {}

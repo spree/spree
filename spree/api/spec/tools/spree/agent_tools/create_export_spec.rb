@@ -63,4 +63,21 @@ RSpec.describe Spree::AgentTools::CreateExport do
       expect(Spree::Export.count).to be_zero
     end
   end
+  # The code IS the instrument: whoever reads it can spend the balance, which
+  # is why gift cards are kept out of the resource map and out of any order
+  # payload. An export must not be the way around that — a merchant holding
+  # read_gift_cards would otherwise hand a model every live code in the store.
+  describe 'an export whose rows carry a bearer instrument' do
+    it 'refuses to create one even for a caller who holds the scope' do
+      result = tool.call(resource: 'gift_cards')
+
+      expect(result[:error]).to include('spend money')
+      expect(Spree::Export.where(store: store).count).to eq(0)
+    end
+
+    it 'refuses coupon codes too' do
+      expect(tool.call(resource: 'coupon_codes')[:error]).to include('spend money')
+    end
+  end
+
 end

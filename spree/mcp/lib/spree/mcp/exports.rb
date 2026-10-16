@@ -20,6 +20,16 @@ module Spree
       # the dashboard link.
       MAX_INLINE_BYTES = 200_000
 
+      # Exports whose rows carry a bearer instrument — a code that spends
+      # money for whoever reads it. The merchant downloads these from the
+      # dashboard; handing one to a model puts live codes in a third party's
+      # chat history, which cannot be undone.
+      #
+      # `Spree::GiftCard` is already kept out of the resource map and out of
+      # any serialized order for the same reason. An export must not be the
+      # way around that. The list lives with the tool that creates them, so
+      # refusing to make one and refusing to read one cannot disagree.
+
       class << self
         # @param context [Spree::AgentTools::Context]
         # @return [Array<Hash>] MCP resource descriptors
@@ -48,6 +58,8 @@ module Spree
 
           record = export.data.to_h
           return unless record['done']
+
+          return [withheld(uri)] if bearer_export?(record['type'])
 
           size = record['byte_size'].to_i
           return [too_large(uri, size)] if size > MAX_INLINE_BYTES
@@ -80,6 +92,19 @@ module Spree
         rescue Date::Error
           { uri: "#{URI_SCHEME}://#{export['id']}", name: export['filename'].to_s,
             mimeType: 'text/csv', size: export['byte_size'] }
+        end
+
+        def bearer_export?(type)
+          Spree::AgentTools::CreateExport::BEARER_EXPORTS.include?(type.to_s)
+        end
+
+        def withheld(uri)
+          {
+            uri: uri,
+            mimeType: 'text/plain',
+            text: 'This export contains codes that spend money for whoever reads them, so it is ' \
+                  'not readable here. Download it from the dashboard instead.'
+          }
         end
 
         def too_large(uri, byte_size)
