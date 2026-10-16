@@ -23,12 +23,6 @@ module Spree
         preferred_market_ids.map(&:to_s).include?(context.market.id.to_s)
       end
 
-      # An empty market list matches every buyer (see #applicable?), so it names
-      # no geography — and that is the state a freshly created rule row is in.
-      def geographic?
-        preferred_market_ids.present?
-      end
-
       def self.description
         'Apply pricing based on the market'
       end

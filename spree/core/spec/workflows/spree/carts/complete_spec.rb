@@ -211,7 +211,7 @@ module Spree
         let(:tax_category) { create(:tax_category) }
         let!(:rate) do
           create(:tax_rate, store: store, country_code: ready_cart.tax_country&.iso, amount: 0.1,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
         end
 
         before do
@@ -267,7 +267,7 @@ module Spree
           before do
             default_category = create(:tax_category, store: store, is_default: true)
             create(:tax_rate, store: store, country_code: ready_cart.tax_country&.iso, amount: 0.2,
-                              included_in_price: false, tax_category: default_category)
+                              tax_category: default_category)
             create(:fee, order: nil, cart: ready_cart, amount: 9, kind: 'payment', label: 'Card surcharge')
             ready_cart.reload.recalculate_totals!
             ready_cart.payments.first.update!(amount: ready_cart.reload.total)
