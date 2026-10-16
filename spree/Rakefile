@@ -14,7 +14,8 @@ SPREE_OPTIONAL_GEMS = %w(emails dashboard opentelemetry).freeze
 SPREE_PROVIDER_GEMS = {
   'spree_easypost' => 'providers/easypost',
   'spree_meilisearch' => 'providers/meilisearch',
-  'spree_stripe' => 'providers/stripe'
+  'spree_stripe' => 'providers/stripe',
+  'spree_vies' => 'providers/vies'
 }.freeze
 
 task default: :test
