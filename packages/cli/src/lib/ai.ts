@@ -57,7 +57,7 @@ export function addDocsMcpServer(projectDir: string): Record<string, McpConfigOu
     config[root] = { ...servers, [DOCS_MCP_SERVER_NAME]: entry }
     try {
       fs.mkdirSync(path.dirname(filePath), { recursive: true })
-      fs.writeFileSync(filePath, `${JSON.stringify(config, null, 2)}\n`)
+      writeFileAtomically(filePath, `${JSON.stringify(config, null, 2)}\n`)
       outcomes[file] = 'added'
     } catch {
       outcomes[file] = 'unwritable'
@@ -126,7 +126,7 @@ export function addDocsSectionToAgentInstructions(projectDir: string): {
       if (file === 'CLAUDE.md' && /^@AGENTS\.md\s*$/m.test(content)) continue
 
       const separator = content.endsWith('\n\n') ? '' : content.endsWith('\n') ? '\n' : '\n\n'
-      fs.writeFileSync(filePath, `${content}${separator}${section}`)
+      writeFileAtomically(filePath, `${content}${separator}${section}`)
       updated.push(file)
     } catch {
       failed.push(file)
@@ -163,6 +163,22 @@ export async function installAgentSkills(
     // A stalled download must fail rather than hang the command.
     { cwd: projectDir, stdio: 'ignore', timeout: 120_000 },
   )
+}
+
+// These files hold the developer's own content, so a failed write must leave
+// the original whole: write a sibling file, then rename it over the target.
+function writeFileAtomically(filePath: string, content: string): void {
+  // A rename replaces even a read-only file, so refuse those up front.
+  if (fs.existsSync(filePath)) fs.accessSync(filePath, fs.constants.W_OK)
+
+  const temporaryPath = `${filePath}.${process.pid}.tmp`
+  try {
+    fs.writeFileSync(temporaryPath, content)
+    fs.renameSync(temporaryPath, filePath)
+  } catch (error) {
+    fs.rmSync(temporaryPath, { force: true })
+    throw error
+  }
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

@@ -134,20 +134,46 @@ describe('addAi', () => {
     expect(read('AGENTS.md')).toContain('node_modules/@spree/docs/dist/')
   })
 
-  // One file that cannot be written must not stop the rest of the setup.
+  // One file that cannot be written must not stop the rest of the setup, and
+  // must be left whole. The failure is injected: file permissions do not
+  // stop a test run as root.
   it('still installs the skills when an instructions file cannot be written', async () => {
-    write('AGENTS.md', '# Read-only\n')
-    fs.chmodSync(path.join(projectDir, 'AGENTS.md'), 0o444)
+    write('AGENTS.md', '# Mine\n')
+    const rename = fs.renameSync
+    const failure = vi.spyOn(fs, 'renameSync').mockImplementation((from, to) => {
+      if (String(to).endsWith('AGENTS.md')) throw new Error('disk full')
+      rename(from, to)
+    })
 
-    expect(await addAi(ctx(), { skills: true, mcp: true, quiet: true })).toBe(false)
+    try {
+      expect(await addAi(ctx(), { skills: true, mcp: true, quiet: true })).toBe(false)
+    } finally {
+      failure.mockRestore()
+    }
 
-    expect(read('AGENTS.md')).toBe('# Read-only\n')
+    expect(read('AGENTS.md')).toBe('# Mine\n')
+    expect(fs.readdirSync(projectDir).filter((file) => file.endsWith('.tmp'))).toEqual([])
     expect(JSON.parse(read('.mcp.json')).mcpServers['spree-docs']).toBeDefined()
     expect(vi.mocked(execa)).toHaveBeenCalledWith(
       expect.any(String),
       expect.arrayContaining(['skills', 'add', 'spree/agent-skills']),
       expect.anything(),
     )
+  })
+
+  it('does not replace a read-only instructions file', async () => {
+    write('AGENTS.md', '# Read-only\n')
+    const access = vi.spyOn(fs, 'accessSync').mockImplementation(() => {
+      throw Object.assign(new Error('permission denied'), { code: 'EACCES' })
+    })
+
+    try {
+      expect(await addAi(ctx(), { skills: false, mcp: true, quiet: true })).toBe(false)
+    } finally {
+      access.mockRestore()
+    }
+
+    expect(read('AGENTS.md')).toBe('# Read-only\n')
   })
 
   it("installs the agent skills with the project's package manager", async () => {
