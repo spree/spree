@@ -44,7 +44,7 @@ erDiagram
 | `currency` | ISO 4217 currency code | `USD` |
 | `default_locale` | Default language for this market | `en` |
 | `supported_locales` | All locales available in this market | `["en", "es"]` |
-| `tax_inclusive` | Whether prices include tax (affects display and checkout calculation) | `false` |
+| `tax_inclusive` | Whether the prices entered for this market include tax | `false` |
 | `default` | Whether this is the fallback market when no country match is found | `true` |
 | `country_codes` | Countries in this market, as ISO codes | `["US", "CA"]` |
 
@@ -220,12 +220,23 @@ See [Localization](/api-reference/store-api/localization) for details on how to 
 
 ## Tax Behavior
 
-The `tax_inclusive` flag on a market controls how prices are displayed and calculated:
+The `tax_inclusive` flag on a market decides whether the prices entered for it include tax:
 
-- **`tax_inclusive: true`** (common in Europe) — the price shown to the customer already includes tax
-- **`tax_inclusive: false`** (common in the US) — tax is added at checkout on top of the displayed price
+- **`tax_inclusive: true`** (common in Europe) — every customer pays the price as entered, with their country's tax inside it
+- **`tax_inclusive: false`** (common in the US) — tax is added at checkout on top of the price
 
-This matters because prices are shown long before anyone knows where the shopper lives. The market's own country supplies the assumed rate for browsing; once a shipping address is entered at checkout, that address takes over and the real rate applies.
+The same price is charged to every customer of the market, wherever they are. Take a €100.00 price in a market covering Germany (19%) and France (20%):
+
+| `tax_inclusive` | Customer in Germany pays | Customer in France pays |
+|---|---|---|
+| `true` | €100.00, of which €15.97 is VAT | €100.00, of which €16.67 is VAT |
+| `false` | €119.00: €100.00 plus €19.00 VAT | €120.00: €100.00 plus €20.00 VAT |
+
+Tax rates only hold the percentage for each country; the market decides whether that tax is inside the price. Spree's own tax tables and external tax providers both read the market's setting, and each order's tax lines record whether their tax was included, so editing a market later never changes an order already placed. A storefront can read `tax_inclusive` from the market to tell the shopper whether the price they see includes tax.
+
+Prices are never adjusted for customers in another country. To charge some countries a different price, put them in a market of their own and give it a [price list](/developer/core-concepts/pricing#price-rules) with a Market Rule.
+
+Before a customer enters an address, the market's first country by name supplies the tax rate; once a shipping address is entered at checkout, that address takes over and the real rate applies.
 
 A market also chooses **which tax provider works out its numbers** — Spree's own rate tables in a simple market, an external tax service in a complicated one. See [Taxes](/developer/core-concepts/taxes).
 

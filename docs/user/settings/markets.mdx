@@ -35,12 +35,25 @@ Click **Add market**.
 - **Supported locales** - Additional languages shoppers can switch to. The default locale is always included.
 - **Countries** - The countries this market covers. Search for each one and add it.
 - **Tax engine** - Which engine calculates tax for orders in this market. Leave this as it is unless another engine has been installed for your store.
-- **Tax-inclusive pricing** - Display prices with tax included. Common in EU markets.
+- **Prices include tax** - Turn this on when the prices you enter for this market already include tax, as is usual in Europe. Leave it off when tax is added at checkout, as is usual in North America. See below.
 - **Default market** - Shoppers without a known country see this market. Only one can be default per store.
 
 Click **Create market** when you are done.
 
 <Warning>Each country can belong to at most one market per store. A country already claimed by another market cannot be added to a second one, so plan your coverage before creating several markets.</Warning>
+
+### Prices include tax, or tax added at checkout
+
+This switch is the difference between how European and North American stores usually work, and getting it wrong misprices everything in the market. Take a product priced at 120, with a 20% tax rate:
+
+| Prices include tax | The customer pays |
+|---|---|
+| **On** | 120, of which 20 is tax |
+| **Off** | 144: the 120 price plus 24 tax at checkout |
+
+Every customer of the market pays the price you entered, wherever they are. With the switch on, a customer in a country with a different rate pays the same price, with their own country's tax inside it.
+
+<Note>To charge customers in some countries a different price, put those countries in a market of their own and give it a [<u>price list</u>](/user/pricing/price-lists) with a market rule.</Note>
 
 ### What the built-in tax engine does not calculate
 
