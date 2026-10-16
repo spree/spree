@@ -38,11 +38,11 @@
     },
     {
       "source": "/user/orders/order-states",
-      "destination": "/user/orders/order-statuses"
+      "destination": "/user/orders/orders"
     },
     {
       "source": "/user/orders/order-adjustments",
-      "destination": "/user/orders/discounts-fees-and-taxes"
+      "destination": "/user/orders/orders"
     },
     {
       "source": "/developer/core-concepts/companies-and-catalogs",
@@ -667,6 +667,38 @@
     {
       "source": "/user/manage-products/custom-product-fields",
       "destination": "/user/products/custom-product-fields"
+    },
+    {
+      "source": "/user/orders/order-statuses",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/exporting-orders",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/searching-orders",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/discounts-fees-and-taxes",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/editing-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/cancelling-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/refunding-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/creating-orders",
+      "destination": "/user/orders/draft-orders"
     }
   ],
   "contextual": {
@@ -1244,15 +1276,9 @@
                   {
                     "group": "Orders",
                     "pages": [
-                      "user/orders/order-statuses",
+                      "user/orders/orders",
                       "user/orders/processing-orders",
-                      "user/orders/creating-orders",
-                      "user/orders/editing-orders",
-                      "user/orders/discounts-fees-and-taxes",
-                      "user/orders/exporting-orders",
-                      "user/orders/cancelling-orders",
-                      "user/orders/refunding-orders",
-                      "user/orders/searching-orders",
+                      "user/orders/draft-orders",
                       "user/orders/returns",
                       "user/orders/exchanges",
                       "user/orders/claims"
@@ -2895,15 +2921,9 @@
           {
             "group": "Orders",
             "pages": [
-              "user/orders/order-statuses",
+              "user/orders/orders",
               "user/orders/processing-orders",
-              "user/orders/creating-orders",
-              "user/orders/editing-orders",
-              "user/orders/discounts-fees-and-taxes",
-              "user/orders/exporting-orders",
-              "user/orders/cancelling-orders",
-              "user/orders/refunding-orders",
-              "user/orders/searching-orders",
+              "user/orders/draft-orders",
               "user/orders/returns",
               "user/orders/exchanges",
               "user/orders/claims"
