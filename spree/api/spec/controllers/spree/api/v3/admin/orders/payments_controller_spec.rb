@@ -39,6 +39,14 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(json_response['status']).to be_present
     end
 
+    it "returns the payment's page at the gateway dashboard" do
+      allow_any_instance_of(Spree::Payment).to receive(:gateway_dashboard_payment_url).and_return('https://dashboard.example.com/payments/ch_123')
+
+      get :show, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id }, as: :json
+
+      expect(json_response['gateway_dashboard_payment_url']).to eq('https://dashboard.example.com/payments/ch_123')
+    end
+
     it 'returns 404 for unknown payment id' do
       get :show, params: { order_id: order_with_payment.prefixed_id, id: 'pay_unknown' }, as: :json
 

@@ -2932,7 +2932,8 @@
           "state": "State",
           "this_order": "This order",
           "shared_help": "Paid once for a basket spanning several sellers. This order has a share of it.",
-          "load_error": "Could not load the payments for this order."
+          "load_error": "Could not load the payments for this order.",
+          "view_at_gateway": "View at {{gateway}}"
         },
         "priced_by": "Priced by {{name}}",
         "purchase_order": {

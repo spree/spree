@@ -245,6 +245,30 @@ RSpec.describe SpreeStripe::Gateway do
     end
   end
 
+  describe '#gateway_dashboard_payment_url' do
+    subject { gateway.gateway_dashboard_payment_url(payment) }
+
+    let(:payment) { build(:payment, response_code: 'pi_123') }
+
+    it 'links to the test dashboard for a test key' do
+      gateway.preferred_secret_key = 'sk_test_123'
+
+      expect(subject).to eq('https://dashboard.stripe.com/test/payments/pi_123')
+    end
+
+    it 'links to the live dashboard for a live key' do
+      gateway.preferred_secret_key = 'sk_live_123'
+
+      expect(subject).to eq('https://dashboard.stripe.com/payments/pi_123')
+    end
+
+    it 'returns nil without a transaction id' do
+      payment.response_code = nil
+
+      expect(subject).to be_nil
+    end
+  end
+
   describe 'creating the payment intent' do
     subject { gateway.send(:create_payment_intent, amount, order) }
 

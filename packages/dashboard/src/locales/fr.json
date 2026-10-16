@@ -2932,7 +2932,8 @@
           "state": "État",
           "this_order": "Cette commande",
           "shared_help": "Payé en une fois pour un panier réparti entre plusieurs vendeurs. Cette commande en détient une part.",
-          "load_error": "Impossible de charger les paiements de cette commande."
+          "load_error": "Impossible de charger les paiements de cette commande.",
+          "view_at_gateway": "Voir sur {{gateway}}"
         },
         "priced_by": "Tarifé par {{name}}",
         "purchase_order": {

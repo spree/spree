@@ -2924,7 +2924,8 @@
           "state": "状态",
           "this_order": "本订单",
           "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
-          "load_error": "无法加载此订单的付款信息。"
+          "load_error": "无法加载此订单的付款信息。",
+          "view_at_gateway": "在 {{gateway}} 中查看"
         },
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {

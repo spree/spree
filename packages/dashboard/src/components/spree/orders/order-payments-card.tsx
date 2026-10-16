@@ -1,4 +1,4 @@
-import type { Order } from '@spree/admin-sdk'
+import type { Order, Payment } from '@spree/admin-sdk'
 import { adminClient, currencyParts, Money } from '@spree/dashboard-core'
 import {
   Badge,
@@ -45,6 +45,7 @@ import {
 import {
   CreditCardIcon,
   EllipsisVerticalIcon,
+  ExternalLinkIcon,
   PlusIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
@@ -171,60 +172,42 @@ export function PaymentsCard({ order }: { order: Order }) {
                     </TableCell>
                   )}
                   <TableCell>
-                    {!grouped &&
-                      (payment.status === 'checkout' ||
-                        payment.status === 'pending' ||
-                        payment.status === 'completed') && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon-xs">
-                              <EllipsisVerticalIcon className="size-4" />
-                              <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {(payment.status === 'checkout' || payment.status === 'pending') && (
-                              <DropdownMenuItem
-                                onClick={async () => {
-                                  if (
-                                    await confirm({
-                                      message: t('admin.orders.detail.confirm.capture_message'),
-                                      variant: 'default',
-                                      confirmLabel: t('admin.pages.orders.detail.actions.capture'),
-                                    })
-                                  ) {
-                                    captureMutation.mutate(payment.id)
-                                  }
-                                }}
-                              >
-                                <CreditCardIcon className="size-4" />
-                                {t('admin.pages.orders.detail.actions.capture')}
-                              </DropdownMenuItem>
-                            )}
-                            {(payment.status === 'checkout' ||
-                              payment.status === 'pending' ||
-                              payment.status === 'completed') && (
-                              <DropdownMenuItem
-                                variant="destructive"
-                                onClick={async () => {
-                                  if (
-                                    await confirm({
-                                      message: t('admin.orders.detail.confirm.void_message'),
-                                      variant: 'destructive',
-                                      confirmLabel: t('admin.pages.orders.detail.actions.void'),
-                                    })
-                                  ) {
-                                    voidMutation.mutate(payment.id)
-                                  }
-                                }}
-                              >
-                                <XCircleIcon className="size-4" />
-                                {t('admin.pages.orders.detail.actions.void')}
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
+                    <PaymentActionsMenu
+                      payment={payment}
+                      // Capturing or voiding a grouped payment acts on every
+                      // order in the checkout, so this page only links out.
+                      canCapture={
+                        !grouped && (payment.status === 'checkout' || payment.status === 'pending')
+                      }
+                      canVoid={
+                        !grouped &&
+                        (payment.status === 'checkout' ||
+                          payment.status === 'pending' ||
+                          payment.status === 'completed')
+                      }
+                      onCapture={async () => {
+                        if (
+                          await confirm({
+                            message: t('admin.orders.detail.confirm.capture_message'),
+                            variant: 'default',
+                            confirmLabel: t('admin.pages.orders.detail.actions.capture'),
+                          })
+                        ) {
+                          captureMutation.mutate(payment.id)
+                        }
+                      }}
+                      onVoid={async () => {
+                        if (
+                          await confirm({
+                            message: t('admin.orders.detail.confirm.void_message'),
+                            variant: 'destructive',
+                            confirmLabel: t('admin.pages.orders.detail.actions.void'),
+                          })
+                        ) {
+                          voidMutation.mutate(payment.id)
+                        }
+                      }}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
@@ -234,6 +217,59 @@ export function PaymentsCard({ order }: { order: Order }) {
       )}
       <AddPaymentDialog order={order} open={addOpen} onOpenChange={setAddOpen} />
     </Card>
+  )
+}
+
+function PaymentActionsMenu({
+  payment,
+  canCapture,
+  canVoid,
+  onCapture,
+  onVoid,
+}: {
+  payment: Payment
+  canCapture: boolean
+  canVoid: boolean
+  onCapture: () => void
+  onVoid: () => void
+}) {
+  const { t } = useTranslation()
+  const dashboardUrl = payment.gateway_dashboard_payment_url
+  if (!canCapture && !canVoid && !dashboardUrl) return null
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon-xs">
+          <EllipsisVerticalIcon className="size-4" />
+          <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {dashboardUrl && (
+          <DropdownMenuItem asChild>
+            <a href={dashboardUrl} target="_blank" rel="noopener noreferrer">
+              <ExternalLinkIcon className="size-4" />
+              {t('admin.orders.detail.payments_table.view_at_gateway', {
+                gateway: payment.payment_method?.name,
+              })}
+            </a>
+          </DropdownMenuItem>
+        )}
+        {canCapture && (
+          <DropdownMenuItem onClick={onCapture}>
+            <CreditCardIcon className="size-4" />
+            {t('admin.pages.orders.detail.actions.capture')}
+          </DropdownMenuItem>
+        )}
+        {canVoid && (
+          <DropdownMenuItem variant="destructive" onClick={onVoid}>
+            <XCircleIcon className="size-4" />
+            {t('admin.pages.orders.detail.actions.void')}
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 

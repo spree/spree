@@ -2960,7 +2960,8 @@
           "state": "Stan",
           "this_order": "To zamówienie",
           "shared_help": "Zapłacone raz za koszyk obejmujący kilku sprzedawców. To zamówienie ma w nim udział.",
-          "load_error": "Nie udało się wczytać płatności tego zamówienia."
+          "load_error": "Nie udało się wczytać płatności tego zamówienia.",
+          "view_at_gateway": "Zobacz w {{gateway}}"
         },
         "priced_by": "Cena z {{name}}",
         "purchase_order": {
