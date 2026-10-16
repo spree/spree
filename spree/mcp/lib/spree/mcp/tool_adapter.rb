@@ -129,20 +129,14 @@ module Spree
           return result.to_s unless result.is_a?(Hash)
 
           summary = result[:summary].presence
-          return "#{summary}\n#{JSON.generate(result)}" if summary && record_list?(result)
-          return summary if summary
+          return JSON.generate(result) if summary.nil?
+          # The summary alone says what was done but not what it did it to,
+          # so a write answered "Orders cancel R1002" and the model had to
+          # fetch the order again to report the new status. Every other key
+          # travels with it.
+          return summary if result.keys == [:summary]
 
-          JSON.generate(result)
-        end
-
-        # A page of records the caller can fetch individually.
-        #
-        # Only `records` counts. A report's rows look similar but are
-        # computed figures that exist nowhere else — summarising them as
-        # "returned 2 results" hands the model a row count where it asked
-        # for the numbers.
-        def record_list?(result)
-          result.key?(:records)
+          "#{summary}\n#{JSON.generate(result)}"
         end
       end
     end
