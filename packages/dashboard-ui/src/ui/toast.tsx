@@ -43,7 +43,7 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
         // everything: the stack sits bottom-right, which is exactly where a
         // side sheet's footer buttons are, and a toast drifting over Save is
         // both unclickable and a click the merchant did not intend.
-        'pointer-events-none fixed inset-x-4 bottom-4 z-40 mx-auto w-auto max-w-sm outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full',
+        'pointer-events-none fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 mx-auto w-auto max-w-sm outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full',
         className,
       )}
       {...props}
@@ -83,7 +83,7 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
     <ToastPrimitive.Content
       data-slot="toast-content"
       className={cn(
-        'flex h-full items-center gap-3 overflow-hidden p-4 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] data-behind:opacity-0 data-expanded:opacity-100',
+        'flex items-center gap-3 overflow-hidden p-4 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] data-behind:opacity-0 data-expanded:opacity-100',
         className,
       )}
       {...props}
