@@ -87,11 +87,12 @@ module Spree
           Spree::TaxRate.create(
             name: 'Tax Rate 1',
             amount: 0.25,
-            included_in_price: true,
             tax_category: category,
             country_code: @default_country&.iso
           )
         end
+
+        before { cart.market.update!(tax_inclusive: true) }
         let(:variant) { create(:variant, price: 1000) }
         let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 50) }
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }

@@ -85,10 +85,13 @@ module Spree
       # @param tax_identifier [Spree::TaxIdentifier, nil] resolved buyer
       #   registration, nil for a consumer sale
       # @param exemptions [Array] exemption evidence to apply
+      # @param tax_inclusive [Boolean, nil] whether the owner's prices already
+      #   include tax, which its market decides (Spree::Market#tax_inclusive);
+      #   nil = ask the owner (+owner.tax_inclusive?+)
       # @param context [Hash] untyped provider extras from set_tax_line_context
       # @return [void] the written rows are the output; raise when the
       #   calculation cannot be completed
-      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
+      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil, context: {})
         raise NotImplementedError, "Please implement 'estimate' in your tax provider: #{self.class.name}"
       end
 
@@ -171,9 +174,10 @@ module Spree
       # @param tax_date [Time, nil] date whose rates apply; nil = now
       # @param tax_identifier [Spree::TaxIdentifier, nil] the order's frozen registration
       # @param exemptions [Array] exemption evidence to apply
+      # @param tax_inclusive [Boolean, nil] as for +estimate+
       # @return [void]
       # @raise [Spree::Tax::ProviderError] when the tax could not be worked out
-      def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [])
+      def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil)
         raise NotImplementedError, "Please implement 'estimate_replacement' in your tax provider: #{self.class.name}"
       end
 

@@ -4,7 +4,6 @@ import { z } from 'zod';
 export const TaxRateSchema = z.object({
   id: z.string(),
   name: z.string(),
-  included_in_price: z.boolean(),
   show_rate_in_label: z.boolean(),
   metadata: z.record(z.string(), z.unknown()).nullable(),
   created_at: z.string(),

@@ -1468,8 +1468,8 @@
           "label": "Idiomas admitidos"
         },
         "tax_inclusive": {
-          "help": "Mostrar los precios con impuestos incluidos. Común en mercados de la UE.",
-          "label": "Precios con impuestos incluidos"
+          "help": "Activado: los clientes pagan el precio que introduces, con los impuestos incluidos. Desactivado: los impuestos se añaden al finalizar la compra.",
+          "label": "Los precios incluyen impuestos"
         },
         "tax_provider": {
           "help": "Qué motor calcula los impuestos de los pedidos de este mercado.",
@@ -2263,11 +2263,6 @@
         },
         "country_code": {
           "help": "Dejalo vacío para cobrar impuestos en todos los países."
-        },
-        "included_in_price": {
-          "help": "Los precios ya incluyen este impuesto, así que se descuenta en lugar de sumarse.",
-          "label": "Incluido en el precio",
-          "short": "Incluido"
         },
         "jurisdiction": {
           "label": "Aplica a"

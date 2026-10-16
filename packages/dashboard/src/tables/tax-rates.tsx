@@ -43,18 +43,6 @@ defineTable<TaxRate>('tax-rates', {
       ),
     },
     {
-      key: 'included_in_price',
-      label: i18n.t('admin.fields.tax_rate.included_in_price.label'),
-      default: true,
-      render: (taxRate) => (
-        <ActiveBadge
-          active={taxRate.included_in_price}
-          activeLabel={i18n.t('admin.fields.tax_rate.included_in_price.short')}
-          dashWhenInactive
-        />
-      ),
-    },
-    {
       key: 'show_rate_in_label',
       label: i18n.t('admin.fields.tax_rate.show_rate_in_label.label'),
       render: (taxRate) => (

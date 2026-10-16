@@ -42,5 +42,52 @@ namespace :spree do
         puts "  Created market '#{market.name}' with #{countries.size} countries for store '#{store.name}' (#{store.code})"
       end
     end
+
+    desc "Set each market's tax_inclusive from whether its tax rates were included in the price"
+    task backfill_tax_inclusive: :environment do
+      # A rate with no store is one spree:backfill_tax_store_ids has not bound
+      # yet, and a market decided without it would be decided on part of its rates.
+      if Spree::TaxRate.with_deleted.where(store_id: nil).where.not(included_in_price: nil).exists?
+        abort '  Some tax rates have no store yet. Run spree:backfill_tax_store_ids first, then run this again.'
+      end
+
+      updated = 0
+      mixed = []
+
+      Spree::Store.find_each do |store|
+        # Each rate's old flag is read once and then cleared, so a re-run finds
+        # nothing to read and cannot undo a market the merchant changed since.
+        legacy_rates = Spree::TaxRate.with_deleted.where(store_id: store.id).where.not(included_in_price: nil)
+        next unless legacy_rates.exists?
+
+        ActiveRecord::Base.transaction do
+          store.markets.includes(:market_countries).find_each do |market|
+            # A rate with no country taxes every market's countries.
+            conventions = legacy_rates.where(deleted_at: nil, country_code: market.country_codes + [nil]).
+                          distinct.pluck(:included_in_price)
+            next if conventions.empty?
+
+            if conventions.size > 1
+              mixed << market
+              next
+            end
+            next if market.tax_inclusive == conventions.first
+
+            market.update_columns(tax_inclusive: conventions.first, updated_at: Time.current)
+            updated += 1
+          end
+
+          legacy_rates.update_all(included_in_price: nil)
+          store.touch
+        end
+      end
+
+      puts "  Set tax_inclusive on #{updated} market(s) from their tax rates."
+
+      mixed.each do |market|
+        puts "  ! Left '#{market.name}' (store #{market.store.code}) unchanged: some of its rates were included in " \
+             "the price and some added on top. Set whether its prices include tax in the dashboard."
+      end
+    end
   end
 end

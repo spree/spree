@@ -236,7 +236,6 @@ function EditTaxRateSheet({
         tax_category_id: taxRate.tax_category_id ?? '',
         country_code: taxRate.country_code ?? '',
         state_code: taxRate.state_code ?? '',
-        included_in_price: taxRate.included_in_price,
         show_rate_in_label: taxRate.show_rate_in_label,
       })
     }
@@ -411,30 +410,6 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
           <FieldDescription>{t('admin.fields.tax_rate.state_code.help')}</FieldDescription>
         </Field>
       )}
-
-      <Field>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col">
-            <FieldLabel htmlFor="included_in_price" className="cursor-pointer">
-              {t('admin.fields.tax_rate.included_in_price.label')}
-            </FieldLabel>
-            <span className="text-xs text-muted-foreground">
-              {t('admin.fields.tax_rate.included_in_price.help')}
-            </span>
-          </div>
-          <Controller
-            name="included_in_price"
-            control={form.control}
-            render={({ field }) => (
-              <Switch
-                id="included_in_price"
-                checked={!!field.value}
-                onCheckedChange={field.onChange}
-              />
-            )}
-          />
-        </div>
-      </Field>
 
       <Field>
         <div className="flex items-start justify-between gap-4">

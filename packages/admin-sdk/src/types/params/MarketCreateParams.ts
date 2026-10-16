@@ -11,7 +11,10 @@ export type MarketCreateParams = {
   currency: CurrencyCode
   /** Locale used as the market default. Always part of `supported_locales`. */
   default_locale: LocaleCode
-  /** Display prices with tax included. */
+  /**
+   * Whether the prices entered for this market include tax. True charges every customer the price
+   * as entered, with their tax inside it; false adds tax at checkout.
+   */
   tax_inclusive?: boolean
   /**
    * Shorthand of the tax engine that prices this market, from the tax providers endpoint. Null uses

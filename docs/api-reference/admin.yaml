@@ -28861,9 +28861,9 @@ paths:
       description: |-
         Returns the store's tax rates. Rates are the entire configuration of
         the built-in tax provider: each pairs a tax category with a jurisdiction
-        (a country, optionally narrowed to one state) and a percentage, and
-        decides whether the tax is already included in the product price
-        (VAT-style) or added on top (US-style).
+        (a country, optionally narrowed to one state) and a percentage. Whether
+        the tax is included in the product price (VAT-style) or added on top
+        (US-style) is the market's `tax_inclusive` setting.
 
         Markets using an external tax provider ignore these rows — that
         provider carries its own jurisdiction data.
@@ -28928,13 +28928,12 @@ paths:
           | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `included_in_price` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `state_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `tax_category_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `amount`, `country_code`, `created_at`, `id`, `included_in_price`, `name`, `state_code`, `tax_category_id`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `amount`, `country_code`, `created_at`, `id`, `name`, `state_code`, `tax_category_id`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: TaxRate
         sortable:
@@ -28942,7 +28941,6 @@ paths:
         - country_code
         - created_at
         - id
-        - included_in_price
         - name
         - rate
         - state_code
@@ -28957,7 +28955,6 @@ paths:
                 data:
                 - id: tax_UkLWZg9DAJ
                   name: TaxRate - 124492
-                  included_in_price: true
                   show_rate_in_label: true
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -29015,9 +29012,6 @@ paths:
         Name the jurisdiction with `country_code` (and `state_code` for a
         state-level rate). Omitting the country makes the rate apply everywhere.
 
-        Set `included_in_price` for VAT-style pricing, where the rate is backed
-        out of the displayed price rather than added to it.
-
 
         **Required scope:** `write_settings` (for API-key authentication).
       parameters:
@@ -29040,7 +29034,6 @@ paths:
               example:
                 id: tax_gbHJdmfrXB
                 name: VAT
-                included_in_price: true
                 show_rate_in_label: true
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -29115,7 +29108,6 @@ paths:
               example:
                 id: tax_UkLWZg9DAJ
                 name: TaxRate - 312890
-                included_in_price: true
                 show_rate_in_label: true
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -29157,7 +29149,6 @@ paths:
               example:
                 id: tax_UkLWZg9DAJ
                 name: TaxRate - 470830
-                included_in_price: true
                 show_rate_in_label: true
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -68240,8 +68231,6 @@ components:
           type: string
         name:
           type: string
-        included_in_price:
-          type: boolean
         show_rate_in_label:
           type: boolean
         metadata:
@@ -68516,7 +68505,6 @@ components:
       required:
       - id
       - name
-      - included_in_price
       - show_rate_in_label
       - metadata
       - created_at
@@ -73744,7 +73732,9 @@ components:
           example: de
         tax_inclusive:
           type: boolean
-          description: Display prices with tax included.
+          description: Whether the prices entered for this market include tax. True
+            charges every customer the price as entered, with their tax inside it;
+            false adds tax at checkout.
         tax_provider:
           type: string
           description: Shorthand of the tax engine that prices this market, from the
@@ -73799,7 +73789,9 @@ components:
           example: de
         tax_inclusive:
           type: boolean
-          description: Display prices with tax included.
+          description: Whether the prices entered for this market include tax. True
+            charges every customer the price as entered, with their tax inside it;
+            false adds tax at checkout.
         tax_provider:
           type: string
           description: Shorthand of the tax engine that prices this market, from the
@@ -77696,8 +77688,6 @@ components:
           pattern: "^-?\\d+(\\.\\d+)?$"
           description: The rate as a percentage.
           example: '19'
-        included_in_price:
-          type: boolean
         show_rate_in_label:
           type: boolean
         tax_category_id:
@@ -77738,8 +77728,6 @@ components:
           pattern: "^-?\\d+(\\.\\d+)?$"
           description: The rate as a percentage.
           example: '19'
-        included_in_price:
-          type: boolean
         show_rate_in_label:
           type: boolean
         tax_category_id:
@@ -79597,7 +79585,6 @@ components:
         country_code: text
         created_at: datetime
         id: id
-        included_in_price: boolean
         name: text
         rate: decimal
         state_code: text
