@@ -70,10 +70,11 @@ export async function runPrompts(
     sellerDashboard = sellerResult
   }
 
-  // One question covers both agent conveniences; a flag answers its own half
-  // and the question then only decides the other.
+  // One question covers both agent conveniences. Passing either flag means the
+  // run is scripted, so the other half takes its default instead of asking —
+  // scripts that only pass --no-agent-skills must not start blocking on input.
   let agentSetup = true
-  if (flags.noAgentSkills === undefined || flags.noDocsMcp === undefined) {
+  if (flags.noAgentSkills === undefined && flags.noDocsMcp === undefined) {
     const agentResult = await p.confirm({
       message: `Set up AI coding agents?\n${pc.dim('Installs the Spree agent skills (Claude Code, Codex, Cursor, Copilot and others) and connects Claude Code, Cursor and VS Code to the Spree docs')}`,
       initialValue: true,
