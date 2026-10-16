@@ -167,13 +167,20 @@ export async function installAgentSkills(
 
 // These files hold the developer's own content, so a failed write must leave
 // the original whole: write a sibling file, then rename it over the target.
+// The sibling takes the original's permissions, so a private file stays private.
 function writeFileAtomically(filePath: string, content: string): void {
-  // A rename replaces even a read-only file, so refuse those up front.
-  if (fs.existsSync(filePath)) fs.accessSync(filePath, fs.constants.W_OK)
+  let mode: number | undefined
+  if (fs.existsSync(filePath)) {
+    // A rename replaces even a read-only file, so refuse those up front.
+    fs.accessSync(filePath, fs.constants.W_OK)
+    mode = fs.statSync(filePath).mode & 0o777
+  }
 
   const temporaryPath = `${filePath}.${process.pid}.tmp`
   try {
-    fs.writeFileSync(temporaryPath, content)
+    fs.writeFileSync(temporaryPath, content, { mode: mode ?? 0o666 })
+    // The mode given on creation is narrowed by the umask; set it exactly.
+    if (mode !== undefined) fs.chmodSync(temporaryPath, mode)
     fs.renameSync(temporaryPath, filePath)
   } catch (error) {
     fs.rmSync(temporaryPath, { force: true })

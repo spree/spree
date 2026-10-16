@@ -161,6 +161,20 @@ describe('addAi', () => {
     )
   })
 
+  it('keeps the permissions of the files it updates', async () => {
+    write('.mcp.json', '{}')
+    write('AGENTS.md', '# Private\n')
+    fs.chmodSync(path.join(projectDir, '.mcp.json'), 0o600)
+    fs.chmodSync(path.join(projectDir, 'AGENTS.md'), 0o640)
+
+    await addAi(ctx(), { skills: false, mcp: true, quiet: true })
+
+    const mode = (file: string) => fs.statSync(path.join(projectDir, file)).mode & 0o777
+    expect(read('.mcp.json')).toContain('spree-docs')
+    expect(mode('.mcp.json')).toBe(0o600)
+    expect(mode('AGENTS.md')).toBe(0o640)
+  })
+
   it('does not replace a read-only instructions file', async () => {
     write('AGENTS.md', '# Read-only\n')
     const access = vi.spyOn(fs, 'accessSync').mockImplementation(() => {
