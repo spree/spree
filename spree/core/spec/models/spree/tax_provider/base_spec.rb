@@ -64,6 +64,7 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(hash[:name]).to eq('Internal')
       expect(hash[:available]).to be(true)
       expect(hash[:default]).to be(true)
+      expect(hash[:exemption_reason_codes]).to be_nil
       expect(hash[:unsupported_capabilities].map { |capability| capability[:key] }).to eq(
         %w[us_local_tax reverse_charge oss_thresholds proportional_delivery_tax]
       )
@@ -99,6 +100,16 @@ describe Spree::TaxProvider::Base, type: :model do
 
       expect(SpreeTaxAvalara::TaxProvider.to_api_hash(order.store)[:name]).to eq('Avalara AvaTax')
       expect(SpreeTaxAvalara::TaxProvider.to_api_hash(order.store)[:default]).to be(false)
+    end
+
+    it 'offers the exemption reason codes an engine reads' do
+      stub_const('SpecCodedProvider', Class.new(described_class) do
+        def self.exemption_reason_codes
+          { 'G' => 'RESALE' }
+        end
+      end)
+
+      expect(SpecCodedProvider.to_api_hash(order.store)[:exemption_reason_codes]).to eq([{ value: 'G', label: 'RESALE' }])
     end
   end
 

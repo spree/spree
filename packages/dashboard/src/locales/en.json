@@ -1794,7 +1794,7 @@
         }
       },
       "reason_code": {
-        "help": "Becomes the tax engine's entity use code.",
+        "help": "Manage the reasons offered here in Settings → Reasons.",
         "label": "Reason"
       },
       "role": {
@@ -4755,12 +4755,16 @@
         "help": "What went wrong with a delivery — damaged, missing or wrong item.",
         "title": "Claim reasons"
       },
+      "code_engine_help": "Your tax engine decides the exemption by this code, so pick the one it defines for this reason.",
+      "code_help": "A short identifier certificates record. Unique in your store.",
+      "code_locked_help": "Certificates record this code, so it cannot change. Rename the reason instead.",
+      "code_placeholder": "e.g. resale",
       "create_description": "Reasons appear in a dropdown when staff open a return, claim or refund.",
       "delete_confirm": {
         "message": "{{name}} will no longer be offered. Records already using it keep it.",
         "title": "Delete reason?"
       },
-      "description": "The vocabularies your team picks from when handling returns, claims, refunds and cancellations.",
+      "description": "The vocabularies your team picks from when handling returns, claims, refunds, cancellations and tax exemptions.",
       "edit_sheet_title": "Edit reason",
       "empty": "No reasons yet",
       "in_use": "In use",
@@ -4783,6 +4787,10 @@
       "return": {
         "help": "Why a customer is sending something back. Shared by returns and exchanges.",
         "title": "Return reasons"
+      },
+      "tax_exemption": {
+        "help": "Why a business buys without tax. Recorded on its exemption certificates; the code is what your tax engine receives.",
+        "title": "Tax exemption reasons"
       },
       "title": "Returns & reasons"
     },
@@ -5542,14 +5550,7 @@
       },
       "never_expires": "Does not expire",
       "no_document": "No document attached",
-      "reason_codes": {
-        "agricultural": "Agricultural",
-        "charitable": "Charitable",
-        "educational": "Educational",
-        "government": "Government",
-        "manufacturing": "Manufacturing",
-        "resale": "Resale"
-      },
+      "no_reasons": "No exemption reasons yet. Add them in Settings → Reasons.",
       "revoke_action": "Revoke",
       "revoke_confirm": {
         "message": "Certificate {{number}} stops applying to new orders. It stays on file as a record.",

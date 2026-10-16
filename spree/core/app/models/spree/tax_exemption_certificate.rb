@@ -35,6 +35,9 @@ module Spree
     # schema difference, so a per-division registration can be allowed later
     # by relaxing this alone.
     validate :company_is_legal_entity
+    # Checked when the code is set, not on every save: a reason the merchant
+    # retires later leaves the certificates that already record it valid.
+    validate :reason_code_offered_by_store, if: :will_save_change_to_reason_code?
 
     # A certificate is a scanned form, not an archive. Bounded because the
     # download action reads the whole blob into memory to serve it, so an
@@ -93,6 +96,13 @@ module Spree
       return if company.nil? || company.legal_entity?
 
       errors.add(:company, :must_be_legal_entity)
+    end
+
+    def reason_code_offered_by_store
+      return if reason_code.blank? || company.nil?
+      return if store.tax_exemption_reasons.active.exists?(code: reason_code)
+
+      errors.add(:reason_code, :not_offered)
     end
   end
 end

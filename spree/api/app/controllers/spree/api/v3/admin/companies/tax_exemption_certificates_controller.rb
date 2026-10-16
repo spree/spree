@@ -14,7 +14,7 @@ module Spree
                 example: 'DE-RESALE-7'
               body.attribute :reason_code, :string, required: true, on: :create,
                 example: 'resale',
-                description: "Becomes the tax provider's entity use code."
+                description: "The `code` of one of the store's active tax exemption reasons. The tax provider receives it."
               body.attribute :issuing_authority, :string, nullable: true, example: 'Finanzamt Berlin'
               body.attribute :issued_at, :datetime, nullable: true
               body.attribute :expires_at, :datetime, nullable: true

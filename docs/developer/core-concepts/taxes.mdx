@@ -246,6 +246,8 @@ Business customers are often exempt, and the paperwork is real. Spree records a 
 
 Exemption is decided when tax is worked out, not stored as a flag on the customer, so an expired certificate stops applying by itself. See [Companies](/developer/core-concepts/companies).
 
+Each certificate records the `code` of one of the store's **tax exemption reasons** — a list the merchant manages, like return and refund reasons. A tax service that decides exemptions by code declares the codes it understands, and the dashboard offers them when a merchant adds a reason. See [Exemption reasons](/developer/how-to/build-a-b2b-store#exemption-reasons).
+
 ## Related
 
 - [Order totals](/developer/core-concepts/order-totals) — how tax rolls into what a customer pays

@@ -6,6 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
   include_context 'API v3 Admin authenticated'
 
   let!(:company) { create(:company, store: store) }
+  let!(:resale) { create(:tax_exemption_reason, store: store, code: 'resale', name: 'Resale') }
   let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
 
   before { request.headers.merge!(headers) }
@@ -70,6 +71,17 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       expect(json_response['status']).to eq('pending')
       expect(json_response['country_code']).to eq('DE')
       expect(company.tax_exemption_certificates.sole.country_code).to eq(germany.iso)
+    end
+
+    it 'refuses a reason the store does not offer' do
+      post :create, params: {
+        company_id: company.prefixed_id,
+        certificate_number: 'DE-RESALE-9',
+        reason_code: 'diplomatic'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'details', 'reason_code')).to be_present
     end
 
     # A division's purchases read exemption through the legal entity; the

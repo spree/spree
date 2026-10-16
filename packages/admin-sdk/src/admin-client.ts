@@ -172,6 +172,8 @@ import type {
   TaxCategorySort,
   TaxExemptionCertificateFilters,
   TaxExemptionCertificateSort,
+  TaxExemptionReasonFilters,
+  TaxExemptionReasonSort,
   TaxIdentifierFilters,
   TaxIdentifierSort,
   TaxLineFilters,
@@ -576,8 +578,11 @@ import type {
   TaxCategoryUpdateParams,
   TaxExemptionCertificateCreateParams,
   TaxExemptionCertificateUpdateParams,
+  TaxExemptionReasonCreateParams,
+  TaxExemptionReasonUpdateParams,
   TaxIdentifierCreateParams,
   TaxIdentifierUpdateParams,
+  TaxProviderOption,
   TaxRateCreateParams,
   TaxRateUpdateParams,
   TrackingCarrierOption,
@@ -691,6 +696,7 @@ import type {
   Supplier,
   TaxCategory,
   TaxExemptionCertificate,
+  TaxExemptionReason,
   TaxIdentifier,
   TaxLine,
   TaxRate,
@@ -3890,8 +3896,8 @@ export class AdminClient {
    * letting a merchant discover it at checkout.
    */
   readonly taxProviders = {
-    list: (options?: RequestOptions): Promise<PaginatedResponse<Record<string, unknown>>> =>
-      this.request<PaginatedResponse<Record<string, unknown>>>('GET', '/tax_providers', options),
+    list: (options?: RequestOptions): Promise<PaginatedResponse<TaxProviderOption>> =>
+      this.request<PaginatedResponse<TaxProviderOption>>('GET', '/tax_providers', options),
   }
 
   /**
@@ -5141,6 +5147,47 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/order_cancellation_reasons/${id}`, options),
+  }
+
+  /**
+   * Why a business buys without tax — the reasons a merchant records on a tax
+   * exemption certificate. `code` is what the certificate stores and the tax
+   * engine receives; `taxProviders.list()` says which codes an engine reads.
+   */
+  readonly taxExemptionReasons = {
+    list: (
+      params?: ListParams<TaxExemptionReasonFilters, TaxExemptionReasonSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<TaxExemptionReason>> =>
+      this.request<PaginatedResponse<TaxExemptionReason>>('GET', '/tax_exemption_reasons', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<TaxExemptionReason> =>
+      this.request<TaxExemptionReason>('GET', `/tax_exemption_reasons/${id}`, options),
+
+    create: (
+      params: TaxExemptionReasonCreateParams,
+      options?: RequestOptions,
+    ): Promise<TaxExemptionReason> =>
+      this.request<TaxExemptionReason>('POST', '/tax_exemption_reasons', {
+        ...options,
+        body: params,
+      }),
+
+    update: (
+      id: string,
+      params: TaxExemptionReasonUpdateParams,
+      options?: RequestOptions,
+    ): Promise<TaxExemptionReason> =>
+      this.request<TaxExemptionReason>('PATCH', `/tax_exemption_reasons/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/tax_exemption_reasons/${id}`, options),
   }
 
   /**

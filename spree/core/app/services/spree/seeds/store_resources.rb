@@ -18,6 +18,7 @@ module Spree
         Spree::Events.disable do
           ActiveRecord::Base.no_touching do
             TaxCategories.call(store: store)
+            TaxExemptionReasons.call(store: store)
             Channels.call(store: store)
             Roles.call(store: store)
             DigitalDelivery.call(store: store)

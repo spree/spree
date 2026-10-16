@@ -66,6 +66,7 @@ import {
   useOrderFees,
   useOrderTaxLines,
 } from '../../../hooks/use-order'
+import { useTaxExemptionReasonNames } from '../../../hooks/use-reasons'
 import {
   groupTaxLines,
   showsTaxabilityReason,
@@ -115,16 +116,12 @@ function AdjustmentDeleteCell({
 }
 
 /** The certificate line under an exempt tax row, or nothing. */
-function taxExemptionDetail(group: TaxLineGroup): string | null {
+function taxExemptionDetail(group: TaxLineGroup, reasonNames: Map<string, string>): string | null {
   const number = group.exemption?.certificate_number
   if (group.taxabilityReason !== 'customer_exempt' || !number) return null
 
   const reasonCode = group.exemption?.reason_code
-  const reason = reasonCode
-    ? i18n.t(`admin.tax_exemption_certificates.reason_codes.${reasonCode}`, {
-        defaultValue: reasonCode,
-      })
-    : null
+  const reason = reasonCode ? (reasonNames.get(reasonCode) ?? reasonCode) : null
 
   return reason
     ? i18n.t('admin.orders.detail.adjustment_lines.tax_exempt_certificate', {
@@ -140,6 +137,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const orderId = order.id
   const { data: taxLines, isPending, isError, isSuccess } = useOrderTaxLines(orderId)
+  const reasonNames = useTaxExemptionReasonNames()
   const taxGroups = groupTaxLines(taxLines?.data ?? [], order.currency)
   const emptyMessage = isPending
     ? t('admin.common.loading')
@@ -174,7 +172,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
           </TableHeader>
           <TableBody>
             {taxGroups.map((group) => {
-              const detail = taxExemptionDetail(group)
+              const detail = taxExemptionDetail(group, reasonNames)
               return (
                 <TableRow key={group.key}>
                   <TableCell>

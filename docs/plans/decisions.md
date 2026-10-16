@@ -1,3 +1,13 @@
+## 2026-10-16: Tax exemption reasons are a store-owned model
+
+**Context:** The reasons a merchant records on a tax exemption certificate came from a code registry: six values hard-coded in core, replaced by the vocabulary of whichever tax provider gem registered one. Spree's own tax engine never reads the reason, so for most stores it was a label the merchant could not rename, translate or extend, unlike every other reason list.
+
+**Decision:** `Spree::TaxExemptionReason` is a store-owned model (`name`, `code`, `active`), managed beside return, claim, refund and order-cancellation reasons through `/api/v3/admin/tax_exemption_reasons`. A certificate keeps its `reason_code` string, which must name an active reason of its store when set. A tax provider declares the codes its engine understands (`exemption_reason_codes`, published on `/tax_providers`) so the dashboard can offer them, but it does not own the list. The registry, the default list in core and the `…/tax_exemption_certificates/reason_codes` endpoint are removed.
+
+**Consequences:** Seeds give each store six neutral reasons; the Avalara upgrade task adds one per Avalara entity use code. A provider whose engine reads reason codes adds `exemption_reason_codes` rather than registering a list.
+
+**Plan:** `6.0-avalara-provider-gem.md`.
+
 ## 2026-10-10: One upload endpoint, store-owned blobs, and `<slot>_signed_id` everywhere
 
 **Context:** Files reached Spree through `/direct_uploads`, which copied Active Storage's nested request and minted references that never expired, and nothing recorded which store a blob belonged to. Endpoints that took those references named them seven different ways.
@@ -5369,6 +5379,55 @@ shortfall on the cart, so neither side blocks the other.
 
 Plans amended: `6.0-b2b-quantity-rules.md` (implementation started),
 `6.0-b2b-wholesale-shipping.md` (`units_per_carton` no longer its column).
+
+## 2026-08-19 — Avalara reference gem: `spree_avalara` in the monorepo, whole-owner fail-closed estimate
+
+The 6.0 first-party tax provider (tax-provider plan, Phase 6) gets its own
+plan — `6.0-avalara-provider-gem.md` — and lands as a **new monorepo gem at
+`spree/providers/avalara`**, not a rewrite of `spree_avatax_official`
+(which stays the 5.x line and becomes the salvage + upgrade source). The
+gem is **`spree_avalara`** / `SpreeAvalara`, superseding the
+`spree_tax_avalara` working name: a class named exactly `Integration`
+derives its `api_type` from the outer module, so `SpreeAvalara::Integration`
+speaks `'avalara'` on the wire — the same string as `TaxLine.provider_id`
+and the locale key — and no Zeitwerk inflection is needed.
+
+Design headlines, each recorded with rationale in the new plan: `estimate`
+prices the **whole owner** per API call (Avalara is a whole-document
+engine; the `items` subset is ignored, replace-all is honored by sweeping
+and rewriting only `provider_id: 'avalara'` rows, and a 5-minute response
+cache absorbs the single-item call sites) and **fails closed** — an
+unreachable Avalara raises rather than under-collecting. `taxability_reason`
+is mostly a deterministic fold of Avalara's structured reason fields
+(`nonTaxableType`, `exemptCertId`/`exemptNo`, `rateTypeCode`,
+`isItemTaxable` — verified against the legacy gem's recorded cassettes);
+only the `intra_community_supply` vs `reverse_charge` split derives from
+request-side facts, because Avalara reports the zero rate but not that
+distinction. Commit is idempotent via
+`create_or_adjust_transaction` with the document id in `order.metadata` —
+no ledger table. The gem consumes core's exemption seam as-is (company
+certificates through `tax_resolve_exemptions_service` — no swap, no
+gem-owned storage; whether customer-level/no-Company exemptions deserve
+first-class handling is the plan's open question, preferring a core
+extension — customer-resolvable certificates — over gem storage, with the
+legacy user columns preserved as the migration source), and
+enforces Avalara address validation at `carts.complete.validate` (fail-open
+on transport) — deliberately not `Spree.validators.addresses`, which fires
+on every address-book and admin save with no checkout context.
+
+Two knock-ons settled elsewhere: **`Market#tax_inclusive` stays** (the gem
+wires it as the external-provider inclusive-price signal, answering the
+tax-provider plan's Phase 9 "wire or drop") — but read
+**destination-derived**: the flag comes from the market covering the tax
+address's country, falling back to the owner's market, never naively from
+`owner.market`. The browsing market can diverge from the tax destination
+(currency changes re-resolve the market by currency past the one
+address-clearing guard; bill-address tax destinations are never validated
+against markets; a missing country hint drops a cart onto the default
+market) — the recorded 5.x bug fixed by spree_avatax_official#198, whose
+policy the gem restates. And the gem's upgrade task points **only blank**
+`Market#tax_provider` values at Avalara — a value someone set, including
+an explicit Internal, is never rewritten.
 
 ## 2026-08-31 — Catalog phase 4: the agreement's prices are shown where it is curated, and a new one is built in steps
 

@@ -1794,7 +1794,7 @@
         }
       },
       "reason_code": {
-        "help": "Transmis au moteur de calcul comme code d'usage.",
+        "help": "Gérez les motifs proposés ici dans Paramètres → Motifs.",
         "label": "Motif"
       },
       "role": {
@@ -4755,12 +4755,16 @@
         "help": "Ce qui s'est mal passé à la livraison — endommagé, manquant ou article incorrect.",
         "title": "Motifs de réclamation"
       },
+      "code_engine_help": "Votre moteur fiscal décide de l'exonération selon ce code : choisissez celui qu'il définit pour ce motif.",
+      "code_help": "Un identifiant court enregistré sur les certificats. Unique dans votre boutique.",
+      "code_locked_help": "Des certificats enregistrent ce code, il ne peut donc pas changer. Renommez plutôt le motif.",
+      "code_placeholder": "ex. resale",
       "create_description": "Les motifs apparaissent dans une liste déroulante lors de la création d'un retour, d'une réclamation ou d'un remboursement.",
       "delete_confirm": {
         "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent.",
         "title": "Supprimer le motif ?"
       },
-      "description": "Les listes de motifs utilisées par votre équipe pour les retours, réclamations, remboursements et annulations.",
+      "description": "Les listes dans lesquelles votre équipe choisit lors des retours, réclamations, remboursements, annulations et exonérations de taxe.",
       "edit_sheet_title": "Modifier le motif",
       "empty": "Aucun motif pour l'instant",
       "in_use": "Utilisé",
@@ -4783,6 +4787,10 @@
       "return": {
         "help": "Pourquoi un client renvoie un article. Partagé par les retours et les échanges.",
         "title": "Motifs de retour"
+      },
+      "tax_exemption": {
+        "help": "Pourquoi une entreprise achète hors taxe. Enregistré sur ses certificats d'exonération ; le code est transmis à votre moteur fiscal.",
+        "title": "Motifs d'exonération de taxe"
       },
       "title": "Retours et motifs"
     },
@@ -5542,14 +5550,7 @@
       },
       "never_expires": "Sans expiration",
       "no_document": "Aucun document joint",
-      "reason_codes": {
-        "agricultural": "Agriculture",
-        "charitable": "Organisme caritatif",
-        "educational": "Enseignement",
-        "government": "Administration",
-        "manufacturing": "Production",
-        "resale": "Revente"
-      },
+      "no_reasons": "Aucun motif d'exonération. Ajoutez-en dans Paramètres → Motifs.",
       "revoke_action": "Révoquer",
       "revoke_confirm": {
         "message": "L'attestation {{number}} ne s'appliquera plus aux nouvelles commandes. Elle reste conservée comme justificatif.",

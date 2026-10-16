@@ -3,7 +3,7 @@ import { login, openRowMenu } from './helpers'
 
 const REASONS_PATH = (storeId: string) => `/${storeId}/settings/reasons`
 
-/** One of the four reason lists on the page, found by its card title. */
+/** One of the reason lists on the page, found by its card title. */
 function reasonCard(page: Page, title: RegExp) {
   return page
     .locator('[data-slot="card"]')
@@ -37,6 +37,35 @@ test.describe('reasons', () => {
     ).toBeVisible()
     await expect(reasonCard(page, /^refund reasons$/i)).toBeVisible()
     await expect(reasonCard(page, /^order cancellation reasons$/i)).toBeVisible()
+    await expect(
+      reasonCard(page, /^tax exemption reasons$/i).getByRole('cell', {
+        name: 'resale',
+        exact: true,
+      }),
+    ).toBeVisible()
+  })
+
+  // Certificates record the code, not the name, so the list shows both.
+  test('adds a tax exemption reason with its code', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(REASONS_PATH(creds.store_id))
+
+    const name = `E2E Diplomatic ${Date.now()}`
+    const code = `diplomatic_${Date.now()}`
+    await reasonCard(page, /^tax exemption reasons$/i)
+      .getByRole('button', { name: /add reason/i })
+      .click()
+    await page.locator('#reason-name').fill(name)
+    await page.locator('#reason-code').fill(code)
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^create$/i })
+      .click()
+
+    const row = reasonCard(page, /^tax exemption reasons$/i)
+      .getByRole('row')
+      .filter({ hasText: name })
+    await expect(row.getByText(code)).toBeVisible({ timeout: 15_000 })
   })
 
   test('adds a reason to the list it was added from only', async ({ page }) => {

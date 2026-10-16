@@ -17,6 +17,20 @@ module Spree
       def exempt?
         exempt
       end
+
+      # @return [Hash]
+      def to_snapshot
+        attributes
+      end
+
+      # Unknown keys are dropped rather than raising: a snapshot is read back
+      # long after it was written, possibly by a different version of Spree.
+      #
+      # @param snapshot [Hash]
+      # @return [Spree::TaxExemption::ItemOverride]
+      def self.from_snapshot(snapshot)
+        new(snapshot.to_h.stringify_keys.slice(*attribute_names).symbolize_keys)
+      end
     end
   end
 end

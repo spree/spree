@@ -1789,7 +1789,7 @@
         }
       },
       "reason_code": {
-        "help": "作为用途代码传递给税费计算引擎。",
+        "help": "在 设置 → 原因 中管理此处提供的原因。",
         "label": "事由"
       },
       "role": {
@@ -4744,12 +4744,16 @@
         "help": "配送出现的问题——商品损坏、缺失或发错。",
         "title": "理赔原因"
       },
+      "code_engine_help": "您的税务引擎根据此代码判断是否免税，请选择它为此原因定义的代码。",
+      "code_help": "证书记录的简短标识符，在店铺内唯一。",
+      "code_locked_help": "已有证书记录此代码，因此无法修改。请改为重命名该原因。",
+      "code_placeholder": "例如 resale",
       "create_description": "员工创建退货、理赔或退款时，可从下拉列表中选择原因。",
       "delete_confirm": {
         "message": "将不再提供 {{name}}。已使用它的记录保持不变。",
         "title": "删除原因？"
       },
-      "description": "团队在处理退货、理赔、退款和取消时可选用的原因列表。",
+      "description": "团队处理退货、索赔、退款、取消和免税时可选择的原因列表。",
       "edit_sheet_title": "编辑原因",
       "empty": "暂无原因",
       "in_use": "使用中",
@@ -4772,6 +4776,10 @@
       "return": {
         "help": "客户退回商品的原因。退货和换货共用。",
         "title": "退货原因"
+      },
+      "tax_exemption": {
+        "help": "企业免税采购的原因。记录在其免税证书上；代码会发送给您的税务引擎。",
+        "title": "免税原因"
       },
       "title": "退货与原因"
     },
@@ -5530,14 +5538,7 @@
       },
       "never_expires": "长期有效",
       "no_document": "未附文件",
-      "reason_codes": {
-        "agricultural": "农业",
-        "charitable": "慈善机构",
-        "educational": "教育机构",
-        "government": "政府机构",
-        "manufacturing": "生产制造",
-        "resale": "转售"
-      },
+      "no_reasons": "尚无免税原因。请在 设置 → 原因 中添加。",
       "revoke_action": "撤销",
       "revoke_confirm": {
         "message": "证明 {{number}} 将不再适用于新订单，但会作为记录保留。",

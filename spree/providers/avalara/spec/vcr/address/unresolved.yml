@@ -1,0 +1,85 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://sandbox-rest.avatax.com/api/v2/addresses/resolve?city=Nowhere&country=US&line1=Nowhere%20at%20all&line2=Northwest&postalCode=00000&region=WA
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.7.3
+      X-Avalara-Client:
+      - a0o0b000005HsXPAA0;Spree by AVALARA_COMPANY;RubySdk;26.7.3;
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 01 Sep 2026 16:41:30 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - 2c5fc4cc-1312-416a-b42d-99112c191656
+      X-Avalara-Uid:
+      - 2c5fc4cc-1312-416a-b42d-99112c191656
+      X-Avalara-Gateway-Pod:
+      - avagateway-6766775548-jb9p2
+      Serverduration:
+      - '00:00:00.0032061'
+      Api-Supported-Versions:
+      - '2.0'
+      X-Envoy-Upstream-Service-Time:
+      - '4'
+      Content-Security-Policy:
+      - frame-ancestors 'self';
+      X-Download-Options:
+      - noopen
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Permissions-Policy:
+      - camera 'none';microphone 'none';geolocation 'none';encrypted-media 'none';payment
+        'none';speaker 'none';usb 'none';
+      X-Cip-Engine:
+      - containers
+      X-Cip-Site:
+      - gcp_us-west3
+      X-Cip-Environment:
+      - sbx
+    body:
+      encoding: UTF-8
+      string: '{"address":{"line1":"Nowhere at all","line2":"Northwest","city":"Nowhere","region":"WA","country":"US","postalCode":"00000"},"validatedAddresses":[{"addressType":"UnknownAddressType","deliveryIndicator":"Unknown","line1":"NORTHWEST","line2":"NOWHERE
+        AT ALL","line3":"","city":"NOWHERE","region":"WA","country":"US","postalCode":"00000"}],"resolutionQuality":"External","messages":[{"summary":"Address
+        not geocoded.","details":"Address cannot be geocoded.","refersTo":"Address","severity":"Error","source":"Avalara.AvaTax.AddressValidation"},{"summary":"The
+        address number is out of range","details":"The address was found but the street
+        number in the input address was not between the low and high range of the
+        post office database.","refersTo":"Address.Line0","severity":"Error","source":"Avalara.AvaTax.AddressValidation"}]}'
+  recorded_at: Tue, 01 Sep 2026 16:41:30 GMT
+recorded_with: VCR 6.4.0

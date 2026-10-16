@@ -84,20 +84,6 @@ export const TAX_EXEMPTION_CERTIFICATE_DEFAULTS: TaxExemptionCertificateFormValu
   document_signed_id: null,
 }
 
-/**
- * Reason codes become the tax provider's entity use code. These are the ones in
- * common circulation; the field stays free text because the set is the
- * provider's, not Spree's.
- */
-export const TAX_EXEMPTION_REASON_CODES = [
-  'resale',
-  'government',
-  'charitable',
-  'educational',
-  'manufacturing',
-  'agricultural',
-] as const
-
 export function taxExemptionCertificateValuesToParams(
   values: TaxExemptionCertificateFormValues,
 ): TaxExemptionCertificateCreateParams {

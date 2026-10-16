@@ -56,7 +56,7 @@ import {
 } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -66,9 +66,9 @@ import {
   useTaxExemptionCertificates,
   useVerifyTaxExemptionCertificate,
 } from '../../hooks/use-companies'
+import { useTaxExemptionReasonNames, useTaxExemptionReasons } from '../../hooks/use-reasons'
 import {
   TAX_EXEMPTION_CERTIFICATE_DEFAULTS,
-  TAX_EXEMPTION_REASON_CODES,
   type TaxExemptionCertificateFormValues,
   taxExemptionCertificateFormSchema,
   taxExemptionCertificateValuesToParams,
@@ -109,9 +109,15 @@ export function TaxExemptionCertificatesCard({
   const verifyMutation = useVerifyTaxExemptionCertificate(companyId)
   const revokeMutation = useRevokeTaxExemptionCertificate(companyId)
   const deleteMutation = useDeleteTaxExemptionCertificate(companyId)
+  const reasonNames = useTaxExemptionReasonNames()
   const [addOpen, setAddOpen] = useState(false)
 
   const certificates = data?.data ?? []
+
+  // A code whose reason was since deleted still reads, as the code itself.
+  function reasonLabel(code: string) {
+    return reasonNames.get(code) ?? code
+  }
 
   async function handleRevoke(certificate: TaxExemptionCertificate) {
     const ok = await confirm({
@@ -201,9 +207,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                 </div>
                 <span className="text-muted-foreground text-xs">
-                  {t(`admin.tax_exemption_certificates.reason_codes.${certificate.reason_code}`, {
-                    defaultValue: certificate.reason_code,
-                  })}
+                  {reasonLabel(certificate.reason_code)}
                   {' · '}
                   <JurisdictionLabel
                     countryCode={certificate.country_code}
@@ -338,6 +342,15 @@ function CertificateSheet({
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateTaxExemptionCertificate(companyId)
+  const reasons = useTaxExemptionReasons()
+  // Only the reasons the store still offers; the server refuses any other.
+  const reasonOptions: ReasonOption[] = useMemo(
+    () =>
+      reasons
+        .filter((reason) => reason.active)
+        .map((reason) => ({ value: reason.code, label: reason.name })),
+    [reasons],
+  )
   const form = useForm<TaxExemptionCertificateFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(taxExemptionCertificateFormSchema) as any,
@@ -405,12 +418,6 @@ function CertificateSheet({
                   name="reason_code"
                   control={form.control}
                   render={({ field }) => {
-                    const reasonOptions = TAX_EXEMPTION_REASON_CODES.map((code) => ({
-                      value: code,
-                      label: t(`admin.tax_exemption_certificates.reason_codes.${code}`, {
-                        defaultValue: code,
-                      }),
-                    }))
                     const selected = reasonOptions.find((o) => o.value === field.value) ?? null
                     return (
                       <Combobox
@@ -427,7 +434,11 @@ function CertificateSheet({
                           placeholder={t('admin.tax_exemption_certificates.select_reason')}
                         />
                         <ComboboxContent>
-                          <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
+                          <ComboboxEmpty>
+                            {reasonOptions.length
+                              ? t('admin.common.no_results')
+                              : t('admin.tax_exemption_certificates.no_reasons')}
+                          </ComboboxEmpty>
                           <ComboboxList>
                             {(option: ReasonOption) => (
                               <ComboboxItem key={option.value} value={option}>

@@ -445,6 +445,11 @@ export type TaxExemptionCertificateFields = Filter.TextFilters<'certificate_numb
   & Filter.IdFilters<'id'>
   & Filter.EnumFilters<'status', 'pending' | 'verified' | 'expired' | 'revoked'>
 
+export type TaxExemptionReasonFields = Filter.BooleanFilters<'active'>
+  & Filter.TextFilters<'code' | 'name'>
+  & Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+
 export type TaxIdentifierFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
 
@@ -2503,6 +2508,26 @@ export type TaxExemptionCertificateFilters = TaxExemptionCertificateFields
   & TaxExemptionCertificateFilterExtensions
 
 export type TaxExemptionCertificateSort = Filter.SortKey<'certificate_number' | 'created_at' | 'expires_at' | 'id' | 'reason_code' | 'status' | 'updated_at' | (keyof TaxExemptionCertificateSortExtensions & string)>
+
+/**
+ * Filters your app adds to TaxExemptionReason lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface TaxExemptionReasonFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface TaxExemptionReasonFilterExtensions {}
+
+/** Sort fields your app adds to TaxExemptionReason lists, as keys: `{ erp_id: true }`. */
+export interface TaxExemptionReasonSortExtensions {}
+
+export type TaxExemptionReasonFilters = TaxExemptionReasonFields
+  & Filter.OrFilters
+  & TaxExemptionReasonFilterExtensions
+
+export type TaxExemptionReasonSort = Filter.SortKey<'active' | 'code' | 'created_at' | 'id' | 'name' | 'updated_at' | (keyof TaxExemptionReasonSortExtensions & string)>
 
 /**
  * Filters your app adds to TaxIdentifier lists. Generate them with `spree filters types`,
