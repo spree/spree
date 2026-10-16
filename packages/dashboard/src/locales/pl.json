@@ -1447,8 +1447,8 @@
           "label": "Obsługiwane ustawienia regionalne"
         },
         "tax_inclusive": {
-          "help": "Wyświetlaj ceny z uwzględnionym podatkiem. Powszechne na rynkach UE.",
-          "label": "Ceny z podatkiem"
+          "help": "Włączone: klienci płacą wpisaną cenę z podatkiem w niej zawartym. Wyłączone: podatek jest doliczany przy kasie.",
+          "label": "Ceny zawierają podatek"
         },
         "tax_provider": {
           "help": "Co nalicza podatek dla zamówień na tym rynku.",
@@ -2242,11 +2242,6 @@
         },
         "country_code": {
           "help": "Zostaw puste, aby opodatkować każdy kraj."
-        },
-        "included_in_price": {
-          "help": "Ceny już zawierają ten podatek, więc jest on wyliczany z ceny, a nie doliczany.",
-          "label": "Wliczony w cenę",
-          "short": "Wliczony"
         },
         "jurisdiction": {
           "label": "Obowiązuje dla"
