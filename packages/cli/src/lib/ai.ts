@@ -17,12 +17,14 @@ const MCP_CONFIGS = [
   { file: '.vscode/mcp.json', root: 'servers', entry: { type: 'http', url: DOCS_MCP_URL } },
 ] as const
 
-export type McpConfigOutcome = 'added' | 'present' | 'unreadable'
+export type McpConfigOutcome = 'added' | 'present' | 'unreadable' | 'unwritable'
 
 /**
  * Add the Spree docs MCP server to every agent's project config, keeping the
  * servers already listed there. A file that is not plain JSON (VS Code allows
  * comments) is reported as `unreadable` and left untouched — never rewritten.
+ * A file that cannot be written is reported as `unwritable`; the others are
+ * still updated.
  *
  * @param projectDir the project root
  * @return each config file's path with what happened to it
@@ -53,9 +55,13 @@ export function addDocsMcpServer(projectDir: string): Record<string, McpConfigOu
     }
 
     config[root] = { ...servers, [DOCS_MCP_SERVER_NAME]: entry }
-    fs.mkdirSync(path.dirname(filePath), { recursive: true })
-    fs.writeFileSync(filePath, `${JSON.stringify(config, null, 2)}\n`)
-    outcomes[file] = 'added'
+    try {
+      fs.mkdirSync(path.dirname(filePath), { recursive: true })
+      fs.writeFileSync(filePath, `${JSON.stringify(config, null, 2)}\n`)
+      outcomes[file] = 'added'
+    } catch {
+      outcomes[file] = 'unwritable'
+    }
   }
 
   return outcomes
@@ -96,28 +102,37 @@ function hasLocalDocs(projectDir: string): boolean {
  * Append the docs-search section to each agent instructions file an agent
  * reads on its own: `AGENTS.md`, and `CLAUDE.md` unless it only imports
  * `AGENTS.md` (Claude Code reads CLAUDE.md alone). Files that already mention
- * the server are left as they are.
+ * the server are left as they are, and a file that cannot be written does
+ * not stop the others.
  *
  * @param projectDir the project root
- * @return the files that were updated
+ * @return the files that were updated, and those that could not be
  */
-export function addDocsSectionToAgentInstructions(projectDir: string): string[] {
+export function addDocsSectionToAgentInstructions(projectDir: string): {
+  updated: string[]
+  failed: string[]
+} {
   const updated: string[] = []
+  const failed: string[] = []
   const section = docsSection(hasLocalDocs(projectDir))
 
   for (const file of ['AGENTS.md', 'CLAUDE.md']) {
     const filePath = path.join(projectDir, file)
     if (!fs.existsSync(filePath)) continue
 
-    const content = fs.readFileSync(filePath, 'utf-8')
-    if (content.includes(DOCS_MCP_SERVER_NAME)) continue
-    if (file === 'CLAUDE.md' && /^@AGENTS\.md\s*$/m.test(content)) continue
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8')
+      if (content.includes(DOCS_MCP_SERVER_NAME)) continue
+      if (file === 'CLAUDE.md' && /^@AGENTS\.md\s*$/m.test(content)) continue
 
-    const separator = content.endsWith('\n\n') ? '' : content.endsWith('\n') ? '\n' : '\n\n'
-    fs.writeFileSync(filePath, `${content}${separator}${section}`)
-    updated.push(file)
+      const separator = content.endsWith('\n\n') ? '' : content.endsWith('\n') ? '\n' : '\n\n'
+      fs.writeFileSync(filePath, `${content}${separator}${section}`)
+      updated.push(file)
+    } catch {
+      failed.push(file)
+    }
   }
-  return updated
+  return { updated, failed }
 }
 
 /**

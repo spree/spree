@@ -140,10 +140,10 @@ export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<bo
   if (opts.mcp) {
     const outcomes = addDocsMcpServer(ctx.projectDir)
     for (const [file, outcome] of Object.entries(outcomes)) {
-      if (outcome === 'unreadable') {
+      if (outcome === 'unreadable' || outcome === 'unwritable') {
         ready = false
         p.log.warn(
-          `Could not read ${pc.bold(file)} as JSON, so it was left as it is. Add the server by hand: https://spreecommerce.org/docs/developer/agentic/mcp`,
+          `Could not ${outcome === 'unreadable' ? 'read' : 'write'} ${pc.bold(file)}${outcome === 'unreadable' ? ' as JSON' : ''}, so it was left as it is. Add the server by hand: https://spreecommerce.org/docs/developer/agentic/mcp`,
         )
       } else if (!opts.quiet) {
         p.log.info(
@@ -153,8 +153,13 @@ export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<bo
         )
       }
     }
-    for (const file of addDocsSectionToAgentInstructions(ctx.projectDir)) {
+    const instructions = addDocsSectionToAgentInstructions(ctx.projectDir)
+    for (const file of instructions.updated) {
       if (!opts.quiet) p.log.info(`Pointed ${pc.bold(file)} at the Spree docs MCP server`)
+    }
+    for (const file of instructions.failed) {
+      ready = false
+      p.log.warn(`Could not update ${pc.bold(file)}, so agents may not know about the docs server.`)
     }
   }
 

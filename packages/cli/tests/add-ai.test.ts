@@ -134,6 +134,22 @@ describe('addAi', () => {
     expect(read('AGENTS.md')).toContain('node_modules/@spree/docs/dist/')
   })
 
+  // One file that cannot be written must not stop the rest of the setup.
+  it('still installs the skills when an instructions file cannot be written', async () => {
+    write('AGENTS.md', '# Read-only\n')
+    fs.chmodSync(path.join(projectDir, 'AGENTS.md'), 0o444)
+
+    expect(await addAi(ctx(), { skills: true, mcp: true, quiet: true })).toBe(false)
+
+    expect(read('AGENTS.md')).toBe('# Read-only\n')
+    expect(JSON.parse(read('.mcp.json')).mcpServers['spree-docs']).toBeDefined()
+    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.arrayContaining(['skills', 'add', 'spree/agent-skills']),
+      expect.anything(),
+    )
+  })
+
   it("installs the agent skills with the project's package manager", async () => {
     write('pnpm-lock.yaml', '')
 
