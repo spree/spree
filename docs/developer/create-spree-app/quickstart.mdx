@@ -14,7 +14,7 @@ The CLI walks you through an interactive setup:
 
 1. Include **Next.js Storefront** (default: yes)
 2. Include the **Seller Panel**, for marketplaces (default: yes)
-3. Install the **[Spree agent skills](/developer/agentic/agent-skills)**, which teach AI coding agents how to work with Spree (default: yes)
+3. **Set up AI coding agents** (default: yes) — installs the [Spree agent skills](/developer/agentic/agent-skills), which teach agents how to work with Spree, and connects Claude Code, Cursor and VS Code to the [Spree docs MCP server](/developer/agentic/mcp) so they can search the latest docs
 4. **Start Docker services** immediately (default: yes)
 
 Once complete, your store is running at [http://localhost:3000](http://localhost:3000) — setup pulls the latest Spree image, seeds the database, and configures API keys, then prints a summary with your admin credentials and keys. If you skipped starting services, the first `pnpm dev` completes setup automatically.
@@ -42,6 +42,8 @@ npx create-spree-app@latest my-store --no-seller-dashboard --no-storefront --no-
 | `--no-storefront` | Skip Next.js storefront setup |
 | `--agent-skills` | Install the Spree agent skills without asking |
 | `--no-agent-skills` | Skip installing the Spree agent skills |
+| `--docs-mcp` | Connect coding agents to the Spree docs MCP server without asking |
+| `--no-docs-mcp` | Skip connecting coding agents to the Spree docs MCP server |
 | `--no-start` | Don't start Docker services after scaffolding |
 | `--port <number>` | Port for the Spree backend (default: `3000`) |
 | `--use-npm` | Use npm as package manager |
@@ -80,6 +82,9 @@ my-store/
 ├── .gitignore
 ├── package.json              # Scripts and the pinned @spree/cli
 ├── .agents/skills/           # Spree agent skills (unless --no-agent-skills)
+├── .mcp.json                 # Spree docs MCP server for Claude Code (unless --no-docs-mcp)
+├── .cursor/mcp.json          # …for Cursor
+├── .vscode/mcp.json          # …for VS Code (Copilot)
 ├── AGENTS.md                 # Instructions for coding agents
 ├── CLAUDE.md                 # Imports AGENTS.md for Claude Code
 └── README.md                 # How to run everything
@@ -124,6 +129,7 @@ The project includes [@spree/cli](/developer/cli/quickstart) for managing your S
 | `spree eject` | Switch from prebuilt image to building from `server/` |
 | `spree add dashboard` | Add the Admin Dashboard to an existing project, to customize it |
 | `spree add seller-dashboard` | Add the marketplace seller panel to an existing project |
+| `spree add ai` | Install the Spree agent skills and connect coding agents to the Spree docs MCP server |
 | `spree build --production` | Build the production image — the Spree API plus your dashboard, in one |
 | `spree logs` | View backend logs |
 | `spree logs worker` | View background jobs logs |

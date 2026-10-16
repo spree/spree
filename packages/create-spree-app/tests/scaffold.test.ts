@@ -368,7 +368,7 @@ describe('scaffold (no-start)', () => {
     expect(fs.readFileSync(path.join(projectDir, 'CLAUDE.md'), 'utf-8')).toBe('@AGENTS.md\n')
   })
 
-  it('installs the agent skills when chosen', async () => {
+  it('delegates the agent setup to `spree add ai`, passing what was declined', async () => {
     const { execa } = await import('execa')
     vi.mocked(execa).mockClear()
     const projectDir = getTempProjectDir()
@@ -377,7 +377,8 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: false,
       dashboard: false,
-      agentSkills: true,
+      agentSkills: false,
+      docsMcp: true,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -385,17 +386,36 @@ describe('scaffold (no-start)', () => {
 
     expect(vi.mocked(execa)).toHaveBeenCalledWith(
       'npx',
-      ['--yes', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes'],
+      ['spree', 'add', 'ai', '--quiet', '--no-skills'],
       expect.objectContaining({ cwd: path.resolve(projectDir) }),
     )
   })
 
-  // Skills are a convenience: a failed install must not stop first-run setup.
-  it('continues to first-run setup when the agent skills fail to install', async () => {
+  it('skips the agent setup when both halves are declined', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
+
+    await scaffold({
+      directory: getTempProjectDir(),
+      storefront: false,
+      dashboard: false,
+      agentSkills: false,
+      docsMcp: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    const addAi = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[2] === 'ai')
+    expect(addAi).toBeUndefined()
+  })
+
+  // Agent setup is a convenience: a failure must not stop first-run setup.
+  it('continues to first-run setup when the agent setup fails', async () => {
     const { execa } = await import('execa')
     vi.mocked(execa).mockClear()
     vi.mocked(execa).mockImplementation((async (_command: string, args: string[]) => {
-      if (args.includes('skills')) throw new Error('network down')
+      if (args.includes('ai')) throw new Error('network down')
     }) as never)
 
     await scaffold({

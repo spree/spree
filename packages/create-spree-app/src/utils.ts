@@ -97,13 +97,6 @@ export function runCommand(pm: PackageManager): string {
   return 'pnpm'
 }
 
-/** Runner for a one-off remote package (e.g. `npx skills`, `pnpm dlx skills`). */
-export function dlxCommand(pm: PackageManager): string {
-  if (pm === 'npm') return 'npx'
-  if (pm === 'yarn') return 'yarn dlx'
-  return 'pnpm dlx'
-}
-
 /** Global-install command for a package (e.g. `npm install -g`, `pnpm add -g`). */
 export function globalAddCommand(pm: PackageManager): string {
   if (pm === 'npm') return 'npm install -g'
