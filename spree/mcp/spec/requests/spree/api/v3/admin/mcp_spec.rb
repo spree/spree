@@ -295,6 +295,20 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     let(:order) { create(:completed_order_with_totals, store: store) }
     let(:fulfillment) { order.shipments.first }
 
+    # A write used to answer with its summary line alone — "Orders cancel
+    # R1002" — so a model had to fetch the record again to report what
+    # changed, and an assistant reading only the text could not confirm the
+    # write at all.
+    it 'answers a write with the record it changed' do
+      body = post_rpc('tools/call',
+                      { name: 'orders_cancel', arguments: { 'order' => order.prefixed_id } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(body.dig('result', 'isError')).to be(false)
+      expect(body.dig('result', 'structuredContent', 'record', 'status')).to eq('canceled')
+      expect(body.dig('result', 'content', 0, 'text')).to include('canceled')
+    end
+
     it 'marks a fulfillment delivered through the real workflow' do
       fulfillment.update!(status: 'fulfilled')
 
