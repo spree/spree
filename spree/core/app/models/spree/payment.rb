@@ -341,7 +341,10 @@ module Spree
     # @return [String, nil]
     def gateway_dashboard_payment_url
       url = payment_method.try(:gateway_dashboard_payment_url, self)
-      url if url.present? && URI.parse(url).is_a?(URI::HTTPS)
+      return if url.blank?
+
+      uri = URI.parse(url)
+      url if uri.is_a?(URI::HTTPS) && uri.host.present?
     rescue URI::InvalidURIError
       nil
     end

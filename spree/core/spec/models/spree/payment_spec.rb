@@ -1093,7 +1093,7 @@ describe Spree::Payment, type: :model do
 
     context 'when the gateway returns a link that is not https' do
       it 'returns nil' do
-        ['javascript:alert(1)', 'http://dashboard.example.com/payments/123', 'https://exa mple.com'].each do |url|
+        ['javascript:alert(1)', 'http://dashboard.example.com/payments/123', 'https://exa mple.com', 'https:javascript:alert(1)', 'https:/payments/123'].each do |url|
           allow(gateway).to receive(:gateway_dashboard_payment_url).with(payment).and_return(url)
 
           expect(payment.gateway_dashboard_payment_url).to be_nil
