@@ -153,9 +153,8 @@ export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<bo
         )
       }
     }
-    const instructions = addDocsSectionToAgentInstructions(ctx.projectDir)
-    if (instructions && !opts.quiet) {
-      p.log.info(`Pointed ${pc.bold(instructions)} at the Spree docs MCP server`)
+    for (const file of addDocsSectionToAgentInstructions(ctx.projectDir)) {
+      if (!opts.quiet) p.log.info(`Pointed ${pc.bold(file)} at the Spree docs MCP server`)
     }
   }
 

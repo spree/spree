@@ -93,32 +93,41 @@ function hasLocalDocs(projectDir: string): boolean {
 }
 
 /**
- * Append the docs-search section to the project's agent instructions
- * (`AGENTS.md`, or `CLAUDE.md` in projects older than it), unless they
- * already mention the server.
+ * Append the docs-search section to each agent instructions file an agent
+ * reads on its own: `AGENTS.md`, and `CLAUDE.md` unless it only imports
+ * `AGENTS.md` (Claude Code reads CLAUDE.md alone). Files that already mention
+ * the server are left as they are.
  *
  * @param projectDir the project root
- * @return the file that was updated, or null when none needed it
+ * @return the files that were updated
  */
-export function addDocsSectionToAgentInstructions(projectDir: string): string | null {
+export function addDocsSectionToAgentInstructions(projectDir: string): string[] {
+  const updated: string[] = []
+  const section = docsSection(hasLocalDocs(projectDir))
+
   for (const file of ['AGENTS.md', 'CLAUDE.md']) {
     const filePath = path.join(projectDir, file)
     if (!fs.existsSync(filePath)) continue
 
     const content = fs.readFileSync(filePath, 'utf-8')
-    if (content.includes(DOCS_MCP_SERVER_NAME)) return null
+    if (content.includes(DOCS_MCP_SERVER_NAME)) continue
+    if (file === 'CLAUDE.md' && /^@AGENTS\.md\s*$/m.test(content)) continue
 
     const separator = content.endsWith('\n\n') ? '' : content.endsWith('\n') ? '\n' : '\n\n'
-    fs.writeFileSync(filePath, `${content}${separator}${docsSection(hasLocalDocs(projectDir))}`)
-    return file
+    fs.writeFileSync(filePath, `${content}${separator}${section}`)
+    updated.push(file)
   }
-  return null
+  return updated
 }
 
-/** Runner for a one-off remote package (`npx`, `pnpm dlx`, `yarn dlx`). */
+/**
+ * Runner for a one-off remote package. Yarn 1 has no `dlx`, and a lockfile
+ * does not say which Yarn a project uses, so Yarn projects use `npx`, which
+ * ships with every Node install.
+ */
 export function dlxCommand(packageManager: string): string[] {
-  if (packageManager === 'npm') return ['npx', '--yes']
-  return [packageManager, 'dlx']
+  if (packageManager === 'pnpm') return ['pnpm', 'dlx']
+  return ['npx', '--yes']
 }
 
 /**

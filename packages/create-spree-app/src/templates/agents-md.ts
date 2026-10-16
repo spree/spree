@@ -140,7 +140,7 @@ export function agentsMdContent(
     '',
     'The official Spree skills cover API conventions, the data model, events, testing,',
     'security, deployment, the Admin Dashboard and the storefront. If `.agents/skills/`',
-    `is missing, install them with \`${spree} add ai\`.`,
+    `is missing, install them with \`${spree} add ai --no-mcp\`.`,
     '',
   )
 

@@ -91,6 +91,30 @@ describe('addAi', () => {
     expect(read('CLAUDE.md')).toBe('@AGENTS.md\n')
   })
 
+  // Claude Code reads CLAUDE.md alone, so one that does not import AGENTS.md
+  // needs the section itself.
+  it('also updates a CLAUDE.md that does not import AGENTS.md', async () => {
+    write('AGENTS.md', '# Shared\n')
+    write('CLAUDE.md', '# Claude only\n')
+
+    await addAi(ctx(), { skills: false, mcp: true, quiet: true })
+
+    expect(read('AGENTS.md')).toContain('`spree-docs` MCP server')
+    expect(read('CLAUDE.md')).toContain('`spree-docs` MCP server')
+  })
+
+  it('installs the skills with npx in Yarn projects, since Yarn 1 has no dlx', async () => {
+    write('yarn.lock', '')
+
+    await addAi(ctx(), { skills: true, mcp: false, quiet: true })
+
+    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+      'npx',
+      ['--yes', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes'],
+      expect.anything(),
+    )
+  })
+
   it('falls back to CLAUDE.md in projects without AGENTS.md', async () => {
     write('CLAUDE.md', '# Older project\n')
 
