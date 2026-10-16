@@ -1177,17 +1177,19 @@ function InlineValueList({
     }))
   }, [isCurrency, currencies, isTags, tags.data, resources.data, column.filterResource, query])
 
-  // Selected values ride at the top so a choice made before searching does not
-  // disappear the moment the query stops matching it.
+  // Values already selected when the list opens ride at the top, so an active
+  // filter is visible without scrolling. The set is frozen at mount: ticking a
+  // box must not move rows under the pointer.
+  const [pinned] = useState(() => selected)
   const ordered = useMemo(() => {
-    const chosen = options.filter((option) => selected.includes(option.value))
-    const rest = options.filter((option) => !selected.includes(option.value))
+    const chosen = options.filter((option) => pinned.includes(option.value))
+    const rest = options.filter((option) => !pinned.includes(option.value))
     // Not truncated: a list cut at ten looks like a list of ten, and a
     // vocabulary of forty tags would silently lose thirty with nothing on
     // screen to say so. The container scrolls instead, so the scrollbar
     // reports how much more there is — and searching narrows it.
     return [...chosen, ...rest]
-  }, [options, selected])
+  }, [options, pinned])
 
   if (!isCurrency && (tags.isLoading || resources.isLoading)) {
     return (
@@ -1507,6 +1509,7 @@ function FilterPanel({
             behind the panel is already showing the result. */}
         {field && multi && column && (
           <InlineValueList
+            key={column.key}
             column={column}
             tenantId={tenantId}
             query={query}
