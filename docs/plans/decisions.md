@@ -6384,3 +6384,23 @@ the path a token names was buying nothing.
 The specs that missed this minted tokens in Ruby and dispatched with an admin
 JWT, so neither consent nor the OAuth dispatch path was ever exercised. The
 MCP suite now walks consent, token exchange and a tool call as a client does.
+
+## 2026-10-16 — The store MCP surface reuses everything but the catalog
+
+A second MCP endpoint for shoppers is planned for 6.1
+(`docs/plans/6.1-store-mcp-server.md`). The tool contract, the registry, the
+in-process dispatcher, the record summaries and the protocol adapter are all
+surface-neutral and carry over unchanged — about 4,600 lines of tool layer
+under 590 of adapter, and the adapter is the part that would otherwise need
+rewriting.
+
+Two things do not carry over. The resource map is derived by walking
+`Admin::ResourceController.descendants` and reading each controller's
+`scoped_resource`; Store controllers declare no scope, so the store map needs
+its own basis. And a grant's owner is refused unless it is an admin user, in
+two places, so a customer principal is a deliberate addition rather than a
+relaxation.
+
+The registry was split by surface during the 6.0 build for exactly this —
+`Spree.store_agent_tools` exists and is empty, and a tool filed on the wrong
+surface is refused at registration.
