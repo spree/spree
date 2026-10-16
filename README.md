@@ -82,13 +82,13 @@ Thank you for supporting Spree open-source ❤️
 
 ### Agentic Development
 
-Building with an AI coding agent? Install the [Spree agent skills](https://github.com/spree/agent-skills) — they teach Claude Code, Cursor, Copilot, and 60+ other tools Spree's conventions, customization patterns, and upgrade flows:
+Building with an AI coding agent? `create-spree-app` sets it up for you — answer yes to **Set up AI coding agents?** In an existing project, run:
 
 ```bash
-npx skills add spree/agent-skills
+npx spree add ai
 ```
 
-Then connect the [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp) and let your agent build with you. Learn more in the [Agentic Development docs](https://spreecommerce.org/docs/developer/agentic/overview).
+This installs the [Spree agent skills](https://github.com/spree/agent-skills), which teach Claude Code, Codex, Cursor, Copilot and 60+ other tools Spree's conventions, customization patterns and upgrade flows. It also connects Claude Code, Cursor and VS Code to the [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp), so your agent can search the latest docs. Learn more in the [Agentic Development docs](https://spreecommerce.org/docs/developer/agentic/overview).
 
 ### Spree CLI
 
@@ -122,7 +122,7 @@ Everything below ships in this repository under the BSD 3-Clause license.
 * **[Security & Identity](https://spreecommerce.org/docs/developer/providers/sso)** — [OpenID Connect](https://spreecommerce.org/docs/developer/providers/sso) single sign-on for staff and customers, [custom auth adapters](https://spreecommerce.org/docs/developer/how-to/custom-api-authentication) for any JWT issuer, [role-based permissions](https://spreecommerce.org/docs/developer/customization/permissions) scoped per store, and a [PCI-compliant](https://spreecommerce.org/docs/developer/security/pci_compliance) payment architecture where card data never touches your server.
 * **[MeiliSearch Integration](https://spreecommerce.org/docs/integrations/search/meilisearch)** — typo-tolerant product search and faceted filtering, or [bring your own search provider](https://spreecommerce.org/docs/developer/how-to/custom-search-provider).
 * **Integrations & Extensibility** — [Event Bus](https://spreecommerce.org/docs/developer/core-concepts/events), [Webhooks](https://spreecommerce.org/docs/developer/core-concepts/webhooks), [OpenTelemetry](spree/opentelemetry) instrumentation, and native integrations ([GA4](https://spreecommerce.org/docs/integrations/analytics/google-analytics), [GTM](https://spreecommerce.org/docs/integrations/analytics/google-tag-manager), [Klaviyo](https://spreecommerce.org/docs/integrations/marketing/klaviyo)).
-* **[Agentic Development](https://spreecommerce.org/docs/developer/agentic/overview)** — [agent skills](https://github.com/spree/agent-skills) (`npx skills add spree/agent-skills`) teaching AI coding agents Spree's conventions, a [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp), [LLM-ready documentation](https://spreecommerce.org/docs/developer/agentic/llm-docs) (llms.txt, per-page Markdown, offline npm package), and a generated AGENTS.md/CLAUDE.md in every scaffolded project.
+* **[Agentic Development](https://spreecommerce.org/docs/developer/agentic/overview)** — [agent skills](https://github.com/spree/agent-skills) teaching AI coding agents Spree's conventions and a [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp), both set up with one command (`spree add ai`), plus [LLM-ready documentation](https://spreecommerce.org/docs/developer/agentic/llm-docs) (llms.txt, per-page Markdown, offline npm package), and a generated AGENTS.md/CLAUDE.md in every scaffolded project.
 
 ## Deployment
 
