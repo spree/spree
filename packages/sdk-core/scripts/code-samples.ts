@@ -46,6 +46,7 @@ export function unmarkedExamples(examplesRoot: string): string[] {
     .filter((file) => file.endsWith('.ts'))
     .filter((file) => {
       const source = readFileSync(path.join(examplesRoot, file), 'utf8')
-      return !/\/\/ region:example\r?\n[\s\S]+?\/\/ endregion:example/.test(source)
+      const region = source.match(/\/\/ region:example\r?\n([\s\S]*?)\/\/ endregion:example/)
+      return !region?.[1].trim()
     })
 }
