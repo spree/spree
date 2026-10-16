@@ -15,10 +15,18 @@ module Spree
       # is a per-resource question, so it is answered in `call` rather than
       # here: a class-level key would hide the tool from a caller who may
       # export orders but not products.
+
+      # Exports whose rows carry a bearer instrument — a code that spends
+      # money for whoever reads it. Refused outright rather than stripped,
+      # because an export of gift cards without their codes answers nothing
+      # the merchant asked for. `Spree::Mcp::Exports` reads this list too, so
+      # a file made before this existed stays unreadable.
+      BEARER_EXPORTS = %w[gift_cards coupon_codes].freeze
+
       permission nil
       mutating!
 
-      param :resource, description: 'What to export: products, orders, customers, gift_cards',
+      param :resource, description: 'What to export: products, orders, customers',
                        required: true
       param :filters, type: :object,
                       description: 'Optional Ransack filters, e.g. {"status_eq": "active"}'
@@ -30,6 +38,14 @@ module Spree
         required = "read_#{export_class.required_scope}"
         unless context.holds?(required)
           return { error: "You do not have permission to export #{resource.to_s.tr('_', ' ')}." }
+        end
+
+        # Refused here rather than at read, so the merchant is not left with a
+        # generated file of live codes waiting to be collected.
+        if Spree::AgentTools::CreateExport::BEARER_EXPORTS.include?(resource.to_s)
+          return { error: "#{resource.to_s.tr('_', ' ').capitalize} carry codes that spend money for " \
+                          'whoever reads them, so they cannot be exported here. Download them from ' \
+                          'the dashboard instead.' }
         end
 
         export = export_class.new(

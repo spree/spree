@@ -218,12 +218,26 @@ RSpec.describe 'agent generic record writes' do
     end
 
     # Named rather than described: a model that is only told `variants` exists
-    # sends the variants one at a time to their own endpoint.
+    # sends the variants one at a time to their own endpoint. The type and
+    # the requirement travel too — without them an agent learns that a field
+    # is mandatory, or wants a decimal string rather than a number, only from
+    # a 422.
     it 'says what fits inside a list-valued attribute' do
       described = tool('describe_resource').call(resource: 'products')[:resources].first
+      fields = described[:nested_attributes]['variants']
 
-      expect(described[:nested_attributes]['variants']).to include('options', 'prices', 'stock_levels')
+      expect(fields.map { |field| field['name'] }).to include('options', 'prices', 'stock_levels')
       expect(described[:writable_attributes]).to include('variants')
+    end
+
+    it 'says which nested fields are required and what type they take' do
+      described = tool('describe_resource').call(resource: 'purchase_orders')[:resources].first
+      items = described[:nested_attributes]['items'].index_by { |field| field['name'] }
+
+      expect(items['quantity_ordered']).to include('type' => 'integer', 'required' => true)
+      # A decimal travels as a canonical string, which a model guesses wrong
+      # until it is told.
+      expect(items['unit_cost']).to include('type' => 'string')
     end
   end
   # A record arrives without its associations, because a full admin payload

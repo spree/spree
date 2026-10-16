@@ -45,6 +45,21 @@ RSpec.describe Spree::Mcp::Exports do
     end
   end
 
+  # A gift card export that already exists — made in the dashboard, or by an
+  # earlier version — must still not be readable here. Refusing only at
+  # creation would leave every file already on disk collectable.
+  describe 'an export whose rows carry a bearer instrument' do
+    it 'refuses to read it, whatever the grant holds' do
+      export = finished_export(Spree::Exports::GiftCards)
+
+      result = described_class.read(context_for(['read_all']),
+                                    "spree+export://#{export.prefixed_id}")
+
+      expect(result.first[:text]).to include('spend money')
+      expect(result.first[:text]).not_to include('Thing')
+    end
+  end
+
   describe 'another store' do
     let(:other_store) { create(:store, code: "other-#{SecureRandom.hex(4)}") }
 
