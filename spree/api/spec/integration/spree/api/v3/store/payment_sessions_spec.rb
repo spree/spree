@@ -34,15 +34,7 @@ RSpec.describe 'Cart Payment Sessions API', type: :request, swagger_doc: 'api-re
                 description: 'Order token for guest access'
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          payment_method_id: { type: :string, example: 'pm_abc123', description: 'Payment method ID' },
-          amount: { type: :string, example: '99.99', description: 'Payment amount (defaults to order total minus store credits)' },
-          external_data: { type: :object, description: 'Provider-specific data passed to the gateway' }
-        },
-        required: %w[payment_method_id]
-      }
+      request_body_for
 
       response '201', 'payment session created' do
         let(:'x-spree-api-key') { api_key.token }
@@ -111,13 +103,7 @@ RSpec.describe 'Cart Payment Sessions API', type: :request, swagger_doc: 'api-re
 
       sdk_example 'carts/payment-sessions-update'
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          amount: { type: :string, example: '50.00', description: 'Updated payment amount' },
-          external_data: { type: :object, description: 'Provider-specific data to update' }
-        }
-      }
+      request_body_for
 
       response '200', 'payment session updated' do
         let(:'x-spree-api-key') { api_key.token }
@@ -154,13 +140,7 @@ RSpec.describe 'Cart Payment Sessions API', type: :request, swagger_doc: 'api-re
 
       sdk_example 'carts/payment-sessions-complete'
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          session_result: { type: :string, description: 'Provider-specific session result token' },
-          external_data: { type: :object, description: 'Provider-specific completion data' }
-        }
-      }
+      request_body_for
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
 

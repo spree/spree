@@ -10,7 +10,6 @@ export const IntegrationSchema = z.object({
   type: z.string(),
   group: z.string().nullable(),
   preferences: z.record(z.string(), z.unknown()),
-  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown(), choices: z.array(z.object({ value: z.string(), label: z.string().optional() })).optional() })),
 });
 
 export type Integration = z.infer<typeof IntegrationSchema>;

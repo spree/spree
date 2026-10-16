@@ -9,8 +9,8 @@ export const EmailParcelItemSchema = z.object({
   quantity: z.number(),
   sku: z.string().nullable(),
   options_text: z.string().nullable(),
-  display_price: z.string(),
-  display_amount: z.string(),
+  price: z.string(),
+  amount: z.string(),
 });
 
 export type EmailParcelItem = z.infer<typeof EmailParcelItemSchema>;

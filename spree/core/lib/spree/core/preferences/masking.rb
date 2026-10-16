@@ -47,6 +47,25 @@ module Spree
         value.is_a?(String) && value.start_with?(TOKEN)
       end
 
+      # Money is written to at least the decimals of the currency the record
+      # names (a calculator's `currency` preference), keeping up to four like
+      # a unit price, so a per-item amount below a cent survives a round trip.
+      # A money preference with no currency of its own, such as an order-total
+      # rule that applies to any currency, keeps its exact decimal.
+      def self.wire_value(preferable, key, type, value)
+        case type
+        when :password then mask(value)
+        when :money
+          # Stored as the JSON text of a decimal.
+          amount = value.is_a?(String) ? BigDecimal(value, exception: false) : value
+          return value unless amount.is_a?(Numeric)
+
+          currency = preferable.money_preference_currency(key)
+          currency.present? ? Spree::Money::Rounding.format(amount, currency, unit_price: true) : Spree::Money::Rounding.format_decimal(amount)
+        else value
+        end
+      end
+
       # Serializes a Preferable's `preferences` hash for the wire,
       # masking `:password` values. Keys are stringified to match the
       # wire shape expected by JSON clients — schema entries built by
@@ -59,13 +78,44 @@ module Spree
       def self.serialize(preferable)
         return {} if preferable.nil?
 
+        definitions = preferable.class.preference_definitions
         preferable.preference_schema.each_with_object({}) do |field, hash|
           # The stored value only, never the default — an unset secret must not
           # reveal what it would fall back to — read through the record,
           # because a secret lives in its own column.
           value = preferable.stored_preference(field[:key]) { nil }
-          hash[field[:key_string] || field[:key].to_s] = field[:type] == :password ? mask(value) : value
+          definition = definitions.fetch(field[:key])
+          hash[field[:key_string] || field[:key].to_s] =
+            if definition[:of] == :id
+              prefixed_ids(value, definition)
+            elsif %i[password money].include?(field[:type])
+              wire_value(preferable, field[:key], field[:type], value)
+            elsif definition[:keys] == :currency && definition[:values] == :money
+              money_by_currency(preferable.wire_preference_value(value, definition))
+            else
+              preferable.wire_preference_value(value, definition)
+            end
         end
+      end
+
+      # Amounts keyed by currency (`{ "EUR" => "12.5" }`), each written with
+      # the decimals of its own currency, as every money value is.
+      def self.money_by_currency(value)
+        return value unless value.is_a?(Hash)
+
+        value.to_h do |currency, amount|
+          decimal = BigDecimal(amount.to_s, exception: false)
+          [currency, decimal ? Spree::Money::Rounding.format(decimal, currency, unit_price: true) : amount]
+        end
+      end
+
+      # Ids are stored as raw primary keys and leave as prefixed ids, the form
+      # every write accepts.
+      def self.prefixed_ids(value, definition)
+        return value unless value.is_a?(Array)
+
+        model = Spree::Preferences::Preferable.preference_model(definition)
+        value.map { |id| Spree::PrefixedId.prefixed_id?(id.to_s) ? id : model.prefixed_id_for(id) }
       end
     end
   end

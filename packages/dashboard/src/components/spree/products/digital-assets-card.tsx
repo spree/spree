@@ -1,5 +1,5 @@
 import type { DigitalAsset, DigitalAssetProvider, Variant } from '@spree/admin-sdk'
-import { formatFileSize, useDirectUpload } from '@spree/dashboard-core'
+import { formatFileSize, useFileUpload } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -61,7 +61,7 @@ export function DigitalAssetsCard({
 
   // Digital files live on private storage: they are only ever served through an
   // authorized, signed link, never from the public bucket.
-  const directUpload = useDirectUpload({ private: true })
+  const fileUpload = useFileUpload({ visibility: 'private' })
   const { data, isLoading } = useDigitalAssets(productId ?? '', page, Boolean(productId))
   const { data: providersData } = useDigitalAssetProviders(productId ?? '', Boolean(productId))
   const createAsset = useCreateDigitalAsset(productId ?? '')
@@ -84,7 +84,7 @@ export function DigitalAssetsCard({
     try {
       for (const file of list) {
         try {
-          const { signedId } = await directUpload.mutateAsync(file)
+          const { signedId } = await fileUpload.mutateAsync(file)
           await createAsset.mutateAsync({ signed_id: signedId })
         } catch (err) {
           // The create mutation suppresses its own toast for validation

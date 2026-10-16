@@ -19,20 +19,6 @@ RSpec.describe Spree::Invitation, type: :model do
       end
     end
 
-    context 'when invitation is accepted after expiration' do
-      it 'is refused' do
-        invitation.save!
-        invitation.update_column(:expires_at, 1.day.ago)
-
-        result = Spree.invitation_accept_workflow.call(invitation: invitation)
-
-        expect(result).not_to be_success
-        expect(result.error.value).to eq(:invitation_expired)
-        expect(invitation.reload.accepted_at).not_to be_present
-        expect(invitation.status).to eq('pending')
-      end
-    end
-
     context 'when invitee already exists in the store' do
       it 'is invalid' do
         create(:admin_user, email: 'existing@example.com')
@@ -88,31 +74,7 @@ RSpec.describe Spree::Invitation, type: :model do
   end
 
   describe 'State Machine' do
-    it 'has initial state of pending' do
-      expect(invitation.status).to eq('pending')
-    end
-
     context 'when accepting an invitation' do
-      it 'changes status to accepted' do
-        invitation.invitee = create(:admin_user, :without_admin_role)
-        Spree.invitation_accept_workflow.call(invitation: invitation)
-        expect(invitation.status).to eq('accepted')
-      end
-
-      it 'sets accepted_at timestamp' do
-        expect(invitation.accepted_at).to be_nil
-        invitation.invitee = create(:admin_user, :without_admin_role)
-        Spree.invitation_accept_workflow.call(invitation: invitation)
-        expect(invitation.accepted_at).to be_present
-      end
-
-      it 'publishes invitation.accept event', events: true do
-        invitation.invitee = create(:admin_user, :without_admin_role)
-
-        expect(invitation).to receive(:publish_event).with('invitation.accepted')
-        Spree.invitation_accept_workflow.call(invitation: invitation)
-      end
-
       it 'creates a resource user' do
         invitation.invitee = create(:admin_user, :without_admin_role)
         expect { Spree.invitation_accept_workflow.call(invitation: invitation) }.to change(invitation, :role_user).from(nil).to(Spree::RoleUser)

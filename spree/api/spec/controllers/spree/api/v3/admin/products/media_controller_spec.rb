@@ -100,6 +100,19 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
         expect(image.reload.alt).to eq('Updated alt text')
       end
 
+      it 'ignores the keys that say how a new file arrives' do
+        patch :update, params: {
+          product_id: product.prefixed_id,
+          id: image.prefixed_id,
+          alt: 'Kept',
+          url: 'https://example.com/other.jpg',
+          signed_id: 'not-a-blob'
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(image.reload.alt).to eq('Kept')
+      end
+
       it 'updates the media position' do
         patch :update, params: {
           product_id: product.prefixed_id,
@@ -308,6 +321,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(image.reload.focal_point).to eq({ x: 0.25, y: 0.75 })
+        expect(json_response.values_at('focal_point_x', 'focal_point_y')).to eq([0.25, 0.75])
       end
     end
   end

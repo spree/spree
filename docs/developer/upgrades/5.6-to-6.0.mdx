@@ -194,7 +194,7 @@ bundle exec rake spree:upgrade:migrate_users_to_customers
 Copies your legacy Devise customer table (default `spree_users`) into `spree_customers`, keeping the same ids, and carries existing passwords over so customers and staff can keep signing in. The source table is left in place as a safety net.
 
 <Warning>
-  Passwords carry over only if your application **never configured a Devise pepper**. The task stops if it finds one. Because Devise is no longer loaded in 6.0, the task usually cannot check for itself — it stops until you confirm no pepper was used by re-running it with `CONFIRM_NO_PEPPER=true`. If you did use a pepper, single sign-on, or a non-bcrypt password format, skip this step and keep your own customer model by setting `Spree.customer_class`.
+  Passwords carry over only if your application **never configured a Devise pepper**. The task stops if it finds one. Because Devise is no longer loaded in 6.0, the task usually cannot check for itself — it stops until you confirm no pepper was used by re-running it with `CONFIRM_NO_PEPPER=true`. When there are no passwords to carry over, for example an empty `spree_users` table, the task skips this check. If you did use a pepper, single sign-on, or a non-bcrypt password format, skip this step and keep your own customer model by setting `Spree.customer_class`.
 </Warning>
 
 ### Name countries and states by ISO code
@@ -204,6 +204,14 @@ bundle exec rake spree:upgrade:migrate_country_state_codes
 ```
 
 Countries and states are no longer database records in 6.0. Addresses, delivery zone members, market countries, stock locations and stores now name them by ISO code (`country_code`, `state_code`), and this task fills those columns from the old `country_id` / `state_id` references. The old `country_iso` / `state_abbr` names still work on addresses for one release.
+
+### Record which store owns every uploaded file
+
+```bash
+bundle exec rake spree:uploads:assign_stores
+```
+
+Every uploaded file now records the store that owns it (`active_storage_blobs.store_id`). New uploads get it when they are made; this task gives existing files the store of the record they are attached to. A file attached in more than one store is listed and left alone for you to resolve. Safe to re-run at any time.
 
 ## Enable Active Record encryption
 
@@ -308,7 +316,7 @@ Spree::Checkout::Registry.add_requirement(
 
   The requirement appears in the Cart API's `requirements` array (so a storefront rendering the feed generically needs zero changes) *and* blocks completion. `register_step` adds whole steps (spliced into `checkout_steps` at `before:`/`after:` anchors); built-in steps are customized through `Registry.base_steps` — an ordered `{ name => applicability }` hash you can mutate directly (`base_steps.delete('confirm')`).
 - **The API `requirements` array now carries a stable `code`** on every entry (`email_required`, `out_of_stock`, `guest_checkout_not_allowed`, ...). Additive change — existing consumers keep working.
-- **The delivery requirement is keyed `delivery_method`, not `shipping_method`.** Its entry is now `{ step: 'delivery', field: 'delivery_method', code: 'delivery_method_required' }`. A storefront that renders the feed generically needs no change; one that keys off the field or code to highlight a specific input must switch both tokens. The `Spree.t('checkout_requirements.shipping_method_required')` translation key was renamed to `checkout_requirements.delivery_method_required` — override it under the new key.
+- **The delivery requirement is keyed by its `code`, `delivery_method_required`.** Its entry is `{ step: 'delivery', field: 'shipping_method', code: 'delivery_method_required' }`. The `field` keeps its 5.6 name until 6.1, when it becomes `delivery_method`, so a 5.6 storefront that matches the field keeps working. Match the `code` instead, which does not change. The `spree.checkout_requirements.shipping_method_required` translation key was renamed to `spree.checkout_requirements.delivery_method_required` — override it under the new key.
 - **"Logic between steps" has no backend home by design.** Side effects hang off data writes (workflow hooks such as `Carts::Complete`'s `before_finalize` and `Carts::AddItem`'s `after_item_added`) and events (`cart.updated`, `order.placed`) — not step transitions.
 
 ## Statuses: derived, then persisted
@@ -348,7 +356,24 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 - `ship_address_id=` / `bill_address_id=` are **ownership-guarded**: an address not owned by the record's customer resolves to `nil`.
 - A signed-in customer entering checkout gets blank address slots **auto-filled from their saved defaults**.
 - **`use_billing` is deprecated** (removed in 6.1): the shipping address is canonical — use `use_shipping` to copy ship → bill.
-- The `firstname`, `lastname` and `zipcode` **columns are renamed** to `first_name`, `last_name` and `postal_code`. The API has used the new names since 5.4, but two things carried the old ones and now change: **validation error keys** (a client sending `postal_code` used to get its error back under `zipcode`) and **Ransack filter keys** (`q[zipcode_cont]` becomes `q[postal_code_cont]`). The old method names still read for one release.
+- The `firstname`, `lastname` and `zipcode` **columns are renamed** to `first_name`, `last_name` and `postal_code`. The API has used the new names since 5.4, but two things carried the old ones and now change: **validation error keys** (a client sending `postal_code` used to get its error back under `zipcode`) and **Ransack filter keys** (`q[zipcode_cont]` becomes `q[postal_code_cont]`). The old method names still read for one release. The Admin and Seller APIs no longer accept `firstname` and `lastname` in an address payload: send `first_name` and `last_name`.
+
+**The Admin and Seller APIs drop their deprecated fields in 6.0.** The Store API keeps its deprecated fields until 6.1, marked `deprecated` in the API reference and the SDK types; the Admin and Seller APIs remove theirs now:
+
+| Removed from the Admin and Seller APIs | Use |
+|---|---|
+| Address `country_iso`, `state_abbr` (read and write) | `country_code`, `state_code` |
+| Stock location `country_iso`, `state_abbr` | `country_code`, `state_code` |
+| Refund `reimbursement_id` | `originator_id`, `originator_type` |
+| Address `zipcode` (write) | `postal_code` |
+| Admin cart `number` | `id` |
+| Admin market `country_isos` | `country_codes` |
+| Import `owner_type`, `owner_id` | `store_id`, `seller_id` |
+| Payment method `auto_capture` (read and write) | `capture_method` |
+| Order discount `amount` on create | `value`, with `value_type` (`amount` stays the field an update edits) |
+| Store settings `preferred_auto_capture`, `preferred_auto_capture_on_dispatch` | `capture_method` |
+| Settings sent under their `preferred_<name>` key | `<name>` |
+| Delivery method `calculator_type`, `calculator_preferences` | `calculator: { type, preferences }` |
 
 ## Returns, exchanges and claims
 
@@ -501,6 +526,39 @@ one. An order whose every parcel was recalled now reads
 `fulfillment_status: unfulfilled` rather than `canceled`; only a canceled
 order reads `canceled`.
 
+## File uploads
+
+`POST /direct_uploads` is removed from the Admin and Seller APIs. Upload through `POST /files` instead ([Uploads](/api-reference/admin-api/uploads)): the request is flat (`filename`, `content_type`, `byte_size`, `checksum`, `visibility`), the bytes go to `upload.url`, and small files can be sent in the request itself. In the SDKs, `directUploads.create()` becomes `files.upload(file, { visibility })`; `private: true` becomes `visibility: 'private'`.
+
+The `signed_id` an upload returns now **expires after a day** (`expires_at`). Store the file's record, not the `signed_id`.
+
+Every parameter that takes a `signed_id` is renamed to `<name>_signed_id`:
+
+| Endpoint | Before | After |
+|---|---|---|
+| Admin `/me`, Seller `/me`, Admin customers | `avatar` | `avatar_signed_id` |
+| Admin store settings | `mailer_logo` (and the new `logo`) | `mailer_logo_signed_id`, `logo_signed_id` |
+| Admin sellers, Seller profile | `logo`, `square_logo`, `cover_photo` | `logo_signed_id`, `square_logo_signed_id`, `cover_photo_signed_id` |
+| Admin categories, collections | `image`, `square_image` | `image_signed_id`, `square_image_signed_id` |
+| Admin option values | `image` | `image_signed_id` |
+| Admin tax exemption certificates | `document` | `document_signed_id` |
+| Admin and Seller imports | `attachment` | `attachment_signed_id` |
+| Admin and Seller shipping labels, Seller requirement submissions | `file` | `file_signed_id` |
+| Admin orders, Store API carts | `po_document` | `po_document_signed_id` |
+
+The Store API's `POST /carts/:id/po_document` keeps its route but takes the same flat request and returns the same response as `POST /files`.
+
+Uploads that are never attached are now deleted after two days. Only files uploaded to a store are deleted; files from before the upgrade that were never attached are left as they are. Schedule the job daily in `server/config/recurring.yml`:
+
+```yaml server/config/recurring.yml
+production:
+  purge_unattached_uploads:
+    class: Spree::Uploads::PurgeUnattachedJob
+    schedule: every day at 4am
+```
+
+Attaching a file uploaded in another store is logged in 6.0 and refused from 6.1. If your logs show `Spree 6.1 refuses this attachment`, fix the code that creates that file before upgrading to 6.1.
+
 ## Payment source IDs use the `psrc_` prefix
 
 `Spree::PaymentSource` shared the `ps_` prefix with `Spree::PaymentSession`,
@@ -514,6 +572,46 @@ Class-level `decode_prefixed_id` (for example `Spree::Product.decode_prefixed_id
 now returns `nil` for an ID with another model's prefix, the same as
 `find_by_prefix_id`. Call `Spree::PrefixedId.decode_prefixed_id` if you
 really need to decode any prefix.
+
+## Type values are short names, not class names
+
+The API no longer sends or accepts Ruby class names. Every value that used to name a class is now a short name (`Spree::CreditCard` becomes `credit_card`), so the API keeps the same shape whatever the server is built with. Records in the database are not touched.
+
+If your storefront or webhook receiver reads any of these fields, compare against the short name instead:
+
+| Field | Where | Before | After |
+|---|---|---|---|
+| `payment_source_type` | Store API payment setup sessions, `payment_setup_session.*` webhooks | `Spree::CreditCard` | `credit_card` |
+| `type` | Custom fields on products, variants, categories and collections | `Spree::CustomFields::ShortText` | removed — read `field_type` (`short_text`) |
+
+The Admin API follows the same rule everywhere: providers and strategies (`fulfillment_provider: 'manual'`, `order_routing_strategy: 'rules'`), custom field definition `resource_type` (`product`, `category`), tag `taggable_type`, the owner and originator types on records, the permission subjects `/me` returns (`product`, `category`), and filters such as `q[type_eq]=orders`. An integration written against the Admin API preview sends and expects these short names; the [Admin SDK](/developer/sdk/admin/resources) types list them.
+
+## Preferences are typed in the API
+
+Settings no longer reach the Admin and Seller APIs in the shape of Ruby's preference methods. The Store API is not affected.
+
+**Settings use plain names.** Every `preferred_*` field is renamed, on read and on write:
+
+| Resource | Before | After |
+|---|---|---|
+| Store (`/admin/store`) | `preferred_timezone`, `preferred_guest_checkout`, `preferred_storefront_url`, … every `preferred_*` field | `timezone`, `guest_checkout`, `storefront_url`, … the same name without the prefix |
+| Channel | `preferred_storefront_access`, `preferred_guest_checkout`, `preferred_order_routing_strategy` | `storefront_access`, `guest_checkout`, `order_routing_strategy` |
+| Import (Admin and Seller) | `preferred_delimiter` | `delimiter` |
+| Seller profile | `preferred_timezone` | `timezone` |
+
+`order.preferred_stock_location_id` keeps its name: it is an association, not a setting. Validation errors name the field without the prefix too. The Admin and Seller APIs no longer accept the old `preferred_*` names; send the new ones. The store's `storefront_url` is the setting as saved, `null` when unset; `url` is the address customer links use. The store's `default_minimum_payout_amount` and `default_commission_tax_rate` are now exact decimal strings (`"0.23"`) instead of numbers.
+
+**`preference_schema` is replaced by `schema`.** Rules, actions, payment methods and integrations no longer carry `preference_schema` on every row. Each family's `/types` endpoint (and the delivery-method and promotion-action calculator lists) returns a `schema` per type instead: the JSON Schema of its `preferences`, with `format`, `enum`, `default` and `x-spree-secret`. Read a row's type, then look up its schema there. `/payment_methods/types` now lists every provider, with `installed: true` on those the store already has, instead of leaving them out.
+
+**Writes are validated.** A `preferences` payload with an unknown key, a value of the wrong type, a value outside the declared choices, or an id of another model or another store is refused with a `422` whose `code` is `invalid_preferences`. `details` names each failing value by its JSON pointer (`/preferences/channel_ids/1`, or `/rules/0/preferences/channel_ids/1` inside a list of rules). Before, unknown keys were silently dropped. Send decimals as strings (`"10.0"`) and record ids as prefixed ids (`ch_…`).
+
+**Id lists read as prefixed ids.** Preferences listing records, such as a rule's `channel_ids` or `customer_group_ids`, now return prefixed ids rather than database ids, the same form a write accepts.
+
+**Delivery methods nest their calculator.** `calculator_type` and `calculator_preferences` are replaced by `calculator: { type, preferences }` on read and write, the shape promotion actions already use. The old two parameters are no longer accepted; their values follow the new rules (decimals as strings).
+
+A preference marked deprecated, such as a flat rate calculator's `minimum_item_total`, is still accepted on write until its removal, with its deprecation warning, but is not read back.
+
+**For extension authors:** declare every preference's full type (`of:` on arrays, `keys:` and `values:` on hashes, the `:money` type for amounts, `choices:`, `format:`). An incomplete declaration still works in 6.0 with a deprecation warning, and its schema accepts any value. Replace `normalize_id_preference` with `preference :ids, :array, of: :id, model:, scope:`, and `in:` with `choices:`. See [Model preferences](/developer/customization/model-preferences#declaring-the-full-type).
 
 ## Every event is declared
 
@@ -543,6 +641,8 @@ These were deprecated in 5.x and are **gone now** — there is no bridge, so cal
 | `Store#supported_shipping_zones` | `#countries_with_shipping_coverage` |
 | `Spree.searcher_class` | `Spree.search_provider` |
 | `Spree.admin_user_class.spree_admin_created?` | `.spree_admin.exists?` |
+| `Spree::Admin::Updater` | `Spree::UpdateCheck` — the dashboard shows the update notice; see [Update Checks and Usage Data](/developer/deployment/usage-data) |
+| `Spree::Admin::RuntimeConfig.admin_updater_enabled` | `Spree::Config.update_check_enabled`, or `SPREE_UPDATE_CHECK_DISABLED=1` |
 | `BaseMailer#set_email_locale` | wrap the action body in `with_store_locale(store) { ... }` |
 | `Asset#styles`, `ImageMethods#generate_url`, `#original_url` | Active Storage variants with `cdn_image_url` |
 | `Spree::ImageMethods`, `Spree::NumberAsParam` (concerns) | deleted — `NumberAsParam` was already a no-op; prefixed IDs come from `Spree::PrefixedId` |
@@ -581,11 +681,15 @@ These had no caller left in Spree, so they are removed with no replacement shim.
 | `Spree::Carts::Empty` and `cart_empty_service` | remove items through the Store API cart items endpoints, or delete the cart with `Spree.cart_destroy_service` |
 | `Spree::Payments::Create` and `payment_create_service` | the Store API payments endpoint, `Spree::StoreCredits::Apply` or `Spree.gift_card_apply_workflow` |
 
+### Products no longer touch their categories
+
+Saving or touching a product used to bump the `updated_at` of each of its categories and their parents, through `Spree::Products::TouchCategoriesJob` (formerly `TouchTaxonsJob`). That kept the old Rails storefront's page caches fresh. The Store API doesn't need it: a category's response has no product data, and product responses are cached on the products' own timestamps. Both jobs are removed. If your own code caches product data under a category's `cache_key_with_version`, include the products' timestamps in that key instead. Jobs still queued from before the upgrade fail with an unknown class error and can be discarded.
+
 ### The Legacy order-routing strategy is gone
 
 `Spree::OrderRouting::Strategy::Legacy` — the pre-5.5 escape hatch that delegated straight to `Spree::Stock::Coordinator` and consulted no routing rules — is removed and no longer registered in `Spree.order_routing.strategies`.
 
-A store or channel still carrying `preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Legacy'` **keeps working**: `Order#order_routing_strategy` ignores unregistered classes, logs a warning, and falls back to `Strategy::Rules`. Clear the stale preference to silence the warning — note that saving such a record now fails validation, since the value is no longer in the registry.
+A store or channel still carrying `order_routing_strategy: 'Spree::OrderRouting::Strategy::Legacy'` **keeps working**: `Order#order_routing_strategy` ignores unregistered classes, logs a warning, and falls back to `Strategy::Rules`. Clear the stale preference to silence the warning — note that saving such a record now fails validation, since the value is no longer in the registry.
 
 `Spree::Stock::Coordinator` itself stays — cart fulfillment building, exchanges, and claims still use it.
 
@@ -640,7 +744,7 @@ Also note:
 
 - **Ransack:** `default_price` is no longer a searchable association on `Variant`; query `prices` instead.
 - **Prices in permitted params:** the dead `:price` and `:compare_at_price` entries are gone. Prices were already written as nested `prices: [{ amount:, currency: }]` under variants — the top-level keys had no writer behind them. (`Spree::PermittedAttributes` itself is removed in 6.0 — see below.)
-- Localized number parsing still happens: `Spree::Price#amount=` runs `Spree::LocalizedNumber.parse`, so `set_price(currency, '1,599.99')` works as `price=` did.
+- Prices are written as numbers or canonical decimal strings: `set_price(currency, '1599.99')`. A localized string such as `'1,599.99'` raises `Spree::Money::InvalidFormat` (see [Money](#money)).
 - The variant validation that inferred a missing price from the product's default variant is gone. Set prices explicitly (the product and variant factories already do).
 
 ### `Spree::PermittedAttributes` is removed
@@ -801,6 +905,58 @@ Other changes that come with it:
 - **Alba moved into `spree_core`**, with its configuration, so core's staff emails render in installations without `spree_api`.
 - **Your own mailers keep working.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own ERB views is wrapped in the new email layout, and the `spree/shared/mailer_hero` and `mailer_button` partials remain for its views. See [Your own mailers](/developer/customization/emails#your-own-mailers).
 
+## Money
+
+- **Numbers are no longer parsed by locale.** Price, variant, payment, refund, store credit, gift card, discount and fee amounts take a number or a canonical decimal string (`"1234.56"`); any other text raises `Spree::Money::InvalidFormat`, which the API answers with `invalid_money_format`. Before 6.0 they were re-read under the request's language, so a store whose language writes a comma decimal (Dutch, German, French) saved the dashboard's `49.50` as 4950, and an unchanged price grew tenfold on each save. Send canonical decimal strings (`"1234.56"`) and convert localized input in the client. `Spree::LocalizedNumber` still works with a warning until 6.1. If your prices were saved in a comma-decimal store before upgrading, check them.
+- **Rounding follows the currency.** Taxes, percentage discounts, promotion splits and shipping markups round to the currency's own decimal places from the ISO 4217 table: whole yen, three decimals for dinar. Two-decimal currencies are unchanged. Open carts in other currencies may change by less than one minor unit the next time they are recalculated. Placed orders do not change. Spree now gives the Hungarian forint two decimal places, as ISO 4217 does.
+- **Money on the API is written to each currency's decimals.** Every amount in the Store, Admin and Seller APIs, and so in webhook payloads and email variables, is a decimal string with exactly its currency's decimal places: `"10.00"` (was `"10.0"`), `"1000"` in yen (was `"1000.0"`), `"1.500"` in dinar. Unit prices keep up to four decimals. Fields that were JSON numbers are now strings: `cart.order_minimum` and `order_minimum_shortfall`, the product filter price range `min`/`max`, report money metrics and percentages, and the store's `default_minimum_payout_amount` and `default_commission_tax_rate`. Clients comparing these strings, or parsing them as numbers, should switch to exact decimal arithmetic; the SDKs export `sumMoney`, `subtractMoney`, `multiplyMoney`, `compareMoney` and `isZeroMoney`.
+- **Admin and Seller writes refuse JSON numbers for money.** Amounts and rates, including those inside `preferences`, must be canonical decimal strings (`"19.99"`). A number, a localized or grouped string, or more decimals than the field holds is answered with `422` and `invalid_money_format`, naming the field.
+- **Amounts may not carry more decimals than they can keep.** Now that the columns hold four decimals, the database no longer rounds away a fraction of a cent, so a payment, refund, store credit, gift card, fee or discount with more decimals than its currency has (`10.0049` dollars) fails validation with `too_many_decimals`. Unit prices and cost prices allow four, tax rates five decimals of the fraction (`rate_percent` `"7.125"`, not `"7.1255"`), and price list percentages three. Round in your own code before saving. A manual order discount's `value` and a commission rate's `value` are read as strictly as other money fields.
+- **The Admin and Seller APIs no longer return `display_*` money fields.** Responses carry the amount (`"29.99"`) with its currency, and the client formats it in the reader's own language. Before 6.0 the server formatted a copy in the request's language, which could disagree with the editable amount beside it. Format with `Intl.NumberFormat` or your platform's equivalent. The Store API and webhook payloads keep their `display_*` money fields until 6.1, marked deprecated in the API reference and the SDK types; format the amount beside each one instead (`total` for `display_total`). Labels such as `display_name` are unchanged.
+- **Money preferences have their own type.** Calculator, rule and store preferences holding an amount (`amount`, `first_item`, `minimal_amount`, `amount_min`, `min_amount`, `default_minimum_payout_amount` and the like) are declared `:money` instead of `:decimal`, report `money` in `preference_schema`, and are written with the decimals of the calculator's currency (`"12.50"` rather than `"12.5"`). Declare your own extensions' amounts with `:money` so the dashboard shows their currency. A `:decimal` or `:money` preference now refuses text such as `"1,599.99"` instead of reading it as 1. Money preferences are checked by their type on write: a value that is not a decimal string, or has more decimals than its currency, is refused with `invalid_preferences` and a pointer to the field (`/calculator/preferences/amount`), rather than `invalid_money_format`.
+- **Rates are decimal strings, and tax rates are renamed.** Rates and percentages read and write as strings without trailing zeros. A tax rate's `amount` (a fraction) is now `rate`, and `amount_percentage` is `rate_percent`; `Spree::TaxRate#amount_percentage` keeps working with a warning until 6.1.
+- **`amount_in_cents` and `compare_at_amount_in_cents` are deprecated** on Store API prices and price history, and removed in 6.1. They still hold the amount in hundredths, which is wrong for currencies without two decimals. Read `amount`, and each currency's `decimal_places` (new on `GET /api/v3/store/currencies`) if you need minor units. The Admin and Seller APIs no longer return them.
+- **Money columns widen to `decimal(19,4)`.** They now hold a Kuwaiti dinar's third decimal, unit prices below a cent (`0.0125`), and very large amounts in currencies like the Vietnamese dong. No stored value changes. Totals, payments and refunds are still rounded to the currency's decimals; only unit prices (`price`, `compare_at_amount`, `cost_price`, `unit_cost`) keep up to four. The migration rewrites each money table while it runs, which locks `spree_orders`, `spree_line_items` and `spree_adjustments` for as long as that takes. If you cannot take that lock, widen those columns online first (add a `decimal(19,4)` shadow column, backfill it in batches, swap it in), and the migration skips any column already at `(19,4)`. Extensions with their own money tables, such as `spree_stripe_payment_intents` from the standalone Stripe gem, should widen theirs the same way.
+- **Payment gateways receive the amount with its currency.** `authorize`, `purchase`, `capture` and `credit` are called with a `Spree::Money` (amount and currency) instead of an integer in hundredths, which was wrong for yen and dinar. A gateway opts in with `self.accepts_money_amounts = true` and converts the amount to its provider's unit (Stripe's rules live in `SpreeStripe::Units`). A gateway that has not opted in still receives hundredths, with a deprecation warning, until 6.1. `Spree.payment_capture_workflow.call(amount:)` takes the amount in the currency's own units; an Integer is still read as hundredths, with a warning.
+- **Stripe refuses amounts it cannot take.** Stripe charges three-decimal currencies (Bahraini, Jordanian, Kuwaiti and Omani dinar, Tunisian dinar) only in steps of 0.010, and pays out Hungarian forint and New Taiwan dollars only in whole units. `spree_stripe` now raises a gateway error naming the rule, rather than rounding to a sum other than the one the order records.
+- **Capture records in yen and dinar written before 6.0 may be wrong.** A capture in a currency without two decimals could be recorded in the wrong unit: 100 times too much in yen, a tenth in dinar. New captures are recorded exactly. To list the old records, writing nothing, run:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:money:audit_capture_events
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:money:audit_capture_events
+```
+
+</CodeGroup>
+
+## Locale codes come from a fixed list
+
+A market's `default_locale` and `supported_locales`, and the store's own `default_locale` and `supported_locales`, accept only the codes in `Spree::Locales::ALL`: every ISO 639-1 language (`en`, `de`) plus the regional variants commerce needs (`en-US`, `en-GB`, `pt-BR`, `zh-CN`). The match is exact, so `pt-br` is refused in favour of `pt-BR`. Any other value is answered with `422` naming the codes Spree does not support. Since an order's or cart's `locale` must be one its store supports, it comes from the list too once the store's locales do. Store setup, seeds and the markets migration move a code Spree does not list to its listed language (`en-IE` becomes `en`, `zh` becomes `zh-CN`).
+
+Values saved before the upgrade keep working until they are changed. If a market uses a code outside the list, change it to the listed spelling when you next edit it. The Store and Admin APIs publish the list as the `LocaleCode` type in the API reference and the SDK types.
+
+A store's locales are content locales, independent of the languages anything ships translation files for: every listed code is accepted for content (product names, descriptions and other translated fields), while messages in a language Spree has no translations for fall back to English. An app that sets `config.i18n.available_locales` keeps that list as the limit. Store setup no longer limits the languages it offers to the ones Spree translates, and refuses a `locale` it cannot place with `422`.
+
+Locale names move to the client. The `name` of a locale from `GET /locales` is deprecated in the Store API and removed in 6.1, and the Admin API no longer returns it: name a locale in the reader's language with `new Intl.DisplayNames([language], { type: 'language' }).of(code)`.
+
+Country and currency names move to the client the same way. A country's `name` and a currency's `name` and `symbol` are deprecated in the Store API and removed in 6.1, and the Admin and Seller APIs no longer return a country's `name`: name a country with `new Intl.DisplayNames([language], { type: 'region' }).of(iso)` and a currency with `{ type: 'currency' }`, and format amounts (which places the symbol) with `formatMoney` or `Intl.NumberFormat`. The Admin and Seller country lists are ordered by ISO code; sort them by the name you display. State and region names stay on the API, since `Intl` has none for them.
+
+## Translations ship with Spree
+
+Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 43 languages besides English. Regional English (`en-GB` and the like) now falls back to `en`. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).
+
+- **Remove `spree_i18n` from your Gemfile.** Its last release is empty and only warns. Older releases load their own, larger files over Spree's.
+- **Use `I18n.t` with the full key.** `Spree.t(:free)` becomes `I18n.t('spree.free')`, and `Spree.t(:x, scope: :api)` becomes `I18n.t('spree.api.x')`. `Spree.t` keeps working until 6.1 with a deprecation warning.
+- **A missing key is plain text.** `Spree.t` used to return a `<span class="translation_missing">` HTML element for a key it could not find. It now returns what `I18n.t` returns.
+- **Untranslated keys fall back to English.** Spree's translations are complete only in English. With `config.i18n.fallbacks = true`, as Rails generates for production, Spree adds English after your default locale. An app that sets its own fallback list or turns fallbacks off keeps its choice.
+- **`spree/testing_support/i18n` does nothing.** Set `config.i18n.raise_on_missing_translations = true` in your test environment to catch missing keys.
+- **Kaminari is no longer loaded.** It came in through `spree_i18n`. Spree paginates with Pagy, and the `Spree::Base.page` bridge for a custom Kaminari `page_method_name` is gone. Add `kaminari` to your Gemfile if your own code uses it.
+- **Translations for removed screens are gone.** Keys used only by the old admin and storefront, and by the v2 API, were removed. If your code reads one, copy it into your app's locale files.
+
 ## Deprecated in 6.0, removed in 6.1
 
 Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:
@@ -818,6 +974,9 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `Address#firstname`, `#lastname`, `#zipcode` | `#first_name`, `#last_name`, `#postal_code` (columns renamed) |
 | `Address.normalize_zipcode`, `#normalized_zipcode` | `.normalize_postal_code`, `#normalized_postal_code` |
 | `Order#bill_address_firstname`, `#bill_address_lastname` | `#bill_address_first_name`, `#bill_address_last_name` |
+| `preference … parse_on_set: normalize_id_preference(klass:, scope:)` | `preference …, :array, of: :id, model:, scope:` |
+| `preference …, in: [...]` | `preference …, choices: [...]` |
+| `:array` without `of:`, `:hash` without `keys:`/`values:`, the `:any` type | A complete declaration (see [Model preferences](/developer/customization/model-preferences#declaring-the-full-type)) |
 | `OptionType#presentation`, `OptionValue#presentation` | `#label` (column renamed, translations included). Reads and writes on an instance only — `where(presentation:)` and `find_by(presentation:)` raise, because Mobility owns `label` so the bridge cannot be an attribute alias. Query by `label`. |
 | `OptionValue#option_type_presentation` | `#option_type_label` |
 | `q[presentation_cont]` (option type / value filters) | `q[label_cont]` — the Ransack whitelist publishes the column, so the filter key moves with it |
@@ -836,7 +995,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `Order#remove_out_of_stock_items!` | cart-side only (`Spree::Carts::RemoveOutOfStockItems`) |
 | `Order#delivery_required?` (Order and Cart) | `#delivery_step_required?` — digital and pickup are deliveries too; this asks whether the customer must choose a delivery option |
 | `Order#requires_ship_address?` (Order and Cart) | `#shipping_address_required?` — decided by the selected delivery methods (`DeliveryMethod#requires_address?`); digital, pickup, and pickup-point deliveries need no customer address |
-| `requirements[].field` / `.code` `shipping_method` (Store API) | `delivery_method` / `delivery_method_required` — no bridge; clients keying off the delivery requirement must switch both tokens |
+| `requirements[].field` `shipping_method` (Store API) | `code` `delivery_method_required`; the field becomes `delivery_method` in 6.1 |
 | `Cart#number` (Store API field) | `id` — carts have no order-style number; the field mirrors the prefixed ID for one release |
 | `order.completed` event | `order.placed` |
 | Calling cart services with `order:` kwargs | `cart:` kwargs |
@@ -847,6 +1006,11 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `metafields` / `public_metafields` associations | `custom_fields` / `storefront_custom_fields` |
 | `.with_metafield_key`, `.with_metafield_key_value` | `.with_custom_field_key`, `.with_custom_field_key_value` |
 | `Spree.metafields` | `Spree.custom_fields` |
+| `Spree.t`, `Spree.translate` | `I18n.t` with the full key, e.g. `I18n.t('spree.free')` |
+| `Spree::LocalizedNumber.parse` | `BigDecimal(value)` on a canonical decimal string; Spree no longer parses numbers by locale |
+| `Spree::TaxRate#amount_percentage`, `#amount_percentage=` | `#rate_percent`, `#rate_percent=` (`#rate` is the fraction) |
+| Gateway methods receiving an integer amount in hundredths | `self.accepts_money_amounts = true` and a `Spree::Money` argument |
+| `Spree.payment_capture_workflow.call(amount: Integer)` (hundredths) | `amount:` as a `BigDecimal` in the currency's own units |
 | `CustomFieldDefinition#name`, `#metafield_type`, `#display_on` | `#label`, `#field_type`, `#storefront_visible` (columns renamed) |
 | `Spree::SearchProvider::Meilisearch` | `SpreeMeilisearch::SearchProvider` (moved to the `spree_meilisearch` gem) |
 | `Spree::SearchProvider::ProductPresenter` | `SpreeMeilisearch::ProductPresenter` (moved to the `spree_meilisearch` gem) |
@@ -924,10 +1088,240 @@ Both internal-note serializers now return the pair. Previously orders exposed on
 
 Stored markup is also held to a narrower allowlist than 5.6 — see [the rich-text migration](#move-rich-text-out-of-action-text) for what is permitted and how to widen it.
 
+## Upgrading a storefront
+
+A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefront](https://github.com/spree/storefront), needs `@spree/sdk` 2.0 and the changes below. Most are type errors that point at the line to change.
+
+**The quickest path, for a person or a coding agent:**
+
+1. Upgrade `@spree/sdk` to 2.x and run the type checker (`pnpm exec tsc --noEmit`, or your framework's build).
+2. Match each error against the table below and apply its fix. Fix values where they come from (a context, a form, an API response), not with a cast at each call site.
+3. Search for the deprecated names in the [deprecated fields](#deprecated-fields-still-work-until-61) section and switch them, even where nothing fails to compile.
+
+To hand the upgrade to a coding agent, give it the [prompt below](#upgrade-with-a-coding-agent).
+
+| Type error mentions | Cause | Fix |
+|---|---|---|
+| `CountryCode` or `CurrencyCode` | Country and currency codes are typed | [Country and currency codes](#country-and-currency-codes-are-typed) |
+| `string \| null` where a price or amount is read | Money fields are `null` for guests when the store hides prices | [Money can be null](#money-can-be-null) |
+| A property that "does not exist" in a `…Params` type | Request types now list exactly what the endpoint accepts | [Request types](#request-types-match-the-api) |
+| `ProductSort`, or a filter key | List filters and sort are typed | [List filters and sort](#list-filters-and-sort-are-typed) |
+| `number` is not assignable to `string` in a filter or amount | Money is a decimal string everywhere | Send `'20.00'`, not `20` ([Money](#money), [store credit](#store-credit-amounts-are-decimal-strings)) |
+| `string` is not assignable to `number` where the price filter's range is read | The price range's `min` and `max` are decimal strings | [The price filter's range is text](#the-price-filters-range-is-text) |
+| A property that "does not exist" on `OrderGroup` | Completing a cart, or reading an order by its cart id, can return an order group | [Completing a cart can return an order group](#completing-a-cart-can-return-an-order-group) |
+
+### Upgrade with a coding agent
+
+Copy this prompt into Claude Code, Cursor or another coding agent, opened in your storefront's repository. It covers what upgrading the Spree storefront itself turned up, including the changes that compile but behave differently.
+
+```text Prompt expandable
+Upgrade this storefront from Spree 5.6 to Spree 6.0: move it to @spree/sdk 2.x and remove every use of a Store API field, SDK name or webhook event that 6.0 deprecates for removal in 6.1.
+
+Read the "Upgrading a storefront" section of the upgrade guide first and keep it open (plain-text version):
+https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0.md
+
+Work on a new branch. Steps:
+
+1. Install the latest @spree/sdk 2.x and run the type checker. Fix each error at the place the value comes from (a context, a form, a data loader, an API response), not with a cast at each call site. The guide's table maps each error to its fix.
+
+2. Go through the guide's "Deprecated fields still work until 6.1" table and replace every entry, even where nothing fails to compile. Search the code for each name. When you finish, none of them may remain.
+
+3. Money:
+   - Replace display_* fields with formatMoney(amount, currency, locale) from @spree/sdk, in the reader's language. Pass { unitPrice: true } for unit prices (line item price, product and variant prices), which can carry up to four decimals.
+   - Payments, fulfillments, delivery rates and applied promotions carry no currency. Use the currency of the cart or order they belong to.
+   - formatMoney returns an empty string, never null, for a missing amount. Fallbacks written as `formatMoney(...) ?? "—"` never trigger; use `||`. Check every place that tested a display_* value for truthiness.
+   - Amounts are decimal strings and can be null when the store hides prices. Compare them with compareMoney or isZeroMoney. Never compare amount_in_cents, and never parse money into a float for arithmetic.
+   - A delivery rate whose cost is null has no price yet (a freight quote, for example). Do not show it as free, in a wallet payment sheet or anywhere else.
+
+4. Addresses: read and write country_code and state_code. If your form state uses the old names, rename the form fields to match the API. Type a cart's addresses as CartAddressParams and address book writes as AddressCreateParams or AddressUpdateParams. Country codes typed by a person or sent by a wallet are plain strings; convert them to CountryCode once, where they enter your code.
+
+5. Names: name countries, currencies and languages in the reader's language with Intl.DisplayNames, and sort them with Intl.Collator. Create one DisplayNames object per locale and reuse it; do not build one on every render or inside a sort comparison.
+
+6. Order groups: carts.complete() and orders.get() return Order | OrderGroup. In a marketplace, a cart holding several sellers' goods becomes one order per seller under a group. Narrow with isOrderGroup. Read totals, payments and addresses from the group, and items and fulfillments from group.orders. Remove casts that hide this, such as `as unknown as Cart`. Report a group as one purchase in analytics.
+
+7. Statuses: map the old values to the new ones using the guide's "Status values changed" tables. That covers fulfillment status, and an order's fulfillment_status and payment_status. Keep the old values mapped as well, because orders saved before the upgrade can still carry them. Add a translated label for every new value in every language the storefront ships. A status with no translation should show its own words, not a raw translation key.
+
+8. Gift cards and store credit: store_credit_total no longer includes what a gift card paid. Show the gift card and store credit rows independently, not one or the other.
+
+9. Webhooks: handle order.placed in place of order.completed, and order.fulfilled in place of order.shipped. Fulfillment status "shipped" is now "fulfilled" (or "delivered"). Type handlers by event name: WebhookEvent<"order.placed">. Update any documentation or environment examples that list the subscribed events.
+
+10. Filters: the price filter's min and max are decimal strings. Send amount filters as strings ("20.00"). Narrow a sort read from the URL to ProductSort where it is read. Match the cart's delivery requirement by its code, delivery_method_required.
+
+11. Update test fixtures and mocks to the 6.0 shapes. Run the type checker, linter, unit tests and end-to-end tests, and make them all pass.
+
+Do not change behaviour beyond what the upgrade requires, and keep every user-visible string translated. When done, list what you changed, and anything that needs a person, such as subscribing the webhook endpoint to the new event names before deploying.
+```
+
+### List filters and sort are typed
+
+Each `list()` method now takes the filters and sort fields its endpoint accepts. A misspelled filter, a filter the endpoint doesn't support, or an unknown sort field used to return the unfiltered list; it is now a compile error. `ProductListParams`, `CategoryListParams`, `CollectionListParams` and `OrderListParams` keep their names but no longer accept arbitrary keys.
+
+- **A sort value read from the URL is a plain `string`.** Narrow it where you read it; the API still validates the value at runtime:
+
+  ```ts src/lib/utils/product-query.ts
+  import type { ProductListParams, ProductSort } from '@spree/sdk'
+
+  params.sort = filters.sortBy as ProductSort
+  ```
+
+- **Filters your backend adds are compile errors until you declare them.** The published types list only the filters Spree itself declares. Any filter or scope your backend adds (through `Spree.ransack.add_attribute`, `add_scope` or a model decorator) still works in the API, but TypeScript rejects the key. Generate the declarations from your app, and run the command again whenever a filter changes:
+
+  ```bash
+  spree filters types
+  ```
+
+  It writes a declaration file into each app under `apps/`, for the SDK that app uses (the storefront, the dashboard and the seller panel). For a one-off filter, send it inside `q` instead (`list({ q: { erp_id_eq: 'ERP-1' } })`), which is not type checked. See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript) for both, and for declaring filters by hand.
+
+- **Amount filters take decimal strings.** `price_gte`, `price_lte` and the other money filters are typed as strings, like every money value in 6.0. Send `'20.00'`, not `20`.
+
+- **Prefer `search`.** Products, categories and collections take `q[search]` (the SDK's `search` key), which matches more than `name_cont`. See [which filters an endpoint accepts](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+### Completing a cart can return an order group
+
+`carts.complete()` returns `Order | OrderGroup`. In a marketplace, a cart holding several sellers' goods divides into one order per seller and returns the group. `orders.get()` does the same when given the cart's id, which is what an order confirmation page usually holds. Narrow the result with `isOrderGroup` before reading order fields:
+
+```ts
+import { isOrderGroup } from '@spree/sdk'
+
+const result = await client.carts.complete(cartId)
+const orders = isOrderGroup(result) ? result.orders : [result]
+```
+
+An order group carries the same totals as an order (`item_total`, `delivery_total`, `discount_total`, `tax_total`, `fee_total`, `gift_card_total`, `store_credit_total`, `total`, `amount_due`) and the payments made at checkout, so one order summary component can render either.
+
+### Store credit no longer includes gift cards
+
+A gift card is redeemed as store credit. `store_credit_total` used to include that amount as well as `gift_card_total`, so a summary showing both rows took it off twice. It now holds only the store credit that is not from a gift card. A storefront that shows one row or the other keeps working, and one that shows both no longer deducts the gift card twice.
+
+### Request types match the API
+
+Request types (`CreateCartParams`, `UpdateCartParams`, `AddLineItemParams`, `AddressParams` and the rest) are generated from what each endpoint accepts. Fields the API never accepted are gone, so a type error there means the value was being dropped. Fields the API accepted but the old types left out are now available.
+
+- **A cart's addresses take `CartAddressParams`, not `AddressParams`.** `AddressParams` is the customer's address book entry. A cart address also takes `id` (an address from the book) and `quick_checkout` (relaxed validation for a wallet's partial address):
+
+  ```ts src/lib/data/express-checkout-flow.ts
+  import type { CartAddressParams } from '@spree/sdk'
+
+  const shipping_address: CartAddressParams = { ...walletAddress, quick_checkout: true }
+  await client.carts.update(cartId, { shipping_address })
+  ```
+
+- **Some requirements relaxed.** `AddLineItemParams.quantity` is optional (it defaults to 1), and `RegisterParams.password_confirmation` is optional.
+- **Renamed types keep their old names until 6.1, marked deprecated:** `LineItemInput` is `LineItemInputParams`. `AddressParams` and `CompanyAddressParams` are split by action into `AddressCreateParams` / `AddressUpdateParams` and `CompanyAddressCreateParams` / `CompanyAddressUpdateParams`: creating requires the name, street, city and country, and updating takes any of them.
+
+### Country and currency codes are typed
+
+`country_code` and `currency` are typed as `CountryCode` (ISO 3166-1 alpha-2, such as `'US'`) and `CurrencyCode` (ISO 4217, such as `'EUR'`) in requests and responses. A plain `string` no longer type-checks where a request expects one. The values come from the API already typed (`Market.currency`, `Market.country_codes`, `Country.iso`, `Currency.iso_code`, `Address.country_code`), so type the state that holds them rather than casting each use:
+
+```ts src/contexts/StoreContext.tsx
+import type { CountryCode, CurrencyCode } from '@spree/sdk'
+
+interface StoreContextValue {
+  currency: CurrencyCode
+  country: CountryCode
+}
+```
+
+A code typed by a shopper or read from the URL is still a `string`. Check it against the store's own list (`market.country_codes`, the currencies endpoint) before using it, which also narrows its type:
+
+```ts
+const country = market.country_codes.find((code) => code === params.country.toUpperCase())
+```
+
+### Money can be null
+
+Every money field, including `display_*` amounts (a gift card's or store credit's `display_amount_remaining`, a delivery rate's `cost`), is typed `string | null`: it is `null` for a guest when the store hides prices (`prices_hidden`). Handle `null` where you format or add amounts, for example by showing nothing, or a "price on request" label.
+
+### Store credit amounts are decimal strings
+
+`carts.storeCredits.apply()` takes the amount as a decimal string, like every other money value. Leave the amount out to apply as much store credit as the cart can use:
+
+```ts
+await client.carts.storeCredits.apply(cartId, '25.00', options) // not 25
+```
+
+Passing a number still works until 6.1: the SDK marks that form `@deprecated`, and the endpoint (`POST /carts/:id/store_credits`) reads a JSON number through its text and logs a deprecation warning. From 6.1 the endpoint refuses a number with `422 invalid_money_format`, so a storefront that calls the API without the SDK must send a string too.
+
+### The price filter's range is text
+
+The price filter that `products.filters()` returns gives its range as decimal strings, like every other amount: `{ min: '9.99', max: '120.00' }`, where 5.6 sent numbers (`9.99`). `PriceRangeFilter` types them as strings, so a price slider that does arithmetic on `min` and `max`, or passes them to a slider component that expects numbers, now fails to compile (the first 2.0 release candidates still typed them as numbers). Use the SDK's `compareMoney` and `subtractMoney` for exact comparisons, and convert to a number only where the slider component needs one, for display:
+
+```ts
+import type { PriceRangeFilter } from '@spree/sdk'
+
+const range = filters.find((filter): filter is PriceRangeFilter => filter.type === 'price_range')
+const slider = range && { min: Number(range.min), max: Number(range.max) } // display only
+```
+
+Send the chosen bounds back as strings (`price_gte: '20.00'`), not the slider's numbers.
+
+### Status values changed
+
+The statuses of fulfillments and the payment and fulfillment statuses of orders use new values. This is not a type error, because status types accept any string, so search your code for the old values.
+
+**A fulfillment's `status`, and an order's `fulfillment_status`:**
+
+| 5.6 | 6.0 |
+|---|---|
+| `pending`, `ready` | `unfulfilled` |
+| `shipped` | `fulfilled` |
+| `canceled` | `canceled` |
+| (new) | `delivered`, once the customer has the parcel |
+
+An order's `fulfillment_status` also keeps `partial` and `backorder`.
+
+**An order's `payment_status`** is worked out from the payments and refunds on the order, so an old value can become more than one new value:
+
+| 5.6 | 6.0 |
+|---|---|
+| `balance_due` | `none` (nothing paid), `authorized` (authorized, not yet captured) or `partially_paid` |
+| `paid` | `paid`, or `partially_refunded` / `refunded` when the order has refunds |
+| `credit_owed` | `overcharged` |
+| `void` | `voided` |
+| `failed` | `none` |
+
+### Deprecated fields still work until 6.1
+
+These Store API fields keep working in 6.0 and are marked `@deprecated` in the SDK types, so editors strike them through. Switch now; they are removed in 6.1:
+
+| Deprecated | Use |
+|---|---|
+| Address `country_iso`, read and written | `country_code` |
+| Address `state_abbr`, read and written | `state_code` |
+| Stock location `country_iso` | `country_code` |
+| Stock location `state_abbr` | `state_code` |
+| Refund `reimbursement_id` (always `null`: reimbursements are folded into returns) | `originator_id` with `originator_type` |
+| Company address `zipcode`, written | `postal_code` |
+| Cart `number` | `id` |
+| Market `country_isos` | `country_codes` |
+| Price `amount_in_cents`, `compare_at_amount_in_cents`, and price history `amount_in_cents` | `amount`, `compare_at_amount` ([Money](#money)) |
+| A cart requirement's `field` `shipping_method` | Match its `code`, `delivery_method_required`; the field becomes `delivery_method` |
+| The `Discount` type for `cart.discounts` and `order.discounts` | `AppliedPromotion` |
+| A number passed to `carts.storeCredits.apply()` | A decimal string ([store credit](#store-credit-amounts-are-decimal-strings)) |
+| Every `display_*` money field (`display_total`, `display_price`, `display_amount`, …) | Format the amount beside it with its currency, with `formatMoney` ([Money](#money)) |
+| Country `name` | `new Intl.DisplayNames([language], { type: 'region' }).of(iso)` ([Locale codes](#locale-codes-come-from-a-fixed-list)) |
+| Currency `name` and `symbol` | `Intl.DisplayNames` with `{ type: 'currency' }`, and `formatMoney` for amounts |
+| Locale `name` | `new Intl.DisplayNames([language], { type: 'language' }).of(code)` |
+| The `AddressParams`, `CompanyAddressParams` and `LineItemInput` types | `CartAddressParams` for a cart, `AddressCreateParams` / `AddressUpdateParams` for the address book, and so on ([Request types](#request-types-match-the-api)) |
+| Webhook events `order.completed`, `order.shipped`, `shipment.shipped`, `shipment.canceled` | `order.placed`, `order.fulfilled`, `fulfillment.fulfilled`, `fulfillment.canceled`. Spree sends both names until 6.1; subscribe the endpoint to the new ones |
+| `WebhookEvent<Order>` (typed by its payload) | `WebhookEvent<'order.placed'>` (typed by its event name) |
+
+### Other Store API changes to check
+
+| Change | What to update | Details |
+|---|---|---|
+| Delivery requirement has a code | Match `delivery_method_required` (code); the `field` keeps `shipping_method` until 6.1 | [Checkout without a state machine](#checkout-without-a-state-machine) |
+| Status values | Map old fulfillment and payment statuses to the new ones | [Status values changed](#status-values-changed) |
+| Type values are short names | Compare `payment_source_type` with `credit_card`, and read custom field `field_type` | [Type values are short names](#type-values-are-short-names-not-class-names) |
+| Rich text comes in two shapes | Render `description_html` for markup; `description` is plain text | [Rich-text fields](#rich-text-fields-read-as-plain-text-plus-html) |
+| Payment source IDs | Stored `source_id` values change prefix from `ps_` to `psrc_` | [Payment source IDs](#payment-source-ids-use-the-psrc_-prefix) |
+| Completed carts are read-only | Read post-checkout data from the order, not the cart | [The Cart/Order split](#the-cartorder-split) |
+| Purchase order document | Send `po_document_signed_id` on the cart; `POST /carts/:id/po_document` takes a flat request | [File uploads](#file-uploads) |
+
 ## For extension authors
 
 - **Don't reach for model business methods from services** — 6.0 code style writes behavior inline in service/workflow steps; models keep data, validations, predicates and persistence primitives. Extensions patching removed model methods (`finalize!` internals, updater hooks) should move to workflow hooks (`Spree.hooks.register('carts.complete.before_finalize') { |flow| ... }` — handlers receive the workflow instance) or event subscribers.
-- **Store-scoped data is single-owner.** `Product`, `Promotion` and `PaymentMethod` `belongs_to :store`; the `stores: [...]` writers are gone. Multi-store sharing lives in the `spree_multi_store` extension.
+- **Store-scoped data is single-owner.** `Product`, `Promotion` and `PaymentMethod` `belongs_to :store`; the `stores: [...]` writers are gone, they will work until 6.1 release with a deprecation warning
 - The Store API v3 contract is stable across the split — cart endpoints keep their shapes; `requirements` gains `code` (and renames the delivery entry's field/code to `delivery_method`, see above), and serializer `number` on carts is bridged as described above.
 
 <Warning>

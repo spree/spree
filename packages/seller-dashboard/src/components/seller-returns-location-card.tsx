@@ -17,7 +17,7 @@ import {
   toastManager,
 } from '@spree/dashboard-ui'
 import { PencilIcon, PlusIcon } from '@spree/dashboard-ui/icons'
-import type { StockLocationParams } from '@spree/seller-sdk'
+import type { StockLocationUpdateParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -46,11 +46,11 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
   // more locations than one page holds would otherwise see one address while
   // the server sent their returns to another, with nothing on screen saying
   // so — and they would edit the wrong one.
-  const activeParams = { active_true: true, limit: 1 }
+  const activeParams = { active_eq: true, limit: 1 }
   const { data: takesReturns, isError: returnsFailed } = useQuery({
     queryKey: ['seller', sellerId, 'stock-locations', 'returns'],
     queryFn: () =>
-      sellerClient().stockLocations.list({ ...activeParams, returns_enabled_true: true }),
+      sellerClient().stockLocations.list({ ...activeParams, returns_enabled_eq: true }),
   })
   const hasReturnsLocation = (takesReturns?.data.length ?? 0) > 0
   const { data: anyActive, isError: anyFailed } = useQuery({
@@ -67,7 +67,7 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
   const title = t('profile.returns_address')
 
   const save = useMutation({
-    mutationFn: (params: StockLocationParams) => {
+    mutationFn: (params: StockLocationUpdateParams) => {
       if (!location) throw new Error(t('common.error'))
       return sellerClient().stockLocations.update(location.id, params)
     },

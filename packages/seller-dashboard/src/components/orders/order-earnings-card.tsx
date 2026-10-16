@@ -1,4 +1,4 @@
-import { formatStoreDateTime } from '@spree/dashboard-core'
+import { formatStoreDateTime, Money } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -88,7 +88,9 @@ export function OrderEarningsCard({ order }: { order: Order }) {
                     </span>
                   )}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">{transfer.display_amount}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  <Money amount={transfer.amount} currency={transfer.currency} />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

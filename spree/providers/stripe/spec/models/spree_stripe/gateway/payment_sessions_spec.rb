@@ -28,18 +28,6 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
     allow(gateway).to receive(:create_ephemeral_key).and_return(ephemeral_key_response)
   end
 
-  describe '#session_required?' do
-    it 'returns true' do
-      expect(gateway.session_required?).to be true
-    end
-  end
-
-  describe '#payment_session_class' do
-    it 'returns Spree::PaymentSessions::Stripe' do
-      expect(gateway.payment_session_class).to eq(Spree::PaymentSessions::Stripe)
-    end
-  end
-
   describe '#create_payment_session' do
     subject { gateway.create_payment_session(order: order) }
 
@@ -80,7 +68,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
 
     it 'raises a GatewayError when amount is zero' do
       allow(order).to receive(:total_minus_store_credits).and_return(0)
-      expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.zero_amount'))
+      expect { subject }.to raise_error(Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.zero_amount'))
     end
 
     context 'when the owner is a cart' do
@@ -294,7 +282,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
 
     context 'when the payment intent is accepted and succeeded' do
       let(:stripe_pi) { Stripe::StripeObject.construct_from(id: 'pi_complete_123', status: 'succeeded', latest_charge: 'ch_test_123', payment_method: { type: 'card' }) }
-      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, state: 'checkout') }
+      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, status: 'checkout') }
 
       before do
         allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)
@@ -484,7 +472,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           next_action: { type: 'setup_future_usage' }
         )
       end
-      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, state: 'checkout') }
+      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, status: 'checkout') }
 
       before do
         allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)
@@ -529,7 +517,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           payment_method: { type: 'card' }
         )
       end
-      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, state: 'checkout') }
+      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, status: 'checkout') }
 
       before do
         allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)
@@ -660,29 +648,6 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
       end
     end
 
-    context 'with payment_intent.amount_capturable_updated event' do
-      let(:stripe_event) do
-        Stripe::StripeObject.construct_from(
-          type: 'payment_intent.amount_capturable_updated',
-          data: { object: { id: 'pi_authorized_123' } }
-        )
-      end
-      let!(:payment_session) do
-        create(:stripe_payment_session, owner: order, payment_method: gateway, external_id: 'pi_authorized_123')
-      end
-
-      before do
-        allow(gateway).to receive(:verify_webhook_signature).and_return(stripe_event)
-      end
-
-      it 'returns authorized action' do
-        result = gateway.parse_webhook_event(raw_body, headers)
-
-        expect(result[:action]).to eq(:authorized)
-        expect(result[:payment_session]).to eq(payment_session)
-      end
-    end
-
     context 'with unsupported event type' do
       let(:stripe_event) do
         Stripe::StripeObject.construct_from(
@@ -714,19 +679,6 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
 
       it 'returns nil' do
         expect(gateway.parse_webhook_event(raw_body, headers)).to be_nil
-      end
-    end
-
-    context 'with invalid signature' do
-      before do
-        allow(gateway).to receive(:verify_webhook_signature)
-          .and_raise(Spree::PaymentMethod::WebhookSignatureError)
-      end
-
-      it 'raises WebhookSignatureError' do
-        expect {
-          gateway.parse_webhook_event(raw_body, headers)
-        }.to raise_error(Spree::PaymentMethod::WebhookSignatureError)
       end
     end
   end

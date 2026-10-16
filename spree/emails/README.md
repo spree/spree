@@ -73,7 +73,7 @@ module Spree
       @current_store = store
 
       with_store_locale(@current_store) do
-        mail_template({ customer: email_data(customer, Spree.api.customer_serializer) }, to: customer.email)
+        mail_template({ customer: email_data(customer, Spree::Emails::CustomerSerializer) }, to: customer.email)
       end
     end
   end

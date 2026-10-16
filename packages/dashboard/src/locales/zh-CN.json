@@ -1093,8 +1093,7 @@
           "inherit": "从商店继承",
           "label": "订单路由策略",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "旧版",
-            "Spree::OrderRouting::Strategy::Rules": "规则（有序）"
+            "rules": "规则（有序）"
           }
         },
         "storefront_access": {
@@ -1229,12 +1228,12 @@
         "resource_type": {
           "label": "适用于",
           "options": {
-            "Spree::OptionType": "选项类型",
-            "Spree::Order": "订单",
-            "Spree::Product": "商品",
-            "Spree::Taxon": "分类",
-            "Spree::Customer": "客户",
-            "Spree::Variant": "变体"
+            "option_type": "选项类型",
+            "order": "订单",
+            "product": "商品",
+            "category": "分类",
+            "customer": "客户",
+            "variant": "变体"
           },
           "read_only_help": "一旦此字段存在值，所属对象便无法更改。"
         },
@@ -2018,22 +2017,22 @@
           "invalid": "只能使用大写字母、数字、连字符和 #。",
           "label": "后缀"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "后台语言",
           "placeholder": "使用默认语言"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "关闭后，将不会发送订单确认、发货或退款邮件。",
           "label": "向客户发送交易类邮件"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "时区",
           "placeholder": "选择时区"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "单位制"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "重量单位"
         },
         "show_products_without_price": {
@@ -2111,14 +2110,14 @@
         "digital_asset_authorized_days": {
           "label": "可用天数"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "高",
           "help": "常用的发货纸箱尺寸,承运商费率提供方据此计算体积重量——英制为英寸,公制为厘米。三项都填写后才生效。",
           "label": "默认包裹尺寸",
           "length": "长",
           "width": "宽"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。",
           "label": "默认包裹重量"
         },
@@ -2139,22 +2138,22 @@
           "help": "当佣金费率和税务服务商都未给出税率时，按此税率对佣金计税。若佣金不计税，保持为 0。",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "强调色"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "背景色"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "卡片颜色"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "文字颜色"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "标题颜色"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "字体",
           "help": "无法加载该字体的邮件应用会使用相近的字体。"
         }
@@ -2859,6 +2858,7 @@
           "packing_slip_total": "合计",
           "print_label": "打印面单",
           "print_packing_slip": "打印装箱单",
+          "quoted_after_review": "审核后报价",
           "rates_pending_origin": "保存新的发货地后即可查看该地可用的配送方式。",
           "refund_label": "退还面单",
           "retry_refund_label": "重试退款",
@@ -2929,7 +2929,7 @@
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {
           "document": "采购订单文件",
-          "document_help": "PDF、图片或 Word 文件，最大 10 MB。",
+          "document_help": "PDF、图片、Word 文档、电子表格或 CSV 文件，最大 10 MB。",
           "download_failed": "无法下载采购订单",
           "save_failed": "无法保存采购订单",
           "title": "采购订单"
@@ -3812,7 +3812,6 @@
           "logo_dimensions_help": "推荐：204×104 像素。",
           "section_addresses": "邮件地址",
           "section_delivery": "发送",
-          "section_logo": "徽标",
           "subtitle": "发件人地址、通知，以及嵌入在交易邮件中的徽标。",
           "title": "邮件设置",
           "branding": {
@@ -6256,6 +6255,18 @@
       "every_language": {
         "notice": "在您为{{language}}发布版本之前，所有语言的客户都会收到此版本。"
       }
+    },
+    "updates": {
+      "available": "Spree {{version}} 现已发布",
+      "running": "您正在使用 Spree {{version}}。"
+    },
+    "notifications": {
+      "title": "通知",
+      "open": "通知",
+      "open_unread": "通知，1 条未读",
+      "empty": "暂无新通知。",
+      "view_on_github": "在 GitHub 上查看",
+      "release_notes_unavailable": "无法加载版本说明，请前往 GitHub 查看。"
     }
   }
 }

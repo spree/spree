@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxProvidersController, type: :controller 
       get :index, as: :json
 
       expect(response).to have_http_status(:ok)
-      internal = json_response['data'].find { |provider| provider['id'] == 'Spree::TaxProvider::Internal' }
+      internal = json_response['data'].find { |provider| provider['id'] == 'internal' }
       expect(internal['name']).to eq('Internal')
       expect(internal['available']).to be(true)
       expect(internal['default']).to be(true)
@@ -24,7 +24,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxProvidersController, type: :controller 
     it 'gives each limit a label and the consequence a merchant can act on' do
       get :index, as: :json
 
-      internal = json_response['data'].find { |provider| provider['id'] == 'Spree::TaxProvider::Internal' }
+      internal = json_response['data'].find { |provider| provider['id'] == 'internal' }
       reverse_charge = internal['unsupported_capabilities'].find { |c| c['key'] == 'reverse_charge' }
 
       expect(reverse_charge['label']).to eq('EU reverse charge')
@@ -45,7 +45,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxProvidersController, type: :controller 
 
       get :index, as: :json
 
-      row = json_response['data'].find { |provider| provider['id'] == 'SpecUnconnectedProvider' }
+      row = json_response['data'].find { |provider| provider['id'] == 'spec_unconnected_provider' }
       expect(row['available']).to be(false)
       expect(row['default']).to be(false)
     ensure

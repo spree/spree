@@ -4,9 +4,11 @@ import type {
   Seller,
   SellerApproveParams,
   SellerCreateParams,
+  SellerFilters,
   SellerInviteParams,
   SellerRejectParams,
   SellerReopenOnboardingParams,
+  SellerSort,
   SellerSuspendParams,
   SellerUpdateParams,
 } from '@spree/admin-sdk'
@@ -19,7 +21,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
-export function useSellers(params?: ListParams & Record<string, unknown>) {
+export function useSellers(params?: ListParams<SellerFilters, SellerSort>) {
   return useQuery({
     queryKey: useResourceKey('sellers', params ? JSON.stringify(params) : 'all'),
     queryFn: () => adminClient.sellers.list(params),
@@ -35,7 +37,7 @@ export function sellerAutocompleteProps(queryKey: string) {
   return {
     queryKey,
     search: (q: string) =>
-      adminClient.sellers.list({ name_cont: q, limit: 100, sort: 'name', fields: ['name'] }),
+      adminClient.sellers.list({ search: q, limit: 100, sort: 'name', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.sellers.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (seller: Seller) => seller.name ?? seller.id,
     placeholder: i18n.t('admin.sellers.autocomplete.placeholder'),
@@ -155,7 +157,7 @@ export function useSellerTeam(sellerId: string) {
 
 export function useRemoveSellerTeamMember(sellerId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.sellers.team.remove(sellerId, id),
+    mutationFn: (id) => adminClient.sellers.team.delete(sellerId, id),
     invalidate: [
       ['sellers', sellerId, 'team'],
       ['sellers', sellerId],
@@ -174,7 +176,7 @@ export function useSellerInvitations(sellerId: string) {
 
 export function useRevokeSellerInvitation(sellerId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.sellers.invitations.remove(sellerId, id),
+    mutationFn: (id) => adminClient.sellers.invitations.delete(sellerId, id),
     invalidate: [['sellers', sellerId, 'invitations']],
     successMessage: i18n.t('admin.sellers.team.messages.invitation_revoked'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),

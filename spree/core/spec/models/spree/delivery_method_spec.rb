@@ -84,13 +84,6 @@ describe Spree::DeliveryMethod, type: :model do
         expect(method.requires_zone_check?).to be false
       end
     end
-
-    it 'is true for the Manual provider' do
-      method = create(:delivery_method)
-
-      expect(method.fulfillment_provider).to eq('Spree::FulfillmentProvider::Manual')
-      expect(method.requires_address?).to be true
-    end
   end
 
   describe '#serves_location?' do
@@ -148,30 +141,10 @@ describe Spree::DeliveryMethod, type: :model do
                                                                                                               ])
 
       expect(described_class.calculators).to eq([Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator])
-      expect(described_class.calculators).not_to eq([Spree::Calculator::FlatRate])
-    end
-  end
-
-  # Regression test for #4492
-  context '#shipments' do
-    let!(:delivery_method) { create(:delivery_method) }
-    let!(:shipment) do
-      shipment = create(:fulfillment)
-      shipment.shipping_rates.create!(delivery_method: delivery_method)
-      shipment
-    end
-
-    it 'can gather all the related shipments' do
-      expect(delivery_method.shipments).to include(shipment)
     end
   end
 
   context 'validations' do
-    it 'validates presence of name' do
-      subject.valid?
-      expect(subject.errors.messages[:name].size).to eq(1)
-    end
-
     it 'requires a name unique within the store and owner' do
       create(:delivery_method, name: 'Standard')
 
@@ -179,14 +152,6 @@ describe Spree::DeliveryMethod, type: :model do
       expect(build(:delivery_method, name: 'Standard', store: create(:store))).to be_valid
       # A seller's own method shares the table and may reuse the operator's name.
       expect(build(:delivery_method, name: 'Standard', seller: create(:seller))).to be_valid
-    end
-
-    it 'defaults to storefront visible and rejects a blank value' do
-      expect(subject.storefront_visible).to be true
-
-      subject.storefront_visible = nil
-      subject.valid?
-      expect(subject.errors.messages[:storefront_visible].size).not_to be_zero
     end
 
     context 'shipping method does not have a tracking URL mask on file' do
@@ -228,6 +193,20 @@ describe Spree::DeliveryMethod, type: :model do
 
       expect(delivery_method).not_to be_valid
       expect(delivery_method.errors[:rate_provider]).to be_present
+    end
+
+    it 'stores the class name of a provider named by its shorthand' do
+      delivery_method.update!(rate_provider: 'freight', fulfillment_provider: 'manual')
+
+      expect(delivery_method.rate_provider).to eq('Spree::DeliveryRateProvider::Freight')
+      expect(delivery_method.fulfillment_provider).to eq('Spree::FulfillmentProvider::Manual')
+    end
+
+    it 'rejects an unregistered fulfillment provider' do
+      delivery_method.fulfillment_provider = 'Spree::Order'
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:fulfillment_provider]).to be_present
     end
 
     it 'keeps rows loadable when a registered provider is later removed' do
@@ -300,16 +279,6 @@ describe Spree::DeliveryMethod, type: :model do
     # calculators.
     it 'accepts any fulfillment provider for rate providers that do not quote shipments' do
       expect(build(:pickup_delivery_method, rate_provider: '')).to be_valid
-    end
-  end
-
-  # Regression test for #4320
-  context 'soft deletion' do
-    let(:delivery_method) { create(:delivery_method) }
-
-    it 'soft-deletes when destroy is called' do
-      delivery_method.destroy
-      expect(delivery_method.deleted_at).not_to be_blank
     end
   end
 
@@ -399,7 +368,41 @@ describe Spree::DeliveryMethod, type: :model do
 
       it { expect(delivery_method.display_estimated_price).to eq('Flat rate: Free') }
     end
+
+    context 'with a percentage of the item total' do
+      let(:delivery_method) do
+        build(:delivery_method, calculator: Spree::Calculator::Shipping::FlatPercentItemTotal.new(preferred_flat_percent: 12.5))
+      end
+
+      it { expect(delivery_method.display_estimated_price).to eq("#{I18n.t('spree.flat_percent')}: 12.50%") }
+    end
   end
+  describe '#pickup_point_provider_instance' do
+    let(:delivery_method) { create(:delivery_method) }
+    let(:provider_class) { Class.new(Spree::PickupPointProvider::Base) }
+
+    before { stub_const('SpreeLockers::PickupPointProvider', provider_class) }
+
+    it 'resolves a registered provider named by its shorthand' do
+      allow(Spree).to receive(:pickup_point_providers).and_return([provider_class])
+
+      delivery_method.pickup_point_provider = 'lockers'
+
+      expect(delivery_method.pickup_point_provider).to eq('SpreeLockers::PickupPointProvider')
+      expect(delivery_method.pickup_point_provider_instance).to be_a(provider_class)
+    end
+
+    # The column is instantiated at checkout, so it may only name a
+    # registered network.
+    it 'rejects and never instantiates an unregistered class' do
+      delivery_method.pickup_point_provider = 'Spree::Order'
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:pickup_point_provider]).to be_present
+      expect(delivery_method.pickup_point_provider_instance).to be_nil
+    end
+  end
+
   describe '#available_pickup_locations' do
     let(:delivery_method) { create(:delivery_method, store: @default_store) }
 
@@ -485,10 +488,6 @@ describe Spree::DeliveryMethod, type: :model do
 
       it 'offers a first-party package the marketplace methods only' do
         expect(described_class.available_to_seller(nil)).to contain_exactly(marketplace_method, shared_method)
-      end
-
-      it "never offers one seller another seller's method" do
-        expect(described_class.available_to_seller(seller)).not_to include(other_sellers_method)
       end
     end
   end

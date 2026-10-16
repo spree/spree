@@ -1,11 +1,14 @@
 module Spree
   # Shared shape of the typed adjustment rows (TaxLine, Discount, Fee):
   # dual-FK cart/order owner (exactly one), consolidated +metadata+ JSON
-  # column, money display and localized amount parsing.
+  # column, money display and strict amount parsing.
   module TypedAdjustmentLine
     extend ActiveSupport::Concern
 
     included do
+      include Spree::CanonicalDecimals
+
+      canonical_decimals :amount
       attribute :metadata, default: -> { {} }
 
       belongs_to :order, class_name: 'Spree::Order', optional: true
@@ -38,10 +41,6 @@ module Spree
       end
     end
 
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
-
     def currency
       owner&.currency
     end
@@ -49,7 +48,7 @@ module Spree
     private
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
   end
 end

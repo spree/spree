@@ -94,6 +94,7 @@ module Spree
     # `seller_id` is what the operator's list filters by to see one seller's
     # packaging, or (blank) the marketplace's own.
     self.whitelisted_ransackable_attributes = %w[name kind default seller_id]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[seller]
 
     # The unit the geometry is expressed in, falling back to what the store's
@@ -149,7 +150,7 @@ module Spree
       return unless default?
       return if destroyed_by_association.present?
 
-      errors.add(:base, Spree.t('errors.messages.cannot_delete_default_package_type'))
+      errors.add(:base, I18n.t('spree.errors.messages.cannot_delete_default_package_type'))
       throw(:abort)
     end
 

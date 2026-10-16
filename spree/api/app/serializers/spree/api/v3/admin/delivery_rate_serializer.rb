@@ -3,6 +3,14 @@ module Spree
     module V3
       module Admin
         class DeliveryRateSerializer < V3::DeliveryRateSerializer
+          without_formatted_money
+
+          # No guest price gating here, so the inherited money fields are always present.
+          typelize cost: [:string, nullable: false],
+                   total: [:string, nullable: false],
+                   additional_tax_total: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false], tax_total: [:string, nullable: false]
+
           typelize metadata: ['Record<string, unknown>', nullable: true]
 
           # Raw carrier payload (quote ids, service codes) — operational

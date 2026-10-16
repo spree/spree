@@ -7,7 +7,7 @@ RSpec.describe Spree::Seeds::DigitalDelivery do
     it 'creates a Digital Delivery delivery method' do
       expect { subject }.to change(Spree::DeliveryMethod, :count).by(1)
 
-      delivery_method = Spree::DeliveryMethod.find_by(name: Spree.t('digital.digital_delivery'))
+      delivery_method = Spree::DeliveryMethod.find_by(name: I18n.t('spree.digital.digital_delivery'))
       expect(delivery_method).to be_present
       expect(delivery_method.storefront_visible).to be true
       expect(delivery_method).to be_digital
@@ -18,7 +18,7 @@ RSpec.describe Spree::Seeds::DigitalDelivery do
     context 'when Digital Delivery delivery method already exists' do
       before do
         Spree::DeliveryMethod.create!(
-          name: Spree.t('digital.digital_delivery'),
+          name: I18n.t('spree.digital.digital_delivery'),
           store: Spree::Store.default,
           storefront_visible: true,
           fulfillment_provider: 'Spree::FulfillmentProvider::Digital',

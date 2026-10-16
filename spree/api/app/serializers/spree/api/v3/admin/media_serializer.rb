@@ -52,9 +52,10 @@ module Spree
           # (a category image, a store logo) accepts on write. Handing it over
           # lets those fields adopt a library file, sharing the blob instead of
           # uploading a second copy — the same economics as placing media on a
-          # product, through endpoints that need no change.
+          # product, through endpoints that need no change. Minted fresh, with
+          # the same expiry as an upload, on every read.
           attribute :signed_id do |asset|
-            asset.attachment_blob&.signed_id
+            Spree::Uploads.signed_id_for(asset.attachment_blob) if asset.attachment_blob
           end
 
           prefixed_id_attributes :viewable

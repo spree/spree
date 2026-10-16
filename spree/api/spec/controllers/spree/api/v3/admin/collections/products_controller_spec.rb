@@ -81,7 +81,7 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('validation_error')
-      expect(json_response['error']['message']).to eq(Spree.t('api.errors.automatic_collection_curation'))
+      expect(json_response['error']['message']).to eq(I18n.t('spree.api.errors.automatic_collection_curation'))
     end
 
     it 'rejects removing before looking up the products' do
@@ -89,7 +89,7 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('validation_error')
-      expect(json_response['error']['message']).to eq(Spree.t('api.errors.automatic_collection_curation'))
+      expect(json_response['error']['message']).to eq(I18n.t('spree.api.errors.automatic_collection_curation'))
     end
   end
 

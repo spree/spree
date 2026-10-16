@@ -470,6 +470,7 @@
       "packing_slip_title": "Packing slip — order {{number}}",
       "print_label": "Print label",
       "print_packing_slip": "Print packing slip",
+      "quoted_after_review": "Quoted after review",
       "ship_to": "Ship to",
       "ships_from_label": "Ships from",
       "split": "Split",

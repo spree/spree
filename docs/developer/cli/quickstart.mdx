@@ -52,10 +52,11 @@ spree init --no-open           # Skip opening browser
 
 ### `spree dev`
 
-Run the app in the foreground — streams web + worker logs; `Ctrl+C` stops them. The databases keep running for a fast next boot (`spree stop` shuts everything down).
+Run the app in the foreground — streams web + worker logs; `Ctrl+C` stops them. The databases keep running for a fast next boot (`spree stop` shuts everything down). The Admin Dashboard opens in your browser as soon as it is ready.
 
 ```bash
 spree dev
+spree dev --no-open            # Skip opening browser
 ```
 
 ### `spree stop`
@@ -94,11 +95,12 @@ spree build --yes            # Skip confirmation prompts (for CI)
 
 Upgrade your project to the latest Spree release in one go. It works for both kinds of project:
 
-1. **Update the server**
-   - On a project that runs the prebuilt image, it pulls the latest Spree image and recreates the containers. Database migrations run as the containers start.
-   - On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`, applies pending migrations, and restarts the app so it loads the new gems.
-2. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records.
-3. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
+1. **Update the server** — on a project that runs the prebuilt image, it pulls the latest Spree image. On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`.
+2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
+3. **Migrate the database** — on a prebuilt-image project, it recreates the containers and the migrations run as they start. On an ejected project, it applies pending migrations.
+4. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records. An ejected project's app is then restarted so it loads the new gems.
+
+The packages are updated before the database steps, so a failed migration or backfill no longer stops them from moving to the newest release their ranges allow. Fix the cause and run `spree upgrade` again.
 
 ```bash
 spree upgrade                  # Run every step, asking before each one
@@ -249,6 +251,18 @@ spree generate migration AddPositionToSpreeBrands position:integer  # Rails buil
 ```
 
 `spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
+
+### `spree filters types`
+
+Generate TypeScript declarations for your app's list filters, so the SDKs accept and autocomplete the filters and sort fields your app adds. It reads them from the running app and writes `src/types/spree-filters.d.ts` into each app under `apps/` (storefront, dashboard, seller panel), for the SDK that app uses. Run it again after you change a filter.
+
+```bash
+spree filters types                                                    # every app under apps/
+spree filters types --api store --out ../my-storefront/src/types/spree-filters.d.ts   # one app elsewhere
+spree filters types --from filter-tables.json                         # from `bin/rails spree:api:filter_tables` output
+```
+
+See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript).
 
 ### `spree migrate`
 

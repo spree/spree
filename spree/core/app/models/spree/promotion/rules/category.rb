@@ -35,7 +35,7 @@ module Spree
         # Preferences
         #
         MATCH_POLICIES = %w(any all)
-        preference :match_policy, :string, default: MATCH_POLICIES.first
+        preference :match_policy, :string, default: MATCH_POLICIES.first, choices: MATCH_POLICIES
 
         #
         # Attributes

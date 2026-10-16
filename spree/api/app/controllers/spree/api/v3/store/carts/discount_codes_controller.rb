@@ -9,6 +9,13 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'ApplyDiscountCodeParams', action: :create do |body|
+              body.attribute :code, :string,
+                required: true,
+                example: 'SAVE10',
+                description: 'The promotion code to apply.'
+            end
+
             # POST  /api/v3/store/carts/:cart_id/discount_codes
             # Applies a discount code. A real-but-not-yet-eligible code is
             # accepted and persisted — recalculation activates the discount
@@ -64,12 +71,12 @@ module Spree
             def attach_pending_coupon_warning
               @cart.warnings |= [{
                 code: coupon_handler.status_code.to_s,
-                message: coupon_handler.error.presence || Spree.t(:coupon_code_not_eligible)
+                message: coupon_handler.error.presence || I18n.t('spree.coupon_code_not_eligible')
               }]
             end
 
             def permitted_params
-              params.permit(:code)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

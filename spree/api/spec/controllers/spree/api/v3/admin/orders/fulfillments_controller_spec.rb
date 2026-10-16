@@ -32,6 +32,35 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(json_response['number']).to eq(shipment.number)
       expect(json_response['status']).to eq(shipment.state)
     end
+
+    it 'finds the fulfillment by the key the shipping system knows it by' do
+      shipment.set_external_id('wms', 'SHIP-1')
+
+      get :show, params: { order_id: order.prefixed_id, id: 'external:wms:SHIP-1' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(shipment.prefixed_id)
+      expect(json_response['external_references']).to eq('wms' => 'SHIP-1')
+    end
+
+    # A replayed create becomes an update, which must not receive the keys
+    # that only shape a new fulfillment.
+    it 'updates rather than re-creating when a shipping system replays a known key' do
+      shipment.set_external_id('wms', 'SHIP-1')
+
+      expect do
+        post :create, params: {
+          order_id: order.prefixed_id, stock_location_id: shipment.stock_location.prefixed_id, tracking: 'TRACK-9',
+          status: 'shipped', cost: '9.99', items: [{ item_id: order.line_items.first.prefixed_id, quantity: 1 }],
+          external_references: { wms: 'SHIP-1' }
+        }, as: :json
+      end.not_to change(Spree::Fulfillment, :count)
+
+      expect(response).to have_http_status(:ok)
+      shipment.reload
+      expect(shipment.tracking).to eq('TRACK-9')
+      expect(shipment.status).to eq('unfulfilled')
+    end
   end
 
   describe 'POST #create' do
@@ -106,7 +135,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['message']).to eq(Spree.t('fulfillments.errors.order_not_completed'))
+      expect(json_response['error']['message']).to eq(I18n.t('spree.fulfillments.errors.order_not_completed'))
     end
 
     it 'returns 422 when the requested quantity exceeds the unfulfilled quantity' do
@@ -430,7 +459,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
         id: shipment.prefixed_id
       }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

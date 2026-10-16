@@ -14,6 +14,7 @@ const ANSWERED = {
   directory: './my-store',
   noStorefront: true,
   noSellerDashboard: false,
+  noAgentSkills: false,
   noStart: true,
   packageManager: 'pnpm',
 } as const
@@ -38,6 +39,22 @@ describe('runPrompts', () => {
     expect(vi.mocked(confirm)).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('Include Seller Panel?'),
+        initialValue: true,
+      }),
+    )
+  })
+
+  it('asks about the agent skills, defaulting to yes', async () => {
+    const { confirm } = await import('@clack/prompts')
+    vi.mocked(confirm).mockClear()
+    vi.mocked(confirm).mockResolvedValueOnce(true)
+
+    const options = await runPrompts({ ...ANSWERED, noAgentSkills: undefined })
+
+    expect(options.agentSkills).toBe(true)
+    expect(vi.mocked(confirm)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: expect.stringContaining('Install Spree agent skills?'),
         initialValue: true,
       }),
     )

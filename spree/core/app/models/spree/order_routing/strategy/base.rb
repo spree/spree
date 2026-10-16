@@ -10,6 +10,8 @@ module Spree
       # Selected per Order via Spree::Order#order_routing_strategy.
       # See docs/plans/6.0-order-routing.md.
       class Base
+        extend Spree::ApiTyped
+
         attr_reader :order
 
         # Human label for admin strategy pickers. Override in a subclass or add
@@ -17,7 +19,7 @@ module Spree
         #
         # @return [String]
         def self.display_name
-          Spree.t(name.demodulize.underscore, scope: 'order_routing.strategies', default: name.demodulize.titleize)
+          I18n.t("spree.order_routing.strategies.#{name.demodulize.underscore}", default: name.demodulize.titleize)
         end
 
         def initialize(order:)

@@ -196,10 +196,14 @@ You can discover all available currencies and locales (aggregated from all marke
 
 ```typescript Store SDK
 const { data: currencies } = await client.currencies.list()
-// [{ iso_code: "USD", name: "US Dollar", symbol: "$" }, { iso_code: "EUR", name: "Euro", symbol: "€" }]
+// [{ iso_code: "USD", decimal_places: 2 }, { iso_code: "EUR", decimal_places: 2 }]
 
 const { data: locales } = await client.locales.list()
-// [{ code: "en", name: "English" }, { code: "de", name: "German" }]
+// [{ code: "en", default: true, rtl: false }, { code: "de", default: false, rtl: false }]
+
+// Name them in the customer's language in the browser
+new Intl.DisplayNames([locale], { type: 'currency' }).of('EUR') // "Euro"
+new Intl.DisplayNames([locale], { type: 'language' }).of('de') // "German"
 ```
 
 ```bash cURL

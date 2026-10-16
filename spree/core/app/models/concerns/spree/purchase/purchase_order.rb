@@ -17,8 +17,8 @@ module Spree
       MAX_PO_DOCUMENT_SIZE = 10.megabytes
 
       # What a purchase order plausibly arrives as: an export from the buyer's
-      # procurement system, a scan, or a photo of one. Matches the list the
-      # seller document requirement accepts — the same kinds of paperwork.
+      # procurement system (often a spreadsheet or CSV), a scan, or a photo of
+      # one.
       PO_DOCUMENT_CONTENT_TYPES = %w[
         application/pdf
         image/jpeg
@@ -27,6 +27,10 @@ module Spree
         image/webp
         application/msword
         application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        application/vnd.ms-excel
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        application/vnd.oasis.opendocument.spreadsheet
+        text/csv
       ].freeze
 
       included do
@@ -36,6 +40,7 @@ module Spree
         # internal cost codes, and is served only through an authenticated
         # download action.
         has_one_attached :po_document, service: Spree.private_storage_service_name
+        signed_id_attachments :po_document
 
         validates :po_document,
                   size: { less_than_or_equal_to: MAX_PO_DOCUMENT_SIZE },
@@ -83,8 +88,8 @@ module Spree
         return if stored_size <= MAX_PO_DOCUMENT_SIZE
 
         errors.add(
-          :po_document, :po_document_too_large, message: Spree.t(
-            :po_document_too_large,
+          :po_document, :po_document_too_large, message: I18n.t(
+            'spree.po_document_too_large',
             size: ActiveSupport::NumberHelper.number_to_human_size(MAX_PO_DOCUMENT_SIZE)
           )
         )

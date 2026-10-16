@@ -7,6 +7,16 @@ module Spree
         # class is inferred from whichever `<segment>_id` route param matches a
         # registered owner.
         class CustomFieldsController < ResourceController
+          # Only `value` is mutable. Switching the linked definition is a
+          # delete-and-create: the model rejects it (definition + resource
+          # uniqueness) and the type wouldn't match.
+          request_params :custom_field do |body|
+            body.attribute :custom_field_definition_id, :id, required: true, only: :create, example: 'cfdef_abc123'
+            body.attribute :value, :any,
+              required: true,
+              description: "A value matching the definition's `field_type`: a scalar for text, number and boolean fields; a list or a hash for JSON fields."
+          end
+
           # POST /api/v3/admin/<parent>/<parent_id>/custom_fields
           def create
             @resource = @parent.custom_fields.new(permitted_params)
@@ -20,9 +30,6 @@ module Spree
           end
 
           # PATCH /api/v3/admin/<parent>/<parent_id>/custom_fields/:id
-          # Only `value` is mutable. Switching the linked definition is a
-          # delete-and-create — the model rejects it (definition + resource
-          # uniqueness) and the type wouldn't match.
           def update
             authorize_resource!(@resource)
 
@@ -82,11 +89,11 @@ module Spree
           # `custom_field_definition_id` is an alias_attribute on Spree::CustomField;
           # AR resolves the prefixed-ID and the alias to the canonical FK on assign.
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :custom_field_definition_id, :value)
+            params.permit(*permitted_attributes)
           end
 
           def update_permitted_params
-            params.permit(:value)
+            params.permit(*declared_permitted_attributes)
           end
 
           private

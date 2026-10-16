@@ -84,7 +84,7 @@ RSpec.describe 'freight serialization' do
       json = described_class.new(fulfillment.reload, params: { store: store }).to_h
 
       expect(json['unpriced']).to be(true)
-      expect(json['display_cost']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(json['display_cost']).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
     end
 
     # display_cost and display_total sit side by side in the same payload;
@@ -97,7 +97,7 @@ RSpec.describe 'freight serialization' do
 
       json = described_class.new(fulfillment.reload, params: { store: store }).to_h
 
-      expect(json['display_total']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(json['display_total']).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
       expect(fulfillment.reload).not_to be_free
     end
 
@@ -122,7 +122,7 @@ RSpec.describe 'freight serialization' do
       json = described_class.new(rate, params: { store: store }).to_h
 
       expect(json['unpriced']).to be(true)
-      expect(json['display_cost']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(json['display_cost']).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
     end
 
     # A storefront rendering the total rather than the cost would otherwise
@@ -132,7 +132,7 @@ RSpec.describe 'freight serialization' do
 
       json = described_class.new(rate, params: { store: store }).to_h
 
-      expect(json['display_total']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(json['display_total']).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
     end
 
     it 'carries the frozen summary the provider quoted against' do

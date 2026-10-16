@@ -17,6 +17,7 @@ require 'awesome_nested_set'
 require 'cancan'
 require 'countries/global'
 require 'friendly_id'
+require 'json_schemer'
 require 'jwt'
 require 'liquid'
 require 'spree/core/emails/escaped_output'
@@ -27,6 +28,7 @@ require 'name_of_person'
 require 'nokogiri'
 require 'oj'
 require 'rails-html-sanitizer'
+require 'rails-i18n'
 require 'paranoia'
 require 'request_store'
 require 'ransack'
@@ -250,7 +252,7 @@ module Spree
   # Example:
   #
   #   Spree.dependencies do |dependency|
-  #     dependency.cart_add_item_service = MyCustomAddToCart
+  #     dependency.cart_add_item_workflow = MyCustomAddToCart
   #   end
   #
   # This method is defined within the core gem on purpose.
@@ -379,6 +381,12 @@ module Spree
   # @return [Array<Class>]
   singleton_class.delegate :delivery_rate_providers, :delivery_rate_providers=, to: :spree_config
 
+  # Third-party pickup point networks selectable on a pickup-point delivery
+  # method. Empty in core; carrier gems append theirs.
+  #
+  # @return [Array<Class>]
+  singleton_class.delegate :pickup_point_providers, :pickup_point_providers=, to: :spree_config
+
   # Re-resolves every provider registry entry by name, in place.
   #
   # The registries hold class objects, and in development Zeitwerk reloads
@@ -396,7 +404,8 @@ module Spree
   # @return [void]
   def self.refresh_provider_registries!
     [Rails.application.config.spree.delivery_rate_providers,
-     Rails.application.config.spree.fulfillment_providers].compact.each do |registry|
+     Rails.application.config.spree.fulfillment_providers,
+     Rails.application.config.spree.pickup_point_providers].compact.each do |registry|
       registry.map! { |entry| entry.is_a?(Module) && entry.name ? entry.name.constantize : entry }
     end
   end
@@ -536,14 +545,24 @@ module Spree
     @ransack ||= RansackConfiguration.new
   end
 
+  # Concerns extensions add to core models, instead of decorating them.
+  #
+  # @example
+  #   Spree.model_extensions.add('Spree::Product', 'MyExtension::ProductWarranty')
+  #
+  # @return [Spree::ModelExtensions]
+  def self.model_extensions
+    @model_extensions ||= ModelExtensions.new
+  end
+
   class << self
     # Dynamic methods for core dependencies
     #
     # @example Getting a dependency (returns resolved class)
-    #   Spree.cart_add_item_service.call(order: order, variant: variant)
+    #   Spree.cart_add_item_workflow.call(cart: cart, variant: variant)
     #
     # @example Setting a dependency
-    #   Spree.cart_add_item_service = MyApp::CartAddItem
+    #   Spree.cart_add_item_workflow = MyApp::CartAddItem
     def method_missing(method_name, *args, &block)
       base_name = method_name.to_s.chomp('=').to_sym
 
@@ -633,6 +652,7 @@ require 'spree/workflow'
 require 'spree/reporting'
 require 'spree/events'
 require 'spree/store_scope_guard'
+require 'spree/uploads'
 
 # Not autoloaded from app/: the registry keeps registered steps in
 # class-level state, which a reload would discard.
@@ -647,12 +667,13 @@ require 'spree/core/controller_helpers/store'
 
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/masking'
+require 'spree/core/preferences/invalid_preferences'
 require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'
+require 'spree/core/model_extensions'
 require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/price_resolution'
 require 'spree/core/tax/provider_error'
 require 'spree/core/pricing/resolver'
-require 'spree/core/tax/provider_error'

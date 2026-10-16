@@ -102,7 +102,7 @@ module Spree
         # attribute, and ActiveModel raises when an error names one that
         # does not exist on the record.
         exchange.errors.add(:base, :invalid_refund_method,
-                            message: Spree.t('errors.messages.invalid_refund_method'))
+                            message: I18n.t('spree.errors.messages.invalid_refund_method'))
         failure(exchange)
       end
 
@@ -146,7 +146,7 @@ module Spree
           attributes: {
             kind: 'exchange',
             amount: settled_difference,
-            label: Spree.t(:exchange_fee_label, number: exchange.number),
+            label: I18n.t('spree.exchange_fee_label', number: exchange.number),
             metadata: { 'exchange_id' => exchange.prefixed_id }
           }
         )

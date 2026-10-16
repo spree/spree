@@ -1116,8 +1116,7 @@
           "inherit": "Dziedzicz ze sklepu",
           "label": "Strategia routingu zamówień",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Starsza",
-            "Spree::OrderRouting::Strategy::Rules": "Reguły (uporządkowane)"
+            "rules": "Reguły (uporządkowane)"
           }
         },
         "storefront_access": {
@@ -1252,12 +1251,12 @@
         "resource_type": {
           "label": "Dotyczy",
           "options": {
-            "Spree::OptionType": "Typy opcji",
-            "Spree::Order": "Zamówienia",
-            "Spree::Product": "Produkty",
-            "Spree::Taxon": "Kategorie",
-            "Spree::Customer": "Klienci",
-            "Spree::Variant": "Warianty"
+            "option_type": "Typy opcji",
+            "order": "Zamówienia",
+            "product": "Produkty",
+            "category": "Kategorie",
+            "customer": "Klienci",
+            "variant": "Warianty"
           },
           "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola."
         },
@@ -2041,22 +2040,22 @@
           "invalid": "Używaj tylko wielkich liter, cyfr, myślników i #.",
           "label": "Sufiks"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Język panelu administracyjnego",
           "placeholder": "Użyj języka domyślnego"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "Gdy wyłączone, nie są wysyłane żadne wiadomości z potwierdzeniem zamówienia, wysyłki ani zwrotu.",
           "label": "Wysyłaj wiadomości transakcyjne do klientów"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Strefa czasowa",
           "placeholder": "Wybierz strefę czasową"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "System jednostek"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Jednostka wagi"
         },
         "show_products_without_price": {
@@ -2134,14 +2133,14 @@
         "digital_asset_authorized_days": {
           "label": "Dostępne dni"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Wysokość",
           "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech.",
           "label": "Domyślne wymiary paczki",
           "length": "Długość",
           "width": "Szerokość"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza.",
           "label": "Domyślna waga paczki"
         },
@@ -2162,22 +2161,22 @@
           "help": "Naliczany od Twojej prowizji, gdy ani stawka prowizji, ani dostawca podatków nie podaje własnej stawki. Zostaw 0, jeśli Twoja prowizja nie jest opodatkowana.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Kolor akcentu"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Kolor tła"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Kolor karty"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Kolor tekstu"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Kolor nagłówków"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Czcionka",
           "help": "Programy pocztowe, które nie mogą jej wczytać, użyją podobnej czcionki."
         }
@@ -2890,6 +2889,7 @@
           "packing_slip_total": "Razem",
           "print_label": "Drukuj etykietę",
           "print_packing_slip": "Drukuj list przewozowy",
+          "quoted_after_review": "Wycena po weryfikacji",
           "rates_pending_origin": "Zapisz nowe miejsce wysyłki, aby zobaczyć dostępne dla niego sposoby dostawy.",
           "refund_label": "Zwrot za etykietę",
           "retry_refund_label": "Ponów zwrot kosztów",
@@ -2965,7 +2965,7 @@
         "priced_by": "Cena z {{name}}",
         "purchase_order": {
           "document": "Dokument zamówienia zakupu",
-          "document_help": "Plik PDF, obraz lub dokument Word, do 10 MB.",
+          "document_help": "Plik PDF, obraz, dokument Word, arkusz kalkulacyjny lub plik CSV, do 10 MB.",
           "download_failed": "Nie udało się pobrać zamówienia zakupu",
           "save_failed": "Nie udało się zapisać zamówienia zakupu",
           "title": "Zamówienie zakupu"
@@ -3870,7 +3870,6 @@
           "logo_dimensions_help": "Zalecane: 204×104 piksele.",
           "section_addresses": "Adresy e-mail",
           "section_delivery": "Dostarczanie",
-          "section_logo": "Logo",
           "subtitle": "Adresy nadawców, powiadomienia i logo umieszczane w e-mailach transakcyjnych.",
           "title": "Ustawienia e-mail",
           "branding": {
@@ -6337,6 +6336,18 @@
       "every_language": {
         "notice": "Klienci we wszystkich językach otrzymują tę wersję, dopóki nie opublikujesz wersji dla języka {{language}}."
       }
+    },
+    "updates": {
+      "available": "Dostępna jest wersja Spree {{version}}",
+      "running": "Używasz Spree {{version}}."
+    },
+    "notifications": {
+      "title": "Powiadomienia",
+      "open": "Powiadomienia",
+      "open_unread": "Powiadomienia, 1 nieprzeczytane",
+      "empty": "Wszystko przeczytane.",
+      "view_on_github": "Zobacz na GitHubie",
+      "release_notes_unavailable": "Nie udało się wczytać informacji o wydaniu. Przeczytaj je na GitHubie."
     }
   }
 }

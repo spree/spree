@@ -5,6 +5,7 @@ module Spree
     include Spree::DerivedNumber
     derives_number infix: 'F'
     include Spree::HasCustomFields
+    include Spree::HasExternalReferences
     include Spree::Metadata
     include Spree::StorePreferences
     if defined?(Spree::Security::Shipments)
@@ -234,7 +235,7 @@ module Spree
     #
     # @return [String, Spree::Money]
     def display_cost(**options)
-      return Spree.t('delivery_rates.quoted_after_review') if unpriced?
+      return I18n.t('spree.delivery_rates.quoted_after_review') if unpriced?
 
       Spree::Money.new(cost, { currency: currency }.merge(options))
     end
@@ -351,7 +352,7 @@ module Spree
     #
     # @return [String, Spree::Money]
     def display_final_price(**options)
-      return Spree.t('delivery_rates.quoted_after_review') if unpriced?
+      return I18n.t('spree.delivery_rates.quoted_after_review') if unpriced?
 
       Spree::Money.new(final_price, { currency: currency }.merge(options))
     end
@@ -374,7 +375,18 @@ module Spree
     #
     # @return [Boolean]
     def with_free_shipping_promotion?
+      return discounts.any?(&:promotion?) if read_association_in_memory?(:discounts)
+
       discounts.promotion.exists?
+    end
+
+    # What promotions took off this shipment's cost, as a negative amount.
+    #
+    # @return [BigDecimal]
+    def promotion_discount_total
+      return discounts.select(&:promotion?).sum(BigDecimal('0'), &:amount) if read_association_in_memory?(:discounts)
+
+      discounts.promotion.sum(:amount)
     end
 
     # Placement no longer moves physical stock — the units are promised in
@@ -701,7 +713,7 @@ module Spree
     #
     # @return [Spree::Delivery, nil]
     def primary_delivery
-      deliveries.first
+      read_association_in_memory?(:deliveries) ? deliveries.to_a.first : deliveries.first
     end
 
     # The primary delivery's tracking number. Read-only since 6.0: tracking is
@@ -895,8 +907,7 @@ module Spree
     def capture_at_gateway(payment, amount)
       return 0 if amount <= 0
 
-      units = Spree::Money::Rounding.to_minor_units(amount, payment.currency)
-      result = Spree.payment_capture_workflow.call(payment: payment, amount: units)
+      result = Spree.payment_capture_workflow.call(payment: payment, amount: amount)
       raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
 
       amount
@@ -983,7 +994,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
 
     def update_adjustments

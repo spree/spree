@@ -15,7 +15,7 @@ module Spree
 
         supported_codes = store.supported_currencies_list.map(&:iso_code)
         unless supported_codes.include?(currency)
-          errors.add(:currency, :currency_not_supported_by_store, message: Spree.t(:currency_not_supported_by_store))
+          errors.add(:currency, :currency_not_supported_by_store, message: I18n.t('spree.currency_not_supported_by_store'))
         end
       end
 

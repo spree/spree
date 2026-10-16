@@ -1,5 +1,4 @@
 import type {
-  AddressParams,
   ListParams,
   ListResponse,
   PaginatedResponse,
@@ -8,35 +7,52 @@ import type {
 } from '@spree/sdk-core'
 import { getParams, transformListParams } from '@spree/sdk-core'
 import type {
+  AcceptCompanyInvitationParams,
+  AddCompanyMemberParams,
   AddLineItemParams,
   Address,
+  AddressCreateParams,
+  AddressUpdateParams,
   AuthTokens,
   Cart,
   Category,
   CategoryListParams,
   Channel,
   Claim,
+  ClaimFilters,
+  ClaimSort,
   Collection,
   CollectionListParams,
   Company,
-  CompanyAddressParams,
+  CompanyAddressCreateParams,
+  CompanyAddressUpdateParams,
   CompanyInvitation,
+  CompanyInvitationFilters,
+  CompanyInvitationSort,
   CompanyMembership,
   CompletePaymentSessionParams,
   CompletePaymentSetupSessionParams,
   Country,
   CreateCartParams,
+  CreateClaimParams,
+  CreateNewsletterSubscriberParams,
   CreatePaymentParams,
   CreatePaymentSessionParams,
   CreatePaymentSetupSessionParams,
+  CreateReturnParams,
+  CreateWishlistItemParams,
+  CreateWishlistParams,
   CreditCard,
   Currency,
   Customer,
   DeliveryMethod,
   DigitalLink,
+  DigitalLinkFilters,
+  DigitalLinkSort,
   GiftCard,
   Locale,
   LoginCredentials,
+  LogoutParams,
   Market,
   NewsletterSubscriber,
   Order,
@@ -50,19 +66,65 @@ import type {
   ProductFiltersParams,
   ProductFiltersResponse,
   ProductListParams,
+  RefreshTokenParams,
   RegisterParams,
+  RequestNewsletterUnsubscribeParams,
   RequestPasswordResetParams,
   ResetPasswordParams,
   Return,
+  ReturnFilters,
+  ReturnSort,
   Seller,
   StockLocation,
   StoreCredit,
   UpdateCartParams,
+  UpdateCompanyParams,
+  UpdateCustomerParams,
+  UpdateFulfillmentParams,
   UpdateLineItemParams,
   UpdatePaymentSessionParams,
+  UpdateWishlistItemParams,
+  UpdateWishlistParams,
+  VerifyNewsletterSubscriberParams,
   Wishlist,
   WishlistItem,
 } from './types'
+import type {
+  AddressFilters,
+  AddressSort,
+  CompanyMembershipFilters,
+  CompanyMembershipSort,
+  CreditCardFilters,
+  CreditCardSort,
+  GiftCardFilters,
+  GiftCardSort,
+  OrderFilters,
+  OrderSort,
+  SellerFilters,
+  SellerSort,
+  StoreCreditFilters,
+  StoreCreditSort,
+  WishlistFilters,
+  WishlistSort,
+} from './types/filters.generated'
+
+// The category and collection go at the top level; only the filters are Ransack params.
+function getFiltersParams(params: ProductFiltersParams = {}) {
+  const { q, ...scope } = params
+  return { ...scope, ...transformListParams({ q }) }
+}
+
+interface ApplyStoreCredit {
+  /**
+   * Apply store credit to the cart
+   * @param cartId - Cart prefixed ID
+   * @param amount - How much to apply, as a decimal string (`'10.00'`). Omit it to apply as much
+   *   as the cart can use.
+   */
+  (cartId: string, amount?: string, options?: RequestOptions): Promise<Cart>
+  /** @deprecated Pass the amount as a decimal string (`'25.00'`). A number is refused from 6.1. */
+  (cartId: string, amount: number, options?: RequestOptions): Promise<Cart>
+}
 
 export class StoreClient {
   /**
@@ -98,13 +160,13 @@ export class StoreClient {
      * Returns new access JWT + rotated refresh token.
      * No Authorization header needed — uses refresh_token in body.
      */
-    refresh: (params: { refresh_token: string }, options?: RequestOptions): Promise<AuthTokens> =>
+    refresh: (params: RefreshTokenParams, options?: RequestOptions): Promise<AuthTokens> =>
       this.request<AuthTokens>('POST', '/auth/refresh', { ...options, body: params }),
 
     /**
      * Logout — revokes the refresh token.
      */
-    logout: (params: { refresh_token: string }, options?: RequestOptions): Promise<void> =>
+    logout: (params: LogoutParams, options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', '/auth/logout', { ...options, body: params }),
   }
 
@@ -148,7 +210,7 @@ export class StoreClient {
     ): Promise<ProductFiltersResponse> =>
       this.request<ProductFiltersResponse>('GET', '/products/filters', {
         ...options,
-        params: params as Record<string, string | number | undefined>,
+        params: getFiltersParams(params),
       }),
   }
 
@@ -202,7 +264,7 @@ export class StoreClient {
      * onboarding, suspended, or away on holiday is omitted.
      */
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerFilters, SellerSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Seller>> =>
       this.request<PaginatedResponse<Seller>>('GET', '/sellers', {
@@ -618,7 +680,7 @@ export class StoreClient {
       update: (
         cartId: string,
         fulfillmentId: string,
-        params: { selected_delivery_rate_id: string },
+        params: UpdateFulfillmentParams,
         options?: RequestOptions,
       ): Promise<Cart> =>
         this.request<Cart>('PATCH', `/carts/${cartId}/fulfillments/${fulfillmentId}`, {
@@ -712,15 +774,11 @@ export class StoreClient {
      * Store credits
      */
     storeCredits: {
-      /**
-       * Apply store credit to the cart
-       * @param cartId - Cart prefixed ID
-       */
-      apply: (cartId: string, amount?: number, options?: RequestOptions): Promise<Cart> =>
+      apply: ((cartId: string, amount?: string | number, options?: RequestOptions): Promise<Cart> =>
         this.request<Cart>('POST', `/carts/${cartId}/store_credits`, {
           ...options,
-          body: amount ? { amount } : undefined,
-        }),
+          body: amount != null && amount !== '' ? { amount } : undefined,
+        })) as ApplyStoreCredit,
 
       /**
        * Remove store credit from the cart
@@ -739,13 +797,19 @@ export class StoreClient {
     /**
      * Get a completed order by prefixed ID.
      * Accessible via JWT (authenticated users) or spreeToken (guests).
+     *
+     * Also accepts the id of the cart the checkout was placed from — the
+     * handle a storefront still holds on its confirmation page. A checkout
+     * that reached several sellers resolves there to the group of orders it
+     * produced rather than to any one of them, exactly as `carts.complete`
+     * answered it; narrow the result with `isOrderGroup`.
      */
     get: (
       id: string,
       params?: { expand?: string[]; fields?: string[] },
       options?: RequestOptions,
-    ): Promise<Order> =>
-      this.request<Order>('GET', `/orders/${id}`, {
+    ): Promise<Order | OrderGroup> =>
+      this.request<Order | OrderGroup>('GET', `/orders/${id}`, {
         ...options,
         params: getParams(params),
       }),
@@ -761,7 +825,7 @@ export class StoreClient {
     returns: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ReturnFilters, ReturnSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Return>> =>
         this.request<PaginatedResponse<Return>>('GET', `/orders/${orderId}/returns`, {
@@ -786,11 +850,7 @@ export class StoreClient {
        */
       create: (
         orderId: string,
-        params: {
-          items: Array<{ fulfillment_item_id: string; quantity: number }>
-          reason_id?: string
-          memo?: string
-        },
+        params: CreateReturnParams,
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('POST', `/orders/${orderId}/returns`, {
@@ -818,7 +878,7 @@ export class StoreClient {
     claims: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ClaimFilters, ClaimSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Claim>> =>
         this.request<PaginatedResponse<Claim>>('GET', `/orders/${orderId}/claims`, {
@@ -842,11 +902,7 @@ export class StoreClient {
        */
       create: (
         orderId: string,
-        params: {
-          items: Array<{ line_item_id: string; quantity: number; description?: string }>
-          reason_id?: string
-          memo?: string
-        },
+        params: CreateClaimParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('POST', `/orders/${orderId}/claims`, {
@@ -881,7 +937,7 @@ export class StoreClient {
      * store's allowed origins.
      */
     create: (
-      params: { email: string; redirect_url?: string },
+      params: CreateNewsletterSubscriberParams,
       options?: RequestOptions,
     ): Promise<NewsletterSubscriber> =>
       this.request<NewsletterSubscriber>('POST', '/newsletter_subscribers', {
@@ -892,7 +948,10 @@ export class StoreClient {
     /**
      * Confirm a pending subscription using the token from the confirmation email.
      */
-    verify: (params: { token: string }, options?: RequestOptions): Promise<NewsletterSubscriber> =>
+    verify: (
+      params: VerifyNewsletterSubscriberParams,
+      options?: RequestOptions,
+    ): Promise<NewsletterSubscriber> =>
       this.request<NewsletterSubscriber>('POST', '/newsletter_subscribers/verify', {
         ...options,
         body: params,
@@ -906,7 +965,7 @@ export class StoreClient {
      * payload when it's not in the store's allowed origins.
      */
     requestUnsubscribe: (
-      params: { email: string; redirect_url?: string },
+      params: RequestNewsletterUnsubscribeParams,
       options?: RequestOptions,
     ): Promise<void> =>
       this.request<void>('POST', '/newsletter_subscribers/request_unsubscribe', {
@@ -937,22 +996,7 @@ export class StoreClient {
     /**
      * Update current customer profile
      */
-    update: (
-      params: {
-        first_name?: string
-        last_name?: string
-        email?: string
-        password?: string
-        password_confirmation?: string
-        /** Required when changing email or password */
-        current_password?: string
-        accepts_email_marketing?: boolean
-        phone?: string
-        /** Arbitrary key-value metadata (stored, not returned in responses) */
-        metadata?: Record<string, unknown>
-      },
-      options?: RequestOptions,
-    ): Promise<Customer> =>
+    update: (params: UpdateCustomerParams, options?: RequestOptions): Promise<Customer> =>
       this.request<Customer>('PATCH', '/customers/me', {
         ...options,
         body: params,
@@ -965,7 +1009,10 @@ export class StoreClient {
       /**
        * List customer addresses
        */
-      list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<Address>> =>
+      list: (
+        params?: ListParams<AddressFilters, AddressSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Address>> =>
         this.request<PaginatedResponse<Address>>('GET', '/customers/me/addresses', {
           ...options,
           params: transformListParams({ ...params }),
@@ -980,7 +1027,7 @@ export class StoreClient {
       /**
        * Create an address
        */
-      create: (params: AddressParams, options?: RequestOptions): Promise<Address> =>
+      create: (params: AddressCreateParams, options?: RequestOptions): Promise<Address> =>
         this.request<Address>('POST', '/customers/me/addresses', {
           ...options,
           body: params,
@@ -991,7 +1038,7 @@ export class StoreClient {
        */
       update: (
         id: string,
-        params: Partial<AddressParams>,
+        params: AddressUpdateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/customers/me/addresses/${id}`, {
@@ -1014,7 +1061,7 @@ export class StoreClient {
        * List customer credit cards
        */
       list: (
-        params?: ListParams,
+        params?: ListParams<CreditCardFilters, CreditCardSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CreditCard>> =>
         this.request<PaginatedResponse<CreditCard>>('GET', '/customers/me/credit_cards', {
@@ -1043,7 +1090,10 @@ export class StoreClient {
        * List customer gift cards
        * Returns gift cards associated with the current user, ordered by newest first
        */
-      list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<GiftCard>> =>
+      list: (
+        params?: ListParams<GiftCardFilters, GiftCardSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<GiftCard>> =>
         this.request<PaginatedResponse<GiftCard>>('GET', '/customers/me/gift_cards', {
           ...options,
           params: transformListParams({ ...params }),
@@ -1066,7 +1116,7 @@ export class StoreClient {
        * Supports Ransack filtering (e.g. `q[amount_remaining_gt]: 0`).
        */
       list: (
-        params?: ListParams,
+        params?: ListParams<StoreCreditFilters, StoreCreditSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<StoreCredit>> =>
         this.request<PaginatedResponse<StoreCredit>>('GET', '/customers/me/store_credits', {
@@ -1092,7 +1142,7 @@ export class StoreClient {
        * List the customer's downloads, newest first.
        */
       list: (
-        params?: ListParams,
+        params?: ListParams<DigitalLinkFilters, DigitalLinkSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<DigitalLink>> =>
         this.request<PaginatedResponse<DigitalLink>>('GET', '/customers/me/digital_links', {
@@ -1232,13 +1282,13 @@ export class StoreClient {
     get: (id: string, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('GET', `/companies/${id}`, options),
 
-    update: (id: string, params: { name?: string }, options?: RequestOptions): Promise<Company> =>
+    update: (id: string, params: UpdateCompanyParams, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('PATCH', `/companies/${id}`, { ...options, body: params }),
 
     addresses: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<AddressFilters, AddressSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Address>> =>
         this.request<PaginatedResponse<Address>>('GET', `/companies/${companyId}/addresses`, {
@@ -1248,7 +1298,7 @@ export class StoreClient {
 
       create: (
         companyId: string,
-        params: CompanyAddressParams,
+        params: CompanyAddressCreateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('POST', `/companies/${companyId}/addresses`, {
@@ -1259,7 +1309,7 @@ export class StoreClient {
       update: (
         companyId: string,
         id: string,
-        params: Partial<CompanyAddressParams>,
+        params: CompanyAddressUpdateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {
@@ -1274,7 +1324,7 @@ export class StoreClient {
     members: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<CompanyMembershipFilters, CompanyMembershipSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CompanyMembership>> =>
         this.request<PaginatedResponse<CompanyMembership>>(
@@ -1293,7 +1343,7 @@ export class StoreClient {
        */
       create: (
         companyId: string,
-        params: { customer_email: string },
+        params: AddCompanyMemberParams,
         options?: RequestOptions,
       ): Promise<CompanyInvitation> =>
         this.request<CompanyInvitation>('POST', `/companies/${companyId}/members`, {
@@ -1309,7 +1359,7 @@ export class StoreClient {
     invitations: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<CompanyInvitationFilters, CompanyInvitationSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CompanyInvitation>> =>
         this.request<PaginatedResponse<CompanyInvitation>>(
@@ -1327,7 +1377,7 @@ export class StoreClient {
     orders: {
       list: (
         companyId: string,
-        params?: ListParams,
+        params?: ListParams<OrderFilters, OrderSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Order>> =>
         this.request<PaginatedResponse<Order>>('GET', `/companies/${companyId}/orders`, {
@@ -1360,13 +1410,7 @@ export class StoreClient {
      */
     accept: (
       token: string,
-      params?: {
-        first_name?: string
-        last_name?: string
-        phone?: string
-        password?: string
-        password_confirmation?: string
-      },
+      params?: AcceptCompanyInvitationParams,
       options?: RequestOptions,
     ): Promise<CompanyMembership> =>
       this.request<CompanyMembership>('POST', `/company_invitations/${token}/accept`, {
@@ -1387,7 +1431,10 @@ export class StoreClient {
     /**
      * List wishlists
      */
-    list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<Wishlist>> =>
+    list: (
+      params?: ListParams<WishlistFilters, WishlistSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Wishlist>> =>
       this.request<PaginatedResponse<Wishlist>>('GET', '/wishlists', {
         ...options,
         params: transformListParams({ ...params }),
@@ -1409,10 +1456,7 @@ export class StoreClient {
     /**
      * Create a wishlist
      */
-    create: (
-      params: { name: string; is_private?: boolean; is_default?: boolean },
-      options?: RequestOptions,
-    ): Promise<Wishlist> =>
+    create: (params: CreateWishlistParams, options?: RequestOptions): Promise<Wishlist> =>
       this.request<Wishlist>('POST', '/wishlists', {
         ...options,
         body: params,
@@ -1423,7 +1467,7 @@ export class StoreClient {
      */
     update: (
       id: string,
-      params: { name?: string; is_private?: boolean; is_default?: boolean },
+      params: UpdateWishlistParams,
       options?: RequestOptions,
     ): Promise<Wishlist> =>
       this.request<Wishlist>('PATCH', `/wishlists/${id}`, {
@@ -1446,7 +1490,7 @@ export class StoreClient {
        */
       create: (
         wishlistId: string,
-        params: { variant_id: string; quantity?: number },
+        params: CreateWishlistItemParams,
         options?: RequestOptions,
       ): Promise<WishlistItem> =>
         this.request<WishlistItem>('POST', `/wishlists/${wishlistId}/items`, {
@@ -1460,7 +1504,7 @@ export class StoreClient {
       update: (
         wishlistId: string,
         itemId: string,
-        params: { quantity: number },
+        params: UpdateWishlistItemParams,
         options?: RequestOptions,
       ): Promise<WishlistItem> =>
         this.request<WishlistItem>('PATCH', `/wishlists/${wishlistId}/items/${itemId}`, {

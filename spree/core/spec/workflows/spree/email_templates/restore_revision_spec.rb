@@ -21,7 +21,7 @@ describe Spree::EmailTemplates::RestoreRevision do
 
     draft = described_class.new.call(revision: keyed, locale: 'en').value
 
-    expect(draft.subject).to eq(Spree.t('admin_user_mailer.password_reset_email.subject'))
-    expect(draft.body).to include(Spree.t('admin_user_mailer.password_reset_email.action'))
+    expect(draft.subject).to eq(I18n.t('spree.admin_user_mailer.password_reset_email.subject'))
+    expect(draft.body).to include(I18n.t('spree.admin_user_mailer.password_reset_email.action'))
   end
 end

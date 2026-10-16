@@ -1,8 +1,29 @@
-import { expect, test } from '@playwright/test'
-import { gotoIndex, login } from './helpers'
+import { expect, type Locator, type Page, test } from '@playwright/test'
+import { FIXTURE_BULK_CHANNEL_NAME, gotoIndex, login } from './helpers'
 
 const DELIVERY_PROFILES_PATH = (storeId: string) => `/${storeId}/settings/delivery-profiles`
 const PROFILE_CTA = /add profile/i
+
+/** The select inside a method-form field, found by the field's visible label. */
+function fieldSelect(scope: Locator | Page, label: string): Locator {
+  const page = 'page' in scope ? scope.page() : scope
+  return scope
+    .locator('[data-slot="field"]')
+    .filter({ has: page.getByText(label, { exact: true }) })
+    .getByRole('combobox')
+}
+
+async function createProfile(page: Page, name: string, kind?: RegExp) {
+  await page.getByRole('button', { name: PROFILE_CTA }).click()
+  await expect(page.getByRole('heading', { name: /new delivery profile/i })).toBeVisible()
+  await page.locator('#name').fill(name)
+  if (kind) {
+    await fieldSelect(page.getByRole('dialog'), 'Kind').click()
+    await page.getByRole('option', { name: kind }).click()
+  }
+  await page.getByRole('button', { name: /create profile/i }).click()
+  await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+}
 
 test.describe('delivery profiles', () => {
   test('lists delivery profiles including the store default', async ({ page }) => {
@@ -134,6 +155,79 @@ test.describe('delivery profiles', () => {
       timeout: 15_000,
     })
     await expect(reopened.locator('[id^="calculator-amount-"]').first()).toHaveValue(/7\.50|7\.5/)
+  })
+
+  // A method's settings are typed: each currency keeps its own amount, the
+  // eligibility rules keep theirs, and switching the calculator starts over
+  // from the new one's defaults instead of carrying the old one's keys.
+  test('keeps per-currency amounts and conditions, and resets settings when the calculator changes', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const stamp = Date.now()
+    const methodName = `E2E Typed ${stamp}`
+    await createProfile(page, `E2E Typed Profile ${stamp}`)
+
+    await page
+      .getByRole('button', { name: /add method/i })
+      .first()
+      .click()
+    const sheet = page.getByRole('dialog')
+    await sheet.locator('#name').fill(methodName)
+
+    const calculator = sheet.locator('#calculator-type')
+    await expect(calculator).toBeEnabled({ timeout: 15_000 })
+    await calculator.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await sheet.locator('#calculator-amount-USD').fill('5.00')
+    await sheet.locator('#calculator-amount-EUR').fill('4.50')
+
+    await sheet.getByRole('button', { name: /^add condition$/i }).click()
+    await page.getByRole('menuitem', { name: /^channel$/i }).click()
+    await sheet.getByPlaceholder(/search sales channels/i).fill(FIXTURE_BULK_CHANNEL_NAME)
+    await page.getByRole('option', { name: FIXTURE_BULK_CHANNEL_NAME }).click()
+
+    await sheet.getByRole('button', { name: /^add condition$/i }).click()
+    await page.getByRole('menuitem', { name: /^item total$/i }).click()
+    await sheet.locator('#preference-minimum_amount').fill('25')
+
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    // Both conditions and both amounts come back as saved.
+    await page.getByText(methodName).click()
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveValue(/^5(\.0+)?$/, {
+      timeout: 15_000,
+    })
+    await expect(sheet.locator('#calculator-amount-EUR')).toHaveValue(/^4\.50?$/)
+    await expect(sheet.getByText(FIXTURE_BULK_CHANNEL_NAME)).toBeVisible()
+    await expect(sheet.locator('#preference-minimum_amount')).toHaveValue(/^25(\.0+)?$/)
+
+    // Changing one currency leaves the other alone.
+    await sheet.locator('#calculator-amount-USD').fill('6.25')
+    await sheet.getByRole('button', { name: /^save$/i }).click()
+    await expect(sheet).toHaveCount(0, { timeout: 15_000 })
+    await page.getByText(methodName).click()
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveValue('6.25', { timeout: 15_000 })
+    await expect(sheet.locator('#calculator-amount-EUR')).toHaveValue(/^4\.50?$/)
+
+    // A different calculator starts from its own defaults.
+    await calculator.click()
+    await page.getByRole('option', { name: /^flexi rate$/i }).click()
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveCount(0)
+    await expect(sheet.locator('#preference-first_item')).toHaveValue(/^0(\.0+)?$/)
+    await sheet.locator('#preference-first_item').fill('3.00')
+    await sheet.getByRole('button', { name: /^save$/i }).click()
+    await expect(sheet).toHaveCount(0, { timeout: 15_000 })
+
+    await page.getByText(methodName).click()
+    await expect(calculator).toContainText(/flexi rate/i, { timeout: 15_000 })
+    await expect(sheet.locator('#preference-first_item')).toHaveValue(/^3(\.0+)?$/)
+    await expect(sheet.getByText(FIXTURE_BULK_CHANNEL_NAME)).toBeVisible()
   })
 
   // Opening a method is a search-param change, so the sheet must survive a
@@ -302,5 +396,83 @@ test.describe('delivery profiles', () => {
       .click()
 
     await expect(page.getByText(groupName)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  // Profile kinds and fulfillment providers are both named by short values on
+  // the wire; the digital kind must offer, preselect and persist the digital
+  // provider, and reopening must find it in the provider catalog again.
+  test('creates a digital profile with a digital method that reopens as digital', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const stamp = Date.now()
+    const methodName = `E2E Download ${stamp}`
+    await createProfile(page, `E2E Digital Profile ${stamp}`, /^digital$/i)
+
+    await page.getByRole('button', { name: /add digital method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    const sheet = page.getByRole('dialog')
+    await expect(fieldSelect(sheet, 'Fulfillment provider')).toContainText(/^digital$/i, {
+      timeout: 15_000,
+    })
+    await sheet.locator('#name').fill(methodName)
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    await page.getByText(methodName).click()
+    await expect(fieldSelect(page.getByRole('dialog'), 'Fulfillment provider')).toContainText(
+      /^digital$/i,
+      { timeout: 15_000 },
+    )
+  })
+
+  // A method left on the default would reopen as Internal whether or not the
+  // stored provider round-tripped, so pick the other built-in one.
+  test('prices a method through the freight rate provider with a markup, and it reopens that way', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const stamp = Date.now()
+    const methodName = `E2E Freight ${stamp}`
+    await createProfile(page, `E2E Freight Profile ${stamp}`)
+
+    await page
+      .getByRole('button', { name: /add method/i })
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    const sheet = page.getByRole('dialog')
+    await sheet.locator('#name').fill(methodName)
+    const rateProvider = fieldSelect(sheet, 'Rate provider')
+    await expect(rateProvider).toContainText(/^internal$/i, { timeout: 15_000 })
+    await rateProvider.click()
+    await page.getByRole('option', { name: /^freight$/i }).click()
+    await expect(rateProvider).toContainText(/^freight$/i)
+    // A provider-priced method carries the store's markup on top of the quote.
+    await sheet.locator('#markup_percent').fill('7.5')
+    await sheet.locator('#markup_flat').fill('2.50')
+
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    await page.getByText(methodName).click()
+    const reopened = page.getByRole('dialog')
+    await expect(fieldSelect(reopened, 'Rate provider')).toContainText(/^freight$/i, {
+      timeout: 15_000,
+    })
+    await expect(reopened.locator('#markup_percent')).toHaveValue('7.5')
+    await expect(reopened.locator('#markup_flat')).toHaveValue('2.50')
   })
 })

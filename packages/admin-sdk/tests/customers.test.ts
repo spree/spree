@@ -13,7 +13,7 @@ const sampleCustomer = {
 }
 
 const sampleCreditCard = { id: 'cc_1', brand: 'visa', last4: '4242' }
-const sampleAddress = { id: 'addr_1', firstname: 'Jane', city: 'Berlin' }
+const sampleAddress = { id: 'addr_1', first_name: 'Jane', city: 'Berlin' }
 const sampleStoreCredit = { id: 'sc_1', amount: '50.0', currency: 'USD' }
 
 describe('customers', () => {
@@ -178,11 +178,11 @@ describe('customers', () => {
       )
 
       await createTestClient().customers.addresses.create('cus_abc123', {
-        firstname: 'Jane',
+        first_name: 'Jane',
         city: 'Berlin',
       })
 
-      expect(body).toEqual({ firstname: 'Jane', city: 'Berlin' })
+      expect(body).toEqual({ first_name: 'Jane', city: 'Berlin' })
     })
 
     it('PATCHes an existing customer address by id', async () => {

@@ -18,15 +18,6 @@ describe Spree.admin_user_class, type: :model do
       admin_user.update!(password: 'new-secret-123', password_confirmation: 'new-secret-123')
       expect(described_class.find_by_password_reset_token(token)).to be_nil
     end
-
-    # The token payload keys off the password salt/digest so it invalidates
-    # when the password changes. has_secure_password provides #password_salt
-    # (derived from password_digest); the generator also falls back through
-    # encrypted_password for a legacy bcrypt column on a custom model without a
-    # password_salt, so it never raises NameError.
-    it 'generates a password reset token from the password digest' do
-      expect(admin_user.generate_token_for(:password_reset)).to be_present
-    end
   end
 
   describe '#can_be_deleted?' do

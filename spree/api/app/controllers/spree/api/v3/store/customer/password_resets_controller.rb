@@ -14,6 +14,23 @@ module Spree
 
             skip_before_action :authenticate_user
 
+            request_params 'RequestPasswordResetParams', action: :create do |body|
+              body.attribute :email, :string,
+                required: true,
+                format: :email,
+                example: 'customer@example.com',
+                description: 'The email of the account to reset.'
+              body.attribute :redirect_url, :string,
+                format: :uri,
+                example: 'https://myshop.com/reset-password',
+                description: "Where the reset link sends the customer. Ignored unless it matches one of the store's allowed origins."
+            end
+
+            request_params 'ResetPasswordParams', action: :update do |body|
+              body.attribute :password, :string, required: true, example: 'newsecurepassword'
+              body.attribute :password_confirmation, :string, required: true, example: 'newsecurepassword'
+            end
+
             # POST /api/v3/store/password_resets
             def create
               redirect_url = params[:redirect_url]
@@ -41,7 +58,7 @@ module Spree
               end
 
               # Always return 202 to prevent email enumeration
-              render json: { message: Spree.t(:password_reset_requested, scope: :api) }, status: :accepted
+              render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
             end
 
             # PATCH /api/v3/store/password_resets/:id
@@ -51,7 +68,7 @@ module Spree
               unless user
                 return render_error(
                   code: ERROR_CODES[:password_reset_token_invalid],
-                  message: Spree.t(:password_reset_token_invalid, scope: :api),
+                  message: I18n.t('spree.api.password_reset_token_invalid'),
                   status: :unprocessable_content
                 )
               end

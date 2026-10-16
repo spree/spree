@@ -224,7 +224,7 @@ module Spree
           payment_method = order.store.payment_methods.find_or_initialize_by(
             type: 'Spree::PaymentMethod::StoreCredit'
           )
-          payment_method.name ||= Spree.t(:store_credit_name)
+          payment_method.name ||= I18n.t('spree.store_credit_name')
           payment_method.active = true
           payment_method.save! if payment_method.new_record?
           payment_method

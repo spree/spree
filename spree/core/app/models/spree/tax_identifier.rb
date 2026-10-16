@@ -152,7 +152,7 @@ module Spree
     # The kind as the dashboard shows it, falling back to the raw key so an
     # extension's kind reads as itself rather than blank.
     def kind_label
-      Spree.t("tax_identifier_kinds.#{kind}", default: kind.to_s.humanize)
+      I18n.t("spree.tax_identifier_kinds.#{kind}", default: kind.to_s.humanize)
     end
 
     # The class registered for this kind, or nil when nothing is registered and

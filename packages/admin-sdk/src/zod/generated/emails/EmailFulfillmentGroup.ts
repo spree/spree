@@ -4,7 +4,8 @@ import { EmailParcelItemSchema } from './EmailParcelItem';
 
 export const EmailFulfillmentGroupSchema = z.object({
   name: z.string().nullable(),
-  display_cost: z.string(),
+  unpriced: z.boolean(),
+  cost: z.string(),
   seller_names: z.array(z.string()),
   items: z.array(EmailParcelItemSchema),
 });

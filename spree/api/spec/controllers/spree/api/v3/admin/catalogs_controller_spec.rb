@@ -178,7 +178,7 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
 
       get :show, params: { id: created.prefixed_id, expand: 'price_list' }, as: :json
 
-      expect(json_response['price_list']['price_adjustment_percentage']).to eq('-10.0')
+      expect(json_response['price_list']['price_adjustment_percentage']).to eq('-10')
     end
   end
 

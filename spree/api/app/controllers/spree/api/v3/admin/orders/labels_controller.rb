@@ -11,16 +11,39 @@ module Spree
           class LabelsController < BaseController
             include Spree::Api::V3::Orders::ShippingLabelActions
 
+            # The permit list itself lives in ShippingLabelActions, shared with
+            # the seller branch; this declaration documents it.
+            request_params :shipping_label do |body|
+              body.attribute :file_signed_id, :string,
+                description: 'A `signed_id` from `files.upload()`. Its presence records a label bought elsewhere instead of buying one; without it the body is ignored and the label is bought through the carrier.'
+              body.attribute :tracking_number, :string,
+                description: 'The number printed on an uploaded label. Required with `file_signed_id`.'
+              body.attribute :carrier, :string,
+                description: "Free text; a forwarder's name is as valid as a carrier slug. Detected from the number when omitted."
+              body.attribute :service, :string, description: 'Carrier service the label was bought at.'
+              body.attribute :cost, :decimal,
+                description: "What the merchant paid the carrier. Accounting data only; it never touches the order's shipping charge."
+              body.attribute :currency, :currency, description: 'Currency of the cost.'
+              body.attribute :file_format, :string,
+                choices: %w[pdf png zpl],
+                description: 'Taken from the file when omitted.'
+              body.attribute :tracking_url, :string, description: 'Tracking page for the consignment the label mints.'
+            end
+
             before_action :set_resource, only: [:show, :download, :refund, :destroy]
 
             # POST .../labels
             #
-            # Buys the label through the parcel's provider, or — when a `file`
+            # Buys the label through the parcel's provider, or — when a `file_signed_id`
             # is given — records one the merchant bought elsewhere.
             def create
               authorize!(:create, Spree::ShippingLabel)
 
-              return record_uploaded_label if label_params[:file].present?
+              return record_uploaded_label if label_params[:file_signed_id].present?
+              # Buying is the default only when no file is sent at all. A file
+              # under its old name would otherwise fall through to buying a
+              # label on the carrier account.
+              return render_misnamed_label_file if params.key?(:file)
 
               with_order_lock do
                 result = Spree.shipping_label_purchase_workflow.call(owner: @parent)
@@ -58,6 +81,16 @@ module Spree
                         else
                           @order.fulfillments.find_by_prefix_id!(params[:fulfillment_id])
                         end
+            end
+
+            private
+
+            def render_misnamed_label_file
+              render_error(
+                code: ERROR_CODES[:parameter_invalid],
+                message: I18n.t('spree.shipping_labels.errors.file_renamed'),
+                status: :unprocessable_content
+              )
             end
           end
         end

@@ -13,15 +13,6 @@ module Spree
           # resource_type + resource_id, so the controller stays free of
           # per-model branching.
           #
-          # POST /api/v3/admin/translations/batch
-          # Body:
-          #   { "translations": [
-          #       { "resource_type": "option_type",  "resource_id": "opt_…",
-          #         "values": { "de": { "label": "Größe" } } },
-          #       { "resource_type": "option_value", "resource_id": "optval_…",
-          #         "values": { "de": { "label": "Klein" } } }
-          #   ] }
-          #
           # All entries succeed or none do — a validation failure on any entry
           # rolls back the whole transaction and returns per-entry detail.
           # The orchestration (resolve → upsert → rollback) lives in
@@ -33,6 +24,23 @@ module Spree
             # write_<resource> scope for EVERY entry (see require_batch_scopes!),
             # which is stricter than the static check and keeps the audit model.
             skip_scope_check!
+
+            request_params 'TranslationBatchParams' do |body|
+              body.attribute :translations, :array,
+                required: true,
+                as: 'TranslationBatchEntryParams',
+                description: 'At least one entry. All entries are saved, or none are.' do |translation|
+                translation.attribute :resource_type, :string,
+                  required: true,
+                  example: 'option_type',
+                  description: 'Translatable resource type token, e.g. `option_type`.'
+                translation.attribute :resource_id, :id, required: true, example: 'opt_abc123'
+                translation.attribute :values, :hash,
+                  required: true,
+                  example: { de: { label: 'Größe' } },
+                  description: 'Translated fields keyed by locale code, then by field name.'
+              end
+            end
 
             # POST /api/v3/admin/translations/batch
             def create

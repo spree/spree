@@ -265,6 +265,16 @@ curl 'https://api.mystore.com/api/v3/store/delivery_methods/dm_xxx/pickup_locati
 
 </CodeGroup>
 
+Third-party pickup points come from a pickup point provider — a locker network or partner-shop integration. Spree ships none; an extension registers its provider so a delivery method can select it by its short name (for example `inpost` for `SpreeInpost::PickupPointProvider`):
+
+```ruby server/config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.pickup_point_providers << SpreeInpost::PickupPointProvider
+end
+```
+
+A delivery method can only use a registered provider.
+
 ## Managing fulfillments
 
 <CodeGroup>

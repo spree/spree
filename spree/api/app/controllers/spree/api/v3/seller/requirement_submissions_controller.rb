@@ -12,6 +12,16 @@ module Spree
         class RequirementSubmissionsController < Seller::BaseController
           scoped_resource :seller_profile
 
+          # `file_signed_id` comes from POST /files, so the bytes are already in
+          # storage by the time this runs.
+          request_params 'RequirementSubmissionParams' do |body|
+            body.attribute :note, :string, description: 'Anything the seller wants to say alongside the submission.'
+            body.attribute :reference, :string,
+              description: 'A reference number or external identifier, for requirements that ask for one.'
+            body.attribute :file_signed_id, :string,
+              description: 'A `signed_id` from `POST /files`, for requirements that ask for a document.'
+          end
+
           before_action :set_requirement, only: [:create]
           before_action :set_submission, only: [:download]
 
@@ -24,7 +34,7 @@ module Spree
               requirement: @requirement,
               note: attributes[:note],
               reference: attributes[:reference],
-              file: attributes[:file],
+              file: attributes[:file_signed_id],
               submitted_by: try_spree_current_user
             )
 
@@ -42,7 +52,7 @@ module Spree
             unless @submission.file.attached?
               return render_error(
                 code: ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t(:seller_submission_no_file),
+                message: I18n.t('spree.seller_submission_no_file'),
                 status: :unprocessable_content
               )
             end
@@ -57,11 +67,8 @@ module Spree
 
           protected
 
-          # What a seller may say about a requirement. `file` is a direct-upload
-          # signed id, so it is a string like the rest — the bytes are already
-          # in storage by the time this runs.
           def permitted_params
-            params.permit(:note, :reference, :file)
+            params.permit(*declared_permitted_attributes)
           end
 
           def read_actions

@@ -15,7 +15,7 @@ export default defineConfig({
   treeshake: true,
   minify: false,
   // sdk-core is workspace-private; inline it into the published bundle.
-  noExternal: ['@spree/sdk-core'],
+  noExternal: ['@spree/sdk-core', 'spark-md5'],
   esbuildOptions(options) {
     options.alias = {
       '@/types': path.resolve(import.meta.dirname, 'src/types/generated/index.ts'),

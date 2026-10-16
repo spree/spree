@@ -6,6 +6,7 @@ import {
   FileUploadField,
   type FileUploadValue,
   getApiClient,
+  signedIdParam,
   useAuth,
 } from '@spree/dashboard-core'
 import {
@@ -22,13 +23,10 @@ import { DownloadIcon, FileTextIcon, PencilIcon } from '@spree/dashboard-ui/icon
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
-
-/** What a purchase order plausibly arrives as — mirrors the server allowlist. */
-const PO_DOCUMENT_ACCEPT =
-  'application/pdf,image/jpeg,image/png,image/heic,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+import { PO_DOCUMENT_ACCEPT } from '../../../schemas/order'
 
 /** Narrowed from the SDK's own contract so the payload cannot drift from it. */
-type UpdateParams = Pick<OrderUpdateParams, 'po_number' | 'po_document'>
+type UpdateParams = Pick<OrderUpdateParams, 'po_number' | 'po_document_signed_id'>
 
 /**
  * The buyer's own purchase-order reference and the document behind it.
@@ -68,12 +66,10 @@ export function OrderPurchaseOrderCard({ order }: { order: Order }) {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
 
-    const params: UpdateParams = { po_number: data.get('po_number') as string }
-    // Three states: a new upload sends its signed id, an explicit removal
-    // sends null, and an untouched field is omitted so the save leaves
-    // whatever is attached alone.
-    if (document.signedId) params.po_document = document.signedId
-    else if (document.cleared) params.po_document = null
+    const params: UpdateParams = {
+      po_number: data.get('po_number') as string,
+      ...signedIdParam('po_document', document.signedId, document.cleared),
+    }
 
     mutation.mutate(params, {
       onSuccess: stopEditing,

@@ -29,6 +29,10 @@ module Spree
 
           protected
 
+          def filterable?
+            false
+          end
+
           def set_parent
             raise ActiveRecord::RecordNotFound, 'Parent resource not found' unless parent_lookup
 

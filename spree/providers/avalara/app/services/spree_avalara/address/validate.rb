@@ -39,7 +39,7 @@ module SpreeAvalara
 
         def summary
           messages.compact_blank.join('; ').presence ||
-            Spree.t('integrations.avalara.errors.address_unresolved')
+            I18n.t('spree.integrations.avalara.errors.address_unresolved')
         end
       end
 

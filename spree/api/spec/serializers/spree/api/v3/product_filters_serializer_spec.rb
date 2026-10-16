@@ -58,7 +58,7 @@ RSpec.describe Spree::Api::V3::ProductFiltersSerializer do
     it 'serializes filter metadata' do
       expect(subject).to eq(
         'filters' => [
-          { 'id' => 'price', 'type' => 'price_range', 'min' => 10.0, 'max' => 100.0, 'currency' => 'USD' },
+          { 'id' => 'price', 'type' => 'price_range', 'min' => '10.00', 'max' => '100.00', 'currency' => 'USD' },
           {
             'id' => 'availability',
             'type' => 'availability',

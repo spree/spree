@@ -1,0 +1,11 @@
+---
+de-CH:
+  spree:
+    newsletter_mailer:
+      email_confirmation:
+        ignore_disclaimer: Falls Sie dies nicht angefordert haben, ignorieren Sie diese E-Mail bitte.
+    order_mailer:
+      store_owner_notification_email:
+        order_summary: Zusammenfassung Bestellung %{number}
+      subtotal: 'Zwischensumme:'
+      total: 'Bestellsumme:'

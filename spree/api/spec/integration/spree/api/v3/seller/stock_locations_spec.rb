@@ -25,10 +25,13 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
         never appear here.
       DESC
 
+      seller_sdk_example 'stock-locations/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
       parameter name: :sort, in: :query, type: :string, required: false, description: 'Sort field; prefix with `-` for descending'
+      filter_parameters_for
 
       response '200', 'stock locations listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -60,26 +63,10 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
         payload says.
       DESC
 
+      seller_sdk_example 'stock-locations/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Main warehouse' },
-          company: { type: :string, nullable: true },
-          address1: { type: :string, nullable: true, example: '1 Kiln Lane' },
-          address2: { type: :string, nullable: true },
-          city: { type: :string, nullable: true, example: 'Portland' },
-          zipcode: { type: :string, nullable: true, example: '97205' },
-          country_code: { type: :string, nullable: true, example: 'US' },
-          state_code: { type: :string, nullable: true, example: 'OR' },
-          state_name: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true },
-          active: { type: :boolean, description: 'Set `false` to retire a location — there is no delete' },
-          default: { type: :boolean },
-          kind: { type: :string, example: 'warehouse' }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'stock location created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -116,6 +103,8 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
         A stock location the acting seller owns. An id belonging to another
         seller — or to the marketplace operator — answers `404`.
       DESC
+
+      seller_sdk_example 'stock-locations/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -154,21 +143,10 @@ RSpec.describe 'Seller Stock Locations API', type: :request, swagger_doc: 'api-r
         `false`.
       DESC
 
+      seller_sdk_example 'stock-locations/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Main warehouse' },
-          address1: { type: :string, nullable: true },
-          city: { type: :string, nullable: true },
-          zipcode: { type: :string, nullable: true },
-          country_code: { type: :string, nullable: true },
-          state_code: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true },
-          active: { type: :boolean },
-          default: { type: :boolean }
-        }
-      }
+      request_body_for
 
       response '200', 'stock location updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

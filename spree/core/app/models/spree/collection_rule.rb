@@ -2,6 +2,10 @@
 
 module Spree
   class CollectionRule < Spree.base_class
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.collection_rule_types'
+
     has_prefix_id :crule
 
     MATCH_POLICIES = %w[is_equal_to is_not_equal_to contains does_not_contain].freeze
@@ -18,25 +22,6 @@ module Spree
 
     validate :type_must_be_registered
 
-    # @return [String] localized display name for the rule kind, used by admin pickers
-    def self.human_name
-      Spree.t("collection_rule_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    # @return [String] localized description for the rule kind
-    def self.human_description
-      Spree.t("collection_rule_types.#{api_type}.description", default: '')
-    end
-
-    # Feeds the `description` field of `subclasses_with_preference_schema`
-    # (the `/types` discovery payload), which only reads `.description`.
-    def self.description
-      human_description
-    end
-
-    def human_name = self.class.human_name
-    def human_description = self.class.human_description
-
     registers_subclasses_via { Rails.application.config.spree.collection_rules }
 
     private
@@ -47,8 +32,7 @@ module Spree
       return if type.blank?
       return if Rails.application.config.spree.collection_rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_collection_rule, message: Spree.t(:invalid_collection_rule, scope: [:errors, :messages],
-                                                          default: 'is not a registered collection rule'))
+      errors.add(:type, :invalid_collection_rule, message: I18n.t('spree.errors.messages.invalid_collection_rule'))
     end
 
     def regenerate_collection_products

@@ -7,7 +7,9 @@ module Spree
         include Alba::Resource
         include Typelizer::DSL
 
-        typelize code: :string, name: :string, default: :boolean, rtl: :boolean
+        typelize code: [:string, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
+                 name: [:string, deprecated: 'Name the locale from `code` with `Intl.DisplayNames`. Removed in 6.1.'],
+                 default: :boolean, rtl: :boolean
 
         attributes :code, :name
 

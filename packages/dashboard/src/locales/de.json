@@ -1098,8 +1098,7 @@
           "inherit": "Vom Store erben",
           "label": "Strategie für das Bestell-Routing",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Legacy",
-            "Spree::OrderRouting::Strategy::Rules": "Regeln (geordnet)"
+            "rules": "Regeln (geordnet)"
           }
         },
         "storefront_access": {
@@ -1234,12 +1233,12 @@
         "resource_type": {
           "label": "Gilt für",
           "options": {
-            "Spree::OptionType": "Optionstypen",
-            "Spree::Order": "Bestellungen",
-            "Spree::Product": "Produkte",
-            "Spree::Taxon": "Kategorien",
-            "Spree::Customer": "Kunden",
-            "Spree::Variant": "Varianten"
+            "option_type": "Optionstypen",
+            "order": "Bestellungen",
+            "product": "Produkte",
+            "category": "Kategorien",
+            "customer": "Kunden",
+            "variant": "Varianten"
           },
           "read_only_help": "Der Eigentümer kann nicht mehr geändert werden, sobald Werte für dieses Feld vorhanden sind."
         },
@@ -2023,22 +2022,22 @@
           "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden.",
           "label": "Suffix"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Admin-Sprache",
           "placeholder": "Standardsprache verwenden"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "Wenn deaktiviert, werden keine Bestellbestätigungen, Versand- oder Erstattungs-E-Mails gesendet.",
           "label": "Transaktionale E-Mails an Kunden senden"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Zeitzone",
           "placeholder": "Zeitzone auswählen"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "Einheitensystem"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Gewichtseinheit"
         },
         "show_products_without_price": {
@@ -2116,14 +2115,14 @@
         "digital_asset_authorized_days": {
           "label": "Verfügbare Tage"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Höhe",
           "help": "Der übliche Versandkarton, von Carrier-Tarifanbietern für Volumengewicht-Preise genutzt — Zoll bei imperial, Zentimeter bei metrisch. Wirksam nur mit allen drei Werten.",
           "label": "Standard-Paketabmessungen",
           "length": "Länge",
           "width": "Breite"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es.",
           "label": "Standard-Paketgewicht"
         },
@@ -2144,22 +2143,22 @@
           "help": "Wird auf Ihre Provision berechnet, wenn weder der Provisionssatz noch Ihr Steueranbieter einen eigenen Satz nennt. Bei 0 belassen, wenn auf Ihre Gebühr keine Steuer anfällt.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Akzentfarbe"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Hintergrundfarbe"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Kartenfarbe"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Textfarbe"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Überschriftenfarbe"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Schrift",
           "help": "E-Mail-Programme, die sie nicht laden können, verwenden eine ähnliche Schrift."
         }
@@ -2866,6 +2865,7 @@
           "packing_slip_total": "Gesamt",
           "print_label": "Label drucken",
           "print_packing_slip": "Lieferschein drucken",
+          "quoted_after_review": "Preis nach Prüfung",
           "rates_pending_origin": "Speichern Sie den neuen Ursprung, um die dort verfügbaren Versandarten zu sehen.",
           "refund_label": "Etikett erstatten",
           "retry_refund_label": "Erstattung erneut anfordern",
@@ -2937,7 +2937,7 @@
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
           "document": "Bestelldokument",
-          "document_help": "PDF-, Bild- oder Word-Datei, bis zu 10 MB.",
+          "document_help": "PDF, Bild, Word-Dokument, Tabelle oder CSV-Datei, bis zu 10 MB.",
           "download_failed": "Die Bestellung konnte nicht heruntergeladen werden",
           "save_failed": "Die Bestellung konnte nicht gespeichert werden",
           "title": "Bestellung des Kunden"
@@ -3822,7 +3822,6 @@
           "logo_dimensions_help": "Empfohlen: 204×104 Pixel.",
           "section_addresses": "E-Mail-Adressen",
           "section_delivery": "Zustellung",
-          "section_logo": "Logo",
           "subtitle": "Absenderadressen, Benachrichtigungen und das in Transaktions-E-Mails eingebettete Logo.",
           "title": "E-Mail-Einstellungen",
           "branding": {
@@ -6269,6 +6268,18 @@
       "every_language": {
         "notice": "Kunden in allen Sprachen erhalten diese Version, bis Sie eine für {{language}} veröffentlichen."
       }
+    },
+    "updates": {
+      "available": "Spree {{version}} ist verfügbar",
+      "running": "Sie verwenden Spree {{version}}."
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "open": "Benachrichtigungen",
+      "open_unread": "Benachrichtigungen, 1 ungelesen",
+      "empty": "Sie sind auf dem neuesten Stand.",
+      "view_on_github": "Auf GitHub ansehen",
+      "release_notes_unavailable": "Die Versionshinweise konnten nicht geladen werden. Lesen Sie sie stattdessen auf GitHub."
     }
   }
 }

@@ -85,10 +85,10 @@ RSpec.describe SpreeAvalara::Integration do
   # Avalara publishes these two and no others, under these names — the same
   # choice the legacy extension offered, so nobody has to type a hostname.
   it 'offers the two Avalara hosts by name' do
-    field = described_class.serialized_preference_schema.find { |entry| entry[:key] == :endpoint }
+    field = described_class.preference_json_schema.dig('properties', 'endpoint')
 
-    expect(field[:choices]).to eq([{ value: described_class::SANDBOX_ENDPOINT, label: 'Sandbox' },
-                                   { value: described_class::PRODUCTION_ENDPOINT, label: 'Production' }])
+    expect(field['x-spree-choice-labels']).to eq(described_class::SANDBOX_ENDPOINT => 'Sandbox',
+                                                 described_class::PRODUCTION_ENDPOINT => 'Production')
   end
 
   describe '#can_connect?' do
@@ -210,11 +210,11 @@ RSpec.describe SpreeAvalara::Integration do
     end
 
     it 'describes the credential form without leaking the secret default' do
-      license_key = entry[:preference_schema].detect { |field| field[:key] == :license_key }
+      properties = entry[:schema]['properties']
 
-      expect(entry[:preference_schema].size).to eq(7)
-      expect(license_key[:type]).to eq(:password)
-      expect(license_key[:default]).to be_nil
+      expect(properties.size).to eq(7)
+      expect(properties['license_key']).to include('x-spree-secret' => true)
+      expect(properties['license_key']).not_to have_key('default')
     end
   end
 end

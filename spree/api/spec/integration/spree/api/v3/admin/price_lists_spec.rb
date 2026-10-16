@@ -22,8 +22,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed. Supported: `price_rules`.'
@@ -52,50 +51,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[name],
-        properties: {
-          name: { type: :string, example: 'EU wholesale' },
-          description: { type: :string, nullable: true },
-          starts_at: { type: :string, nullable: true, example: '2026-06-01T00:00:00Z' },
-          ends_at: { type: :string, nullable: true, example: '2026-09-01T00:00:00Z' },
-          match_policy: { type: :string, enum: %w[all any], example: 'all' },
-          position: { type: :integer, example: 1 },
-          rules: {
-            type: :array,
-            description: 'STI-typed price rules to attach on create. Existing rules ' \
-                         'on the same payload via PATCH reconcile by id.',
-            items: {
-              type: :object,
-              required: %w[type],
-              properties: {
-                type: { type: :string, example: 'volume_rule' },
-                preferences: { type: :object, additionalProperties: true }
-              }
-            }
-          },
-          prices: {
-            type: :array,
-            description: 'Server-to-server shape: ship the exact per-variant prices ' \
-                         'the list should contain. Each row upserts on the unique key ' \
-                         '`(variant_id, currency, price_list_id)` — `prices` alone tells ' \
-                         'the server which variants belong to the list and what the ' \
-                         'override amount is. Curating whole products goes through the ' \
-                         'nested `/price_lists/{id}/products` surface instead.',
-            items: {
-              type: :object,
-              required: %w[variant_id currency],
-              properties: {
-                variant_id: { type: :string, example: 'variant_xY9' },
-                currency: { type: :string, example: 'USD' },
-                amount: { type: :string, nullable: true, example: '19.99' },
-                compare_at_amount: { type: :string, nullable: true, example: '24.99' }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'price list created (one-shot — metadata, schedule, rules)' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -253,49 +209,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          description: { type: :string, nullable: true },
-          starts_at: { type: :string, nullable: true },
-          ends_at: { type: :string, nullable: true },
-          match_policy: { type: :string, enum: %w[all any] },
-          position: { type: :integer },
-          rules: {
-            type: :array,
-            items: {
-              type: :object,
-              required: %w[type],
-              properties: {
-                id: { type: :string, nullable: true },
-                type: { type: :string, example: 'volume_rule' },
-                preferences: { type: :object, additionalProperties: true }
-              }
-            }
-          },
-          prices: {
-            type: :array,
-            description: 'Individual price overrides (the spreadsheet payload). ' \
-                         'Each row updates by `id` if shipped, otherwise upserts ' \
-                         'on the unique key `(variant_id, currency, price_list_id)`.',
-            items: {
-              type: :object,
-              oneOf: [
-                { required: %w[id] },
-                { required: %w[variant_id currency] }
-              ],
-              properties: {
-                id: { type: :string, example: 'price_aBc123' },
-                variant_id: { type: :string, example: 'variant_xY9' },
-                currency: { type: :string, example: 'USD' },
-                amount: { type: :string, nullable: true, example: '12.50' },
-                compare_at_amount: { type: :string, nullable: true, example: '15.00' }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'price list updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -466,6 +380,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated. `price_list_price` adds the resolved price to every row.',
                 example: 'price_list_price'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -508,11 +423,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :price_list_id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
-        required: %w[product_ids]
-      }
+      request_body_for
 
       response '201', 'products added' do
         let!(:product) { create(:product, store: store) }
@@ -537,11 +448,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :price_list_id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
-        required: %w[product_ids]
-      }
+      request_body_for
 
       response '200', 'products removed' do
         let!(:product) { create(:product, store: store) }

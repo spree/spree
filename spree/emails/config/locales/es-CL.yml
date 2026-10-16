@@ -1,0 +1,21 @@
+---
+es-CL:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        expiry_notice: Este enlace para restablecer la contraseña vencerá pronto. Si no solicitaste esto, no necesitas hacer nada.
+        greeting: Hola %{name},
+        ignore_notice: Si no solicitaste restablecer tu contraseña, puedes ignorar este correo sin problemas. Tu contraseña no se cambiará.
+        instructions: Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para elegir una nueva contraseña.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hola,
+        ignore_disclaimer: Si no solicitaste esto, ignora este correo.
+        instructions: Haz clic en el botón de abajo para verificar tu correo electrónico.
+        subject: Verifica tu correo electrónico
+        verify_email_address_link: Verificar correo electrónico
+    order_mailer:
+      confirm_email:
+        instructions: Por favor, revisa y conserva la siguiente información de tu compra.
+      store_owner_notification_email:
+        instructions: Recibiste un nuevo pedido.

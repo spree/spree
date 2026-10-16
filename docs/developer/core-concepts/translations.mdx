@@ -1,21 +1,11 @@
 ---
 title: Translations
-description: Selling in more than one language — translating product content, and translating the interface around it.
+description: Selling in more than one language — translating content
 ---
 
-## Overview
-
-Two different things need translating, and they're handled separately because they belong to different people.
-
-**Your content** — product names, descriptions, category names — is written by whoever runs the store. Spree stores a version of each field per language.
-
-**The interface** — button labels, error messages, email wording — is written by Spree, and is already translated into dozens of languages by the community.
-
-<Info>
-Which languages a region gets is decided by its [Market](/developer/core-concepts/markets). A market sets the default locale alongside the currency, so a visitor from France lands on French prices and French copy without choosing anything.
-</Info>
-
-## Translating content
+<Note>
+  For Dashboard  UI translations see [Dashboard Customization: Translations](/developer/dashboard/customization/translations).
+</Note>
 
 Every translatable record keeps one row per language, so a product genuinely has a French name rather than a French name pasted over the English one.
 
@@ -121,28 +111,6 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/translations/batch' \
 </CodeGroup>
 
 Asking the API which resources are translatable means a translation tool doesn't need a hardcoded list that goes stale.
-
-## Translating the interface
-
-Spree's own strings — everything in the dashboard and in transactional emails — come from a community-maintained project covering 40+ languages.
-
-<CodeGroup>
-
-```bash Spree CLI
-spree bundle add spree_i18n
-```
-
-```bash Bundler
-bundle add spree_i18n
-```
-
-</CodeGroup>
-
-That's the whole installation. Locales are picked up automatically; nothing needs copying into your app.
-
-<Info>
-See the [supported locales](https://github.com/spree-contrib/spree_i18n/tree/main/config/locales) in the Spree I18n repository. Contributions are welcome if yours is incomplete.
-</Info>
 
 ## Related
 

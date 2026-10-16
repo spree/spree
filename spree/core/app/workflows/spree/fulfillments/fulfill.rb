@@ -105,7 +105,7 @@ module Spree
       end
 
       def ensure_fulfillable
-        failure(@source, Spree.t('fulfillments.errors.cannot_fulfill')) unless @source.can_fulfill?
+        failure(@source, I18n.t('spree.fulfillments.errors.cannot_fulfill')) unless @source.can_fulfill?
 
         ensure_order_placed
         ensure_ready_to_hand_over
@@ -118,7 +118,7 @@ module Spree
       def ensure_order_placed
         return unless @source.order&.draft?
 
-        failure(@source, Spree.t('fulfillments.errors.order_draft'))
+        failure(@source, I18n.t('spree.fulfillments.errors.order_draft'))
       end
 
       # What the pending/ready statuses used to encode, asked once at the
@@ -134,7 +134,7 @@ module Spree
         return if order.nil?
 
         if @source.fulfillment_items.any?(&:backordered?)
-          failure(@source, Spree.t('fulfillments.errors.backordered_units'))
+          failure(@source, I18n.t('spree.fulfillments.errors.backordered_units'))
         end
 
         # An order that owes nothing is ready to hand over, which the old
@@ -154,7 +154,7 @@ module Spree
         pending = order.settlement_pending_payments
         return if pending.any? && pending.all? { |payment| payment.payment_method&.capture_at_checkout? == false }
 
-        failure(@source, Spree.t('fulfillments.errors.order_not_paid'))
+        failure(@source, I18n.t('spree.fulfillments.errors.order_not_paid'))
       end
 
       # The shelf has to be able to cover what is about to leave it. A dispatch
@@ -183,7 +183,7 @@ module Spree
 
           failure(
             @source,
-            Spree.t('fulfillments.errors.insufficient_stock_on_hand',
+            I18n.t('spree.fulfillments.errors.insufficient_stock_on_hand',
                     item: variants[variant_id]&.name,
                     on_hand: stock_level.count_on_hand,
                     requested: quantity)
@@ -221,7 +221,7 @@ module Spree
 
           failure(
             @source,
-            Spree.t('fulfillments.errors.not_in_fulfillment',
+            I18n.t('spree.fulfillments.errors.not_in_fulfillment',
                     item: item[:line_item].prefixed_id, requested: item[:quantity], available: held)
           )
         end

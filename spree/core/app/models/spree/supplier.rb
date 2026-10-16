@@ -32,6 +32,7 @@ module Spree
     normalizes :name, :contact_name, :phone, with: ->(value) { value.strip }
 
     self.whitelisted_ransackable_attributes = %w[name contact_name email phone city country_code created_at]
+    search_by :name, :contact_name, :email
 
     # The postal address, built from this row's own columns the way
     # {Spree::StockLocation#address} does. Unsaved, and blank when nothing has

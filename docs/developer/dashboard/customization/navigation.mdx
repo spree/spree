@@ -24,7 +24,7 @@ nav.add({
   path: '/analytics',      // prefixed with /$storeId at render time
   icon: BarChartIcon,
   position: 650,
-  subject: 'Spree::Order', // optional permission subject — hides item without read permission
+  subject: 'order', // optional permission subject — hides item without read permission
 })
 ```
 
@@ -72,7 +72,7 @@ nav.addChild('products', {
   key: 'products.brands',
   label: 'Brands',
   path: '/products/brands',
-  subject: 'Spree::Brand',
+  subject: 'brand',
 })
 ```
 
@@ -179,7 +179,7 @@ settingsNav.add({
   path: '/integrations/stripe-tax',  // prefixed with /$storeId/settings
   group: 'integrations',
   position: 100,
-  subject: 'Spree::TaxRate',
+  subject: 'tax_rate',
 })
 ```
 

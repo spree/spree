@@ -18,9 +18,6 @@ module Spree
           included do
             include ActiveStorage::SetCurrent
             include Spree::Api::V3::StreamsShippingLabel
-
-            rescue_from ActiveSupport::MessageVerifier::InvalidSignature,
-                        with: :render_invalid_signature
           end
 
           # GET .../labels/:id/download
@@ -31,7 +28,7 @@ module Spree
             stream_shipping_label(@resource) do
               render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t('shipping_labels.errors.no_file_url'),
+                message: I18n.t('spree.shipping_labels.errors.no_file_url'),
                 status: :unprocessable_content
               )
             end
@@ -45,7 +42,7 @@ module Spree
             unless @resource.uploaded?
               return render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t('shipping_labels.errors.purchased_not_deletable'),
+                message: I18n.t('spree.shipping_labels.errors.purchased_not_deletable'),
                 status: :unprocessable_content
               )
             end
@@ -83,39 +80,26 @@ module Spree
 
           private
 
-          def label_permitted_keys
-            [:file, :tracking_number, :carrier, :service,
-             :cost, :currency, :file_format, :tracking_url]
-          end
-
           def label_params
-            @label_params ||= params.permit(*label_permitted_keys)
+            @label_params ||= params.permit(*declared_permitted_attributes)
           end
 
           # Records a label bought outside Spree.
           #
           # Every key is passed whether or not the request carried it, so the
           # workflow sees a missing tracking number as a blank one to reject
-          # rather than a keyword it was never given.
+          # rather than a keyword it was never given. The workflow takes any
+          # attachable as `file`; the API names the reference `file_signed_id`.
           def record_uploaded_label
             with_order_lock do
               result = Spree.shipping_label_record_workflow.call(
                 owner: @parent,
-                **label_permitted_keys.index_with { |key| label_params[key] }
+                file: label_params[:file_signed_id],
+                **(declared_permitted_attributes.grep(Symbol) - [:file_signed_id]).index_with { |key| label_params[key] }
               )
 
               render_result(result, status: :created)
             end
-          end
-
-          # A tampered or expired direct-upload signature is a bad parameter,
-          # not a server fault.
-          def render_invalid_signature
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:parameter_invalid],
-              message: Spree.t('shipping_labels.errors.file_required'),
-              status: :unprocessable_content
-            )
           end
         end
       end

@@ -10,12 +10,12 @@ module Spree
     }
 
     def self.description
-      Spree.t(:tiered_percent)
+      I18n.t('spree.tiered_percent')
     end
 
     def compute(object)
       percent = tier_value_for(object.amount) || preferred_base_percent
-      (object.amount * percent / 100).round(2)
+      Spree::Money::Rounding.to_currency(object.amount * percent / 100, object.try(:currency))
     end
 
     private

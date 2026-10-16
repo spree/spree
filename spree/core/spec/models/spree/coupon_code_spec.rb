@@ -6,11 +6,6 @@ RSpec.describe Spree::CouponCode, type: :model do
 
   describe 'validations' do
     describe 'code' do
-      it 'validates presence' do
-        coupon_code.code = nil
-        expect(coupon_code).not_to be_valid
-      end
-
       it 'validates uniqueness' do
         other_coupon_code = promotion.coupon_codes.last
 

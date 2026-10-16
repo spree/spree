@@ -14,6 +14,10 @@ module Spree
   #
   # See docs/plans/6.0-order-routing.md.
   class OrderRoutingRule < Spree.base_class
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.order_routing_rule_types'
+
     self.table_name = 'spree_order_routing_rules'
 
     # `rank` is integer (lower = better) when the rule has an opinion,
@@ -50,25 +54,6 @@ module Spree
 
     validate :type_must_be_registered
 
-    # @return [String] localized display name for the rule kind, used by admin pickers
-    def self.human_name
-      Spree.t("order_routing_rule_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    # @return [String] localized description for the rule kind
-    def self.human_description
-      Spree.t("order_routing_rule_types.#{api_type}.description", default: '')
-    end
-
-    # Feeds the `description` field of `subclasses_with_preference_schema`
-    # (the `/types` discovery payload), which only reads `.description`.
-    def self.description
-      human_description
-    end
-
-    def human_name = self.class.human_name
-    def human_description = self.class.human_description
-
     # Subclasses override. Returns an Array<LocationRanking> — one per location,
     # with rank=nil to abstain.
     #
@@ -94,14 +79,14 @@ module Spree
       return if type.blank?
       return if Spree.order_routing.rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_order_routing_rule, message: Spree.t(:invalid_order_routing_rule, scope: [:errors, :messages], default: 'is not a registered order routing rule'))
+      errors.add(:type, :invalid_order_routing_rule, message: I18n.t('spree.errors.messages.invalid_order_routing_rule'))
     end
 
     def channel_belongs_to_store
       return if channel.nil? || store_id.nil?
       return if channel.store_id == store_id
 
-      errors.add(:channel, :channel_store_mismatch, message: Spree.t('errors.messages.channel_store_mismatch'))
+      errors.add(:channel, :channel_store_mismatch, message: I18n.t('spree.errors.messages.channel_store_mismatch'))
     end
   end
 end

@@ -5,7 +5,11 @@ require 'spec_helper'
 # the taxons queue, and the method bridges warn through Spree::Deprecation.
 RSpec.describe 'Taxon -> Category deprecation aliases' do
   describe 'constant aliases resolve to the canonical class' do
+    # Each alias warns once, when its file first loads, so another spec may
+    # already have loaded it.
     it 'keeps them as true class aliases (not proxies), so is_a?/STI stay correct' do
+      allow(Spree::Deprecation).to receive(:warn)
+
       expect(Spree::Taxon).to equal(Spree::Category)
       expect(Spree::Classification).to equal(Spree::ProductCategory)
       expect(Spree::PromotionRuleTaxon).to equal(Spree::PromotionRuleCategory)
@@ -66,17 +70,6 @@ RSpec.describe 'Taxon -> Category deprecation aliases' do
       expect(Spree::Deprecation).to receive(:warn).with(/AutoMatchCollectionsJob/)
 
       expect { described_class.new.perform(product.id) }.not_to raise_error
-    end
-  end
-
-  describe Spree::Products::TouchTaxonsJob do
-    it 'is a subclass of the renamed job and warns on perform' do
-      expect(described_class.superclass).to eq(Spree::Products::TouchCategoriesJob)
-
-      category = create(:category)
-      expect(Spree::Deprecation).to receive(:warn).with(/TouchCategoriesJob/)
-
-      expect { described_class.new.perform([category.id], []) }.not_to raise_error
     end
   end
 

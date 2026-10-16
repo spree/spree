@@ -13,6 +13,47 @@ module Spree
           before_action :require_ids!, only: [:bulk_destroy]
           before_action :require_prices!, only: [:bulk_upsert]
 
+          # variant_id and price_list_id resolve through the current store's
+          # scopes (+permitted_params+), so a foreign or unknown id 404s.
+          request_params :price do |body|
+            body.attribute :variant_id, :id, required: true, on: :create, example: 'variant_xY9'
+            body.attribute :currency, :currency, required: true, on: :create, example: 'USD'
+            body.attribute :min_quantity, :integer,
+              description: 'The quantity a line must reach for this price to apply. Omit for the bottom rung of the ladder. Anything above 1 requires a `price_list_id`.'
+            body.attribute :amount, :decimal, nullable: true, example: '19.99'
+            body.attribute :compare_at_amount, :decimal, nullable: true, example: '19.99'
+            body.attribute :price_list_id, :id,
+              nullable: true,
+              example: 'pl_aBc123',
+              description: 'Omit or null for a base price; a price list for a list override.'
+          end
+
+          request_params 'PriceBulkUpsertParams', action: :bulk_upsert do |body|
+            body.attribute :prices, :array,
+              required: true,
+              as: 'PriceBulkUpsertRowParams',
+              description: 'Send an empty list to change nothing.' do |price|
+              price.attribute :id, :id,
+                nullable: true,
+                example: 'price_aBc123',
+                description: 'Present: updates that row. Absent: upserts on `(variant_id, currency, price_list_id, min_quantity)`.'
+              price.attribute :variant_id, :id, required: true, example: 'variant_xY9'
+              price.attribute :currency, :currency, required: true, example: 'USD'
+              price.attribute :price_list_id, :id,
+                nullable: true,
+                example: 'pl_aBc123',
+                description: 'Omit or null for a base price.'
+              price.attribute :min_quantity, :integer,
+                description: "The rung of the variant's ladder. Omit for the bottom rung; anything above 1 requires a `price_list_id`. A variant carries at most ten rungs on one list per currency."
+              price.attribute :amount, :decimal, nullable: true, example: '19.99'
+              price.attribute :compare_at_amount, :decimal, nullable: true, example: '19.99'
+            end
+          end
+
+          request_params 'PriceBulkDestroyParams', action: :bulk_destroy do |body|
+            body.attribute :ids, :array, of: :id, required: true, example: %w[price_aBc123]
+          end
+
           # Bulk-upserts prices on the unique key
           # `(variant_id, currency, price_list_id, min_quantity)` — one row per
           # rung of a variant's ladder (docs/plans/6.0-volume-pricing.md).
@@ -58,16 +99,21 @@ module Spree
             # validations (docs/plans/6.0-volume-pricing.md). Each branch is
             # guarded on the key its own failure carries, so a failure mode the
             # service grows later is not reported under one of these names.
-            #
-            # `I18n.t` rather than `Spree.t` for these: the models raise them
-            # under `activerecord.errors`, and `Spree.t` would scope the lookup
-            # to `spree.` and miss the key.
             if (invalid = result.error&.value.try(:[], :invalid_quantities))
               return render_error(
                 code: 'invalid_min_quantity',
                 message: 'Each quantity break must start at a whole number of units.',
                 status: :unprocessable_content,
                 details: { rows: invalid }
+              )
+            end
+
+            if (malformed = result.error&.value.try(:[], :malformed_amounts))
+              return render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_money_format],
+                message: I18n.t('activerecord.errors.models.spree/price_list.attributes.base.malformed_price').upcase_first,
+                status: :unprocessable_content,
+                details: { rows: malformed }
               )
             end
 
@@ -164,11 +210,8 @@ module Spree
             false
           end
 
-          # Resolves variant_id / price_list_id through the current store's
-          # scopes so a foreign or unknown id 404s instead of binding the
-          # price to another store's record.
           def permitted_params
-            permitted = params.permit(*model_additional_permitted_attributes, :variant_id, :currency, :min_quantity, :amount, :compare_at_amount, :price_list_id)
+            permitted = params.permit(*permitted_attributes)
             permitted[:variant_id] = store_variants.find_by_prefix_id!(permitted[:variant_id]).id if permitted[:variant_id].present?
             permitted[:price_list_id] = store_price_lists.find_by_prefix_id!(permitted[:price_list_id]).id if permitted[:price_list_id].present?
             permitted

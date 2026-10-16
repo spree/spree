@@ -1,4 +1,4 @@
-import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
+import type { PaymentMethod, PreferenceSchema } from '@spree/admin-sdk'
 import type { UseFormReturn } from 'react-hook-form'
 import type { PaymentMethodFormValues } from '../../../schemas/payment-method'
 
@@ -32,7 +32,7 @@ export interface PaymentMethodEditorContext {
   type: string
   /** Loaded server record in `edit` mode; `null` in `create` mode. */
   paymentMethod: PaymentMethod | null
-  preferenceSchema: PreferenceField[]
+  preferenceSchema: PreferenceSchema | undefined
   preferences: Record<string, unknown>
   onPreferencesChange: (next: Record<string, unknown>) => void
   /** react-hook-form instance for the top-level fields. */

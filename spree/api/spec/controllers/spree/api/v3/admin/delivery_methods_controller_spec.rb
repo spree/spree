@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       data = json_response['data'].find { |row| row['name'] == 'UPS Ground' }
       expect(data).to be_present
       expect(data['delivery_profile_id']).to be_present
-      expect(data['calculator_type']).to be_present
+      expect(data['calculator']['type']).to be_present
     end
   end
 
@@ -29,7 +29,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       types = json_response['data'].map { |row| row['type'] }
       expect(types).to include('flat_rate')
       flat_rate = json_response['data'].find { |row| row['type'] == 'flat_rate' }
-      expect(flat_rate['preference_schema']).to be_an(Array)
+      expect(flat_rate['schema']).to include('type' => 'object', 'additionalProperties' => false)
+      expect(flat_rate['schema']['properties']).to include('amount', 'currency', 'amounts')
     end
   end
 
@@ -38,19 +39,19 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       get :fulfillment_providers, params: {}, as: :json
 
       expect(response).to have_http_status(:ok)
-      pickup = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Pickup' }
+      pickup = json_response['data'].find { |row| row['type'] == 'pickup' }
       expect(pickup['name']).to eq('Pickup')
       expect(pickup['pickup']).to be true
       expect(pickup['requires_address']).to be false
 
-      manual = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Manual' }
+      manual = json_response['data'].find { |row| row['type'] == 'manual' }
       expect(manual['digital']).to be false
       expect(manual['pickup']).to be false
       expect(manual['requires_address']).to be true
       # Providers without credentials are always available; carrier ones are
       # listed with available: false until their integration is connected.
       expect(manual['available']).to be true
-      expect(manual['integration_class']).to be_nil
+      expect(manual).not_to have_key('integration_class')
     end
   end
 
@@ -59,13 +60,13 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       get :rate_providers, params: {}, as: :json
 
       expect(response).to have_http_status(:ok)
-      internal = json_response['data'].find { |row| row['type'] == 'Spree::DeliveryRateProvider::Internal' }
+      internal = json_response['data'].find { |row| row['type'] == 'internal' }
       expect(internal['name']).to eq('Internal')
-      expect(internal['integration_class']).to be_nil
+      expect(internal).not_to have_key('integration_class')
       expect(internal['service_catalog']).to eq([])
       expect(internal['service_catalog_error']).to be_nil
       expect(internal['integration_type']).to be_nil
-      expect(json_response['default']).to eq('Spree::DeliveryRateProvider::Internal')
+      expect(json_response['default']).to eq('internal')
     end
 
     # Unconnected providers are listed but flagged, so the dashboard can
@@ -76,14 +77,14 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
         def self.integration_class = 'Spree::Integrations::Unconnected'
         def self.available_for_store?(_store) = false
       end
-      stub_const('UnavailableRateProvider', provider_class)
+      stub_const('SpreeUnavailable::DeliveryRateProvider', provider_class)
       Spree.delivery_rate_providers << provider_class
 
       get :rate_providers, params: {}, as: :json
 
-      row = json_response['data'].find { |entry| entry['type'] == 'UnavailableRateProvider' }
+      row = json_response['data'].find { |entry| entry['type'] == 'unavailable' }
       expect(row['available']).to be false
-      expect(json_response['data'].find { |entry| entry['type'] == 'Spree::DeliveryRateProvider::Internal' }['available']).to be true
+      expect(json_response['data'].find { |entry| entry['type'] == 'internal' }['available']).to be true
     ensure
       Spree.delivery_rate_providers.delete(provider_class)
     end
@@ -96,7 +97,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'creates service rows with markup and label from a flat payload' do
       patch :update, params: {
         id: delivery_method.prefixed_id,
-        markup_percent: 5,
+        markup_percent: '5',
         services: [
           { carrier: 'UPS', service: 'Ground', label: 'UPS standard' },
           { carrier: 'USPS', service: 'Priority', markup_flat: '2.5' }
@@ -104,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['markup_percent']).to eq('5.0')
+      expect(json_response['markup_percent']).to eq('5')
       services = json_response['services']
       expect(services.size).to eq(2)
       ups = services.find { |row| row['carrier'] == 'UPS' }
@@ -144,25 +145,25 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'persists the chosen fulfillment provider' do
       post :create, params: {
         name: 'Store pickup',
-        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup'
+        fulfillment_provider: 'pickup'
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['fulfillment_provider']).to eq('Spree::FulfillmentProvider::Pickup')
+      expect(json_response['fulfillment_provider']).to eq('pickup')
+      expect(Spree::DeliveryMethod.find_by_prefix_id(json_response['id']).fulfillment_provider).to eq('Spree::FulfillmentProvider::Pickup')
     end
 
     it 'creates a delivery method with calculator and zone' do
       post :create, params: {
         name: 'Express',
         storefront_visible: true,
-        calculator_type: 'flat_rate',
-        calculator_preferences: { amount: 12.5 },
+        calculator: { type: 'flat_rate', preferences: { amount: '12.5' } },
         delivery_zone_id: zone.prefixed_id
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['name']).to eq('Express')
-      expect(json_response['calculator_type']).to eq('flat_rate')
+      expect(json_response['calculator']['type']).to eq('flat_rate')
       expect(json_response['delivery_zone_id']).to eq(zone.prefixed_id)
       expect(json_response['delivery_profile_id']).to be_present
 
@@ -176,7 +177,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'keeps the amount when no calculator is named' do
       post :create, params: {
         name: 'Priced by default',
-        calculator_preferences: { amount: 7.25 }
+        calculator: { preferences: { amount: '7.25' } }
       }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -188,12 +189,12 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'creates a pickup method without a calculator requirement' do
       post :create, params: {
         name: 'Store pickup',
-        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup',
-        calculator_type: 'flat_rate'
+        fulfillment_provider: 'pickup',
+        calculator: { type: 'flat_rate' }
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['fulfillment_provider']).to eq('Spree::FulfillmentProvider::Pickup')
+      expect(json_response['fulfillment_provider']).to eq('pickup')
     end
 
     it 'assigns configured pickup locations' do
@@ -201,7 +202,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
 
       post :create, params: {
         name: 'Counter pickup',
-        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup',
+        fulfillment_provider: 'pickup',
         stock_location_ids: [location.prefixed_id]
       }, as: :json
 
@@ -212,7 +213,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'rejects unknown calculator types' do
       post :create, params: {
         name: 'Sneaky',
-        calculator_type: 'Kernel'
+        calculator: { type: 'Kernel' }
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
@@ -226,7 +227,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       patch :update, params: {
         id: delivery_method.prefixed_id,
         name: 'UPS Ground v2',
-        calculator_preferences: { amount: 99 }
+        calculator: { preferences: { amount: '99' } }
       }, as: :json
 
       expect(response).to have_http_status(:ok)
@@ -234,15 +235,60 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.calculator.preferred_amount).to eq(99)
     end
 
+    it 'keeps the current calculator when the new one\'s settings are refused' do
+      calculator = delivery_method.calculator
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        calculator: { type: 'flexi_rate', preferences: { max_items: 'many' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']).to have_key('/calculator/preferences/max_items')
+      expect(delivery_method.reload.calculator).to eq(calculator)
+    end
+
+    # The calculator's preferences are checked by their declared types, so a
+    # money amount is refused for its currency's decimals whatever it is called.
+    it 'refuses a calculator amount with more decimals than its currency has' do
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        calculator: { preferences: { amount: '9.995', currency: 'USD' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_preferences')
+      expect(json_response['error']['details']['/calculator/preferences/amount'].first).to match(/2 decimal places for USD/)
+    end
+
+    it 'refuses a calculator amount sent as a JSON number' do
+      patch :update, params: { id: delivery_method.prefixed_id, calculator: { preferences: { amount: 9.99 } } }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']).to have_key('/calculator/preferences/amount')
+    end
+
+    it 'keeps the current calculator when the rest of the update is refused' do
+      calculator = delivery_method.calculator
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        name: '',
+        calculator: { type: 'flexi_rate', preferences: { first_item: '5' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(delivery_method.reload.calculator).to eq(calculator)
+    end
+
     it 'stores per-currency amounts' do
       patch :update, params: {
         id: delivery_method.prefixed_id,
-        calculator_type: 'flat_rate',
-        calculator_preferences: { amount: 20, currency: 'USD', amounts: { 'EUR' => '15.0' } }
+        calculator: { type: 'flat_rate', preferences: { amount: '20', currency: 'USD', amounts: { 'EUR' => '15.0' } } }
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['calculator_preferences']['amounts']).to eq('EUR' => '15.0')
+      expect(json_response['calculator']['preferences']['amounts']).to eq('EUR' => '15.00')
 
       calculator = delivery_method.reload.calculator
       expect(calculator.preferred_amounts).to eq('EUR' => '15.0')
@@ -258,7 +304,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
         id: delivery_method.prefixed_id,
         name: 'Express',
         rules: [
-          { type: 'item_total_rule', preferences: { minimum_amount: 25 } },
+          { type: 'item_total_rule', preferences: { minimum_amount: '25' } },
           { type: 'excluded_products_rule', product_ids: [product.prefixed_id] }
         ]
       }, as: :json

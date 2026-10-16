@@ -26,9 +26,35 @@ module Spree
           # actions. Wrapping it under a different name keeps both.
           before_action :load_member_resource, only: [:activate, :deactivate]
 
+          request_params :price_list do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'EU wholesale'
+            body.attribute :description, :string, nullable: true
+            body.attribute :position, :integer, example: 1
+            body.attribute :starts_at, :datetime,
+              nullable: true,
+              example: '2026-06-01T00:00:00Z',
+              description: 'Pair with `ends_at` to schedule the list: activating a list whose start is in the future marks it `scheduled`.'
+            body.attribute :ends_at, :datetime, nullable: true, example: '2026-09-01T00:00:00Z'
+            body.attribute :match_policy, :string,
+              choices: Spree::PriceList::MATCH_POLICIES,
+              example: 'all',
+              description: '`all`: every rule must match. `any`: one matching rule is enough.'
+            body.attribute :price_adjustment_percentage, :decimal,
+              nullable: true,
+              example: '-15.0',
+              description: 'Signed: negative discounts off base prices, positive marks up.'
+            body.attribute :adjust_compare_at, :boolean
+            body.attribute :rules, :array, of: Spree::Api::V3::Admin::PriceListRuleRequestSchema,
+              description: 'The complete rule set: rules are matched by `id` and updated, new ones are built, and rules left out are removed.'
+            body.attribute :price_adjustment_tiers, :array, of: Spree::Api::V3::Admin::PriceAdjustmentTierRequestSchema,
+              description: "Quantity bands on the list's percentage. The payload is the whole ladder: a band left out is removed."
+            body.attribute :prices, :array, of: Spree::Api::V3::Admin::PriceListPriceRequestSchema,
+              description: 'Per-variant price overrides. Each row upserts, so the variants it names become part of the list. Curating whole products goes through the nested products endpoint instead.'
+          end
+
           # GET /api/v3/admin/price_lists/price_rule_types
           #
-          # Returns `[{ type, label, description, preference_schema }]`
+          # Returns `[{ type, label, description, schema }]`
           # for every registered subclass in `Spree.pricing.rules`. The
           # SPA uses this to build the "Add rule" picker + render a
           # generic preferences form per subclass. Rules themselves are
@@ -95,20 +121,6 @@ module Spree
           # rather than paying a query per row.
           def collection_includes
             [:price_adjustment_tiers]
-          end
-
-          def permitted_params
-            normalize_params(
-              params.permit(
-                *model_additional_permitted_attributes,
-                :name, :description, :position,
-                :starts_at, :ends_at, :match_policy,
-                :price_adjustment_percentage, :adjust_compare_at,
-                rules: [:id, :type, { preferences: {} }],
-                price_adjustment_tiers: [:min_quantity, :percentage],
-                prices: [:id, :variant_id, :currency, :min_quantity, :amount, :compare_at_amount]
-              )
-            )
           end
 
           private

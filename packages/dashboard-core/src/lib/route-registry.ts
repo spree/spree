@@ -3,22 +3,34 @@ import { useSyncExternalStore } from 'react'
 import type { SubjectName } from './permissions'
 
 /**
- * Dashboard route contributed by a plugin. Mounted under the dashboard's
- * `/_authenticated/$storeId/_plugins/$` catch-all, which reads this registry
- * at render time and dispatches based on the splat path.
+ * Where a registry route mounts:
+ *
+ * - `store` (default) — inside a store, under `/$storeId`, with the store's
+ *   sidebar and top bar.
+ * - `authenticated` — at the root, for signed-in users, outside any store
+ *   (account or onboarding pages). Signed-out visitors go to the login page.
+ * - `public` — at the root, with no sign-in required (a sign-up or terms page).
+ */
+export type RouteScope = 'store' | 'authenticated' | 'public'
+
+/**
+ * Dashboard route contributed by a plugin. Store routes mount under the
+ * dashboard's `/_authenticated/$storeId/$` catch-all, which reads this
+ * registry at render time and dispatches based on the splat path.
  *
  * Path patterns use TanStack-Router-style param tokens (`$brandId`) inside the
  * plugin's namespace. The dashboard strips the `/$storeId/` prefix before
  * matching, so a plugin pattern of `/brands/$brandId` matches the URL
  * `/store_xyz/brands/br_abc123` with `params: { brandId: 'br_abc123' }`.
  */
-export interface RouteEntry {
+export interface StoreRouteEntry {
   /**
    * Stable identifier — used for register/remove/update and as the React key.
    * Mirrors the slug a plugin would use in its `nav.add({ key })` call so the
    * sidebar entry and route stay paired.
    */
   key: string
+  scope?: 'store'
   /**
    * Path pattern relative to `/$storeId`. Examples: `/brands`,
    * `/brands/$brandId`, `/wishlists/$wishlistId/items`.
@@ -30,7 +42,7 @@ export interface RouteEntry {
    * The component to render. Receives:
    * - `params`: extracted path params (e.g. matching `/brands/$brandId`
    *   against `/brands/br_abc` yields `{ brandId: 'br_abc' }`)
-   * - `storeId`: the current store — every plugin route is implicitly scoped
+   * - `storeId`: the current store — every store route is implicitly scoped
    *   under `/$storeId/...`
    * - `searchParams`: the URL search-state object from TanStack Router. Use
    *   this with `<ResourceTable searchParams={searchParams} ... />` so
@@ -49,6 +61,27 @@ export interface RouteEntry {
   subject?: SubjectName
 }
 
+/**
+ * Route mounted at the dashboard's root, outside any store. Unlike store
+ * routes these become real router routes when `createDashboardRouter` runs,
+ * so they must be registered before it — `plugins.ts` and installed plugins
+ * always are.
+ */
+export interface RootRouteEntry {
+  key: string
+  scope: 'authenticated' | 'public'
+  /** Full URL path, e.g. `/sign-up` or `/account/$section`. Must start with `/`. */
+  path: string
+  component: ComponentType<{
+    params: Record<string, string>
+    searchParams: Record<string, unknown>
+  }>
+}
+
+export type RouteEntry = StoreRouteEntry | RootRouteEntry
+
+const ROUTE_SCOPES: readonly RouteScope[] = ['store', 'authenticated', 'public']
+
 const entries: RouteEntry[] = []
 const listeners = new Set<() => void>()
 
@@ -61,10 +94,6 @@ function subscribe(listener: () => void): () => void {
   return () => {
     listeners.delete(listener)
   }
-}
-
-function getSnapshot(): readonly RouteEntry[] {
-  return entries
 }
 
 interface RouteMutator {
@@ -82,6 +111,11 @@ export const pluginRoutes: RouteMutator = {
     if (!entry.path.startsWith('/')) {
       throw new Error(`Plugin route "${entry.key}" path must start with "/", got "${entry.path}".`)
     }
+    if (entry.scope !== undefined && !ROUTE_SCOPES.includes(entry.scope)) {
+      throw new Error(
+        `Plugin route "${entry.key}" scope must be one of ${ROUTE_SCOPES.join(', ')}, got "${entry.scope}".`,
+      )
+    }
     entries.push(entry)
     notify()
   },
@@ -93,17 +127,22 @@ export const pluginRoutes: RouteMutator = {
   },
 }
 
+/** Every registered route, read outside React. */
+export function getPluginRoutes(): readonly RouteEntry[] {
+  return entries
+}
+
 /**
  * Subscribe to plugin route updates. Returns the full list of registered
  * routes; the catch-all renderer matches against this on every navigation.
  */
 export function usePluginRoutes(): readonly RouteEntry[] {
-  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+  return useSyncExternalStore(subscribe, getPluginRoutes, getPluginRoutes)
 }
 
 /**
  * Match a URL splat (the bit after `/$storeId/`) against the registered
- * routes. Returns the matched entry plus the extracted path params, or
+ * store routes. Returns the matched entry plus the extracted path params, or
  * `null` if nothing matched.
  *
  * Path patterns support TanStack-style `$param` tokens. A pattern segment
@@ -117,12 +156,12 @@ export function usePluginRoutes(): readonly RouteEntry[] {
 export function matchPluginRoute(
   splat: string,
   routes: readonly RouteEntry[],
-): { entry: RouteEntry; params: Record<string, string> } | null {
+): { entry: StoreRouteEntry; params: Record<string, string> } | null {
   // Normalize: strip leading slash, drop empty trailing segments.
   const urlSegments = splat.replace(/^\/+/, '').split('/').filter(Boolean)
-  const bySpecificity = [...routes].sort(
-    (a, b) => countDynamicSegments(a.path) - countDynamicSegments(b.path),
-  )
+  const bySpecificity = routes
+    .filter(isStoreRoute)
+    .sort((a, b) => countDynamicSegments(a.path) - countDynamicSegments(b.path))
   for (const entry of bySpecificity) {
     const patternSegments = entry.path.replace(/^\/+/, '').split('/').filter(Boolean)
     if (patternSegments.length !== urlSegments.length) continue
@@ -142,6 +181,10 @@ export function matchPluginRoute(
     if (matched) return { entry, params }
   }
   return null
+}
+
+function isStoreRoute(entry: RouteEntry): entry is StoreRouteEntry {
+  return entry.scope === undefined || entry.scope === 'store'
 }
 
 function countDynamicSegments(path: string): number {

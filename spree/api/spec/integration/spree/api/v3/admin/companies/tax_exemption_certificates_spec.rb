@@ -42,6 +42,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
 
       admin_sdk_example 'tax-exemption-certificates/list'
 
+      filter_parameters_for
+
       response '200', 'certificates found' do
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -60,30 +62,14 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
         until verified.
 
         `country_code` and `state_code` say where the certificate holds — omit both for one valid
-        everywhere, give only the country for one valid throughout it. `document` takes an ActiveStorage
-        signed blob id obtained from `POST /api/v3/admin/direct_uploads`.
+        everywhere, give only the country for one valid throughout it. `document_signed_id` takes the
+        `signed_id` returned by `POST /api/v3/admin/files`.
       DESC
       admin_scope :write, :customers
 
       admin_sdk_example 'tax-exemption-certificates/create'
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          certificate_number: { type: :string, example: 'DE-RESALE-7' },
-          reason_code: { type: :string, description: 'Becomes the tax provider\'s entity use code.', example: 'resale' },
-          country_code: { type: :string, nullable: true, example: 'DE' },
-          state_code: { type: :string, nullable: true, example: 'BE' },
-          expires_at: { type: :string, format: 'date-time', nullable: true },
-          issuing_authority: { type: :string, nullable: true, example: 'Finanzamt Berlin' },
-          document: {
-            type: :string,
-            description: 'ActiveStorage signed blob id from POST /api/v3/admin/direct_uploads.',
-            example: 'eyJfcmFpbHMiOnsiZGF0YSI6MX0=--signed'
-          }
-        },
-        required: %w[certificate_number reason_code]
-      }
+      request_body_for
 
       response '201', 'certificate created' do
         let(:body) do
@@ -91,7 +77,7 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
             certificate_number: 'DE-RESALE-7',
             reason_code: 'resale',
             country_code: germany.iso,
-            document: pdf_blob.signed_id
+            document_signed_id: pdf_blob.signed_id
           }
         end
 
@@ -106,6 +92,38 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
         let(:body) { { reason_code: 'resale' } }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}' do
+    let(:company_id) { company.prefixed_id }
+    let(:id) { certificate.prefixed_id }
+    let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+    parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+    parameter name: :Authorization, in: :header, type: :string, required: true
+    parameter name: :company_id, in: :path, type: :string, required: true
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Update a tax exemption certificate' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Corrects the details recorded for a certificate, such as its issuing authority or expiry date.'
+      admin_scope :write, :customers
+
+      request_body_for
+
+      response '200', 'certificate updated' do
+        let(:body) { { issuing_authority: 'Finanzamt Berlin', expires_at: '2027-12-31T23:59:59Z' } }
+
+        schema '$ref' => '#/components/schemas/TaxExemptionCertificate'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['issuing_authority']).to eq('Finanzamt Berlin')
+        end
       end
     end
   end

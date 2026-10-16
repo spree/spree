@@ -1,5 +1,5 @@
-import type { Collection, CollectionRuleParam, CollectionSortOrder } from '@spree/admin-sdk'
-import { customFieldFormSchema } from '@spree/dashboard-core'
+import type { Collection, CollectionRuleParams, CollectionSortOrder } from '@spree/admin-sdk'
+import { customFieldFormSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
@@ -189,19 +189,11 @@ export function collectionToParams(values: CollectionFormValues) {
     // so omitted rules are deleted. Only send it for automatic collections —
     // a manual one has no rules to express, and sending [] would wipe the rules
     // of a collection the merchant just toggled off (they come back on re-enable).
-    ...(values.automatic ? { rules: values.rules as CollectionRuleParam[] } : {}),
+    ...(values.automatic ? { rules: values.rules as CollectionRuleParams[] } : {}),
     ...(values.custom_fields && values.custom_fields.length > 0
       ? { custom_fields: values.custom_fields }
       : {}),
-    ...imageParam('image', values.image_signed_id, values.image_cleared),
-    ...imageParam('square_image', values.square_image_signed_id, values.square_image_cleared),
+    ...signedIdParam('image', values.image_signed_id, values.image_cleared),
+    ...signedIdParam('square_image', values.square_image_signed_id, values.square_image_cleared),
   }
-}
-
-// Three-state mapping: a fresh upload sends the signed_id, an explicit clear
-// sends null (purges the attachment), and an untouched field is omitted.
-function imageParam(key: 'image' | 'square_image', signedId: string | null, cleared: boolean) {
-  if (signedId) return { [key]: signedId }
-  if (cleared) return { [key]: null }
-  return {}
 }

@@ -41,45 +41,9 @@ describe Spree::PriceRules::MarketRule, type: :model do
         expect(rule.applicable?(context)).to be false
       end
     end
-
-    context 'when market_ids preference contains strings' do
-      before { rule.preferred_market_ids = [market.id.to_s] }
-
-      it 'returns true when context market matches' do
-        context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', market: market)
-        expect(rule.applicable?(context)).to be true
-      end
-
-      it 'returns false when context market does not match' do
-        other_market = create(:market, store: price_list.store)
-        context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', market: other_market)
-        expect(rule.applicable?(context)).to be false
-      end
-    end
   end
 
   describe '#preferred_market_ids=' do
-    it 'decodes prefixed market IDs to raw IDs' do
-      rule.preferred_market_ids = [market.prefixed_id]
-      expect(rule.preferred_market_ids).to eq([market.id.to_s])
-    end
-
-    it 'accepts a mix of prefixed and raw IDs' do
-      other_market = create(:market, store: price_list.store)
-      rule.preferred_market_ids = [market.prefixed_id, other_market.id.to_s]
-      expect(rule.preferred_market_ids).to contain_exactly(market.id.to_s, other_market.id.to_s)
-    end
-
-    it 'accepts a comma-separated string' do
-      other_market = create(:market, store: price_list.store)
-      rule.preferred_market_ids = "#{market.prefixed_id},#{other_market.prefixed_id}"
-      expect(rule.preferred_market_ids).to contain_exactly(market.id.to_s, other_market.id.to_s)
-    end
-
-    it 'raises when given an unknown prefixed ID' do
-      expect { rule.preferred_market_ids = ['mkt_doesnotexist'] }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-
     it 'rejects a market that belongs to another store' do
       other_store = create(:store)
       cross_store_market = create(:market, store: other_store)

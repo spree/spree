@@ -1,5 +1,5 @@
 import type { OptionValue, OptionValueParams } from '@spree/admin-sdk'
-import { i18n } from '@spree/dashboard-core'
+import { i18n, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -64,15 +64,15 @@ export function optionValueToFormRow(ov: OptionValue): OptionValueFormValue {
  * Build the API payload for a single option_value row. `index` is the row's
  * current array position; we send `position: index + 1` (1-indexed) so
  * `acts_as_list` persists the drag-reordered order. The frontend-only image
- * upload state collapses into the API's `image` field: a fresh signed_id is
- * sent, an explicit clear sends `null`, and an untouched row omits `image`
- * entirely so the existing attachment stays.
+ * upload state collapses into the API's `image_signed_id` field: a fresh
+ * signed_id is sent, an explicit clear sends `null`, and an untouched row
+ * omits it entirely so the existing attachment stays.
  */
 export function valueToParam(v: OptionValueFormValue, index: number): OptionValueParams {
   const { image_signed_id, image_url: _imageUrl, image_cleared, ...rest } = v
   return {
     ...rest,
     position: index + 1,
-    ...(image_signed_id ? { image: image_signed_id } : image_cleared ? { image: null } : {}),
+    ...signedIdParam('image', image_signed_id, image_cleared),
   }
 }

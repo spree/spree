@@ -19,6 +19,7 @@ module Spree
                                :payout_providers,
                                :password_validator,
                                :fulfillment_providers,
+                               :pickup_point_providers,
                                :tracking_carriers,
                                :tax_exemption_reason_codes,
                                :stock_splitters,
@@ -75,7 +76,7 @@ module Spree
         # Core's defaults are concatenated in after_initialize below.
         %i[subscribers actor_classes commission_rules delivery_method_rules seller_requirements
            delivery_rate_providers tax_providers pricing_providers inventory_providers
-           payout_providers digital_asset_providers delivery_profile_types].each do |registry|
+           payout_providers digital_asset_providers delivery_profile_types pickup_point_providers].each do |registry|
           app.config.spree[registry] = []
         end
         app.config.spree.line_item_comparison_hooks = Set.new
@@ -108,6 +109,34 @@ module Spree
         app.middleware.use ::I18n::Middleware
       end
 
+      # Spree's translations cover only part of the English keys in most
+      # languages, so the rest fall back to English, the one complete language.
+      # `true` (Rails' generated production.rb) falls back to the app's default
+      # locale only, so English is added after it. An app that configured its
+      # own fallback chain, or turned fallbacks off, keeps its choice.
+      initializer 'spree.i18n.fallbacks', before: :load_config_initializers do |app|
+        fallbacks = app.config.i18n.fallbacks
+        if fallbacks == true
+          app.config.i18n.fallbacks = [app.config.i18n.default_locale || :en, :en].uniq
+        elsif fallbacks.is_a?(ActiveSupport::OrderedOptions) && fallbacks.empty?
+          app.config.i18n.fallbacks = [:en]
+        end
+      end
+
+      # Spree's gems ship translations for dozens of languages. An app that
+      # limits `config.i18n.available_locales` loads only those (and English),
+      # instead of parsing every file at boot and discarding the rest.
+      initializer 'spree.i18n.locale_files', before: :load_config_initializers do |app|
+        allowed = Array(app.config.i18n.available_locales).map(&:to_s)
+        next if allowed.empty?
+
+        # A regional file (de-CH) holds only its differences from its base (de).
+        locales = allowed | allowed.map { |locale| locale.split('-').first } | ['en']
+        %w[Spree::Core::Engine Spree::Api::Engine Spree::Emails::Engine].filter_map(&:safe_constantize).each do |engine|
+          engine.config.paths['config/locales'].glob = "{#{locales.join(',')}}.yml"
+        end
+      end
+
       # Seeded before application initializers so a host's
       # `config/initializers/spree.rb` can register custom generators.
       initializer 'spree.register.number_generators', before: :load_config_initializers do |app|
@@ -136,7 +165,7 @@ module Spree
       # populated while initializers are still running.
       config.after_initialize do
         ISO3166.configure do |iso_config|
-          iso_config.locales = (Spree.available_locales.map { |locale| locale.to_s.downcase } << 'en').uniq
+          iso_config.locales = (Spree.configured_locales.map { |locale| locale.to_s.downcase } << 'en').uniq
         end
 
         Spree::IsoData.reset!
@@ -540,6 +569,25 @@ module Spree
         )
       end
 
+      # Deprecated constant aliases warn when their file loads. Leaving them
+      # out of eager loading keeps every boot quiet; they still load, and
+      # warn, the first time something references the old name.
+      DEPRECATED_ALIAS_FILES = %w[
+        app/models/concerns/spree/user_methods.rb
+        app/models/spree/asset.rb
+        app/models/spree/classification.rb
+        app/models/spree/promotion/rules/taxon.rb
+        app/models/spree/promotion_rule_taxon.rb
+        app/models/spree/return_authorization_reason.rb
+        app/models/spree/taxon.rb
+        app/services/spree/checkout/add_store_credit.rb
+        app/services/spree/checkout/remove_store_credit.rb
+      ].freeze
+
+      initializer 'spree.deprecated_aliases.skip_eager_load' do
+        Rails.autoloaders.main.do_not_eager_load(*DEPRECATED_ALIAS_FILES.map { |path| root.join(path) })
+      end
+
       # filter sensitive information during logging
       initializer 'spree.params.filter' do |app|
         app.config.filter_parameters += [
@@ -551,6 +599,13 @@ module Spree
           :client_secret,
           :refresh_token
         ]
+      end
+
+      # Records which store owns every uploaded file, and reports attaching a
+      # file to another store's record (docs/plans/6.0-uploads-and-file-ownership.md).
+      initializer 'spree.active_storage.store_ownership' do
+        ActiveSupport.on_load(:active_storage_blob) { include Spree::Uploads::BlobStoreOwnership }
+        ActiveSupport.on_load(:active_storage_attachment) { include Spree::Uploads::AttachmentStoreCheck }
       end
 
       initializer 'spree.core.checking_migrations' do |app|
@@ -568,6 +623,13 @@ module Spree
         end
       end
 
+      # The same contexts, for the concerns extensions add to core models.
+      initializer 'spree.model_extensions.schedule_apply', after: :load_config_initializers do |app|
+        app.config.after_initialize do
+          Spree.model_extensions.apply
+        end
+      end
+
       # A hook registered against a key no workflow declares would never fire
       # and never say so. Checking after eager load turns that typo into a
       # boot failure. Skipped when eager loading is off (development,
@@ -580,14 +642,14 @@ module Spree
       end
 
       config.to_prepare do
-        I18n.load_path.unshift(*(Dir.glob(
-          File.join(
-            File.dirname(__FILE__), '../../../config/locales', '*.{rb,yml}'
-          )
-        ) - I18n.load_path))
+        I18n.load_path.unshift(*(Spree::Core::Engine.config.paths['config/locales'].existent - I18n.load_path))
 
         ActsAsTaggableOn::Tag.include(Spree::RansackableAttributes)
         ActsAsTaggableOn::Tag.whitelisted_ransackable_attributes = %w[id name]
+
+        # Reloading makes new model classes, which have none of the
+        # extensions' concerns yet.
+        Spree.model_extensions.apply
 
         # Reset and re-activate event subscribers on code reload
         # activate! will register all subscribers from Spree.subscribers

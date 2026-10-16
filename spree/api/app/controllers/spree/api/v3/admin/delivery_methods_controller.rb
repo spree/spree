@@ -5,6 +5,88 @@ module Spree
         class DeliveryMethodsController < ResourceController
           scoped_resource :delivery_methods
 
+          # A single POST/PATCH can ship eligibility rules and carrier service
+          # rows alongside the basics; `DeliveryMethod#rules=` / `#services=`
+          # reconcile to the desired set, so the dashboard saves the whole
+          # sheet in one round-trip.
+          request_params :delivery_method do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Express'
+            body.attribute :admin_name, :string, nullable: true
+            body.attribute :code, :string, nullable: true
+            body.attribute :fulfillment_provider, :string,
+              example: 'manual',
+              description: 'Fulfillment provider shorthand (see the fulfillment providers endpoint), e.g. `manual`.'
+            body.attribute :pickup_point_provider, :string, nullable: true
+            body.attribute :rate_provider, :string,
+              nullable: true,
+              description: 'Rate provider shorthand (see the rate providers endpoint), e.g. `easy_post`. Omit or send null for the built-in provider, which prices through the method\'s calculator.'
+            body.attribute :storefront_visible, :boolean
+            body.attribute :available_to_sellers, :boolean,
+              description: "Marketplace only: whether a seller's packages may be quoted by this method. Off by default, and refused on a method that belongs to a seller."
+            body.attribute :tracking_url, :string, nullable: true
+            body.attribute :estimated_transit_business_days_min, :integer, nullable: true
+            body.attribute :estimated_transit_business_days_max, :integer, nullable: true
+            body.attribute :tax_category_id, :id,
+              nullable: true,
+              description: 'Prefixed tax category ID (`taxcat_...`), or null to clear.'
+            body.attribute :markup_flat, :decimal,
+              nullable: true,
+              description: 'Method-level flat handling fee added on top of provider-quoted rates.'
+            body.attribute :markup_percent, :decimal,
+              nullable: true,
+              description: 'Method-level percentage handling fee added on top of provider-quoted rates. Ignored for calculator-priced methods.'
+            body.attribute :delivery_profile_id, :id,
+              example: 'fp_86Rf07xd4z',
+              description: 'Delivery profile this method belongs to (`fp_...`); defaults to the store default profile.'
+            body.attribute :delivery_origin_group_id, :id,
+              description: "Origin group offering this method (`og_...`); defaults to the zone's group, else the profile's default group."
+            body.attribute :delivery_zone_id, :id,
+              nullable: true,
+              description: "Delivery zone narrowing destinations (`dz_...`), or null for no restriction. Must belong to the method's profile."
+            body.attribute :stock_location_ids, :array, of: :id,
+              description: 'Pickup locations (`sloc_...`); replaces the full set.'
+            body.attribute :calculator, :object,
+              description: "How the method prices a shipment: a type from the calculators endpoint and its preferences, matching that type's `schema`." do |calculator|
+              calculator.attribute :type, :string, example: 'flat_rate'
+              calculator.attribute :preferences, :hash, example: { amount: '12.5' }
+            end
+            # Permitted by `rule_attributes`, which adds the association-backed
+            # config each registered rule kind declares.
+            body.attribute :rules, :array,
+              permit: false,
+              description: 'Eligibility rules. Replaces the full set: omitted rules are removed.' do |rule|
+              rule.attribute :id, :id
+              rule.attribute :type, :string, description: 'A rule kind from the delivery method rule types endpoint.'
+              rule.attribute :active, :boolean
+              rule.attribute :preferences, :hash
+              rule.attribute :product_ids, :array, of: :id,
+                description: 'Products an association-backed rule (`excluded_products_rule`) applies to.'
+            end
+            body.attribute :services, :array,
+              as: 'DeliveryMethodServiceParams',
+              description: 'Carrier service rows: which provider services this method offers. Replaces the full set: omitted rows are removed; no rows means every service the provider returns is offered.' do |service|
+              service.attribute :id, :id, description: 'Prefixed row ID (`dms_...`) when updating an existing row.'
+              service.attribute :carrier, :string,
+                required: true,
+                example: 'UPS',
+                description: "Carrier identifier as the provider's API knows it."
+              service.attribute :service, :string,
+                required: true,
+                example: 'Ground',
+                description: "Service identifier as the provider's API knows it."
+              service.attribute :label, :string,
+                nullable: true,
+                description: 'Display label shown to customers instead of the carrier-derived name.'
+              service.attribute :markup_flat, :decimal,
+                nullable: true,
+                description: 'Overrides the method-level flat markup for this service.'
+              service.attribute :markup_percent, :decimal,
+                nullable: true,
+                description: 'Overrides the method-level percentage markup for this service.'
+              service.attribute :position, :integer
+            end
+          end
+
           # GET /api/v3/admin/delivery_methods/calculators
           # Registered delivery calculator classes with their preference
           # schemas, so admin UIs can render configuration forms.
@@ -15,7 +97,7 @@ module Spree
               {
                 type: calculator_class.api_type,
                 name: calculator_class.description,
-                preference_schema: calculator_class.respond_to?(:serialized_preference_schema) ? calculator_class.serialized_preference_schema : []
+                schema: calculator_class.preference_json_schema
               }
             end
 
@@ -31,9 +113,8 @@ module Spree
 
             data = Spree.fulfillment_providers.map do |provider_class|
               {
-                type: provider_class.to_s,
+                type: provider_class.api_type,
                 name: provider_class.provider_name,
-                integration_class: provider_class.integration_class,
                 integration_type: integration_api_type(provider_class),
                 available: provider_class.available_for_store?(current_store),
                 digital: provider_class.digital?,
@@ -61,9 +142,8 @@ module Spree
               catalog = provider_class.service_catalog(integration)
 
               {
-                type: provider_class.to_s,
+                type: provider_class.api_type,
                 name: provider_class.provider_name,
-                integration_class: provider_class.integration_class,
                 integration_type: integration_api_type(provider_class),
                 available: provider_class.available_for_store?(current_store),
                 requires_address: provider_class.requires_address?,
@@ -76,15 +156,15 @@ module Spree
               }
             end
 
-            render json: { data: data, default: Spree::DeliveryMethod::DEFAULT_RATE_PROVIDER }
+            render json: { data: data, default: Spree::ApiTyped.api_type_for(Spree::DeliveryMethod::DEFAULT_RATE_PROVIDER) }
           end
 
           def create
             @resource = model_class.new(assignable_params)
             authorize_resource!(@resource, :create)
-            assign_calculator(@resource)
+            @resource.assign_calculator_attributes(permitted_params[:calculator])
 
-            if @resource.errors.empty? && @resource.save
+            if @resource.save
               render json: serialize_resource(@resource), status: :created
             else
               render_validation_error(@resource.errors)
@@ -92,10 +172,12 @@ module Spree
           end
 
           def update
-            @resource.assign_attributes(assignable_params)
-            assign_calculator(@resource)
+            saved = save_atomically do
+              @resource.assign_attributes(assignable_params)
+              @resource.assign_calculator_attributes(permitted_params[:calculator])
+            end
 
-            if @resource.errors.empty? && @resource.save
+            if saved
               render json: serialize_resource(@resource)
             else
               render_validation_error(@resource.errors)
@@ -120,23 +202,8 @@ module Spree
             Spree.api.admin_delivery_method_serializer
           end
 
-          # A single POST/PATCH can ship eligibility rules and carrier service
-          # rows alongside the basics; `DeliveryMethod#rules=` / `#services=`
-          # reconcile to the desired set, so the dashboard saves the whole
-          # sheet in one round-trip.
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              :name, :admin_name, :code, :fulfillment_provider,
-              :pickup_point_provider, :rate_provider, :storefront_visible, :tracking_url,
-              :available_to_sellers,
-              :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :tax_category_id, :calculator_type, :markup_flat, :markup_percent,
-              :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id,
-              stock_location_ids: [], calculator_preferences: {},
-              rules: rule_attributes,
-              services: [:id, :carrier, :service, :label, :markup_flat, :markup_percent, :position]
-            )
+            params.permit(*permitted_attributes, rules: rule_attributes)
           end
 
           def rule_attributes
@@ -160,7 +227,7 @@ module Spree
 
           # Resolves prefixed-ID params to records; calculator handled separately.
           def assignable_params
-            attributes = permitted_params.except(:tax_category_id, :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id, :stock_location_ids, :calculator_type, :calculator_preferences)
+            attributes = permitted_params.except(:tax_category_id, :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id, :stock_location_ids, :calculator)
             if params.key?(:tax_category_id)
               attributes[:tax_category] = params[:tax_category_id].present? ? Spree::TaxCategory.accessible_by(current_ability, :show).find_by_prefix_id!(params[:tax_category_id]) : nil
             end
@@ -201,40 +268,6 @@ module Spree
               accessible_by(current_ability, :show).
               where(id: decode_prefixed_ids(ids)).
               pluck(:id)
-          end
-
-          def assign_calculator(delivery_method)
-            calculator_type = permitted_params[:calculator_type]
-            preferences = permitted_params[:calculator_preferences]
-
-            if calculator_type.present? && delivery_method.calculator&.class&.api_type != calculator_type
-              selected_calculator_class = Spree::DeliveryMethod.calculators.find do |klass|
-                klass.api_type == calculator_type
-              end
-              unless selected_calculator_class
-                delivery_method.errors.add(:calculator_type, :invalid)
-                return
-              end
-
-              delivery_method.calculator = selected_calculator_class.new
-            end
-
-            return if preferences.blank?
-
-            # A payload may carry preferences without naming a calculator —
-            # editing the amount on a method that already has one, or creating
-            # with the default. The model only builds the default calculator
-            # at validation, so without this the preferences land on nothing
-            # and the amount the merchant typed is silently replaced by a free
-            # rate.
-            delivery_method.ensure_calculator
-            return if delivery_method.calculator.nil?
-
-            preferences.each do |key, value|
-              next unless delivery_method.calculator.has_preference?(key)
-
-              delivery_method.calculator.set_preference(key, value)
-            end
           end
         end
       end

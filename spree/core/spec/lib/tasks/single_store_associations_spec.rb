@@ -45,6 +45,8 @@ describe 'spree:upgrade:populate_single_store_associations' do
       end
 
       it 'assigns the earliest store and reports the shared record' do
+        expect(Spree::Deprecation).to receive(:warn).with(/Promotion \S+ was shared across 2 stores/)
+
         expect { subject.invoke }
           .to output(/shared across stores/).to_stdout
           .and change { promotion.reload.store_id }.from(nil).to(default_store.id)
@@ -79,6 +81,8 @@ describe 'spree:upgrade:populate_single_store_associations' do
 
       # No timestamps on the join — the lowest store_id is the deterministic owner.
       it 'assigns the lowest store_id' do
+        expect(Spree::Deprecation).to receive(:warn).with(/PaymentMethod \S+ was shared across 2 stores/)
+
         subject.invoke
         expect(payment_method.reload.store_id).to eq([default_store.id, other_store.id].min)
       end

@@ -1,0 +1,13 @@
+---
+pt-BR:
+  spree:
+    api:
+      cannot_delete: "%{model} não pode ser excluído"
+      current_password_invalid: A senha atual é inválida ou está ausente
+      password_reset_requested: Se existir uma conta para esse e-mail, as instruções de redefinição de senha foram enviadas.
+      password_reset_token_invalid: O token de redefinição de senha é inválido ou expirou.
+      unauthorized: Você não está autorizado a realizar essa ação.
+      v3:
+        payments:
+          method_unavailable: Esta forma de pagamento não está disponível para este pedido.
+          session_required: Esta forma de pagamento requer uma sessão de pagamento. Use o endpoint de sessões de pagamento em vez disso.

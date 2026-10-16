@@ -43,13 +43,13 @@ RSpec.describe Spree::Products::Duplicator do
     # A promise belongs to the order that made it. Copied onto the duplicate,
     # it would open holding stock for somebody else's order.
     it 'starts the copy with no stock and no promise' do
-      original = product.variants_including_master.first
+      original = product.variants.first
       level = original.stock_levels.first
       level.update_columns(count_on_hand: 7, allocated_count: 3)
 
       new_product = subject.value
 
-      new_product.variants_including_master.flat_map(&:stock_levels).each do |copy|
+      new_product.variants.flat_map(&:stock_levels).each do |copy|
         expect(copy.count_on_hand).to eq(0)
         expect(copy.allocated_count).to eq(0)
       end

@@ -28,6 +28,37 @@ pre-commit:
         pnpm generate:zod
         git add packages/sdk/src/zod/generated/ packages/admin-sdk/src/zod/generated/ packages/seller-sdk/src/zod/generated/
 
+    filters:
+      # The API reference carries the filter tables; regenerating it, or
+      # changing the generator, needs fresh SDK filter types.
+      glob:
+        - "docs/api-reference/{store,admin,seller}.yaml"
+        - "packages/sdk-core/scripts/generate-filters.ts"
+      run: |
+        pnpm generate:filters
+        git add packages/sdk/src/types/filters.generated.ts packages/admin-sdk/src/types/filters.generated.ts packages/seller-sdk/src/types/filters.generated.ts
+
+    params:
+      # The API reference carries the request schemas; regenerating it, or
+      # changing the generator, needs fresh SDK request types.
+      glob:
+        - "docs/api-reference/{store,admin,seller}.yaml"
+        - "packages/sdk-core/scripts/generate-params.ts"
+        - "packages/sdk-core/src/params-types.ts"
+      run: |
+        pnpm generate:params
+        git add packages/sdk/src/types/params/ packages/admin-sdk/src/types/params/ packages/seller-sdk/src/types/params/
+
+    iso-codes:
+      # The country, currency and locale lists come from the Store API
+      # reference; regenerating it, or changing the generator, needs fresh lists.
+      glob:
+        - "docs/api-reference/store.yaml"
+        - "packages/sdk-core/scripts/generate-iso-codes.ts"
+      run: |
+        pnpm generate:iso-codes
+        git add packages/sdk-core/src/iso-codes.generated.ts
+
 pre-push:
   commands:
     biome-ci:

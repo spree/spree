@@ -45,7 +45,7 @@ module Spree
       def ensure_deliverable
         return if fulfillment.can_mark_delivered?
 
-        failure(fulfillment, Spree.t('fulfillments.errors.cannot_mark_delivered'))
+        failure(fulfillment, I18n.t('spree.fulfillments.errors.cannot_mark_delivered'))
       end
 
       # A human saying "it arrived" outranks a carrier that never sent the

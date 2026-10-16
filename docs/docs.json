@@ -433,11 +433,19 @@
       "destination": "/user/loyalty/gift-cards"
     },
     {
+      "source": "/user/loyalty/issue-gift-card",
+      "destination": "/user/loyalty/gift-cards"
+    },
+    {
       "source": "/user/customers/issue-gift-card",
-      "destination": "/user/loyalty/issue-gift-card"
+      "destination": "/user/loyalty/gift-cards"
     },
     {
       "source": "/user/customers/assign-store-credits",
+      "destination": "/user/loyalty/store-credits"
+    },
+    {
+      "source": "/user/loyalty/store-credits-list",
       "destination": "/user/loyalty/store-credits"
     },
     {
@@ -606,7 +614,59 @@
     },
     {
       "source": "/user/manage-products/product-metafields",
-      "destination": "/user/manage-products/custom-product-fields"
+      "destination": "/user/products/custom-product-fields"
+    },
+    {
+      "source": "/user/manage-products/search-products",
+      "destination": "/user/products/products"
+    },
+    {
+      "source": "/user/manage-products/bulk-product-operations",
+      "destination": "/user/products/products"
+    },
+    {
+      "source": "/user/products/creating-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/editing-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/cloning-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/deleting-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/editing-multi-variant-products",
+      "destination": "/user/products/variants"
+    },
+    {
+      "source": "/user/manage-products/import-products",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/export-products",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/multi-currency-import-export",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/product-options",
+      "destination": "/user/products/options"
+    },
+    {
+      "source": "/user/manage-products/product-import-file-template",
+      "destination": "/user/products/import-template"
+    },
+    {
+      "source": "/user/manage-products/custom-product-fields",
+      "destination": "/user/products/custom-product-fields"
     }
   ],
   "contextual": {
@@ -701,6 +761,7 @@
                           "developer/core-concepts/translations",
                           "developer/core-concepts/slugs",
                           "developer/core-concepts/metafields",
+                          "developer/core-concepts/external-references",
                           "developer/core-concepts/imports-exports",
                           "developer/core-concepts/reporting"
                         ]
@@ -977,7 +1038,8 @@
                       "developer/deployment/cdn",
                       "developer/deployment/background_jobs",
                       "developer/deployment/caching",
-                      "developer/deployment/database"
+                      "developer/deployment/database",
+                      "developer/deployment/usage-data"
                     ],
                     "icon": "server"
                   },
@@ -1067,6 +1129,7 @@
                       "api-reference/admin-api/errors",
                       "api-reference/admin-api/querying",
                       "api-reference/admin-api/monetary-amounts",
+                      "api-reference/admin-api/uploads",
                       "api-reference/admin-api/endpoints"
                     ]
                   },
@@ -1135,21 +1198,16 @@
                     "group": "Products",
                     "icon": "package",
                     "pages": [
-                      "user/products/creating-products",
-                      "user/products/editing-products",
-                      "user/products/editing-multi-variant-products",
-                      "user/products/cloning-products",
-                      "user/products/deleting-products",
-                      "user/manage-products/search-products",
-                      "user/manage-products/bulk-product-operations",
+                      "user/products/products",
+                      "user/products/adding-products",
+                      "user/products/variants",
+                      "user/products/options",
+                      "user/products/media",
                       "user/products/categories",
                       "user/products/collections",
-                      "user/manage-products/product-options",
-                      "user/manage-products/custom-product-fields",
-                      "user/manage-products/import-products",
-                      "user/manage-products/export-products",
-                      "user/manage-products/product-import-file-template",
-                      "user/manage-products/multi-currency-import-export"
+                      "user/products/custom-product-fields",
+                      "user/products/import-and-export",
+                      "user/products/import-template"
                     ]
                   },
                   {
@@ -1231,9 +1289,7 @@
                     "group": "Loyalty",
                     "pages": [
                       "user/loyalty/gift-cards",
-                      "user/loyalty/issue-gift-card",
-                      "user/loyalty/store-credits",
-                      "user/loyalty/store-credits-list"
+                      "user/loyalty/store-credits"
                     ],
                     "icon": "gift"
                   },
@@ -1822,6 +1878,7 @@
                       "api-reference/admin-api/errors",
                       "api-reference/admin-api/querying",
                       "api-reference/admin-api/monetary-amounts",
+                      "api-reference/admin-api/uploads",
                       "api-reference/admin-api/endpoints"
                     ]
                   },
@@ -2164,6 +2221,7 @@
                   "developer/core-concepts/translations",
                   "developer/core-concepts/slugs",
                   "developer/core-concepts/metafields",
+                  "developer/core-concepts/external-references",
                   "developer/core-concepts/imports-exports",
                   "developer/core-concepts/reporting"
                 ]
@@ -2617,6 +2675,7 @@
                   "api-reference/admin-api/errors",
                   "api-reference/admin-api/querying",
                   "api-reference/admin-api/monetary-amounts",
+                  "api-reference/admin-api/uploads",
                   "api-reference/admin-api/endpoints"
                 ]
               },
@@ -2790,21 +2849,16 @@
             "group": "Products",
             "icon": "package",
             "pages": [
-              "user/products/creating-products",
-              "user/products/editing-products",
-              "user/products/editing-multi-variant-products",
-              "user/products/cloning-products",
-              "user/products/deleting-products",
-              "user/manage-products/search-products",
-              "user/manage-products/bulk-product-operations",
+              "user/products/products",
+              "user/products/adding-products",
+              "user/products/variants",
+              "user/products/options",
+              "user/products/media",
               "user/products/categories",
               "user/products/collections",
-              "user/manage-products/product-options",
-              "user/manage-products/product-metafields",
-              "user/manage-products/import-products",
-              "user/manage-products/export-products",
-              "user/manage-products/product-import-file-template",
-              "user/manage-products/multi-currency-import-export"
+              "user/products/custom-product-fields",
+              "user/products/import-and-export",
+              "user/products/import-template"
             ]
           },
           {
@@ -2884,9 +2938,7 @@
             "group": "Loyalty",
             "pages": [
               "user/loyalty/gift-cards",
-              "user/loyalty/issue-gift-card",
-              "user/loyalty/store-credits",
-              "user/loyalty/store-credits-list"
+              "user/loyalty/store-credits"
             ]
           },
           {

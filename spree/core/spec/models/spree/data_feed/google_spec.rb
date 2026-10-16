@@ -33,12 +33,4 @@ describe Spree::DataFeed::Google, type: :model do
       expect(data_feed.formatted_url).to eq(expected_url)
     end
   end
-
-  describe '.label' do
-    subject { Spree::DataFeed::Google.label }
-
-    it 'returns a descriptive label' do
-      expect(subject).to eq('Google Merchant Center Feed')
-    end
-  end
 end

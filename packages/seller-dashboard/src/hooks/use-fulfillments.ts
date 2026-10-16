@@ -1,5 +1,6 @@
 import { useResourceKeyBuilder } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
+import type { CurrencyCode } from '@spree/seller-sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { sellerClient } from '../api-client'
 
@@ -125,14 +126,14 @@ export function useFulfillmentActions(orderId: string) {
       ...params
     }: {
       fulfillmentId: string
-      file: string
+      file_signed_id: string
       // Required: a label with no tracking number is refused server-side,
       // since nothing could then follow the parcel it prints.
       tracking_number: string
       carrier?: string
       service?: string
       cost?: string
-      currency?: string
+      currency?: CurrencyCode
     }) => sellerClient().orders.fulfillments.labels.create(orderId, fulfillmentId, params),
   )
 

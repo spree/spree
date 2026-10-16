@@ -93,8 +93,11 @@ export function ClaimResolveDialog({
 
   // Refunding nothing, or replacing nothing, is what the server rejects —
   // say so here instead of letting the request fail.
+  // The amount is the canonical decimal string a number input yields, so
+  // "above zero" is unsigned digits with a non-zero digit among them.
+  const positiveAmount = /^(\d+(\.\d+)?|\.\d+)$/.test(amount) && /[1-9]/.test(amount)
   const ready =
-    (!refunding || Number(amount) > 0) && (!sendingReplacement || chosenReplacements.length > 0)
+    (!refunding || positiveAmount) && (!sendingReplacement || chosenReplacements.length > 0)
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -138,7 +141,7 @@ export function ClaimResolveDialog({
                   <InputGroupInput
                     id="claim-resolve-amount"
                     type="number"
-                    step="0.01"
+                    step="any"
                     min="0"
                     value={amount}
                     onChange={(event) => setAmount(event.target.value)}

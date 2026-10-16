@@ -43,8 +43,7 @@ module Spree
               "Spree::Product##{legacy_attr}= is deprecated; set #{publication_attr} on " \
               "ProductPublication instead (writes to every channel's publication). "
             )
-            super(value)
-            product_publications.each { |publication| publication.public_send("#{publication_attr}=", value) }
+            write_publication_date(legacy_attr, value)
           end
 
           # Reading +available_on+/+discontinue_on+ prefers the current-channel
@@ -91,6 +90,14 @@ module Spree
       end
 
       private
+
+      # Writes a legacy date column together with the matching date on every
+      # channel's publication, so the two never disagree.
+      def write_publication_date(legacy_attr, value)
+        write_attribute(legacy_attr, value)
+        publication_attr = DEPRECATED_DATE_TO_PUBLICATION_FIELD.fetch(legacy_attr.to_sym)
+        product_publications.each { |publication| publication.public_send("#{publication_attr}=", value) }
+      end
 
       def assign_default_store
         self.store ||= Spree::Current.store || Spree::Store.default

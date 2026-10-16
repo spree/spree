@@ -1480,11 +1480,13 @@
         "seeded_report_read_only": "To raport wbudowany i nie można go zmienić. Zapisz zamiast tego kopię.",
         "taken": "jest już zajęte",
         "too_long": "jest za długie (maksymalnie {{count}} znaków)",
+        "too_many_decimals": "ma więcej niż {{count}} miejsca po przecinku",
         "too_short": "jest za krótkie (minimalnie {{count}} znaków)",
         "wrong_length": "ma nieprawidłową długość (powinno mieć {{count}} znaków)"
       },
       "country_required": "Kraj jest wymagany",
       "currency_required": "Waluta jest wymagana",
+      "locale_required": "Język jest wymagany",
       "first_name_required": "Imię jest wymagane",
       "invalid_email": "Wprowadź prawidłowy adres e-mail",
       "invalid_email_or_password": "Nieprawidłowy adres e-mail lub hasło",
@@ -1496,7 +1498,8 @@
       "passwords_dont_match": "Hasła nie są zgodne",
       "positive_number": "Pole {{field}} musi być większe niż 0",
       "required": "Pole {{field}} jest wymagane",
-      "store_name_required": "Nazwa sklepu jest wymagana"
+      "store_name_required": "Nazwa sklepu jest wymagana",
+      "too_many_decimals": "{{field}} może mieć najwyżej {{count}} miejsca po przecinku"
     },
     "products": {
       "autocomplete": {

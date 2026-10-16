@@ -4,6 +4,8 @@ module Spree
       module CartResolvable
         extend ActiveSupport::Concern
 
+        include Spree::Api::V3::PurchaseSerialization
+
         protected
 
         # Find cart by prefixed ID and authorize read access (owner or guest
@@ -73,9 +75,8 @@ module Spree
         # needs there.
         def render_order(status: :ok)
           record = @cart.reload
-          serializer = record.is_a?(Spree::OrderGroup) ? Spree.api.order_group_serializer : Spree.api.order_serializer
 
-          render json: serializer.new(record, params: serializer_params).to_h, status: status
+          render json: purchase_serializer_for(record).new(record, params: serializer_params).to_h, status: status
         end
 
         # Return the cart token from the request headers.

@@ -11,23 +11,47 @@ module Spree
           class DiscountsController < BaseController
             scoped_resource :orders
 
+            request_params :discount do |body|
+              body.attribute :label, :string, required: true, on: :create, example: 'Customer appeasement'
+              body.attribute :value, :decimal,
+                required: true, on: :create,
+                only: :create,
+                example: '10.00',
+                description: 'An amount in the order currency for a `flat` discount, or a percentage for a `percent` one.'
+              body.attribute :amount, :decimal,
+                only: :update,
+                description: 'The new amount of the row, in the order currency.'
+              body.attribute :value_type, :string,
+                only: :create,
+                choices: %w[flat percent],
+                description: 'Defaults to `flat`.'
+              body.attribute :line_item_id, :id,
+                only: :create,
+                nullable: true,
+                description: 'The line item the discount applies to. Omitted, the value is distributed across the line items.'
+            end
+
             # POST /api/v3/admin/orders/:order_id/discounts
             def create
               with_order_lock do
                 line_item = @parent.line_items.find_by_prefix_id!(params[:line_item_id]) if params[:line_item_id].present?
 
+                value_type = params[:value_type].presence || 'flat'
+                # A flat discount is money in the order's currency; a percentage is a rate.
+                value = value_type == 'percent' ? decimal_param(:value) : money_param(:value, @parent.currency)
+
                 result = Spree.order_discount_create_service.call(
                   order: @parent,
                   label: params[:label],
-                  value: params[:value].presence || params[:amount],
-                  value_type: params[:value_type].presence || 'flat',
+                  value: value,
+                  value_type: value_type,
                   line_item: line_item
                 )
 
                 if result.success?
                   render json: { data: serialize_collection(result.value) }, status: :created
                 else
-                  render_error(code: ERROR_CODES[:validation_error], message: result.error.to_s, status: :unprocessable_entity)
+                  render_error(code: ERROR_CODES[:validation_error], message: result.error.to_s, status: :unprocessable_content)
                 end
               end
             end
@@ -75,7 +99,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:label, :amount)
+              params.permit(*permitted_attributes)
             end
 
             def collection_includes
@@ -87,8 +111,8 @@ module Spree
             def render_promotion_row_error
               render_error(
                 code: ERROR_CODES[:discount_not_editable],
-                message: Spree.t('errors.messages.promotion_discount_not_editable'),
-                status: :unprocessable_entity
+                message: I18n.t('spree.errors.messages.promotion_discount_not_editable'),
+                status: :unprocessable_content
               )
             end
           end

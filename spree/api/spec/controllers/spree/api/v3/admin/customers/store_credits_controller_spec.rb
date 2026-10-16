@@ -69,7 +69,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
     let(:headers) { { 'x-spree-api-key' => secret_api_key.plaintext_token } }
 
     let(:create_params) do
-      { customer_id: customer.prefixed_id, amount: 10.0, currency: 'USD' }
+      { customer_id: customer.prefixed_id, amount: '10.00', currency: 'USD' }
     end
 
     context 'with a key granting only read_store_credits' do
@@ -109,7 +109,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
       expect {
         post :create, params: {
           customer_id: customer.prefixed_id,
-          amount: 25.00,
+          amount: '25.00',
           currency: 'USD',
           memo: 'Goodwill'
         }, as: :json

@@ -18,20 +18,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       sdk_example 'customers/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'newuser@example.com' },
-          password: { type: :string, minLength: 6, example: 'password123' },
-          password_confirmation: { type: :string, example: 'password123' },
-          first_name: { type: :string, example: 'John' },
-          last_name: { type: :string, example: 'Doe' },
-          phone: { type: :string, example: '+1234567890' },
-          accepts_email_marketing: { type: :boolean, example: true },
-          metadata: { type: :object, example: { source: 'storefront' } }
-        },
-        required: %w[email password]
-      }
+      request_body_for
 
       response '201', 'registration successful' do
         let(:'x-spree-api-key') { api_key.token }
@@ -140,19 +127,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string, example: 'John' },
-          last_name: { type: :string, example: 'Doe' },
-          email: { type: :string, format: 'email', example: 'customer@example.com' },
-          password: { type: :string, example: 'newpassword123' },
-          password_confirmation: { type: :string, example: 'newpassword123' },
-          accepts_email_marketing: { type: :boolean, example: true },
-          phone: { type: :string, example: '+1 555 123 4567' },
-          metadata: { type: :object, example: { preferred_contact: 'email' } }
-        }
-      }
+      request_body_for
 
       response '200', 'profile updated' do
         let(:'x-spree-api-key') { api_key.token }

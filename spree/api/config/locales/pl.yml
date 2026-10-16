@@ -1,0 +1,15 @@
+---
+pl:
+  spree:
+    api:
+      cannot_delete: "%{model} nie może zostać usunięty"
+      current_password_invalid: Bieżące hasło jest nieprawidłowe lub go brakuje
+      newsletter_verification_token_invalid: Token weryfikacji newslettera jest nieprawidłowy lub wygasł.
+      password_reset_requested: Jeśli istnieje konto powiązane z tym adresem e-mail, instrukcje resetowania hasła zostały wysłane.
+      password_reset_token_invalid: Token resetowania hasła jest nieprawidłowy lub wygasł.
+      record_not_found: Nie znaleziono %{model}
+      unauthorized: Nie masz uprawnień do wykonania tej akcji.
+      v3:
+        payments:
+          method_unavailable: Ta metoda płatności jest niedostępna dla tego zamówienia.
+          session_required: Ta metoda płatności wymaga sesji płatności. Użyj zamiast tego punktu końcowego sesji płatności.

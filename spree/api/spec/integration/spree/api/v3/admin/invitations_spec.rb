@@ -23,6 +23,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'invitations found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -48,14 +49,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[email role_id],
-        properties: {
-          email: { type: :string, example: 'ada@example.com' },
-          role_id: { type: :string, example: 'role_xxx' }
-        }
-      }
+      request_body_for
 
       response '201', 'invitation created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -141,6 +135,63 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
 
       response '200', 'invitation resent' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/auth/invitations/{id}/accept' do
+    parameter name: :id, in: :path, type: :string, description: 'Invitation ID from the emailed link'
+
+    let(:staff_invitation) do
+      create(:invitation, resource: store, role: admin_role, inviter: admin_user, email: 'newcomer@acme.test')
+    end
+
+    post 'Accept an invitation' do
+      tags 'Authentication'
+      consumes 'application/json'
+      produces 'application/json'
+      description <<~DESC
+        Accepts a staff invitation and returns a signed-in admin session, so the
+        new member lands in the dashboard rather than on a login form.
+
+        Unauthenticated — the ID and token in the emailed link are the
+        credential. The email is never taken from the request; it always comes
+        from the invitation.
+
+        `password` is required when no account exists for the invited address,
+        in which case it sets one. When an account already exists, the same
+        field is how the person proves the account is theirs.
+      DESC
+
+      parameter name: :token, in: :query, type: :string, required: true,
+                description: 'The token from the emailed link'
+      request_body_for
+
+      response '200', 'invitation accepted, session issued' do
+        let(:id) { staff_invitation.prefixed_id }
+        let(:token) { staff_invitation.token }
+        let(:body) do
+          { password: 'password123', password_confirmation: 'password123', first_name: 'Robin', last_name: 'Ellis' }
+        end
+
+        schema '$ref' => '#/components/schemas/AuthResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['token']).to be_present
+          expect(data['user']['email']).to eq('newcomer@acme.test')
+          expect(staff_invitation.reload.status).to eq('accepted')
+        end
+      end
+
+      response '404', 'wrong token, or an invitation that can no longer be accepted' do
+        let(:id) { staff_invitation.prefixed_id }
+        let(:token) { 'not-the-token' }
+        let(:body) { { password: 'password123', password_confirmation: 'password123' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
       end

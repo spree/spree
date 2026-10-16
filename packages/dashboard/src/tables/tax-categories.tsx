@@ -8,7 +8,7 @@ defineTable<TaxCategory>('tax-categories', {
   docsPath: 'settings/tax',
   description: i18n.t('admin.table_descriptions.tax_categories'),
   title: i18n.t('admin.settings_nav.items.tax_categories'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.tax_categories.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <PercentIcon className="size-8 text-muted-foreground" />,

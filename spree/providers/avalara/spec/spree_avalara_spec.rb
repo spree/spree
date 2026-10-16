@@ -9,7 +9,7 @@ RSpec.describe SpreeAvalara do
 
   it 'loads as a Rails engine with its translations' do
     expect(described_class::Engine.root.join('config', 'locales', 'en.yml')).to exist
-    expect(Spree.t('integrations.avalara.description')).to include('Avalara AvaTax')
+    expect(I18n.t('spree.integrations.avalara.description')).to include('Avalara AvaTax')
   end
 
   describe 'timeouts' do

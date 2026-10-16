@@ -7,8 +7,6 @@ describe Spree::Calculator::FlatRate, type: :model do
   before { allow(line_item).to receive_messages quantity: 10 }
 
   describe '#compute' do
-    it { expect(calculator.preferred_apply_only_on_full_priced_items).to be false }
-
     shared_examples 'computing amount correctly' do
       it "computes the amount as the rate when currency matches the line_item's currency" do
         calculator.preferred_amount = 25.0

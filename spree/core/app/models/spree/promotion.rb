@@ -87,6 +87,7 @@ module Spree
     # `name` is whitelisted so the admin global search / command palette can
     # filter via the `name_or_code_cont` predicate without a dedicated scope.
     self.whitelisted_ransackable_attributes = ['name', 'path', 'promotion_category_id', 'code', 'kind', 'starts_at', 'expires_at']
+    search_by :name, :code
     self.whitelisted_ransackable_associations = %w[coupon_codes]
 
     def self.with_coupon_code(coupon_code)
@@ -378,7 +379,7 @@ module Spree
     def not_used?
       return true if orders.empty?
 
-      errors.add(:base, :promotion_already_used, message: Spree.t('promotion_already_used'))
+      errors.add(:base, :promotion_already_used, message: I18n.t('spree.promotion_already_used'))
       throw(:abort)
     end
 

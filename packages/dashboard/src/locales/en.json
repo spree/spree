@@ -1098,8 +1098,7 @@
           "inherit": "Inherit from store",
           "label": "Order routing strategy",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Legacy",
-            "Spree::OrderRouting::Strategy::Rules": "Rules (ordered)"
+            "rules": "Rules (ordered)"
           }
         },
         "storefront_access": {
@@ -1234,12 +1233,12 @@
         "resource_type": {
           "label": "Applies to",
           "options": {
-            "Spree::OptionType": "Option types",
-            "Spree::Order": "Orders",
-            "Spree::Product": "Products",
-            "Spree::Taxon": "Categories",
-            "Spree::Customer": "Customers",
-            "Spree::Variant": "Variants"
+            "option_type": "Option types",
+            "order": "Orders",
+            "product": "Products",
+            "category": "Categories",
+            "customer": "Customers",
+            "variant": "Variants"
           },
           "read_only_help": "The owner can't be changed once values exist for this field."
         },
@@ -2023,22 +2022,22 @@
           "invalid": "Use only uppercase letters, digits, dashes and #.",
           "label": "Suffix"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Admin language",
           "placeholder": "Use the default language"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "When off, no order confirmation, shipping, or refund emails are sent.",
           "label": "Send transactional emails to customers"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Timezone",
           "placeholder": "Select a timezone"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "Unit system"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Weight unit"
         },
         "show_products_without_price": {
@@ -2116,14 +2115,14 @@
         "digital_asset_authorized_days": {
           "label": "Days available"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Height",
           "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect.",
           "label": "Default package dimensions",
           "length": "Length",
           "width": "Width"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable.",
           "label": "Default package weight"
         },
@@ -2144,22 +2143,22 @@
           "help": "Charged on your commission when neither the commission rate nor your tax provider gives a rate of its own. Leave at 0 if you charge no tax on your fee.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Accent color"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Background color"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Card color"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Text color"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Heading color"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Font",
           "help": "Email apps that can't load it fall back to a similar font."
         }
@@ -2866,6 +2865,7 @@
           "packing_slip_total": "Total",
           "print_label": "Print label",
           "print_packing_slip": "Print packing slip",
+          "quoted_after_review": "Quoted after review",
           "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
           "refund_label": "Refund label",
           "retry_refund_label": "Retry refund",
@@ -2937,7 +2937,7 @@
         "priced_by": "Priced by {{name}}",
         "purchase_order": {
           "document": "Purchase order document",
-          "document_help": "PDF, image or Word file, up to 10 MB.",
+          "document_help": "PDF, image, Word document, spreadsheet or CSV file, up to 10 MB.",
           "download_failed": "Could not download the purchase order",
           "save_failed": "Could not save the purchase order",
           "title": "Purchase order"
@@ -3822,7 +3822,6 @@
           "logo_dimensions_help": "Recommended: 204×104 pixels.",
           "section_addresses": "Email addresses",
           "section_delivery": "Delivery",
-          "section_logo": "Logo",
           "subtitle": "Sender addresses, notifications, and the logo embedded in transactional emails.",
           "title": "Email settings",
           "branding": {
@@ -6269,6 +6268,18 @@
       "every_language": {
         "notice": "Customers in every language receive this version until you publish one for {{language}}."
       }
+    },
+    "updates": {
+      "available": "Spree {{version}} is available",
+      "running": "You are running Spree {{version}}."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "open": "Notifications",
+      "open_unread": "Notifications, 1 unread",
+      "empty": "You're all caught up.",
+      "view_on_github": "View on GitHub",
+      "release_notes_unavailable": "The release notes could not be loaded. Read them on GitHub instead."
     }
   }
 }

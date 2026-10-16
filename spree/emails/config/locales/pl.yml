@@ -1,0 +1,39 @@
+---
+pl:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Zresetuj hasło
+        expiry_notice: Ten link do zresetowania hasła wkrótce wygaśnie. Jeśli nie składałeś tej prośby, nie musisz nic robić.
+        greeting: Cześć %{name},
+        ignore_notice: Jeśli nie prosiłeś o zresetowanie hasła, możesz bezpiecznie zignorować tę wiadomość. Twoje hasło nie zostanie zmienione.
+        instructions: Otrzymaliśmy prośbę o zresetowanie Twojego hasła. Kliknij poniższy przycisk, aby wybrać nowe hasło.
+        subject: Instrukcje resetowania hasła
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Cześć,
+        ignore_disclaimer: Jeśli nie składałeś tej prośby, zignoruj tę wiadomość.
+        instructions: Kliknij poniższy przycisk, aby zweryfikować swój adres e-mail.
+        message_copy_link: 'Jeśli przycisk nie działa, skopiuj i wklej poniższy link do swojej przeglądarki:'
+        subject: Zweryfikuj swój adres e-mail
+        verify_email_address_link: Zweryfikuj adres e-mail
+    order_mailer:
+      cancel_email:
+        instructions: Twoje zamówienie zostało anulowane. Zachowaj na wszelki wypadek tę infromację.
+        subject: Anulowanie zamówienia
+      confirm_email:
+        instructions: Przejrzyj i zachowaj poniższe informacje o zamówieniu.
+        order_summary: Podsumowanie Zamówienia %{number}
+        subject: Temat
+      payment_link_email:
+        message: Kliknij poniższy przycisk, aby opłacić swoje zamówienie.
+        message_copy_link: 'Jeśli przycisk nie działa, skopiuj i wklej poniższy link do swojej przeglądarki:'
+        pay_for_order: Opłać zamówienie
+        subject: 'Link do płatności za zamówienie #%{number}'
+      store_owner_notification_email:
+        heading: Otrzymano nowe zamówienie
+        instructions: Otrzymałeś nowe zamówienie.
+        order_summary: Podsumowanie zamówienia %{number}
+        subject: "%{store_name} otrzymał nowe zamówienie"
+      subtotal: 'Subtotal:'
+      total: 'Order Total:'

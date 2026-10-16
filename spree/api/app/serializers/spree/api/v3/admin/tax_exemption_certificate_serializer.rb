@@ -7,8 +7,10 @@ module Spree
         class TaxExemptionCertificateSerializer < V3::BaseSerializer
           typelize certificate_number: :string, reason_code: :string, status: [:string, enum: Spree::TaxExemptionCertificate.statuses, enum_type_name: 'TaxExemptionCertificateStatus'],
                    issuing_authority: [:string, nullable: true],
+                   issued_at: [:string, nullable: true], expires_at: [:string, nullable: true],
+                   verified_at: [:string, nullable: true],
                    company_id: :string,
-                   country_code: [:string, nullable: true], state_code: [:string, nullable: true],
+                   country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'], state_code: [:string, nullable: true],
                    active: :boolean, lapsed: :boolean, can_be_deleted: :boolean,
                    document_filename: [:string, nullable: true],
                    document_byte_size: ['number | null'],

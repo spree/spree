@@ -48,8 +48,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: "Filter by status ('draft', 'ordered', 'partially_received', 'received', 'over_received', 'canceled')"
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed: items, supplier, destination_location'
 
@@ -63,7 +62,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
           row = data['data'].find { |po| po['id'] == order_record.prefixed_id }
           expect(row['status']).to eq('draft')
           expect(row['quantity_ordered_total']).to eq(100)
-          expect(row['subtotal']).to eq('1250.0')
+          expect(row['subtotal']).to eq('1250.00')
         end
       end
 
@@ -97,35 +96,11 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :purchase_order, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          supplier_id: { type: :string, example: 'sup_1234567890' },
-          destination_location_id: { type: :string, example: 'sloc_1234567890' },
-          currency: { type: :string, nullable: true, example: 'USD' },
-          expected_at: { type: :string, format: :date, nullable: true, example: '2026-10-01' },
-          reference: { type: :string, nullable: true, description: "The supplier's own order number" },
-          notes: { type: :string, nullable: true },
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                variant_id: { type: :string, example: 'variant_1234567890' },
-                quantity_ordered: { type: :integer, example: 100 },
-                unit_cost: { type: :string, example: '12.50' }
-              },
-              required: %w[variant_id quantity_ordered]
-            }
-          },
-          metadata: { type: :object, nullable: true }
-        },
-        required: %w[supplier_id destination_location_id]
-      }
+      request_body_for
 
       response '201', 'purchase order created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:purchase_order) do
+        let(:body) do
           {
             supplier_id: supplier.prefixed_id,
             destination_location_id: destination.prefixed_id,
@@ -147,7 +122,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
 
       response '404', 'supplier belongs to another store' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:purchase_order) do
+        let(:body) do
           {
             supplier_id: create(:supplier, store: create(:store)).prefixed_id,
             destination_location_id: destination.prefixed_id,
@@ -186,7 +161,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['items'].first['unit_cost']).to eq('12.5')
+          expect(data['items'].first['unit_cost']).to eq('12.50')
           expect(data['supplier']['name']).to eq('Acme Wholesale')
         end
       end
@@ -198,6 +173,44 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
+      end
+    end
+
+    patch 'Update a purchase order' do
+      tags 'Purchase Orders'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Edits a draft: its supplier, destination, dates, reference, notes and
+        lines. Sending `items` replaces every line the order holds. Status
+        moves through the order's own actions, never through this endpoint.
+      DESC
+      admin_scope :write, :purchasing
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      request_body_for
+
+      response '200', 'purchase order updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { order_record.prefixed_id }
+        let(:body) do
+          {
+            reference: 'ACME-4471',
+            expected_at: '2026-10-15',
+            items: [{ variant_id: variant.prefixed_id, quantity_ordered: 120, unit_cost: '11.75' }]
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/PurchaseOrder'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['reference']).to eq('ACME-4471')
+          expect(order_record.reload.items.sum(:quantity_ordered)).to eq(120)
+        end
       end
     end
   end
@@ -250,6 +263,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
+      filter_parameters_for
 
       response '200', 'deliveries found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -299,33 +313,12 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :receipt, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          reference: { type: :string, nullable: true, example: 'DN-4471', description: "The supplier's delivery note or packing slip" },
-          received_at: { type: :string, format: 'date-time', nullable: true, description: 'Defaults to now' },
-          notes: { type: :string, nullable: true },
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, example: 'poi_1234567890' },
-                quantity_accepted: { type: :integer, example: 58 },
-                quantity_rejected: { type: :integer, example: 2 },
-                rejection_reason: { type: :string, nullable: true, example: 'damaged' },
-                notes: { type: :string, nullable: true }
-              },
-              required: %w[id]
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'delivery booked in' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:purchase_order_id) { order_record.prefixed_id }
-        let(:receipt) do
+        let(:body) do
           { reference: 'DN-4471',
             items: [{ id: order_record.items.first.prefixed_id, quantity_accepted: 58, quantity_rejected: 2,
                       rejection_reason: 'damaged' }] }
@@ -348,7 +341,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       response '422', 'order has not been placed yet' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:purchase_order_id) { order_record.prefixed_id }
-        let(:receipt) { {} }
+        let(:body) { {} }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -411,15 +404,12 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :closure, in: :body, required: false, schema: {
-        type: :object,
-        properties: { reason: { type: :string, nullable: true, example: 'Supplier out of stock' } }
-      }
+      request_body_for
 
       response '200', 'order closed short' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { order_record.prefixed_id }
-        let(:closure) { { reason: 'Supplier out of stock' } }
+        let(:body) { { reason: 'Supplier out of stock' } }
 
         before do
           Spree::PurchaseOrders::MarkOrdered.call(purchase_order: order_record)
@@ -459,15 +449,12 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :cancellation, in: :body, required: false, schema: {
-        type: :object,
-        properties: { reason: { type: :string, example: 'Supplier went under' } }
-      }
+      request_body_for
 
       response '200', 'purchase order cancelled' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { order_record.prefixed_id }
-        let(:cancellation) { { reason: 'Supplier went under' } }
+        let(:body) { { reason: 'Supplier went under' } }
 
         schema '$ref' => '#/components/schemas/PurchaseOrder'
 

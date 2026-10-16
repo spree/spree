@@ -25,6 +25,10 @@ module Spree
     # and provider-backed assets (which carry no file) are exempt.
     DEFAULT_PROVIDER = 'Spree::DigitalAssetProvider::File'.freeze
 
+    # The API names a provider by its shorthand (`file`); the column keeps the
+    # class name.
+    normalizes :provider_type, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.digital_asset_providers, value) }
+
     validate :provider_type_is_registered, if: -> { provider_type.present? }
     # Only ask a valid provider whether it needs a file — an unregistered
     # provider_type is already rejected above, and calling requires_attachment?

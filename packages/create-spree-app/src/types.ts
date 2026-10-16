@@ -5,6 +5,7 @@ export interface ScaffoldOptions {
   storefront: boolean
   dashboard: boolean
   sellerDashboard: boolean
+  agentSkills: boolean
   start: boolean
   packageManager: PackageManager
   port: number

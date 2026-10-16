@@ -1,0 +1,821 @@
+---
+lt:
+  activemodel:
+    errors:
+      messages:
+        blank: negali būti tuščia
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adresas
+        address2: Adresas (antra eil.)
+        city: Miestas
+        company: Įmonė
+        country: Valstybė
+        label: Adreso pavadinimas
+        phone: Telefonas
+        state: Apskritis
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Pagrindinis kiekis
+        preferred_tiers: Pakopos
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Pagrindinis kiekis procentais
+        preferred_tiers: Pakopos
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO Pavadinimas
+        name: Pavadinimas
+        numcode: ISO Kodas
+      spree/credit_card:
+        base: Kodas
+        cc_type: Tipas
+        month: Mėnuo
+        name: Vardas
+        number: Numeris
+        verification_value: Patvirtinimo kodas
+        year: Metai
+      spree/customer_group:
+        description: Aprašymas
+        name: Pavadinimas
+      spree/gift_card:
+        amount_used: Panaudota suma
+        expires_at: Galioja iki
+      spree/import:
+        preferred_delimiter: Skirtukas
+      spree/import_mapping:
+        file_column: Failo stulpelis
+        schema_field: Schemos laukas
+      spree/import_row:
+        row_number: Numeris
+      spree/inventory_unit:
+        state: Apskritis
+      spree/invitation:
+        inviter: Pakvietė
+      spree/line_item:
+        price: Kaina
+        quantity: Turimas likutis
+      spree/option_type:
+        filterable: Filtruojama
+        kind: Tipas
+        name: Pavadinimas
+      spree/option_value:
+        color_code: Spalvos kodas
+        image: Pavyzdžio paveikslėlis
+      spree/order:
+        checkout_complete: Apsipirkimas baigtas
+        completed_at: Užsakymo data
+        considered_risky: Rizika
+        coupon_code: Nuolaidos Kodas
+        created_at: Užsakymo Data
+        email: Pirkėjo el. paštas
+        internal_note: Vidinė pastaba
+        ip_address: IP Adresas
+        item_count: Prekės
+        item_total: Viso prekių
+        number: Kodas
+        payment_state: Apmokėjimo būsena
+        shipment_state: Siuntos būsena
+        special_instructions: Specialios Instrukcijos
+        state: Būsena
+        total: Suma
+      spree/order/bill_address:
+        address1: Mokėtojo gatvė
+        city: Mokėtojo miestas
+        phone: Mokėtojo telefonas
+        state: Mokėtojo apskritis
+      spree/order/ship_address:
+        address1: Gavėjo gatvė
+        city: Gavėjo miestas
+        phone: Gavėjo telefonas
+        state: Gavėjo apskritis
+      spree/payment:
+        amount: Kiekis
+        number: Kodas
+      spree/payment_method:
+        name: Pavadinimas
+      spree/policy:
+        body: Turinys
+        owner: Taisyklės skirtos
+      spree/price_list:
+        description: Aprašymas
+        ends_at: Baigiasi
+        match_policy: Atitikimo taisyklė
+        name: Pavadinimas
+        priority: Prioritetas
+        starts_at: Prasideda
+        status: Būsena
+      spree/price_rule:
+        priority: Prioritetas
+        type: Tipas
+      spree/product:
+        available_on: Atvyksta
+        cost_currency: Valiuta
+        cost_price: Savikaina
+        description: Aprašymas
+        discontinue_on: Nebeparduodamas nuo
+        less_than: Mažiau nei
+        make_active_at: Aktyvuoti
+        master_price: Pagrindinė kaina
+        more_than: Daugiau nei
+        name: Pavadinimas
+        on_hand: Turimas Kiekis
+        tax_category: Mokestinė kategorija
+      spree/promotion:
+        advertise: Skelbti
+        code: Nuolaidos kodas
+        description: Aprašymas
+        event_name: Įvykio pavadinimas
+        expires_at: Akcijos pabaiga
+        generate_code: Generuoti nuolaidos kodą
+        name: Pavadinimas
+        path: Nuolaidos kelias
+        promotion_category: Akcijų kategorija
+        starts_at: Akcijos pradžia
+        usage_limit: Kuponų skaičius
+      spree/promotion_category:
+        code: Kodas
+        name: Akcijos kategorija
+      spree/property:
+        name: Pavadinimas
+        presentation: Aprašymas
+      spree/role:
+        name: Pavadinimas
+      spree/shipment:
+        number: Numeris
+      spree/state:
+        abbr: Trumpinys
+        name: Pavadinimas
+      spree/store:
+        address: Adresas
+        contact_phone: Kontaktinis telefonas
+        mail_from_address: Parduotuvės Pašto Adresas
+        meta_description: Meta Aprašymas
+        meta_keywords: Meta Raktažodžiai
+        name: Parduotuvės Pavadinimas
+        preferred_digital_asset_authorized_clicks: Atsisiuntimų paspaudimų limitas
+        preferred_digital_asset_authorized_days: Atsisiuntimų dienų limitas
+        preferred_limit_digital_download_count: Riboti skaitmeninių nuorodų atsisiuntimų skaičių
+        preferred_limit_digital_download_days: Riboti skaitmeninių nuorodų atsisiuntimų dienas
+        seo_robots: SEO robotai
+        seo_title: SEO Pavadinimas
+        storefront_custom_code_body_end: Pasirinktinis kodas prieš uždarant body žymą
+        storefront_custom_code_body_start: Pasirinktinis kodas po body žymos atidarymo
+        storefront_custom_code_head: Pasirinktinis kodas puslapio antraštėje
+        url: URL Adresas
+      spree/store_credit:
+        amount_used: Panaudota suma
+      spree/tax_category:
+        description: Aprašymas
+        name: Pavadinimas
+      spree/tax_rate:
+        amount: Mokestis
+        included_in_price: Įtraukta į kainą
+        show_rate_in_label: Rodyti tarifą pirkėjui
+      spree/taxon:
+        name: Klasės pavadinimas
+        permalink: URL
+        position: Pozicija
+        sort_order: Rūšiavimo tvarka
+      spree/taxonomy:
+        name: Klasifikacijos pavadinimas
+      spree/user:
+        avatar: Avataras
+        email: El. paštas
+        password: Slaptažodis
+        password_confirmation: Pakartokite slaptažodį
+      spree/variant:
+        cost_currency: Valiuta
+        cost_price: Savikaina
+        depth: Ilgis
+        height: Aukštis
+        price: Kaina
+        sku: SKU
+        weight: Svoris
+        width: Plotis
+      spree/zone:
+        description: Aprašymas
+        name: Pavadinimas
+      user:
+        current_sign_in: Dabartinis prisijungimas
+        last_sign_in: Paskutinis prisijungimas
+        sign_in_count: Prisijungimų skaičius
+    errors:
+      messages:
+        blank: negali būti tuščia
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: turi būti kilmė (schema ir pagrindinis kompiuteris) be kelio, užklausos ar fragmento
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: Jau priskirta prekei
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Mokėjimo kortelės galiojimas baigėsi
+              expiry_invalid: Neteisinga galiojimo data
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Negalima ištrinti panaudotos dovanų kortelės
+        spree/import:
+          attributes:
+            attachment:
+              content_type: turi neleidžiamą turinio tipą
+            type:
+              inclusion: nėra leidžiamų tipų sąraše
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Turi sutapti su užsakymo valiuta
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: Negalima ištrinti numatytosios rinkos.
+              cannot_destroy_last_market: Negalima ištrinti vienintelės rinkos.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: jau priskirta kitai šios parduotuvės rinkai
+              not_in_shipping_zone: neapima jokia pristatymo zona. Pirmiausia sukurkite pristatymo zoną.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: yra didesnė nei leidžiama maksimali suma %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: turi būti vėliau nei pradžios data
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Prekė negali būti ištrinta, jei ji yra naudojama rinkiniuose
+            discontinue_on:
+              invalid_date_range: turi būti vėliau nei galimumo data
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: turi būti vėliau nei publikavimo data
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: turi būti vėliau nei pradžios data
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: Suma didesnė nei leistina
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: Negalima ištrinti vienintelės parduotuvės.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Viršija bendrą kreditų sumą.
+            amount_used:
+              cannot_be_greater_than_amount: Negali būti didesnė nei suma.
+              greater_than_zero_restrict_delete: yra didesnė nei nulis. Negalima ištrinti parduotuvės kredito.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: priklauso kitam naudotojui
+              deprecated_in_completed_order: nebenaudojamas užbaigtame užsakyme
+            ship_address_id:
+              belongs_to_other_user: priklauso kitam naudotojui
+              deprecated_in_completed_order: nebenaudojamas užbaigtame užsakyme
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Prekės variantas negali būti ištrintas, jei jis naudojamas rinkiniuose
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: negali nurodyti į vidinį ar privatų tinklo adresą
+    models:
+      spree/address:
+        one: Adresas
+        other: Adresai
+      spree/classification:
+        one: Klasifikacija
+        other: Klasifikacijos
+      spree/country:
+        one: Valstybė
+        other: Valstybės
+      spree/credit_card:
+        one: Mokėjimo kortelė
+        other: Mokėjimo kortelės
+      spree/customer_group:
+        one: Klientų grupė
+        other: Klientų grupės
+      spree/customer_group_user:
+        one: Klientų grupės naudotojas
+        other: Klientų grupės naudotojai
+      spree/export:
+        one: Eksportas
+        other: Eksportai
+      spree/integration:
+        one: Integracija
+        other: Integracijos
+      spree/inventory_unit:
+        one: Prekės vienetas
+        other: Prekių vienetai
+      spree/line_item:
+        one: Prekė
+        other: Prekės
+      spree/option_type:
+        one: Prekės variantas
+        other: Prekės variantai
+      spree/option_value:
+        one: Savybė
+        other: Savybės
+      spree/order:
+        one: Užsakymas
+        other: Užsakymai
+      spree/payment:
+        one: Mokėjimas
+        other: Mokėjimai
+      spree/payment_method:
+        one: Mokėjimo būdas
+        other: Mokėjimo būdai
+      spree/price:
+        one: Kaina
+        other: Kainos
+      spree/price_list:
+        one: Kainoraštis
+        other: Kainoraščiai
+      spree/price_rule:
+        one: Kainodaros taisyklė
+        other: Kainodaros taisyklės
+      spree/product:
+        one: Prekė
+        other: Prekės
+      spree/promotion:
+        one: Reklama
+        other: Reklamos
+      spree/promotion_category:
+        one: Akcijos kategorija
+        other: Akcijos kategorijos
+      spree/property:
+        one: Savybė
+        other: Savybės
+      spree/refund_reason:
+        one: Kompensacijos priežastis
+        other: Kompensacijos priežastys
+      spree/role:
+        one: Rolė
+        other: Rolės
+      spree/shipment:
+        one: Pristatymas
+        other: Pristatymai
+      spree/shipping_method:
+        one: Pristatymo būdas
+        other: Pristatymo būdai
+      spree/state:
+        one: Apskritis
+        other: Apskritys
+      spree/stock_location:
+        one: Sandėlys
+        other: Sandėliai
+      spree/stock_movement:
+        one: Sandėlio likučio veiksmas
+        other: Sandėlio likučio veiksmai
+      spree/stock_transfer:
+        one: Sandėlio likučio perkėlimas
+        other: Sandėlio likučio perkėlimai
+      spree/store:
+        one: Parduotuvė
+        other: Parduotuvės
+      spree/store_credit:
+        one: Parduotuvės kreditas
+        other: Parduotuvės kreditai
+      spree/tax_category:
+        one: Mokesčių kategorija
+        other: Mokesčių kategorijos
+      spree/tax_rate:
+        one: Mokesčio tarifas
+        other: Mokesčių tarifai
+      spree/taxon:
+        one: Prekių klasė
+        other: Prekių klasės
+      spree/taxonomy:
+        one: Prekių klasifikacija
+        other: Prekių klasifikacijos
+      spree/user:
+        one: Klientas
+        other: Klientai
+      spree/variant:
+        one: Variantas
+        other: Variantai
+      spree/zone:
+        one: Zona
+        other: Zonos
+  errors:
+    messages:
+      already_confirmed: jau buvo patvirtinta
+      not_found: nerastas
+      not_locked: nebuvo užrakinta
+      not_saved:
+        one: '1 klaida neleido išsaugoti %{resource}:'
+        other: "%{count} klaidos neleido išsaugoti %{resource}:"
+  number:
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accept: Patvirtinti
+    accepted: Patvirtinta
+    accepts_email_marketing: Sutinka gauti rinkodaros el. laiškus
+    account: Paskyra
+    active: Aktyvus
+    address: Adresas
+    address1: Adresas
+    address2: Adresas (antra eil.)
+    adjustment: Nuolaida
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Įskaičiuota į kainą)"
+    adjustments_deleted: Koregavimai ištrinti
+    all: Visi
+    amount: Suma
+    api_key_no_current_key: Šios užklausos neautentifikavo joks API raktas
+    api_key_scopes_immutable: negali būti keičiamas po rakto sukūrimo; sukurkite naują raktą su reikiamomis sritimis ir atšaukite šį
+    approver: Patvirtino
+    authorized: Patvirtinti
+    availability: prieinamumas
+    backorderable: Galimas išankstinis užsakymas
+    backordered: Užsakytas iš anksto
+    bill_address: Sąskaito adresas
+    billing_address: Mokėtojo adresas
+    calculator: Skaičiuotuvas
+    canceled: Atšaukti
+    canceler: Atšaukė
+    cannot_be_destroyed: Užsakymo negalima ištrinti.
+    capture: Gautas
+    cart: Krepšelyje
+    cart_already_updated: Krepšelis jau atnaujintas.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} negali būti pristatyta pasirinktu adresu"
+      discontinued: "%{li_name} pašalinta, nes nebeparduodama"
+      out_of_stock: "%{li_name} pašalinta, nes išparduota"
+    categories: Kategorijos
+    category: Kategorija
+    channel: Pardavimo kanalas
+    channels: Pardavimo kanalai
+    checkout: Pirkti
+    checkout_requirements:
+      email_required: El. pašto adresas privalomas
+      line_items_required: Į krepšelį įdėkite bent vieną prekę
+      payment_required: Pridėkite mokėjimo būdą
+      ship_address_required: Pristatymo adresas privalomas
+    city: Miestas
+    color_code: Spalvos kodas
+    company: Įmonė
+    compare_at_amount: Palyginamoji suma
+    compare_at_price: Palyginamoji kaina
+    complete: Užsakymas pateiktas
+    confirm: Patvirtinti
+    cost_price: Savikaina
+    count_on_hand: Turimas kiekis
+    country: Valstybė
+    coupon_code: Nuolaidos kodas
+    coupon_code_already_applied: Nuolaidos kodas jau buvo pritaikytas šiam užsakymui
+    coupon_code_applied: Nuolaida buvo sėkmingai pritaikyta jūsų užsakymui.
+    coupon_code_better_exists: Ankstesnis kuponas turi didesnę nuolaidą
+    coupon_code_expired: Nuolaidos galiojimo laikas baigėsi
+    coupon_code_max_usage: Visos nuolaidos jau panaudotos
+    coupon_code_not_eligible: Nuolaida netaikoma šiam užsakymui
+    coupon_code_not_found: Įvestas nuolaidos kodas neegzistuoja. Pabandykite dar kartą.
+    coupon_code_unknown_error: Nenustatyta klaida bandant panaudoti nuolaidos kodą
+    coupon_code_used: Įvestas kupono kodas jau panaudotas. Bandykite dar kartą.
+    created_at: Sukurta
+    credit_card: Mokėjimo kortelė
+    currency: Valiuta
+    currency_not_supported_by_store: nepalaikoma šios parduotuvės
+    customer: Klientas
+    customers: Klientai
+    default: Numatytas
+    default_stock_location_name: Parduotuvės vieta
+    default_wishlist_name: Pageidavimų sąrašas
+    delivery: Pristatymas
+    depth: Gylis
+    description: Aprašymas
+    destination: Paskirties vieta
+    destroy: Sunaikinti
+    details: Detalės
+    digital:
+      digital_delivery: Skaitmeninis pristatymas
+    digital_assets: Skaitmeninis turinys
+    discontinued: Pardavimai baigti
+    discontinued_variants_present: Kai kurios šio užsakymo prekės turi produktų, kurie nebėra prieinami.
+    display_delivery_range: Pristatymas per %{delivery_range} darbo dienas
+    draft: Juodraštis
+    eligibility_errors:
+      messages:
+        has_excluded_product: produktas neįtrauktas
+        limit_once_per_user: leisti tik kartą kiekvienam vartotojui
+        missing_product: nerasta prekė
+        missing_taxon: nerasta prekių kategorija
+        no_applicable_products: Krepšelyje nėra prekių, kurioms taikoma nuolaida.
+        no_matching_channel: Šis nuolaidos kodas negalioja šiam pardavimo kanalui.
+        no_matching_market: Šis nuolaidos kodas negalioja jūsų rinkoje.
+        no_matching_taxons: Krepšelyje nėra prekių kategorijų, kurioms taikoma nuolaida.
+        no_user_or_email_specified: nepasirinktas vartotojas ar el. paštas
+        no_user_specified: nepasirinktas vartotojas
+        not_first_order: ne pirmas užsakymas.
+        wrong_country: Šis kupono kodas negalioja jūsų šalyje
+    email: El. paštas
+    error: klaida
+    error_user_destroy_with_orders: Negalima ištrinti kliento, turinčio nebaigtų užsakymų
+    error_user_does_not_have_any_store_credits: Naudotojas neturi jokių prieinamų parduotuvės kreditų
+    errors:
+      messages:
+        cannot_delete_default_channel: Numatytojo kanalo ištrinti negalima. Pirmiausia paskirkite kitą kanalą numatytuoju.
+        channel_store_mismatch: turi priklausyti tai pačiai parduotuvei
+        invalid_order_routing_rule: nėra registruota užsakymų nukreipimo taisyklė
+        invalid_order_routing_strategy: nėra registruota užsakymų nukreipimo strategija
+        store_association_can_not_be_changed: Parduotuvės sąsajos keisti negalima
+        store_is_already_set: Parduotuvė jau nustatyta
+    expired: Pasibaigęs
+    export_mailer:
+      export_done:
+        message: Puiku, jūsų eksportas paruoštas! Atsisiųskite jį naudodami žemiau esančią nuorodą.
+        subject: Jūsų eksportas %{export_number} sėkmingai apdorotas!
+      greeting: Sveiki, %{user_name},
+    field: Laukas
+    first_name: Vardas
+    flat_percent: Procentai
+    flat_rate_per_order: Fiksuota nuolaida rinkiniui
+    flexible_rate: Kintanti nuolaida
+    free: Nemokama
+    gateway: Gateway
+    gateway_error: Gateway Klaida
+    gift_card: Dovanų kortelė
+    gift_card_already_redeemed: Dovanų kortelė jau panaudota.
+    gift_card_applied: Dovanų kortelė sėkmingai pritaikyta jūsų užsakymui!
+    gift_card_customer_not_logged_in: Dovanų kortelės negalima taikyti svečio paskyrai.
+    gift_card_expired: Dovanų kortelė nustojo galioti.
+    gift_card_mismatched_currency: Dovanų kortelės negalima taikyti su dabartine valiuta.
+    gift_card_mismatched_customer: Ši dovanų kortelė susieta su kitu naudotoju.
+    gift_card_not_found: Dovanų kortelė nerasta.
+    gift_card_removed: Dovanų kortelė sėkmingai pašalinta iš jūsų užsakymo
+    gift_card_using_store_credit_error: Negalite taikyti dovanų kortelės po to, kai pritaikėte parduotuvės kreditą.
+    height: Aukštis
+    i18n:
+      this_file_language: Lietuvių (LT)
+    idempotency_key_reused: Šis Idempotency-Key jau buvo panaudotas su kitais užklausos parametrais.
+    image: Paveikslėlis
+    import: Importuoti
+    in_stock: Yra sandėlyje
+    inactive: Neaktyvus
+    incomplete: Nebaigta
+    insufficient_stock_lines_present: Nepakankamas prekių likutis.
+    internal_note: Vidinė pastaba
+    inventory: Inventorius
+    invitation_mailer:
+      greeting: Sveiki, %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} priėmė jūsų kvietimą prisijungti prie %{resource_name}"
+        subject: "%{invitee_name} priėmė jūsų kvietimą prisijungti prie %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} pakvietė jus prisijungti prie %{resource_name}"
+        link_description: 'Norėdami priimti šį kvietimą, spustelėkite žemiau esančią nuorodą:'
+        subject: Kvietimas prisijungti prie %{resource_name}
+    iso: ISO Alpha-2
+    item: Prekė
+    items_cannot_be_shipped: Deja, negalime pristatyti pasirinktų prekių jūsų nurodytu adresu. Pasirinkite kitą adresą.
+    key: Raktas
+    kind: Tipas
+    label: Etiketė
+    last_name: Pavardė
+    line_item: Užsakymo eilutė
+    line_items: Užsakymo eilutės
+    link: Nuoroda
+    locale: Lokalė
+    locale_not_supported_by_store: nepalaikoma šios parduotuvės
+    manual: Rankinis
+    market: Rinka
+    me_no_current_user: Šios užklausos neautentifikavo joks administratorius
+    media: Medija
+    meta_description: Meta aprašymas
+    meta_keywords: Meta raktažodžiai
+    meta_title: Meta pavadinimas
+    metadata: Metadata
+    min_quantity: Minimalus kiekis
+    month: Mėnuo
+    name: Pavadinimas
+    new_variant: Naujas Variantas
+    no_cc_type: Nėra
+    no_payment_found: Mokėjimas nerastas
+    none: Tuščia
+    number: Numeris
+    on_hand: Turimas kiekis
+    only_active_products_can_be_added_to_cart: Juodraščių ir archyvuotų produktų negalima pridėti į krepšelį, pirmiausia pažymėkite produktą kaip aktyvų.
+    open: Atidaryti
+    option_name: Pasirinkimo pavadinimas
+    option_type: Kriterijaus tipas
+    option_value: Kriterijus
+    options: Kategorijos
+    or: arba
+    order: Užsakymas
+    order_canceled: Užsakymas atšauktas
+    order_routing:
+      strategies:
+        legacy: Senoji
+        rules: Taisyklės (pagal eiliškumą)
+    order_summary: Užsakymo santrauka
+    orders: Užsakymai
+    out_of_stock: Atsiprašome, prekės šiuo metu neturime.
+    password: Naujas slaptažodis
+    path: Kelias
+    payment: Apmokejimo būdas
+    payment_method: Mokėjimo būdas
+    payment_method_not_supported: Nepalaikomas mokėjimo būdas
+    payment_methods: Mokėjimo būdai
+    payment_processing_failed: Nepavyko atlikti mokėjimo, patikrinkite ar gerai įvedėte duomenis
+    payment_source: Mokėjimo šaltinis
+    pending: Laukiama
+    percent: Procentas
+    percent_per_item: Procentas vienai prekei
+    phone: Telefonas
+    price: Kaina
+    price_range: Kainų intervalas
+    price_rules:
+      channel_rule:
+        description: Taikyti kainodarą pagal pardavimo kanalą
+      customer_group_rule:
+        description: Taikyti kainodarą konkrečioms klientų grupėms
+    price_sack: Kainų krepšelis
+    prices: Kainos
+    privacy_policy: Privatumo politika
+    processing: Apdorojama
+    product: Prekė
+    product_translations: Produktų vertimai
+    products: Prekės
+    products_cannot_be_shipped: Šiuo metu negalime pristatyti %{product_names} į jūsų dabartinę vietą. Pakeiskite pristatymo adresą arba pašalinkite %{product_names} iš krepšelio.
+    promotion: Reklama
+    promotion_action_types:
+      create_adjustment:
+        description: Suteikti nuolaidą visam krepšeliui
+        name: Nuolaida krepšeliui
+      create_item_adjustments:
+        description: Suteikti nuolaidą prekių rinkiniui
+        name: Nuolaida prekių rinkiniui
+      create_line_items:
+        description: Įkelti nurodytas prekes į kliento krepšelį
+        name: Įkelti prekes į krepšelį
+      free_shipping:
+        description: Nemokamas prekių išsiuntimas klientui
+        name: Nemokamas siuntimas
+    promotion_actions: Akcijos taikomos nuolaidos
+    promotion_already_used: Negalima ištrinti akcijos, kuri jau buvo pritaikyta
+    promotion_label: Akcija (%{name})
+    promotion_rule_types:
+      category:
+        description: Užsakyme yra produktų iš nurodytų kategorijų
+        name: Kategorijos
+      channel:
+        description: Apriboti užsakymais, pateiktais per nurodytus kanalus
+        name: Kanalai
+      country:
+        description: Taikyti tik užsakymams su pristatymo adresu konkrečioje šalyje
+        name: Šalis
+      currency:
+        description: Taikyti tik užsakymams konkrečia valiuta
+        name: Valiuta
+      customer:
+        description: Prieinama tik nurodytiems klientams
+        name: Klientai
+      customer_group:
+        description: Prieinama tik klientams iš nurodytų klientų grupių
+        name: Klientų grupė (-s)
+      customer_logged_in:
+        description: Prieinama tik prisijungusiems klientams
+        name: Tik prisijungę klientai
+      first_order:
+        description: Pirmas kliento užsakymas
+        name: Pirmas užsakymas
+      item_total:
+        description: Užsakymo kaina yra intervale
+        name: Užsakymo kaina
+      market:
+        description: Apriboti užsakymais, pateiktais nurodytose rinkose
+        name: Rinkos
+      one_use_per_user:
+        description: Suteikiamas tik vieną kartą vienam vartotojui
+        name: 1x vartotojui
+      option_value:
+        description: Užsakymo krepšelyje yra prekių atitinkančių nurodytas savybes
+        name: Savybės
+      product:
+        description: Užsakymo krepšelyje yra nurodytos prekės
+        name: Nustatytos prekės
+    promotions: Akcijos
+    quantity: Kiekis
+    query: Užklausa
+    reason: Priežastis
+    received: Gauta
+    reference: Vieta
+    refund: Kompensacija
+    refund_amount: Grąžinama suma
+    refunds: Kompensacijos
+    registration: Registracija
+    rejected: Atmestas
+    remove: Panaikinti
+    remove_gift_card_on_completed_order_error: Negalite pašalinti dovanų kortelės po to, kai užsakymas buvo pateiktas
+    resellable: Perparduodamas
+    resend: Pakartotinis
+    response_code: Response Code
+    return: grįžti
+    returned: Grąžinta
+    returns_policy: Grąžinimo politika
+    row: Eilutė
+    rules: Taisyklės
+    scope: Apimtis
+    selected_quantity_not_available: "%{item} yra per mažas."
+    ship: Išsiųsti
+    ship_address: Siuntimo adresas
+    shipment: Siuntos būsena
+    shipped: Išsiųsta
+    shipping: Už pristatymą
+    shipping_address: Pristatymo adresas
+    shipping_flat_rate_per_item: Pristatymo mokestis grupei
+    shipping_flat_rate_per_order: Pristatymo mokestis
+    shipping_flexible_rate: Kintantis mokestis
+    shipping_policy: Pristatymo politika
+    shipping_price_sack: Kainų eilė
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (Įsk. %{tax_amount} %{tax_rate_name})"
+    sku: SKU kodas
+    slug: URL
+    source: Vieta
+    status: Statusas
+    stock_location: Prekės likučio buvimo vieta
+    stock_locations: Sandėliai
+    stock_transfer:
+      errors:
+        must_have_variant: Turite pridėti bent vieną variaciją
+        same_location: negali sutapti su paskirties vieta
+        variants_unavailable: Kai kurios variacijos nepasiekiamos vietoje %{stock}
+    store: Saugoti
+    store_credit:
+      allocated: Pridėta
+      authorized: Autorizuota
+      captured: Panaudota
+      credit: Kreditas
+      eligible: Tinkama
+    store_credit_name: Parduotuvės kreditas
+    store_credit_payment_method:
+      currency_mismatch: Parduotuvės kredito valiuta neatitinka užsakymo valiutos
+      insufficient_authorized_amount: Negalima nuskaityti daugiau nei autorizuota suma
+      insufficient_funds: Likusios parduotuvės kredito sumos nepakanka
+      successful_action: 'Sėkmingas parduotuvės kredito veiksmas: %{action}'
+      unable_to_credit: 'Nepavyko įskaityti kodo: %{auth_code}'
+      unable_to_find: Nepavyko rasti parduotuvės kredito
+      unable_to_find_for_action: 'Nepavyko rasti parduotuvės kredito autorizacijos kodui: %{auth_code} veiksmui: %{action}'
+      unable_to_void: 'Nepavyko anuliuoti kodo: %{auth_code}'
+    success: Pavyko
+    tags: Raktažodžiai
+    tax: Mokestis
+    tax_category: Mokesčių kategorija
+    terms_of_service: Paslaugų teikimo sąlygos
+    there_are_no_items_for_this_order: Nepridėtos prekės šiam užsakymui. Pridėkite prekę, kad galėtumėte tęsti.
+    tiered_flat_rate: Pakopiniės sumos
+    tiered_percent: Pakopiniai procentai
+    total: Viso
+    track_inventory: Sekti likutį
+    tracking: Siuntos kodas
+    tracking_number: Siuntos kodas
+    tracking_url: Sekimo URL
+    type: Tipas
+    unable_to_connect_to_gateway: Nepavyko prisijungti prie sąsajos.
+    updated_at: Atnaujinta
+    url: URL
+    user: Vartotojas
+    validation:
+      must_be_int: turi būti sveikas skaičius
+    value: Reikšmė
+    variant: Prekės variantas
+    variants: Variantai
+    verified: Patvirtinta
+    void: Anuliuoti
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Išjungta
+        heading: Webhook galinis taškas išjungtas
+        instructions: Patikrinkite galinio taško URL ir paslaugą, tada vėl įjunkite jį skiltyje Nustatymai → Kūrėjai → Webhook'ai.
+        message: Webhook galinis taškas „%{endpoint_name}“ buvo automatiškai išjungtas po pakartotinių pristatymo nesėkmių.
+        name_label: Pavadinimas
+        reason_label: Priežastis
+        subject: 'Webhook galinis taškas išjungtas: %{endpoint_name}'
+        url_label: URL
+    weight: Svoris
+    weight_unit: Svorio vienetas
+    width: Plotis
+    year: Metai
+    zip: Pašto kodas

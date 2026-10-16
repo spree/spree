@@ -1,0 +1,11 @@
+---
+de-CH:
+  spree:
+    api:
+      newsletter_verification_token_invalid: Der Newsletter-Bestätigungstoken ist ungültig oder abgelaufen.
+      password_reset_requested: Falls für diese E-Mail-Adresse ein Konto besteht, wurden Anweisungen zum Zurücksetzen des Passworts versendet.
+      password_reset_token_invalid: Der Token zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.
+      v3:
+        payments:
+          method_unavailable: Diese Zahlungsart ist für diese Bestellung nicht verfügbar.
+          session_required: Diese Zahlungsart erfordert eine Zahlungssitzung. Verwenden Sie stattdessen den Endpunkt für Zahlungssitzungen.

@@ -11,8 +11,11 @@ npx create-spree-app my-store
 | Flag | Description |
 |------|-------------|
 | `--no-dashboard` | Skip the Admin Dashboard app — the API still serves the built-in one at `/dashboard` (add your own copy later via `spree add dashboard`) |
+| `--seller-dashboard` | Include the marketplace seller panel without asking |
 | `--no-seller-dashboard` | Skip the marketplace seller panel (also available later via `spree add seller-dashboard`) |
 | `--no-storefront` | Skip Next.js storefront setup |
+| `--agent-skills` | Install the Spree agent skills without asking |
+| `--no-agent-skills` | Skip installing the Spree agent skills |
 | `--no-start` | Don't start Docker services (the first `dev` run completes setup instead) |
 | `--port <number>` | Port for the Spree backend (default: `3000`) |
 | `--use-npm` / `--use-yarn` / `--use-pnpm` | Package manager (auto-detected from how you run the command) |

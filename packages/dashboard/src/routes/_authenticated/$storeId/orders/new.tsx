@@ -47,11 +47,8 @@ import {
   NEW_ORDER_DEFAULTS,
   type NewOrderFormValues,
   newOrderFormSchema,
+  PO_DOCUMENT_ACCEPT,
 } from '../../../../schemas/order'
-
-/** What a purchase order plausibly arrives as — mirrors the server allowlist. */
-const PO_DOCUMENT_ACCEPT =
-  'application/pdf,image/jpeg,image/png,image/heic,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/new')({
   component: NewOrderPage,
@@ -109,7 +106,7 @@ function NewOrderPage() {
       if (values.po_number) payload.po_number = values.po_number
       // The bytes are already in private storage by now; the create carries
       // only the signed id the upload handed back.
-      if (poDocument.signedId) payload.po_document = poDocument.signedId
+      if (poDocument.signedId) payload.po_document_signed_id = poDocument.signedId
       if (values.coupon_code) payload.coupon_code = values.coupon_code
       if (values.channel_id) payload.channel_id = values.channel_id
       return adminClient.orders.create(payload)

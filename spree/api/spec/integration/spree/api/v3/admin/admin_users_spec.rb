@@ -30,6 +30,7 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'staff found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -84,14 +85,7 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string, example: 'Ada' },
-          last_name: { type: :string, example: 'Lovelace' },
-          role_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'staff member updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

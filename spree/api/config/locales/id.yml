@@ -1,0 +1,15 @@
+---
+id:
+  spree:
+    api:
+      cannot_delete: "%{model} tidak dapat dihapus"
+      current_password_invalid: Kata sandi saat ini tidak valid atau tidak ada
+      newsletter_verification_token_invalid: Token verifikasi buletin tidak valid atau telah kedaluwarsa.
+      password_reset_requested: Jika ada akun untuk email tersebut, instruksi pengaturan ulang kata sandi telah dikirim.
+      password_reset_token_invalid: Token pengaturan ulang kata sandi tidak valid atau telah kedaluwarsa.
+      record_not_found: "%{model} tidak ditemukan"
+      unauthorized: Anda tidak berwenang untuk melakukan tindakan tersebut.
+      v3:
+        payments:
+          method_unavailable: Metode pembayaran ini tidak tersedia untuk pesanan ini.
+          session_required: Metode pembayaran ini memerlukan sesi pembayaran. Gunakan endpoint sesi pembayaran sebagai gantinya.

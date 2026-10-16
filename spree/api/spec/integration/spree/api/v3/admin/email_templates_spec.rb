@@ -161,16 +161,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       admin_sdk_example 'email-templates/save-draft'
 
       include_context 'with admin auth parameters'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          language: { type: :string, example: 'any' },
-          subject: { type: :string, example: 'Your order {{ order.number }} is confirmed' },
-          body: { type: :string, example: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>' },
-          lock_version: { type: :integer, example: 0 },
-          rebase: { type: :boolean, description: "Marks the draft as based on Spree's current default, after reviewing what changed in it" }
-        }
-      }
+      request_body_for
 
       response '200', 'draft saved' do
         let(:body) { { subject: 'Your order {{ order.number }} is confirmed', body: body_mjml } }
@@ -242,13 +233,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       admin_sdk_example 'email-templates/publish'
 
       include_context 'with admin auth parameters'
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          language: { type: :string, example: 'any' },
-          lock_version: { type: :integer, description: "The draft's `lock_version` as reviewed; a draft saved since is refused with 409" }
-        }
-      }
+      request_body_for(required: false)
 
       response '201', 'draft published' do
         let(:body) { {} }
@@ -299,28 +284,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       admin_sdk_example 'email-templates/preview'
 
       include_context 'with admin auth parameters'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          language: { type: :string, example: 'any' },
-          subject: { type: :string, example: 'Your order {{ order.number }} is confirmed' },
-          body: { type: :string, example: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>' },
-          record_id: { type: :string, example: 'or_m3Rp9wXz', description: 'The record to build sample data from' },
-          email_key: { type: :string, example: 'spree.order_mailer.confirm_email', description: 'For the layout or a partial, the email to show it in' },
-          branding: {
-            type: :object,
-            description: "Unsaved colors and font to preview, named like the store's `preferred_email_*` settings without the prefix",
-            properties: {
-              accent_color: { type: :string, example: '#FF5500' },
-              background_color: { type: :string },
-              card_color: { type: :string },
-              text_color: { type: :string },
-              heading_color: { type: :string },
-              font: { type: :string, enum: Spree::Emails::Branding::FONTS.keys }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'email template rendered' do
         let(:body) { { body: body_mjml } }
@@ -352,16 +316,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       admin_sdk_example 'email-templates/send-test', signed_in: true
 
       include_context 'with admin auth parameters'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          language: { type: :string, example: 'any' },
-          subject: { type: :string },
-          body: { type: :string },
-          record_id: { type: :string },
-          email_key: { type: :string }
-        }
-      }
+      request_body_for
 
       response '202', 'test email queued' do
         let(:body) { { body: body_mjml } }
@@ -430,6 +385,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (`published_by`)'
+      filter_parameters_for
 
       response '200', 'revisions found' do
         before do
@@ -463,13 +419,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       admin_sdk_example 'email-templates/revisions/restore'
 
       include_context 'with admin auth parameters'
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          language: { type: :string, example: 'any' },
-          lock_version: { type: :integer }
-        }
-      }
+      request_body_for(required: false)
 
       response '201', 'revision copied into the draft' do
         let(:template) { create(:email_template, store: store, key: editable_key) }

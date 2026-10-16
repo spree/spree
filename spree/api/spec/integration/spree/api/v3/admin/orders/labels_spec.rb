@@ -34,6 +34,7 @@ RSpec.describe 'Admin Shipping Labels API', type: :request, swagger_doc: 'api-re
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order ID'
       parameter name: :fulfillment_id, in: :path, type: :string, required: true, description: 'Fulfillment ID'
+      filter_parameters_for
 
       response '200', 'labels found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -62,19 +63,7 @@ RSpec.describe 'Admin Shipping Labels API', type: :request, swagger_doc: 'api-re
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order ID'
       parameter name: :fulfillment_id, in: :path, type: :string, required: true, description: 'Fulfillment ID'
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          file: { type: :string, description: 'Signed blob id of an uploaded label file; its presence records rather than buys' },
-          tracking_number: { type: :string, description: 'Number printed on an uploaded label' },
-          carrier: { type: :string, description: 'Free-text carrier; detected from the number when omitted' },
-          service: { type: :string, description: 'Carrier service the label was bought at' },
-          cost: { type: :string, description: 'What the merchant paid the carrier' },
-          currency: { type: :string, description: 'Currency of the cost' },
-          file_format: { type: :string, enum: %w[pdf png zpl], description: 'Label file format; taken from the file when omitted' },
-          tracking_url: { type: :string, description: 'Tracking page for the consignment' }
-        }
-      }
+      request_body_for
 
       response '201', 'label purchased' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

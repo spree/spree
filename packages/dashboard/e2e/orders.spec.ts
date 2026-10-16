@@ -297,3 +297,53 @@ test.describe('order addresses', () => {
     await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
   })
 })
+
+test.describe('order tags', () => {
+  async function createDraft(page: Page, storeId: string, email: string) {
+    await page.goto(NEW_ORDER_PATH(storeId))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    await fillNewOrderForm(page, email)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${storeId}/orders/or_[^/]+$`), { timeout: 15_000 })
+  }
+
+  function tagsCard(page: Page) {
+    return page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^tags$/i }) })
+  }
+
+  // The order tag vocabulary is fetched by its short name (`order`); a tag
+  // saved on one order is offered as an existing tag on the next.
+  test('tags an order and offers the tag on another order', async ({ page }) => {
+    const creds = await login(page)
+    const suffix = Date.now()
+    const tagName = `e2e-order-tag-${suffix}`
+
+    await createDraft(page, creds.store_id, `e2e-order-tag-a-${suffix}@example.com`)
+    await tagsCard(page)
+      .getByRole('button', { name: /^edit$/i })
+      .click()
+    const input = tagsCard(page).getByPlaceholder(/type to add tags/i)
+    await input.fill(tagName)
+    await input.press('Enter')
+    await tagsCard(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
+    await expect(tagsCard(page).getByText(tagName, { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(tagsCard(page).getByPlaceholder(/type to add tags/i)).toHaveCount(0)
+
+    await createDraft(page, creds.store_id, `e2e-order-tag-b-${suffix}@example.com`)
+    await tagsCard(page)
+      .getByRole('button', { name: /^edit$/i })
+      .click()
+    await tagsCard(page)
+      .getByPlaceholder(/type to add tags/i)
+      .fill(tagName)
+    await expect(page.getByRole('option', { name: tagName, exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+})

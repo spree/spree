@@ -10,6 +10,15 @@ module Spree
       let(:delivery) { create(:webhook_delivery, :pending, webhook_endpoint: webhook_endpoint) }
       let(:secret_key) { webhook_endpoint.secret_key }
 
+      # The Net::HTTP connections a delivery opens on its direct path.
+      def capture_http_connections
+        connections = []
+        allow(Net::HTTP).to receive(:new).and_wrap_original do |original, *args|
+          original.call(*args).tap { |http| connections << http }
+        end
+        connections
+      end
+
       describe '.call' do
         context 'when the payload had credentials withheld from the log' do
           let(:delivery) do
@@ -291,6 +300,92 @@ module Spree
             expect(delivery.success).to be false
             expect(delivery.error_type).to eq('connection_error')
             expect(delivery.request_errors).to include('blocked internal address')
+          end
+        end
+
+        context 'when the endpoint host is an allowed internal host' do
+          let(:webhook_endpoint) do
+            create(:webhook_endpoint, store: store, url: 'http://storefront.shop.svc.cluster.local/api/webhooks/spree')
+          end
+
+          before do
+            allow(Spree::Api::Config).to receive(:webhooks_allowed_internal_hosts).and_return(['.svc.cluster.local'])
+            allow(SsrfFilter).to receive(:post)
+            stub_request(:post, delivery.url).to_return(status: 200, body: '{}')
+          end
+
+          after { described_class.header_decorators.clear }
+
+          it 'delivers directly instead of through SsrfFilter' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(SsrfFilter).not_to have_received(:post)
+            expect(delivery.reload.success).to be true
+          end
+
+          it 'signs the body that was actually sent' do
+            Timecop.freeze do
+              described_class.call(delivery: delivery, secret_key: secret_key)
+
+              expect(WebMock).to have_requested(:post, delivery.url).with { |req|
+                expected = OpenSSL::HMAC.hexdigest('SHA256', secret_key, "#{Time.current.to_i}.#{req.body}")
+                req.headers['X-Spree-Webhook-Signature'] == expected
+              }
+            end
+          end
+
+          it 'applies registered header decorators' do
+            described_class.header_decorators << ->(headers, _delivery) { headers['traceparent'] = '00-trace-01' }
+
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(WebMock).to have_requested(:post, delivery.url).with(headers: { 'traceparent' => '00-trace-01' })
+          end
+
+          # SsrfFilter connects without a proxy; the direct path must too, or an
+          # egress proxy from the environment would carry in-cluster traffic.
+          it 'ignores a proxy configured in the environment' do
+            stub_const('ENV', ENV.to_h.merge('http_proxy' => 'http://proxy.example:3128').except('no_proxy', 'NO_PROXY'))
+            connections = capture_http_connections
+
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(connections.sole.proxy?).to be false
+          end
+        end
+
+        context 'when the endpoint is an allowed IPv6 address' do
+          let(:webhook_endpoint) do
+            create(:webhook_endpoint, store: store, url: 'http://[::1]/api/webhooks/spree')
+          end
+
+          before do
+            allow(Spree::Api::Config).to receive(:webhooks_allowed_internal_hosts).and_return(['::1'])
+            stub_request(:post, delivery.url).to_return(status: 200, body: '{}')
+          end
+
+          it 'connects to the address without its URL brackets' do
+            connections = capture_http_connections
+
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(connections.sole.address).to eq('::1')
+          end
+        end
+
+        context 'when other internal hosts are allowed but not this one' do
+          before do
+            delivery
+            allow(Spree::Api::Config).to receive(:webhooks_allowed_internal_hosts).and_return(['.svc.cluster.local'])
+            allow(SsrfFilter).to receive(:post).and_raise(SsrfFilter::PrivateIPAddress, 'URL resolves to a blocked internal address')
+            allow(Rails.error).to receive(:report)
+          end
+
+          it 'still delivers through SsrfFilter' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(SsrfFilter).to have_received(:post)
+            expect(delivery.reload.error_type).to eq('connection_error')
           end
         end
       end

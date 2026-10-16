@@ -17,8 +17,11 @@ module Spree
             before_action :ensure_manual_collection, only: [:create, :destroy, :reposition]
             before_action :set_product, only: [:reposition]
 
+            request_params 'ProductMembershipRepositionParams', action: :reposition do |body|
+              body.include_attributes Spree::Api::V3::Admin::ProductMembershipRepositionRequestSchema
+            end
+
             # PATCH /api/v3/admin/collections/:collection_id/products/:id/reposition
-            # Body: { new_position: 0 } — 0-based index among the collection's products.
             # @product is already constrained to the collection's scope, so a
             # ProductCollection always exists.
             def reposition
@@ -80,8 +83,7 @@ module Spree
 
               render_error(
                 code: ERROR_CODES[:validation_error],
-                message: Spree.t('api.errors.automatic_collection_curation',
-                                 default: "Products of an automatic collection are managed by its rules and can't be curated manually"),
+                message: I18n.t('spree.api.errors.automatic_collection_curation'),
                 status: :unprocessable_content
               )
             end

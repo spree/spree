@@ -179,7 +179,7 @@ module Spree
         result = subject.call(fulfillment: fulfillment, force: true)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.order_draft'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.order_draft'))
         expect(fulfillment.reload).not_to be_fulfilled
       end
 
@@ -189,7 +189,7 @@ module Spree
         result = subject.call(fulfillment: fulfillment)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.cannot_fulfill'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.cannot_fulfill'))
       end
 
       # Deliberately NOT rolled back: the label step sits between the split
@@ -468,7 +468,7 @@ module Spree
         result = subject.call(fulfillment: fulfillment)
 
         expect(result).to be_failure
-        expect(result.error.value).to include(Spree.t('fulfillments.errors.order_not_paid'))
+        expect(result.error.value).to include(I18n.t('spree.fulfillments.errors.order_not_paid'))
       end
 
       # Gross capture is not the measure: a share given back is money the

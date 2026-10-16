@@ -1,0 +1,15 @@
+---
+ar:
+  spree:
+    api:
+      cannot_delete: لا يمكن حذف %{model}
+      current_password_invalid: كلمة المرور الحالية غير صحيحة أو مفقودة
+      newsletter_verification_token_invalid: رمز التحقق من النشرة الإخبارية غير صالح أو انتهت صلاحيته.
+      password_reset_requested: إذا كان هناك حساب مرتبط بهذا البريد الإلكتروني، فقد تم إرسال تعليمات إعادة تعيين كلمة المرور.
+      password_reset_token_invalid: رمز إعادة تعيين كلمة المرور غير صالح أو انتهت صلاحيته.
+      record_not_found: "%{model} غير موجود"
+      unauthorized: أنت غير مخوّل لتنفيذ هذا الإجراء.
+      v3:
+        payments:
+          method_unavailable: طريقة الدفع هذه غير متاحة لهذا الطلب.
+          session_required: تتطلب طريقة الدفع هذه جلسة دفع. استخدم نقطة نهاية جلسات الدفع بدلًا من ذلك.

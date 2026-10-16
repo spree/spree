@@ -46,17 +46,21 @@ export function variantToFormValues(variant: PanelVariant, position: number): Va
     tax_category_id: variant.tax_category_id ?? null,
     // Base prices only: this array is posted back as the variant's base
     // prices, so a price-list row taken in here returns as the shop price.
-    prices: (variant.prices ?? [])
-      .filter((p) => p.currency != null && p.price_list_id == null)
-      .map((p) => ({
-        currency: p.currency as string,
-        // Keep amounts as the canonical decimal strings the API returns.
-        // The bulk price editor displays them with the locale's decimal
-        // separator and ships the raw user input unchanged on submit;
-        // `Spree::LocalizedNumber.parse` handles locale-aware parsing.
-        amount: p.amount != null ? String(p.amount) : '',
-        compare_at_amount: p.compare_at_amount != null ? String(p.compare_at_amount) : null,
-      })),
+    prices: (variant.prices ?? []).flatMap(
+      ({ currency, price_list_id, amount, compare_at_amount }) =>
+        currency != null && price_list_id == null
+          ? [
+              {
+                currency,
+                // Keep amounts as the canonical decimal strings the API returns;
+                // the price editor shows them in the admin's number format and
+                // normalizes edits back before they reach the form.
+                amount: amount != null ? String(amount) : '',
+                compare_at_amount: compare_at_amount != null ? String(compare_at_amount) : null,
+              },
+            ]
+          : [],
+    ),
     stock_levels: (variant.stock_levels ?? []).map((si) => ({
       id: si.id,
       stock_location_id: si.stock_location_id ?? si.stock_location?.id ?? '',

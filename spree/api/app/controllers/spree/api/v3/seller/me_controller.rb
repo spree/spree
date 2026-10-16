@@ -16,6 +16,17 @@ module Spree
           skip_before_action :set_current_seller_context
           before_action :require_current_user!
 
+          request_params 'AccountUpdateParams' do |body|
+            body.attribute :first_name, :string, example: 'Ada'
+            body.attribute :last_name, :string, example: 'Lovelace'
+            body.attribute :selected_locale, :string,
+              example: 'de',
+              description: "The panel's display language, as a code the panel ships."
+            body.attribute :avatar_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `POST /files` to set the photo, or `null` to remove it. Omit to leave the current one alone.'
+          end
+
           def show
             render json: me_response
           end
@@ -27,8 +38,8 @@ module Spree
           # seller they are acting for.
           #
           # Distinct from PATCH /profile, which writes the seller business.
-          # `avatar` accepts an ActiveStorage direct-upload signed id to set
-          # the photo, or `null` to remove it.
+          # `avatar_signed_id` takes a signed id from POST /files to set the
+          # photo, or `null` to remove it.
           def update
             if current_user.update(permitted_params)
               render json: me_response
@@ -40,7 +51,7 @@ module Spree
           private
 
           def permitted_params
-            params.permit(:selected_locale, :first_name, :last_name, :avatar)
+            params.permit(*declared_permitted_attributes)
           end
 
           def me_response
@@ -83,7 +94,7 @@ module Spree
 
             render_error(
               code: ErrorHandler::ERROR_CODES[:record_not_found],
-              message: Spree.t(:me_no_current_user),
+              message: I18n.t('spree.me_no_current_user'),
               status: :not_found
             )
             false

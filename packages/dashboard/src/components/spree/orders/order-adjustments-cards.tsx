@@ -1,5 +1,14 @@
-import type { Discount, Fee, Order } from '@spree/admin-sdk'
-import { adminClient, currencyParts, formatPrice } from '@spree/dashboard-core'
+import {
+  compareMoney,
+  type Discount,
+  type Fee,
+  type FeeCreateParams,
+  isDecimalString,
+  isZeroMoney,
+  type Order,
+  sumMoney,
+} from '@spree/admin-sdk'
+import { adminClient, currencyParts, formatMoney, Money, percentOf } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -131,7 +140,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const orderId = order.id
   const { data: taxLines, isPending, isError, isSuccess } = useOrderTaxLines(orderId)
-  const taxGroups = groupTaxLines(taxLines?.data ?? [])
+  const taxGroups = groupTaxLines(taxLines?.data ?? [], order.currency)
   const emptyMessage = isPending
     ? t('admin.common.loading')
     : isError
@@ -185,11 +194,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
                     </div>
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
-                    {formatPrice({
-                      amount: group.amount.toFixed(2),
-                      currency: order.currency,
-                      display_amount: null,
-                    })}
+                    <Money amount={group.amount} currency={order.currency} />
                   </TableCell>
                 </TableRow>
               )
@@ -275,7 +280,9 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
                 <TableCell className="text-muted-foreground">
                   {row.code ? <Badge variant="outline">{row.code}</Badge> : '—'}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">{row.display_amount}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  <Money amount={row.amount} currency={order.currency} />
+                </TableCell>
                 <AdjustmentDeleteCell
                   onDelete={row.kind === 'promotion' ? undefined : () => handleDeleteDiscount(row)}
                   deleting={deleteDiscountMutation.isPending}
@@ -354,7 +361,9 @@ export function FeesCard({ order }: { order: Order }) {
                 <TableCell className="text-muted-foreground">
                   {row.kind ? <Badge variant="outline">{feeKindLabel(row.kind)}</Badge> : '—'}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">{row.display_amount}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  <Money amount={row.amount} currency={order.currency} />
+                </TableCell>
                 <AdjustmentDeleteCell
                   onDelete={() => handleDeleteFee(row)}
                   deleting={deleteFeeMutation.isPending}
@@ -426,21 +435,19 @@ function AddDiscountDialog({
 
   // Mirrors Orders::AddManualDiscount: percent applies to the already-
   // discounted line amounts, clamped so no line goes below zero.
-  const numericValue = Number.parseFloat(value)
-  let previewAmount: number | null = null
-  if (valueType === 'percent' && Number.isFinite(numericValue) && numericValue > 0) {
+  const positive = (amount: string | null | undefined) =>
+    isDecimalString(amount) && compareMoney(amount, '0') > 0 ? amount : '0'
+  let previewAmount: string | null = null
+  if (valueType === 'percent' && isDecimalString(value) && compareMoney(value, '0') > 0) {
     const items = order.items ?? []
     const base =
       target === 'order'
-        ? items.reduce(
-            (sum, item) => sum + Math.max(Number.parseFloat(item.discounted_amount), 0),
-            0,
-          )
-        : Math.max(
-            Number.parseFloat(items.find((item) => item.id === target)?.discounted_amount ?? '0'),
-            0,
-          )
-    if (base > 0) previewAmount = Math.min((base * numericValue) / 100, base)
+        ? sumMoney(items.map((item) => positive(item.discounted_amount)))
+        : positive(items.find((item) => item.id === target)?.discounted_amount)
+    if (!isZeroMoney(base)) {
+      const discount = percentOf(base, value, order.currency)
+      previewAmount = compareMoney(discount, base) > 0 ? base : discount
+    }
   }
 
   return (
@@ -476,7 +483,7 @@ function AddDiscountDialog({
                       id="discount-value"
                       name="value"
                       type="number"
-                      step="0.01"
+                      step="any"
                       min="0.01"
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
@@ -533,10 +540,7 @@ function AddDiscountDialog({
               {previewAmount !== null && (
                 <p className="text-sm text-muted-foreground">
                   {t('admin.orders.detail.adjustment_lines.percent_preview', {
-                    amount: new Intl.NumberFormat(i18n.language, {
-                      style: 'currency',
-                      currency: order.currency,
-                    }).format(previewAmount),
+                    amount: formatMoney(previewAmount, order.currency, i18n.language),
                   })}
                 </p>
               )}
@@ -570,12 +574,10 @@ function AddFeeDialog({
   const { t } = useTranslation()
   const orderId = order.id
   const [target, setTarget] = useState('order')
-  const [kind, setKind] = useState<string>('surcharge')
+  const [kind, setKind] = useState<(typeof FEE_KINDS)[number]>('surcharge')
 
-  const mutation = useOrderAdjustmentLinesMutation(
-    orderId,
-    (params: { label: string; amount: string; kind?: string; line_item_id?: string }) =>
-      adminClient.orders.fees.create(orderId, params),
+  const mutation = useOrderAdjustmentLinesMutation(orderId, (params: FeeCreateParams) =>
+    adminClient.orders.fees.create(orderId, params),
   )
 
   const targetOptions = [
@@ -634,7 +636,7 @@ function AddFeeDialog({
                       id="fee-amount"
                       name="amount"
                       type="number"
-                      step="0.01"
+                      step="any"
                       min="0"
                       required
                     />
@@ -645,7 +647,7 @@ function AddFeeDialog({
                   <Select
                     items={kindOptions}
                     value={kind}
-                    onValueChange={(v) => setKind(v as string)}
+                    onValueChange={(v) => setKind(v as (typeof FEE_KINDS)[number])}
                   >
                     <SelectTrigger>
                       <SelectValue />

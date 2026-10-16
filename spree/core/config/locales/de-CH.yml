@@ -1,0 +1,248 @@
+---
+de-CH:
+  activerecord:
+    attributes:
+      spree/address:
+        label: Adressname
+      spree/option_type:
+        filterable: Filterbar
+      spree/product:
+        discontinue_on: Auslaufen am
+        make_active_at: Aktiv schalten am
+      spree/promotion:
+        promotion_category: Aktionskategorie
+      spree/store:
+        seo_robots: SEO-Robots
+        storefront_custom_code_body_end: Benutzerdefinierter Code vor schliessendem Body-Tag
+        storefront_custom_code_body_start: Benutzerdefinierter Code nach öffnendem Body-Tag
+        storefront_custom_code_head: Benutzerdefinierter Code im Seiten-Head
+      spree/store_credit:
+        amount_used: Verwendeter Betrag
+      user:
+        sign_in_count: Anzahl Anmeldungen
+    errors:
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: muss ein Origin (Schema und Host) ohne Pfad, Query oder Fragment sein
+        spree/import:
+          attributes:
+            attachment:
+              content_type: hat einen nicht erlaubten Inhaltstyp
+            type:
+              inclusion: ist nicht in der Liste der erlaubten Typen enthalten
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: ist in diesem Store bereits einem anderen Markt zugewiesen
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: ist grösser als der erlaubte Höchstbetrag von %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: muss nach dem Startdatum liegen
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Produkte, die zu aufgegebenen Bestellungen hinzugefügt wurden, können nicht gelöscht werden. Lassen Sie sie in solchen Fällen bitte auslaufen.
+            discontinue_on:
+              invalid_date_range: muss nach dem Verfügbarkeitsdatum liegen
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: muss nach dem Startdatum liegen
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: Der einzige Store kann nicht gelöscht werden.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Übersteigt das gesamte Guthaben.
+            amount_used:
+              cannot_be_greater_than_amount: Darf nicht grösser als der Betrag sein.
+              greater_than_zero_restrict_delete: ist grösser als null. Store-Guthaben kann nicht gelöscht werden.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: gehört einem anderen Benutzer
+              deprecated_in_completed_order: in einer abgeschlossenen Bestellung veraltet
+            ship_address_id:
+              belongs_to_other_user: gehört einem anderen Benutzer
+              deprecated_in_completed_order: in einer abgeschlossenen Bestellung veraltet
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Varianten, die zu aufgegebenen Bestellungen hinzugefügt wurden, können nicht gelöscht werden. Lassen Sie sie in solchen Fällen bitte auslaufen.
+    models:
+      spree/customer_group_user:
+        one: Kundengruppen-Benutzer
+        other: Kundengruppen-Benutzer
+      spree/inventory_unit:
+        one: Lagereinheit
+        other: Lagereinheiten
+      spree/line_item:
+        one: Position
+        other: Positionen
+      spree/option_type:
+        one: Optionstyp
+        other: Optionstypen
+      spree/option_value:
+        one: Optionswert
+        other: Optionswerte
+      spree/payment:
+        one: Zahlung
+        other: Zahlungen
+      spree/promotion:
+        one: Aktion
+        other: Aktionen
+      spree/promotion_category:
+        one: Aktionskategorie
+        other: Aktionskategorien
+      spree/refund_reason:
+        one: Rückerstattungsgrund
+        other: Rückerstattungsgründe
+      spree/role:
+        one: Rollen
+        other: Rollen
+      spree/shipment:
+        one: Sendung
+        other: Sendungen
+      spree/shipping_method:
+        one: Versandart
+        other: Versandarten
+      spree/state:
+        one: Kanton/Bundesland
+        other: Kantone/Bundesländer
+      spree/stock_location:
+        one: Lagerort
+        other: Lagerorte
+      spree/stock_transfer:
+        one: Lagerumlagerung
+        other: Lagerumlagerungen
+      spree/store:
+        one: Store
+        other: Stores
+      spree/store_credit:
+        one: Store-Guthaben
+        other: Store-Guthaben
+      spree/taxon:
+        one: Kategorie
+        other: Kategorien
+      spree/taxonomy:
+        one: Kategorie
+        other: Kategorien
+      spree/zone:
+        one: Zone
+        other: Zonen
+  errors:
+    messages:
+      not_saved:
+        one: '1 Fehler hat das Speichern dieser %{resource} verhindert:'
+        other: "%{count} Fehler haben das Speichern dieser %{resource} verhindert:"
+  spree:
+    adjustment_labels:
+      tax_rates:
+        including_tax: "%{name}%{amount} (im Preis enthalten)"
+    api_key_no_current_key: Diese Anfrage wurde mit keinem API-Schlüssel authentifiziert
+    api_key_scopes_immutable: kann nach Erstellung des Schlüssels nicht mehr geändert werden; erstellen Sie einen neuen Schlüssel mit den gewünschten Scopes und widerrufen Sie diesen
+    calculator: Kalkulator
+    capture: stornieren
+    cart_line_item:
+      delivery_unavailable: "%{li_name} kann nicht an die gewählte Adresse geliefert werden"
+      discontinued: "%{li_name} wurde entfernt, da der Artikel ausläuft"
+    channel: Vertriebskanal
+    checkout_requirements:
+      payment_required: Fügen Sie eine Zahlungsart hinzu
+    city: Stadt
+    compare_at_amount: Vergleichsbetrag
+    compare_at_price: Vergleichspreis
+    currency_not_supported_by_store: wird von diesem Store nicht unterstützt
+    discontinued: Ausgelaufen
+    discontinued_variants_present: Einige Positionen in dieser Bestellung enthalten Produkte, die nicht mehr verfügbar sind.
+    eligibility_errors:
+      messages:
+        no_matching_channel: Dieser Gutscheincode ist für diesen Verkaufskanal nicht gültig.
+    error_user_destroy_with_orders: Ein Benutzer mit zugehörigen Bestellungen kann nicht gelöscht werden
+    error_user_does_not_have_any_store_credits: Der Benutzer hat kein verfügbares Store-Guthaben
+    errors:
+      messages:
+        cannot_delete_default_channel: Der Standardkanal kann nicht gelöscht werden. Stufen Sie zuerst einen anderen Kanal zum Standard hoch.
+        channel_store_mismatch: muss zum selben Store gehören
+        invalid_order_routing_rule: ist keine registrierte Order-Routing-Regel
+        invalid_order_routing_strategy: ist keine registrierte Order-Routing-Strategie
+        store_association_can_not_be_changed: Die Store-Zuordnung kann nicht geändert werden
+        store_is_already_set: Store ist bereits festgelegt
+    export_mailer:
+      export_done:
+        message: Gute Arbeit, Ihr Export ist bereit! Bitte verwenden Sie den Link unten, um ihn herunterzuladen.
+    free: Gratis
+    gateway_error: Gateway-Fehler
+    gift_card_using_store_credit_error: Sie können die Geschenkkarte nicht anwenden, nachdem Sie das Store-Guthaben angewendet haben.
+    i18n:
+      this_file_language: Deutsch Schweiz (de-CH)
+    in_stock: An Lager
+    invitation_mailer:
+      invitation_email:
+        link_description: 'Um diese Einladung anzunehmen, klicken Sie bitte auf den Link unten:'
+    line_item: Position
+    line_items: Positionen
+    locale: Sprache
+    locale_not_supported_by_store: wird von diesem Store nicht unterstützt
+    me_no_current_user: Diese Anfrage wurde mit keinem Admin-Benutzer authentifiziert
+    meta_keywords: Meta-Schlüsselwörter
+    min_quantity: Min. Menge
+    no_cc_type: N/A
+    only_active_products_can_be_added_to_cart: Produkte im Entwurfsstatus oder archivierte Produkte können nicht in den Warenkorb gelegt werden. Bitte markieren Sie das Produkt zuerst als aktiv.
+    order_routing:
+      strategies:
+        legacy: Legacy
+    price_rules:
+      channel_rule:
+        description: Preise basierend auf dem Verkaufskanal anwenden
+    promotion_already_used: Sie können eine Aktion, die bereits angewendet wurde, nicht löschen
+    promotion_label: Aktion (%{name})
+    promotion_rule_types:
+      channel:
+        description: Auf Bestellungen beschränken, die über bestimmte Kanäle aufgegeben werden
+        name: Kanäle
+      country:
+        description: Auf Bestellungen mit Lieferadresse in einem bestimmten Land beschränken
+      customer_group:
+        description: Nur für Kunden in bestimmten Kundengruppen verfügbar
+      market:
+        description: Auf Bestellungen beschränken, die in bestimmten Märkten aufgegeben werden
+        name: Märkte
+    promotions: Promotionen
+    refund_amount: Rückerstattungsbetrag
+    resend: Neu versenden
+    selected_quantity_not_available: ausgewählte Menge von %{item} ist nicht verfügbar.
+    shipment: Lieferung
+    sku: Lagerhaltungsnummer
+    stock_transfer:
+      errors:
+        must_have_variant: Sie müssen mindestens eine Variante hinzufügen
+        same_location: darf nicht dieselbe wie der Zielort sein
+        variants_unavailable: Einige Varianten sind in %{stock} nicht verfügbar
+    store_credit:
+      authorized: Autorisiert
+      captured: Verwendet
+      credit: Gutschrift
+    store_credit_name: Store-Guthaben
+    store_credit_payment_method:
+      currency_mismatch: Die Währung des Store-Guthabens stimmt nicht mit der Bestellwährung überein
+      insufficient_funds: Das verbleibende Store-Guthaben reicht nicht aus
+      successful_action: Store-Guthaben %{action} erfolgreich
+      unable_to_credit: 'Code kann nicht gutgeschrieben werden: %{auth_code}'
+      unable_to_find: Store-Guthaben konnte nicht gefunden werden
+      unable_to_find_for_action: Store-Guthaben für Auth-Code %{auth_code} für Aktion %{action} konnte nicht gefunden werden
+      unable_to_void: 'Code kann nicht storniert werden: %{auth_code}'
+    tax: MwSt.
+    variant: Variant
+    webhook_mailer:
+      endpoint_disabled:
+        instructions: Bitte überprüfen Sie die Endpunkt-URL und den Dienst und aktivieren Sie ihn anschliessend unter Einstellungen → Entwickler → Webhooks erneut.
+        message: Der Webhook-Endpunkt "%{endpoint_name}" wurde nach wiederholten Zustellfehlern automatisch deaktiviert.

@@ -1,4 +1,4 @@
-import { currencyParts } from '@spree/dashboard-core'
+import { currencyParts, formatMoney, isPositiveMoney, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -23,6 +23,7 @@ import {
   ShieldAlertIcon,
 } from '@spree/dashboard-ui/icons'
 import type { Claim, Order } from '@spree/seller-sdk'
+import { sumMoney } from '@spree/seller-sdk'
 import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -47,6 +48,7 @@ const CLAIM_ACTIONABLE = ['open', 'approved']
  */
 export function ExchangesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
   const confirm = useConfirm()
   const { data } = useOrderExchanges(order.id)
   const { approve, receive, fulfill, cancel } = useExchangeActions(order.id)
@@ -113,7 +115,7 @@ export function ExchangesCard({ order }: { order: Order }) {
                             // A dearer replacement leaves the customer owing the
                             // difference, which fulfilling puts on the order.
                             if (
-                              Number(exchange.price_difference) > 0 &&
+                              isPositiveMoney(exchange.price_difference) &&
                               !(await confirm({
                                 message: t('orders.post_sale.exchanges.balance_due_confirm'),
                                 confirmLabel: t('orders.post_sale.exchanges.fulfill'),
@@ -152,7 +154,7 @@ export function ExchangesCard({ order }: { order: Order }) {
               ))}
               <p className="text-muted-foreground text-sm">
                 {t('orders.post_sale.exchanges.price_difference', {
-                  amount: exchange.display_price_difference,
+                  amount: formatMoney(exchange.price_difference, order.currency, locale),
                 })}
               </p>
             </CardContent>
@@ -322,14 +324,9 @@ function ResolveClaimDialog({
   // A claim opened without per-item amounts has a refund_total of zero, and
   // the workflow refuses to refund nothing — offer what the customer paid for
   // the claimed items instead, which is also the ceiling it enforces.
-  const recorded = Number(claim.refund_total)
-  const paid = lines.reduce((sum, line) => sum + Number(line.paid_amount ?? 0), 0)
+  const paid = sumMoney(lines.map((line) => line.paid_amount))
   const defaultAmount =
-    Number.isFinite(recorded) && recorded > 0
-      ? claim.refund_total
-      : paid > 0
-        ? paid.toFixed(2)
-        : claim.refund_total
+    isPositiveMoney(claim.refund_total) || !isPositiveMoney(paid) ? claim.refund_total : paid
 
   return (
     <ClaimResolveDialog

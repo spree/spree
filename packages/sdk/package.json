@@ -1,6 +1,6 @@
 {
   "name": "@spree/sdk",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0-rc.3",
   "description": "Official TypeScript SDK for Spree Commerce Store API",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -55,10 +55,13 @@
   ],
   "scripts": {
     "generate:zod": "tsx ../sdk-core/scripts/generate-zod.ts",
+    "generate:filters": "tsx ../sdk-core/scripts/generate-filters.ts store",
+    "generate:params": "tsx ../sdk-core/scripts/generate-params.ts store",
+    "generate:iso-codes": "tsx ../sdk-core/scripts/generate-iso-codes.ts",
     "build": "tsup",
     "dev": "tsup --watch",
     "console": "tsx console.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.examples.json",
     "examples:typecheck": "tsc --noEmit -p tsconfig.examples.json",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",

@@ -27,6 +27,7 @@ RSpec.describe 'Admin Deliveries API', type: :request, swagger_doc: 'api-referen
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order ID'
       parameter name: :fulfillment_id, in: :path, type: :string, required: true, description: 'Fulfillment ID'
+      filter_parameters_for
 
       response '200', 'deliveries found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -53,16 +54,7 @@ RSpec.describe 'Admin Deliveries API', type: :request, swagger_doc: 'api-referen
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order ID'
       parameter name: :fulfillment_id, in: :path, type: :string, required: true, description: 'Fulfillment ID'
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        required: %w[tracking_number],
-        properties: {
-          tracking_number: { type: :string, description: 'Carrier tracking number, freight PRO number, or a full tracking link' },
-          carrier: { type: :string, description: 'Free-text carrier; detected from the number when omitted' },
-          service: { type: :string, description: 'Carrier service' },
-          tracking_url: { type: :string, description: 'Tracking page for this consignment' }
-        }
-      }
+      request_body_for
 
       response '201', 'delivery recorded' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -103,15 +95,7 @@ RSpec.describe 'Admin Deliveries API', type: :request, swagger_doc: 'api-referen
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order ID'
       parameter name: :fulfillment_id, in: :path, type: :string, required: true, description: 'Fulfillment ID'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Delivery ID'
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          tracking_number: { type: :string },
-          carrier: { type: :string },
-          service: { type: :string },
-          tracking_url: { type: :string }
-        }
-      }
+      request_body_for
 
       response '200', 'delivery updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -163,13 +147,7 @@ RSpec.describe 'Admin Deliveries API', type: :request, swagger_doc: 'api-referen
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order ID'
       parameter name: :fulfillment_id, in: :path, type: :string, required: true, description: 'Fulfillment ID'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Delivery ID'
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          delivered_at: { type: :string, format: 'date-time', description: 'When it arrived. Defaults to now.' },
-          notify_customer: { type: :boolean, description: 'Whether the customer gets a delivery notification when the parcel completes.' }
-        }
-      }
+      request_body_for
 
       response '200', 'delivery marked delivered' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

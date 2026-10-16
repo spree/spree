@@ -1,5 +1,5 @@
 import type { Customer } from '@spree/admin-sdk'
-import { PageHeader, Slot, Subject } from '@spree/dashboard-core'
+import { PageHeader, Slot } from '@spree/dashboard-core'
 import { Badge, ErrorState, MetadataCard, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
@@ -110,9 +110,9 @@ function CustomerBody({ customer }: { customer: Customer }) {
           />
           <CustomerStoreCreditsCard customer={customer} />
           <EditableApiCustomFieldsProvider
-            ownerType={Subject.Customer}
+            ownerType="customer"
             ownerId={customer.id}
-            resourceType={Subject.Customer}
+            resourceType="customer"
             resourceLabel={t('admin.nav.customers').toLowerCase()}
           >
             <CustomFieldsInlineCard />

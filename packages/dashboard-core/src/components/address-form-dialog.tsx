@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { CountryCode } from '@spree/admin-sdk'
 import {
   Button,
   Checkbox,
@@ -17,10 +18,11 @@ import {
   SheetTitle,
 } from '@spree/dashboard-ui'
 import { useEffect, useRef } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, type DefaultValues, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
+import { countryCodeSchema, isCountryCode } from '../lib/iso-codes'
 import { useOptionalStore } from '../providers/store-provider'
 import { CountryCombobox } from './country-combobox'
 import { StateCombobox, useCountryStates } from './country-state-fields'
@@ -33,7 +35,7 @@ export interface AddressParams {
   address2: string
   city: string
   postal_code: string
-  country_code: string
+  country_code: CountryCode
   state_code: string
   phone: string
   label?: string
@@ -55,10 +57,7 @@ const addressFormFields = {
     .string()
     .trim()
     .min(1, { error: requiredMessage('address.postal_code') }),
-  country_code: z
-    .string()
-    .trim()
-    .min(1, { error: requiredMessage('country_code') }),
+  country_code: countryCodeSchema,
   state_code: z.string(),
   phone: z.string(),
   label: z.string(),
@@ -139,14 +138,15 @@ export interface EditableAddress {
 export function resolveAddressCountryCode(
   address: EditableAddress | null | undefined,
   storeDefaultCountryCode?: string | null,
-): string {
-  return address?.country_code || storeDefaultCountryCode || ''
+): CountryCode | undefined {
+  const countryCode = address?.country_code || storeDefaultCountryCode
+  return isCountryCode(countryCode) ? countryCode : undefined
 }
 
 function buildDefaults(
   address: EditableAddress | null | undefined,
   storeDefaultCountryCode?: string | null,
-): AddressFormValues {
+): DefaultValues<AddressFormValues> {
   return {
     first_name: address?.first_name ?? '',
     last_name: address?.last_name ?? '',
@@ -228,7 +228,7 @@ export function AddressFormDialog({
   // picked a different country is not overwritten.
   useEffect(() => {
     if (address?.country_code) return
-    if (!storeDefaultCountryCode) return
+    if (!isCountryCode(storeDefaultCountryCode)) return
     if (form.getValues('country_code')) return
     form.setValue('country_code', storeDefaultCountryCode)
   }, [address?.country_code, storeDefaultCountryCode, form])

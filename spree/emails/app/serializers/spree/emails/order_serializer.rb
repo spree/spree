@@ -5,6 +5,8 @@ module Spree
     class OrderSerializer < Spree::Api::V3::OrderSerializer
       include Spree::Emails::PurchaseSummaryAttributes
 
+      without_display_money
+
       many :order_promotions, key: :discounts, resource: Spree::Emails::AppliedPromotionSerializer
       many :fees, resource: Spree::Emails::FeeSerializer
       many :fulfillments, resource: Spree::Emails::FulfillmentSerializer

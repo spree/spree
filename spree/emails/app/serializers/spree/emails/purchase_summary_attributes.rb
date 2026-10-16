@@ -7,14 +7,14 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        typelize customer_name: :string, display_total_minus_store_credits: :string
+        typelize customer_name: :string, total_minus_store_credits: :string
 
         attribute :customer_name do |purchase|
-          purchase.name.presence || Spree.t(:customer)
+          purchase.name.presence || I18n.t('spree.customer')
         end
 
-        attribute :display_total_minus_store_credits do |purchase|
-          purchase.display_total_minus_store_credits.to_s
+        attribute :total_minus_store_credits do |purchase|
+          Spree::Money::Rounding.format(purchase.total_minus_store_credits, purchase.currency)
         end
 
         many :line_items, key: :items, resource: Spree::Emails::LineItemSerializer

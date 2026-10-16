@@ -2,8 +2,8 @@ module Spree
   module Api
     module V3
       class LineItemSerializer < BaseSerializer
-        typelize variant_id: :string, quantity: :number, currency: :string, name: :string, slug: :string,
-                 options_text: :string, compare_at_amount: [:string, nullable: true],
+        typelize variant_id: :string, quantity: :number, currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], name: :string, slug: :string,
+                 options_text: :string, compare_at_amount: [:string, nullable: true, comment: 'The compare-at price times quantity, or null when the variant has none.'],
                  thumbnail_url: [:string, nullable: true], preorder: :boolean,
                  preorder_ships_at: [:string, nullable: true], seller_id: [:string, nullable: true]
 
@@ -30,21 +30,31 @@ module Spree
 
         # Nulled for gated (prices_hidden) guests so the cart's line items can't
         # leak the prices that product/variant serializers already withhold.
-        money_attributes :price, :display_price, :total, :display_total,
+        money_attributes :price, :display_price, unit_price: true, descriptions: { price: 'The price of one unit.' }
+        money_attributes :total, :display_total,
                          :adjustment_total, :display_adjustment_total,
                          :additional_tax_total, :display_additional_tax_total,
                          :included_tax_total, :display_included_tax_total,
                          :discount_total, :display_discount_total,
                          :pre_tax_amount, :display_pre_tax_amount,
                          :discounted_amount, :display_discounted_amount,
-                         :display_compare_at_amount
+                         :display_compare_at_amount,
+                         descriptions: {
+                           total: 'What this line costs: price times quantity, with its discounts, fees and added tax.',
+                           adjustment_total: "This line's discounts, fees and added tax together.",
+                           additional_tax_total: 'Tax added on top of the price.',
+                           included_tax_total: 'Tax already included in the price.',
+                           discount_total: 'What promotions take off this line, as a negative amount.',
+                           pre_tax_amount: 'This line after discounts, without tax.',
+                           discounted_amount: 'Price times quantity, after discounts.'
+                         }
 
         # Return compare_at_amount as string, nil if zero
         attribute :compare_at_amount do |line_item|
           next nil if params[:hide_prices]
 
           amount = line_item.compare_at_amount
-          amount.present? && amount.positive? ? amount.to_s : nil
+          amount.present? && amount.positive? ? Spree::Money::Rounding.format(amount, line_item.currency, unit_price: true) : nil
         end
 
         # Thumbnail URL for line item (variant thumbnail or product thumbnail)

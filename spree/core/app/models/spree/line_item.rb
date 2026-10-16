@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :li  # Spree-specific: line item
 
     include Spree::HasCustomFields
+    include Spree::HasExternalReferences
     include Spree::Metadata
 
     publishes_lifecycle_events
@@ -63,7 +64,7 @@ module Spree
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
       in: 0..DB_INTEGER_MAX,
-      only_integer: true, message: Spree.t('validation.must_be_int')
+      only_integer: true, message: I18n.t('spree.validation.must_be_int')
     }
 
     validates :price, numericality: true
@@ -119,7 +120,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[variant order tax_category]
     self.whitelisted_ransackable_attributes = %w[variant_id order_id tax_category_id quantity
-                                                 price cost_price cost_currency adjustment_total
+                                                 price cost_price adjustment_total
                                                  additional_tax_total discount_total included_tax_total
                                                  pre_tax_amount taxable_adjustment_total
                                                  non_taxable_adjustment_total]
@@ -231,7 +232,7 @@ module Spree
     #
     # @return [BigDecimal]
     def amount
-      price * quantity
+      Spree::Money::Rounding.to_currency(price * quantity, currency)
     end
 
     # Returns the compare at amount (compare at price * quantity) of the line item
@@ -496,7 +497,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
   end
 end

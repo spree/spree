@@ -22,8 +22,9 @@ import {
   mapSpreeErrorsToForm,
   ResourceTable,
   resourceSearchSchema,
+  runtimeListParams,
   Subject,
-  useDirectUpload,
+  useFileUpload,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -156,7 +157,9 @@ function OptionTypesPage() {
       <ResourceTable<OptionType>
         tableKey="option-types"
         queryKey="option-types"
-        queryFn={(params) => adminClient.optionTypes.list({ ...params, expand: ['option_values'] })}
+        queryFn={(params: Record<string, unknown>) =>
+          adminClient.optionTypes.list(runtimeListParams({ ...params, expand: ['option_values'] }))
+        }
         searchParams={search}
         rowActions={(optionType) => (
           <RowActions
@@ -722,7 +725,7 @@ function OptionValueImageField({
   const { t } = useTranslation()
   const fileInputId = useId()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const directUpload = useDirectUpload()
+  const fileUpload = useFileUpload()
   const [localPreview, setLocalPreview] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [zoomOpen, setZoomOpen] = useState(false)
@@ -747,7 +750,7 @@ function OptionValueImageField({
     if (!file) return
     setUploading(true)
     try {
-      const result = await directUpload.mutateAsync(file)
+      const result = await fileUpload.mutateAsync(file)
       if (localPreview) URL.revokeObjectURL(localPreview)
       setLocalPreview(result.previewUrl)
       form.setValue(`option_values.${index}.image_signed_id`, result.signedId, {

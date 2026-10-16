@@ -6,6 +6,10 @@ module Spree
           class PreviewsController < Admin::BaseController
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
+            request_params 'EmailTemplatePreviewParams' do |body|
+              body.include_attributes Spree::Api::V3::Admin::EmailTemplatePreviewRequestSchema
+            end
+
             before_action :authorize_sample_data!
 
             # POST /api/v3/admin/email_templates/:email_template_id/preview

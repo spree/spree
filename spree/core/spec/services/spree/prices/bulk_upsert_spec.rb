@@ -107,6 +107,14 @@ RSpec.describe Spree::Prices::BulkUpsert do
       end
     end
 
+    it 'reindexes the product for search' do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+
+      expect {
+        described_class.call(rows: [{ variant_id: variant.id, currency: 'USD', amount: '7.77' }])
+      }.to have_enqueued_job(Spree::SearchProvider::IndexJob).with('Spree::Product', product.id.to_s, product.store_id.to_s)
+    end
+
     # Regression: the base-row update loop pulls existing rows via
     # `WHERE variant_id IN (...) AND currency IN (...)`, which returns
     # cross-pairs (variant_a + EUR, variant_b + USD) that the caller never
@@ -127,6 +135,20 @@ RSpec.describe Spree::Prices::BulkUpsert do
       expect(result).to be_success
       base = variant.prices.find_by!(currency: 'USD', price_list_id: nil)
       expect(base.amount).to eq(BigDecimal('7.77'))
+    end
+
+    it 'refuses an amount it would otherwise misread, naming the row' do
+      result = described_class.call(rows: [{ variant_id: variant.id, currency: 'USD', amount: '1,599.99' }])
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(malformed_amounts: [{ index: 0 }])
+    end
+
+    it 'refuses an amount that is not a number rather than clearing the price' do
+      result = described_class.call(rows: [{ variant_id: variant.id, currency: 'USD', price_list_id: price_list.id, amount: false }])
+
+      expect(result).to be_failure
+      expect(override.reload.amount).to eq(BigDecimal('5.00'))
     end
 
     it 'drops rows missing variant_id or currency' do

@@ -1,6 +1,6 @@
 import type {
   Company,
-  Customer,
+  EmailCustomer,
   EmailFulfillment,
   EmailOrder,
   EmailOrderGroup,
@@ -8,6 +8,7 @@ import type {
   EmailStore,
 } from '@spree/admin-sdk'
 import {
+  EmailCustomerSchema,
   EmailFulfillmentSchema,
   EmailOrderGroupSchema,
   EmailOrderSchema,
@@ -25,18 +26,31 @@ export interface EmailTemplateVariable {
   /** Translation key for one line saying what it is. */
   descriptionKey: string
   fields?: readonly string[]
+  /** The fields holding an amount, inserted through the `money` filter. */
+  moneyFields?: readonly string[]
 }
 
 const variable = (
   name: string,
   fields?: readonly string[],
   schema?: unknown,
+  moneyFields?: readonly string[],
 ): EmailTemplateVariable => ({
   name,
   descriptionKey: `admin.email_templates.variables.${name}`,
   fields,
   schema,
+  moneyFields,
 })
+
+/**
+ * The Liquid a field's chip inserts: an amount goes through the `money`
+ * filter, which formats it in the email's currency and language.
+ */
+export function insertionFor(variable: EmailTemplateVariable, field: string): string {
+  const path = `${variable.name}.${field}`
+  return variable.moneyFields?.includes(field) ? `{{ ${path} | money }}` : `{{ ${path} }}`
+}
 
 const ORDER_FIELDS = [
   'number',
@@ -44,16 +58,21 @@ const ORDER_FIELDS = [
   'email',
   'completed_at',
   'items',
-  'display_item_total',
-  'display_delivery_total',
-  'display_tax_total',
-  'display_total',
+  'item_total',
+  'delivery_total',
+  'tax_total',
+  'total',
   'shipping_address',
   'billing_address',
   'payments',
 ] as const satisfies FieldsOf<EmailOrder>
 
-const order = variable('order', ORDER_FIELDS, EmailOrderSchema)
+const order = variable('order', ORDER_FIELDS, EmailOrderSchema, [
+  'item_total',
+  'delivery_total',
+  'tax_total',
+  'total',
+] satisfies FieldsOf<EmailOrder>)
 const resend = variable('resend')
 
 const STORE_FIELDS = [
@@ -82,12 +101,21 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
       [
         'number',
         'customer_name',
+        'email',
+        'completed_at',
         'order_count',
         'items',
         'fulfillment_groups',
-        'display_total',
+        'item_total',
+        'delivery_total',
+        'tax_total',
+        'total',
+        'shipping_address',
+        'billing_address',
+        'payments',
       ] as const satisfies FieldsOf<EmailOrderGroup>,
       EmailOrderGroupSchema,
+      ['item_total', 'delivery_total', 'tax_total', 'total'] satisfies FieldsOf<EmailOrderGroup>,
     ),
     resend,
   ],
@@ -110,22 +138,19 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
     order,
     variable(
       'return',
-      [
-        'number',
-        'returned_items',
-        'display_refunded_total',
-      ] as const satisfies FieldsOf<EmailReturn>,
+      ['number', 'returned_items', 'refunded_total'] as const satisfies FieldsOf<EmailReturn>,
       EmailReturnSchema,
+      ['refunded_total'] satisfies FieldsOf<EmailReturn>,
     ),
     resend,
   ],
   'spree.digital_asset_mailer.files_ready_email': [order, variable('downloads'), resend],
   'spree.customer_mailer.password_reset_email': [
-    variable('customer', [
-      'first_name',
-      'last_name',
-      'email',
-    ] as const satisfies FieldsOf<Customer>),
+    variable(
+      'customer',
+      ['first_name', 'last_name', 'email'] as const satisfies FieldsOf<EmailCustomer>,
+      EmailCustomerSchema,
+    ),
     variable('reset_url'),
   ],
   'spree.customer_mailer.data_export_email': [variable('download_url'), variable('expires_at')],

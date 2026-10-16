@@ -55,7 +55,7 @@ that doesn't apply never appears at all:
 applicable: ->(cart) { cart.customer&.company.present? }
 ```
 
-`message` is stored verbatim — wrap it in `Spree.t` yourself if it needs translating.
+`message` is stored verbatim — wrap it in `I18n.t` yourself if it needs translating.
 
 ## Adding a step
 

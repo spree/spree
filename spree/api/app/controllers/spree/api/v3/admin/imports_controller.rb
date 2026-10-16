@@ -17,10 +17,43 @@ module Spree
           # writable ones instead of gating on a single scope.
           skip_scope_check! only: :index
 
+          request_params :import do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              example: 'products',
+              description: 'Which dataset to import, as its shorthand: `products`, `customers`, `product_translations`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
+            body.attribute :attachment_signed_id, :string,
+              required: true, on: :create,
+              description: 'The `signed_id` of the uploaded CSV, from `files.upload()` with `visibility: "private"`.'
+            body.attribute :delimiter, :string,
+              choices: [',', ';', '|', "\t"],
+              example: ',',
+              description: 'CSV column separator. Defaults to a comma.'
+            body.attribute :results_url, :string,
+              example: 'https://admin.example.com/store_abc/settings/imports',
+              description: "Absolute URL of your admin imports view; the import-done email links back to it with `?import=<id>` appended. Only honored when it matches one of the store's allowed origins."
+            body.attribute :price_list_id, :id,
+              description: 'For `price_list_prices` imports: the price list the rows are merged into. Must belong to the current store; other types ignore it.'
+          end
+
+          request_params 'ImportCompleteMappingParams', action: :complete_mapping do |body|
+            body.attribute :mappings, :array,
+              description: 'Column assignments to apply before processing starts. Omit to accept the ones assigned on create.' do |mapping|
+              mapping.attribute :schema_field, :string,
+                required: true,
+                example: 'slug',
+                description: "A schema field name from the import's `schema_fields`."
+              mapping.attribute :file_column, :string,
+                nullable: true,
+                example: 'Product Handle',
+                description: 'The CSV header to read the field from; null unmaps the field.'
+            end
+          end
+
           # POST /api/v3/admin/imports
           #
-          # `attachment` is an ActiveStorage signed blob id obtained from
-          # POST /api/v3/admin/direct_uploads. On success the import advances
+          # `attachment_signed_id` is a signed id obtained from
+          # POST /api/v3/admin/files. On success the import advances
           # straight into `mapping` (auto-assigning file columns from the CSV
           # headers), so the response already carries the mapping payload.
           def create
@@ -48,12 +81,6 @@ module Spree
             else
               render_errors(@resource.errors)
             end
-          rescue ActiveSupport::MessageVerifier::InvalidSignature
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: 'Invalid attachment signed id',
-              status: :unprocessable_content
-            )
           end
 
           # PATCH /api/v3/admin/imports/:id/complete_mapping
@@ -259,7 +286,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :preferred_delimiter, :results_url, :price_list_id)
+            params.permit(*permitted_attributes)
           end
 
           # A price-list import writes into one list, named by its prefixed id.
@@ -312,8 +339,7 @@ module Spree
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: Spree.t(:cannot_modify_seller_import, scope: 'api',
-                               default: "This import belongs to a seller. It can be viewed here, but only the seller can retry or delete it."),
+              message: I18n.t('spree.api.cannot_modify_seller_import'),
               status: :unprocessable_content
             )
             true

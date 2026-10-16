@@ -25,6 +25,16 @@ module Spree
                      store: Rails.cache,
                      with: RATE_LIMIT_RESPONSE
 
+          request_params :password_reset do |body|
+            body.attribute :email, :string, required: true, only: :create, example: 'seller@acme.test'
+            body.attribute :redirect_url, :string,
+              only: :create,
+              example: 'https://sellers.your-store.com/reset-password',
+              description: 'Must match an allowed origin of the store; ignored otherwise.'
+            body.attribute :password, :string, required: true, only: :update, example: 'new-password-123'
+            body.attribute :password_confirmation, :string, required: true, only: :update, example: 'new-password-123'
+          end
+
           # POST /api/v3/seller/auth/password_resets
           def create
             user = Spree.admin_user_class.find_by(email: params[:email])
@@ -39,7 +49,7 @@ module Spree
 
             # Always 202, whether or not anything matched — this endpoint must
             # not become a way to discover which addresses exist.
-            render json: { message: Spree.t(:password_reset_requested, scope: :api) }, status: :accepted
+            render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
           end
 
           # PATCH /api/v3/seller/auth/password_resets/:id
@@ -81,7 +91,7 @@ module Spree
           def render_token_invalid
             render_error(
               code: ErrorHandler::ERROR_CODES[:password_reset_token_invalid],
-              message: Spree.t(:password_reset_token_invalid, scope: :api),
+              message: I18n.t('spree.api.password_reset_token_invalid'),
               status: :unprocessable_content
             )
           end

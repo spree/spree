@@ -29,7 +29,7 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
 
     get :show, as: :json
 
-    expect(json_response['preferred_timezone']).to eq('Europe/Warsaw')
+    expect(json_response['timezone']).to eq('Europe/Warsaw')
   end
 
     it 'returns the seller their own record' do

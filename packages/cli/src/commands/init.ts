@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { platform } from 'node:os'
 import path from 'node:path'
+import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa, execaCommand } from 'execa'
@@ -256,7 +257,9 @@ export async function runFirstRunSetup(flags: {
       // With the dashboard, wait for Vite to report ready (it auto-bumps the
       // port when 5173 is taken) so the browser opens the real URL. Without
       // one, open the built-in dashboard the summary names.
-      const dashboardUrl = dashboard ? await dashboard.url : setupBase
+      const dashboardUrl = dashboard
+        ? ((await dashboard.url) ?? `http://localhost:${DASHBOARD_PORT}`)
+        : setupBase
       // No admin was seeded, so the dashboard would only show a login form
       // nobody can pass — open first-run setup instead and land the operator
       // on the account form directly.
@@ -296,18 +299,19 @@ async function installAppDeps(projectDir: string, app: string): Promise<void> {
   }
 }
 
-async function waitForHealthy(port: number): Promise<void> {
+export async function waitForHealthy(port: number, signal?: AbortSignal): Promise<void> {
   const url = `http://localhost:${port}/up`
   const start = Date.now()
 
   while (Date.now() - start < HEALTH_CHECK_TIMEOUT_MS) {
+    signal?.throwIfAborted()
     try {
-      const res = await fetch(url)
+      const res = await fetch(url, { signal })
       if (res.ok) return
     } catch {
       // not ready yet
     }
-    await new Promise((resolve) => setTimeout(resolve, HEALTH_CHECK_INTERVAL_MS))
+    await sleep(HEALTH_CHECK_INTERVAL_MS, undefined, { signal })
   }
 
   throw new Error(`Spree did not become healthy within ${HEALTH_CHECK_TIMEOUT_MS / 1000}s`)
@@ -394,7 +398,7 @@ function resolveAdminCredentials(flags: { adminEmail?: string; adminPassword?: s
   return { adminEmail, adminPassword }
 }
 
-async function openBrowser(url: string): Promise<void> {
+export async function openBrowser(url: string): Promise<void> {
   const os = platform()
   const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
 

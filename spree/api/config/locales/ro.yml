@@ -1,0 +1,15 @@
+---
+ro:
+  spree:
+    api:
+      cannot_delete: "%{model} nu poate fi șters"
+      current_password_invalid: Parola curentă este invalidă sau lipsește
+      newsletter_verification_token_invalid: Tokenul de verificare a newsletterului este invalid sau a expirat.
+      password_reset_requested: Dacă există un cont pentru acel e-mail, instrucțiunile de resetare a parolei au fost trimise.
+      password_reset_token_invalid: Tokenul de resetare a parolei este invalid sau a expirat.
+      record_not_found: "%{model} nu a fost găsit"
+      unauthorized: Nu sunteți autorizat să efectuați acea acțiune.
+      v3:
+        payments:
+          method_unavailable: Această metodă de plată nu este disponibilă pentru această comandă.
+          session_required: Această metodă de plată necesită o sesiune de plată. Folosiți în schimb punctul final pentru sesiuni de plată.

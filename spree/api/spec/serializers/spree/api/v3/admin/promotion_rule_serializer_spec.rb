@@ -21,6 +21,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionRuleSerializer do
         { key: :api_secret, type: :password, default: nil }
       ]
       allow(rule.class).to receive(:preference_schema).and_return(stubbed_schema)
+      allow(rule.class).to receive(:preference_definitions).and_return(rule.class.preference_definitions.merge(api_secret: { type: :password }))
       rule
     end
 

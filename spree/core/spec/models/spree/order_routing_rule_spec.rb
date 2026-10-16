@@ -1,22 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe Spree::OrderRoutingRule, type: :model do
+
+  it_behaves_like 'type labels'
+
   let(:store) { @default_store }
   let(:channel) { store.default_channel }
 
   describe 'validations' do
-    it 'requires a type' do
-      rule = described_class.new(store: store, channel: channel, position: 1)
-      expect(rule).not_to be_valid
-      expect(rule.errors[:type]).to be_present
-    end
-
-    it 'requires a channel' do
-      rule = Spree::OrderRouting::Rules::PreferredLocation.new(store: store, position: 1)
-      expect(rule).not_to be_valid
-      expect(rule.errors[:channel]).to be_present
-    end
-
     it 'is valid when instantiated as an STI subclass with a channel' do
       # The seeded rule of the same kind must go first — `type` is unique per channel.
       channel.order_routing_rules.find_by(type: 'Spree::OrderRouting::Rules::PreferredLocation').destroy!
@@ -32,7 +23,7 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
       )
 
       expect(rule).not_to be_valid
-      expect(rule.errors[:channel]).to include(Spree.t('errors.messages.channel_store_mismatch'))
+      expect(rule.errors[:channel]).to include(I18n.t('spree.errors.messages.channel_store_mismatch'))
     end
 
     it 'rejects a present-but-unregistered STI type' do
@@ -64,17 +55,7 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
 
       expect(entry[:label]).to eq('Default location')
       expect(entry[:description]).to be_present
-      expect(entry[:preference_schema]).to eq([])
-    end
-  end
-
-  describe 'Spree.order_routing.rules' do
-    it 'includes the core rule kinds' do
-      expect(Spree.order_routing.rules).to include(
-        Spree::OrderRouting::Rules::PreferredLocation,
-        Spree::OrderRouting::Rules::MinimizeSplits,
-        Spree::OrderRouting::Rules::DefaultLocation
-      )
+      expect(entry[:schema]).to include('type' => 'object', 'properties' => {})
     end
   end
 

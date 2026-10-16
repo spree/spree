@@ -109,7 +109,7 @@ RSpec.describe Spree::Api::V3::Admin::OrderRoutingRulesController, type: :contro
   end
 
   describe 'GET #types' do
-    it 'enumerates registered rule kinds with labels and preference schemas' do
+    it 'enumerates registered rule kinds with labels and their preferences schema' do
       get :types, as: :json
 
       types = json_response[:data]
@@ -117,7 +117,7 @@ RSpec.describe Spree::Api::V3::Admin::OrderRoutingRulesController, type: :contro
       entry = types.find { |t| t[:type] == 'default_location' }
       expect(entry[:label]).to eq('Default location')
       expect(entry[:description]).to be_present
-      expect(entry[:preference_schema]).to eq([])
+      expect(entry[:schema]).to eq('type' => 'object', 'properties' => {}, 'additionalProperties' => false)
     end
 
     context 'with a read-only secret API key and no JWT' do

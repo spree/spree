@@ -32,10 +32,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name (contains)'
-      parameter name: :'q[included_in_price_true]', in: :query, type: :boolean, required: false,
-                description: 'Only rates included in the product price'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-created_at`).'
 
@@ -66,8 +63,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        Creates a tax rate for the current store. Give either `amount` as a
-        decimal (`0.19`) or `amount_percentage` as a percentage (`19`).
+        Creates a tax rate for the current store. Give either `rate` as a
+        decimal string (`"0.19"`) or `rate_percent` as a percentage string (`"19"`).
 
         Name the jurisdiction with `country_code` (and `state_code` for a
         state-level rate). Omitting the country makes the rate apply everywhere.
@@ -80,25 +77,12 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, description: 'Customer-facing rate name, e.g. "VAT"' },
-          amount: { type: :string, description: 'Rate as a decimal, e.g. "0.19"' },
-          amount_percentage: { type: :number, description: 'Rate as a percentage, e.g. 19' },
-          included_in_price: { type: :boolean },
-          show_rate_in_label: { type: :boolean },
-          tax_category_id: { type: :string },
-          country_code: { type: :string, description: 'ISO code, e.g. "DE". Omit for every country.' },
-          state_code: { type: :string, description: 'State abbreviation within that country, e.g. "CA".' }
-        },
-        required: %w[name tax_category_id]
-      }
+      request_body_for
 
       response '201', 'tax rate created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
-          { name: 'VAT', amount_percentage: 19, included_in_price: true,
+          { name: 'VAT', rate_percent: '19', included_in_price: true,
             tax_category_id: tax_category.prefixed_id, country_code: 'DE' }
         end
 
@@ -106,14 +90,14 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['amount']).to eq('0.19')
-          expect(data['amount_percentage']).to eq(19.0)
+          expect(data['rate']).to eq('0.19')
+          expect(data['rate_percent']).to eq('19')
         end
       end
 
       response '422', 'validation failed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { amount_percentage: 19 } }
+        let(:body) { { rate_percent: '19' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -156,28 +140,16 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          amount: { type: :string },
-          amount_percentage: { type: :number },
-          included_in_price: { type: :boolean },
-          show_rate_in_label: { type: :boolean },
-          tax_category_id: { type: :string },
-          country_code: { type: :string },
-          state_code: { type: :string }
-        }
-      }
+      request_body_for
 
       response '200', 'tax rate updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { amount_percentage: 7 } }
+        let(:body) { { rate_percent: '7' } }
 
         schema '$ref' => '#/components/schemas/TaxRate'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['amount']).to eq('0.07')
+          expect(JSON.parse(response.body)['rate']).to eq('0.07')
         end
       end
     end

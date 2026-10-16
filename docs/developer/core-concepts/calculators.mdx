@@ -83,8 +83,8 @@ const calculators = await adminClient.deliveryMethods.calculators()
 await adminClient.deliveryMethods.create({
   name: 'Standard shipping',
   delivery_zone_id: 'dz_xxx',
-  calculator_type: 'flat_rate',
-  calculator_attributes: {
+  calculator: {
+    type: 'flat_rate',
     preferences: { amount: '7.00', currency: 'USD' },
   },
 })

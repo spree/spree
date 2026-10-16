@@ -39,6 +39,7 @@ import {
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
 } from '../../../../hooks/use-payment-methods'
+import { filterPaymentMethodProviderTypes } from '../../../../schemas/payment-method'
 
 const PAYMENTS_GROUP = 'payments'
 const ALL_TAB = 'all'
@@ -98,10 +99,12 @@ function IntegrationsPage() {
         : [],
     [canReadPayments, paymentMethodsResponse],
   )
-  // The server already leaves out providers installed on this store, so
-  // these are only the ones still to set up.
+  // Only the providers still to set up: not installed on this store yet.
   const availablePaymentTypes = useMemo(
-    () => (paymentTypesResponse?.data ?? []).filter((type) => type.third_party && !type.superseded),
+    () =>
+      filterPaymentMethodProviderTypes(paymentTypesResponse?.data ?? []).filter(
+        (type) => type.third_party && !type.superseded,
+      ),
     [paymentTypesResponse],
   )
 

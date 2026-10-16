@@ -40,7 +40,7 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplatesController, type: :controlle
       get :show, params: { id: id, language: 'en' }, as: :json
 
       expect(json_response['body']).not_to include("| t")
-      expect(json_response['body']).to include(Spree.t('admin_user_mailer.password_reset_email.action'))
+      expect(json_response['body']).to include(I18n.t('spree.admin_user_mailer.password_reset_email.action'))
       expect(json_response['default_body']).to eq(json_response['body'])
     end
 

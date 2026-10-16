@@ -26,31 +26,59 @@ module Spree
       def calculator_type=(calculator_type)
         return if calculator_type.blank?
 
-        registry = self.class.respond_to?(:calculators) ? self.class.calculators : []
-        klass = registry.find { |k| k.api_type == calculator_type.to_s }
+        klass = registered_calculator_class(calculator_type)
         self.calculator = klass.new if klass && !calculator.instance_of?(klass)
       end
 
-      # API v3 writer for the flat `calculator: { type:, preferences: {} }`
-      # payload. Routes preferences through `set_preference` so values are
-      # coerced by the typed `preferred_<name>=` setters — direct
-      # assignment to the serialized hash would skip coercion.
-      def assign_calculator_attributes(attrs)
+      # API v3 writer for the `calculator: { type:, preferences: {} }`
+      # payload. A type the registry does not list is refused like a setting
+      # that does not match (`/calculator/type`); preferences are checked
+      # against the calculator's schema and written through its typed writers.
+      #
+      # @param attrs [Hash, ActionController::Parameters, nil]
+      # @param pointer [String] where the calculator sits in the request
+      # @raise [Spree::Preferences::InvalidPreferences] for a type the registry does not list, or
+      #   preferences that do not match its schema
+      # @return [void]
+      def assign_calculator_attributes(attrs, pointer: '/calculator')
         return if attrs.nil?
 
         attrs = attrs.to_h.with_indifferent_access
-        self.calculator_type = attrs[:type] if attrs[:type].present?
+        type = attrs[:type].to_s
+        target = calculator
+        if type.present? && calculator&.class&.api_type != type
+          klass = registered_calculator_class(type)
+          unless klass
+            raise Spree::Preferences::InvalidPreferences.new(
+              [{ pointer: '/type', message: I18n.t('spree.errors.messages.unknown_calculator_type', type: type) }], prefix: pointer
+            )
+          end
 
-        return if calculator.nil? || attrs[:preferences].blank?
-
-        attrs[:preferences].to_h.each do |key, value|
-          next unless calculator.has_preference?(key.to_sym)
-
-          calculator.set_preference(key.to_sym, value)
+          target = klass.new
         end
+
+        if attrs[:preferences].present?
+          # Preferences sent without a type land on the default calculator
+          # rather than on nothing, for a model that has one.
+          target ||= default_calculator if respond_to?(:default_calculator, true)
+          target&.assign_preferences(attrs[:preferences], pointer: "#{pointer}/preferences")
+        end
+
+        # Attached only once its settings are accepted: on a saved owner,
+        # assigning a has_one replaces the stored calculator immediately.
+        self.calculator = target unless target.equal?(calculator)
       end
 
       private
+
+      # The registered calculator for an API shorthand, resolved from the
+      # registry entry's own name: nothing user-supplied reaches
+      # `constantize`, and in development the registry can hold a class from
+      # an earlier reload whose instances fail the association's type check.
+      def registered_calculator_class(type)
+        registry = self.class.respond_to?(:calculators) ? self.class.calculators : []
+        registry.find { |klass| klass.api_type == type.to_s }&.to_s&.constantize
+      end
 
       def self.model_name_without_spree_namespace
         to_s.tableize.tr('/', '_').sub('spree_', '')

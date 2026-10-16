@@ -121,9 +121,17 @@ test.describe('markets', () => {
     await expect(page.locator('#market-name')).toHaveValue(original)
 
     await page.locator('#market-name').fill(updated)
+    // Name the built-in engine explicitly rather than inheriting the default,
+    // so reopening proves the saved provider matches the catalog's entry.
+    await page.locator('#market-tax-provider').click()
+    await page.getByRole('option', { name: /^internal$/i }).click()
     await page.getByRole('button', { name: /^save$/i }).click()
 
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
+
+    await rowButton(page, updated).click()
+    await expect(page.getByRole('heading', { name: updated })).toBeVisible({ timeout: 15_000 })
+    await expect(page.locator('#market-tax-provider')).toHaveText(/^internal$/i)
   })
 
   test('deletes a market', async ({ page }) => {

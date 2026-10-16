@@ -38,6 +38,7 @@ module Spree
     # Private, and served only through the admin and seller branches: these
     # are business registrations and identity documents.
     has_one_attached :file, service: Spree.private_storage_service_name
+    signed_id_attachments :file
 
     #
     # Validations
@@ -85,8 +86,7 @@ module Spree
       return if seller.nil? || requirement.nil?
       return if seller.store_id == requirement.store_id
 
-      errors.add(:requirement, :seller_requirement_store_mismatch, message: Spree.t('errors.messages.seller_requirement_store_mismatch',
-                                       default: 'must belong to the same store as the seller'))
+      errors.add(:requirement, :seller_requirement_store_mismatch, message: I18n.t('spree.errors.messages.seller_requirement_store_mismatch'))
     end
   end
 end

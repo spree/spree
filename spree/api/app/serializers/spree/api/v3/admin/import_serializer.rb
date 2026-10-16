@@ -9,7 +9,7 @@ module Spree
                    completed_rows_count: :number,
                    failed_rows_count: :number,
                    processing_errors: [:string, nullable: true],
-                   preferred_delimiter: :string,
+                   delimiter: :string,
                    schema_fields: 'Array<{ name: string; label: string; required: boolean }>',
                    csv_headers: [:string, multi: true],
                    sample_row: 'Record<string, string | null>',
@@ -18,7 +18,7 @@ module Spree
                    original_file_url: [:string, nullable: true],
                    price_list_id: [:string, nullable: true]
 
-          attributes :processing_errors, :preferred_delimiter
+          attributes :processing_errors, :delimiter
 
           # The list a price-list import writes into; nil for every other type.
           attribute :price_list_id do |import|

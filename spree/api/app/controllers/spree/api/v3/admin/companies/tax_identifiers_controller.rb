@@ -12,6 +12,11 @@ module Spree
           class TaxIdentifiersController < BaseController
             include Spree::Api::V3::TaxIdentifierValidation
 
+            request_params :tax_identifier do |body|
+              body.include_attributes Spree::Api::V3::Admin::TaxIdentifierRequestSchema
+              body.require_attributes :kind, :value, on: :create
+            end
+
             before_action :authorize_parent_access!
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions have to be listed alongside the custom one.
@@ -32,7 +37,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:kind, :value)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

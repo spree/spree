@@ -129,6 +129,7 @@ export function AppSidebar({
   header,
   uiLocales,
   onEditProfile,
+  notifications,
   ...props
 }: ComponentProps<typeof Sidebar> & {
   /**
@@ -142,11 +143,13 @@ export function AppSidebar({
   uiLocales?: ReadonlyArray<{ code: string; name: string }>
   /** Opens the app's edit-profile dialog from the account menu. */
   onEditProfile?: () => void
+  /** Shown beside the account menu, such as a notifications bell. */
+  notifications?: ReactNode
 }) {
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const { navItems, bottomItems, isLoading } = useNavItems(tenantId ?? storeId ?? 'default')
-  const { isMobile } = useSidebar()
+  const { isMobile, state } = useSidebar()
 
   return (
     <Sidebar collapsible="icon" variant="inset" side={primarySidebarSide(i18n.language)} {...props}>
@@ -190,7 +193,20 @@ export function AppSidebar({
           list fades out above it rather than scrolling it away. */}
       {!isLoading && !isMobile && <NavBottom items={bottomItems} className="py-2" />}
       <SidebarFooter className="hidden md:flex">
-        <SidebarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
+        {/* In icon mode the rail is too narrow for a row, so the control
+            stacks above the avatar. */}
+        <div
+          className={
+            state === 'collapsed'
+              ? 'flex flex-col-reverse items-center gap-1'
+              : 'flex items-center gap-1'
+          }
+        >
+          <div className="min-w-0 flex-1">
+            <SidebarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
+          </div>
+          {notifications}
+        </div>
       </SidebarFooter>
     </Sidebar>
   )

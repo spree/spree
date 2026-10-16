@@ -21,6 +21,39 @@ module Spree
 
           scoped_resource :orders
 
+          ADDRESS = Spree::Api::V3::RequestSchema.shape('OrderAddressParams') do |schema|
+            schema.attribute :first_name, :string
+            schema.attribute :last_name, :string
+            schema.attribute :address1, :string
+            schema.attribute :city, :string
+            schema.attribute :postal_code, :string
+            schema.attribute :company, :string, nullable: true
+            schema.attribute :address2, :string, nullable: true
+            schema.attribute :phone, :string, nullable: true
+            schema.attribute :alternative_phone, :string, nullable: true
+            schema.attribute :state_code, :string, nullable: true
+            schema.attribute :state_name, :string, nullable: true
+            schema.attribute :label, :string, nullable: true
+            schema.attribute :country_code, :country, example: 'US'
+          end
+
+          request_params 'OrderCancelParams', action: :cancel do |body|
+            body.attribute :cancel_reason_id, :id,
+              nullable: true,
+              description: 'A reason from the order cancellation reasons endpoint.'
+            body.attribute :cancel_note, :string, nullable: true, description: 'Free text beside the reason.'
+            body.attribute :refund_payments, :boolean,
+              description: "Hand back what the buyer paid for this order's goods."
+            body.attribute :notify_customer, :boolean, description: 'Email the customer about the cancellation.'
+          end
+
+          request_params 'OrderAddressCorrectionParams', action: :address do |body|
+            body.attribute :shipping_address, :object, shape: ADDRESS,
+              description: 'Only the lines that change; the rest of the address is carried over.'
+            body.attribute :billing_address, :object, shape: ADDRESS,
+              description: 'Only the lines that change; the rest of the address is carried over.'
+          end
+
           before_action :set_resource, only: [:show, :cancel, :address]
 
           # PATCH /api/v3/seller/orders/:id/cancel
@@ -124,10 +157,8 @@ module Spree
           # files the address in their book and makes it their default for
           # every later checkout on the marketplace.
           def sent_addresses
-            @sent_addresses ||= params.permit(
-              shipping_address: address_permitted_keys,
-              billing_address: address_permitted_keys
-            ).slice(:shipping_address, :billing_address).reject { |_key, value| value.blank? }
+            @sent_addresses ||= params.permit(*declared_permitted_attributes).
+                                slice(:shipping_address, :billing_address).reject { |_key, value| value.blank? }
           end
 
           def corrected_addresses
@@ -146,16 +177,6 @@ module Spree
             # No label: an address-book label means nothing on an order's copy,
             # and labels are unique per owner, which an ownerless copy lacks.
             (address&.snapshot || Spree::Address.new).tap { |copy| copy.assign_attributes(sent.to_h.except('label', :label)) }
-          end
-
-          def address_permitted_keys
-            [
-              :firstname, :lastname, :first_name, :last_name,
-              :address1, :address2, :city,
-              :country_code, :state_code,
-              :zipcode, :postal_code, :phone, :alternative_phone,
-              :state_name, :company, :label
-            ]
           end
 
           # A request naming neither address has asked for nothing; saying so

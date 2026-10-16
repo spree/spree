@@ -8,6 +8,26 @@ module Spree
         class DeliveryZonesController < ResourceController
           scoped_resource :settings
 
+          request_params :delivery_zone do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'US North-East'
+            body.attribute :description, :string, nullable: true
+            body.attribute :delivery_profile_id, :id,
+              description: 'Delivery profile this zone belongs to (`fp_...`); defaults to the store default profile.'
+            body.attribute :delivery_origin_group_id, :id,
+              description: 'Origin group this zone belongs to (`og_...`).'
+            body.attribute :members, :array,
+              as: 'DeliveryZoneMemberParams',
+              description: "Replaces the zone's full member set atomically." do |member|
+              member.attribute :member_type, :string, required: true, choices: Spree::DeliveryZoneMember::MEMBER_TYPES
+              member.attribute :country_code, :country, example: 'US'
+              member.attribute :state_code, :string,
+                description: 'A subdivision code or name. Without `country_code` the country is inferred when only one country matches.'
+              member.attribute :postal_code_prefix, :string
+              member.attribute :postal_code_from, :string
+              member.attribute :postal_code_to, :string
+            end
+          end
+
           def create
             @resource = model_class.new(zone_params)
             authorize_resource!(@resource, :create)
@@ -50,11 +70,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              :name, :description, :delivery_profile_id, :delivery_origin_group_id,
-              members: [:member_type, :country_code, :state_code, :postal_code_prefix, :postal_code_from, :postal_code_to]
-            )
+            params.permit(*permitted_attributes)
           end
 
           def collection_includes

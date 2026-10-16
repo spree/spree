@@ -14,8 +14,8 @@ module SpreeAvalara
     # pair under the same labels, so a merchant sees the choice they already
     # know rather than a URL to type.
     preference :endpoint, :string, default: SANDBOX_ENDPOINT,
-                                   in: { SANDBOX_ENDPOINT => 'Sandbox',
-                                         PRODUCTION_ENDPOINT => 'Production' }
+                                   choices: { SANDBOX_ENDPOINT => 'Sandbox',
+                                              PRODUCTION_ENDPOINT => 'Production' }
     preference :company_code, :string
 
     preference :address_validation_enabled, :boolean, default: false
@@ -27,9 +27,8 @@ module SpreeAvalara
     # than a missing field.
     validates :preferred_account_number, :preferred_license_key, :preferred_company_code, presence: true
 
-    # `in:` above builds the picker; it does not refuse anything. The admin API
-    # takes a free-form preferences hash, so the allowlist is enforced here as
-    # well: the value is handed to the HTTP client along with the credentials,
+    # `choices:` above builds the picker and guards API writes; the allowlist is
+    # enforced on the model as well, so no other write path gets past it: the value is handed to the HTTP client along with the credentials,
     # and an arbitrary host turns this into a way to make the server issue
     # requests wherever an admin points it — internal services and cloud
     # metadata included — with the reply readable through the connection test.
@@ -94,9 +93,9 @@ module SpreeAvalara
 
       self.connection_error_message =
         if body.is_a?(Hash) && body.key?('authenticated')
-          Spree.t('integrations.avalara.errors.invalid_credentials')
+          I18n.t('spree.integrations.avalara.errors.invalid_credentials')
         else
-          Spree.t('integrations.avalara.errors.connection_failed')
+          I18n.t('spree.integrations.avalara.errors.connection_failed')
         end
 
       false
@@ -119,7 +118,7 @@ module SpreeAvalara
       return error.message if error.status.nil?
 
       (error.details.is_a?(Hash) && error.details['message'].presence) ||
-        Spree.t('integrations.avalara.errors.connection_failed')
+        I18n.t('spree.integrations.avalara.errors.connection_failed')
     end
   end
 end

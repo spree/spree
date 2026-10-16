@@ -100,7 +100,7 @@ module Spree
         halt!(result) if result.canceled?
 
         if !result.placed? && result.payment_required? && !payment_covered?(result)
-          failure(cart, code: 'payment_failed', message: Spree.t(:payment_processing_failed))
+          failure(cart, code: 'payment_failed', message: I18n.t('spree.payment_processing_failed'))
         end
 
         finalize!(cart, result)
@@ -127,7 +127,7 @@ module Spree
       def guard_coupon_code
         return unless cart.coupon_code_unavailable?
 
-        failure(cart, code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable))
+        failure(cart, code: 'coupon_code_unavailable', message: I18n.t('spree.coupon_code_unavailable'))
       end
 
       # In-lock recalculation — the totals about to be charged are computed
@@ -166,7 +166,7 @@ module Spree
           # the endpoint and the transport, which tells a shopper nothing and
           # tells everyone else too much.
           failure(cart, code: 'tax_provider_unavailable',
-                        message: Spree.t('cart_line_item.tax_unavailable'))
+                        message: I18n.t('spree.cart_line_item.tax_unavailable'))
         end
       end
 
@@ -202,7 +202,7 @@ module Spree
         return if payment_covered?(order)
 
         failure(cart, code: 'payment_failed',
-                      message: order.errors.full_messages.to_sentence.presence || Spree.t(:payment_processing_failed))
+                      message: order.errors.full_messages.to_sentence.presence || I18n.t('spree.payment_processing_failed'))
       rescue Spree::Core::GatewayError => e
         failure(cart, code: 'payment_failed', message: e.message)
       end
@@ -431,7 +431,7 @@ module Spree
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
 
         cart.fulfillments.reload.each_with_object({}) do |cart_fulfillment, map|
-          attributes = cart_fulfillment.attributes.except('id', 'cart_id', 'number', 'created_at', 'updated_at')
+          attributes = cart_fulfillment.attributes.except('id', 'cart_id', 'number', 'tracking', 'created_at', 'updated_at')
           fulfillment = order.fulfillments.create!(attributes.merge('order_id' => order.id, 'address_id' => order.ship_address_id))
 
           if (selected = cart_fulfillment.selected_delivery_rate)

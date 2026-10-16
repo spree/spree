@@ -6,6 +6,18 @@ module Spree
           class PaymentsController < BaseController
             scoped_resource :payments
 
+            request_params :payment do |body|
+              body.attribute :payment_method_id, :id, required: true, on: :create
+              body.attribute :amount, :decimal, description: "Defaults to the order total left after store credit."
+              body.attribute :source_id, :id,
+                description: "A saved payment source of the order's customer (a credit card), for an off-session charge. Used only by payment methods that require a source."
+            end
+
+            request_params 'PaymentCaptureParams', action: :capture do |body|
+              body.attribute :amount, :decimal,
+                description: 'Captures part of the authorized amount. Defaults to all of it.'
+            end
+
             before_action :set_resource, only: [:show, :capture, :void]
 
             # POST /api/v3/admin/orders/:order_id/payments
@@ -52,7 +64,10 @@ module Spree
             # to prevent. Both flows are idempotent on replay — an
             # already-captured or already-void payment returns success.
             def capture
-              amount = params[:amount] ? (params[:amount].to_f * 100).round : nil
+              amount = money_param(:amount, @resource.currency)
+              unless amount.nil? || amount.positive?
+                raise Spree::Money::InvalidFormat.new('must be greater than 0', field: :amount)
+              end
 
               result = Spree.payment_capture_workflow.call(payment: @resource, amount: amount)
 
@@ -74,10 +89,6 @@ module Spree
 
             def serializer_class
               Spree.api.admin_payment_serializer
-            end
-
-            def permitted_params
-              params.permit(:amount, :payment_method_id, :source_id)
             end
 
             # Saved-source charges require an order customer — sources are scoped

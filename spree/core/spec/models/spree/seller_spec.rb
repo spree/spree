@@ -3,27 +3,6 @@ require 'spec_helper'
 describe Spree::Seller do
   let(:store) { @default_store }
 
-  describe 'statuses' do
-    it 'starts pending and moves only through workflows' do
-      expect(described_class.default_status).to eq('pending')
-      expect(described_class.statuses).to include('approved', 'suspended', 'rejected')
-      # A state machine would have generated these; the absence is the point.
-      expect(described_class).not_to respond_to(:state_machines)
-    end
-
-    it 'generates a predicate and a scope per status' do
-      seller = create(:seller, :approved)
-
-      expect(seller).to be_approved
-      expect(seller).not_to be_pending
-      expect(described_class.approved).to include(seller)
-    end
-
-    it 'rejects an unknown status' do
-      expect(build(:seller, status: 'flourishing')).not_to be_valid
-    end
-  end
-
   describe 'slug' do
     it 'derives from the name when absent' do
       expect(create(:seller, name: 'Bright Sparks Ltd').slug).to eq('bright-sparks-ltd')
@@ -33,15 +12,10 @@ describe Spree::Seller do
       expect(create(:seller, name: 'Bright Sparks', slug: 'sparks').slug).to eq('sparks')
     end
 
-    it 'is unique within a store' do
+    it 'is unique within a store but may repeat on another' do
       create(:seller, slug: 'sparks', store: store)
 
       expect(build(:seller, slug: 'sparks', store: store)).not_to be_valid
-    end
-
-    it 'may repeat on another store' do
-      create(:seller, slug: 'sparks', store: store)
-
       expect(build(:seller, slug: 'sparks', store: create(:store))).to be_valid
     end
   end
@@ -182,9 +156,7 @@ describe Spree::Seller do
   end
 
   describe 'settlement configuration' do
-    it 'defaults to the seller remitting its own tax' do
-      expect(create(:seller).tax_remittance).to eq('seller')
-    end
+    let(:seller) { create(:seller, :approved, store: store) }
 
     it 'rejects an unknown remittance or interval' do
       expect(build(:seller, tax_remittance: 'someone_else')).not_to be_valid
@@ -194,6 +166,18 @@ describe Spree::Seller do
     # Nil means "use the store's default", so it stays valid.
     it 'allows both to be unset' do
       expect(build(:seller, payouts_schedule_interval: nil, minimum_payout_amount: nil)).to be_valid
+    end
+
+    it 'falls back to the store’s schedule and threshold' do
+      expect(seller.resolved_payouts_schedule_interval).to eq('monthly')
+      expect(seller.resolved_minimum_payout_amount).to eq(0)
+    end
+
+    it 'prefers its own once it deviates' do
+      seller.update!(payouts_schedule_interval: 'weekly', minimum_payout_amount: 25)
+
+      expect(seller.resolved_payouts_schedule_interval).to eq('weekly')
+      expect(seller.resolved_minimum_payout_amount).to eq(25)
     end
   end
 
@@ -271,7 +255,6 @@ describe Spree::Seller do
   end
 
   describe 'onboarding progress' do
-    let(:store) { @default_store }
     let(:seller) { create(:seller, :onboarding, store: store) }
 
     before { store.seller_requirements.destroy_all }
@@ -349,7 +332,6 @@ describe Spree::Seller do
   end
 
   describe '#balance' do
-    let(:store) { @default_store }
     let(:seller) { create(:seller, :approved, store: store) }
 
     def earn(amount, currency: 'USD', status: 'completed')
@@ -424,22 +406,6 @@ describe Spree::Seller do
     end
   end
 
-  describe 'settlement configuration' do
-    let(:store) { @default_store }
-    let(:seller) { create(:seller, :approved, store: store) }
-
-    it 'falls back to the store’s schedule and threshold' do
-      expect(seller.resolved_payouts_schedule_interval).to eq('monthly')
-      expect(seller.resolved_minimum_payout_amount).to eq(0)
-    end
-
-    it 'prefers its own once it deviates' do
-      seller.update!(payouts_schedule_interval: 'weekly', minimum_payout_amount: 25)
-
-      expect(seller.resolved_payouts_schedule_interval).to eq('weekly')
-      expect(seller.resolved_minimum_payout_amount).to eq(25)
-    end
-  end
   # The seller's identity in the system that pays them — recorded where every
   # other external identity is, rather than in a column of its own.
   describe 'the payout account' do

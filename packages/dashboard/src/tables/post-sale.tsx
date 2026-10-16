@@ -1,5 +1,5 @@
 import type { Claim, Exchange, Return } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -67,7 +67,7 @@ defineTable<Return>('returns', {
   title: i18n.t('admin.nav.returns'),
   description: i18n.t('admin.table_descriptions.returns'),
   docsPath: 'orders/returns',
-  searchParam: 'number_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.post_sale.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <RotateCcwIcon className="size-8 text-muted-foreground" />,
@@ -84,11 +84,11 @@ defineTable<Return>('returns', {
     statusColumn(['requested', 'approved', 'received', 'refunded', 'canceled']),
     orderColumn<Return>(),
     {
-      key: 'display_refund_total',
+      key: 'refund_total',
       label: i18n.t('admin.pages.orders.detail.returns.refund_total'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (r) => r.display_refund_total,
+      render: (r) => <Money amount={r.refund_total} currency={r.order?.currency} />,
     },
     createdColumn<Return>(),
   ],
@@ -98,7 +98,7 @@ defineTable<Exchange>('exchanges', {
   title: i18n.t('admin.nav.exchanges'),
   description: i18n.t('admin.table_descriptions.exchanges'),
   docsPath: 'orders/exchanges',
-  searchParam: 'number_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.post_sale.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <RepeatIcon className="size-8 text-muted-foreground" />,
@@ -115,11 +115,11 @@ defineTable<Exchange>('exchanges', {
     statusColumn(['requested', 'approved', 'received', 'fulfilled', 'canceled']),
     orderColumn<Exchange>(),
     {
-      key: 'display_price_difference',
+      key: 'price_difference',
       label: i18n.t('admin.pages.orders.detail.exchanges.price_difference'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (e) => e.display_price_difference,
+      render: (e) => <Money amount={e.price_difference} currency={e.order?.currency} />,
     },
     createdColumn<Exchange>(),
   ],
@@ -129,7 +129,7 @@ defineTable<Claim>('claims', {
   title: i18n.t('admin.nav.claims'),
   description: i18n.t('admin.table_descriptions.claims'),
   docsPath: 'orders/claims',
-  searchParam: 'number_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.post_sale.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <ShieldAlertIcon className="size-8 text-muted-foreground" />,

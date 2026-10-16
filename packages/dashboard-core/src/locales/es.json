@@ -1608,11 +1608,13 @@
         "seeded_report_read_only": "Este es un reporte incorporado y no se puede modificar. Guardá una copia.",
         "taken": "ya está en uso",
         "too_long": "es demasiado largo (máximo {{count}} caracteres)",
+        "too_many_decimals": "tiene más de {{count}} decimales",
         "too_short": "es demasiado corto (mínimo {{count}} caracteres)",
         "wrong_length": "tiene un largo incorrecto (debería ser {{count}} caracteres)"
       },
       "country_required": "El país es obligatorio",
       "currency_required": "La moneda es obligatoria",
+      "locale_required": "El idioma es obligatorio",
       "first_name_required": "El nombre es obligatorio",
       "invalid_email": "Ingresá un email válido",
       "invalid_email_or_password": "Email o contraseña inválidos",
@@ -1624,7 +1626,8 @@
       "passwords_dont_match": "Las contraseñas no coinciden",
       "positive_number": "{{field}} debe ser mayor que 0",
       "required": "{{field}} es obligatorio",
-      "store_name_required": "El nombre de la tienda es obligatorio"
+      "store_name_required": "El nombre de la tienda es obligatorio",
+      "too_many_decimals": "{{field}} puede tener como máximo {{count}} decimales"
     },
     "common": {
       "active": "Activo",

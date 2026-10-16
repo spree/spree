@@ -6,12 +6,10 @@ export const TransferSchema = z.object({
   kind: z.string(),
   status: z.string(),
   currency: z.string(),
-  provider: z.string(),
   reference: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   amount: z.string(),
-  display_amount: z.string(),
   settled_amount: z.string().nullable(),
   settled_currency: z.string().nullable(),
   converted: z.boolean(),
@@ -19,6 +17,7 @@ export const TransferSchema = z.object({
   payout_id: z.string().nullable(),
   reversed_from_id: z.string().nullable(),
   order_number: z.string().nullable(),
+  provider: z.string(),
 });
 
 export type Transfer = z.infer<typeof TransferSchema>;

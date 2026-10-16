@@ -35,7 +35,7 @@ module Spree
         return if store.commission_rates.exists?(code: DEFAULT_CODE)
 
         rate = store.commission_rates.create!(
-          name: Spree.t('seed.commission_rates.marketplace_default'),
+          name: I18n.t('spree.seed.commission_rates.marketplace_default'),
           code: DEFAULT_CODE,
           kind: 'percentage',
           value: 0,

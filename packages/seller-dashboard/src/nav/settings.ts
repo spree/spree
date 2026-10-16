@@ -1,4 +1,4 @@
-import { i18n, settingsNav } from '@spree/dashboard-core'
+import { i18n, Subject, settingsNav } from '@spree/dashboard-core'
 import {
   PackageIcon,
   ScrollTextIcon,
@@ -44,7 +44,7 @@ settingsNav.add({
   position: 100,
   // The seller-branch subject the API's `/me` serializes. A member without
   // stock permission never sees the entry.
-  subject: 'Spree::StockLocation',
+  subject: Subject.StockLocation,
 })
 
 // How this seller's goods ship. Beside stock locations because the two are
@@ -60,7 +60,7 @@ settingsNav.add({
   position: 200,
   // The seller-branch subject the API's `/me` serializes. A member without
   // delivery permission never sees the entry.
-  subject: 'Spree::DeliveryMethod',
+  subject: Subject.DeliveryMethod,
 })
 
 // What this seller packs their goods into. Beside the other two because the
@@ -77,7 +77,7 @@ settingsNav.add({
   position: 300,
   // The seller-branch subject the API's `/me` serializes. A member without
   // packaging permission never sees the entry.
-  subject: 'Spree::PackageType',
+  subject: Subject.PackageType,
 })
 
 // Who runs this seller. Under settings rather than in the main rail, matching

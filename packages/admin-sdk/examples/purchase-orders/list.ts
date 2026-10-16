@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: purchaseOrders } = await client.purchaseOrders.list({
-  q: { status_eq: 'ordered' },
+  status_eq: 'ordered',
   expand: ['supplier'],
 })
 

@@ -10,7 +10,7 @@ const digitalAssetsKey = (productId: string) => ['products', productId, 'digital
 export function useDigitalAssets(productId: string, page = 1, enabled = true) {
   return useQuery({
     queryKey: useResourceKey('products', productId, 'digital-assets', page),
-    queryFn: () => adminClient.products.digitalAssets.list(productId, { page, per_page: 25 }),
+    queryFn: () => adminClient.products.digitalAssets.list(productId, { page, limit: 25 }),
     enabled: enabled && Boolean(productId),
   })
 }

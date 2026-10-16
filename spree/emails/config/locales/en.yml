@@ -114,14 +114,3 @@ en:
         heading: Your account has been suspended
         message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
         subject: Your %{store_name} account has been suspended
-    shipment_mailer:
-      shipped_email:
-        dear_customer: Dear %{name},
-        instructions: Your order %{number} has been shipped
-        shipment_summary: Shipment Summary for order
-        shipping_method: 'Shipping method: %{shipping_method}'
-        store_team: "%{store_name} Team"
-        subject: Shipment Notification
-        thanks: Thank you for your business.
-        track_information: 'Tracking Information: %{tracking}'
-        track_link: 'Tracking Link: %{url}'

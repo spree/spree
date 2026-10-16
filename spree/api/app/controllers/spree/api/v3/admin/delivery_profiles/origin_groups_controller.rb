@@ -10,6 +10,13 @@ module Spree
           class OriginGroupsController < ResourceController
             scoped_resource :settings
 
+            request_params 'DeliveryOriginGroupParams' do |body|
+              body.attribute :name, :string, nullable: true, example: 'EU warehouse'
+              body.attribute :position, :integer
+              body.attribute :stock_location_ids, :array, of: :id,
+                description: 'Prefixed stock location IDs (`sloc_...`); replaces the full set. Empty means every store location.'
+            end
+
             def create
               @resource = scope.new(assignable_params)
               authorize_resource!(@resource, :create)
@@ -46,7 +53,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(*model_additional_permitted_attributes, :name, :position, stock_location_ids: [])
+              params.permit(*permitted_attributes)
             end
 
             def collection_includes

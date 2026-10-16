@@ -31,7 +31,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
 
     it 'renders the subject' do
       expect(mail.subject).to eq(
-        Spree.t('invitation_mailer.invitation_email.subject', resource_name: store.name)
+        I18n.t('spree.invitation_mailer.invitation_email.subject', resource_name: store.name)
       )
     end
 
@@ -60,7 +60,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       end
 
       it 'uses spree.admin_invitation_url for the accept link' do
-        expect(email_body(mail)).to include(Spree.t(:accept))
+        expect(email_body(mail)).to include(I18n.t('spree.accept'))
         expect(email_body(mail)).to include(legacy_admin_url)
         expect(email_body(mail)).not_to include(spa_acceptance_url)
       end
@@ -70,20 +70,20 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       before do
         allow(spree).to receive(:respond_to?).and_call_original
         allow(spree).to receive(:respond_to?).with(:admin_invitation_url).and_return(false)
-        Spree::Config[:admin_url] = 'https://admin.example.com'
+        Spree::Config[:dashboard_url] = 'https://admin.example.com'
       end
 
       after do
-        Spree::Config[:admin_url] = nil
+        Spree::Config[:dashboard_url] = nil
       end
 
       it 'uses the admin_invitation_acceptance helper for the accept link' do
-        expect(email_body(mail)).to include(Spree.t(:accept))
+        expect(email_body(mail)).to include(I18n.t('spree.accept'))
         expect(email_body(mail)).to include(spa_acceptance_url)
         expect(email_body(mail)).not_to include(legacy_admin_url)
       end
 
-      it 'honors Spree::Config[:admin_url] in the rendered URL' do
+      it 'honors Spree::Config[:dashboard_url] in the rendered URL' do
         expect(email_body(mail)).to include(
           "https://admin.example.com/accept-invitation/#{invitation.prefixed_id}"
         )
@@ -122,7 +122,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       end
     end
 
-    context 'when neither the legacy gem nor admin_url is configured' do
+    context 'when neither the legacy gem nor dashboard_url is configured' do
       before do
         allow(spree).to receive(:respond_to?).and_call_original
         allow(spree).to receive(:respond_to?).with(:admin_invitation_url).and_return(false)
@@ -147,7 +147,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
 
     it 'renders the subject' do
       expect(mail.subject).to eq(
-        Spree.t('invitation_mailer.invitation_accepted.subject', invitee_name: invitee.name, resource_name: store.name)
+        I18n.t('spree.invitation_mailer.invitation_accepted.subject', invitee_name: invitee.name, resource_name: store.name)
       )
     end
 

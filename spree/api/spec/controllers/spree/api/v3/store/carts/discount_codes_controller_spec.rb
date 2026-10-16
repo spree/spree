@@ -90,7 +90,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
           post :create, params: { cart_id: order.prefixed_id, code: coupon_code.code }
 
           expect(response).to have_http_status(:unprocessable_content)
-          expect(json_response['error']['message']).to eq(Spree.t(:coupon_code_used))
+          expect(json_response['error']['message']).to eq(I18n.t('spree.coupon_code_used'))
           expect(order.reload.read_attribute(:coupon_code)).to be_nil
         end
       end

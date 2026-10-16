@@ -16,6 +16,7 @@ RSpec.describe 'Data Requests API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      filter_parameters_for
 
       response '200', 'data requests found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -51,13 +52,7 @@ RSpec.describe 'Data Requests API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          kind: { type: :string, enum: %w[access erasure], description: 'Defaults to access' },
-          current_password: { type: :string, description: 'Required for erasure' }
-        }
-      }
+      request_body_for(required: false)
 
       response '202', 'request accepted' do
         let(:'x-spree-api-key') { api_key.token }

@@ -1,0 +1,62 @@
+---
+title: Update Checks and Usage Data
+description: How Spree tells you a newer release exists, the usage data the same daily check reports, and how to turn either off.
+---
+
+When an admin opens the [Dashboard](/developer/dashboard/deployment), Spree asks `spreecloud.io` whether a newer Spree release exists, at most once a day. When one does, the dashboard tells admins who can manage the store, and shows that release's notes.
+
+The same request carries a small amount of usage data. It tells the Spree team which versions, gems and databases are in use, so they can decide what to support and fix first. It never identifies a person. It does include your storefront's address, so it identifies the store; you can turn it off with one environment variable.
+
+## What admins see
+
+A dot appears on the notifications bell beside the account menu when a newer release exists. Opening the bell shows which release is available, which version you are running, and that release's notes from GitHub. The dot clears once the notifications are opened, and comes back when the next release is published.
+
+Only admins who can manage the store see the update. The running Spree version is not shown to anyone else, and an integration using a secret API key cannot read it.
+
+The release notes are fetched from GitHub by the admin's browser and kept there for that release. If GitHub refuses the request, for example because an office has used up GitHub's hourly limit for its address, the dialog links to the notes on GitHub instead.
+
+The update check's answer is [cached](/developer/deployment/caching) on the server for a day, so only the first dashboard visit of the day waits on it, and never for more than two seconds. A failed check is retried after an hour, and that retry waits on spreecloud.io again. An installation without a dashboard only runs the check when a signed-in admin calls the updates endpoint of the Admin API directly.
+
+## What is sent
+
+| Field | Example | Notes |
+| --- | --- | --- |
+| `version` | `6.0.1` | The running Spree version. Always sent, even with usage data turned off. |
+| `environment` | `production` | The Rails environment. |
+| `url` | `https://shop.example.com` | The default store's storefront URL. This identifies the store. |
+| `install_id` | `2f1f2f60-9114-4b3a-…` | A random identifier generated once per installation. It is not derived from anything about you. |
+| `ruby`, `rails` | `3.4.7`, `8.1.4` | Ruby and Rails versions. |
+| `database` | `postgresql` | The database adapter. |
+| `gems` | `spree_api,spree_emails,spree_stripe` | Installed Spree gems. |
+| `dashboard` | `true` | Whether the dashboard is configured. |
+| `stores`, `products`, `orders`, `sellers` | `1-9`, `1k-9k`, `10k-99k` | Counts as ranges (`0`, `1-9`, `10-99`, `100-999`, `1k-9k`, `10k-99k`, `100k+`), never exact numbers. Sellers are sent only when there are any. |
+
+### What is never sent
+
+- Names, email addresses or any other customer, admin or seller data
+- Order contents, prices, revenue or exact counts
+- Store names, settings, credentials or API keys
+
+The IP address a request comes from is not saved with the data.
+
+## Turning it off
+
+Two switches, both environment variables. See [Environment Variables](/developer/deployment/environment_variables) for where to set them.
+
+| Variable | Effect |
+| --- | --- |
+| `SPREE_TELEMETRY_DISABLED=1` | Stops the usage data. The daily check still runs, but sends only `version`, so the update notice keeps working. `DO_NOT_TRACK=1` does the same. |
+| `SPREE_UPDATE_CHECK_DISABLED=1` | Stops the daily request entirely. Nothing is sent and the update notice never appears. |
+
+You can set the same switches from Ruby instead:
+
+```ruby server/config/initializers/spree.rb
+Spree.config do |config|
+  config.telemetry_enabled = false     # send the version only
+  config.update_check_enabled = false  # send nothing at all
+end
+```
+
+Either way, turning a switch off wins over the other method: an environment variable cannot turn back on what the initializer turned off, and the reverse.
+
+The check never runs in the `test` environment or on a CI server (any machine with the `CI` environment variable set, which GitHub Actions, GitLab CI, CircleCI and most other services do), so test runs send nothing.

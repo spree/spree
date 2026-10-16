@@ -23,6 +23,33 @@ describe Spree::Price, type: :model do
       end
     end
 
+    describe 'touching the variant' do
+      let(:variant) { create(:variant) }
+      let(:price_list) { create(:price_list) }
+
+      before { variant.update_columns(updated_at: 1.day.ago) }
+
+      it 'touches the variant when a priced row is saved' do
+        expect {
+          create(:price, variant: variant, currency: 'GBP', amount: 10)
+        }.to change { variant.reload.updated_at }
+      end
+
+      it 'touches the variant when an amount is cleared' do
+        price = create(:price, variant: variant, price_list: price_list, currency: 'GBP', amount: 10)
+        variant.update_columns(updated_at: 1.day.ago)
+
+        expect { price.update!(amount: nil) }.to change { variant.reload.updated_at }
+      end
+
+      it 'touches the variant when a priced row is destroyed' do
+        price = create(:price, variant: variant, currency: 'GBP', amount: 10)
+        variant.update_columns(updated_at: 1.day.ago)
+
+        expect { price.destroy }.to change { variant.reload.updated_at }
+      end
+    end
+
     describe 'after_commit :auto_match_collections' do
       context 'when price is discounted' do
         context 'on create' do
@@ -86,14 +113,28 @@ describe Spree::Price, type: :model do
 
   describe '#amount=' do
     let(:price) { build :price }
-    let(:amount) { '3,0A0' }
 
-    before do
-      price.amount = amount
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
+      I18n.with_locale(:nl) { price.amount = '49.50' }
+      expect(price.amount).to eq(BigDecimal('49.50'))
     end
 
-    it 'is expected to equal to localized number' do
-      expect(price.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    it 'refuses text it would otherwise misread, naming the attribute' do
+      expect { price.amount = '1,599.99' }.to raise_error(Spree::Money::InvalidFormat) { |error| expect(error.field).to eq(:amount) }
+    end
+
+    it 'does not grow when what it read back is saved again' do
+      I18n.with_locale(:nl) { price.amount = '99.0' }
+      expect(price.amount).to eq(BigDecimal('99'))
+    end
+
+    it 'keeps a unit price to four decimals and refuses a fifth' do
+      price.amount = '0.0125'
+      expect(price).to be_valid
+
+      price.amount = '0.01255'
+      expect(price).not_to be_valid
+      expect(price.errors.details[:amount]).to include(error: :too_many_decimals, count: 4)
     end
   end
 
@@ -105,8 +146,8 @@ describe Spree::Price, type: :model do
       price.compare_at_amount = compare_at_amount
     end
 
-    it 'is expected to equal to localized number' do
-      expect(price.compare_at_amount).to eq(Spree::LocalizedNumber.parse(compare_at_amount))
+    it 'stores a canonical decimal exactly' do
+      expect(price.compare_at_amount).to eq(BigDecimal('169.99'))
     end
 
     context 'with empty string being passed as value' do
@@ -114,36 +155,6 @@ describe Spree::Price, type: :model do
 
       it 'casts value to nil' do
         expect(price.compare_at_amount).to be_nil
-      end
-    end
-  end
-
-  describe '#price' do
-    let(:price) { build :price }
-    let(:amount) { 3000.00 }
-
-    context 'when amount is changed' do
-      before do
-        price.amount = amount
-      end
-
-      it 'is expected to equal to price' do
-        expect(price.amount).to eq(price.price)
-      end
-    end
-  end
-
-  describe '#compare_at_price' do
-    let(:price) { build :price }
-    let(:compare_at_amount) { 3000.00 }
-
-    context 'when amount is changed' do
-      before do
-        price.compare_at_amount = compare_at_amount
-      end
-
-      it 'is expected to equal to price' do
-        expect(price.compare_at_amount).to eq(price.compare_at_price)
       end
     end
   end
@@ -173,11 +184,8 @@ describe Spree::Price, type: :model do
       let(:amount) { -1 }
       before { subject.valid? }
 
-      it 'has 1 error on amount' do
-        expect(subject.errors.messages[:amount].size).to eq(1)
-      end
       it 'populates errors' do
-        expect(subject.errors.messages[:amount].first).to eq 'must be greater than or equal to 0'
+        expect(subject.errors.messages[:amount]).to eq ['must be greater than or equal to 0']
       end
     end
 
@@ -185,11 +193,8 @@ describe Spree::Price, type: :model do
       let(:amount) { Spree::Price::MAXIMUM_AMOUNT + 1 }
       before { subject.valid? }
 
-      it 'has 1 error on amount' do
-        expect(subject.errors.messages[:amount].size).to eq(1)
-      end
       it 'populates errors' do
-        expect(subject.errors.messages[:amount].first).to eq "must be less than or equal to #{Spree::Price::MAXIMUM_AMOUNT}"
+        expect(subject.errors.messages[:amount]).to eq ["must be less than or equal to #{Spree::Price::MAXIMUM_AMOUNT}"]
       end
     end
 
@@ -203,10 +208,6 @@ describe Spree::Price, type: :model do
     describe 'min_quantity' do
       let(:amount) { 10 }
       let(:price_list) { create(:price_list) }
-
-      it 'defaults to the ladder\'s bottom rung' do
-        expect(described_class.new.min_quantity).to eq(1)
-      end
 
       it 'refuses a quantity below one' do
         subject.min_quantity = 0
@@ -371,24 +372,6 @@ describe Spree::Price, type: :model do
         expect(price).to receive(:compare_at_price).and_call_original
         expect(price.compare_at_price_including_vat_for(country: destination)).to eq(100.00)
       end
-    end
-  end
-
-  describe '#display_price_including_vat_for(zone)' do
-    subject { build :price, amount: 10 }
-
-    it 'calls #price_including_vat_for' do
-      expect(subject).to receive(:price_including_vat_for)
-      subject.display_price_including_vat_for(nil)
-    end
-  end
-
-  describe '#display_compare_at_price_including_vat_for(zone)' do
-    subject { build :price, amount: 10, compare_at_amount: 100 }
-
-    it 'calls #price_including_vat_for' do
-      expect(subject).to receive(:compare_at_price_including_vat_for)
-      subject.display_compare_at_price_including_vat_for(nil)
     end
   end
 

@@ -45,6 +45,19 @@ module Spree
       # total is suppressed rather than rendered as a headline.
       def per_group? = requires_grouping.present?
       def money? = format == :money
+
+      # A value as the API and exports write it: money to the currency's
+      # decimal places, other decimals without trailing zeros, counts as
+      # integers.
+      #
+      # @param value [Numeric, nil]
+      # @param currency [String, nil]
+      # @return [String, Integer, nil]
+      def format_value(value, currency)
+        return value if value.nil? || format == :integer
+
+        money? ? Spree::Money::Rounding.format(value, currency) : Spree::Money::Rounding.format_decimal(value)
+      end
     end
 
     # A dimension groups rows. The definition owns every behavior keyed off

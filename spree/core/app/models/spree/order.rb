@@ -51,9 +51,10 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
-    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :placed, :shipped,
+    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :placed,
                      :resend_confirmation_email, :resend_digital_links_email
     publishes_event :completed, deprecated_alias_of: 'order.placed'
+    publishes_event :shipped, deprecated_alias_of: 'order.fulfilled'
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::HasExternalReferences
@@ -154,6 +155,7 @@ module Spree
       order_group_id po_number
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search]
+    self.ransackable_scope_types = %w[complete incomplete refunded partially_refunded].index_with('boolean')
     # A seller never sees the buyer's email, and a company member filtering the
     # company's orders must not learn a colleague's; the risk flag and coupon
     # are back-office data. `search` matches on the email too.
@@ -415,7 +417,7 @@ module Spree
 
     # Returns the subtotal used for analytics integrations
     # It's a sum of the item total and the promo total
-    # @return [Float]
+    # @return [Float] a JSON number, as analytics providers expect
     def analytics_subtotal
       (item_total + line_items.sum(:discount_total)).to_f
     end
@@ -458,7 +460,7 @@ module Spree
     end
 
     def refunds_total
-      refunds.loaded? ? refunds.sum(&:amount) : refunds.sum(:amount)
+      read_association_in_memory?(:refunds) ? refunds.sum(0.to_d, &:amount) : refunds.sum(:amount)
     end
 
     # Checks if the order is partially refunded
@@ -707,7 +709,7 @@ module Spree
     #
     # @return [BigDecimal]
     def returned_items_refund_total
-      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if refunds.loaded?
+      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if read_association_in_memory?(:refunds)
 
       refunds.for_returned_items.sum(:amount)
     end
@@ -829,7 +831,6 @@ module Spree
     end
 
     def fulfill!
-      fulfillments.each { |shipment| shipment.update!(self) if shipment.persisted? }
       save!
       update_statuses!
     end
@@ -849,7 +850,7 @@ module Spree
     def ensure_line_item_variants_are_not_discontinued
       Spree::Deprecation.warn('Spree::Order#ensure_line_item_variants_are_not_discontinued is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if line_items.any? { |li| !li.variant || li.variant.discontinued? }
-        errors.add(:base, :discontinued_variants_present, message: Spree.t(:discontinued_variants_present))
+        errors.add(:base, :discontinued_variants_present, message: I18n.t('spree.discontinued_variants_present'))
         false
       else
         true
@@ -862,7 +863,7 @@ module Spree
     def ensure_line_items_are_in_stock
       Spree::Deprecation.warn('Spree::Order#ensure_line_items_are_in_stock is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if insufficient_stock_lines.present?
-        errors.add(:base, :insufficient_stock_lines_present, message: Spree.t(:insufficient_stock_lines_present))
+        errors.add(:base, :insufficient_stock_lines_present, message: I18n.t('spree.insufficient_stock_lines_present'))
         false
       else
         true
@@ -920,6 +921,9 @@ module Spree
 
       shipment_ids = fulfillments.map(&:id)
       DeliveryRate.where(fulfillment_id: shipment_ids).delete_all
+      # A connector's key for a fulfillment that is going away would otherwise
+      # outlive it and block the key from naming the rebuilt one.
+      Spree::ExternalReference.where(resource_type: Spree::Fulfillment.name, resource_id: shipment_ids).delete_all if shipment_ids.any?
 
       fulfillments.delete_all
 
@@ -1209,14 +1213,14 @@ module Spree
     def ensure_can_be_deleted
       return true if can_be_deleted?
 
-      errors.add(:base, :order_cannot_be_deleted, message: Spree.t(:order_cannot_be_deleted))
+      errors.add(:base, :order_cannot_be_deleted, message: I18n.t('spree.order_cannot_be_deleted'))
       throw :abort
     end
 
     def valid_order_routing_strategy_class(klass_name)
       return if klass_name.blank?
 
-      klass = Spree.order_routing.strategies.find { |strategy| strategy.to_s == klass_name.to_s }
+      klass = Spree::ApiTyped.registered_class(Spree.order_routing.strategies, klass_name)
       return klass if klass
 
       Rails.logger.warn(
@@ -1238,7 +1242,7 @@ module Spree
 
     def ensure_line_items_present
       unless line_items.present?
-        errors.add(:base, :there_are_no_items_for_this_order, message: Spree.t(:there_are_no_items_for_this_order)) && (return false)
+        errors.add(:base, :there_are_no_items_for_this_order, message: I18n.t('spree.there_are_no_items_for_this_order')) && (return false)
       end
     end
 
@@ -1255,18 +1259,18 @@ module Spree
         if undeliverable_line_items.present?
           product_names = undeliverable_line_items.map(&:name).to_sentence
           errors.add(:base, :products_cannot_be_shipped, product_names: product_names,
-                     message: Spree.t(:products_cannot_be_shipped, product_names: product_names))
+                     message: I18n.t('spree.products_cannot_be_shipped', product_names: product_names))
           self.warnings |= undeliverable_line_items.map do |line_item|
             {
               code: 'delivery_unavailable',
-              message: Spree.t('cart_line_item.delivery_unavailable', li_name: line_item.name),
+              message: I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
               line_item_id: line_item.prefixed_id,
               variant_id: line_item.variant&.prefixed_id
             }
           end
         else
-          errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
-          self.warnings |= [{ code: 'delivery_unavailable', message: Spree.t(:items_cannot_be_shipped) }]
+          errors.add(:base, :items_cannot_be_shipped, message: I18n.t('spree.items_cannot_be_shipped'))
+          self.warnings |= [{ code: 'delivery_unavailable', message: I18n.t('spree.items_cannot_be_shipped') }]
         end
 
         false
@@ -1274,7 +1278,7 @@ module Spree
     end
 
     def credit_card_nil_payment?(attributes)
-      payments.store_credits.present? && attributes[:amount].to_f.zero?
+      payments.store_credits.present? && Spree::Money::Rounding.blank_or_zero?(attributes[:amount])
     end
   end
 end

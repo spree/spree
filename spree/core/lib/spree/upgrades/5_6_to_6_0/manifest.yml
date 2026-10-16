@@ -165,7 +165,9 @@ steps:
       that has_secure_password reads directly only when unpeppered; the task
       aborts if Devise.pepper is set. Because Devise is gone in 6.0 a former
       pepper can't be introspected, so when Devise is absent the task aborts until
-      you confirm none was used with CONFIRM_NO_PEPPER=true. Peppered / SSO /
+      you confirm none was used with CONFIRM_NO_PEPPER=true. The check is skipped
+      when there are no passwords to copy (e.g. an empty spree_users table), so
+      new projects pass without the flag. Peppered / SSO /
       non-bcrypt installs keep a custom customer_class instead (see the 5.6-to-6.0
       upgrade guide) and skip this step.
 
@@ -760,3 +762,22 @@ steps:
       this step again.
 
       Idempotent.
+
+  - id: assign_upload_stores
+    name: "Record which store owns every uploaded file"
+    task: "spree:uploads:assign_stores"
+    notes: |
+      Spree 6.0 records the store that owns every uploaded file, so a file from
+      one store cannot be attached in another and storage can be measured and
+      cleaned up per store. New files get their store when they are uploaded;
+      this gives existing files the store of the record they are attached to.
+
+      Files attached in more than one store are listed and left unchanged for
+      you to resolve. Files attached to nothing keep no store and are left
+      alone: the daily purge of never-attached uploads
+      (Spree::Uploads::PurgeUnattachedJob, see the upgrade guide) only
+      deletes files that belong to a store.
+
+      Run AFTER the steps that create or move attachments (media, categories,
+      returns), so their files are covered. Idempotent — files that already
+      have a store are skipped.

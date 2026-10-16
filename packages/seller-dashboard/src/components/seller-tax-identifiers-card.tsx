@@ -37,7 +37,7 @@ export function SellerTaxIdentifiersCard() {
     onSuccess: refresh,
   })
   const remove = useMutation({
-    mutationFn: (id: string) => sellerClient().taxIdentifiers.remove(id),
+    mutationFn: (id: string) => sellerClient().taxIdentifiers.delete(id),
     onSuccess: refresh,
   })
   const validate = useMutation({

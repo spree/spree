@@ -85,6 +85,13 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
         subject
         expect(json_response['permission_keys']).to eq(%w[read_orders write_orders])
       end
+
+      it 'names subjects by their short name, never the Ruby class' do
+        subject
+        subjects = json_response['permissions'].flat_map { |rule| rule['subjects'] }
+        expect(subjects).to include('order', 'country')
+        expect(subjects.grep(/::/)).to be_empty
+      end
     end
 
     context 'as a staffer with different roles on different stores' do
@@ -178,7 +185,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
 
     # The admin-UI language is a client concern (the dashboard ships its own
     # locale bundles), so the API stores whatever code the client sends without
-    # validating it against the backend's Rails/SpreeI18n locales.
+    # validating it against the backend's Rails/Spree locales.
     context 'with a locale code' do
       let(:params) { { selected_locale: 'pl' } }
 
@@ -198,7 +205,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
           content_type: 'image/jpeg'
         )
       end
-      let(:params) { { avatar: blob.signed_id } }
+      let(:params) { { avatar_signed_id: blob.signed_id } }
 
       it 'attaches the avatar and returns its url' do
         subject
@@ -216,7 +223,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
           content_type: 'image/svg+xml'
         )
       end
-      let(:params) { { avatar: blob.signed_id } }
+      let(:params) { { avatar_signed_id: blob.signed_id } }
 
       it 'rejects the upload with a validation error' do
         subject
@@ -233,7 +240,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
           content_type: 'image/jpeg'
         )
       end
-      let(:params) { { avatar: nil } }
+      let(:params) { { avatar_signed_id: nil } }
 
       it 'purges the avatar' do
         subject

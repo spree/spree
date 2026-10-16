@@ -14,8 +14,6 @@ module Spree
       let(:line_item) { build(:line_item, variant: variant, price: variant.amount_in(variant.cost_currency)) }
       let(:variant) { create(:variant, price: 2) }
 
-      let(:inventory_unit1) {  }
-
       let(:normal_package) do
         iu = build(:fulfillment_item, quantity: 2, variant: variant, line_item: line_item)
         build(:stock_package, contents: [::Spree::Stock::ContentItem.new(iu)])

@@ -181,8 +181,8 @@ describe Spree::OrderMailer, type: :mailer do
       body = described_class.confirm_email(order).text_part.body.to_s
 
       expect(body).to match(/Free Shipping -\$5\.00/)
-      expect(body).to match(/#{Spree.t(:shipping)} .*\$5\.00/)
-      expect(body).not_to match(/#{Spree.t(:shipping)} .*\$0\.00/)
+      expect(body).to match(/#{I18n.t('spree.shipping')} .*\$5\.00/)
+      expect(body).not_to match(/#{I18n.t('spree.shipping')} .*\$0\.00/)
     end
   end
 

@@ -10,9 +10,9 @@ const products = await client.products.list({
   page: 1,
   limit: 25,
   sort: 'price',
-  name_cont: 'shirt',
-  price_gte: 20,
-  price_lte: 100,
+  search: 'shirt',
+  price_gte: '20',
+  price_lte: '100',
   with_option_value_ids: ['optval_abc', 'optval_def'],
   expand: ['variants', 'media'],
 })

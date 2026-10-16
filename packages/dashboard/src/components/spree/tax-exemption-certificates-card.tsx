@@ -596,6 +596,7 @@ function CertificateSheet({
                       }}
                       onChange={(next) => field.onChange(next.signedId)}
                       accept="application/pdf,image/png,image/jpeg"
+                      private
                     />
                   )}
                 />

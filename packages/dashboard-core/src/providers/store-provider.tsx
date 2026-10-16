@@ -1,4 +1,4 @@
-import type { Store } from '@spree/admin-sdk'
+import type { CurrencyCode, LocaleCode, Store } from '@spree/admin-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, type ReactNode, useContext, useEffect, useRef } from 'react'
 import { adminClient } from '../client'
@@ -19,15 +19,15 @@ interface StoreContextValue {
   store: Store | null
   storeId: string
   isLoading: boolean
-  currencies: string[]
+  currencies: CurrencyCode[]
   /** Locales this store is configured to translate content into. */
-  locales: string[]
+  locales: LocaleCode[]
   /** Every locale a merchant may translate content into — the full canonical
    *  set, independent of which locales the store currently uses. Drives locale
    *  pickers so a new locale can always be added. */
-  availableLocales: string[]
-  defaultCurrency: string
-  defaultLocale: string
+  availableLocales: LocaleCode[]
+  defaultCurrency: CurrencyCode
+  defaultLocale: LocaleCode
   /** ISO country the store sells from — used to pre-fill new address forms. */
   defaultCountry: string
   /** IANA timezone for the store (e.g. `Europe/Berlin`). Falls back to the
@@ -64,7 +64,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   // that path already owns the locale via `switchAdminLocale`, and re-applying
   // would race that PATCH and could reload before it lands. Tracking the
   // storeId it last ran for re-arms it per store, so a multi-store admin still
-  // inherits each store's preferred_admin_locale.
+  // inherits each store's admin_locale.
   const localeFallbackStoreRef = useRef<string | null>(null)
 
   const query = useQuery({
@@ -83,7 +83,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
 
     localeFallbackStoreRef.current = storeId
     reconcileStoreDefaultLocale(
-      store.preferred_admin_locale,
+      store.admin_locale,
       storeId,
       accountLocaleRef.current,
       coreLocaleCodes(),
@@ -99,7 +99,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   // A store's zone preference defaults to the host app's `Time.zone.name`,
   // which may be a Rails name ("Eastern Time (US & Canada)") that Intl and
   // date-fns-tz reject — falling back keeps every date control working.
-  const timezone = resolveTimezone(store?.preferred_timezone)
+  const timezone = resolveTimezone(store?.timezone)
 
   return (
     <StoreContext.Provider

@@ -3,9 +3,9 @@ import type {
   Customer,
   Promotion,
   PromotionAction,
-  PromotionActionDraft,
+  PromotionActionDraftParams,
   PromotionRule,
-  PromotionRuleDraft,
+  PromotionRuleDraftParams,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
@@ -34,6 +34,7 @@ import {
   Subject,
   typeDescription,
   typeLabel,
+  useCountryDisplayName,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -73,6 +74,7 @@ import {
 } from '@spree/dashboard-ui'
 import { optionValueLabel } from '../../../hooks/use-option-types'
 import {
+  usePromotionActionCalculators,
   usePromotionActionTypes,
   usePromotionCouponCodes,
   usePromotionRuleTypes,
@@ -125,8 +127,8 @@ export interface PromotionFormPayload {
   expires_at: string | null
   usage_limit: number | null
   match_policy: MatchPolicy
-  rules: PromotionRuleDraft[]
-  actions: PromotionActionDraft[]
+  rules: PromotionRuleDraftParams[]
+  actions: PromotionActionDraftParams[]
   /** Only sent in create mode — server rejects these on update. */
   kind?: PromotionKind
   code?: string | null
@@ -852,12 +854,13 @@ function RuleRow({
 
 function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   const { t } = useTranslation()
+  const countryName = useCountryDisplayName()
   const parts: string[] = []
   const products = nameList(draft.products)
   const categories = nameList(draft.categories)
   const customers = nameList(draft.customers, customerLabel)
   const groups = nameList(draft.customer_groups)
-  const countries = nameList(draft.countries)
+  const countries = nameList(draft.countries, countryName)
   const channels = nameList(draft.channels)
   const markets = nameList(draft.markets)
   const optionValues = nameList(draft.option_values, optionValueLabel)
@@ -888,9 +891,8 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
 
   // Fallback for preference-only rules (Currency, ItemTotal, FirstOrder,
   // OneUsePerUser, UserLoggedIn, OptionValue, …) — these don't carry
-  // embedded records, just a `preferences` hash. Walk the rule's
-  // preference schema and format each value so drafts that haven't been
-  // saved yet still get a useful row preview.
+  // embedded records, just a `preferences` hash. Format each value so
+  // drafts that haven't been saved yet still get a useful row preview.
   const prefSummary = formatPreferencesSummary(draft)
   if (prefSummary) parts.push(prefSummary)
 
@@ -912,15 +914,13 @@ const RULE_PREFS_SHOWN_ELSEWHERE = new Set([
 function formatPreferencesSummary(draft: PromotionRuleFormDraft): string | null {
   const prefs = draft.preferences
   if (!prefs) return null
-  const schema = draft.preference_schema ?? []
 
   const pairs: string[] = []
-  for (const field of schema) {
-    if (RULE_PREFS_SHOWN_ELSEWHERE.has(field.key)) continue
-    const value = prefs[field.key]
+  for (const [key, value] of Object.entries(prefs)) {
+    if (RULE_PREFS_SHOWN_ELSEWHERE.has(key)) continue
     if (value === null || value === undefined || value === '') continue
     if (Array.isArray(value) && value.length === 0) continue
-    pairs.push(`${humanize(field.key)}: ${formatPreferenceValue(value)}`)
+    pairs.push(`${humanize(key)}: ${formatPreferenceValue(value)}`)
   }
   return pairs.length > 0 ? pairs.join(', ') : null
 }
@@ -1073,7 +1073,9 @@ function RuleEditSheet({
 function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
   const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
-  const hasPreferences = !!draft.preference_schema?.length
+  const { data: typesData } = usePromotionRuleTypes()
+  const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
+  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -1088,7 +1090,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContex
       saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
         <p className="text-sm text-muted-foreground">
           {t('admin.promotions.rule_edit.no_options')}
@@ -1253,13 +1255,19 @@ function ActionRow({
 function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
   const { t } = useTranslation()
   const parts: string[] = []
-  // dashboard-ui is headless, so the localized calculator name is resolved
-  // here and handed to the formatter rather than looked up inside it.
+  const { data: calculatorsData } = usePromotionActionCalculators(
+    draft.calculator ? draft.type : undefined,
+  )
+  // dashboard-ui is headless, so the localized calculator name and the
+  // calculator's schema are resolved here and handed to the formatter.
+  const calculatorType = draft.calculator?.type
   const calc = formatCalculatorSummary(
-    draft.calculator?.type
+    calculatorType
       ? {
           ...draft.calculator,
-          label: typeLabel('calculator', draft.calculator.type, draft.calculator.label),
+          label: typeLabel('calculator', calculatorType, draft.calculator?.label),
+          schema: calculatorsData?.data.find((calculator) => calculator.type === calculatorType)
+            ?.schema,
         }
       : draft.calculator,
   )
@@ -1364,7 +1372,9 @@ function ActionEditSheet({
 function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorContext) {
   const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
-  const hasPreferences = !!draft.preference_schema?.length
+  const { data: typesData } = usePromotionActionTypes()
+  const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
+  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -1379,7 +1389,7 @@ function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorCo
       saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
         <p className="text-sm text-muted-foreground">
           {t('admin.promotions.action_edit.no_options')}

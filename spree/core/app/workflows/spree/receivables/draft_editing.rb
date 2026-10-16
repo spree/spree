@@ -24,7 +24,7 @@ module Spree
       def ensure_editable
         return if receivable.editable?
 
-        failure(receivable, Spree.t("#{receivable.event_prefix}.errors.not_editable"))
+        failure(receivable, I18n.t("spree.#{receivable.event_prefix}.errors.not_editable"))
       end
 
       # A whole-list replacement rather than a per-line diff: a draft's lines

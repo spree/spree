@@ -3,10 +3,6 @@ require 'spec_helper'
 RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
   subject { Spree::Calculator::Shipping::DigitalDelivery.new }
 
-  it 'has a description for the class' do
-    expect(Spree::Calculator::Shipping::DigitalDelivery).to respond_to(:description)
-  end
-
   describe '#compute_package' do
     it 'quotes the package currency from the per-currency amounts' do
       subject.preferred_amounts = { 'EUR' => 3.5 }

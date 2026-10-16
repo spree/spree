@@ -232,7 +232,7 @@ function EditTaxRateSheet({
     if (taxRate) {
       form.reset({
         name: taxRate.name,
-        amount_percentage: taxRate.amount_percentage ?? 0,
+        rate_percent: taxRate.rate_percent ?? '0',
         tax_category_id: taxRate.tax_category_id ?? '',
         country_code: taxRate.country_code ?? '',
         state_code: taxRate.state_code ?? '',
@@ -319,26 +319,24 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="amount_percentage">
-          {t('admin.fields.tax_rate.amount.label')}
-        </FieldLabel>
+        <FieldLabel htmlFor="rate_percent">{t('admin.fields.tax_rate.amount.label')}</FieldLabel>
         <InputGroup>
           <InputGroupInput
-            id="amount_percentage"
+            id="rate_percent"
             type="number"
-            step="0.01"
+            step="any"
             min="0"
             max="100"
             inputMode="decimal"
-            aria-invalid={!!errors.amount_percentage || undefined}
-            {...form.register('amount_percentage')}
+            aria-invalid={!!errors.rate_percent || undefined}
+            {...form.register('rate_percent')}
           />
           <InputGroupAddon align="inline-end">
             <InputGroupText>%</InputGroupText>
           </InputGroupAddon>
         </InputGroup>
         <FieldDescription>{t('admin.fields.tax_rate.amount.help')}</FieldDescription>
-        <FieldError errors={[errors.amount_percentage]} />
+        <FieldError errors={[errors.rate_percent]} />
       </Field>
 
       <Field>

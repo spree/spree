@@ -30,10 +30,44 @@ module Spree
     before_save :clear_disabled_state_when_reactivated
 
     self.whitelisted_ransackable_attributes = %w[name url active]
+    search_by :url
 
     scope :active, -> { where(active: true) }
     scope :inactive, -> { where(active: false) }
     scope :enabled, -> { active.where(disabled_at: nil) }
+
+    # Whether +url+ targets a host the operator trusts despite it resolving to
+    # a private address — e.g. a storefront Service in the same Kubernetes
+    # cluster. Set via +Spree::Api::Config.webhooks_allowed_internal_hosts+
+    # (SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS): an entry matches that exact
+    # host, or with a leading dot (".svc.cluster.local") any host under it.
+    # Matching is case-insensitive. Operator config only, so a store admin
+    # can never point a webhook at an internal address.
+    #
+    # @param url [String]
+    # @return [Boolean]
+    def self.allowed_internal_host?(url)
+      host = URI.parse(url.to_s).hostname&.downcase
+      return false if host.blank?
+
+      allowed_internal_hosts.any? do |entry|
+        entry.start_with?('.') ? host.end_with?(entry) : host == entry
+      end
+    rescue URI::InvalidURIError
+      false
+    end
+
+    # Spree::Api::Config only exists when spree_api is loaded; without it no
+    # webhook is ever delivered, so there is nothing to allow.
+    def self.allowed_internal_hosts
+      return [] unless defined?(Spree::Api::Config)
+
+      Array(Spree::Api::Config.webhooks_allowed_internal_hosts).filter_map do |entry|
+        entry = entry.to_s.strip.downcase
+        entry if entry.present? && entry != '.'
+      end
+    end
+    private_class_method :allowed_internal_hosts
 
     # Returns the plaintext `secret_key` only on the create response.
     #
@@ -165,6 +199,8 @@ module Spree
     end
 
     def url_must_not_resolve_to_private_ip
+      return if self.class.allowed_internal_host?(url)
+
       uri = URI.parse(url)
       blacklist = SsrfFilter::IPV4_BLACKLIST + SsrfFilter::IPV6_BLACKLIST
       addresses = Resolv.getaddresses(uri.host)

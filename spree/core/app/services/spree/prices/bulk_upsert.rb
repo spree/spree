@@ -44,9 +44,12 @@ module Spree
       #   (docs/plans/6.0-volume-pricing.md).
       def call(rows:)
         rows = Array(rows).map { |r| r.with_indifferent_access }
-        # Amounts are parsed once, here; everything below reads numbers.
         keyed = rows.select { |r| r[:variant_id].present? && r[:currency].present? }
-                    .map { |r| r.merge(amount: parse_amount(r[:amount]), compare_at_amount: parse_amount(r[:compare_at_amount])) }
+        unreadable = rows_with_malformed_amount(keyed)
+        return failure(nil, malformed_amounts: unreadable) if unreadable.any?
+
+        # Amounts are parsed once, here; everything below reads numbers.
+        keyed = keyed.map { |r| r.merge(amount: Spree::Money::Rounding.parse_decimal(r[:amount]), compare_at_amount: Spree::Money::Rounding.parse_decimal(r[:compare_at_amount])) }
         # Checked before anything is deduped: `row_key` coerces the quantity,
         # so two malformed rows would collapse into one and the batch would be
         # judged on a shape the caller never sent.
@@ -98,12 +101,13 @@ module Spree
             upsert_batch(base_rows, BASE_UNIQUE_BY)
           end
           upsert_batch(override_rows, OVERRIDE_UNIQUE_BY)
-          sweep(affected_keys, clear_rows)
+          cleared_variant_ids = sweep(affected_keys, clear_rows)
           # `upsert_all` and `delete_all` both skip AR callbacks, so the
           # `Price -> Variant -> Product` `touch:` chain never fires —
           # downstream caches (`cache_key_with_version`) would stay stale.
-          # Re-trigger the chain with one `.touch` per affected variant.
-          touch_variants(affected_keys.map { |k| k[0] }.uniq)
+          # A blank row clearing a rung that had no amount changes nothing,
+          # so only priced rows and cleared amounts touch their variant.
+          touch_variants((upsert_rows.map { |r| r[:variant_id].to_s } + cleared_variant_ids).uniq)
         end
 
         success(price_count: payload.length)
@@ -165,6 +169,18 @@ module Spree
         return raw if raw.is_a?(Integer)
 
         Integer(raw.to_s.strip, 10, exception: false)
+      end
+
+      # Rows whose amount is not a number or plain decimal text ("1,599.99",
+      # `false`), refused before a malformed value can read as "clear".
+      def rows_with_malformed_amount(rows)
+        rows.each_with_index.filter_map do |row, index|
+          Spree::Money::Rounding.parse_decimal(row[:amount])
+          Spree::Money::Rounding.parse_decimal(row[:compare_at_amount])
+          nil
+        rescue Spree::Money::InvalidFormat
+          { index: index }
+        end
       end
 
       # Rows pricing below zero. This path runs no model validations, so the
@@ -370,15 +386,6 @@ module Spree
         [row[:variant_id].to_s, row[:currency], row[:price_list_id].to_s]
       end
 
-      # Parses locale-aware decimal input ("1.234,56" in DE, "1,234.56"
-      # in en-US). Numeric values pass through; blank values become nil.
-      def parse_amount(value)
-        return nil if value.blank?
-        return value if value.is_a?(Numeric)
-
-        Spree::LocalizedNumber.parse(value)
-      end
-
       def sweep(affected_keys, clear_rows)
         cleared_keys = clear_rows.map { |r| row_key(r) }.to_set
         affected_set = affected_keys.to_set
@@ -392,16 +399,14 @@ module Spree
           )
           .pluck(:id, :variant_id, :currency, :price_list_id, :min_quantity, :amount)
 
-        doomed_ids = candidates.filter_map do |id, variant_id, currency, price_list_id, min_quantity, amount|
+        doomed = candidates.select do |_, variant_id, currency, price_list_id, min_quantity, amount|
           key = [variant_id.to_s, currency, price_list_id&.to_s, min_quantity]
-          next unless affected_set.include?(key)
-          next id if amount.nil?
-          next id if cleared_keys.include?(key)
-
-          nil
+          affected_set.include?(key) && (amount.nil? || cleared_keys.include?(key))
         end
 
-        Spree::Price.where(id: doomed_ids).delete_all if doomed_ids.any?
+        Spree::Price.where(id: doomed.map(&:first)).delete_all if doomed.any?
+
+        doomed.filter_map { |_, variant_id, *, amount| variant_id.to_s if amount }
       end
 
       # Bumps `updated_at` on the affected variants and their parent
@@ -410,15 +415,17 @@ module Spree
       # `Variant -> Product` `touch:` chains otherwise.
       #
       # We use `touch_all` rather than per-record `Variant#touch`: it bumps
-      # every affected row in a single UPDATE and skips AR callbacks, giving
-      # the cache bust without extra side effects.
+      # every affected row in a single UPDATE. It also skips the product's
+      # commit callbacks, so the search index, which stores prices, is
+      # refreshed here.
       def touch_variants(variant_ids)
         return if variant_ids.empty?
 
         variants = Spree::Variant.where(id: variant_ids)
-        product_ids = variants.pluck(:product_id).uniq
+        products = Spree::Product.where(id: variants.select(:product_id))
         variants.touch_all
-        Spree::Product.where(id: product_ids).touch_all if product_ids.any?
+        products.touch_all
+        products.find_each(&:enqueue_search_index)
       end
 
       # MySQL infers conflict targets from its own unique indexes and

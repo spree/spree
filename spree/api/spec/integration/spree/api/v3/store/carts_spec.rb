@@ -22,10 +22,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of results per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort order. Prefix with - for descending. Values: created_at, -created_at, updated_at, -updated_at'
-      parameter name: 'q[created_at_gt]', in: :query, type: :string, required: false,
-                description: 'Filter by created after date (ISO 8601)'
-      parameter name: 'q[updated_at_gt]', in: :query, type: :string, required: false,
-                description: 'Filter by updated after date (ISO 8601)'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (items, fulfillments, payments, discounts, billing_address, shipping_address, gift_card, payment_methods). Use "none" to skip associations.'
       parameter name: :fields, in: :query, type: :string, required: false,
@@ -73,25 +70,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer JWT token (optional - for authenticated customers)'
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          metadata: { type: :object, description: 'Write-only key-value metadata (Stripe-style).' },
-          items: {
-            type: :array,
-            description: 'Items to add to the cart on creation',
-            items: {
-              type: :object,
-              properties: {
-                variant_id: { type: :string, example: 'variant_abc123', description: 'Prefixed variant ID' },
-                quantity: { type: :integer, example: 2, description: 'Quantity (defaults to 1)' },
-                metadata: { type: :object, additionalProperties: true }
-              },
-              required: %w[variant_id]
-            }
-          }
-        }
-      }
+      request_body_for(required: false)
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
 
@@ -152,7 +131,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
           expect(data['number']).to eq(cart.number)
           expect(data['warnings']).to eq([])
           expect(data['fees'].map { |fee| fee['kind'] }).to contain_exactly('gift_wrap', 'duty')
-          expect(data['fee_total']).to eq('17.0')
+          expect(data['fee_total']).to eq('17.00')
         end
       end
 
@@ -203,36 +182,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       parameter name: 'x-spree-token', in: :header, type: :string, required: false
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'customer@example.com' },
-          customer_note: { type: :string, example: 'Leave at door' },
-          metadata: { type: :object, additionalProperties: true },
-          shipping_address_id: { type: :string, description: 'Existing address ID to use as shipping address', example: 'addr_abc123' },
-          billing_address_id: { type: :string, description: 'Existing address ID to use as billing address', example: 'addr_def456' },
-          billing_address: {
-            type: :object,
-            properties: {
-              first_name: { type: :string }, last_name: { type: :string },
-              address1: { type: :string }, address2: { type: :string },
-              city: { type: :string }, postal_code: { type: :string },
-              phone: { type: :string }, company: { type: :string },
-              country_code: { type: :string }, state_code: { type: :string }
-            }
-          },
-          shipping_address: {
-            type: :object,
-            properties: {
-              first_name: { type: :string }, last_name: { type: :string },
-              address1: { type: :string }, address2: { type: :string },
-              city: { type: :string }, postal_code: { type: :string },
-              phone: { type: :string }, company: { type: :string },
-              country_code: { type: :string }, state_code: { type: :string }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'cart updated' do
         let!(:order) { create(:cart_with_line_items, store: store, customer: user) }

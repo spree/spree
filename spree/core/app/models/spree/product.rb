@@ -40,8 +40,7 @@ module Spree
     publishes_lifecycle_events
     publishes_events :activated, :approved, :archived, :back_in_stock, :drafted, :out_of_stock, :proposed, :rejected
 
-    MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
-                          default_variant_id tax_category default_variant variant_for_images
+    MEMOIZED_METHODS = %w[total_on_hand default_variant_id tax_category default_variant variant_for_images
                           primary_category buy_box_variants resolved_delivery_profile
                           purchasable? in_stock? backorderable? digital?]
 
@@ -243,8 +242,6 @@ module Spree
     after_create :set_default_variant
 
     after_save :auto_promote_default_variant
-    after_save :run_touch_callbacks, if: :saved_changes?
-    after_touch :touch_categories
 
     after_commit :auto_match_collections, if: :eligible_for_collection_matching?
 
@@ -364,7 +361,21 @@ module Spree
       super(manual_ids | collections.automatic.ids)
     end
 
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id price]
+
+    # The default variant's base price in the current currency — what the
+    # product lists show — so a list can filter on it like a column.
+    ransacker :price, type: :decimal do |parent|
+      prices = Spree::Price.arel_table
+      Arel::Nodes::Grouping.new(
+        prices.project(prices[:amount]).
+          where(prices[:variant_id].eq(parent.table[:default_variant_id])).
+          where(prices[:currency].eq(Spree::Current.currency)).
+          where(prices[:price_list_id].eq(nil)).
+          where(prices[:deleted_at].eq(nil)).
+          take(1)
+      )
+    end
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
                                                    product_type product_categories option_types seller]
     # The storefront filters by tag, category and collection; every other hop
@@ -376,6 +387,12 @@ module Spree
                                              search in_stock out_of_stock with_option_value_ids
 
                                              ascend_by_price descend_by_price]
+    self.ransackable_scope_types = {
+      'in_taxon' => 'id', 'in_category' => 'id', 'in_collection' => 'id',
+      'in_categories' => { list: 'id' }, 'with_option_value_ids' => { list: 'id' },
+      'price_between' => %w[decimal decimal], 'price_lte' => 'decimal', 'price_gte' => 'decimal',
+      'ascend_by_price' => 'boolean', 'descend_by_price' => 'boolean'
+    }
 
     # All product-level convenience attributes delegate to the default variant —
     # one target, no branching. Reads resolve the existing default variant
@@ -691,12 +708,12 @@ module Spree
     # variant), reading preloaded associations to avoid an N+1.
     # @return [ActiveSupport::TimeWithZone, nil]
     def preorder_ships_at
-      candidates = has_variants? ? variants : [master]
+      candidates = has_variants? ? variants : [default_variant]
       candidates.select(&:preorder?).filter_map(&:preorder_ships_at).max
     end
 
     def discontinue!
-      self.discontinue_on = Time.current
+      write_publication_date(:discontinue_on, Time.current)
       self.status = 'archived'
       save(validate: false)
     end
@@ -994,23 +1011,6 @@ module Spree
       return if seller.store_id == store_id
 
       errors.add(:seller, :invalid)
-    end
-
-    def run_touch_callbacks
-      run_callbacks(:touch)
-    end
-
-    def category_and_ancestors
-      @category_and_ancestors ||= categories.map(&:self_and_ancestors).flatten.uniq
-    end
-
-    # Iterate through this product's categories and touch their timestamps in a batch
-    def touch_categories
-      if categories.any?
-        Spree::Products::TouchCategoriesJob.
-          set(wait: 5.seconds).
-          perform_later(category_and_ancestors.map(&:id))
-      end
     end
 
     def ensure_not_in_complete_orders

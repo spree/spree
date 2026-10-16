@@ -24,7 +24,7 @@ describe 'Payment' do
       let(:successful_response) do
         Spree::PaymentResponse.new(
           true,
-          Spree.t('store_credit_payment_method.successful_action', action: :cancel),
+          I18n.t('spree.store_credit_payment_method.successful_action', action: :cancel),
           {},
           authorization: payment.response_code
         )
@@ -33,7 +33,7 @@ describe 'Payment' do
       let(:failed_response) do
         Spree::PaymentResponse.new(
           false,
-          Spree.t('store_credit_payment_method.unable_to_find_for_action', action: :cancel,
+          I18n.t('spree.store_credit_payment_method.unable_to_find_for_action', action: :cancel,
                                                                            auth_code: payment.response_code),
           {},
           {}
@@ -47,7 +47,7 @@ describe 'Payment' do
 
       context 'cancels successfully' do
         it 'voids the payment', retry: 3 do
-          expect { subject }.to change(payment, :state).to('void')
+          expect { subject }.to change(payment, :status).to('void')
         end
       end
 
@@ -55,7 +55,7 @@ describe 'Payment' do
         it 'does not change the payment state' do
           expect(payment.payment_method).to receive(:cancel).with(payment.response_code, payment, refund: true) { failed_response }
           expect { subject }.to raise_error(Spree::Core::GatewayError)
-          expect(payment.reload.state).not_to eq 'void'
+          expect(payment.reload.status).not_to eq 'void'
         end
       end
     end

@@ -1,6 +1,16 @@
 import { expect, test } from '@playwright/test'
-import { FIXTURE_BULK_CHANNEL_NAME, login } from './helpers'
-import { createProduct, publishingCard, typeDescription } from './products-helpers'
+import {
+  FIXTURE_BULK_CATEGORY,
+  FIXTURE_BULK_CHANNEL_NAME,
+  FIXTURE_PROMO_TAXON,
+  login,
+} from './helpers'
+import {
+  categorizationCard,
+  createProduct,
+  publishingCard,
+  typeDescription,
+} from './products-helpers'
 
 test.describe('product edit', () => {
   test('creates a product and lands on the edit page', async ({ page }) => {
@@ -128,6 +138,39 @@ test.describe('product edit', () => {
     await expect(page.getByLabel(/^name$/i)).toHaveValue(updated)
   })
 
+  test('keeps picked categories when Escape dismisses the search', async ({ page }) => {
+    const creds = await login(page)
+    await createProduct(page, creds.store_id, `E2E Product Categories ${Date.now()}`)
+
+    const categoriesField = page
+      .locator('[data-slot="field"]')
+      .filter({ has: page.getByText('Categories', { exact: true }) })
+    const search = categoriesField.getByRole('combobox')
+    const chips = categoriesField.locator('[data-slot="combobox-chip"]')
+
+    // Picking a searched result closes the list, so the Escape that follows
+    // lands on a closed picker.
+    for (const category of [FIXTURE_PROMO_TAXON, FIXTURE_BULK_CATEGORY]) {
+      await search.fill(category)
+      await page
+        .getByRole('option', { name: new RegExp(category, 'i') })
+        .first()
+        .click()
+    }
+    await expect(chips).toHaveCount(2)
+    await expect(page.getByRole('listbox')).toBeHidden()
+    await expect(search).toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(chips).toHaveCount(2)
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 15_000,
+    })
+    await page.reload()
+    await expect(chips).toHaveCount(2)
+  })
+
   test('lists a product on an additional channel via the publishing card', async ({ page }) => {
     const creds = await login(page)
     const name = `E2E Product Publish ${Date.now()}`
@@ -214,5 +257,30 @@ test.describe('product edit', () => {
     await expect(
       publishingCard(page).getByText(new RegExp(FIXTURE_BULK_CHANNEL_NAME, 'i')),
     ).not.toBeVisible()
+  })
+
+  // The product tag vocabulary is fetched by its short name (`product`); a
+  // tag saved on one product is offered as an existing tag on the next.
+  test('tags a product and offers the tag on another product', async ({ page }) => {
+    const creds = await login(page)
+    const suffix = Date.now()
+    const tagName = `e2e-product-tag-${suffix}`
+
+    await createProduct(page, creds.store_id, `E2E Tagged A ${suffix}`)
+    const input = categorizationCard(page).getByPlaceholder(/type to add tags/i)
+    await input.fill(tagName)
+    await input.press('Enter')
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await createProduct(page, creds.store_id, `E2E Tagged B ${suffix}`)
+    await categorizationCard(page)
+      .getByPlaceholder(/type to add tags/i)
+      .fill(tagName)
+    await expect(page.getByRole('option', { name: tagName, exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 })

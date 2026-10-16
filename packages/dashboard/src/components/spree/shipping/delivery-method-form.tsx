@@ -5,13 +5,15 @@ import type {
   DeliveryRateProviderOption,
   DeliveryZone,
   IntegrationTypeDefinition,
-  PreferenceField,
   Product,
 } from '@spree/admin-sdk'
 import {
   type adminClient,
   Can,
   currencyParts,
+  defaultPreferences,
+  filterPreferenceSchema,
+  isCurrencyCode,
   PreferencesForm,
   ResourceMultiAutocomplete,
   Subject,
@@ -894,7 +896,7 @@ function ServiceOverridesSheet({
               <InputGroupInput
                 id={`service-markup-flat-${index}`}
                 type="number"
-                step="0.01"
+                step="any"
                 min="0"
                 placeholder="0"
                 {...form.register(`services.${index}.markup_flat`)}
@@ -909,7 +911,7 @@ function ServiceOverridesSheet({
               <InputGroupInput
                 id={`service-markup-percent-${index}`}
                 type="number"
-                step="0.01"
+                step="any"
                 min="0"
                 placeholder="0"
                 {...form.register(`services.${index}.markup_percent`)}
@@ -961,7 +963,10 @@ function CurrencyAmountsField({
   const extraCodes = Object.keys(amounts).join(',')
   const codes = useMemo(() => {
     const supported = currencies.length > 0 ? currencies : [defaultCurrency]
-    const extra = extraCodes.split(',').filter((code) => code && !supported.includes(code))
+    const extra = extraCodes
+      .split(',')
+      .filter(isCurrencyCode)
+      .filter((code) => !supported.includes(code))
     return [defaultCurrency, ...supported.filter((code) => code !== defaultCurrency), ...extra]
   }, [currencies, defaultCurrency, extraCodes])
 
@@ -1020,7 +1025,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
   const { data: calculators } = useDeliveryCalculators()
   const { data: taxCategories } = useTaxCategories()
   const selectedRateProvider = useSelectedRateProvider(form)
-  const calculatorType = form.watch('calculator_type')
+  const calculatorType = form.watch('calculator.type')
 
   // Carrier providers quote live rates, so the calculator's amount is never
   // read — the field is hidden rather than offering pricing that does nothing.
@@ -1033,15 +1038,19 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
     label: typeLabel('calculator', calculator.type, calculator.name),
   }))
   const selectedCalculator = (calculators?.data ?? []).find((c) => c.type === calculatorType)
-  const preferenceSchema = (selectedCalculator?.preference_schema ?? []) as PreferenceField[]
+  const preferenceSchema = selectedCalculator?.schema
 
   // An amount-based calculator prices per currency, so its amount fields are
   // rendered by the editor below rather than one-by-one from the schema. The
   // rest of its preferences (weight and total bounds) still render generically.
   const amountBased = AMOUNT_BASED_CALCULATORS.includes(calculatorType ?? '')
-  const genericSchema = amountBased
-    ? preferenceSchema.filter((field) => !CURRENCY_AMOUNT_KEYS.includes(field.key))
-    : preferenceSchema
+  const genericSchema = useMemo(
+    () =>
+      amountBased && preferenceSchema
+        ? filterPreferenceSchema(preferenceSchema, (key) => !CURRENCY_AMOUNT_KEYS.includes(key))
+        : preferenceSchema,
+    [amountBased, preferenceSchema],
+  )
 
   const taxCategoryOptions = [
     { value: '', label: t('admin.common.none') },
@@ -1057,13 +1066,24 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
               {t('admin.fields.delivery_method.calculator.label')}
             </FieldLabel>
             <Controller
-              name="calculator_type"
+              name="calculator.type"
               control={form.control}
               render={({ field }) => (
                 <Select
                   items={calculatorOptions}
                   value={field.value ?? ''}
-                  onValueChange={field.onChange}
+                  onValueChange={(next) => {
+                    field.onChange(next)
+                    // Each calculator declares its own settings, and the server
+                    // refuses any it does not, so a switch starts from the new
+                    // calculator's defaults rather than the old one's values.
+                    const schema = (calculators?.data ?? []).find((c) => c.type === next)?.schema
+                    form.setValue(
+                      'calculator.preferences',
+                      schema ? defaultPreferences(schema, { currency: defaultCurrency }) : {},
+                      { shouldDirty: true },
+                    )
+                  }}
                 >
                   <SelectTrigger id="calculator-type">
                     <SelectValue />
@@ -1081,7 +1101,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
           </Field>
 
           <Controller
-            name="calculator_preferences"
+            name="calculator.preferences"
             control={form.control}
             render={({ field }) => (
               <>
@@ -1111,7 +1131,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                 <InputGroupInput
                   id="markup_percent"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   placeholder="0"
                   {...form.register('markup_percent')}
@@ -1132,7 +1152,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                 <InputGroupInput
                   id="markup_flat"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   placeholder="0"
                   {...form.register('markup_flat')}
@@ -1312,13 +1332,11 @@ function ConditionRuleRow({
   const productBacked = ruleType?.association_fields?.includes('product_ids') ?? false
   // Channel ids ride in preferences rather than an association field, but a
   // bare id array is unusable as a text input — it needs the same picker.
-  const channelBacked = (ruleType?.preference_schema ?? []).some(
-    (preference) => preference.key === 'channel_ids',
-  )
+  const channelBacked = Boolean(ruleType?.schema?.properties?.channel_ids)
   const label = ruleType
     ? typeLabel('delivery_method_rule', ruleType.type, ruleType.name)
     : fallbackLabel
-  const schema = ruleType?.preference_schema ?? []
+  const schema = ruleType?.schema
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">

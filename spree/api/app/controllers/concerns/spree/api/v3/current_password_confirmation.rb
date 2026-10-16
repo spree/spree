@@ -39,7 +39,7 @@ module Spree
         def render_current_password_invalid
           render_error(
             code: ErrorHandler::ERROR_CODES[:current_password_invalid],
-            message: Spree.t(:current_password_invalid, scope: :api),
+            message: I18n.t('spree.api.current_password_invalid'),
             status: :unprocessable_content
           )
         end

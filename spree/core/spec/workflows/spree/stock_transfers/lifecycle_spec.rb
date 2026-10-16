@@ -85,7 +85,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = Spree::StockTransfers::MarkReady.call(stock_transfer: transfer.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.not_draft'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.not_draft'))
     end
   end
 
@@ -137,7 +137,7 @@ describe 'stock transfer lifecycle', type: :model do
 
       expect(result).to be_failure
       expect(result.error.to_s).to eq(
-        Spree.t('stock_transfer.errors.variants_unavailable', stock: source.name)
+        I18n.t('spree.stock_transfer.errors.variants_unavailable', stock: source.name)
       )
       expect(source_on_hand).to eq(4)
     end
@@ -247,7 +247,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = receive([{ item: line, quantity_accepted: 4 }, { item: line, quantity_accepted: 6 }])
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.repeated_item', variant: line.variant_name))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.repeated_item', variant: line.variant_name))
       expect(destination_on_hand).to eq(0)
       expect(line.quantity_received).to eq(0)
     end
@@ -256,7 +256,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = receive([{ item: line, quantity_accepted: 0 }])
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.no_items_received'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.no_items_received'))
     end
 
     it 'refuses a line belonging to another transfer' do
@@ -265,7 +265,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = receive([{ item: other_item, quantity_accepted: 1 }])
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.item_not_on_document'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.item_not_on_document'))
     end
 
     it 'refuses a transfer that is not on the road' do
@@ -274,7 +274,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = Spree::StockTransfers::Receive.call(stock_transfer: draft)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.not_in_transit'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.not_in_transit'))
     end
   end
 
@@ -301,7 +301,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = Spree::StockTransfers::Close.call(stock_transfer: transfer.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.not_partially_received'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.not_partially_received'))
     end
   end
 
@@ -323,7 +323,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = Spree::StockTransfers::MarkDraft.call(stock_transfer: transfer.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.not_ready_to_ship'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.not_ready_to_ship'))
     end
   end
 
@@ -357,7 +357,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = Spree::StockTransfers::Cancel.call(stock_transfer: transfer.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.in_transit_resolution_required'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.in_transit_resolution_required'))
       expect(transfer.reload).to be_in_transit
     end
 
@@ -408,7 +408,7 @@ describe 'stock transfer lifecycle', type: :model do
       result = Spree::StockTransfers::Cancel.call(stock_transfer: transfer.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.already_closed'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.already_closed'))
     end
   end
 
@@ -434,7 +434,7 @@ describe 'stock transfer lifecycle', type: :model do
                                                   attributes: { reference: 'too late' })
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.not_editable'))
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.not_editable'))
     end
   end
 end

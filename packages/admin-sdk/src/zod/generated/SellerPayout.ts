@@ -5,7 +5,6 @@ export const SellerPayoutSchema = z.object({
   id: z.string(),
   status: z.string(),
   currency: z.string(),
-  provider: z.string(),
   reference: z.string().nullable(),
   metadata: z.unknown(),
   period_start: z.string().nullable(),
@@ -13,10 +12,10 @@ export const SellerPayoutSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   amount: z.string(),
-  display_amount: z.string(),
   seller_id: z.string(),
   seller_name: z.string().nullable(),
   transfers_count: z.number(),
+  provider: z.string(),
 });
 
 export type SellerPayout = z.infer<typeof SellerPayoutSchema>;

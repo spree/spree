@@ -1,0 +1,15 @@
+---
+km:
+  spree:
+    api:
+      cannot_delete: "%{model} មិនអាចលុបបានទេ"
+      current_password_invalid: ពាក្យសម្ងាត់បច្ចុប្បន្នមិនត្រឹមត្រូវ ឬបាត់
+      newsletter_verification_token_invalid: Token ផ្ទៀងផ្ទាត់ព្រឹត្តិបត្រព័ត៌មានមិនត្រឹមត្រូវ ឬផុតកំណត់។
+      password_reset_requested: ប្រសិនបើមានគណនីសម្រាប់អ៊ីមែលនោះ ការណែនាំកំណត់ពាក្យសម្ងាត់ឡើងវិញត្រូវបានផ្ញើ។
+      password_reset_token_invalid: Token កំណត់ពាក្យសម្ងាត់ឡើងវិញមិនត្រឹមត្រូវ ឬផុតកំណត់។
+      record_not_found: រកមិនឃើញ %{model} ទេ
+      unauthorized: អ្នកមិនមានសិទ្ធិធ្វើសកម្មភាពនោះទេ។
+      v3:
+        payments:
+          method_unavailable: វិធីបង់ប្រាក់នេះមិនមានសម្រាប់ការបញ្ជាទិញនេះទេ។
+          session_required: វិធីបង់ប្រាក់នេះតម្រូវឱ្យមាន payment session។ សូមប្រើ endpoint payment sessions ជំនួសវិញ។

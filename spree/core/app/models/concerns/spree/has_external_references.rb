@@ -11,13 +11,14 @@ module Spree
       # Scope-friendly so controllers can chain it onto an already store-scoped
       # relation: `current_store.products.with_external_id('erp', 'MAT-100')`.
       # Scoping the lookup to the store is the caller's job, exactly as with any
-      # other id coming off a request.
+      # other id coming off a request. A subquery rather than a join, so a
+      # relation that also preloads `external_references` still loads every
+      # key, not only the matched one.
       scope :with_external_id, lambda { |system, external_id|
-        joins(:external_references).where(
-          spree_external_references: {
-            system: Spree::ExternalReference.normalize_system(system),
-            external_id: external_id.to_s.strip
-          }
+        where(
+          id: Spree::ExternalReference.for_system(system).
+            where(resource_type: polymorphic_name, external_id: external_id.to_s.strip).
+            select(:resource_id)
         )
       }
     end

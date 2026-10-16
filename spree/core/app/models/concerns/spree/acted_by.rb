@@ -158,7 +158,7 @@ module Spree
           next if value.blank? || Spree.actor_classes.include?(value)
 
           errors.add(type_column, :unregistered_actor,
-                     message: Spree.t('errors.messages.unregistered_actor'))
+                     message: I18n.t('spree.errors.messages.unregistered_actor'))
         end
       end
 

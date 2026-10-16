@@ -8,9 +8,7 @@ module Spree
       # their order history shows them — with the per-seller orders nested
       # inside it, each carrying its own items, delivery and tracking.
       class OrderGroupSerializer < BaseSerializer
-        typelize number: :string, email: [:string, nullable: true], currency: :string,
-                 total: [:string, nullable: true], display_total: [:string, nullable: true],
-                 item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
+        typelize number: :string, email: [:string, nullable: true], currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
                  payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
                  completed_at: [:string, nullable: true],
@@ -18,7 +16,11 @@ module Spree
 
         attributes :number, :email, :currency
 
-        attributes total: :string, display_total: :string, item_total: :string, display_item_total: :string
+        # Every figure is rolled up from the children, never prorated back
+        # down. The payments are the group's own: a split checkout pays once,
+        # against the group, so a child holds none.
+        include Spree::Api::V3::PurchaseSummary
+
         # Rolled up across the children rather than stored, so it can never
         # disagree with the orders it describes.
         attributes :fulfillment_status, :payment_status
@@ -29,6 +31,12 @@ module Spree
 
         one :billing_address, resource: proc { Spree.api.address_serializer }
         one :shipping_address, resource: proc { Spree.api.address_serializer }
+
+        # The card itself is deliberately not nested here — the split copies it
+        # onto every child, so it is already in the payload, and a group this
+        # deep pushes the generated Zod schema past what TypeScript will
+        # serialize into a declaration file. `gift_card_total` is the figure a
+        # summary needs, and only the group can answer it.
 
         # The whole point of the group: the customer sees one purchase, and the
         # seller orders inside it are how it will arrive.

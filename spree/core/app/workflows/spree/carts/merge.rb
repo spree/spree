@@ -42,7 +42,7 @@ module Spree
       def ensure_matching_currency
         return if other_cart.currency == cart.currency
 
-        failure(cart, Spree.t('errors.messages.cart_currency_mismatch'))
+        failure(cart, I18n.t('spree.errors.messages.cart_currency_mismatch'))
       end
 
       # A matching item absorbs the quantity; everything else is re-pointed

@@ -539,7 +539,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(json_response['coupon_code']).to be_nil
         expect(json_response['warnings']).to contain_exactly(
-          'code' => 'coupon_code_unavailable', 'message' => Spree.t(:coupon_code_unavailable)
+          'code' => 'coupon_code_unavailable', 'message' => I18n.t('spree.coupon_code_unavailable')
         )
       end
     end
@@ -597,8 +597,9 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
+        # The field keeps its 5.6 name until 6.1, so 5.6 storefronts still match it.
         expect(json_response['requirements']).to include(
-          a_hash_including('step' => 'delivery', 'field' => 'delivery_method')
+          a_hash_including('step' => 'delivery', 'field' => 'shipping_method', 'code' => 'delivery_method_required')
         )
       end
 
@@ -710,7 +711,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
           service_name: Spree.private_storage_service_name
         )
 
-        patch :update, params: { id: order.prefixed_id, po_document: blob.signed_id }
+        patch :update, params: { id: order.prefixed_id, po_document_signed_id: blob.signed_id }
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.po_document).to be_attached
@@ -719,7 +720,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       # A tampered id must not surface as a 500.
       it 'refuses a tampered signed id' do
-        patch :update, params: { id: order.prefixed_id, po_document: 'not-a-signed-id' }
+        patch :update, params: { id: order.prefixed_id, po_document_signed_id: 'not-a-signed-id' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(order.reload.po_document).not_to be_attached
@@ -816,7 +817,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
         expect(json_response['requirements']).to include(
-          a_hash_including('step' => 'delivery', 'field' => 'delivery_method')
+          a_hash_including('step' => 'delivery', 'code' => 'delivery_method_required')
         )
       end
     end

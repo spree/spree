@@ -7,6 +7,15 @@ module Spree
 
           skip_scope_check!
 
+          request_params :me do |body|
+            body.attribute :selected_locale, :string, example: 'de', description: 'The dashboard display language.'
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+            body.attribute :avatar_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `files.upload()` to set the avatar, or null to remove it. Omit it to keep the current photo.'
+          end
+
           before_action :require_current_user!
 
           # GET /api/v3/admin/me
@@ -33,8 +42,8 @@ module Spree
           # name, admin UI language, and avatar) — it operates on `current_user`
           # directly, so it needs no per-record authorization. Distinct from
           # PATCH /admin_users/:id, which is store-scoped staff management of
-          # *other* users. `avatar` accepts an ActiveStorage direct-upload
-          # signed id to set the photo, or `null` to remove it.
+          # *other* users. `avatar_signed_id` takes a signed id from
+          # POST /files to set the photo, or `null` to remove it.
           def update
             if current_user.update(permitted_params)
               render json: me_response
@@ -53,7 +62,7 @@ module Spree
 
             render_error(
               code: ERROR_CODES[:record_not_found],
-              message: Spree.t(:me_no_current_user),
+              message: I18n.t('spree.me_no_current_user'),
               status: :not_found
             )
           end
@@ -70,7 +79,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:selected_locale, :first_name, :last_name, :avatar)
+            params.permit(*declared_permitted_attributes)
           end
 
           def me_response

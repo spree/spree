@@ -1,0 +1,37 @@
+---
+nb:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Tilbakestill passord
+        expiry_notice: Denne lenken for tilbakestilling av passord utløper snart. Hvis du ikke ba om dette, trenger du ikke gjøre noe.
+        greeting: Hei %{name},
+        ignore_notice: Hvis du ikke ba om å tilbakestille passordet, kan du trygt se bort fra denne e-posten. Passordet ditt blir ikke endret.
+        instructions: Vi mottok en forespørsel om å tilbakestille passordet ditt. Klikk på knappen nedenfor for å velge et nytt passord.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hei,
+        ignore_disclaimer: Hvis du ikke ba om dette, kan du se bort fra denne e-posten.
+        instructions: Klikk på knappen nedenfor for å bekrefte e-postadressen din.
+        message_copy_link: 'Hvis knappen ikke fungerer, kopier og lim inn følgende lenke i nettleseren din:'
+        subject: Bekreft e-postadressen din
+        verify_email_address_link: Bekreft e-postadresse
+    order_mailer:
+      cancel_email:
+        instructions: Din ordre er KANSELLERT. Vennligst ta vare på denne informasjonen.
+        subject: Kansellering av ordre
+      confirm_email:
+        instructions: Vennligst se over og behold en kopi av denne informasjonen.
+        subject: Ordrebekreftelse
+      payment_link_email:
+        message: Klikk på knappen nedenfor for å betale for ordren din.
+        message_copy_link: 'Hvis knappen ikke fungerer, kopier og lim inn følgende lenke i nettleseren din:'
+        pay_for_order: Betal for ordre
+        subject: 'Betalingslenke for ordre #%{number}'
+      store_owner_notification_email:
+        heading: Ny ordre mottatt
+        instructions: Du har mottatt en ny ordre.
+        order_summary: Rekkefølge %{number} Sammendrag
+        subject: "%{store_name} mottatt en ny ordre "
+      subtotal: 'Delsum:'
+      total: 'Bestill totalt:'

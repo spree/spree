@@ -1,0 +1,15 @@
+---
+sk:
+  spree:
+    api:
+      cannot_delete: "%{model} nie je možné odstrániť"
+      current_password_invalid: Aktuálne heslo je neplatné alebo chýba
+      newsletter_verification_token_invalid: Overovací token noviniek je neplatný alebo vypršal.
+      password_reset_requested: Ak pre tento e-mail existuje účet, boli odoslané pokyny na obnovenie hesla.
+      password_reset_token_invalid: Token na obnovenie hesla je neplatný alebo vypršal.
+      record_not_found: "%{model} sa nenašiel"
+      unauthorized: Nemáte oprávnenie vykonať túto akciu.
+      v3:
+        payments:
+          method_unavailable: Tento spôsob platby nie je pre túto objednávku dostupný.
+          session_required: Tento spôsob platby vyžaduje platobnú reláciu. Použite namiesto toho koncový bod platobných relácií.

@@ -22,8 +22,8 @@ Use flat param keys — the SDK wraps them in `q[...]` automatically:
 ```typescript
 const products = await client.products.list({
   name_cont: 'shirt',                                     // Name contains
-  price_gte: 20,                                           // Min price
-  price_lte: 100,                                          // Max price
+  price_gte: '20',                                         // Min price
+  price_lte: '100',                                        // Max price
   with_option_value_ids: ['optval_abc', 'optval_def'], // By option values
   in_stock: true,                                          // In stock only
   search: 'blue shirt',                                     // Full-text search

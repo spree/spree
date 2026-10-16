@@ -11,7 +11,7 @@ We strongly advise upgrading Spree incrementally, rather than in one big go.
 
 ## How to upgrade
 
-An upgrade updates the server, migrates the database, runs the version's data backfills, and updates the `@spree/*` packages of your dashboard apps. Always read the guide for the version you're moving to first — it lists the behavior changes to review.
+An upgrade updates the server and the `@spree/*` packages of your dashboard apps, migrates the database, and runs the version's data backfills. Always read the guide for the version you're moving to first — it lists the behavior changes to review.
 
 <Tabs>
   <Tab title="Spree CLI">
@@ -19,22 +19,22 @@ An upgrade updates the server, migrates the database, runs the version's data ba
     spree upgrade
     ```
 
-    One command for every project: it pulls the new image, or updates the Spree gems on an [ejected](/developer/cli/quickstart#spree-eject) project, then runs migrations, data backfills and the package updates. See [`spree upgrade`](/developer/cli/quickstart#spree-upgrade) for its options.
+    One command for every project: it pulls the new image, or updates the Spree gems on an [ejected](/developer/cli/quickstart#spree-eject) project, then updates the packages and runs migrations and data backfills. See [`spree upgrade`](/developer/cli/quickstart#spree-upgrade) for its options.
   </Tab>
   <Tab title="Without CLI">
     Run from the project root:
 
     ```bash
-    cd server
-    bundle update $(bundle list --name-only | grep ^spree)
-    bin/rails spree:install:migrations db:migrate
-    bin/rails spree:upgrade
-    cd ..
+    (cd server && bundle update $(bundle list --name-only | grep ^spree))
 
     # The project root and each dashboard app have their own package.json
     pnpm update "@spree/*"
     (cd apps/dashboard && pnpm update "@spree/*")
     (cd apps/seller-dashboard && pnpm update "@spree/*")
+
+    cd server
+    bin/rails spree:install:migrations db:migrate
+    bin/rails spree:upgrade
     ```
 
     On npm or Yarn, run `npm update` or `yarn upgrade` instead, naming each `@spree/*` package from that `package.json` (they do not accept the `"@spree/*"` pattern).

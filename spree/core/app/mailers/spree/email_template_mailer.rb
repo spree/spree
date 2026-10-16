@@ -11,14 +11,17 @@ module Spree
     # @param record_id [String, nil] the record to build sample data from
     # @param email_key [String, nil] for the layout or a partial, the email to show it in
     # @param branding [Hash] unsaved branding values
-    def test_email(store, recipient, key, locale: nil, subject: nil, body: nil, record_id: nil, email_key: nil, branding: {})
+    # @param mailer_logo_signed_id [String, nil] the signed id of an unsaved, uploaded email logo
+    # @param mailer_logo_cleared [Boolean] whether the email logo is sent as removed
+    def test_email(store, recipient, key, locale: nil, subject: nil, body: nil, record_id: nil, email_key: nil, branding: {},
+                   mailer_logo_signed_id: nil, mailer_logo_cleared: false)
       @current_store = store
       email = Spree::EmailTemplates::Preview.new(
         store: store, key: key, locale: locale, subject: subject, body: body, record_id: record_id, email_key: email_key,
-        branding: branding
+        branding: branding, mailer_logo_signed_id: mailer_logo_signed_id, mailer_logo_cleared: mailer_logo_cleared
       ).call
 
-      mail(to: recipient, subject: Spree.t('email_templates.test_email_subject', subject: email.subject)) do |format|
+      mail(to: recipient, subject: I18n.t('spree.email_templates.test_email_subject', subject: email.subject)) do |format|
         format.text { render plain: email.text, layout: false }
         format.html { render html: email.html.html_safe, layout: false }
       end

@@ -80,7 +80,7 @@ module Spree
         # which raises before the controller hook fires and yields 403.
         def destroy
           if @resource.respond_to?(:can_be_deleted?) && !@resource.can_be_deleted?
-            message = Spree.t(:cannot_delete, scope: 'api', model: @resource.class.model_name.human)
+            message = I18n.t('spree.api.cannot_delete', model: @resource.class.model_name.human)
             return render_error(
               code: ERROR_CODES[:validation_error],
               message: message,
@@ -95,6 +95,18 @@ module Spree
         end
 
         protected
+
+        # Runs the block's assignments and saves the resource as one unit:
+        # assigning a has_one (a calculator, say) on a saved record writes it
+        # at once, so anything refused afterwards rolls that back too.
+        #
+        # @return [Boolean] whether the resource was saved
+        def save_atomically
+          model_class.transaction do
+            yield
+            @resource.save || raise(ActiveRecord::Rollback)
+          end || false
+        end
 
         def authenticate_request!
           raise NotImplementedError, "#{self.class} must implement authenticate_request!"
@@ -272,6 +284,32 @@ module Spree
           nil
         end
 
+        # Whether this endpoint's list filters through Ransack on
+        # {#model_class}. An index that ignores `q`, or whose model depends on
+        # the request, has no filter table to publish.
+        #
+        # @return [Boolean]
+        def filterable?
+          true
+        end
+
+        # Sort keys this endpoint accepts beyond the model's sortable
+        # attributes, for a controller that sorts outside Ransack.
+        #
+        # @return [Array<String>]
+        def additional_sort_fields
+          []
+        end
+
+        # Whether this endpoint also filters and sorts on the store's
+        # searchable custom fields (`cf_<namespace>_<key>`), which are store
+        # data and so cannot be listed in the contract.
+        #
+        # @return [Boolean]
+        def custom_field_filters?
+          false
+        end
+
         # Override in subclass to disable distinct (e.g., for custom sorting with computed columns)
         # @return [Boolean] whether to apply distinct to the collection
         def collection_distinct?
@@ -297,6 +335,7 @@ module Spree
         def ransack_params
           rp = params[:q]&.to_unsafe_h || params[:q] || {}
           rp = decode_prefixed_id_predicates(rp)
+          rp = decode_api_type_predicates(rp)
           sort_value = sort_param
 
           if sort_value.present?
@@ -326,6 +365,60 @@ module Spree
                           else
                             value
                           end
+          end
+        end
+
+        # Filters on a type column take the same shorthand responses carry
+        # (`type_eq=orders`, `receivable_type_eq=purchase_order`), translated
+        # here to the class name the column stores. Only the model's own STI
+        # column and its polymorphic `*_type` columns are translated; any other
+        # `*_type` attribute (`media_type`, `key_type`) is a plain value.
+        RANSACK_TYPE_PREDICATE_RE = /\A(?<attribute>(?:\w+_)?type)_(?:eq|not_eq|in|not_in)\z/.freeze
+        def decode_api_type_predicates(hash)
+          return hash unless hash.is_a?(Hash)
+
+          hash.each_with_object({}) do |(key, value), result|
+            resolver = api_type_resolver(RANSACK_TYPE_PREDICATE_RE.match(key.to_s)&.[](:attribute))
+            result[key] = if resolver
+                            resolve_api_type_values(value, resolver)
+                          elsif value.is_a?(Hash)
+                            decode_api_type_predicates(value)
+                          else
+                            value
+                          end
+          end
+        end
+
+        # A scalar stays a scalar; a list — including the indexed form
+        # (`type_in[0]=orders`) that arrives as a hash — becomes an array.
+        def resolve_api_type_values(value, resolver)
+          case value
+          when Hash, Array then (value.is_a?(Hash) ? value.values : value).map { |entry| resolve_api_type_values(entry, resolver) }
+          else resolver.call(value.to_s) || value
+          end
+        end
+
+        # A `*type` column of {#model_class}, or of a model it reaches through
+        # its associations (`payment_method_type`), as the filter tables publish.
+        #
+        # @param attribute [String, nil]
+        # @return [Proc, nil] shorthand → stored class name
+        def api_type_resolver(attribute, model = model_class, depth = 0)
+          return if attribute.nil? || !model.respond_to?(:api_type_resolver)
+
+          model.api_type_resolver(attribute) || begin
+            return if depth >= Spree::Api::V3::FilterTable::MAX_DEPTH
+
+            model.reflect_on_all_associations.each do |reflection|
+              next if reflection.polymorphic? || !attribute.start_with?("#{reflection.name}_")
+
+              resolver = api_type_resolver(attribute.delete_prefix("#{reflection.name}_"), reflection.klass, depth + 1)
+              return resolver if resolver
+            rescue NameError
+              # A reflection naming a class this installation does not load.
+              next
+            end
+            nil
           end
         end
 
@@ -468,9 +561,12 @@ module Spree
           resource_permitted_attributes + model_additional_permitted_attributes
         end
 
-        # Override in subclass to declare the resource's writable attributes.
+        # The resource's writable attributes: its `request_params`
+        # declaration, or an override in the subclass.
         def resource_permitted_attributes
-          raise NotImplementedError, 'Subclass must implement resource_permitted_attributes or permitted_params'
+          return declared_permitted_attributes if request_params_schema
+
+          raise NotImplementedError, 'Subclass must declare request_params, or implement resource_permitted_attributes or permitted_params'
         end
 
         # Attributes extensions have declared on the model via

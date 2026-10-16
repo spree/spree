@@ -235,7 +235,7 @@ export function VariantLineEditor({
                         <InputGroupInput
                           type="number"
                           min={0}
-                          step="0.01"
+                          step="any"
                           value={unitCost ?? ''}
                           onChange={(event) => update(variant.id, { unitCost: event.target.value })}
                           className="text-right tabular-nums"

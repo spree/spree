@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "root": false,
   "extends": ["../../biome.json"],
   "files": {
@@ -7,6 +7,8 @@
       "src/**",
       "tests/**",
       "!src/types/generated",
+      "!src/types/filters.generated.ts",
+      "!src/types/params",
       "!src/zod/generated",
       "!src/webhooks/generated"
     ]

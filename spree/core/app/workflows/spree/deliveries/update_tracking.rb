@@ -49,7 +49,7 @@ module Spree
         return if tracking_status.blank?
         return if Spree::Delivery::STATUSES.include?(tracking_status.to_s)
 
-        failure(delivery, Spree.t('fulfillments.errors.unknown_tracking_status', status: tracking_status))
+        failure(delivery, I18n.t('spree.fulfillments.errors.unknown_tracking_status', status: tracking_status))
       end
 
       # Overwrite rather than accumulate: this axis answers "where is it now",

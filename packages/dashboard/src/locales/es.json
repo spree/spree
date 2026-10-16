@@ -467,7 +467,6 @@
           "logo_dimensions_help": "Recomendado: 204×104 píxeles.",
           "section_addresses": "Direcciones de email",
           "section_delivery": "Entrega",
-          "section_logo": "Logo",
           "subtitle": "Direcciones de remitente, notificaciones y el logo incorporado en los emails transaccionales.",
           "title": "Configuración de email",
           "branding": {
@@ -1138,8 +1137,7 @@
           "inherit": "Heredar de la tienda",
           "label": "Estrategia de ruteo de pedidos",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Legacy",
-            "Spree::OrderRouting::Strategy::Rules": "Reglas (ordenadas)"
+            "rules": "Reglas (ordenadas)"
           }
         },
         "storefront_access": {
@@ -1274,12 +1272,12 @@
         "resource_type": {
           "label": "Se aplica a",
           "options": {
-            "Spree::OptionType": "Tipos de opción",
-            "Spree::Order": "Pedidos",
-            "Spree::Product": "Productos",
-            "Spree::Taxon": "Categorías",
-            "Spree::Customer": "Clientes",
-            "Spree::Variant": "Variantes"
+            "option_type": "Tipos de opción",
+            "order": "Pedidos",
+            "product": "Productos",
+            "category": "Categorías",
+            "customer": "Clientes",
+            "variant": "Variantes"
           },
           "read_only_help": "El propietario no se puede cambiar una vez que existen valores para este campo."
         },
@@ -2063,22 +2061,22 @@
           "invalid": "Usá solo letras mayúsculas, dígitos, guiones y #.",
           "label": "Sufijo"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Idioma del admin",
           "placeholder": "Usar el idioma predeterminado"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "Desactivado, no se envían emails de confirmación de pedido, envío ni reembolso.",
           "label": "Enviar emails transaccionales a los clientes"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Zona horaria",
           "placeholder": "Seleccionar una zona horaria"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "Sistema de unidades"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Unidad de peso"
         },
         "show_products_without_price": {
@@ -2156,14 +2154,14 @@
         "digital_asset_authorized_days": {
           "label": "Días disponibles"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Alto",
           "help": "La caja en la que sueles enviar, usada por los proveedores de tarifas de transporte para el precio por peso dimensional: pulgadas en imperial, centímetros en métrico. Se necesitan los tres para que surta efecto.",
           "label": "Dimensiones del paquete predeterminado",
           "length": "Largo",
           "width": "Ancho"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Peso del empaque (caja y relleno) sumado al contenido de cada paquete al calcular las tarifas de entrega. Poniendo 0 lo deshabilitás.",
           "label": "Peso del paquete predeterminado"
         },
@@ -2184,22 +2182,22 @@
           "help": "Se aplica a tu comisión cuando ni la tarifa de comisión ni tu proveedor de impuestos indican una propia. Déjalo en 0 si tu comisión no lleva impuesto.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Color de acento"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Color de fondo"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Color de la tarjeta"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Color del texto"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Color de los títulos"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Fuente",
           "help": "Las aplicaciones de correo que no puedan cargarla usarán una fuente similar."
         }
@@ -2653,6 +2651,7 @@
           "packing_slip_total": "Total",
           "print_label": "Imprimir etiqueta",
           "print_packing_slip": "Imprimir nota de despacho",
+          "quoted_after_review": "Precio tras revisión",
           "rates_pending_origin": "Guardá el nuevo origen para ver los métodos de entrega que ofrece.",
           "refund_label": "Reembolsar etiqueta",
           "retry_refund_label": "Reintentar reembolso",
@@ -2724,7 +2723,7 @@
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
           "document": "Documento de orden de compra",
-          "document_help": "PDF, imagen o archivo de Word, hasta 10 MB.",
+          "document_help": "PDF, imagen, documento de Word, hoja de cálculo o archivo CSV, hasta 10 MB.",
           "download_failed": "No se pudo descargar la orden de compra",
           "save_failed": "No se pudo guardar la orden de compra",
           "title": "Orden de compra"
@@ -6269,6 +6268,18 @@
       "every_language": {
         "notice": "Los clientes de todos los idiomas reciben esta versión hasta que publiques una para {{language}}."
       }
+    },
+    "updates": {
+      "available": "Spree {{version}} está disponible",
+      "running": "Estás usando Spree {{version}}."
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "open": "Notificaciones",
+      "open_unread": "Notificaciones, 1 sin leer",
+      "empty": "Estás al día.",
+      "view_on_github": "Ver en GitHub",
+      "release_notes_unavailable": "No se pudieron cargar las notas de la versión. Léelas en GitHub."
     }
   }
 }

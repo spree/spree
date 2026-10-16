@@ -18,7 +18,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       tags 'Custom Fields'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns all defined custom fields. Filter by `?q[resource_type_eq]=Spree::Product` to narrow to one parent type.'
+      description 'Returns all defined custom fields. Filter by `?q[resource_type_eq]=product` to narrow to one parent type.'
       admin_scope :read, :settings
 
       admin_sdk_example 'custom-field-definitions/list'
@@ -29,6 +29,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
                 description: 'Comma-separated associations to expand. Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., key,label,field_type). id is always included.'
+      filter_parameters_for
 
       response '200', 'definitions returned' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -41,7 +42,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           expect(item['namespace']).to eq('specs')
           expect(item['field_type']).to eq('short_text')
           expect(item['storefront_visible']).to eq(true)
-          expect(item['resource_type']).to eq('Spree::Product')
+          expect(item['resource_type']).to eq('product')
           expect(item['filter_key']).to eq('cf_specs_fabric')
         end
       end
@@ -58,35 +59,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[key field_type resource_type],
-        properties: {
-          namespace: { type: :string, description: 'Defaults to `custom`' },
-          key: { type: :string },
-          label: { type: :string, description: 'Human-readable name; defaults to titleized `key`' },
-          field_type: {
-            type: :string,
-            description: 'Custom field type token (`short_text`, `long_text`, `rich_text`, `number`, …). An extension type that has no token is named by its registered class instead.'
-          },
-          resource_type: {
-            type: :string,
-            description: 'Owner class, e.g. `Spree::Product`'
-          },
-          storefront_visible: {
-            type: :boolean,
-            description: 'When false, the definition is admin-only and never exposed in the Store API'
-          },
-          searchable: {
-            type: :boolean,
-            description: 'When true, values are included in storefront product text search'
-          },
-          sortable: {
-            type: :boolean,
-            description: 'When true, storefront product listings can sort by this field'
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'definition created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -96,7 +69,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
             key: 'origin',
             label: 'Country of Origin',
             field_type: 'short_text',
-            resource_type: 'Spree::Product',
+            resource_type: 'product',
             storefront_visible: true
           }
         end
@@ -154,15 +127,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          label: { type: :string },
-          storefront_visible: { type: :boolean },
-          searchable: { type: :boolean },
-          sortable: { type: :boolean }
-        }
-      }
+      request_body_for
 
       response '200', 'definition updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -212,9 +177,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
         that is not listed is refused on create.
 
         `resource_type` is the value to send; `name` is what a merchant calls
-        it. The two differ where a class has been renamed — categories are
-        stored under `Spree::Taxon` and shown as "Categories" — so send the
-        value back verbatim rather than deriving it from the name.
+        it — send the value back verbatim rather than deriving it from the name.
       DESC
       admin_scope :read, :settings
 
@@ -233,7 +196,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
                    items: {
                      type: :object,
                      properties: {
-                       resource_type: { type: :string, example: 'Spree::Seller' },
+                       resource_type: { type: :string, example: 'seller' },
                        name: { type: :string, example: 'Sellers' }
                      }
                    }

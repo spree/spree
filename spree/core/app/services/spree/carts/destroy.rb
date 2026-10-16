@@ -20,7 +20,7 @@ module Spree
       private
 
       def check_if_can_be_destroyed(cart:)
-        return failure(false, Spree.t(:cannot_be_destroyed)) unless cart&.can_be_deleted?
+        return failure(false, I18n.t('spree.cannot_be_destroyed')) unless cart&.can_be_deleted?
 
         success(cart: cart)
       end
@@ -62,7 +62,7 @@ module Spree
       def destroy_order(cart:)
         destroyed_result = cart.destroy
 
-        return failure(false, Spree.t(:cannot_be_destroyed)) unless destroyed_result.present?
+        return failure(false, I18n.t('spree.cannot_be_destroyed')) unless destroyed_result.present?
 
         success(cart)
       end

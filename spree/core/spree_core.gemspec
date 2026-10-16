@@ -49,6 +49,7 @@ Gem::Specification.new do |s|
   # touching a JSON column raises ArgumentError. Rails' bug, not ours — unpin
   # once activesupport passes those options as keywords.
   s.add_dependency 'json', '< 3'
+  s.add_dependency 'json_schemer', '~> 2.4'
   s.add_dependency 'jwt', '~> 3.1'
   s.add_dependency 'liquid', '~> 5.14'
   s.add_dependency 'money', '~> 6.13'
@@ -60,6 +61,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paranoia', '>= 2.4'
   s.add_dependency 'loofah', '~> 2.21'
   s.add_dependency 'rails-html-sanitizer', '~> 1.6'
+  s.add_dependency 'rails-i18n', '~> 8.0'
   s.add_dependency 'ransack', '>= 4.1'
   s.add_dependency 'request_store', '~> 1.5'
   s.add_dependency 'rexml'
@@ -80,5 +82,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'bcrypt', '~> 3.1'
   s.add_dependency 'sqids', '~> 0.2'
   s.add_dependency 'ssrf_filter', '~> 1.0'
-  s.add_dependency 'pagy', '>= 43.3'
+  s.add_dependency 'pagy', '>= 43.6.3'
 end

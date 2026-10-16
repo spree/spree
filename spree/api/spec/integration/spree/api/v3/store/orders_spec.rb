@@ -12,7 +12,18 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       tags 'Orders'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns a single completed order by prefixed ID. Accessible via JWT (authenticated users) or order token header (guests).'
+      description <<~DESCRIPTION
+        Returns a completed purchase. Accessible via JWT (authenticated users) or order token header (guests).
+
+        Resolves three kinds of id: the order's own (`or_…`), the id of the cart it was placed from, and the
+        id of an order group (`ogrp_…`). The cart's id is the handle a storefront keeps through checkout, so
+        a confirmation page can ask what its cart became without having learned a new one.
+
+        A checkout that reached several sellers divided into one order per seller, and the cart moved up to
+        the group holding them — so that handle, and the group's own id, answer with the **order group**,
+        with the per-seller orders nested inside it. Every other lookup answers with an **order**. The two
+        are told apart by the id prefix (`ogrp_` vs `or_`), or by the presence of `orders`.
+      DESCRIPTION
 
       sdk_example 'orders/get'
 
@@ -20,7 +31,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer token for authenticated customers'
       parameter name: :id, in: :path, type: :string, required: true,
-                description: 'Order prefixed ID'
+                description: 'Prefixed ID of the order, of the cart it was placed from, or of its order group'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: :expand, in: :query, type: :string, required: false,
@@ -46,7 +57,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
           expect(data['id']).to start_with('or_')
           expect(data['number']).to eq(completed_order.number)
           expect(data['fees'].map { |fee| fee['kind'] }).to eq(['duty'])
-          expect(data['fee_total']).to eq('12.0')
+          expect(data['fee_total']).to eq('12.00')
           expect(data['completed_at']).to be_present
           expect(data).not_to have_key('token')
           expect(data).not_to have_key('checkout_steps')

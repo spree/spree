@@ -1,5 +1,10 @@
 import type { CatalogProductTerm } from '@spree/admin-sdk'
-import { CurrencySelect, normalizeQuantityRule, useStore } from '@spree/dashboard-core'
+import {
+  CurrencySelect,
+  isPositiveMoney,
+  normalizeQuantityRule,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -151,10 +156,9 @@ function OrderMinimums({
   }
 
   const usedCurrencies = rows.map((row) => row.currency)
-  const nextCurrency =
-    [store?.default_currency, ...(store?.supported_currencies ?? [])]
-      .filter((code): code is string => !!code)
-      .find((code) => !usedCurrencies.includes(code)) ?? ''
+  const nextCurrency = [store?.default_currency, ...(store?.supported_currencies ?? [])]
+    .filter((code) => code !== undefined)
+    .find((code) => !usedCurrencies.includes(code))
 
   return (
     <section className="flex flex-col gap-3">
@@ -178,7 +182,9 @@ function OrderMinimums({
             size="sm"
             className="shrink-0"
             disabled={!nextCurrency}
-            onClick={() => update([...rows, { currency: nextCurrency, amount: '' }])}
+            onClick={() =>
+              nextCurrency && update([...rows, { currency: nextCurrency, amount: '' }])
+            }
           >
             <PlusIcon className="size-4" />
             {t('admin.actions.add')}
@@ -192,7 +198,7 @@ function OrderMinimums({
         <div className="flex flex-col gap-2">
           {rows.map((row, index) => {
             const duplicate = usedCurrencies.indexOf(row.currency) !== index
-            const amountValid = !row.amount.trim() || Number(row.amount) > 0
+            const amountValid = !row.amount.trim() || isPositiveMoney(row.amount.trim())
 
             return (
               <div key={row.currency} className="flex flex-col gap-1">
@@ -208,7 +214,7 @@ function OrderMinimums({
                   <Input
                     type="number"
                     min="0"
-                    step="0.01"
+                    step="any"
                     disabled={!canEdit}
                     aria-invalid={!amountValid || duplicate}
                     aria-label={t('admin.catalogs.terms.minimum_amount_label')}

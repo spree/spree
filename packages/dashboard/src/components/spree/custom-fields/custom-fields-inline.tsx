@@ -97,11 +97,9 @@ interface CustomFieldsMeta {
   definitions: CustomFieldDefinition[]
   isLoading: boolean
   /**
-   * Resource type the definitions belong to (e.g. `Spree::Product`,
-   * `Spree::Taxon`). Drives the in-place "create definition" sheet and its
-   * query invalidation — note this is the *definition* owner, which can differ
-   * from the value owner (`ownerType`), as for categories where definitions
-   * live under `Spree::Taxon` but values under `Spree::Category`.
+   * Resource type the definitions belong to, by API shorthand (e.g.
+   * `product`, `category`). Drives the in-place "create definition" sheet and
+   * its query invalidation.
    */
   resourceType: string
   /** Plural, human-readable resource name for empty-state copy (e.g. "orders"). */

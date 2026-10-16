@@ -19,6 +19,7 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasStatus
     include Spree::HasCustomFields
+    include Spree::HasExternalReferences
     include Spree::Metadata
     include Spree::PostSale::Taxation
 
@@ -52,6 +53,7 @@ module Spree
     delegate :currency, to: :order
 
     self.whitelisted_ransackable_attributes = %w[number status created_at]
+    search_by :number
     self.whitelisted_ransackable_associations = %w[order reason]
 
     # The label that currently binds the inbound parcel — bought or uploaded,

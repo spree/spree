@@ -1,8 +1,12 @@
 import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
 import {
   type FulfillmentItemRow,
+  formatAmount,
   fulfillmentItemRows,
+  isPositiveMoney,
+  Money,
   unfulfilledItemRows,
+  useMoneyLocale,
   useStockLocations,
 } from '@spree/dashboard-core'
 import {
@@ -435,6 +439,7 @@ const CAN_MARK_DELIVERED = ['fulfilled']
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const confirm = useConfirm()
   const orderId = order.id
   const { cancel, markDelivered, buyLabel, refundLabel, deleteLabel } =
@@ -562,7 +567,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           is still pending. */}
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
-        Number.parseFloat(fulfillment.cost) > 0) && (
+        isPositiveMoney(fulfillment.cost)) && (
         <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually
@@ -573,7 +578,13 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               fulfillment.delivery_method?.name ??
               t('admin.pages.orders.detail.no_delivery_method')}
           </span>
-          <span>{fulfillment.display_cost}</span>
+          <span>
+            {fulfillment.unpriced ? (
+              t('admin.orders.detail.fulfillments.quoted_after_review')
+            ) : (
+              <Money amount={fulfillment.cost} currency={order.currency} />
+            )}
+          </span>
         </CardContent>
       )}
 
@@ -632,7 +643,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                         message: selectedRate
                           ? t('admin.orders.detail.fulfillments.buy_label_confirm_rate', {
                               rate: selectedRate.name,
-                              cost: selectedRate.display_cost,
+                              cost: formatAmount(selectedRate.cost, order.currency, moneyLocale),
                             })
                           : t('admin.orders.detail.fulfillments.buy_label_confirm'),
                         confirmLabel: t('admin.orders.detail.fulfillments.buy_label'),

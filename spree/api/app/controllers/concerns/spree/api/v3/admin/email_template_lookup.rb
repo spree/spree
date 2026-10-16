@@ -60,12 +60,17 @@ module Spree
 
           # An unsaved subject and body are previewed only when sent, so an
           # empty body still previews as empty. `branding` previews unsaved
-          # colors and font.
+          # colors and font, `mailer_logo_signed_id` an unsaved logo (null
+          # removes it, as it does when saving the store).
           def preview_arguments
             arguments = params.permit(:record_id, :subject, :body).to_h.symbolize_keys
             arguments[:locale] = language
             arguments[:email_key] = params[:email_key].to_s.tr('.', '/').presence
             arguments[:branding] = params.fetch(:branding, {}).permit(*Spree::Emails::Branding.attribute_names).to_h
+            if params.key?(:mailer_logo_signed_id)
+              signed_id = params[:mailer_logo_signed_id].presence&.to_s
+              arguments.merge!(mailer_logo_signed_id: signed_id, mailer_logo_cleared: signed_id.nil?)
+            end
             arguments
           end
 
@@ -78,7 +83,7 @@ module Spree
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-              message: Spree.t('email_templates.sample_needs_permission', permissions: missing.to_sentence),
+              message: I18n.t('spree.email_templates.sample_needs_permission', permissions: missing.to_sentence),
               status: :forbidden,
               details: { required_scope: missing.first }
             )
@@ -127,7 +132,7 @@ module Spree
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:email_template_stale],
-              message: Spree.t('email_templates.stale_draft', name: saved_by || Spree.t('email_templates.another_admin')),
+              message: I18n.t('spree.email_templates.stale_draft', name: saved_by || I18n.t('spree.email_templates.another_admin')),
               status: :conflict,
               details: { updated_by: saved_by }
             )

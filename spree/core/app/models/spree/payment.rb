@@ -6,6 +6,9 @@ module Spree
     derives_number infix: 'P'
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments
     end
@@ -253,16 +256,6 @@ module Spree
       else
         amount_from_order
       end
-    end
-
-    def amount=(amount)
-      self[:amount] =
-        case amount
-        when String
-          separator = I18n.t('number.currency.format.separator')
-          number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
-          number.to_d if number.present?
-        end || amount
     end
 
     # Resizes a store credit payment that has not been taken yet. Completion
@@ -517,7 +510,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
     end
 
     def set_amount
@@ -547,8 +540,8 @@ module Spree
     end
 
     def add_source_error(field, message)
-      field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-      errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{message}")
+      field_name = source.class.human_attribute_name(field)
+      errors.add(source.class.model_name.human, "#{field_name} #{message}")
     end
 
 

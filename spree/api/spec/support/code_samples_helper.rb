@@ -31,8 +31,39 @@ module CodeSamplesHelper
     })
   JS
 
+  # Seller API callers: a guest (sign-in, password reset, invitations), a
+  # signed-in person who has not picked a seller yet (`/me`), and a session
+  # acting for one seller (everything else).
+  SELLER_SDK_CLIENT_INITS = {
+    guest: <<~JS.strip,
+      import { createSellerClient } from '@spree/seller-sdk'
+
+      const client = createSellerClient({
+        baseUrl: 'https://your-store.com',
+      })
+    JS
+    user: <<~JS.strip,
+      import { createSellerClient } from '@spree/seller-sdk'
+
+      const client = createSellerClient({
+        baseUrl: 'https://your-store.com',
+        jwtToken: 'eyJhbGciOi...',
+      })
+    JS
+    seller: <<~JS.strip
+      import { createSellerClient } from '@spree/seller-sdk'
+
+      const client = createSellerClient({
+        baseUrl: 'https://your-store.com',
+        jwtToken: 'eyJhbGciOi...',
+        sellerId: 'sel_UkLWZg9DAJ',
+      })
+    JS
+  }.freeze
+
   SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/sdk/examples', __dir__)
   ADMIN_SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/admin-sdk/examples', __dir__)
+  SELLER_SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/seller-sdk/examples', __dir__)
 
   # Match `// region:example` / `// endregion:example` markers and extract
   # the body between them. The markers can have arbitrary indentation.
@@ -86,6 +117,24 @@ module CodeSamplesHelper
       }
     )
     admin_cli_example(sdk_body_json(source), sdk_call_has_args(source))
+  end
+
+  # Mirrors `sdk_example` for the Seller SDK — examples live under
+  # `packages/seller-sdk/examples/`.
+  #
+  # @param name [String] the example's path under `examples/`, without `.ts`
+  # @param as [Symbol] the client the sample starts from: `:seller`, `:user`
+  #   or `:guest` (see SELLER_SDK_CLIENT_INITS)
+  # @return [Array<Hash>] the operation's code samples
+  def seller_sdk_example(name, as: :seller)
+    source = EXAMPLE_CACHE[[:seller, name]] ||= load_example_body(SELLER_SDK_EXAMPLES_ROOT, name, 'Seller SDK')
+    code_samples(
+      {
+        lang: 'javascript',
+        label: 'Spree Seller SDK',
+        source: "#{SELLER_SDK_CLIENT_INITS.fetch(as)}\n\n#{source}\n"
+      }
+    )
   end
 
   # Emits a `spree api` CLI code sample for the current operation, derived from

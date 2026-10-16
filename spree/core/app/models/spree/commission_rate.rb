@@ -36,6 +36,9 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasListPosition
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :value, places: 5
     include Spree::TypedAssociations
 
     KINDS = %w[percentage fixed].freeze
@@ -103,6 +106,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[name code kind enabled position value
                                                  tax_inclusive include_shipping]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[commission_rules]
 
     # @return [Boolean]
@@ -244,7 +248,7 @@ module Spree
     # shape a price list's rules use.
     #
     # Ids inside a rule's preferences are scope-checked against this rate's own
-    # store as they are written (see normalize_id_preference), so a rule can
+    # store as they are written (see `of: :id, scope:`), so a rule can
     # never be pointed at another marketplace's records.
     #
     # @param rows [Array<Hash>, nil]
@@ -356,14 +360,14 @@ module Spree
     def flat_fee_does_not_charge_delivery
       return unless fixed? && include_shipping?
 
-      errors.add(:include_shipping, :flat_fee_cannot_charge_delivery, message: Spree.t('errors.messages.flat_fee_cannot_charge_delivery'))
+      errors.add(:include_shipping, :flat_fee_cannot_charge_delivery, message: I18n.t('spree.errors.messages.flat_fee_cannot_charge_delivery'))
     end
 
     def fixed_rate_states_an_amount
       return unless fixed?
       return if @pending_amounts.present? || commission_rate_values.any?
 
-      errors.add(:base, :commission_rate_needs_an_amount, message: Spree.t('errors.messages.commission_rate_needs_an_amount'))
+      errors.add(:base, :commission_rate_needs_an_amount, message: I18n.t('spree.errors.messages.commission_rate_needs_an_amount'))
     end
   end
 end

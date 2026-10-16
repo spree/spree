@@ -324,11 +324,6 @@ describe Spree::Media, type: :model do
       expect(asset.media_type).to eq('image')
     end
 
-    it 'defaults to image for Spree::Media subclass' do
-      image = Spree::Media.new
-      expect(image.media_type).to eq('image')
-    end
-
     it 'answers a predicate per media type' do
       expect(build(:media)).to be_image
       expect(build(:video_media)).to be_video
@@ -337,10 +332,6 @@ describe Spree::Media, type: :model do
   end
 
   describe 'video' do
-    it 'accepts an uploaded video file' do
-      expect(build(:video_media)).to be_valid
-    end
-
     it 'requires a file, not a URL' do
       asset = build(:media, media_type: 'video')
       asset.attachment.detach
@@ -369,10 +360,6 @@ describe Spree::Media, type: :model do
   end
 
   describe 'external video' do
-    it 'accepts a YouTube link' do
-      expect(build(:external_video_media)).to be_valid
-    end
-
     it 'accepts a Vimeo link' do
       expect(build(:external_video_media, external_video_url: 'https://vimeo.com/123456789')).to be_valid
     end
@@ -512,45 +499,6 @@ describe Spree::Media, type: :model do
       expect { asset = create(:media, viewable_type: 'Spree::Product', viewable_id: nil) }.not_to raise_error
       expect(asset.viewable).to be_nil
       expect { asset.destroy! }.not_to raise_error
-    end
-  end
-
-  describe 'delegated methods' do
-    let(:asset) { create(:media) }
-    let(:attachment) { asset.attachment }
-
-    before do
-      allow(asset).to receive(:attachment).and_return(attachment)
-    end
-
-    it 'delegates :key to attachment' do
-      expect(attachment).to receive(:key)
-      asset.key
-    end
-
-    it 'delegates :attached? to attachment' do
-      expect(attachment).to receive(:attached?)
-      asset.attached?
-    end
-
-    it 'delegates :variant to attachment' do
-      expect(attachment).to receive(:variant)
-      asset.variant
-    end
-
-    it 'delegates :variable? to attachment' do
-      expect(attachment).to receive(:variable?)
-      asset.variable?
-    end
-
-    it 'delegates :blob to attachment' do
-      expect(attachment).to receive(:blob)
-      asset.blob
-    end
-
-    it 'delegates :filename to attachment' do
-      expect(attachment).to receive(:filename)
-      asset.filename
     end
   end
 

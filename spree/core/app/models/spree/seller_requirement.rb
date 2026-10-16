@@ -16,8 +16,12 @@ module Spree
     include Spree::HasListPosition
     include Spree::PreferenceSchema
     include Spree::Metadata
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.seller_requirement_types'
 
     has_prefix_id :selreq
+    search_by :name
 
     acts_as_list scope: :store
 
@@ -85,16 +89,6 @@ module Spree
       ((DEFAULT_KINDS & registered) - existing).map do |kind|
         store.seller_requirements.create!(type: kind)
       end
-    end
-
-    # @return [String] the localized name of the kind, used by operator pickers
-    def self.human_name
-      Spree.t("seller_requirement_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    # @return [String] the localized description of the kind
-    def self.human_description
-      Spree.t("seller_requirement_types.#{api_type}.description", default: '')
     end
 
     # Whether the operator may configure this kind more than once per store.
@@ -266,8 +260,7 @@ module Spree
       return if Spree.seller_requirements.any? { |kind| kind.to_s == type }
 
       errors.add(
-        :type, :invalid_seller_requirement, message: Spree.t(:invalid_seller_requirement, scope: [:errors, :messages],
-                                             default: 'is not a registered seller requirement')
+        :type, :invalid_seller_requirement, message: I18n.t('spree.errors.messages.invalid_seller_requirement')
       )
     end
   end

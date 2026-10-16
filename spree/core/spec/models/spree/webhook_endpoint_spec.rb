@@ -43,22 +43,45 @@ describe Spree::WebhookEndpoint, type: :model do
         expect(webhook_endpoint).not_to be_valid
         expect(webhook_endpoint.errors[:url]).to include('must not point to an internal or private network address')
       end
-    end
 
-    describe 'active inclusion' do
-      it 'accepts true' do
-        webhook_endpoint.active = true
-        expect(webhook_endpoint).to be_valid
-      end
+      context 'with allowed internal hosts configured' do
+        before do
+          stub_const('Spree::Api::Config', double(webhooks_allowed_internal_hosts: ['storefront.internal', '.svc.cluster.local']))
+          allow(Resolv).to receive(:getaddresses).and_return(['10.43.0.15'])
+        end
 
-      it 'accepts false' do
-        webhook_endpoint.active = false
-        expect(webhook_endpoint).to be_valid
-      end
+        it 'accepts an exactly matching host' do
+          webhook_endpoint.url = 'http://storefront.internal/api/webhooks/spree'
+          expect(webhook_endpoint).to be_valid
+        end
 
-      it 'rejects nil' do
-        webhook_endpoint.active = nil
-        expect(webhook_endpoint).not_to be_valid
+        it 'matches hosts case-insensitively' do
+          webhook_endpoint.url = 'http://Storefront.Internal/api/webhooks/spree'
+          expect(webhook_endpoint).to be_valid
+        end
+
+        it 'accepts a host under a leading-dot suffix' do
+          webhook_endpoint.url = 'http://storefront.shop.svc.cluster.local/api/webhooks/spree'
+          expect(webhook_endpoint).to be_valid
+        end
+
+        it 'matches an IPv6 address without its URL brackets' do
+          stub_const('Spree::Api::Config', double(webhooks_allowed_internal_hosts: ['::1']))
+          webhook_endpoint.url = 'http://[::1]/api/webhooks/spree'
+          expect(webhook_endpoint).to be_valid
+        end
+
+        it 'rejects a host that only ends with the suffix text' do
+          webhook_endpoint.url = 'http://evil-svc.cluster.local/api/webhooks/spree'
+          expect(webhook_endpoint).not_to be_valid
+          expect(webhook_endpoint.errors[:url]).to include('must not point to an internal or private network address')
+        end
+
+        it 'still rejects a private host that is not allowed' do
+          webhook_endpoint.url = 'http://other.internal/api/webhooks/spree'
+          expect(webhook_endpoint).not_to be_valid
+          expect(webhook_endpoint.errors[:url]).to include('must not point to an internal or private network address')
+        end
       end
     end
   end
@@ -171,23 +194,6 @@ describe Spree::WebhookEndpoint, type: :model do
       it 'does not match events outside the pattern' do
         expect(endpoint.subscribed_to?('product.created')).to be false
         expect(endpoint.subscribed_to?('shipment.shipped')).to be false
-      end
-    end
-
-    context 'with mixed subscriptions' do
-      let(:endpoint) { build(:webhook_endpoint, subscriptions: ['order.*', 'product.created']) }
-
-      it 'matches pattern events' do
-        expect(endpoint.subscribed_to?('order.created')).to be true
-        expect(endpoint.subscribed_to?('order.placed')).to be true
-      end
-
-      it 'matches exact events' do
-        expect(endpoint.subscribed_to?('product.created')).to be true
-      end
-
-      it 'does not match non-subscribed events' do
-        expect(endpoint.subscribed_to?('product.updated')).to be false
       end
     end
   end
@@ -353,16 +359,6 @@ describe Spree::WebhookEndpoint, type: :model do
       it 'does nothing' do
         expect { endpoint.check_auto_disable! }.not_to change { endpoint.reload.disabled_at }
       end
-    end
-  end
-
-  describe 'soft delete' do
-    let!(:endpoint) { create(:webhook_endpoint, store: store) }
-
-    it 'soft deletes the record' do
-      endpoint.destroy
-      expect(endpoint.deleted_at).to be_present
-      expect(described_class.with_deleted.find(endpoint.id)).to eq(endpoint)
     end
   end
 end

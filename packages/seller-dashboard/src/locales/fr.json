@@ -470,6 +470,7 @@
       "packing_slip_title": "Bon de livraison — commande {{number}}",
       "print_label": "Imprimer l’étiquette",
       "print_packing_slip": "Imprimer le bon de livraison",
+      "quoted_after_review": "Prix après vérification",
       "ship_to": "Livrer à",
       "ships_from_label": "Expédié depuis",
       "split": "Scinder",

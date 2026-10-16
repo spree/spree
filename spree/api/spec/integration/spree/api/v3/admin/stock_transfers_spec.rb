@@ -50,8 +50,7 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: "Filter by status ('draft', 'ready_to_ship', 'in_transit', 'partially_received', 'received', 'over_received', 'canceled')"
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed: items, source_location, destination_location'
 
@@ -97,32 +96,11 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :stock_transfer, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          source_location_id: { type: :string, example: 'sloc_1234567890' },
-          destination_location_id: { type: :string, example: 'sloc_0987654321' },
-          reference: { type: :string, nullable: true, description: "The merchant's own label for the trip" },
-          notes: { type: :string, nullable: true },
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                variant_id: { type: :string, example: 'variant_1234567890' },
-                quantity_shipped: { type: :integer, example: 10 }
-              },
-              required: %w[variant_id quantity_shipped]
-            }
-          },
-          metadata: { type: :object, nullable: true }
-        },
-        required: %w[source_location_id destination_location_id]
-      }
+      request_body_for
 
       response '201', 'stock transfer created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:stock_transfer) do
+        let(:body) do
           {
             source_location_id: source.prefixed_id,
             destination_location_id: destination.prefixed_id,
@@ -143,7 +121,7 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
 
       response '404', 'warehouse belongs to another store' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:stock_transfer) do
+        let(:body) do
           {
             source_location_id: source.prefixed_id,
             destination_location_id: create(:stock_location, store: create(:store)).prefixed_id,
@@ -194,6 +172,43 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
+      end
+    end
+
+    patch 'Update a stock transfer' do
+      tags 'Stock Transfers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Edits a draft: its reference, notes, either end, and its lines.
+        Sending `items` replaces every line the draft holds. Status moves
+        through the transfer's own actions, never through this endpoint.
+      DESC
+      admin_scope :write, :stock
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      request_body_for
+
+      response '200', 'stock transfer updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { transfer_record.prefixed_id }
+        let(:body) do
+          {
+            reference: 'Weekend restock',
+            notes: 'Two cartons, fragile',
+            items: [{ variant_id: variant.prefixed_id, quantity_shipped: 12 }]
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/StockTransfer'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['reference']).to eq('Weekend restock')
+          expect(transfer_record.reload.items.sum(:quantity_shipped)).to eq(12)
+        end
       end
     end
 
@@ -273,20 +288,12 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :departure, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          force: {
-            type: :boolean,
-            description: 'Ship even if it drives the source below zero'
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'transfer is in transit' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { transfer_record.prefixed_id }
-        let(:departure) { {} }
+        let(:body) { {} }
 
         schema '$ref' => '#/components/schemas/StockTransfer'
 
@@ -316,6 +323,7 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
+      filter_parameters_for
 
       response '200', 'deliveries found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -362,33 +370,12 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :receipt, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          reference: { type: :string, nullable: true, example: 'Van 3, morning run' },
-          received_at: { type: :string, format: 'date-time', nullable: true, description: 'Defaults to now' },
-          notes: { type: :string, nullable: true },
-          items: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, example: 'sti_1234567890' },
-                quantity_accepted: { type: :integer, example: 8 },
-                quantity_rejected: { type: :integer, example: 2 },
-                rejection_reason: { type: :string, nullable: true, example: 'damaged' },
-                notes: { type: :string, nullable: true }
-              },
-              required: %w[id]
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'delivery counted in' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:stock_transfer_id) { transfer_record.prefixed_id }
-        let(:receipt) do
+        let(:body) do
           { items: [{ id: transfer_record.items.first.prefixed_id, quantity_accepted: 8, quantity_rejected: 2,
                       rejection_reason: 'damaged' }] }
         end
@@ -409,7 +396,7 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       response '422', 'transfer has not shipped yet' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:stock_transfer_id) { transfer_record.prefixed_id }
-        let(:receipt) { {} }
+        let(:body) { {} }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -470,15 +457,12 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :closure, in: :body, required: false, schema: {
-        type: :object,
-        properties: { reason: { type: :string, nullable: true, example: 'Two fell off the van' } }
-      }
+      request_body_for
 
       response '200', 'transfer closed short' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { transfer_record.prefixed_id }
-        let(:closure) { { reason: 'Two fell off the van' } }
+        let(:body) { { reason: 'Two fell off the van' } }
 
         before do
           Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer_record)
@@ -521,22 +505,12 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :cancellation, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          on_in_transit: {
-            type: :string,
-            enum: %w[restock write_off],
-            description: 'Required once the units have left the source'
-          },
-          reason: { type: :string, nullable: true, description: 'Recorded against the written-off lines' }
-        }
-      }
+      request_body_for
 
       response '200', 'transfer cancelled' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { transfer_record.prefixed_id }
-        let(:cancellation) { { on_in_transit: 'restock' } }
+        let(:body) { { on_in_transit: 'restock' } }
 
         before { Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer_record) }
 
@@ -551,7 +525,7 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       response '422', 'in-transit cancellation needs a decision' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { transfer_record.prefixed_id }
-        let(:cancellation) { {} }
+        let(:body) { {} }
 
         before { Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer_record) }
 

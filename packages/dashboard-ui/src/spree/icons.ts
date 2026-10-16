@@ -18,6 +18,7 @@ export {
   BanIcon,
   BanknoteIcon,
   BarChart3Icon as AnalyticsIcon,
+  BellIcon,
   BoldIcon,
   BookOpenIcon,
   BoxesIcon,

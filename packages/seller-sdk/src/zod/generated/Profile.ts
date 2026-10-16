@@ -12,7 +12,7 @@ export const ProfileSchema = z.object({
   logo_url: z.string().nullable(),
   square_logo_url: z.string().nullable(),
   cover_photo_url: z.string().nullable(),
-  preferred_timezone: z.string().nullable(),
+  timezone: z.string().nullable(),
   status: z.string(),
   legal_name: z.string().nullable(),
   registration_number: z.string().nullable(),

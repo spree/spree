@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CollectionRule, type: :model do
+
+  it_behaves_like 'type labels'
+
   let(:store) { @default_store }
   let(:collection) { create(:automatic_collection, store: store) }
 
@@ -10,13 +13,6 @@ RSpec.describe Spree::CollectionRule, type: :model do
 
       expect(rule).not_to be_valid
       expect(rule.errors[:match_policy]).to be_present
-    end
-
-    it 'requires a value' do
-      rule = build(:tag_collection_rule, :is_equal_to, collection: collection, value: nil)
-
-      expect(rule).not_to be_valid
-      expect(rule.errors[:value]).to be_present
     end
   end
 

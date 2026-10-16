@@ -3,20 +3,20 @@ module Spree
     class FlatRate < ShippingCalculator
       include Spree::Calculator::CurrencyAmounts
 
-      preference :amount, :decimal, default: 0
+      preference :amount, :money, default: 0
       # @deprecated Together with the single `amount`, superseded by the
       #   per-currency `amounts` hash; kept as the fallback for its own
       #   currency so upgraded stores quote unchanged.
-      preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+      preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
-      preference :minimum_item_total, :decimal, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
-      preference :maximum_item_total, :decimal, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
+      preference :minimum_item_total, :money, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
+      preference :maximum_item_total, :money, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
 
       preference :minimum_weight, :decimal, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
       preference :maximum_weight, :decimal, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
 
       def self.description
-        Spree.t(:shipping_flat_rate_per_order)
+        I18n.t('spree.shipping_flat_rate_per_order')
       end
 
       def compute_package(package)

@@ -1,9 +1,9 @@
 import type {
-  CompanyParams,
-  TaxExemptionCertificateParams,
-  TaxIdentifierParams,
+  CompanyCreateParams,
+  TaxExemptionCertificateCreateParams,
+  TaxIdentifierCreateParams,
 } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { blankToNull, countryCodeSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -20,7 +20,7 @@ export type CompanyFormValues = z.infer<typeof companyFormSchema>
 
 export const COMPANY_DEFAULTS: CompanyFormValues = { name: '', po_number_required: false }
 
-export function companyValuesToParams(values: CompanyFormValues): CompanyParams {
+export function companyValuesToParams(values: CompanyFormValues): CompanyCreateParams {
   return {
     name: values.name,
     po_number_required: values.po_number_required,
@@ -47,7 +47,9 @@ export type TaxIdentifierFormValues = z.infer<typeof taxIdentifierFormSchema>
 
 export const TAX_IDENTIFIER_DEFAULTS: TaxIdentifierFormValues = { kind: '', value: '' }
 
-export function taxIdentifierValuesToParams(values: TaxIdentifierFormValues): TaxIdentifierParams {
+export function taxIdentifierValuesToParams(
+  values: TaxIdentifierFormValues,
+): TaxIdentifierCreateParams {
   return { kind: values.kind, value: values.value }
 }
 
@@ -61,7 +63,7 @@ export const TAX_IDENTIFIER_KINDS = ['eu_vat', 'gb_vat', 'ch_vat', 'au_abn', 'us
 export const taxExemptionCertificateFormSchema = z.object({
   certificate_number: z.string().min(1, { error: requiredMessage('certificate_number') }),
   reason_code: z.string().min(1, { error: requiredMessage('reason_code') }),
-  country_code: z.string().optional(),
+  country_code: countryCodeSchema.or(z.literal('')).optional(),
   state_code: z.string().optional(),
   issued_at: z.string().optional(),
   expires_at: z.string().optional(),
@@ -98,15 +100,15 @@ export const TAX_EXEMPTION_REASON_CODES = [
 
 export function taxExemptionCertificateValuesToParams(
   values: TaxExemptionCertificateFormValues,
-): TaxExemptionCertificateParams {
+): TaxExemptionCertificateCreateParams {
   return {
     certificate_number: values.certificate_number,
     reason_code: values.reason_code,
-    country_code: blankToNull(values.country_code),
+    country_code: values.country_code || null,
     state_code: blankToNull(values.state_code),
     issued_at: blankToNull(values.issued_at),
     expires_at: blankToNull(values.expires_at),
     issuing_authority: blankToNull(values.issuing_authority),
-    ...(values.document_signed_id ? { document: values.document_signed_id } : {}),
+    ...signedIdParam('document', values.document_signed_id),
   }
 }

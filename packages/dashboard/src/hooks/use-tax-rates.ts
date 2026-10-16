@@ -1,4 +1,4 @@
-import type { TaxRate, TaxRateParams } from '@spree/admin-sdk'
+import type { TaxRate, TaxRateCreateParams, TaxRateUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -17,7 +17,7 @@ export function useTaxRate(id: string | undefined) {
 }
 
 export function useCreateTaxRate() {
-  return useResourceMutation<TaxRate, Error, TaxRateParams>({
+  return useResourceMutation<TaxRate, Error, TaxRateCreateParams>({
     mutationFn: (params) => adminClient.taxRates.create(params),
     invalidate: [['tax-rates']],
     successMessage: i18n.t('admin.tax_rates.messages.created'),
@@ -26,7 +26,7 @@ export function useCreateTaxRate() {
 }
 
 export function useUpdateTaxRate(id: string) {
-  return useResourceMutation<TaxRate, Error, TaxRateParams>({
+  return useResourceMutation<TaxRate, Error, TaxRateUpdateParams>({
     mutationFn: (params) => adminClient.taxRates.update(id, params),
     invalidate: [['tax-rates'], ['tax-rates', id]],
     successMessage: i18n.t('admin.tax_rates.messages.updated'),

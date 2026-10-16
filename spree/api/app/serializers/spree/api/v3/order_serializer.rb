@@ -9,12 +9,11 @@ module Spree
                  channel_id: [:string, nullable: true], company_id: [:string, nullable: true],
                  company_name: [:string, nullable: true], po_number: [:string, nullable: true],
                  po_document_filename: [:string, nullable: true], po_document_byte_size: ['number | null'],
-                 currency: :string, locale: [:string, nullable: true], total_quantity: :number,
+                 currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], locale: [:string, nullable: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
                  payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
-                 store_credit_total: [:string, nullable: true], display_store_credit_total: [:string, nullable: true],
-                 covered_by_store_credit: :boolean, completed_at: [:string, nullable: true],
+                 completed_at: [:string, nullable: true],
                  withdrawal_period_ends_at: [:string, nullable: true], within_withdrawal_period: :boolean,
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
@@ -64,25 +63,9 @@ module Spree
 
         # Nulled for gated (prices_hidden) guests, consistent with cart and
         # catalog price hiding.
-        money_attributes :item_total, :display_item_total,
-                         :adjustment_total, :display_adjustment_total,
-                         :discount_total, :display_discount_total,
-                         :tax_total, :display_tax_total, :included_tax_total, :display_included_tax_total,
-                         :additional_tax_total, :display_additional_tax_total, :total, :display_total,
-                         :gift_card_total, :display_gift_card_total,
-                         :amount_due, :display_amount_due,
-                         :delivery_total, :display_delivery_total,
-                         :fee_total, :display_fee_total
-
-        attribute :store_credit_total do |order|
-          order.total_applied_store_credit.to_s unless params[:hide_prices]
-        end
-
-        attribute :display_store_credit_total do |order|
-          order.display_total_applied_store_credit.to_s unless params[:hide_prices]
-        end
-
-        attribute :covered_by_store_credit, &:covered_by_store_credit?
+        include Spree::Api::V3::PurchaseSummary
+        money_attributes :adjustment_total, :display_adjustment_total,
+                         descriptions: { adjustment_total: 'Every discount, fee and added tax together, as one amount.' }
 
         many :order_promotions, key: :discounts, resource: proc { Spree.api.applied_promotion_serializer }
         # Itemized charges (duties, surcharges, COD, handling) — see the cart
@@ -90,7 +73,6 @@ module Spree
         many :fees, resource: proc { Spree.api.fee_serializer }
         many :line_items, key: :items, resource: proc { Spree.api.line_item_serializer }
         many :fulfillments, resource: proc { Spree.api.fulfillment_serializer }
-        many :payments, resource: proc { Spree.api.payment_serializer }
         one :billing_address, resource: proc { Spree.api.address_serializer }
         one :shipping_address, resource: proc { Spree.api.address_serializer }
         one :gift_card, resource: proc { Spree.api.gift_card_serializer }

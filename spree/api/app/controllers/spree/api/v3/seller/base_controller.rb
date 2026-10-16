@@ -18,6 +18,7 @@ module Spree
           before_action :authenticate_seller!
 
           include Spree::Api::V3::ScopedAuthorization
+          include Spree::Api::V3::StrictMoneyParams
         end
       end
     end

@@ -26,7 +26,7 @@ module Spree
               # nil code, which the dashboard reads as "render the message".
               details = errors.details[attribute] || []
 
-              result[attribute] = messages.each_with_index.map do |message, index|
+              result[wire_error_attribute(errors, attribute)] = messages.each_with_index.map do |message, index|
                 detail = details[index] || {}
                 code = detail[:error].is_a?(Symbol) ? detail[:error] : nil
 

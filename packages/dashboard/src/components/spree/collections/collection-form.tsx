@@ -96,7 +96,7 @@ export function CollectionMain({
       {collection && (
         <>
           <CollectionProductsCard collectionId={collection.id} automatic={automatic} />
-          <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Collection">
+          <FormBackedCustomFieldsProvider form={form} resourceType="collection">
             <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
           <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />

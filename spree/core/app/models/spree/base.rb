@@ -9,6 +9,7 @@ class Spree::Base < ApplicationRecord
   include Spree::HasNumber
   include Spree::HasIsoGeography
   include Spree::TypedAssociations
+  include Spree::SignedIdAttachments
   include Spree::ValidatesStoreUniqueness
 
   # Extra writable attributes contributed by extensions, appended to the v3
@@ -39,13 +40,6 @@ class Spree::Base < ApplicationRecord
     backfill_default_preferences if has_attribute?(:preferences) && !preferences.nil?
   end
 
-  # only for backwards compatibility with Kaminari
-  if defined?(Kaminari) && Kaminari.config.page_method_name != :page
-    def self.page(num)
-      send Kaminari.config.page_method_name, num
-    end
-  end
-
   self.abstract_class = true
 
   scope :for_ordering_with_translations, lambda { |klass, fields = nil|
@@ -73,6 +67,18 @@ class Spree::Base < ApplicationRecord
   # this can overridden in subclasses to disallow deletion
   def can_be_deleted?
     true
+  end
+
+  # Whether to answer from an association's rows rather than a query of its
+  # own (a SUM, an EXISTS). True when the rows are loaded already, or when
+  # this record came from a list loaded with +preload_associations_lazily+:
+  # loading them then fetches the rows for the whole list in one query, where
+  # an aggregate would run once per record.
+  #
+  # @param name [Symbol] the association
+  # @return [Boolean]
+  def read_association_in_memory?(name)
+    association(name).loaded? || lazy_preload_context.present?
   end
 
   # @see Spree.mysql? — the single definition; this reads it so a model can
@@ -118,9 +124,10 @@ class Spree::Base < ApplicationRecord
   # read through the parent (a plain `Spree::Export` row, a factory that sets
   # `type` as an attribute, a query on the base relation).
   #
-  # Resolves against `available_types` where the class defines it, so an
-  # unrecognized column value passes through untouched rather than being
-  # constantized.
+  # Resolves against the class's type registry where it has one, so an
+  # unrecognized column value (an extension no longer installed) is never
+  # constantized — it is shortened the same way instead, never sent as a class
+  # name.
   #
   # @param type [String, nil] value of the STI `type` column
   # @return [String]
@@ -128,9 +135,49 @@ class Spree::Base < ApplicationRecord
     return api_type if type.blank?
 
     type = type.to_s
-    return type unless respond_to?(:available_types)
+    api_type_registry.find { |klass| klass.to_s == type }&.api_type || type.demodulize.underscore
+  end
 
-    available_types.find { |klass| klass.to_s == type }&.api_type || type
+  # Inverse of {.api_type_for}: the STI `type` column value for a wire
+  # shorthand, or nil when no registered subclass answers to it. Lookup is
+  # registry-driven, so a request can never name a class outside the family.
+  #
+  # @param api_type [String, nil] e.g. `"orders"`
+  # @return [String, nil] e.g. `"Spree::Exports::Orders"`
+  def self.class_name_for_api_type(api_type)
+    return nil if api_type.blank?
+
+    api_type_registry.find { |klass| klass.api_type == api_type.to_s }&.to_s
+  end
+
+  # The subclasses a typed family accepts — `registered_subclasses` for the
+  # preference-schema families, `available_types` for exports and imports.
+  #
+  # @return [Array<Class>]
+  def self.api_type_registry
+    if subclass_registry
+      registered_subclasses
+    elsif respond_to?(:available_types)
+      Array(available_types)
+    else
+      []
+    end
+  end
+
+  # How a filter on one of this model's columns turns the short name a client
+  # sends (`purchase_order`) into the class name the column stores, or nil
+  # when the column does not store class names. Covers the STI column of a
+  # typed family and polymorphic `*_type` columns; a model with another such
+  # column overrides this.
+  #
+  # @param attribute [String]
+  # @return [Proc, nil] short name → stored class name
+  def self.api_type_resolver(attribute)
+    if attribute == inheritance_column && api_type_registry.any?
+      ->(api_type) { class_name_for_api_type(api_type) }
+    elsif reflect_on_all_associations(:belongs_to).any? { |reflection| reflection.polymorphic? && reflection.foreign_type == attribute }
+      ->(api_type) { Spree::Base.polymorphic_type_for(api_type) }
+    end
   end
 
   # Shorthand for a *polymorphic* `*_type` column (`owner_type`,
@@ -141,10 +188,37 @@ class Spree::Base < ApplicationRecord
   #
   # @param type [String, Class, nil] value of the polymorphic type column
   # @return [String, nil]
+  #
+  # The configured customer and admin user classes always answer `customer`
+  # and `admin_user`, so a host app's own `User` class does not change the
+  # contract.
   def self.polymorphic_api_type(type)
     return nil if type.blank?
 
-    type.to_s.demodulize.underscore
+    type = type.to_s
+    return 'customer' if type == Spree.customer_class(constantize: false)
+    return 'admin_user' if type == Spree.admin_user_class(constantize: false)
+
+    type.demodulize.underscore
+  end
+
+  # Inverse of {.polymorphic_api_type}: the class name a polymorphic `*_type`
+  # column stores for a wire shorthand. Matches against `candidates` when the
+  # caller knows what the column may reference (always prefer that); otherwise
+  # against the configured customer and admin user classes, then the
+  # `Spree::` model of that name. Never constantizes the input.
+  #
+  # @param api_type [String, nil] e.g. `"purchase_order"`
+  # @param candidates [Array<Class, String>, nil] classes the column may hold
+  # @return [String, nil] e.g. `"Spree::PurchaseOrder"`
+  def self.polymorphic_type_for(api_type, candidates = nil)
+    token = api_type.to_s
+    return nil unless token.match?(/\A[a-z][a-z0-9_]*\z/)
+
+    candidates ||= [Spree.customer_class(constantize: false),
+                    Spree.admin_user_class(constantize: false),
+                    "Spree::#{token.camelize}"]
+    candidates.map(&:to_s).find { |name| polymorphic_api_type(name) == token }
   end
 
   # Prefixed id for a polymorphic reference, encoded from the columns without

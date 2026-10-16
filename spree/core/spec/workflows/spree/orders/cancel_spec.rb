@@ -91,7 +91,7 @@ module Spree
 
         it 'says why it refused' do
           expect(result.error.value.full_messages.join).
-            to include(Spree.t('errors.messages.not_cancellable'))
+            to include(I18n.t('spree.errors.messages.not_cancellable'))
         end
       end
 

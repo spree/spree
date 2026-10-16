@@ -1,3 +1,6 @@
+import i18n from 'i18next'
+import { formatMoney } from './formatters'
+
 /**
  * Which line items sit in which fulfillment, and which units nobody has
  * claimed yet. The order payload describes the two halves separately —
@@ -14,8 +17,8 @@ export interface GroupableLineItem {
   options_text?: string | null
   quantity: number
   thumbnail_url?: string | null
-  display_price?: string | null
-  display_total?: string | null
+  price?: string | null
+  currency?: string | null
 }
 
 /** The fulfillment-item fields the grouping reads. */
@@ -130,7 +133,10 @@ function buildRow(
     name: copy?.name ?? fallback?.name ?? '',
     optionsText: copy?.options_text ?? fallback?.options_text ?? null,
     thumbnailUrl: copy?.thumbnail_url ?? null,
-    displayPrice: copy?.display_price ?? null,
+    displayPrice:
+      copy?.price && copy.currency
+        ? formatMoney(copy.price, copy.currency, i18n.language || 'en', { unitPrice: true })
+        : null,
     quantity,
   }
 }

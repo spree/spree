@@ -10,6 +10,13 @@ RSpec.shared_examples 'a gift cards host' do
       expect(record.gift_card_total).to eq(gift_card.amount)
       expect(record.total_minus_gift_cards).to eq(record.total - gift_card.amount)
     end
+
+    # A gift card is redeemed as store credit; reporting it in both totals
+    # would have a summary deduct it twice.
+    it 'is left out of the store credit total' do
+      expect(record.total_applied_store_credit).to eq(gift_card.amount)
+      expect(record.store_credit_total).to eq(0)
+    end
   end
 
   describe '#apply_gift_card' do

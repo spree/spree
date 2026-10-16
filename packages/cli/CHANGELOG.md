@@ -1,5 +1,41 @@
 # @spree/cli
 
+## 3.3.0
+
+### Minor Changes
+
+- [#14866](https://github.com/spree/spree/pull/14866) [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree api upload <file>` uploads a file and prints the `signed_id` to pass to the endpoint that uses it. Add `--private` for documents, imports and digital products.
+
+- [#14854](https://github.com/spree/spree/pull/14854) [`0cb8656`](https://github.com/spree/spree/commit/0cb86561b020e0744e92b60afd10041dcccf0d17) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `spree filters types`, which writes TypeScript declarations for an app's own list filters and sort fields from its running backend (or from `bin/rails spree:api:filter_tables` output with `--from`), so the SDKs accept and autocomplete them.
+
+- [#14858](https://github.com/spree/spree/pull/14858) [`b5208d0`](https://github.com/spree/spree/commit/b5208d0ab283797445d8b350d100bcfa9070251b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree filters types` now writes declarations into every app under `apps/` in one run, each for the SDK that app uses. `--api` and `--out` write a single file for an app outside that layout.
+
+## 3.2.2
+
+### Patch Changes
+
+- [#14748](https://github.com/spree/spree/pull/14748) [`012fcdb`](https://github.com/spree/spree/commit/012fcdb5c258bd5268f880c296394e8ab3b52e08) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Dashboards and seller panels added with `spree add` now pass `typecheck` and `lint` out of the box: the seller panel no longer type-checks its Vite config without Node types, and the generated `biome.json` is formatted the way Biome expects.
+
+## 3.2.1
+
+### Patch Changes
+
+- [#14843](https://github.com/spree/spree/pull/14843) [`6ff684e`](https://github.com/spree/spree/commit/6ff684e20192d4a29b08cb63f356248705d162ec) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` now updates the `@spree/*` packages right after the server (gems or image) and before migrations and data backfills, so a failing migration or backfill no longer prevents the `@spree/*` packages from updating.
+
+## 3.2.0
+
+### Minor Changes
+
+- [#14828](https://github.com/spree/spree/pull/14828) [`f61ff68`](https://github.com/spree/spree/commit/f61ff68db21d08385f743dc0bf46575fba0b284a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Merged `spree update` into `spree upgrade`, which now upgrades both prebuilt-image and ejected projects and also updates the `@spree/*` packages of the project root and the dashboard apps. `spree update` keeps working for one release with a deprecation warning. New projects get an `upgrade` script instead of `update`.
+
+### Patch Changes
+
+- [#14758](https://github.com/spree/spree/pull/14758) [`d1b27e2`](https://github.com/spree/spree/commit/d1b27e2c9dfd87de3ee8b74177b6d3082dc1f394) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed `spree eject` failing on a fresh stack with `service "web" is not running`. The development database is now created before the app server starts, since the server exits when that database is missing; `spree init` on an ejected project does the same. Eject also switches older dev compose files to a Postgres health check that only passes once the database server is really up.
+
+- [#14814](https://github.com/spree/spree/pull/14814) [`992b25e`](https://github.com/spree/spree/commit/992b25e00dc6b3ba9941f7223dd4d8cd17a25271) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Made the marketplace seller panel optional: `create-spree-app` now asks whether to install it (yes by default) and accepts `--no-seller-dashboard`. Added `--no-dashboard` for projects that are happy with the built-in admin dashboard; `--react-dashboard` is deprecated and does nothing. Apps are now set up in a consistent order — dashboard, seller panel, then storefront — and the storefront step looks the same as the others. `spree init` also installs the seller panel's dependencies, and both tools now point projects without their own dashboard at the built-in one instead of saying no admin is installed.
+
+- [#14747](https://github.com/spree/spree/pull/14747) [`a0151c1`](https://github.com/spree/spree/commit/a0151c15a268356f5a5ba236850b8ee7405e9ae7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the setup screen of a new project reloading while the merchant was filling it in. The generated route file now refers to installed packages by their stable location, and `spree add` generates it right after installing, so the first dev start has nothing to rewrite. Upgrades also no longer rewrite every line of that file, so its diff shows only the pages an upgrade added.
+
 ## 3.1.0
 
 ### Minor Changes

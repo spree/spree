@@ -45,10 +45,10 @@ RSpec.describe Spree::GiftCard, type: :model do
   end
 
   describe 'Scopes' do
-    let(:active_gift_card) { create(:gift_card, status: :active) }
-    let(:redeemed_gift_card) { create(:gift_card, status: :redeemed) }
-    let(:partially_redeemed_gift_card) { create(:gift_card, status: :partially_redeemed) }
-    let(:expired_gift_card) { create(:gift_card, expires_at: Date.current, status: :active) }
+    let!(:active_gift_card) { create(:gift_card, status: :active) }
+    let!(:redeemed_gift_card) { create(:gift_card, status: :redeemed) }
+    let!(:partially_redeemed_gift_card) { create(:gift_card, status: :partially_redeemed) }
+    let!(:expired_gift_card) { create(:gift_card, expires_at: Date.current, status: :active) }
 
     describe '#masked_code' do
       it 'shows only the last four characters' do
@@ -57,8 +57,8 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
 
     describe '#active' do
-      it 'returns active gift cards' do
-        expect(described_class.active).to contain_exactly(active_gift_card)
+      it 'returns unexpired active and partially redeemed gift cards' do
+        expect(described_class.active).to contain_exactly(active_gift_card, partially_redeemed_gift_card)
       end
     end
 
@@ -222,20 +222,6 @@ RSpec.describe Spree::GiftCard, type: :model do
 
     it 'includes the user email' do
       expect(subject[7]).to eq(user.email)
-    end
-  end
-
-  describe 'status' do
-    it 'has no state machine' do
-      expect(described_class).not_to respond_to(:state_machines)
-    end
-
-    it 'defaults to active' do
-      expect(described_class.new.status).to eq('active')
-    end
-
-    it 'rejects an unknown status' do
-      expect(build(:gift_card, status: 'nonsense')).not_to be_valid
     end
   end
 

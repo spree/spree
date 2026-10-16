@@ -1,3 +1,5 @@
+import { isDecimalString, sumMoney } from '@spree/admin-sdk'
+
 /**
  * How tax rows are shown on an order: one rate charged on many lines
  * collapses to a single amount, but a different treatment (exempt vs
@@ -25,7 +27,7 @@ export interface TaxLineExemption {
 export interface TaxLineGroup {
   key: string
   label: string
-  amount: number
+  amount: string
   taxabilityReason: string | null
   exemption: TaxLineExemption | null
   countryCode: string | null
@@ -57,9 +59,10 @@ export function taxLineExemption(row: GroupableTaxLine): TaxLineExemption | null
  * not collapse into a single $0.00 row.
  *
  * @param rows - Tax lines for one order
+ * @param currency - The order's currency, so sums keep its decimals
  * @returns Display groups in first-seen order
  */
-export function groupTaxLines(rows: GroupableTaxLine[]): TaxLineGroup[] {
+export function groupTaxLines(rows: GroupableTaxLine[], currency?: string): TaxLineGroup[] {
   const groups = new Map<string, TaxLineGroup>()
 
   for (const row of rows) {
@@ -70,12 +73,11 @@ export function groupTaxLines(rows: GroupableTaxLine[]): TaxLineGroup[] {
       exemption?.certificate_number ?? '',
       exemption?.reason_code ?? '',
     ].join('\0')
-    const parsed = Number.parseFloat(row.amount)
-    const amount = Number.isFinite(parsed) ? parsed : 0
+    const amount = isDecimalString(row.amount) ? row.amount : '0'
     const existing = groups.get(key)
 
     if (existing) {
-      existing.amount += amount
+      existing.amount = sumMoney([existing.amount, amount], currency)
       continue
     }
 

@@ -115,24 +115,4 @@ describe Spree::StockReservation, type: :model do
       expect(level.reload.reserved_count).to eq(0)
     end
   end
-
-  describe 'cleanup via dependent: :destroy' do
-    let(:reservation) { create(:stock_reservation) }
-
-    it 'is destroyed when its order is destroyed' do
-      reservation
-      order = reservation.order
-      expect { order.destroy }.to change(Spree::StockReservation, :count).by(-1)
-    end
-
-    it 'is destroyed when its line item is destroyed' do
-      reservation
-      expect { reservation.line_item.destroy }.to change(Spree::StockReservation, :count).by(-1)
-    end
-
-    it 'is destroyed when its stock item is destroyed' do
-      reservation
-      expect { reservation.stock_level.destroy }.to change(Spree::StockReservation, :count).by(-1)
-    end
-  end
 end

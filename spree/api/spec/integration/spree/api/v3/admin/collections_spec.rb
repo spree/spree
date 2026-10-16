@@ -23,6 +23,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (e.g., rules, custom_fields, translations).'
+      filter_parameters_for
 
       response '200', 'collections found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -47,34 +48,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'On Sale' },
-          automatic: { type: :boolean, example: true },
-          rules_match_policy: { type: :string, enum: %w[all any], example: 'all' },
-          sort_order: { type: :string, example: 'manual' },
-          permalink: { type: :string },
-          description: { type: :string },
-          meta_title: { type: :string },
-          meta_description: { type: :string },
-          meta_keywords: { type: :string },
-          rules: {
-            type: :array,
-            description: 'Full desired rule set. Entries with an id update, id-less entries create, omitted rules are removed.',
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, example: 'crule_abc123' },
-                type: { type: :string, example: 'tag' },
-                value: { type: :string, example: 'summer' },
-                match_policy: { type: :string, example: 'contains' }
-              }
-            }
-          }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'collection created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -158,34 +132,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Collection ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Winter Sale' },
-          permalink: { type: :string },
-          description: { type: :string },
-          meta_title: { type: :string },
-          meta_description: { type: :string },
-          meta_keywords: { type: :string },
-          sort_order: { type: :string },
-          automatic: { type: :boolean },
-          rules_match_policy: { type: :string, enum: %w[all any] },
-          position: { type: :integer, description: 'Reorders the collection within the flat list (acts_as_list)' },
-          rules: {
-            type: :array,
-            description: 'Full desired rule set (see create).',
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                type: { type: :string },
-                value: { type: :string },
-                match_policy: { type: :string }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'collection updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -233,6 +180,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :collection_id, in: :path, type: :string, required: true, description: 'Collection ID'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -257,11 +205,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :collection_id, in: :path, type: :string, required: true, description: 'Collection ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
-        required: %w[product_ids]
-      }
+      request_body_for
 
       response '201', 'products added' do
         let!(:product) { create(:product, store: store) }
@@ -288,11 +232,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :collection_id, in: :path, type: :string, required: true, description: 'Collection ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
-        required: %w[product_ids]
-      }
+      request_body_for
 
       response '200', 'products removed' do
         let!(:product) { create(:product, store: store) }
@@ -323,11 +263,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
                 description: 'Bearer token for admin authentication'
       parameter name: :collection_id, in: :path, type: :string, required: true, description: 'Collection ID'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { new_position: { type: :integer, description: '0-based index among the collection\'s products' } },
-        required: %w[new_position]
-      }
+      request_body_for
 
       response '204', 'product repositioned' do
         let!(:product) { create(:product, store: store) }
@@ -360,7 +296,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.map { |type| type['type'] }).to contain_exactly('tag', 'sale', 'available_on')
-          expect(data.first).to include('label', 'description', 'preference_schema')
+          expect(data.first).to include('label', 'description', 'schema')
         end
       end
     end

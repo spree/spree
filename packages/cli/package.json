@@ -1,6 +1,6 @@
 {
   "name": "@spree/cli",
-  "version": "3.1.0",
+  "version": "3.3.0",
   "description": "CLI for managing Spree Commerce projects",
   "type": "module",
   "bin": {
@@ -13,9 +13,9 @@
   ],
   "scripts": {
     "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-starter.mjs templates/dashboard-starter && node ../../scripts/sync-starter.mjs templates/seller-dashboard-starter seller-dashboard-starter && tsup",
-    "dev": "tsup --watch",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "dev": "node scripts/bundle-spec.mjs && tsup --watch",
+    "test": "node scripts/bundle-spec.mjs && vitest run",
+    "typecheck": "node scripts/bundle-spec.mjs && tsc --noEmit",
     "lint": "biome check src tests",
     "lint:fix": "biome check --fix src tests",
     "format": "biome format --write src tests",
@@ -46,7 +46,7 @@
     "url": "https://github.com/spree/spree/issues"
   },
   "dependencies": {
-    "@clack/prompts": "^1.3.0",
+    "@clack/prompts": "^1.8.0",
     "commander": "^14.0.3",
     "console-table-printer": "^2.15.0",
     "execa": "^9.6.1",
@@ -56,6 +56,7 @@
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@spree/admin-sdk": "workspace:^",
+    "@spree/sdk-core": "workspace:*",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",

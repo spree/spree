@@ -30,23 +30,18 @@ RSpec.describe 'Seller Requirement Submissions API', type: :request, swagger_doc
         needs to correct something submits again rather than editing, and the
         latest one counts.
 
-        `file` is **not** a multipart upload — it is the `signed_id` returned by
-        `POST /api/v3/seller/direct_uploads`, so the bytes are already in storage
+        `file_signed_id` is the `signed_id` returned by
+        `POST /api/v3/seller/files`, so the bytes are already in storage
         by the time this runs.
 
         An attestation is accepted on the spot; a requirement the operator
         reviews comes back `pending`.
       DESC
 
+      seller_sdk_example 'requirement-submissions/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          note: { type: :string, description: 'Anything the seller wants to say alongside the submission' },
-          reference: { type: :string, description: 'A reference number or external identifier, for requirements that ask for one' },
-          file: { type: :string, description: 'A direct-upload `signed_id`, for requirements that ask for a document' }
-        }
-      }
+      request_body_for
 
       response '201', 'submission recorded' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -88,6 +83,8 @@ RSpec.describe 'Seller Requirement Submissions API', type: :request, swagger_doc
         are identity and registration documents, so every read is authorized
         against the acting seller. Another seller's submission answers `404`.
       DESC
+
+      seller_sdk_example 'requirement-submissions/download'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

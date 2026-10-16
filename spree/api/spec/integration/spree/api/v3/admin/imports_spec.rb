@@ -27,6 +27,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'imports found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -45,8 +46,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~MD
-        Queues a CSV import. Upload the file first via `POST /api/v3/admin/direct_uploads`
-        and pass the returned `signed_id` as `attachment`. On success the import is in the
+        Queues a CSV import. Upload the file first via `POST /api/v3/admin/files`
+        and pass the returned `signed_id` as `attachment_signed_id`. On success the import is in the
         `mapping` state and the response carries the mapping payload: `schema_fields`
         (the canonical columns for the type), `csv_headers`, a `sample_row`, and the
         auto-assigned `mappings`.
@@ -59,54 +60,14 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[type attachment],
-        properties: {
-          type: {
-            type: :string,
-            enum: %w[
-              products
-              customers
-              product_translations
-              price_list_prices
-              purchase_orders
-            ],
-            example: 'products'
-          },
-          price_list_id: {
-            type: :string,
-            description: 'For `price_list_prices` imports: the price list the rows are merged into. ' \
-                         'Must belong to the current store.',
-            example: 'pl_86Rf07xd4z'
-          },
-          attachment: {
-            type: :string,
-            description: 'ActiveStorage signed blob id from POST /api/v3/admin/direct_uploads.',
-            example: 'eyJfcmFpbHMiOnsiZGF0YSI6MX0=--signed'
-          },
-          preferred_delimiter: {
-            type: :string,
-            enum: [',', ';', '|', "\t"],
-            description: 'CSV column separator. Defaults to a comma.',
-            example: ','
-          },
-          results_url: {
-            type: :string,
-            description: 'Absolute URL of your admin imports view; the import-done email links back to it ' \
-                         'with `?import=<id>` appended. Only honored when it matches one of the store\'s ' \
-                         'configured allowed origins.',
-            example: 'https://admin.example.com/store_abc/settings/imports'
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'import created in mapping state' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
           {
             type: 'products',
-            attachment: csv_blob("slug,sku,name,price\nwidget,W-1,Widget,10.00\n").signed_id
+            attachment_signed_id: csv_blob("slug,sku,name,price\nwidget,W-1,Widget,10.00\n").signed_id
           }
         end
 
@@ -121,7 +82,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
       response '422', 'unknown import type' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { type: 'Spree::Unknown', attachment: csv_blob("slug\nx\n").signed_id } }
+        let(:body) { { type: 'Spree::Unknown', attachment_signed_id: csv_blob("slug\nx\n").signed_id } }
 
         run_test!
       end
@@ -280,23 +241,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          mappings: {
-            type: :array,
-            description: 'Column assignments to apply before starting. `file_column: null` unmaps a field.',
-            items: {
-              type: :object,
-              required: %w[schema_field],
-              properties: {
-                schema_field: { type: :string, example: 'slug' },
-                file_column: { type: :string, nullable: true, example: 'Product Handle' }
-              }
-            }
-          }
-        }
-      }
+      request_body_for(required: false)
 
       response '200', 'mapping completed, processing queued' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -363,12 +308,11 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :import_id, in: :path, type: :string, required: true
-      parameter name: 'q[status_eq]', in: :query, type: :string, required: false,
-                description: 'Filter rows by status: pending, processing, completed, failed.'
+      filter_parameters_for
 
       response '200', 'rows found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:'q[status_eq]') { 'failed' }
+        let(:q) { { status_eq: 'failed' } }
 
         run_test! do |response|
           data = JSON.parse(response.body)

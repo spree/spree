@@ -407,7 +407,7 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
             <InputGroupInput
               id="value"
               type="number"
-              step="0.01"
+              step="any"
               min="0"
               max="100"
               aria-invalid={!!errors.value || undefined}
@@ -441,7 +441,7 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
           <InputGroupInput
             id="commission_tax_rate"
             type="number"
-            step="0.01"
+            step="any"
             min="0"
             placeholder={t('admin.fields.commission_rate.commission_tax_rate.placeholder')}
             {...form.register('commission_tax_rate')}
@@ -557,7 +557,7 @@ function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormV
               render={({ field }) => (
                 <Input
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   aria-label={currency}
                   value={(field.value?.[currency] as string) ?? ''}
@@ -611,7 +611,7 @@ function FlatFeeCapField({ form }: { form: UseFormReturn<CommissionRateFormValue
                 return (
                   <Input
                     type="number"
-                    step="0.01"
+                    step="any"
                     min="0"
                     aria-label={`${currency} ${t('admin.fields.commission_rate.max_amount.label')}`}
                     placeholder={t('admin.fields.commission_rate.max_amount.label')}
@@ -671,7 +671,7 @@ function PercentageBoundsField({ form }: { form: UseFormReturn<CommissionRateFor
                   <>
                     <Input
                       type="number"
-                      step="0.01"
+                      step="any"
                       min="0"
                       aria-label={`${currency} ${t('admin.fields.commission_rate.min_amount.label')}`}
                       placeholder={t('admin.fields.commission_rate.min_amount.label')}
@@ -681,7 +681,7 @@ function PercentageBoundsField({ form }: { form: UseFormReturn<CommissionRateFor
                     <span className="text-sm text-muted-foreground">–</span>
                     <Input
                       type="number"
-                      step="0.01"
+                      step="any"
                       min="0"
                       aria-label={`${currency} ${t('admin.fields.commission_rate.max_amount.label')}`}
                       placeholder={t('admin.fields.commission_rate.max_amount.label')}
@@ -805,13 +805,16 @@ function CommissionRuleRow({
   onRemove: () => void
 }) {
   const { t } = useTranslation()
-  const schema = ruleType?.preference_schema ?? []
+  const schema = ruleType?.schema
   // Catalog-scale references arrive as their own field; everything else names
   // records through an id list in preferences. Either way the picker comes
   // from the registry, keyed by rule kind.
   const picker = ruleType ? commissionRuleSubjectPicker(ruleType.type) : undefined
   const associationField = ruleType?.association_fields?.[0]
-  const preferenceIdKey = schema.find((preference) => preference.key.endsWith('_ids'))?.key
+  // The id list the schema marks with a record prefix.
+  const preferenceIdKey = Object.entries(schema?.properties ?? {}).find(
+    ([, property]) => property.items?.['x-spree-prefix'],
+  )?.[0]
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">

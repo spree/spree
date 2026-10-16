@@ -119,6 +119,19 @@ module Spree
       # requirement, in bytes. Small on purpose: these are certificates and
       # registrations, and an unbounded upload is a way to fill a disk.
       preference :max_seller_document_upload_size, :integer, default: 20_971_520, env: 'SPREE_MAX_SELLER_DOCUMENT_UPLOAD_SIZE' # 20 MB
+
+      # Largest file the Admin and Seller APIs accept for upload straight to
+      # storage, in bytes. Digital products (courses, archives) can be large.
+      preference :max_upload_size, :integer, default: 5_368_709_120, env: 'SPREE_MAX_UPLOAD_SIZE' # 5 GB
+
+      # Largest file accepted as bytes in the upload request itself, in bytes.
+      # Lower, because those bytes pass through the application.
+      preference :max_multipart_upload_size, :integer, default: 10_485_760, env: 'SPREE_MAX_MULTIPART_UPLOAD_SIZE' # 10 MB
+
+      # Days an uploaded file that was never attached to anything is kept
+      # before the daily purge deletes it. Longer than an upload reference
+      # stays valid (one day), so nothing a client can still attach is lost.
+      preference :unattached_upload_retention_days, :integer, default: 2, env: 'SPREE_UNATTACHED_UPLOAD_RETENTION_DAYS'
       preference :non_expiring_credit_types, :array, default: [], deprecated: 'Nothing reads this in Spree 6 — store credits no longer carry a category, and expiry lives on Spree::GiftCard'
       preference :products_per_page, :integer, default: 12, deprecated: 'Nothing reads this in Spree 6 — pass per_page to the API instead'
       preference :restock_inventory, :boolean, default: true, deprecated: 'Restocking is decided per line item by Spree::ReturnLineItem#resellable'
@@ -137,10 +150,15 @@ module Spree
       preference :empty_cart_expiry_hours, :integer, default: 48, env: 'SPREE_EMPTY_CART_EXPIRY_HOURS'
       preference :show_variant_full_price, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — a storefront decides how it renders prices'
       preference :show_products_without_price, :boolean, default: false, deprecated: 'Set it on the store instead'
+      # The daily update check also reports usage (see Spree::UpdateCheck).
+      # SPREE_TELEMETRY_DISABLED or DO_NOT_TRACK turns it off as well.
+      preference :telemetry_enabled, :boolean, default: true
       preference :tax_using_ship_address, :boolean, default: true, deprecated: 'Set it on the store instead'
       preference :track_inventory_levels, :boolean, default: true, deprecated: 'Set it on the store instead' # Determines whether to track on_hand values for variants / products.
       preference :track_price_history, :boolean, default: true, deprecated: 'Set it on the store instead' # Records price changes for Omnibus Directive compliance. Disable for non-EU stores.
       preference :price_history_retention_days, :integer, default: 30, deprecated: 'Set it on the store instead' # Days to retain price history records. Used by spree:price_history:prune rake task.
+      # SPREE_UPDATE_CHECK_DISABLED turns it off as well; it never runs in the test environment or on CI.
+      preference :update_check_enabled, :boolean, default: true
       preference :use_user_locale, :boolean, default: true, deprecated: true
 
       # Sets the path used for products, taxons and pages.

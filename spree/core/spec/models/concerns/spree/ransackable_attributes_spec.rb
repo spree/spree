@@ -34,4 +34,30 @@ RSpec.describe Spree::RansackableAttributes do
       expect(Spree::Order.ransackable_scopes(:seller)).not_to include('search')
     end
   end
+
+  describe '.search_by' do
+    let(:store) { @default_store }
+
+    it 'matches any declared attribute, partially and case-insensitively' do
+      supplier = create(:supplier, store: store, name: 'Acme Supplies', contact_name: 'Jane Roe', email: 'orders@acme.test')
+      other = create(:supplier, store: store, name: 'Globex', contact_name: 'John Doe', email: 'hello@globex.test')
+
+      expect(Spree::Supplier.search('acme')).to contain_exactly(supplier)
+      expect(Spree::Supplier.search('JANE')).to contain_exactly(supplier)
+      expect(Spree::Supplier.search('')).to include(supplier, other)
+    end
+
+    it 'reaches through associations' do
+      variant = create(:variant, sku: 'SEARCH-SKU-1')
+
+      expect(Spree::StockLevel.search('search-sku')).to include(*variant.stock_levels)
+    end
+
+    it 'is offered to an audience only when it may filter on every searched attribute' do
+      expect(Spree::StoreCredit.ransackable_scopes).to include('search')
+      expect(Spree::StoreCredit.ransackable_scopes(:store)).not_to include('search')
+      expect(Spree::StockLevel.ransackable_scopes(:store)).not_to include('search')
+      expect(Spree::Collection.ransackable_scopes(:store)).to include('search')
+    end
+  end
 end
