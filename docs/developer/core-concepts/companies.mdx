@@ -215,6 +215,36 @@ curl -X POST 'https://api.mystore.com/api/v3/store/companies/comp_xxx/addresses'
 
 Note that a delivery site is just an address. Ten warehouses do not mean ten company nodes — nodes exist for organizational and legal structure, addresses for where things go.
 
+### Addresses inherit downwards
+
+Listing a node's addresses returns its own entries **and** the ones it inherits from the nodes above it, so a division can ship to the headquarters site it shares. Writing one stays with the node that owns it: a division can add and edit its own entries, and reads its parent's without being able to change them.
+
+### Picking an address at checkout
+
+A member buying for their company ships to the company's sites, not only to their own saved addresses. Rather than reassembling that list from the memberships and the two books, ask the cart what it accepts:
+
+<CodeGroup>
+
+```typescript Store SDK
+const { data: addresses } = await client.carts.addresses.list('cart_xxx')
+
+await client.carts.update('cart_xxx', {
+  shipping_address_id: addresses[0].id,
+})
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx/addresses' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT'
+```
+
+</CodeGroup>
+
+The list holds the buyer's own address book plus the address book of the company the cart is for, and every entry in it is accepted as `shipping_address_id` or `billing_address_id` — so a picker built from it can never offer something the cart then refuses. An address belonging to anyone else is rejected, and completing the order copies the chosen address onto it, leaving the book entry free to be renamed or retired later.
+
+Staff placing an order get the same reach: `shipping_address_id` and `billing_address_id` on the Admin API's order creation accept the company's sites, and `use_customer_default_address` fills the slots from the company's defaults when the order names a company.
+
 ## Tax
 
 Tax registrations and exemption certificates live **only on legal entities**, and a purchase resolves tax through the node's nearest `company` ancestor.

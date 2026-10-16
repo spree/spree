@@ -245,7 +245,7 @@ module Spree
     #
     # @return [ActiveRecord::Relation]
     def address_book
-      Spree::Address.where(owner_type: 'Spree::Company', owner_id: self_and_ancestors.map(&:id))
+      Spree::Address.not_deleted.where(owner_type: 'Spree::Company', owner_id: self_and_ancestors.map(&:id))
     end
 
     private

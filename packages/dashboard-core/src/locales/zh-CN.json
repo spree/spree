@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "未选择地址"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "面包屑导航",

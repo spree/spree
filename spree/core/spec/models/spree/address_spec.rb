@@ -993,6 +993,23 @@ describe Spree::Address, type: :model do
       expect(address.snapshot.save).to be(true)
       expect(address.snapshot.save).to be(true)
     end
+
+    context 'of a company site' do
+      let(:company) { create(:company, name: 'Acme Logistics') }
+      let(:address) do
+        create(:company_address, owner: company, company: nil, first_name: 'Dana', last_name: 'Reyes')
+      end
+
+      it 'freezes the company line the owner was supplying' do
+        expect(snapshot.company).to eq('Acme Logistics')
+      end
+
+      it 'keeps a line the entry stored for itself' do
+        address.update!(company: 'Acme Logistics — Dock B')
+
+        expect(snapshot.company).to eq('Acme Logistics — Dock B')
+      end
+    end
   end
 
   describe '#duplicate_in_address_book' do

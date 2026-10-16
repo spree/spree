@@ -3437,15 +3437,20 @@
         "drafts_title": "Draft Orders",
         "new": {
           "add_line_item": "Add line item",
+          "address_help": "Leave an address unpicked to enter it on the order once it exists. A company order may use that company’s sites and the ones it inherits.",
+          "company_addresses": "Company addresses",
           "company_help": "Attach this order to a business. The customer list then shows only people who can buy for it.",
+          "customer_addresses": "Customer addresses",
           "search_variant": "Search variant…",
           "section_billing": "Billing",
           "section_customer": "Customer",
           "section_items": "Items",
           "section_notes": "Notes",
           "section_summary": "Summary",
+          "select_billing_address": "Billing address",
           "select_company": "Company (optional)",
           "select_customer": "Select customer",
+          "select_shipping_address": "Shipping address",
           "title": "New Order"
         }
       },

@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "لم يتم اختيار عنوان"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "مسار التنقل",
