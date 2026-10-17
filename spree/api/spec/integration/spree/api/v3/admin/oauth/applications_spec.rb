@@ -24,6 +24,7 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
   path '/api/v3/admin/oauth/applications' do
     get 'List connected applications' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-applications/list'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -47,6 +48,7 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
 
     post 'Register an application' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-applications/create'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -89,6 +91,7 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
 
     patch 'Update an application' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-applications/update'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -112,6 +115,7 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
 
     delete 'Remove an application' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-applications/delete'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -137,6 +141,7 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
 
     get 'List who is connected' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-application-tokens/list'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -166,6 +171,7 @@ RSpec.describe 'Admin OAuth Applications API', type: :request, swagger_doc: 'api
 
     delete 'Revoke one person\'s access' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-application-tokens/delete'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
