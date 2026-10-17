@@ -23,6 +23,7 @@ export const PaymentSchema = z.object({
   avs_response: z.string().nullable(),
   cvv_response_code: z.string().nullable(),
   cvv_response_message: z.string().nullable(),
+  gateway_dashboard_payment_url: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   captured_amount: z.string(),

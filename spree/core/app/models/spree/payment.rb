@@ -334,8 +334,19 @@ module Spree
       true
     end
 
+    # The payment's page in the provider's dashboard. Only https links are
+    # returned, since staff open it from the admin and a gateway may build it
+    # from values the provider sent back.
+    #
+    # @return [String, nil]
     def gateway_dashboard_payment_url
-      payment_method.try(:gateway_dashboard_payment_url, self)
+      url = payment_method.try(:gateway_dashboard_payment_url, self)
+      return if url.blank?
+
+      uri = URI.parse(url)
+      url if uri.is_a?(URI::HTTPS) && uri.host.present?
+    rescue URI::InvalidURIError
+      nil
     end
 
     def captured_amount

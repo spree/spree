@@ -2932,7 +2932,8 @@
           "state": "Status",
           "this_order": "Diese Bestellung",
           "shared_help": "Einmal bezahlt für einen Warenkorb mehrerer Verkäufer. Diese Bestellung hat einen Anteil daran.",
-          "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden."
+          "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden.",
+          "view_at_gateway": "In {{gateway}} ansehen"
         },
         "priced_by": "Preis von {{name}}",
         "purchase_order": {

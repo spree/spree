@@ -1075,8 +1075,8 @@ describe Spree::Payment, type: :model do
   end
 
   describe '#gateway_dashboard_payment_url' do
-    it 'returns nil' do
-      expect(payment.gateway_dashboard_payment_url).to be_nil
+    it 'returns nil when the payment method has no dashboard' do
+      expect(build(:payment, payment_method: create(:check_payment_method)).gateway_dashboard_payment_url).to be_nil
     end
 
     let(:payment) { create(:payment, payment_method: gateway, transaction_id: '123') }
@@ -1088,6 +1088,16 @@ describe Spree::Payment, type: :model do
 
       it 'returns the url' do
         expect(payment.gateway_dashboard_payment_url).to eq("https://dashboard.stripe.com/payments/#{payment.transaction_id}")
+      end
+    end
+
+    context 'when the gateway returns a link that is not https' do
+      it 'returns nil' do
+        ['javascript:alert(1)', 'http://dashboard.example.com/payments/123', 'https://exa mple.com', 'https:javascript:alert(1)', 'https:/payments/123'].each do |url|
+          allow(gateway).to receive(:gateway_dashboard_payment_url).with(payment).and_return(url)
+
+          expect(payment.gateway_dashboard_payment_url).to be_nil
+        end
       end
     end
   end

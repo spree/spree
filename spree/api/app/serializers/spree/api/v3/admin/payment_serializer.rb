@@ -13,9 +13,11 @@ module Spree
                    order_id: [:string, nullable: true],
                    avs_response: [:string, nullable: true],
                    cvv_response_code: [:string, nullable: true],
-                   cvv_response_message: [:string, nullable: true]
+                   cvv_response_message: [:string, nullable: true],
+                   gateway_dashboard_payment_url: [:string, nullable: true]
 
           attributes :metadata, :avs_response, :cvv_response_code, :cvv_response_message,
+                     :gateway_dashboard_payment_url,
                      created_at: :iso8601, updated_at: :iso8601
 
           money_attributes :captured_amount

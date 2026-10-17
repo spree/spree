@@ -1,7 +1,15 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, fillAddressForm, login } from './helpers'
+import {
+  adminRequest,
+  FIXTURE_BOGUS_GATEWAY,
+  FIXTURE_BOGUS_ORDER_EMAIL,
+  FIXTURE_BOGUS_TRANSACTION_ID,
+  FIXTURE_PROMO_PRODUCT,
+  fillAddressForm,
+  login,
+} from './helpers'
 
 // A PNG is in the PO document allowlist, so the shared fixture works and no
 // new binary ships with the suite.
@@ -345,5 +353,31 @@ test.describe('order tags', () => {
     await expect(page.getByRole('option', { name: tagName, exact: true })).toBeVisible({
       timeout: 15_000,
     })
+  })
+})
+
+test.describe('order payments', () => {
+  test("links a card payment to its page at the gateway's dashboard", async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    const link = page.getByRole('menuitem', { name: `View at ${FIXTURE_BOGUS_GATEWAY}` })
+    await expect(link).toHaveAttribute(
+      'href',
+      `https://dashboard.bogus.example/payments/${FIXTURE_BOGUS_TRANSACTION_ID}`,
+    )
+    await expect(link).toHaveAttribute('target', '_blank')
   })
 })

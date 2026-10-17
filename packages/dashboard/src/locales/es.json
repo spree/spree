@@ -2718,7 +2718,8 @@
           "state": "Estado",
           "this_order": "Este pedido",
           "shared_help": "Pagado una vez por un carrito que abarca varios vendedores. Este pedido tiene una parte de él.",
-          "load_error": "No se pudieron cargar los pagos de este pedido."
+          "load_error": "No se pudieron cargar los pagos de este pedido.",
+          "view_at_gateway": "Ver en {{gateway}}"
         },
         "priced_by": "Precio según {{name}}",
         "purchase_order": {

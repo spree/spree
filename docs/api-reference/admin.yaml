@@ -21612,6 +21612,7 @@ paths:
                   avs_response:
                   cvv_response_code:
                   cvv_response_message:
+                  gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-343039b69b86
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   captured_amount: '0.00'
@@ -21693,6 +21694,7 @@ paths:
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
+                gateway_dashboard_payment_url:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 captured_amount: '0.00'
@@ -21800,6 +21802,7 @@ paths:
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
+                gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-4a236d40ef07
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 captured_amount: '0.00'
@@ -21888,6 +21891,7 @@ paths:
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
+                gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-ccc19f06b194
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 captured_amount: '110.00'
@@ -21990,6 +21994,7 @@ paths:
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
+                gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/void-BGS-11f2e975ba0c
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 captured_amount: '0.00'
@@ -63916,6 +63921,9 @@ components:
         cvv_response_message:
           type: string
           nullable: true
+        gateway_dashboard_payment_url:
+          type: string
+          nullable: true
         created_at:
           type: string
         updated_at:
@@ -63949,6 +63957,7 @@ components:
       - avs_response
       - cvv_response_code
       - cvv_response_message
+      - gateway_dashboard_payment_url
       - created_at
       - updated_at
       - captured_amount
