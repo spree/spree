@@ -3,11 +3,10 @@ import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
 import {
   adminRequest,
-  FIXTURE_GATEWAY_DASHBOARD_URL,
-  FIXTURE_GATEWAY_PAYMENT_METHOD,
-  FIXTURE_PROMO_CUSTOMER_EMAIL,
+  FIXTURE_BOGUS_GATEWAY,
+  FIXTURE_BOGUS_ORDER_EMAIL,
+  FIXTURE_BOGUS_TRANSACTION_ID,
   FIXTURE_PROMO_PRODUCT,
-  FIXTURE_PROMO_SKU,
   fillAddressForm,
   login,
 } from './helpers'
@@ -358,53 +357,27 @@ test.describe('order tags', () => {
 })
 
 test.describe('order payments', () => {
-  test("links a payment to its page at the payment provider's dashboard", async ({ page }) => {
+  test("links a card payment to its page at the gateway's dashboard", async ({ page }) => {
     const creds = await login(page)
-    type List = { data: { id: string }[] }
-    const [paymentMethods, customers, variants] = await Promise.all([
-      adminRequest<List>(
-        page,
-        creds,
-        'get',
-        `/payment_methods?q[name_eq]=${encodeURIComponent(FIXTURE_GATEWAY_PAYMENT_METHOD)}`,
-      ),
-      adminRequest<List>(
-        page,
-        creds,
-        'get',
-        `/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
-      ),
-      adminRequest<List>(page, creds, 'get', `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`),
-    ])
-    const order = await adminRequest<{ id: string; total: string }>(
+    const orders = await adminRequest<{ data: { id: string }[] }>(
       page,
-      creds,
-      'post',
-      '/orders',
-      {
-        customer_id: customers.data[0].id,
-        items: [{ variant_id: variants.data[0].id, quantity: 1 }],
-      },
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
     )
-    const payment = await adminRequest<{ number: string }>(
-      page,
-      creds,
-      'post',
-      `/orders/${order.id}/payments`,
-      { payment_method_id: paymentMethods.data[0].id, amount: order.total },
-    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
 
-    await page.goto(`/${creds.store_id}/orders/${order.id}`)
     await page
       .locator('tr')
-      .filter({ hasText: payment.number })
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
       .getByRole('button', { name: /^actions$/i })
       .click({ timeout: 15_000 })
 
-    const link = page.getByRole('menuitem', {
-      name: `View at ${FIXTURE_GATEWAY_PAYMENT_METHOD}`,
-    })
-    await expect(link).toHaveAttribute('href', `${FIXTURE_GATEWAY_DASHBOARD_URL}/${payment.number}`)
+    const link = page.getByRole('menuitem', { name: `View at ${FIXTURE_BOGUS_GATEWAY}` })
+    await expect(link).toHaveAttribute(
+      'href',
+      `https://dashboard.bogus.example/payments/${FIXTURE_BOGUS_TRANSACTION_ID}`,
+    )
     await expect(link).toHaveAttribute('target', '_blank')
   })
 })

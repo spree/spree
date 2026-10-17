@@ -1,6 +1,9 @@
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
+  FIXTURE_BOGUS_GATEWAY,
+  FIXTURE_BOGUS_ORDER_EMAIL,
+  FIXTURE_BOGUS_TRANSACTION_ID,
   FIXTURE_BULK_CATEGORY,
   FIXTURE_BULK_CATEGORY_PERMALINK,
   FIXTURE_BULK_CHANNEL_CODE,
@@ -19,8 +22,6 @@ import {
   FIXTURE_BULK_PRODUCT_L,
   FIXTURE_BULK_PRODUCT_M,
   FIXTURE_BULK_PRODUCT_N,
-  FIXTURE_GATEWAY_DASHBOARD_URL,
-  FIXTURE_GATEWAY_PAYMENT_METHOD,
   FIXTURE_INVENTORY_PRODUCT,
   FIXTURE_INVENTORY_RESERVED,
   FIXTURE_INVENTORY_SKU,
@@ -50,7 +51,6 @@ import {
   CREDENTIALS_FILE,
   RAILS_PID_FILE,
   TEST_INTEGRATION_INITIALIZER,
-  TEST_PAYMENT_GATEWAY_INITIALIZER,
 } from './paths'
 import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
 
@@ -183,8 +183,14 @@ const BOOTSTRAP_RUBY = [
   // period as well as its own.
   `comma_store.markets.find_or_create_by!(name: 'United States') { |m| m.currency = 'USD'; m.default_locale = 'en'; m.countries = [Spree::Country.find_by_iso!('US')] } unless comma_store.markets.exists?(currency: 'USD')`,
   'comma_store.add_user(admin, Spree::Role.default_admin_role(comma_store)) unless comma_store.role_users.exists?(user: admin)',
-  // Its payments link out to a provider dashboard (see the initializer below).
-  `s.payment_methods.where(name: '${FIXTURE_GATEWAY_PAYMENT_METHOD}').first_or_create!(type: 'E2eGateway', active: true, storefront_visible: false)`,
+  // A card payment the Bogus gateway has charged, so its page at the gateway's
+  // dashboard has an address. On this store because the payment method specs
+  // install Bogus on the default one, and a store holds each provider once.
+  // Written directly: charging a card needs a full checkout.
+  `comma_bogus = comma_store.payment_methods.where(type: 'Spree::Gateway::Bogus').first_or_create!(name: '${FIXTURE_BOGUS_GATEWAY}', active: true, storefront_visible: false)`,
+  `gateway_order = comma_store.orders.find_by(email: '${FIXTURE_BOGUS_ORDER_EMAIL}') || Spree::Order.create!(store: comma_store, currency: 'EUR', email: '${FIXTURE_BOGUS_ORDER_EMAIL}', status: 'placed', completed_at: Time.current, total: 10)`,
+  "gateway_card = Spree::CreditCard.where(payment_method: comma_bogus, gateway_customer_profile_id: 'BGS-E2E').first_or_create!(number: '4111111111111111', verification_value: '123', month: 12, year: 1.year.from_now.year, name: 'E2E Customer', cc_type: 'visa')",
+  `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}') unless gateway_order.payments.exists?`,
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
 ].join('; ')
@@ -226,27 +232,6 @@ export default async function globalSetup() {
       '      end',
       '    end',
       "    Spree.integrations << 'E2eRelay' unless Spree.integrations.include?('E2eRelay')",
-      '  end',
-      'end',
-      '',
-    ].join('\n'),
-  )
-
-  // Left out of the payment method registry, so the provider pickers the
-  // payment method specs assert on stay as they are.
-  writeFileSync(
-    TEST_PAYMENT_GATEWAY_INITIALIZER,
-    [
-      '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
-      "if ENV['DASHBOARD_E2E'] == '1'",
-      '  Rails.application.config.after_initialize do',
-      '    unless defined?(::E2eGateway)',
-      '      class ::E2eGateway < Spree::PaymentMethod::Check',
-      '        def gateway_dashboard_payment_url(payment)',
-      `          "${FIXTURE_GATEWAY_DASHBOARD_URL}/#{payment.number}"`,
-      '        end',
-      '      end',
-      '    end',
       '  end',
       'end',
       '',

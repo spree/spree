@@ -1075,8 +1075,8 @@ describe Spree::Payment, type: :model do
   end
 
   describe '#gateway_dashboard_payment_url' do
-    it 'returns nil' do
-      expect(payment.gateway_dashboard_payment_url).to be_nil
+    it 'returns nil when the payment method has no dashboard' do
+      expect(build(:payment, payment_method: create(:check_payment_method)).gateway_dashboard_payment_url).to be_nil
     end
 
     let(:payment) { create(:payment, payment_method: gateway, transaction_id: '123') }
