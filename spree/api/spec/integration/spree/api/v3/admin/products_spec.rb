@@ -593,6 +593,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
     patch 'Approve a submitted product' do
       tags 'Products'
+      admin_sdk_example 'products/approve'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

@@ -14,6 +14,7 @@ RSpec.describe 'OAuth Protected Resource Metadata', type: :request,
 
     get 'Discover the authorization server' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-discovery/protected-resource'
       produces 'application/json'
       description <<~DESC
         RFC 9728. A client given a URL it cannot reach unauthenticated reads

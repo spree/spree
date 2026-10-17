@@ -34,6 +34,7 @@ RSpec.describe 'Admin OAuth Consent API', type: :request, swagger_doc: 'api-refe
 
     get 'Describe what a client is asking for' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-consent/show'
       produces 'application/json'
       security [bearer_auth: []]
       description <<~DESC
@@ -72,6 +73,7 @@ RSpec.describe 'Admin OAuth Consent API', type: :request, swagger_doc: 'api-refe
 
     post 'Approve a request' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-consent/approve'
       produces 'application/json'
       security [bearer_auth: []]
       description <<~DESC
@@ -100,6 +102,7 @@ RSpec.describe 'Admin OAuth Consent API', type: :request, swagger_doc: 'api-refe
 
     delete 'Turn a request down' do
       tags 'OAuth'
+      admin_sdk_example 'oauth-consent/deny'
       produces 'application/json'
       security [bearer_auth: []]
       description 'Answers with where to send the browser, carrying the refusal.'
