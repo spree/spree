@@ -31,10 +31,6 @@ function StoreLayout() {
   const { storeId } = Route.useParams()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const inSettings = pathname.startsWith(`/${storeId}/settings`)
-  // Permissions are store-scoped (roles are held per store), and the provider
-  // now keys its query by the active store — so switching store refetches them
-  // on its own. The manual reload this used to run here is not just redundant
-  // but harmful: it re-ran whenever its callback changed identity.
 
   return (
     <StoreProvider storeId={storeId}>

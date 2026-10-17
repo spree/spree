@@ -19,6 +19,7 @@ import {
   FIXTURE_BULK_PRODUCT_L,
   FIXTURE_BULK_PRODUCT_M,
   FIXTURE_BULK_PRODUCT_N,
+  FIXTURE_COMMA_STORE_NAME,
   FIXTURE_INVENTORY_PRODUCT,
   FIXTURE_INVENTORY_RESERVED,
   FIXTURE_INVENTORY_SKU,
@@ -42,6 +43,7 @@ import {
   FIXTURE_TRANSFER_PRODUCT,
   FIXTURE_TRANSFER_SKU,
   FIXTURE_TRANSFER_SOURCE,
+  FIXTURE_TWO_STORE_STAFF_EMAIL,
 } from './helpers'
 import {
   ASYNC_JOBS_INITIALIZER,
@@ -174,12 +176,16 @@ const BOOTSTRAP_RUBY = [
   // price is misread if anything parses money by locale. Its name sorts after
   // the default store's, so signing in still opens the default store first, and
   // its dashboard stays in English so the specs' labels match.
-  `comma_store = Spree::Store.find_by(code: 'e2e-nl') || Spree::Store.create!(code: 'e2e-nl', name: 'Winkel', url: 'nl.example.com', mail_from_address: 'no-reply@example.com', preferred_admin_locale: 'en')`,
+  `comma_store = Spree::Store.find_by(code: 'e2e-nl') || Spree::Store.create!(code: 'e2e-nl', name: '${FIXTURE_COMMA_STORE_NAME}', url: 'nl.example.com', mail_from_address: 'no-reply@example.com', preferred_admin_locale: 'en')`,
   'Spree::Seeds::StoreResources.call(store: comma_store); Spree::Stores::ProvisionDefaults.call(store: comma_store, country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.stock_locations.exists?',
   // A second market in USD, so the store sells in a currency written with a
   // period as well as its own.
   `comma_store.markets.find_or_create_by!(name: 'United States') { |m| m.currency = 'USD'; m.default_locale = 'en'; m.countries = [Spree::Country.find_by_iso!('US')] } unless comma_store.markets.exists?(currency: 'USD')`,
   'comma_store.add_user(admin, Spree::Role.default_admin_role(comma_store)) unless comma_store.role_users.exists?(user: admin)',
+  // Admin of the default store, read-only on orders in the comma store.
+  `two_store_staff = Spree.admin_user_class.where(email: '${FIXTURE_TWO_STORE_STAFF_EMAIL}').first_or_create! { |u| u.password = 'spree123'; u.password_confirmation = 'spree123' }`,
+  's.add_user(two_store_staff, Spree::Role.default_admin_role(s))',
+  "comma_store.add_user(two_store_staff, comma_store.roles.find_or_create_by!(name: 'E2E Order Reader') { |role| role.permissions = ['read_orders'] })",
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
 ].join('; ')
