@@ -87,27 +87,33 @@ module Spree
             params.to_unsafe_h.slice(*QUERY_KEYS)
           end
 
-          # Both credential types are authorized per referenced member:
-          # JWT admins via CanCanCan (`required_subjects`), secret keys via
-          # their scopes (`required_key_scopes` on top of the `read_reports`
-          # endpoint gate) — a key without `read_products` cannot query the
-          # product dimension any more than a limited staff role can.
+          # Every referenced member is authorized against what this
+          # credential holds, on top of the `read_reports` endpoint gate: a
+          # caller without `read_products` cannot query the product dimension
+          # whatever its principal type.
+          #
+          # Asked through `holds_permission?` rather than of the ability,
+          # because an OAuth grant authenticates as the staff member who
+          # approved it and carries no API key. Measured against their role,
+          # a grant for `read_reports` alone could group by customer and read
+          # names, emails and spend — data the merchant never consented to.
           def authorize_reporting_members!(reporting_query)
-            if current_api_key.present?
-              missing = reporting_query.required_key_scopes.reject { |scope| current_api_key.has_scope?(scope) }
-              return if missing.empty?
+            missing = reporting_query.required_key_scopes.reject { |scope| holds_permission?(scope) }
 
-              render_error(
+            if missing.any?
+              return render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-                message: "API key lacks scope: #{missing.join(', ')}",
+                message: "Missing permission: #{missing.join(', ')}",
                 status: :forbidden,
                 details: { required_scopes: missing }
               )
-            else
-              authorize!(:read, :reports)
-              forbidden = reporting_query.unreadable_subjects(current_ability).first
-              raise CanCan::AccessDenied.new(nil, :read, forbidden) if forbidden
             end
+
+            # Then the record-level rules, which a host app uses to narrow
+            # what a role sees within data it may read at all.
+            authorize!(:read, :reports)
+            forbidden = reporting_query.unreadable_subjects(current_ability).first
+            raise CanCan::AccessDenied.new(nil, :read, forbidden) if forbidden
           end
 
           # An unknown member carries what it was and what was valid instead.

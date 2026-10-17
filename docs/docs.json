@@ -699,6 +699,10 @@
     {
       "source": "/user/orders/creating-orders",
       "destination": "/user/orders/draft-orders"
+    },
+    {
+      "source": "/developer/agentic/admin-mcp",
+      "destination": "/developer/mcp/overview"
     }
   ],
   "contextual": {
@@ -811,6 +815,17 @@
                       "developer/cli/admin-api"
                     ],
                     "icon": "sparkles"
+                  },
+                  {
+                    "group": "MCP Server",
+                    "pages": [
+                      "developer/mcp/overview",
+                      "developer/mcp/quick-start",
+                      "developer/mcp/tools",
+                      "developer/mcp/permissions",
+                      "developer/mcp/custom-tools"
+                    ],
+                    "icon": "plug"
                   },
                   {
                     "group": "Tutorial",

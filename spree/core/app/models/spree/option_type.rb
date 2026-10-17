@@ -12,6 +12,11 @@ module Spree
 
     TRANSLATABLE_FIELDS = Spree::LabelTranslatable::TRANSLATABLE_FIELDS
 
+    # Option types are managed under the catalog, so the products permission guards them — see Admin::OptionTypesController.
+    def self.translation_write_permission
+      'write_products'
+    end
+
     # Option values are translated alongside their type — the translations
     # endpoint nests their matrices so the editor fetches both in one read.
     def self.translatable_children

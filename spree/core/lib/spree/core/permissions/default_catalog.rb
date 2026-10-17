@@ -202,6 +202,11 @@ module Spree
         catalog.register_scope(:integrations, group: :settings, resources: -> { [Spree::Integration] })
 
         catalog.register_scope(:api_keys, group: :access, resources: -> { [Spree::ApiKey] })
+        # Connecting an AI agent hands a third party a standing credential to
+        # the store, so it is its own permission rather than part of settings
+        # — a merchandiser who may edit a delivery zone is not thereby someone
+        # who may connect Claude to the back office.
+        catalog.register_scope(:oauth_applications, group: :access, resources: -> { [Spree::OauthApplication] })
         catalog.register_scope(:staff, group: :access, resources: -> {
           [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]
         })

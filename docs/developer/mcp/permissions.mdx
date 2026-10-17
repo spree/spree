@@ -1,0 +1,60 @@
+---
+title: "Permissions and Consent"
+sidebarTitle: Permissions
+description: "What a merchant approves when they connect an agent, how a grant is bounded, and how to take it away."
+---
+
+An agent acts for the person who connected it. There is no standing credential with nobody behind it, and no key to rotate — the merchant signs in, approves specific permissions, and those permissions are the ceiling for everything that follows.
+
+## What a merchant approves
+
+Connecting sends the merchant to Spree, where a consent screen lists the permissions the client asked for and lets them tick the ones to hand over. The vocabulary is the same as a staff role's — `read_products`, `write_orders` — so a grant is expressed in terms the merchant already understands from the dashboard.
+
+Three rules bound it:
+
+**A grant can only narrow.** It is the intersection of what the client asked for and what the approver holds. A staff member who cannot issue refunds cannot approve an agent that can, and a request naming a permission they lack is cut down rather than honoured.
+
+**It is a standing ceiling, not a one-off.** The grant persists until revoked, which is why it is recorded as the intersection rather than as what was asked for. Recorded too wide, it would widen on its own the day that person is promoted.
+
+**It is per person.** Each staff member connects for themselves, and an agent's actions are recorded against whoever approved it. **Settings → AI Agents** lists each agent with the people connected through it, what each of them approved, and a revoke beside each — so taking one person's access away leaves their colleagues working.
+
+## What a grant can never hold
+
+Some permissions are never offered on the consent screen, whatever the client asks for: API keys, integrations, webhook endpoints, roles and staff accounts.
+
+These are the permissions that mint *other* credentials. If a grant could hold them, an agent could create an API key with wider scopes than its own, and the ceiling would mean nothing.
+
+## How the ceiling is enforced
+
+A grant narrows at two points, and both matter:
+
+**Which tools are offered.** The model is never shown a tool outside the grant, so it does not try and fail — it has no way to ask.
+
+**What each call reaches.** Tool visibility is per permission; the data behind it is checked per resource and per record. A connection granted `read_reports` can run a report, and is still refused a dimension exposing customers unless it also holds `read_customers`.
+
+The second matters because the first is about what the model knows, not about what the store allows. Every tool reaches data by making a real API request with the grant's own credential, so a host application's record-level rules — `can :manage, Spree::Product, seller_id: …` — narrow an agent exactly as they narrow a person.
+
+## Revoking
+
+**Settings → AI Agents** lists everything connected, who approved it and when. Revoking takes effect on that person's next call: it revokes their access rather than the registration, so they stop working immediately, their colleagues carry on, and they can connect again later without the client being registered afresh.
+
+## Registering a client
+
+A client is registered once per store, under **Settings → OAuth clients**, before any merchant connects it. A registration carries no permissions of its own — what a client may do is decided per merchant at consent.
+
+Clients are public rather than confidential: a hosted connector cannot keep a secret, so PKCE is required instead of a client secret.
+
+## For integrations that cannot sign in
+
+A CI job, a nightly sync or a server-side integration has no person behind it and no browser to sign in with. Those use a [secret API key](/developer/cli/admin-api) with its own scopes, which is what API keys are for. The MCP endpoint deliberately refuses them.
+
+## See also
+
+<CardGroup cols={2}>
+  <Card title="Tool reference" icon="wrench" href="/developer/mcp/tools">
+    Which permission each tool needs.
+  </Card>
+  <Card title="Roles and permissions" icon="users" href="/developer/customization/permissions">
+    The permission catalog a grant draws from.
+  </Card>
+</CardGroup>

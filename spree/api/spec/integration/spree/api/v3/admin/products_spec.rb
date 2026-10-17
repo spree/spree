@@ -588,6 +588,47 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/admin/products/{id}/approve' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Approve a submitted product' do
+      tags 'Products'
+      admin_sdk_example 'products/approve'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Puts a product a seller submitted for review on sale, and closes the
+        submission. Only a product awaiting review can be approved.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'product approved' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:submitted) { create(:product, store: store, status: 'proposed') }
+        let(:id) { submitted.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('active')
+        end
+      end
+
+      response '422', 'the product is not awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/products/{id}/reject' do
     parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
 
