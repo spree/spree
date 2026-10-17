@@ -2719,7 +2719,9 @@
           "this_order": "Este pedido",
           "shared_help": "Pagado una vez por un carrito que abarca varios vendedores. Este pedido tiene una parte de él.",
           "load_error": "No se pudieron cargar los pagos de este pedido.",
-          "view_at_gateway": "Ver en {{gateway}}"
+          "view_at_gateway": "Ver en {{gateway}}",
+          "view_details": "Ver detalles",
+          "failed_card_checks": "Verificaciones de tarjeta fallidas"
         },
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
@@ -2769,6 +2771,22 @@
           "cbm": "{{value}} CBM",
           "kg": "{{value}} kg",
           "incomplete": "Algunos artículos no están medidos, así que estas cifras son un piso más que un total."
+        },
+        "payment_details": {
+          "title": "Pago {{number}}",
+          "description": "Lo que informó el emisor de la tarjeta y cada captura del importe.",
+          "transaction_id": "ID de transacción",
+          "address_check": "Verificación de dirección",
+          "security_code_check": "Verificación del código de seguridad",
+          "code": "Código {{code}}",
+          "check": {
+            "passed": "Superada",
+            "failed": "No superada",
+            "not_checked": "No verificada"
+          },
+          "captures": "Capturas",
+          "captures_empty": "Aún no se ha capturado nada.",
+          "captured_at": "Capturado"
         }
       },
       "edit": {

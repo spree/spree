@@ -2961,7 +2961,9 @@
           "this_order": "To zamówienie",
           "shared_help": "Zapłacone raz za koszyk obejmujący kilku sprzedawców. To zamówienie ma w nim udział.",
           "load_error": "Nie udało się wczytać płatności tego zamówienia.",
-          "view_at_gateway": "Zobacz w {{gateway}}"
+          "view_at_gateway": "Zobacz w {{gateway}}",
+          "view_details": "Zobacz szczegóły",
+          "failed_card_checks": "Nieudana weryfikacja karty"
         },
         "priced_by": "Cena z {{name}}",
         "purchase_order": {
@@ -3011,6 +3013,22 @@
           "cbm": "{{value}} m³",
           "kg": "{{value}} kg",
           "incomplete": "Część towaru nie ma wymiarów, więc te liczby to wartość minimalna, a nie suma."
+        },
+        "payment_details": {
+          "title": "Płatność {{number}}",
+          "description": "Co zgłosił wydawca karty oraz każde pobranie środków.",
+          "transaction_id": "ID transakcji",
+          "address_check": "Weryfikacja adresu",
+          "security_code_check": "Weryfikacja kodu bezpieczeństwa",
+          "code": "Kod {{code}}",
+          "check": {
+            "passed": "Pozytywna",
+            "failed": "Negatywna",
+            "not_checked": "Niesprawdzona"
+          },
+          "captures": "Pobrania środków",
+          "captures_empty": "Nie pobrano jeszcze żadnych środków.",
+          "captured_at": "Pobrano"
         }
       },
       "edit": {

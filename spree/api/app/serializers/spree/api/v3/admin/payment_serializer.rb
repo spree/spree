@@ -14,11 +14,16 @@ module Spree
                    avs_response: [:string, nullable: true],
                    cvv_response_code: [:string, nullable: true],
                    cvv_response_message: [:string, nullable: true],
-                   gateway_dashboard_payment_url: [:string, nullable: true]
+                   gateway_dashboard_payment_url: [:string, nullable: true],
+                   avs_risky: [:boolean, comment: 'Whether the card issuer reported that the billing address did not match.'],
+                   cvv_risky: [:boolean, comment: 'Whether the card issuer reported that the security code did not match.']
 
           attributes :metadata, :avs_response, :cvv_response_code, :cvv_response_message,
                      :gateway_dashboard_payment_url,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute(:avs_risky, &:is_avs_risky?)
+          attribute(:cvv_risky, &:is_cvv_risky?)
 
           money_attributes :captured_amount
           typelize captured_amount: [:string, nullable: false]
@@ -42,6 +47,10 @@ module Spree
 
             serializer.new(payment.source).to_h
           end
+
+          many :capture_events,
+               resource: proc { Spree.api.admin_payment_capture_event_serializer },
+               if: proc { expand?('capture_events') }
 
           one :order,
               resource: proc { Spree.api.admin_order_serializer },

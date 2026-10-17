@@ -2925,7 +2925,9 @@
           "this_order": "本订单",
           "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
           "load_error": "无法加载此订单的付款信息。",
-          "view_at_gateway": "在 {{gateway}} 中查看"
+          "view_at_gateway": "在 {{gateway}} 中查看",
+          "view_details": "查看详情",
+          "failed_card_checks": "银行卡验证未通过"
         },
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {
@@ -2975,6 +2977,22 @@
           "cbm": "{{value}} 立方米",
           "kg": "{{value}} 公斤",
           "incomplete": "部分商品未量尺寸，因此以上数字是下限而非总量。"
+        },
+        "payment_details": {
+          "title": "付款 {{number}}",
+          "description": "发卡机构的验证结果，以及每一笔资金扣款。",
+          "transaction_id": "交易 ID",
+          "address_check": "地址验证",
+          "security_code_check": "安全码验证",
+          "code": "代码 {{code}}",
+          "check": {
+            "passed": "通过",
+            "failed": "未通过",
+            "not_checked": "未验证"
+          },
+          "captures": "扣款记录",
+          "captures_empty": "尚未扣款。",
+          "captured_at": "扣款时间"
         }
       },
       "edit": {

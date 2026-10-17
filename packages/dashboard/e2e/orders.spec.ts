@@ -380,4 +380,27 @@ test.describe('order payments', () => {
     )
     await expect(link).toHaveAttribute('target', '_blank')
   })
+
+  test("shows a card payment's checks and captures", async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    const row = page.locator('tr').filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+    await expect(row.getByText('Failed card checks')).toBeVisible({ timeout: 15_000 })
+
+    await row.getByRole('button', { name: /^actions$/i }).click()
+    await page.getByRole('menuitem', { name: 'View details' }).click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText(FIXTURE_BOGUS_TRANSACTION_ID)).toBeVisible()
+    await expect(dialog.getByText('Did not pass')).toHaveCount(2)
+    await expect(dialog.getByText('CVV does not match')).toBeVisible()
+    await expect(dialog.getByRole('row').filter({ hasText: '€10.00' })).toBeVisible()
+  })
 })
