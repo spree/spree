@@ -284,10 +284,27 @@ The product page is a host form with the form key `seller.product`: fields a wid
 
 | Where | Login page, below the sign-in options |
 |---|---|
-| Use | Extra content for people who can't sign in yet — a link to a sign-up page, a support contact, terms of service |
-| Context | none |
+| Use | Extra content for people who can't sign in yet — a link to a sign-up page, a support contact, terms of service, or a next step after a failed sign-in |
+| Context | `{ error, email }` — `error` is the API's error for the last failed password sign-in (`SpreeError`, with `code` and `status`), `null` before one fails, while a new attempt runs, or when the request never reached the API; `email` is the address that sign-in was submitted with, `null` before the first attempt |
 
-Nobody is signed in when this renders, so only call endpoints that need no session. Links to a [public page](/developer/dashboard/customization/routes#pages-outside-a-store) fit here.
+Import the name as `LOGIN_AFTER_SLOT` and the context type as `LoginAfterSlotContext` from `@spree/dashboard-core`. Nobody is signed in when this renders, so only call endpoints that need no session. Links to a [public page](/developer/dashboard/customization/routes#pages-outside-a-store) fit here.
+
+React to a specific failure by its `code`. For example, if your backend rejects sign-in with an `email_not_confirmed` code until the address is confirmed, offer a way to confirm it:
+
+```tsx
+import { LOGIN_AFTER_SLOT, type LoginAfterSlotContext, registerSlot } from '@spree/dashboard-core'
+import { Link } from '@tanstack/react-router'
+
+registerSlot<LoginAfterSlotContext>(LOGIN_AFTER_SLOT, {
+  id: 'resend-confirmation',
+  if: ({ error }) => error?.code === 'email_not_confirmed',
+  component: ({ email }) => (
+    <Link to="/resend-confirmation" search={{ email }} className="link text-sm">
+      Resend confirmation email
+    </Link>
+  ),
+})
+```
 
 ## Replaceable slots
 
