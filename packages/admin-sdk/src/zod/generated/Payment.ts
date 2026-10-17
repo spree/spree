@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { CreditCardSchema } from './CreditCard';
 import { OrderSchema } from './Order';
+import { PaymentCaptureEventSchema } from './PaymentCaptureEvent';
 import { PaymentMethodSchema } from './PaymentMethod';
 import { PaymentSourceSchema } from './PaymentSource';
 import { PaymentSplitSchema } from './PaymentSplit';
@@ -26,8 +27,11 @@ export const PaymentSchema = z.object({
   gateway_dashboard_payment_url: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
+  avs_risky: z.boolean(),
+  cvv_risky: z.boolean(),
   captured_amount: z.string(),
   order_id: z.string().nullable(),
+  capture_events: z.array(PaymentCaptureEventSchema).optional(),
   get order() { return OrderSchema.optional(); },
   get refunds() { return z.array(RefundSchema).optional(); },
   payment_splits: z.array(PaymentSplitSchema).optional(),

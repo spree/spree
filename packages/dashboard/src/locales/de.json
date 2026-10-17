@@ -2933,7 +2933,9 @@
           "this_order": "Diese Bestellung",
           "shared_help": "Einmal bezahlt für einen Warenkorb mehrerer Verkäufer. Diese Bestellung hat einen Anteil daran.",
           "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden.",
-          "view_at_gateway": "In {{gateway}} ansehen"
+          "view_at_gateway": "In {{gateway}} ansehen",
+          "view_details": "Details ansehen",
+          "failed_card_checks": "Kartenprüfung fehlgeschlagen"
         },
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
@@ -2983,6 +2985,22 @@
           "cbm": "{{value}} m³",
           "kg": "{{value}} kg",
           "incomplete": "Einige Artikel sind nicht vermessen. Diese Werte sind daher ein Mindestwert, keine Gesamtsumme."
+        },
+        "payment_details": {
+          "title": "Zahlung {{number}}",
+          "description": "Was der Kartenaussteller gemeldet hat, und jede Erfassung des Betrags.",
+          "transaction_id": "Transaktions-ID",
+          "address_check": "Adressprüfung",
+          "security_code_check": "Prüfung des Sicherheitscodes",
+          "code": "Code {{code}}",
+          "check": {
+            "passed": "Bestanden",
+            "failed": "Nicht bestanden",
+            "not_checked": "Nicht geprüft"
+          },
+          "captures": "Erfassungen",
+          "captures_empty": "Es wurde noch nichts erfasst.",
+          "captured_at": "Erfasst"
         }
       },
       "edit": {

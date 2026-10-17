@@ -86,6 +86,7 @@ export { OrderGroupSchema, type OrderGroup } from './OrderGroup';
 export { OrderRoutingRuleSchema, type OrderRoutingRule } from './OrderRoutingRule';
 export { PackageTypeSchema, type PackageType } from './PackageType';
 export { PaymentSchema, type Payment } from './Payment';
+export { PaymentCaptureEventSchema, type PaymentCaptureEvent } from './PaymentCaptureEvent';
 export { PaymentMethodSchema, type PaymentMethod } from './PaymentMethod';
 export { PaymentSourceSchema, type PaymentSource } from './PaymentSource';
 export { PaymentSplitSchema, type PaymentSplit } from './PaymentSplit';

@@ -2933,7 +2933,9 @@
           "this_order": "Cette commande",
           "shared_help": "Payé en une fois pour un panier réparti entre plusieurs vendeurs. Cette commande en détient une part.",
           "load_error": "Impossible de charger les paiements de cette commande.",
-          "view_at_gateway": "Voir sur {{gateway}}"
+          "view_at_gateway": "Voir sur {{gateway}}",
+          "view_details": "Voir les détails",
+          "failed_card_checks": "Vérifications de carte échouées"
         },
         "priced_by": "Tarifé par {{name}}",
         "purchase_order": {
@@ -2983,6 +2985,22 @@
           "cbm": "{{value}} m³",
           "kg": "{{value}} kg",
           "incomplete": "Certains articles ne sont pas mesurés : ces chiffres sont un minimum, pas un total."
+        },
+        "payment_details": {
+          "title": "Paiement {{number}}",
+          "description": "Ce que l'émetteur de la carte a signalé, et chaque capture du montant.",
+          "transaction_id": "ID de transaction",
+          "address_check": "Vérification de l'adresse",
+          "security_code_check": "Vérification du code de sécurité",
+          "code": "Code {{code}}",
+          "check": {
+            "passed": "Réussie",
+            "failed": "Échouée",
+            "not_checked": "Non vérifiée"
+          },
+          "captures": "Captures",
+          "captures_empty": "Rien n'a encore été capturé.",
+          "captured_at": "Capturé"
         }
       },
       "edit": {

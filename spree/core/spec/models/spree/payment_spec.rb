@@ -995,6 +995,11 @@ describe Spree::Payment, type: :model do
         expect(payment.is_cvv_risky?).to eq(true)
       end
     end
+
+    it 'returns true for a mismatch the gateway described' do
+      payment.assign_attributes(cvv_response_code: 'N', cvv_response_message: 'CVV does not match')
+      expect(payment.is_cvv_risky?).to eq(true)
+    end
   end
 
   describe '#editable?' do

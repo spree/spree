@@ -326,10 +326,11 @@ module Spree
       true
     end
 
+    # Matches +Payment.risky+: any result other than a match counts, whatever
+    # message the gateway sent with it.
     def is_cvv_risky?
       return false if cvv_response_code == 'M'
       return false if cvv_response_code.nil?
-      return false if cvv_response_message.present?
 
       true
     end

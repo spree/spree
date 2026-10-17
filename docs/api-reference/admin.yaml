@@ -21615,6 +21615,8 @@ paths:
                   gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-343039b69b86
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  avs_risky: false
+                  cvv_risky: false
                   captured_amount: '0.00'
                   order_id: or_UkLWZg9DAJ
                 meta:
@@ -21697,6 +21699,8 @@ paths:
                 gateway_dashboard_payment_url:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                avs_risky: false
+                cvv_risky: false
                 captured_amount: '0.00'
                 order_id: or_gbHJdmfrXB
       requestBody:
@@ -21805,6 +21809,8 @@ paths:
                 gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-4a236d40ef07
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                avs_risky: false
+                cvv_risky: false
                 captured_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
@@ -21894,6 +21900,8 @@ paths:
                 gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-ccc19f06b194
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                avs_risky: false
+                cvv_risky: false
                 captured_amount: '110.00'
                 order_id: or_UkLWZg9DAJ
         '422':
@@ -21997,6 +22005,8 @@ paths:
                 gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/void-BGS-11f2e975ba0c
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                avs_risky: false
+                cvv_risky: false
                 captured_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/price_lists":
@@ -63790,6 +63800,23 @@ components:
       - seller_id
       - seller_name
       x-typelizer: true
+    PaymentCaptureEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        amount:
+          type: string
+      required:
+      - id
+      - created_at
+      - updated_at
+      - amount
+      x-typelizer: true
     PaymentMethod:
       type: object
       properties:
@@ -63928,11 +63955,23 @@ components:
           type: string
         updated_at:
           type: string
+        avs_risky:
+          type: boolean
+          description: Whether the card issuer reported that the billing address did
+            not match.
+        cvv_risky:
+          type: boolean
+          description: Whether the card issuer reported that the security code did
+            not match.
         captured_amount:
           type: string
         order_id:
           type: string
           nullable: true
+        capture_events:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PaymentCaptureEvent"
         order:
           "$ref": "#/components/schemas/Order"
         refunds:
@@ -63960,6 +63999,8 @@ components:
       - gateway_dashboard_payment_url
       - created_at
       - updated_at
+      - avs_risky
+      - cvv_risky
       - captured_amount
       - order_id
       x-typelizer: true
