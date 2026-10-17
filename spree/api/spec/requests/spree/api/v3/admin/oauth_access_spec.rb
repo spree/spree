@@ -156,6 +156,61 @@ RSpec.describe 'Admin API OAuth access', type: :request do
   # RFC 8707: a token names the resources it may be used against. A client
   # that asked for one endpoint must not receive a credential good across the
   # rest of the API.
+  # A grant authenticates AS the staff member who approved it, so every
+  # guard written for "a human at the dashboard" now answers for an agent
+  # too. These three asked what kind of credential had arrived instead of
+  # what it held, and a read-only grant walked through all of them.
+  describe 'a guard that was written before delegated credentials existed' do
+    let(:read_only) { token_for('read_products', resource: '/api/v3/admin') }
+
+    it 'refuses to let an agent rewrite the profile of the person who connected it' do
+      patch '/api/v3/admin/me',
+            params: { first_name: 'PWNED' }.to_json,
+            headers: { 'Authorization' => "Bearer #{read_only}", 'CONTENT_TYPE' => 'application/json' }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(admin.reload.first_name).not_to eq('PWNED')
+    end
+
+    # The tag list is per taggable type, and its check began
+    # `return unless current_api_key` — which an OAuth request never has.
+    it 'refuses order tags to a grant that holds no read_orders' do
+      get_with(read_only, '/api/v3/admin/tags?taggable_type=order')
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'allows them to a grant that does' do
+      get_with(token_for('read_orders', resource: '/api/v3/admin'),
+               '/api/v3/admin/tags?taggable_type=order')
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    # `jwt_only` exempts a signed-in staff member from the scope gate because
+    # their role already bounds them. A grant is bounded by something
+    # narrower, and was taking the exemption.
+    it 'refuses store settings to a grant that holds no read_settings' do
+      get_with(read_only, '/api/v3/admin/store')
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'allows them to a grant that does' do
+      get_with(token_for('read_settings', resource: '/api/v3/admin'), '/api/v3/admin/store')
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    # /me is what a client reads to decide what to attempt, so reporting the
+    # approver's whole role both oversells the grant and discloses the role.
+    it 'reports what the credential holds rather than what its owner does' do
+      get_with(read_only, '/api/v3/admin/me')
+
+      expect(json_response['permission_keys']).to eq(['read_products'])
+    end
+  end
+
   describe 'a token issued for another resource' do
     it 'is refused' do
       get_with(token_for('read_products', resource: '/api/v3/admin/mcp'),

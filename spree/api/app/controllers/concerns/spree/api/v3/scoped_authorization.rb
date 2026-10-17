@@ -98,7 +98,17 @@ module Spree
             # A `jwt_only` skip exempts the JWT/publishable principal we now know
             # this is (no secret key resolved) — shell data the dashboard reads
             # without a specific scope.
-            return if scope_check_skipped_for_action? && self.class._scope_check_skip_jwt_only
+            #
+            # Not a delegated credential, though. The exemption exists because
+            # a signed-in staff member is already bounded by their role, and an
+            # OAuth grant is bounded by something narrower that this would skip
+            # — it carries no API key, so it was taking the human's exemption
+            # and reading settings its scopes never covered.
+            if scope_check_skipped_for_action? && self.class._scope_check_skip_jwt_only
+              return if current_oauth_token.blank?
+
+              return authorize_staff_permission!
+            end
 
             # JWT staff pass through the same key gate as secret keys: their
             # roles' catalog keys play the role scopes play for keys, so both
