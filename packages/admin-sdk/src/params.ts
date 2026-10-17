@@ -398,6 +398,7 @@ export type CustomFieldOwnerType =
   | 'category'
   | 'collection'
   | 'option_type'
+  | 'seller'
   | (string & {})
 
 export type PromotionKind = 'coupon_code' | 'automatic'

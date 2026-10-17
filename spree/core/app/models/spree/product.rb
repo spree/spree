@@ -887,7 +887,7 @@ module Spree
         next unless variant.should_track_inventory?
         next if variant.sku.blank? && variant != default_variant
 
-        variant.stock_levels.each do |stock_level|
+        variant.stock_levels.sort_by(&:id).each do |stock_level|
           location = stock_level.stock_location
           next if location.nil? || location == default_stock_location
           next unless location.store_id == store.id && location_owner_ids.include?(location.seller_id)

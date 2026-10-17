@@ -169,15 +169,15 @@ describe Spree::CustomerMethods do
     end
 
     it 'is case-insensitive across email and name' do
-      mixed = create(:user, email: 'Greg.Smith@Example.COM', first_name: 'Greg', last_name: 'Smith')
+      mixed = create(:user, email: 'Grevik.Quillmore@Example.COM', first_name: 'Grevik', last_name: 'Quillmore')
 
-      expect(Spree.customer_class.search('GREG.SMITH@EXAMPLE.COM')).to eq([mixed])
-      expect(Spree.customer_class.search('greg.smith@example.com')).to eq([mixed])
-      expect(Spree.customer_class.search('gReG.SmItH')).to eq([mixed])
-      expect(Spree.customer_class.search('GREG')).to eq([mixed])
-      expect(Spree.customer_class.search('SMITH')).to eq([mixed])
-      expect(Spree.customer_class.search('greg smith')).to eq([mixed])
-      expect(Spree.customer_class.search('GREG SMITH')).to eq([mixed])
+      expect(Spree.customer_class.search('GREVIK.QUILLMORE@EXAMPLE.COM')).to eq([mixed])
+      expect(Spree.customer_class.search('grevik.quillmore@example.com')).to eq([mixed])
+      expect(Spree.customer_class.search('gReViK.QuIlLmOrE')).to eq([mixed])
+      expect(Spree.customer_class.search('GREVIK')).to eq([mixed])
+      expect(Spree.customer_class.search('QUILLMORE')).to eq([mixed])
+      expect(Spree.customer_class.search('grevik quillmore')).to eq([mixed])
+      expect(Spree.customer_class.search('GREVIK QUILLMORE')).to eq([mixed])
     end
 
     it 'returns users based on the first name' do

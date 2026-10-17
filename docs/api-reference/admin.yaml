@@ -290,6 +290,29 @@ paths:
         `password` is required when no account exists for the invited address,
         in which case it sets one. When an account already exists, the same
         field is how the person proves the account is theirs.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The invitation ID and token come from the link in the invitation email.
+          // An invitee without an account sets a password here; one with an account
+          // signs in with theirs. The refresh token is set as an HttpOnly cookie.
+          const auth = await client.auth.acceptInvitation('inv_UkLWZg9DAJ', 'xK3pQ9vLmT2wRz8N', {
+            password: 'password123',
+            password_confirmation: 'password123',
+            first_name: 'Robin',
+            last_name: 'Ellis',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /auth/invitations/{id}/accept -d '{"password":"password123","password_confirmation":"password123","first_name":"Robin","last_name":"Ellis"}'
       parameters:
       - name: token
         in: query
@@ -772,6 +795,22 @@ paths:
         Reports whether first-run setup is still available — true only while
         the installation has no admin user. Unauthenticated; the dashboard
         login page uses it to offer the setup screen.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // True only until the installation has its first admin user.
+          const { setup_required } = await client.auth.setupStatus()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /auth/setup
       responses:
         '200':
           description: setup status
@@ -789,6 +828,33 @@ paths:
         `bin/rails spree:setup:token`). Issues a JWT access token and a
         refresh-token cookie exactly like login. Returns 404 once any admin
         user exists — the flow is closed permanently after setup.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The setup token is printed when Spree is installed. The refresh token is
+          // set as an HttpOnly cookie; only `token` and `user` come back in the body.
+          const auth = await client.auth.completeSetup({
+            setup_token: 'st_9f2c4e7a1b8d',
+            email: 'owner@example.com',
+            password: 'Secret123!',
+            password_confirmation: 'Secret123!',
+            first_name: 'Olivia',
+            last_name: 'Owner',
+            store_name: 'My Store',
+            country_code: 'US',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /auth/setup -d '{"setup_token":"st_9f2c4e7a1b8d","email":"owner@example.com","password":"Secret123!","password_confirmation":"Secret123!","first_name":"Olivia","last_name":"Owner","store_name":"My
+          Store","country_code":"US"}'
       parameters: []
       responses:
         '200':
@@ -838,6 +904,22 @@ paths:
         official languages derived from it. Unauthenticated, because the setup
         screen runs before any credential exists. Returns 404 once any admin
         user exists.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Each country comes with the currency and languages the store would start with.
+          const { countries } = await client.auth.setupCountries()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /auth/setup/countries
       responses:
         '200':
           description: countries
@@ -2853,6 +2935,24 @@ paths:
         Returns a paginated list of the store's categories (manual hierarchical taxons; rule-based collections are excluded).
 
         **Required scope:** `read_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: categories } = await client.categories.list({
+            name_cont: 'Shirts',
+            limit: 25,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /categories -d '{"name_cont":"Shirts","limit":25}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3012,6 +3112,26 @@ paths:
         Creates a category. Nests under the parent when parent_id is given, otherwise creates a top-level category.
 
         **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const category = await client.categories.create({
+            name: 'Shirts',
+            parent_id: 'ctg_UkLWZg9DAJ',
+            description: '<p>Casual and dress shirts.</p>',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /categories -d '{"name":"Shirts","parent_id":"ctg_UkLWZg9DAJ","description":"<p>Casual
+          and dress shirts.</p>"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3090,6 +3210,23 @@ paths:
         Returns a single category by ID.
 
         **Required scope:** `read_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const category = await client.categories.get('ctg_UkLWZg9DAJ', {
+            expand: ['children', 'ancestors'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /categories/{id} -d '{"expand":["children","ancestors"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3169,6 +3306,25 @@ paths:
         Updates a category.
 
         **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const category = await client.categories.update('ctg_UkLWZg9DAJ', {
+            name: 'Apparel',
+            meta_title: 'Apparel for every season',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /categories/{id} -d '{"name":"Apparel","meta_title":"Apparel
+          for every season"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3237,6 +3393,21 @@ paths:
         Deletes a category and its descendants.
 
         **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.categories.delete('ctg_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /categories/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3270,6 +3441,25 @@ paths:
         Moves a category to a new parent and/or index within the tree.
 
         **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Moves the category under a new parent, as its first child.
+          const category = await client.categories.reposition('ctg_gbHJdmfrXB', {
+            new_parent_id: 'ctg_UkLWZg9DAJ',
+            new_position: 0,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /categories/{id}/reposition -d '{"new_parent_id":"ctg_UkLWZg9DAJ","new_position":0}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3339,6 +3529,23 @@ paths:
         Products classified under the category, ordered by their classification position.
 
         **Required scope:** `read_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: products } = await client.categories.products.list('ctg_UkLWZg9DAJ', {
+            limit: 25,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /categories/{category_id}/products -d '{"limit":25}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3572,6 +3779,24 @@ paths:
         Classifies products under the category in bulk (appended to the end). Already-classified products are skipped; the count reports what was added.
 
         **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { added_count } = await client.categories.products.create('ctg_UkLWZg9DAJ', [
+            'prod_UkLWZg9DAJ',
+            'prod_9XbR2kQwLm',
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /categories/{category_id}/products -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3614,6 +3839,23 @@ paths:
         Removes products from the category's manual classification in bulk. Ids that are not classified are ignored; the count reports what was removed.
 
         **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { removed_count } = await client.categories.products.delete('ctg_UkLWZg9DAJ', [
+            'prod_UkLWZg9DAJ',
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /categories/{category_id}/products
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3657,6 +3899,25 @@ paths:
         Moves a product to a new index among the category's products.
 
         **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Moves the product to the top of the category; positions are 0-based.
+          await client.categories.products.reposition('ctg_UkLWZg9DAJ', 'prod_UkLWZg9DAJ', {
+            new_position: 0,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /categories/{category_id}/products/{id}/reposition
+          -d '{"new_position":0}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3702,6 +3963,21 @@ paths:
         Returns the category's custom field values.
 
         **Required scope:** `read_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.categories.customFields.list('ctg_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /categories/{category_id}/custom_fields
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5556,6 +5832,21 @@ paths:
         Returns the customer's custom field values.
 
         **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customers.customFields.list('cus_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers/{customer_id}/custom_fields
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5668,6 +5959,22 @@ paths:
 
 
         **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Everything the store holds about the customer, to answer a GDPR access request:
+          const customerData = await client.customers.export('cus_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers/{id}/export
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5770,6 +6077,22 @@ paths:
 
 
         **Required scope:** `write_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Irreversible: personal data is erased, orders and payments are kept.
+          const customer = await client.customers.anonymize('cus_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers/{id}/anonymize -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5836,6 +6159,24 @@ paths:
         Returns the consents customers gave or withdrew, newest first, as evidence of what each one agreed to and when.
 
         **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: consentRecords } = await client.consentRecords.list({
+            email_eq: 'jane@example.com',
+            sort: '-recorded_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /consent_records -d '{"email_eq":"jane@example.com","sort":"-recorded_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5936,6 +6277,24 @@ paths:
         Returns the requests customers made to export or erase their personal data, newest first.
 
         **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: dataRequests } = await client.dataRequests.list({
+            kind_eq: 'erasure',
+            sort: '-requested_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /data_requests -d '{"kind_eq":"erasure","sort":"-requested_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6063,6 +6422,24 @@ paths:
 
 
         **Required scope:** `write_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const dataRequest = await client.dataRequests.create({
+            customer_id: 'cus_UkLWZg9DAJ',
+            kind: 'access',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /data_requests -d '{"customer_id":"cus_UkLWZg9DAJ","kind":"access"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7112,6 +7489,21 @@ paths:
         Returns the customer's own tax registrations, one per kind.
 
         **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: registrations } = await client.customers.taxIdentifiers.list('cus_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers/{customer_id}/tax_identifiers
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7211,6 +7603,25 @@ paths:
         Corrects a registration number. A changed number is checked again before it counts as verified.
 
         **Required scope:** `write_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const registration = await client.customers.taxIdentifiers.update(
+            'cus_UkLWZg9DAJ',
+            'txi_UkLWZg9DAJ',
+            { value: 'DE123456789' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /customers/{customer_id}/tax_identifiers/{id} -d '{"value":"DE123456789"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9744,6 +10155,31 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Returns where to send the bytes: send the file to `upload.url` with
+          // `upload.method` and `upload.headers`, then pass `signed_id` to the
+          // endpoint that uses it.
+          // `client.files.upload(file)` does both steps for you.
+          const { signed_id, upload } = await client.files.create({
+            filename: 'products.csv',
+            content_type: 'text/csv',
+            byte_size: 48213,
+            checksum: 'XrY7u+Ae7tCTyyK7j1rNww==',
+            visibility: 'private',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /files -d '{"filename":"products.csv","content_type":"text/csv","byte_size":48213,"checksum":"XrY7u+Ae7tCTyyK7j1rNww==","visibility":"private"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11598,6 +12034,24 @@ paths:
         Returns CSV imports queued or completed for the current store.
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: imports } = await client.imports.list({
+            status_eq: 'failed',
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /imports -d '{"status_eq":"failed","sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11857,6 +12311,27 @@ paths:
 
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Upload the CSV with `client.files.upload(file, { visibility: 'private' })`
+          // first and pass its `signed_id`. The import then waits in `mapping`, with the
+          // columns assigned automatically.
+          const productImport = await client.imports.create({
+            type: 'products',
+            attachment_signed_id: 'eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a1b2c3',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /imports -d '{"type":"products","attachment_signed_id":"eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a1b2c3"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12251,6 +12726,26 @@ paths:
         Returns a CSV header row for the given import type, including the custom field columns available for the model.
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The template is a CSV, so fetch it directly with the API key:
+          const response = await fetch('https://your-store.com/api/v3/admin/imports/template?type=products', {
+            headers: { 'X-Spree-API-Key': 'sk_xxx' },
+          })
+          if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
+          const csvHeader = await response.text()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /imports/template
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12288,6 +12783,26 @@ paths:
         Redirects to a populated example CSV for the given import type — the same sample data `rake spree:load_sample_data` uses, pinned to the installed Spree version. Returns 404 for a type that ships no example file.
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Redirects to a populated example CSV; fetch follows the redirect.
+          const response = await fetch('https://your-store.com/api/v3/admin/imports/example?type=products', {
+            headers: { 'X-Spree-API-Key': 'sk_xxx' },
+          })
+          if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
+          const exampleCsv = await response.text()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /imports/example
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12320,6 +12835,21 @@ paths:
         Returns import status and row counters. The admin dashboard polls this endpoint while `status` is `completed_mapping` or `processing`; `rows_count`, `completed_rows_count` and `failed_rows_count` drive the progress bar. The mapping payload (`csv_headers`, `sample_row`) is only present while `status` is `mapping`.
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const productImport = await client.imports.get('imp_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /imports/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12511,6 +13041,21 @@ paths:
         Removes the import, its rows and the uploaded file. Returns 422 while the import is being processed.
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.imports.delete('imp_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /imports/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12542,6 +13087,31 @@ paths:
         Streams the CSV exactly as it was uploaded — the audit trail for what was imported. JWT/API-key protected; SPA clients fetch it with the Authorization header and trigger the browser download via a Blob URL.
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const productImport = await client.imports.get('imp_UkLWZg9DAJ')
+
+          if (productImport.original_file_url) {
+            // The uploaded file is served through the API, so fetch it with the API key:
+            const response = await fetch(`https://your-store.com${productImport.original_file_url}`, {
+              headers: { 'X-Spree-API-Key': 'sk_xxx' },
+            })
+            if (!response.ok) throw new Error(`Download failed with status ${response.status}`)
+            const csv = await response.text()
+            console.log(csv)
+          }
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /imports/{id}/download
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12582,6 +13152,27 @@ paths:
 
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Omit `mappings` to accept the columns assigned on create.
+          const productImport = await client.imports.completeMapping('imp_UkLWZg9DAJ', {
+            mappings: [
+              { schema_field: 'slug', file_column: 'handle' },
+              { schema_field: 'price', file_column: 'price_usd' },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /imports/{id}/complete_mapping -d '{"mappings":[{"schema_field":"slug","file_column":"handle"},{"schema_field":"price","file_column":"price_usd"}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12959,6 +13550,21 @@ paths:
         Re-processes the rows that failed. The import re-enters `processing`; poll `GET /admin/imports/{id}` until it completes again. Returns 422 when the import is not `completed` or has no failed rows.
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const productImport = await client.imports.retryFailedRows('imp_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /imports/{id}/retry_failed_rows -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13151,6 +13757,23 @@ paths:
         Paginated rows of an import — the failure report. Filter with `q[status_eq]=failed` to list only rows that could not be imported; each row carries the raw CSV `data` and its `validation_errors`.
 
         **Required scope:** the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc. (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: failedRows } = await client.imports.rows.list('imp_UkLWZg9DAJ', {
+            status_eq: 'failed',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /imports/{import_id}/rows -d '{"status_eq":"failed"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13733,6 +14356,21 @@ paths:
         Returns the option type's custom field values.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.optionTypes.customFields.list('opt_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /option_types/{option_type_id}/custom_fields
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14312,6 +14950,24 @@ paths:
         Every damage or missing-item claim in the store, across all orders.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: claims } = await client.claims.list({
+            status_eq: 'open',
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /claims -d '{"status_eq":"open","sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14455,6 +15111,21 @@ paths:
         The damage or missing-item claims opened on one order.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: claims } = await client.orders.claims.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/claims
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14603,6 +15274,35 @@ paths:
         Opens a damage or missing-item claim on a completed order. Each item says how it should be made right: money back, a replacement, or both.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The customer keeps the goods: nothing comes back, so no return is opened.
+          const claim = await client.orders.claims.create('or_UkLWZg9DAJ', {
+            reason_id: 'clr_UkLWZg9DAJ',
+            memo: 'Arrived with a cracked lid',
+            items: [
+              {
+                line_item_id: 'li_UkLWZg9DAJ',
+                quantity: 1,
+                description: 'Lid cracked in transit',
+                send_replacement: true,
+              },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/claims -d '{"reason_id":"clr_UkLWZg9DAJ","memo":"Arrived
+          with a cracked lid","items":[{"line_item_id":"li_UkLWZg9DAJ","quantity":1,"description":"Lid
+          cracked in transit","send_replacement":true}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14663,6 +15363,24 @@ paths:
         Edits the reason, memo or metadata of a claim. Its status moves only through the approve, resolve, deny and cancel actions.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const claim = await client.orders.claims.update('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ', {
+            memo: 'Photos received from the customer',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/claims/{id} -d '{"memo":"Photos
+          received from the customer"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14729,6 +15447,25 @@ paths:
         Settles an approved claim with money back, a replacement shipment, or both.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const claim = await client.orders.claims.resolve('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ', {
+            resolution: 'refund_and_replacement',
+            refund_method: 'original_payment',
+            amount: '5.00',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/claims/{id}/resolve -d '{"resolution":"refund_and_replacement","refund_method":"original_payment","amount":"5.00"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14805,6 +15542,24 @@ paths:
         Turns down an open claim, recording why for the customer.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const claim = await client.orders.claims.deny('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ', {
+            reason: 'Damage is not covered after 30 days',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/claims/{id}/deny -d '{"reason":"Damage
+          is not covered after 30 days"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14872,6 +15627,24 @@ paths:
         Withdraws a claim that has not been resolved.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const claim = await client.orders.claims.cancel('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ', {
+            reason: 'Opened by mistake',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/claims/{id}/cancel -d '{"reason":"Opened
+          by mistake"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14939,6 +15712,21 @@ paths:
         Returns the order's custom field values.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.orders.customFields.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/custom_fields
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15048,6 +15836,23 @@ paths:
         Returns the download links issued for digital products bought in this store, newest first.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: digitalLinks } = await client.digitalLinks.list({
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /digital_links -d '{"sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15153,6 +15958,24 @@ paths:
         Every exchange in the store, across all orders.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: exchanges } = await client.exchanges.list({
+            status_eq: 'received',
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /exchanges -d '{"status_eq":"received","sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15296,6 +16119,21 @@ paths:
         The exchanges opened on one order.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: exchanges } = await client.orders.exchanges.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/exchanges
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15444,6 +16282,27 @@ paths:
         Opens an exchange on a completed order: items coming back, and the variant that goes out in place of each.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const exchange = await client.orders.exchanges.create('or_UkLWZg9DAJ', {
+            reason_id: 'rar_UkLWZg9DAJ',
+            stock_location_id: 'sloc_UkLWZg9DAJ',
+            items: [
+              { fulfillment_item_id: 'fi_UkLWZg9DAJ', new_variant_id: 'variant_k5nR8xLq', quantity: 1 },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/exchanges -d '{"reason_id":"rar_UkLWZg9DAJ","stock_location_id":"sloc_UkLWZg9DAJ","items":[{"fulfillment_item_id":"fi_UkLWZg9DAJ","new_variant_id":"variant_k5nR8xLq","quantity":1}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15504,6 +16363,24 @@ paths:
         Edits the warehouse, reason, memo or metadata of an exchange. Its status moves only through the approve, receive, fulfill and cancel actions.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const exchange = await client.orders.exchanges.update('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ', {
+            memo: 'Customer prefers the larger size',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/exchanges/{id} -d '{"memo":"Customer
+          prefers the larger size"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15570,6 +16447,24 @@ paths:
         Records the goods that came back on an approved exchange. Omit `items` to receive everything as requested and resellable.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Omit `items` to receive everything as requested and resellable.
+          const exchange = await client.orders.exchanges.receive('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ', {
+            items: [{ exchange_line_item_id: 'eli_UkLWZg9DAJ', quantity: 1, resellable: false }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/exchanges/{id}/receive -d '{"items":[{"exchange_line_item_id":"eli_UkLWZg9DAJ","quantity":1,"resellable":false}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15635,6 +16530,23 @@ paths:
         Ships the replacements for a received exchange and settles any price difference.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const exchange = await client.orders.exchanges.fulfill('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ', {
+            refund_method: 'store_credit',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/exchanges/{id}/fulfill -d '{"refund_method":"store_credit"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15700,6 +16612,24 @@ paths:
         Withdraws an exchange whose goods have not been received.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const exchange = await client.orders.exchanges.cancel('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ', {
+            reason: 'Customer kept the original item',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/exchanges/{id}/cancel -d '{"reason":"Customer
+          kept the original item"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16079,6 +17009,25 @@ paths:
         Edits the label or amount of a manual discount and re-sums the order totals. Promotion-sourced rows are owned by recalculation and respond 422.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const discount = await client.orders.discounts.update('or_UkLWZg9DAJ', 'disc_UkLWZg9DAJ', {
+            label: 'Customer appeasement',
+            amount: '15.00',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/discounts/{id} -d '{"label":"Customer
+          appeasement","amount":"15.00"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16139,6 +17088,21 @@ paths:
         Returns the order's fees, such as surcharges, handling and gift wrap, on the whole order or on one item or delivery.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: fees } = await client.orders.fees.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/fees
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16317,6 +17281,24 @@ paths:
         Edits the label, amount or kind of a fee and re-sums the order totals. Works on completed orders.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const fee = await client.orders.fees.update('or_UkLWZg9DAJ', 'fee_UkLWZg9DAJ', {
+            label: 'Gift wrap',
+            amount: '5.00',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fees/{id} -d '{"label":"Gift wrap","amount":"5.00"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16375,6 +17357,24 @@ paths:
         Returns checkouts split into one order per seller, grouping the orders placed together.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: orderGroups } = await client.orderGroups.list({
+            email_cont: 'jane@example.com',
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /order_groups -d '{"email_cont":"jane@example.com","sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16522,6 +17522,23 @@ paths:
         Applies a discount code to a draft order and returns the order. A real code the order does not yet qualify for is kept and applies once it does. Completed orders refuse codes; change their discounts through manual discounts instead.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const order = await client.orders.discountCodes.create('or_UkLWZg9DAJ', {
+            code: 'SUMMER20',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/discount_codes -d '{"code":"SUMMER20"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19030,6 +20047,24 @@ paths:
         Every return in the store, across all orders.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: returns } = await client.returns.list({
+            status_eq: 'requested',
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /returns -d '{"status_eq":"requested","sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19180,6 +20215,21 @@ paths:
         The returns opened on one order.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: returns } = await client.orders.returns.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/returns
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19335,6 +20385,24 @@ paths:
         Opens a return on a completed order for fulfilled units the customer is sending back.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderReturn = await client.orders.returns.create('or_UkLWZg9DAJ', {
+            reason_id: 'rar_UkLWZg9DAJ',
+            items: [{ fulfillment_item_id: 'fi_UkLWZg9DAJ', quantity: 1 }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/returns -d '{"reason_id":"rar_UkLWZg9DAJ","items":[{"fulfillment_item_id":"fi_UkLWZg9DAJ","quantity":1}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19412,6 +20480,25 @@ paths:
         Edits the warehouse, reason, memo or metadata of a return. Its status moves only through the approve, receive, refund and cancel actions.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderReturn = await client.orders.returns.update('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ', {
+            stock_location_id: 'sloc_UkLWZg9DAJ',
+            memo: 'Send to the returns warehouse',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/returns/{id} -d '{"stock_location_id":"sloc_UkLWZg9DAJ","memo":"Send
+          to the returns warehouse"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19485,6 +20572,24 @@ paths:
         Records what arrived on an approved return. Omit `items` to receive everything as requested and resellable; send rows for a partial or damaged receipt.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Omit `items` to receive everything as requested and resellable.
+          const orderReturn = await client.orders.returns.receive('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ', {
+            items: [{ return_line_item_id: 'rli_UkLWZg9DAJ', quantity: 1, resellable: false }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/returns/{id}/receive -d '{"items":[{"return_line_item_id":"rli_UkLWZg9DAJ","quantity":1,"resellable":false}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19557,6 +20662,24 @@ paths:
         Pays the customer back for a received return, to store credit or through the original payment.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderReturn = await client.orders.returns.refund('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ', {
+            amount: '29.99',
+            refund_method: 'original_payment',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/returns/{id}/refund -d '{"amount":"29.99","refund_method":"original_payment"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19629,6 +20752,24 @@ paths:
         Withdraws a return whose goods have not been received.
 
         **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderReturn = await client.orders.returns.cancel('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ', {
+            reason: 'Customer decided to keep the item',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/returns/{id}/cancel -d '{"reason":"Customer
+          decided to keep the item"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19703,6 +20844,21 @@ paths:
         The shipping labels issued for sending one return back to the store.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: labels } = await client.orders.returns.labels.list('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/returns/{return_id}/labels
       parameters:
       - name: x-spree-api-key
         in: header
@@ -19970,6 +21126,29 @@ paths:
 
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const paymentMethod = await client.paymentMethods.create({
+            type: 'check',
+            name: 'Bank transfer',
+            description: 'Pay by bank transfer within 14 days.',
+            active: true,
+            storefront_visible: true,
+            capture_method: 'manual',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /payment_methods -d '{"type":"check","name":"Bank transfer","description":"Pay
+          by bank transfer within 14 days.","active":true,"storefront_visible":true,"capture_method":"manual"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -20210,6 +21389,25 @@ paths:
         Updates a payment method. Its `type` is fixed once created.
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const paymentMethod = await client.paymentMethods.update('pm_UkLWZg9DAJ', {
+            name: 'Cheque',
+            storefront_visible: false,
+            position: 2,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /payment_methods/{id} -d '{"name":"Cheque","storefront_visible":false,"position":2}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -22398,6 +23596,21 @@ paths:
         Returns the downloadable files attached to the product's variants, oldest first.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: digitalAssets } = await client.products.digitalAssets.list('prod_86Rf07xd4z')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{product_id}/digital_assets
       parameters:
       - name: x-spree-api-key
         in: header
@@ -22511,6 +23724,26 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // `signed_id` comes from `files.upload()` with `visibility: 'private'`.
+          const digitalAsset = await client.products.digitalAssets.create('prod_86Rf07xd4z', {
+            signed_id: 'eyJfcmFpbHMiOnsiZGF0YSI6MTIzfX0=--abc123',
+            authorized_clicks: 5,
+            authorized_days: 30,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/{product_id}/digital_assets -d '{"signed_id":"eyJfcmFpbHMiOnsiZGF0YSI6MTIzfX0=--abc123","authorized_clicks":5,"authorized_days":30}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -22580,6 +23813,26 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // `null` falls back to the store's download settings.
+          const digitalAsset = await client.products.digitalAssets.update(
+            'prod_86Rf07xd4z',
+            'dig_k5nR8xLqPz',
+            { authorized_clicks: 10, authorized_days: null },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{product_id}/digital_assets/{id} -d '{"authorized_clicks":10,"authorized_days":null}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -22633,6 +23886,22 @@ paths:
         Returns the full translation matrix for the product: the source value and content type per translatable field, plus the translated value for every supported locale.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Source values and every locale's translations, including the product's variants and options.
+          const translations = await client.products.translations.get('prod_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{product_id}/translations
       parameters:
       - name: x-spree-api-key
         in: header
@@ -23696,6 +24965,24 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkAddToCollections({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            collection_ids: ['coll_AbC123XyZq'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_add_to_collections -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"collection_ids":["coll_AbC123XyZq"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -23740,6 +25027,24 @@ paths:
         Detaches each product in `ids` from every collection in `collection_ids`.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkRemoveFromCollections({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            collection_ids: ['coll_AbC123XyZq'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_remove_from_collections -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"collection_ids":["coll_AbC123XyZq"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -24091,6 +25396,25 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The seller sees the reason, fixes the product and submits it again.
+          const product = await client.products.reject('prod_86Rf07xd4z', {
+            reason: 'Photos are too dark',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{id}/reject -d '{"reason":"Photos are too
+          dark"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -24186,6 +25510,25 @@ paths:
         Reports how much of each record is translated into each of the store's non-default locales, plus per-locale totals. A record counts as covered for a locale only when every one of its translatable fields is filled in.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // How much of each product is translated into each of the store's other languages.
+          const { data: coverage } = await client.translations.coverage('product', {
+            search: 'espresso',
+            limit: 25,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /translations -d '{"search":"espresso","limit":25}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -26504,6 +27847,24 @@ paths:
 
 
         **Required scope:** `write_promotions` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const action = await client.promotions.actions.update('promo_UkLWZg9DAJ', 'pact_k5nR8xLqPz', {
+            calculator: { type: 'percent_on_line_item', preferences: { percent: '15' } },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /promotions/{promotion_id}/promotion_actions/{id}
+          -d '{"calculator":{"type":"percent_on_line_item","preferences":{"percent":"15"}}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -27837,6 +29198,21 @@ paths:
         Returns the locales a merchant can translate content into for the current store, with the default and right-to-left flags.
 
         **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const locales = await client.locales.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /locales
       parameters:
       - name: x-spree-api-key
         in: header
@@ -28640,6 +30016,21 @@ paths:
         Returns the tax categories products and delivery methods can be assigned to, which tax rates then apply to.
 
         **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: taxCategories } = await client.taxCategories.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tax_categories
       parameters:
       - name: x-spree-api-key
         in: header
@@ -28753,6 +30144,26 @@ paths:
         Creates a tax category. `tax_code` is the code a tax provider uses to classify the goods in it.
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const taxCategory = await client.taxCategories.create({
+            name: 'Food',
+            tax_code: 'PF050000',
+            description: 'Groceries and prepared food',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /tax_categories -d '{"name":"Food","tax_code":"PF050000","description":"Groceries
+          and prepared food"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -28817,6 +30228,25 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Making a category the default moves the flag off the previous one.
+          const taxCategory = await client.taxCategories.update('taxcat_UkLWZg9DAJ', {
+            name: 'Apparel',
+            is_default: true,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /tax_categories/{id} -d '{"name":"Apparel","is_default":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -28870,6 +30300,21 @@ paths:
 
 
         **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: taxRates } = await client.taxRates.list({ country_code_eq: 'DE' })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tax_rates -d '{"country_code_eq":"DE"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -29020,6 +30465,28 @@ paths:
 
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // A rate names the jurisdiction it applies to; one naming no country taxes everywhere.
+          const taxRate = await client.taxRates.create({
+            name: 'German VAT',
+            rate_percent: '19',
+            country_code: 'DE',
+            tax_category_id: 'txc_UkLWZg9DAJ',
+            included_in_price: true,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /tax_rates -d '{"name":"German VAT","rate_percent":"19","country_code":"DE","tax_category_id":"txc_UkLWZg9DAJ","included_in_price":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -29095,6 +30562,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const taxRate = await client.taxRates.get('tax_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tax_rates/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -29137,6 +30619,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const taxRate = await client.taxRates.update('tax_UkLWZg9DAJ', { rate_percent: '7' })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /tax_rates/{id} -d '{"rate_percent":"7"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -29188,6 +30685,21 @@ paths:
         Soft-deletes the rate. Tax lines it already produced keep their own rate snapshot.
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.taxRates.delete('tax_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /tax_rates/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -29215,6 +30727,21 @@ paths:
         Returns every translatable resource type and its translatable fields (key + content type), so clients can render translation editors generically.
 
         **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const resources = await client.translatableResources.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /translatable_resources
       parameters:
       - name: x-spree-api-key
         in: header
@@ -29324,6 +30851,33 @@ paths:
         Atomically upserts translations across many records of (possibly) different translatable resource types in one request — e.g. an option type and all its option values in one save. A flat list of independent registry writes; all entries succeed or none do.
 
         **Required scope:** `write_<resource>` for every resource type in the batch (for API-key authentication) (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // All entries are saved together, or none are.
+          const translations = await client.translations.batch([
+            {
+              resource_type: 'option_type',
+              resource_id: 'opt_UkLWZg9DAJ',
+              values: { de: { label: 'Größe' } },
+            },
+            {
+              resource_type: 'option_value',
+              resource_id: 'optval_UkLWZg9DAJ',
+              values: { de: { label: 'Klein' } },
+            },
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /translations/batch -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -31862,6 +33416,21 @@ paths:
         Returns the variant's custom field values.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.variants.customFields.list('variant_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /variants/{variant_id}/custom_fields
       parameters:
       - name: x-spree-api-key
         in: header
@@ -32815,6 +34384,25 @@ paths:
         Returns every variant in the store across all products, for pickers and stock views that are not tied to one product.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Every variant in the store, across all products.
+          const { data: variants } = await client.variants.list({
+            sku_cont: 'TSHIRT',
+            limit: 25,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /variants -d '{"sku_cont":"TSHIRT","limit":25}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -35943,6 +37531,25 @@ paths:
         Updates a catalog and its commercial terms. Only the attributes sent change.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const catalog = await client.catalogs.update('cat_UkLWZg9DAJ', {
+            name: 'Wholesale Plus',
+            minimum_order_quantity: 10,
+            order_multiple: 5,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /catalogs/{id} -d '{"name":"Wholesale Plus","minimum_order_quantity":10,"order_multiple":5}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36065,6 +37672,24 @@ paths:
 
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // `catalog_price` adds what a buyer on this agreement pays for each product.
+          const { data: products } = await client.catalogs.products.list('cat_UkLWZg9DAJ', {
+            expand: ['catalog_price'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /catalogs/{catalog_id}/products -d '{"expand":["catalog_price"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36316,6 +37941,24 @@ paths:
         Curates products into the assortment in bulk. Already-present products are skipped; the count reports what was added.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { added_count } = await client.catalogs.products.create('cat_UkLWZg9DAJ', [
+            'prod_86Rf07xd4z',
+            'prod_9XbR2kQwLm',
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /catalogs/{catalog_id}/products -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36356,6 +37999,23 @@ paths:
         Removes products from the assortment in bulk. Ids that are not members are ignored; the count reports what was removed.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { removed_count } = await client.catalogs.products.delete('cat_UkLWZg9DAJ', [
+            'prod_86Rf07xd4z',
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /catalogs/{catalog_id}/products
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36397,6 +38057,21 @@ paths:
         The least a whole order must come to under this agreement. One row per currency — Spree holds no exchange rates, so a threshold is never stated once and converted.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: orderMinimums } = await client.catalogs.orderMinimums.list('cat_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /catalogs/{catalog_id}/order_minimums
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36475,6 +38150,24 @@ paths:
         Requires orders in one currency to reach an amount. The buyer sees the shortfall on the cart while they can still act on it; completion is refused below it.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderMinimum = await client.catalogs.orderMinimums.create('cat_UkLWZg9DAJ', {
+            currency: 'USD',
+            amount: '500.00',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /catalogs/{catalog_id}/order_minimums -d '{"currency":"USD","amount":"500.00"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36535,6 +38228,25 @@ paths:
         Restates one currency's threshold.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderMinimum = await client.catalogs.orderMinimums.update(
+            'cat_UkLWZg9DAJ',
+            'com_k5nR8xLqPz',
+            { amount: '750.00' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /catalogs/{catalog_id}/order_minimums/{id} -d '{"amount":"750.00"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36584,6 +38296,21 @@ paths:
         Lifts the threshold for one currency, so orders in it may come to any total.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.catalogs.orderMinimums.delete('cat_UkLWZg9DAJ', 'com_k5nR8xLqPz')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /catalogs/{catalog_id}/order_minimums/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36620,6 +38347,27 @@ paths:
         Writes the given products' quantity terms in one request, keyed by prefixed product id. The stated pair is written to every variant of the product, which is the grain the database keeps them at. Both fields null clears that product's terms; a product not yet in the assortment is added, since a term with nothing to apply to is not a reachable state. Products absent from the payload are left alone — an agreement may name terms for thousands of SKUs. Read them back on the assortment rows: `GET /catalogs/{id}/products?expand=quantity_rule`.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Keyed by product. Both values null clears that product's terms.
+          await client.catalogs.quantityRules.upsert('cat_UkLWZg9DAJ', {
+            terms: {
+              prod_86Rf07xd4z: { minimum_order_quantity: 48, order_multiple: 24 },
+              prod_9XbR2kQwLm: { minimum_order_quantity: null, order_multiple: null },
+            },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api put /catalogs/{catalog_id}/quantity_rules -d '{"terms":{"prod_86Rf07xd4z":{"minimum_order_quantity":48,"order_multiple":24},"prod_9XbR2kQwLm":{"minimum_order_quantity":null,"order_multiple":null}}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36796,6 +38544,24 @@ paths:
         Returns a paginated list of the store's collections.
 
         **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: collections } = await client.collections.list({
+            name_cont: 'Sale',
+            limit: 25,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collections -d '{"name_cont":"Sale","limit":25}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -36932,6 +38698,27 @@ paths:
         Creates a manual or automatic (rule-based) collection. For automatic collections, send the full desired rule set under `rules`.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // An automatic collection: its products are the ones matching the rules.
+          const collection = await client.collections.create({
+            name: 'On Sale',
+            automatic: true,
+            rules_match_policy: 'any',
+            rules: [{ type: 'tag', value: 'summer', match_policy: 'contains' }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /collections -d '{"name":"On Sale","automatic":true,"rules_match_policy":"any","rules":[{"type":"tag","value":"summer","match_policy":"contains"}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37003,6 +38790,23 @@ paths:
         Returns a single collection by ID, including its rules.
 
         **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const collection = await client.collections.get('coll_UkLWZg9DAJ', {
+            expand: ['rules'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collections/{id} -d '{"expand":["rules"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37075,6 +38879,23 @@ paths:
         Updates a collection. Send `position` to reorder it within the flat list; send the full `rules` set to sync automatic rules.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const collection = await client.collections.update('coll_UkLWZg9DAJ', {
+            name: 'Winter Sale',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /collections/{id} -d '{"name":"Winter Sale"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37136,6 +38957,21 @@ paths:
         Deletes a collection.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.collections.delete('coll_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /collections/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37169,6 +39005,23 @@ paths:
         Products curated in the collection, ordered by their membership position.
 
         **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: products } = await client.collections.products.list('coll_UkLWZg9DAJ', {
+            limit: 25,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collections/{collection_id}/products -d '{"limit":25}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37402,6 +39255,24 @@ paths:
         Curates products into the collection in bulk (appended to the end). Already-curated products are skipped; the count reports what was added.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { added_count } = await client.collections.products.create('coll_UkLWZg9DAJ', [
+            'prod_UkLWZg9DAJ',
+            'prod_9XbR2kQwLm',
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /collections/{collection_id}/products -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37444,6 +39315,23 @@ paths:
         Removes products from the collection's manual curation in bulk. Ids that are not curated are ignored; the count reports what was removed.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { removed_count } = await client.collections.products.delete('coll_UkLWZg9DAJ', [
+            'prod_UkLWZg9DAJ',
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /collections/{collection_id}/products
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37487,6 +39375,25 @@ paths:
         Moves a product to a new index among the collection's products.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Moves the product to the top of the collection; positions are 0-based.
+          await client.collections.products.reposition('coll_UkLWZg9DAJ', 'prod_UkLWZg9DAJ', {
+            new_position: 0,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /collections/{collection_id}/products/{id}/reposition
+          -d '{"new_position":0}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37532,6 +39439,21 @@ paths:
         Enumerates the registered rule kinds with their labels and descriptions — drives the rule picker on an automatic collection. Plugins extend the list by registering `Spree::CollectionRule` subclasses via `config.spree.collection_rules`. The `type` returned here is the wire shorthand accepted when writing a collection's `rules`.
 
         **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: ruleTypes } = await client.collectionRules.types()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collection_rules/types
       parameters:
       - name: x-spree-api-key
         in: header
@@ -37779,6 +39701,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_commissions` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const commissionLine = await client.commissionLines.get('cline_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /commission_lines/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -38139,6 +40076,22 @@ paths:
 
 
         **Required scope:** `read_commissions` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Each kind comes with the JSON Schema of its configuration.
+          const { data: ruleTypes } = await client.commissionRates.ruleTypes()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /commission_rates/rule_types
       parameters:
       - name: x-spree-api-key
         in: header
@@ -38458,6 +40411,21 @@ paths:
         Returns the business's addresses: its sites, billing address and delivery points.
 
         **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: addresses } = await client.companies.addresses.list('comp_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /companies/{company_id}/addresses
       parameters:
       - name: x-spree-api-key
         in: header
@@ -38590,6 +40558,35 @@ paths:
         Adds an address to the business. Pass `default_billing: true` or `default_shipping: true` to make it the default of that kind.
 
         **Required scope:** `write_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const address = await client.companies.addresses.create('comp_UkLWZg9DAJ', {
+            first_name: 'Jane',
+            last_name: 'Doe',
+            company: 'Acme Wholesale',
+            label: 'Warehouse',
+            address1: '350 Fifth Avenue',
+            city: 'New York',
+            postal_code: '10118',
+            country_code: 'US',
+            state_code: 'NY',
+            phone: '+12125551234',
+            default_shipping: true,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /companies/{company_id}/addresses -d '{"first_name":"Jane","last_name":"Doe","company":"Acme
+          Wholesale","label":"Warehouse","address1":"350 Fifth Avenue","city":"New
+          York","postal_code":"10118","country_code":"US","state_code":"NY","phone":"+12125551234","default_shipping":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -38659,6 +40656,25 @@ paths:
         Changes an address of the business. Pass `default_billing` or `default_shipping` to move that default to it, or `false` to give it up.
 
         **Required scope:** `write_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const address = await client.companies.addresses.update('comp_UkLWZg9DAJ', 'addr_k5nR8xLqPz', {
+            label: 'Northern Warehouse',
+            default_billing: true,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /companies/{company_id}/addresses/{id} -d '{"label":"Northern
+          Warehouse","default_billing":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -38733,6 +40749,21 @@ paths:
         Returns the invitations into this business that are still waiting to be accepted.
 
         **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: invitations } = await client.companies.invitations.list('comp_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /companies/{company_id}/invitations
       parameters:
       - name: x-spree-api-key
         in: header
@@ -39210,6 +41241,26 @@ paths:
         Corrects the details recorded for a certificate, such as its issuing authority or expiry date.
 
         **Required scope:** `write_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const certificate = await client.companies.taxExemptionCertificates.update(
+            'comp_UkLWZg9DAJ',
+            'cert_k5nR8xLqPz',
+            { issuing_authority: 'Finanzamt Berlin', expires_at: '2027-12-31T23:59:59Z' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /companies/{company_id}/tax_exemption_certificates/{id}
+          -d '{"issuing_authority":"Finanzamt Berlin","expires_at":"2027-12-31T23:59:59Z"}'
       parameters: []
       responses:
         '200':
@@ -39444,6 +41495,41 @@ paths:
 
 
         **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The document is served through the API, so fetch it with the API key,
+          // then drive the browser download from a Blob.
+          const certificate = await client.companies.taxExemptionCertificates.get(
+            'comp_UkLWZg9DAJ',
+            'cert_k5nR8xLqPz',
+          )
+
+          if (certificate.document_url) {
+            const response = await fetch(`https://your-store.com${certificate.document_url}`, {
+              headers: { 'X-Spree-API-Key': 'sk_xxx' },
+            })
+            if (!response.ok) throw new Error(`Download failed: ${response.status}`)
+
+            const url = URL.createObjectURL(await response.blob())
+            const link = Object.assign(document.createElement('a'), {
+              href: url,
+              download: certificate.document_filename ?? 'certificate',
+            })
+            link.click()
+            URL.revokeObjectURL(url)
+          }
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /companies/{company_id}/tax_exemption_certificates/{id}/download
       responses:
         '200':
           description: document streamed
@@ -39925,6 +42011,24 @@ paths:
         Updates a company node. Only the attributes sent change.
 
         **Required scope:** `write_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const company = await client.companies.update('comp_UkLWZg9DAJ', {
+            name: 'Acme Industrial Group',
+            po_number_required: true,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /companies/{id} -d '{"name":"Acme Industrial Group","po_number_required":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -40105,6 +42209,21 @@ paths:
         Returns the collection's custom field values.
 
         **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.collections.customFields.list('coll_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collections/{collection_id}/custom_fields
       parameters:
       - name: x-spree-api-key
         in: header
@@ -40214,6 +42333,21 @@ paths:
         Returns the seller's custom field values.
 
         **Required scope:** `read_sellers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.sellers.customFields.list('sel_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /sellers/{seller_id}/custom_fields
       parameters:
       - name: x-spree-api-key
         in: header
@@ -40526,6 +42660,21 @@ paths:
         Returns the profile's origin groups: the sets of warehouses that each quote their own delivery rates.
 
         **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: originGroups } = await client.deliveryProfiles.originGroups.list('fp_86Rf07xd4z')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /delivery_profiles/{delivery_profile_id}/origin_groups
       parameters:
       - name: x-spree-api-key
         in: header
@@ -41040,6 +43189,25 @@ paths:
         Updates a delivery method. Only the attributes sent change.
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const deliveryMethod = await client.deliveryMethods.update('dm_UkLWZg9DAJ', {
+            name: 'UPS Express',
+            estimated_transit_business_days_min: 1,
+            estimated_transit_business_days_max: 2,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /delivery_methods/{id} -d '{"name":"UPS Express","estimated_transit_business_days_min":1,"estimated_transit_business_days_max":2}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -41296,6 +43464,21 @@ paths:
         Returns the areas delivery methods ship to, each made of countries, states or postal code ranges.
 
         **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: deliveryZones } = await client.deliveryZones.list({ name_cont: 'US' })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /delivery_zones -d '{"name_cont":"US"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -41481,6 +43664,32 @@ paths:
         Updates a delivery zone. Sending `members` replaces the whole member list; leaving it out keeps the current members.
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // `members` replaces the zone's full member set.
+          const deliveryZone = await client.deliveryZones.update('dz_UkLWZg9DAJ', {
+            name: 'US East Coast',
+            members: [
+              {
+                member_type: 'postal_code',
+                country_code: 'US',
+                postal_code_from: '10000',
+                postal_code_to: '14999',
+              },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /delivery_zones/{id} -d '{"name":"US East Coast","members":[{"member_type":"postal_code","country_code":"US","postal_code_from":"10000","postal_code_to":"14999"}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -41547,6 +43756,21 @@ paths:
         Returns the conditions a delivery method must meet to be offered at checkout, such as an order total or weight range.
 
         **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: rules } = await client.deliveryMethods.rules.list('dm_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /delivery_methods/{delivery_method_id}/rules
       parameters:
       - name: x-spree-api-key
         in: header
@@ -41644,6 +43868,25 @@ paths:
 
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Offer this method only on orders of 50.00 or more:
+          const rule = await client.deliveryMethods.rules.create('dm_UkLWZg9DAJ', {
+            type: 'item_total_rule',
+            preferences: { minimum_amount: '50.00' },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /delivery_methods/{delivery_method_id}/rules -d '{"type":"item_total_rule","preferences":{"minimum_amount":"50.00"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -41705,6 +43948,25 @@ paths:
         Changes a rule's settings or turns it off. Its `type` is fixed once created.
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const rule = await client.deliveryMethods.rules.update('dm_UkLWZg9DAJ', 'dmrule_UkLWZg9DAJ', {
+            active: false,
+            preferences: { minimum_amount: '40.00', maximum_amount: '500.00' },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /delivery_methods/{delivery_method_id}/rules/{id}
+          -d '{"active":false,"preferences":{"minimum_amount":"40.00","maximum_amount":"500.00"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -41981,6 +44243,24 @@ paths:
         Changes an integration's credentials or turns it on or off. Setting active: true verifies the connection and fails with 422 when it cannot connect. Submitting a masked secret value back keeps the stored secret.
 
         **Required scope:** `write_integrations` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const integration = await client.integrations.update('int_UkLWZg9DAJ', {
+            active: true,
+            preferences: { account_number: 'demo-0001' },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /integrations/{id} -d '{"active":true,"preferences":{"account_number":"demo-0001"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42086,6 +44366,26 @@ paths:
 
 
         **Required scope:** `read_media` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Library images that are not used anywhere yet.
+          const { data: media } = await client.media.list({
+            unattached: true,
+            media_type_eq: 'image',
+            limit: 25,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /media -d '{"unattached":true,"media_type_eq":"image","limit":25}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42240,6 +44540,26 @@ paths:
 
 
         **Required scope:** `write_media` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Upload the file first with `client.files.upload(file)`, then add it here.
+          const media = await client.media.create({
+            signed_id: 'eyJfcmFpbHMiOnsiZGF0YSI6NDJ9fQ==--8f3a2c',
+            alt: 'Folded on a table',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /media -d '{"signed_id":"eyJfcmFpbHMiOnsiZGF0YSI6NDJ9fQ==--8f3a2c","alt":"Folded
+          on a table"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42318,6 +44638,23 @@ paths:
         Edits a file in the library, such as its alt text.
 
         **Required scope:** `write_media` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const media = await client.media.update('media_UkLWZg9DAJ', {
+            alt: 'Folded on a table',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /media/{id} -d '{"alt":"Folded on a table"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42404,6 +44741,22 @@ paths:
 
 
         **Required scope:** `read_media` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Check where a file is used before deleting it.
+          const { data: usage } = await client.media.usage('media_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /media/{id}/usage
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42472,6 +44825,21 @@ paths:
         Returns the files placed on a product, in their display order.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: media } = await client.products.media.list('prod_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{product_id}/media
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42626,6 +44994,26 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Places a library file on the product. The file is shared, not copied.
+          const media = await client.products.media.create('prod_UkLWZg9DAJ', {
+            source_media_id: 'media_UkLWZg9DAJ',
+            alt: 'Front view',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/{product_id}/media -d '{"source_media_id":"media_UkLWZg9DAJ","alt":"Front
+          view"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42713,6 +45101,26 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const media = await client.products.media.update('prod_UkLWZg9DAJ', 'media_gbHJdmfrXB', {
+            alt: 'Side view',
+            position: 1,
+            variant_ids: ['variant_UkLWZg9DAJ'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{product_id}/media/{id} -d '{"alt":"Side
+          view","position":1,"variant_ids":["variant_UkLWZg9DAJ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42797,6 +45205,24 @@ paths:
         Returns the files placed on one of a product's variants, in their display order.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: media } = await client.products.variants.media.list(
+            'prod_UkLWZg9DAJ',
+            'variant_UkLWZg9DAJ',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{product_id}/variants/{variant_id}/media
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43166,6 +45592,28 @@ paths:
         Corrects the tracking number, carrier or link. A corrected number starts the carrier journey over.
 
         **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // A corrected number resets the carrier status to `pending`.
+          const delivery = await client.orders.fulfillments.deliveries.update(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'dlv_UkLWZg9DAJ',
+            { tracking_number: '1Z999AA10123456784', carrier: 'UPS' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}
+          -d '{"tracking_number":"1Z999AA10123456784","carrier":"UPS"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43232,6 +45680,25 @@ paths:
         Removes a hand-entered consignment. One a label minted is refused — refund the label instead.
 
         **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.orders.fulfillments.deliveries.delete(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'dlv_UkLWZg9DAJ',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43591,6 +46058,25 @@ paths:
         One label, with what it cost and where to print it from.
 
         **Required scope:** `read_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const label = await client.orders.fulfillments.labels.get(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'lbl_UkLWZg9DAJ',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43658,6 +46144,22 @@ paths:
         Removes an uploaded label. A purchased label is refunded instead, so the postage history stays honest.
 
         **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Only a label recorded from an uploaded file can be deleted; refund a bought one.
+          await client.orders.fulfillments.labels.delete('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', 'lbl_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44278,6 +46780,24 @@ paths:
 
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // `price_list_price` adds the price this list sets for each product.
+          const { data: products } = await client.priceLists.products.list('pl_UkLWZg9DAJ', {
+            expand: ['price_list_price'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /price_lists/{price_list_id}/products -d '{"expand":["price_list_price"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44531,6 +47051,24 @@ paths:
         Adds products to the list in bulk, materializing a placeholder price per variant and store currency. Already-present products are skipped.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { added_count } = await client.priceLists.products.create('pl_UkLWZg9DAJ', [
+            'prod_86Rf07xd4z',
+            'prod_9XbR2kQwLm',
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /price_lists/{price_list_id}/products -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44571,6 +47109,23 @@ paths:
         Removes products from the list in bulk, hard-deleting their price rows. Ids that are not members are ignored.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { removed_count } = await client.priceLists.products.delete('pl_UkLWZg9DAJ', [
+            'prod_86Rf07xd4z',
+          ])
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /price_lists/{price_list_id}/products
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44617,6 +47172,21 @@ paths:
 
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: productTypes } = await client.productTypes.list({ name_cont: 'shirt' })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /product_types -d '{"name_cont":"shirt"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44753,6 +47323,26 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Products created with this type start with its option types and categories.
+          const productType = await client.productTypes.create({
+            name: 'Hoodie',
+            option_type_ids: ['opt_UkLWZg9DAJ'],
+            category_ids: ['ctg_UkLWZg9DAJ'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /product_types -d '{"name":"Hoodie","option_type_ids":["opt_UkLWZg9DAJ"],"category_ids":["ctg_UkLWZg9DAJ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44822,6 +47412,21 @@ paths:
         Returns a single product type with its option types, categories and custom fields.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const productType = await client.productTypes.get('pt_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /product_types/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44876,6 +47481,23 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const productType = await client.productTypes.update('pt_UkLWZg9DAJ', {
+            name: 'Premium T-Shirt',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /product_types/{id} -d '{"name":"Premium T-Shirt"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44922,6 +47544,21 @@ paths:
         Deletes a product type. Types still used by products cannot be deleted.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.productTypes.delete('pt_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /product_types/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44962,6 +47599,22 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Backfills the type's option types and categories onto products that already have it.
+          const result = await client.productTypes.applyToProducts('pt_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /product_types/{id}/apply_to_products -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -45332,6 +47985,23 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_purchasing` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const purchaseOrder = await client.purchaseOrders.get('po_1234567890', {
+            expand: ['items', 'supplier'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /purchase_orders/{id} -d '{"expand":["items","supplier"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -45445,6 +48115,26 @@ paths:
 
 
         **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Drafts only. Sending `items` replaces every line on the order.
+          const purchaseOrder = await client.purchaseOrders.update('po_1234567890', {
+            expected_at: '2026-10-15',
+            reference: 'ACME-88412',
+            items: [{ variant_id: 'variant_1234567890', quantity_ordered: 120, unit_cost: '12.50' }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /purchase_orders/{id} -d '{"expected_at":"2026-10-15","reference":"ACME-88412","items":[{"variant_id":"variant_1234567890","quantity_ordered":120,"unit_cost":"12.50"}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -45517,6 +48207,22 @@ paths:
 
 
         **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Sends the order to the supplier: the lines freeze and the expected date starts counting.
+          const purchaseOrder = await client.purchaseOrders.markOrdered('po_1234567890')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /purchase_orders/{id}/mark_ordered -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -45987,6 +48693,24 @@ paths:
 
 
         **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const purchaseOrder = await client.purchaseOrders.cancel('po_1234567890', {
+            reason: 'Supplier discontinued the line',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /purchase_orders/{id}/cancel -d '{"reason":"Supplier
+          discontinued the line"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -46049,6 +48773,21 @@ paths:
         Returns the store's saved reports, each a named query staff can run again.
 
         **Required scope:** `read_reports` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: savedReports } = await client.reporting.savedReports.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /reporting/saved_reports
       parameters:
       - name: x-spree-api-key
         in: header
@@ -46153,6 +48892,26 @@ paths:
         Saves a reporting query under a name so staff can run it again. The query is validated against the reporting registry.
 
         **Required scope:** `write_reports` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const savedReport = await client.reporting.savedReports.create({
+            name: 'Orders by channel',
+            description: 'Weekly review',
+            query: { metrics: ['total_sales', 'orders'], dimensions: ['channel'] },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /reporting/saved_reports -d '{"name":"Orders by channel","description":"Weekly
+          review","query":{"metrics":["total_sales","orders"],"dimensions":["channel"]}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -46208,6 +48967,25 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_reports` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const savedReport = await client.reporting.savedReports.update('sq_UkLWZg9DAJ', {
+            name: 'Sales by channel (monthly)',
+            description: 'For the board pack',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /reporting/saved_reports/{id} -d '{"name":"Sales by
+          channel (monthly)","description":"For the board pack"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -46263,6 +49041,26 @@ paths:
 
 
         **Required scope:** `read_reports` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.reporting.query({
+            metrics: ['total_sales', 'orders'],
+            dimensions: [{ name: 'completed_at', grain: 'day' }],
+            time_range: { preset: 'last_7_days' },
+            compare: 'previous_period',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /reporting/query -d '{"metrics":["total_sales","orders"],"dimensions":[{"name":"completed_at","grain":"day"}],"time_range":{"preset":"last_7_days"},"compare":"previous_period"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -47868,6 +50666,25 @@ paths:
 
 
         **Required scope:** `write_sellers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The note tells the seller what to fix before they submit again.
+          const seller = await client.sellers.reopenOnboarding('sel_UkLWZg9DAJ', {
+            note: 'Please upload a bank statement dated within the last 3 months.',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /sellers/{id}/reopen_onboarding -d '{"note":"Please
+          upload a bank statement dated within the last 3 months."}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48143,6 +50960,22 @@ paths:
 
 
         **Required scope:** `read_payouts` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // One row per currency: earned, paid, still owed, and not yet confirmed.
+          const { data: balances } = await client.sellers.balances('sel_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /sellers/{seller_id}/balances
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48222,6 +51055,22 @@ paths:
 
 
         **Required scope:** `write_payouts` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Pays out everything the seller is owed now, one payout per currency.
+          const { data: payouts } = await client.sellers.settle('sel_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /sellers/{seller_id}/payouts -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48292,6 +51141,21 @@ paths:
         What this seller submitted against the marketplace requirements, with the review decision on each.
 
         **Required scope:** `read_sellers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: submissions } = await client.sellers.requirementSubmissions.list('sel_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /sellers/{seller_id}/requirement_submissions
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48416,6 +51280,26 @@ paths:
 
 
         **Required scope:** `write_sellers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Excuses this seller from a requirement every other seller still has to meet.
+          const submission = await client.sellers.requirementSubmissions.waive('sel_UkLWZg9DAJ', {
+            requirement_id: 'selreq_UkLWZg9DAJ',
+            review_note: 'Registered charity, exempt from the business licence check.',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /sellers/{seller_id}/requirement_submissions -d '{"requirement_id":"selreq_UkLWZg9DAJ","review_note":"Registered
+          charity, exempt from the business licence check."}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48480,6 +51364,26 @@ paths:
         Marks what the seller submitted as meeting the requirement.
 
         **Required scope:** `write_sellers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const submission = await client.sellers.requirementSubmissions.accept(
+            'sel_UkLWZg9DAJ',
+            'selsub_UkLWZg9DAJ',
+            { review_note: 'Licence verified with the issuing authority.' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /sellers/{seller_id}/requirement_submissions/{id}/accept
+          -d '{"review_note":"Licence verified with the issuing authority."}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48545,6 +51449,27 @@ paths:
 
 
         **Required scope:** `write_sellers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The review note is sent back to the seller as the reason.
+          const submission = await client.sellers.requirementSubmissions.reject(
+            'sel_UkLWZg9DAJ',
+            'selsub_UkLWZg9DAJ',
+            { review_note: 'The document has expired. Please upload a current one.' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /sellers/{seller_id}/requirement_submissions/{id}/reject
+          -d '{"review_note":"The document has expired. Please upload a current one."}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48597,6 +51522,25 @@ paths:
 
 
         **Required scope:** `read_payouts` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: transfers } = await client.sellerTransfers.list({
+            seller_name_cont: 'Acme',
+            created_at_gteq: '2026-09-01',
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /seller_transfers -d '{"seller_name_cont":"Acme","created_at_gteq":"2026-09-01","sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48750,6 +51694,24 @@ paths:
 
 
         **Required scope:** `read_payouts` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: payouts } = await client.sellerPayouts.list({
+            period_end_gteq: '2026-09-01',
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /seller_payouts -d '{"period_end_gteq":"2026-09-01","sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -48908,6 +51870,24 @@ paths:
 
 
         **Required scope:** `write_payouts` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Records that the bank transfer went out.
+          const payout = await client.sellerPayouts.complete('vpo_UkLWZg9DAJ', {
+            reference: 'BANK-TRF-20261012-0042',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /seller_payouts/{id}/complete -d '{"reference":"BANK-TRF-20261012-0042"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -49284,6 +52264,26 @@ paths:
 
 
         **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Sets the count the shelf should end at; the difference is recorded in the stock history.
+          const stockLevel = await client.stockLevels.update('sl_UkLWZg9DAJ', {
+            count_on_hand: 42,
+            reason: 'Cycle count',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /stock_levels/{id} -d '{"count_on_hand":42,"reason":"Cycle
+          count"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -49650,6 +52650,24 @@ paths:
         Returns the stock held for orders that are being checked out, so it cannot be sold twice before they complete or the hold expires.
 
         **Required scope:** `read_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Stock held for checkouts in progress, soonest to expire first.
+          const { data: reservations } = await client.stockReservations.list({
+            sort: 'expires_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_reservations -d '{"sort":"expires_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -49812,6 +52830,24 @@ paths:
 
 
         **Required scope:** `read_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: transfers } = await client.stockTransfers.list({
+            open: true,
+            sort: '-created_at',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_transfers -d '{"open":true,"sort":"-created_at"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -50092,6 +53128,23 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_stock` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const transfer = await client.stockTransfers.get('st_1234567890', {
+            expand: ['items'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_transfers/{id} -d '{"expand":["items"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -50240,6 +53293,26 @@ paths:
 
 
         **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Drafts only. Sending `items` replaces every line on the transfer.
+          const transfer = await client.stockTransfers.update('st_1234567890', {
+            reference: 'Restock east coast',
+            items: [{ variant_id: 'variant_1234567890', quantity_shipped: 24 }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /stock_transfers/{id} -d '{"reference":"Restock east
+          coast","items":[{"variant_id":"variant_1234567890","quantity_shipped":24}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -50300,6 +53373,22 @@ paths:
 
 
         **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Drafts only: a transfer that has shipped is cancelled instead.
+          await client.stockTransfers.delete('st_1234567890')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /stock_transfers/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -50336,6 +53425,22 @@ paths:
 
 
         **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Freezes the lines; nothing leaves the source shelf until the transfer is sent.
+          const transfer = await client.stockTransfers.markReady('st_1234567890')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /stock_transfers/{id}/mark_ready -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -50887,6 +53992,26 @@ paths:
 
 
         **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Once units have left the source, say whether they come back or are written off.
+          const transfer = await client.stockTransfers.cancel('st_1234567890', {
+            on_in_transit: 'write_off',
+            reason: 'Lost in transit',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /stock_transfers/{id}/cancel -d '{"on_in_transit":"write_off","reason":"Lost
+          in transit"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -51222,6 +54347,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_purchasing` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const supplier = await client.suppliers.get('sup_1234567890')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /suppliers/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -51279,6 +54419,26 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_purchasing` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const supplier = await client.suppliers.update('sup_1234567890', {
+            contact_name: 'Jordan Lee',
+            email: 'orders@acme-supply.com',
+            phone: '+1 555 0100',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /suppliers/{id} -d '{"contact_name":"Jordan Lee","email":"orders@acme-supply.com","phone":"+1
+          555 0100"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -51337,6 +54497,21 @@ paths:
 
 
         **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.suppliers.delete('sup_1234567890')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /suppliers/{id}
       parameters:
       - name: x-spree-api-key
         in: header

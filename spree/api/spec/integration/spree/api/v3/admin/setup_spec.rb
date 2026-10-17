@@ -13,6 +13,8 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
         login page uses it to offer the setup screen.
       DESC
 
+      admin_sdk_example 'auth/setup-status'
+
       response '200', 'setup status' do
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -32,6 +34,8 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
         refresh-token cookie exactly like login. Returns 404 once any admin
         user exists — the flow is closed permanently after setup.
       DESC
+
+      admin_sdk_example 'auth/complete-setup'
 
       request_body_for
 
@@ -82,6 +86,8 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
         screen runs before any credential exists. Returns 404 once any admin
         user exists.
       DESC
+
+      admin_sdk_example 'auth/setup-countries'
 
       response '200', 'countries' do
         run_test! do |response|

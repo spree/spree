@@ -22,6 +22,8 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       DESC
       admin_scope :read, :media
 
+      admin_sdk_example 'media/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -53,6 +55,8 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
         this record's id as `source_media_id`.
       DESC
       admin_scope :write, :media
+
+      admin_sdk_example 'media/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -89,6 +93,8 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description 'Edits a file in the library, such as its alt text.'
       admin_scope :write, :media
+
+      admin_sdk_example 'media/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -127,6 +133,8 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
         not proof the file is unused.
       DESC
       admin_scope :read, :media
+
+      admin_sdk_example 'media/usage'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -171,6 +179,8 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       description "Returns the files placed on a product, in their display order."
       admin_scope :read, :products
 
+      admin_sdk_example 'product-media/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -203,6 +213,8 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
         position and variant links from here on.
       DESC
       admin_scope :write, :products
+
+      admin_sdk_example 'product-media/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -241,6 +253,8 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'product-media/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -271,6 +285,8 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description "Returns the files placed on one of a product's variants, in their display order."
       admin_scope :read, :products
+
+      admin_sdk_example 'variant-media/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

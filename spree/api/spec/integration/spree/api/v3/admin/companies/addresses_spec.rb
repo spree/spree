@@ -19,6 +19,8 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
       description "Returns the business's addresses: its sites, billing address and delivery points."
       admin_scope :read, :customers
 
+      admin_sdk_example 'companies/addresses/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :company_id, in: :path, type: :string, required: true
@@ -43,6 +45,8 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
       security [api_key: [], bearer_auth: []]
       description 'Adds an address to the business. Pass `default_billing: true` or `default_shipping: true` to make it the default of that kind.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'companies/addresses/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -82,6 +86,8 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
       security [api_key: [], bearer_auth: []]
       description 'Changes an address of the business. Pass `default_billing` or `default_shipping` to move that default to it, or `false` to give it up.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'companies/addresses/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

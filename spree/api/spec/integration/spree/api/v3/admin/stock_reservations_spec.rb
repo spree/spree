@@ -17,6 +17,8 @@ RSpec.describe 'Admin Stock Reservations API', type: :request, swagger_doc: 'api
       description 'Returns the stock held for orders that are being checked out, so it cannot be sold twice before they complete or the hold expires.'
       admin_scope :read, :stock
 
+      admin_sdk_example 'stock-reservations/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'

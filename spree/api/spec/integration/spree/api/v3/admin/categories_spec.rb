@@ -17,6 +17,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       description 'Returns a paginated list of the store\'s categories (manual hierarchical taxons; rule-based collections are excluded).'
       admin_scope :read, :categories
 
+      admin_sdk_example 'categories/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -45,6 +47,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       description 'Creates a category. Nests under the parent when parent_id is given, otherwise creates a top-level category.'
       admin_scope :write, :categories
+
+      admin_sdk_example 'categories/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -81,6 +85,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       description 'Returns a single category by ID.'
       admin_scope :read, :categories
+
+      admin_sdk_example 'categories/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -119,6 +125,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       description 'Updates a category.'
       admin_scope :write, :categories
 
+      admin_sdk_example 'categories/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -145,6 +153,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       description 'Deletes a category and its descendants.'
       admin_scope :write, :categories
 
+      admin_sdk_example 'categories/delete'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -167,6 +177,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       description 'Moves a category to a new parent and/or index within the tree.'
       admin_scope :write, :categories
+
+      admin_sdk_example 'categories/reposition'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -195,6 +207,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       description 'Products classified under the category, ordered by their classification position.'
       admin_scope :read, :categories
 
+      admin_sdk_example 'category-products/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -219,6 +233,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       description 'Classifies products under the category in bulk (appended to the end). ' \
                   'Already-classified products are skipped; the count reports what was added.'
       admin_scope :write, :categories
+
+      admin_sdk_example 'category-products/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -246,6 +262,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       description 'Removes products from the category\'s manual classification in bulk. ' \
                   'Ids that are not classified are ignored; the count reports what was removed.'
       admin_scope :write, :categories
+
+      admin_sdk_example 'category-products/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -276,6 +294,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       description 'Moves a product to a new index among the category\'s products.'
       admin_scope :write, :categories
+
+      admin_sdk_example 'category-products/reposition'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

@@ -112,6 +112,8 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
       description 'Changes an integration\'s credentials or turns it on or off. Setting active: true verifies the connection and fails with 422 when it cannot connect. Submitting a masked secret value back keeps the stored secret.'
       admin_scope :write, :integrations
 
+      admin_sdk_example 'integrations/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string

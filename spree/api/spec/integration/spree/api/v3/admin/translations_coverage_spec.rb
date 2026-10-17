@@ -17,6 +17,8 @@ RSpec.describe 'Admin Translations Coverage API', type: :request, swagger_doc: '
                   'translatable fields is filled in.'
       admin_scope :read, :products
 
+      admin_sdk_example 'translations/coverage'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :resource_type, in: :query, type: :string, required: true,

@@ -20,6 +20,8 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
       DESC
       admin_scope :read, :customers
 
+      admin_sdk_example 'customers/export'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
 
@@ -73,6 +75,8 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
       DESC
       admin_scope :write, :customers
 
+      admin_sdk_example 'customers/anonymize'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
 
@@ -104,6 +108,8 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
       description 'Returns the consents customers gave or withdrew, newest first, as evidence of what each one agreed to and when.'
       admin_scope :read, :customers
 
+      admin_sdk_example 'consent-records/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       filter_parameters_for
@@ -129,6 +135,8 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
       security [api_key: [], bearer_auth: []]
       description 'Returns the requests customers made to export or erase their personal data, newest first.'
       admin_scope :read, :customers
+
+      admin_sdk_example 'data-requests/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -159,6 +167,8 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
         second one.
       DESC
       admin_scope :write, :customers
+
+      admin_sdk_example 'data-requests/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
