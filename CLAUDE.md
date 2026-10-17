@@ -809,6 +809,8 @@ cd packages/dashboard && pnpm test:e2e          # full suite
 cd packages/dashboard && pnpm test:e2e:ui       # Playwright UI mode (debug)
 ```
 
+**Every behaviour change or new feature ships with an E2E test.** If a merchant or seller can see the change in the Admin Dashboard or the Seller Panel, the same change adds or updates a Playwright spec that exercises it there: admin specs as `e2e/<resource>.spec.ts`, seller panel specs as `e2e/seller-<area>.spec.ts`. This applies to backend-only changes too, such as a validation, a status rule or a newly required field. Backend specs and unit tests prove the server refuses bad input; only the E2E test proves the dashboards still let users complete the flow.
+
 The `login(page)` helper authenticates through the API (one POST plants the refresh cookie; the SPA's boot-time silent refresh does the rest) — only `auth.spec.ts` drives the login form itself.
 
 **Write UI-only assertions, like Capybara.** Drive the test through user-visible actions (fill labels, click buttons, find by role) and assert on visible UI. **Do not** reach for `page.waitForResponse(/api/...)` to wait for backend completion — it leaks API shape into tests and makes refactors painful. Playwright's `await expect(...).toBeVisible()` auto-polls until the condition is met (same as Capybara's `default_max_wait_time`), which covers virtually all cases.
