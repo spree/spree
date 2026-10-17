@@ -82,18 +82,21 @@ module Spree
           end
 
           # Per-type scope check for API-key principals: a key listing product
-          # tags needs `read_products`, order tags `read_orders`, etc. JWT
-          # admins are gated by store membership + CanCanCan, not scopes.
+          # tags needs `read_products`, order tags `read_orders`, etc.
+          #
+          # Asked of the credential, not of its kind: an OAuth grant carries
+          # no API key, so a check that began `return unless current_api_key`
+          # skipped itself entirely and handed an agent every order and
+          # customer tag the approver could see.
           def authorize_taggable_scope!
-            return unless current_api_key
             return unless taggable_type
 
             required = self.class.scope_for_taggable_type.fetch(taggable_type, 'read_all')
-            return if current_api_key.has_scope?(required)
+            return if holds_permission?(required)
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-              message: "API key lacks scope: #{required}",
+              message: "Missing permission: #{required}",
               status: :forbidden,
               details: { required_scope: required }
             )
