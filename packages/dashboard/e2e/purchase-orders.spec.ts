@@ -94,6 +94,7 @@ test.describe('purchase orders', () => {
     await picker.getByRole('button', { name: /^add 1$/i }).click()
     await expect(picker).toBeHidden()
     await page.getByRole('spinbutton', { name: /^ordered$/i }).fill('12')
+    await page.getByLabel(/^unit cost$/i).fill('7.50')
 
     await page.getByRole('button', { name: /create draft/i }).click()
 

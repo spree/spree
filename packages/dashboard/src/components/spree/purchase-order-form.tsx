@@ -31,7 +31,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supplierAutocompleteProps } from '../../hooks/use-suppliers'
 import { SupplierSheet } from './supplier-sheet'
-import { type VariantLine, VariantLineEditor } from './variant-line-editor'
+import { type CostedVariantLine, type VariantLine, VariantLineEditor } from './variant-line-editor'
 
 export interface PurchaseOrderFormValues {
   supplierId: string
@@ -42,6 +42,23 @@ export interface PurchaseOrderFormValues {
   reference: string
   notes: string
   lines: VariantLine[]
+}
+
+export interface PurchaseOrderSubmitValues extends PurchaseOrderFormValues {
+  lines: CostedVariantLine[]
+}
+
+// A cleared cost input is not zero — it is nothing, which the server rejects
+// field-by-field. Trimmed here so the value checked is the value sent.
+function costedLine(line: VariantLine): CostedVariantLine | undefined {
+  const unitCost = line.unitCost?.trim()
+  if (line.quantity <= 0 || !isDecimalString(unitCost) || unitCost.startsWith('-')) return undefined
+  return { ...line, unitCost }
+}
+
+function costedLines(lines: VariantLine[]): CostedVariantLine[] | undefined {
+  const costed = lines.map(costedLine).filter((line) => line !== undefined)
+  return costed.length === lines.length ? costed : undefined
 }
 
 export const EMPTY_PURCHASE_ORDER: PurchaseOrderFormValues = {
@@ -87,7 +104,7 @@ export function PurchaseOrderForm({
   submitLabel: string
   pendingLabel: string
   pending: boolean
-  onSubmit: (values: PurchaseOrderFormValues) => void
+  onSubmit: (values: PurchaseOrderSubmitValues) => void
   onCancel: () => void
 }) {
   const { t } = useTranslation()
@@ -106,17 +123,8 @@ export function PurchaseOrderForm({
   const [creatingSupplier, setCreatingSupplier] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
 
-  // A cleared cost input is not zero — it is nothing, which the server rejects
-  // field-by-field.
-  const hasCost = (value?: string) => {
-    const trimmed = value?.trim()
-    return isDecimalString(trimmed) && !trimmed.startsWith('-')
-  }
-
-  const canSubmit =
-    !!supplierId &&
-    !!destinationId &&
-    lines.every((line) => line.quantity > 0 && hasCost(line.unitCost))
+  const submitLines = costedLines(lines)
+  const canSubmit = !!supplierId && !!destinationId && !!submitLines
 
   const detailsCard = (
     <Card>
@@ -273,6 +281,7 @@ export function PurchaseOrderForm({
                 <Button
                   type="button"
                   onClick={() =>
+                    submitLines &&
                     onSubmit({
                       supplierId,
                       destinationId,
@@ -281,7 +290,7 @@ export function PurchaseOrderForm({
                       cancelBy,
                       reference,
                       notes,
-                      lines,
+                      lines: submitLines,
                     })
                   }
                   disabled={!canSubmit || pending}

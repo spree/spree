@@ -38,8 +38,8 @@ describe('addVariantsToLines', () => {
     expect(lines[0].quantity).toBe(2)
   })
 
-  it('seeds a cost only where the document has one', () => {
-    expect(addVariantsToLines([], [variant('a')], true)[0].unitCost).toBe('0.00')
+  it('leaves a cost blank for the merchant to fill only where the document has one', () => {
+    expect(addVariantsToLines([], [variant('a')], true)[0].unitCost).toBe('')
     expect(addVariantsToLines([], [variant('a')], false)[0].unitCost).toBeUndefined()
   })
 
