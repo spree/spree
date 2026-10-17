@@ -1,7 +1,16 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, fillAddressForm, login } from './helpers'
+import {
+  adminRequest,
+  FIXTURE_GATEWAY_DASHBOARD_URL,
+  FIXTURE_GATEWAY_PAYMENT_METHOD,
+  FIXTURE_PROMO_CUSTOMER_EMAIL,
+  FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
+  fillAddressForm,
+  login,
+} from './helpers'
 
 // A PNG is in the PO document allowlist, so the shared fixture works and no
 // new binary ships with the suite.
@@ -345,5 +354,57 @@ test.describe('order tags', () => {
     await expect(page.getByRole('option', { name: tagName, exact: true })).toBeVisible({
       timeout: 15_000,
     })
+  })
+})
+
+test.describe('order payments', () => {
+  test("links a payment to its page at the payment provider's dashboard", async ({ page }) => {
+    const creds = await login(page)
+    type List = { data: { id: string }[] }
+    const [paymentMethods, customers, variants] = await Promise.all([
+      adminRequest<List>(
+        page,
+        creds,
+        'get',
+        `/payment_methods?q[name_eq]=${encodeURIComponent(FIXTURE_GATEWAY_PAYMENT_METHOD)}`,
+      ),
+      adminRequest<List>(
+        page,
+        creds,
+        'get',
+        `/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
+      ),
+      adminRequest<List>(page, creds, 'get', `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`),
+    ])
+    const order = await adminRequest<{ id: string; total: string }>(
+      page,
+      creds,
+      'post',
+      '/orders',
+      {
+        customer_id: customers.data[0].id,
+        items: [{ variant_id: variants.data[0].id, quantity: 1 }],
+      },
+    )
+    const payment = await adminRequest<{ number: string }>(
+      page,
+      creds,
+      'post',
+      `/orders/${order.id}/payments`,
+      { payment_method_id: paymentMethods.data[0].id, amount: order.total },
+    )
+
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+    await page
+      .locator('tr')
+      .filter({ hasText: payment.number })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    const link = page.getByRole('menuitem', {
+      name: `View at ${FIXTURE_GATEWAY_PAYMENT_METHOD}`,
+    })
+    await expect(link).toHaveAttribute('href', `${FIXTURE_GATEWAY_DASHBOARD_URL}/${payment.number}`)
+    await expect(link).toHaveAttribute('target', '_blank')
   })
 })

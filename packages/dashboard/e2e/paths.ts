@@ -17,6 +17,13 @@ export const TEST_INTEGRATION_INITIALIZER = resolve(
   E2E_DIR,
   '../../../spree/api/spec/dummy/config/initializers/zz_dashboard_e2e_integration.rb',
 )
+// A payment method that links each payment to a provider dashboard, which
+// only provider gems the test app does not install offer. Written and removed
+// alongside the files above.
+export const TEST_PAYMENT_GATEWAY_INITIALIZER = resolve(
+  E2E_DIR,
+  '../../../spree/api/spec/dummy/config/initializers/zz_dashboard_e2e_payment_gateway.rb',
+)
 // The first-run setup suite runs its own Rails against its own database, so
 // its state files live apart from the main suite's.
 export const FIRST_RUN_CREDENTIALS_FILE = resolve(E2E_DIR, '.first-run.json')

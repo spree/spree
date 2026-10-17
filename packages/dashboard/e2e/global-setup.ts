@@ -19,6 +19,8 @@ import {
   FIXTURE_BULK_PRODUCT_L,
   FIXTURE_BULK_PRODUCT_M,
   FIXTURE_BULK_PRODUCT_N,
+  FIXTURE_GATEWAY_DASHBOARD_URL,
+  FIXTURE_GATEWAY_PAYMENT_METHOD,
   FIXTURE_INVENTORY_PRODUCT,
   FIXTURE_INVENTORY_RESERVED,
   FIXTURE_INVENTORY_SKU,
@@ -48,6 +50,7 @@ import {
   CREDENTIALS_FILE,
   RAILS_PID_FILE,
   TEST_INTEGRATION_INITIALIZER,
+  TEST_PAYMENT_GATEWAY_INITIALIZER,
 } from './paths'
 import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
 
@@ -180,6 +183,8 @@ const BOOTSTRAP_RUBY = [
   // period as well as its own.
   `comma_store.markets.find_or_create_by!(name: 'United States') { |m| m.currency = 'USD'; m.default_locale = 'en'; m.countries = [Spree::Country.find_by_iso!('US')] } unless comma_store.markets.exists?(currency: 'USD')`,
   'comma_store.add_user(admin, Spree::Role.default_admin_role(comma_store)) unless comma_store.role_users.exists?(user: admin)',
+  // Its payments link out to a provider dashboard (see the initializer below).
+  `s.payment_methods.where(name: '${FIXTURE_GATEWAY_PAYMENT_METHOD}').first_or_create!(type: 'E2eGateway', active: true, storefront_visible: false)`,
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
 ].join('; ')
@@ -221,6 +226,27 @@ export default async function globalSetup() {
       '      end',
       '    end',
       "    Spree.integrations << 'E2eRelay' unless Spree.integrations.include?('E2eRelay')",
+      '  end',
+      'end',
+      '',
+    ].join('\n'),
+  )
+
+  // Left out of the payment method registry, so the provider pickers the
+  // payment method specs assert on stay as they are.
+  writeFileSync(
+    TEST_PAYMENT_GATEWAY_INITIALIZER,
+    [
+      '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
+      "if ENV['DASHBOARD_E2E'] == '1'",
+      '  Rails.application.config.after_initialize do',
+      '    unless defined?(::E2eGateway)',
+      '      class ::E2eGateway < Spree::PaymentMethod::Check',
+      '        def gateway_dashboard_payment_url(payment)',
+      `          "${FIXTURE_GATEWAY_DASHBOARD_URL}/#{payment.number}"`,
+      '        end',
+      '      end',
+      '    end',
       '  end',
       'end',
       '',

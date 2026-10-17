@@ -193,6 +193,10 @@ export const FIXTURE_PANEL_SELLER = 'E2E Panel Seller'
 /** The marketplace seller panel, its own app on its own origin (see playwright.config.ts). */
 export const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
 
+/** A payment method whose payments link to a page at a provider dashboard. */
+export const FIXTURE_GATEWAY_PAYMENT_METHOD = 'E2E Gateway'
+export const FIXTURE_GATEWAY_DASHBOARD_URL = 'https://dashboard.e2e-gateway.test/payments'
+
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
 export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'
