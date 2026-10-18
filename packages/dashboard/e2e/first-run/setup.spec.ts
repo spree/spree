@@ -93,7 +93,7 @@ test.describe
       const storePath = new URL(page.url()).pathname.replace(/\/getting-started$/, '')
       await page.goto(`${storePath}/settings/stock-locations`)
       await expect(page.getByText('Shop location')).toBeVisible()
-      await page.goto(`${storePath}/settings/tax-categories`)
+      await page.goto(`${storePath}/settings/taxes/categories`)
       await expect(page.getByText('Non-taxable')).toBeVisible()
 
       await page.getByRole('button', { name: 'User menu' }).click()
