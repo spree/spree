@@ -89,6 +89,9 @@ module Spree
     before_validation :normalize_state
     before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
 
+    after_validation :forget_submitted_state_code, if: -> { errors.any? }
+    after_save :forget_submitted_state_code
+
     after_create :set_user_attributes, if: -> { customer_owned? }
 
     after_commit :async_geocode
@@ -243,6 +246,19 @@ module Spree
     def user
       Spree::Deprecation.warn('Spree::Address#user is deprecated and will be removed in Spree 6.1. Use #owner instead.') if defined?(Spree::Deprecation)
       customer_owner
+    end
+
+    # Remembers that the caller named a subdivision code, so validation can
+    # tell it apart from the code already stored, even when both are equal.
+    # @param value [String, nil]
+    def state_code=(value)
+      @state_code_submitted = true
+      super
+    end
+
+    # The alias would write the column directly and skip {#state_code=}.
+    def state_abbr=(value)
+      self.state_code = value
     end
 
     def user=(value)
@@ -531,10 +547,20 @@ module Spree
     # a real subdivision of this country. A name matching nothing is left
     # alone — countries without subdivisions keep it as free text, and
     # +state_validate+ decides whether that is acceptable.
+    #
+    # A stored code only stands when the caller said nothing new about the
+    # region. A new name or a new country without a code in the same write
+    # makes it stale, even when it happens to be valid in the new country
+    # (New York's NY is also Hungary's Nyíregyháza).
     def normalize_state
       return if country_code.blank?
 
       submitted_abbr = self[:state_code].presence
+
+      if submitted_abbr.present? && stored_state_code_stale?
+        self[:state_code] = nil
+        submitted_abbr = nil
+      end
 
       if submitted_abbr.present?
         resolved = Spree::IsoData.subdivision_code(country_code, submitted_abbr)
@@ -552,7 +578,24 @@ module Spree
       return if matched.blank?
 
       self[:state_code] = matched
+      @state_code_resolved_for = [country_code, matched]
       self.state_name = nil
+    end
+
+    # Only a saved address has a stored code that can go stale. A code the
+    # caller sent, or one an earlier validation pass resolved from a name for
+    # the same country, never is; an unsaved code left behind by a rejected
+    # update is.
+    def stored_state_code_stale?
+      return false if new_record? || @state_code_submitted
+      return false if @state_code_resolved_for == [country_code, self[:state_code]]
+
+      (will_save_change_to_state_name? && state_name.present?) || will_save_change_to_country_code?
+    end
+
+    def forget_submitted_state_code
+      @state_code_submitted = false
+      @state_code_resolved_for = nil
     end
 
     def clear_state

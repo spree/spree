@@ -96,6 +96,16 @@ RSpec.describe Spree::Addresses::Update do
           expect(value.state).to eq(state)
         end
 
+        context 'when the stored state code is also valid in the new country' do
+          let(:country) { Spree::Country.by_iso('HU') }
+          let(:state) { Spree::State.resolve('HU', 'BE') }
+
+          it 'uses the submitted state name' do
+            expect(result).to be_success
+            expect(value.state_code).to eq('BE')
+          end
+        end
+
         context 'when user sets address as default shipping' do
           let(:result) { subject.call(address: address, address_params: new_address_params, order: order, default_shipping: true) }
           let!(:previous_address) { create(:address, customer: user) }
