@@ -55340,9 +55340,7 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          const response = await fetch(
-            'https://your-store.com/api/v3/oauth/protected-resource/admin',
-          )
+          const response = await fetch('https://your-store.com/api/v3/oauth/protected-resource/admin')
           const metadata = await response.json()
       - lang: bash
         label: Spree CLI
