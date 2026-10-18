@@ -5707,7 +5707,7 @@
       },
       "never_expires": "Bez daty wygaśnięcia",
       "no_document": "Brak załączonego dokumentu",
-      "no_reasons": "Brak powodów zwolnienia. Dodaj je w Ustawienia → Powody.",
+      "no_reasons": "Brak powodów zwolnienia. Dodaj je w Ustawienia → Podatki → Powody zwolnień.",
       "revoke_action": "Unieważnij",
       "revoke_confirm": {
         "message": "Certyfikat {{number}} przestanie obowiązywać dla nowych zamówień. Pozostanie zapisany jako dokumentacja.",

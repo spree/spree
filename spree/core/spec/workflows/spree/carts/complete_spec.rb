@@ -436,6 +436,27 @@ module Spree
         expect(provider).to have_received(:commit).with(draft)
       end
 
+      it 'files each order of a draft divided between sellers' do
+        draft = create(:order_ready_to_ship, store: store, line_items_count: 2)
+        draft.update_columns(status: 'draft', completed_at: nil, payment_status: nil)
+        draft.line_items.reload.zip(create_list(:seller, 2, :approved, store: store)).each do |line_item, seller|
+          line_item.variant.update!(seller: seller)
+          line_item.update_columns(seller_id: seller.id)
+        end
+        draft.reload.recalculate_totals!
+        draft.payments.destroy_all
+        create(:payment, order: draft, status: 'completed', amount: draft.reload.total)
+        filed = []
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+        allow(provider).to receive(:commit) { |placed| filed << placed }
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: draft.reload)
+
+        expect(result.value).to be_a(Spree::OrderGroup)
+        expect(filed).to match_array(result.value.orders.to_a)
+      end
+
       # An empty list, not nil: the reader has to tell "found no claim" apart
       # from an order placed before the column existed.
       it 'freezes an empty list when the sale claimed no exemption' do

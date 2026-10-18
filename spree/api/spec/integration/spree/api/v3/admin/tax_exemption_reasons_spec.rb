@@ -138,7 +138,8 @@ RSpec.describe 'Admin Tax Exemption Reasons API', type: :request, swagger_doc: '
       description <<~DESC
         Renames a tax exemption reason or retires it. Deactivating keeps it on the
         certificates that already record it while removing it from the pickers. The
-        code is fixed once a certificate records it.
+        code can change at any time, and every certificate holding the reason sends
+        the new code to the tax provider from then on.
       DESC
       admin_scope :write, :settings
 
@@ -179,6 +180,17 @@ RSpec.describe 'Admin Tax Exemption Reasons API', type: :request, swagger_doc: '
       response '204', 'tax exemption reason deleted' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { reason.prefixed_id }
+
+        run_test!
+      end
+
+      response '422', 'tax exemption reason is in use' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { reason.prefixed_id }
+
+        before { create(:tax_exemption_certificate, company: create(:company, store: store), reason_code: reason.code) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
       end

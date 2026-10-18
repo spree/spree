@@ -22,6 +22,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Skeleton,
   Switch,
   Table,
   TableBody,
@@ -390,7 +391,7 @@ function ReasonCodeField({ form }: { form: UseFormReturn<ReasonFormValues> }) {
   const { errors } = form.formState
   const { data } = useTaxProviders()
   const { permissions } = usePermissions()
-  const marketProviders = useMarketTaxProviders()
+  const { groups: marketProviders, isLoading } = useMarketTaxProviders()
   // Only engines a market actually taxes with: a store that has Avalara set
   // up but still taxes every market itself keeps free-text codes. Staff who
   // cannot see markets fall back to every engine the store has set up.
@@ -416,7 +417,11 @@ function ReasonCodeField({ form }: { form: UseFormReturn<ReasonFormValues> }) {
   return (
     <Field>
       <FieldLabel htmlFor="reason-code">{t('admin.fields.code.label')}</FieldLabel>
-      {engineCodes.length ? (
+      {/* Which control fits is only known once the engines and markets load;
+          choosing early swaps a half-typed code into a picker. */}
+      {isLoading ? (
+        <Skeleton className="h-9 w-full" />
+      ) : engineCodes.length ? (
         <Controller
           control={form.control}
           name="code"

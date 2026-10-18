@@ -5641,7 +5641,7 @@
       },
       "never_expires": "Does not expire",
       "no_document": "No document attached",
-      "no_reasons": "No exemption reasons yet. Add them in Settings → Reasons.",
+      "no_reasons": "No exemption reasons yet. Add them in Settings → Taxes → Exemption reasons.",
       "revoke_action": "Revoke",
       "revoke_confirm": {
         "message": "Certificate {{number}} stops applying to new orders. It stays on file as a record.",
