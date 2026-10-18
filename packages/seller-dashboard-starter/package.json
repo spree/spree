@@ -17,14 +17,17 @@
   },
   "dependencies": {
     "@spree/admin-sdk": "workspace:^",
-    "@spree/seller-dashboard": "workspace:^",
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
+    "@spree/seller-dashboard": "workspace:^",
     "@spree/seller-sdk": "workspace:^",
     "@tanstack/react-query": "^5.100.9",
     "@tanstack/react-router": "^1.169.2",
+    "i18next": "^26.2.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-hook-form": "^7.75.0",
+    "react-i18next": "^17.0.8"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
