@@ -57,6 +57,7 @@
     "@changesets/cli": "^2.31.0",
     "@spree/admin-sdk": "workspace:^",
     "@spree/sdk-core": "workspace:*",
+    "@spree/telemetry": "workspace:*",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",

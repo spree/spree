@@ -17,14 +17,20 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 
 | Package | npm | Status | Description |
 | --- | --- | --- | --- |
-| [`sdk`](./sdk) | [`@spree/sdk`](https://www.npmjs.com/package/@spree/sdk) | **Stable** (1.x) | TypeScript client for the customer-facing **Store API v3**. |
-| [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **Developer Preview** (0.x) | TypeScript client for the **Admin API v3** (Spree 5.5+). Published under the `next` dist-tag. |
-| [`dashboard`](./dashboard) | `@spree/dashboard` (not yet published) | **In Development** | React SPA admin dashboard for Spree 6.0. Will replace the legacy Rails `spree/admin` engine. Currently private in the workspace; will be published as `@spree/dashboard` once ready. |
-| [`dashboard-ui`](./dashboard-ui) | `@spree/dashboard-ui` (not yet published) | **In Development** | Design system for the dashboard — shadcn primitives, headless composed components, design tokens. Source-only; consumed by `@spree/dashboard` and downstream plugin authors. |
-| [`dashboard-core`](./dashboard-core) | `@spree/dashboard-core` (not yet published) | **In Development** | Dashboard framework — registries (table, nav, slot, settings-nav), providers, generic infra hooks, `defineDashboardPlugin`. The extension API surface. |
-| [`sdk-core`](./sdk-core) | — | **Internal** | Shared HTTP/retry/error layer used by `@spree/sdk` and `@spree/admin-sdk`. Not published. |
-| [`cli`](./cli) | [`@spree/cli`](https://www.npmjs.com/package/@spree/cli) | **Stable** (2.x) | Docker-based CLI for managing Spree projects scaffolded with `create-spree-app`. |
-| [`create-spree-app`](./create-spree-app) | [`create-spree-app`](https://www.npmjs.com/package/create-spree-app) | **Stable** (1.x) | One-shot scaffolder: `npx create-spree-app my-store`. Sets up backend (Docker) + optional Next.js storefront. |
+| [`sdk`](./sdk) | [`@spree/sdk`](https://www.npmjs.com/package/@spree/sdk) | **Stable** (2.0 release candidate for Spree 6.0) | TypeScript client for the customer-facing **Store API v3**. |
+| [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **In Development** (1.0 release candidate) | TypeScript client for the **Admin API v3**. |
+| [`seller-sdk`](./seller-sdk) | [`@spree/seller-sdk`](https://www.npmjs.com/package/@spree/seller-sdk) | **In Development** (1.0 release candidate) | TypeScript client for the marketplace **Seller API v3**. |
+| [`dashboard`](./dashboard) | [`@spree/dashboard`](https://www.npmjs.com/package/@spree/dashboard) | **In Development** (1.0 release candidate) | React SPA admin dashboard for Spree 6.0. Replaces the legacy Rails `spree/admin` engine. |
+| [`dashboard-ui`](./dashboard-ui) | [`@spree/dashboard-ui`](https://www.npmjs.com/package/@spree/dashboard-ui) | **In Development** (1.0 release candidate) | Design system for the dashboard — shadcn primitives, headless composed components, design tokens. Source-only. |
+| [`dashboard-core`](./dashboard-core) | [`@spree/dashboard-core`](https://www.npmjs.com/package/@spree/dashboard-core) | **In Development** (1.0 release candidate) | Dashboard framework — registries (table, nav, slot, settings-nav), providers, generic infra hooks, `defineDashboardPlugin`. The extension API surface. |
+| [`seller-dashboard`](./seller-dashboard) | [`@spree/seller-dashboard`](https://www.npmjs.com/package/@spree/seller-dashboard) | **In Development** (1.0 release candidate) | React SPA seller panel for marketplace deployments, built from the dashboard packages. |
+| [`dashboard-starter`](./dashboard-starter) | — | **Internal** | Host app for the admin dashboard; source of the `spree/dashboard-starter` template. |
+| [`seller-dashboard-starter`](./seller-dashboard-starter) | — | **Internal** | Host app for the seller panel; source of the `spree/seller-dashboard-starter` template. |
+| [`dashboard-plugin-example`](./dashboard-plugin-example) | — | **Internal** | Example dashboard plugin, the reference for the plugin authoring docs. |
+| [`sdk-core`](./sdk-core) | — | **Internal** | Shared HTTP/retry/error layer used by the SDKs. Not published. |
+| [`telemetry`](./telemetry) | — | **Internal** | Usage reporting shared by `@spree/cli` and `create-spree-app`. Bundled into both, not published. |
+| [`cli`](./cli) | [`@spree/cli`](https://www.npmjs.com/package/@spree/cli) | **Stable** (3.x) | Docker-based CLI for managing Spree projects scaffolded with `create-spree-app`. |
+| [`create-spree-app`](./create-spree-app) | [`create-spree-app`](https://www.npmjs.com/package/create-spree-app) | **Stable** (2.x) | One-shot scaffolder: `npx create-spree-app my-store`. Sets up the backend (Docker), the dashboard, and an optional Next.js storefront. |
 | [`docs`](./docs) | [`@spree/docs`](https://www.npmjs.com/package/@spree/docs) | **Developer Preview** (0.x) | Spree developer documentation packaged for local access by AI agents and dev tools. |
 
 ### `@spree/sdk` — Store API client
@@ -37,7 +43,7 @@ Includes auto-generated TypeScript types and Zod schemas derived from the Rails 
 
 The back-office counterpart to `@spree/sdk`. Same patterns, but targets the Admin API and supports both **secret API key** (server-to-server, scope-based authorization) and **JWT** (admin user, CanCanCan-based authorization) auth modes. Used internally by the `@spree/dashboard` SPA and externally by integrations and admin tooling.
 
-The Admin API v3 ships with Spree 5.5; the SDK is in **Developer Preview** on the 0.x line (published under the `next` dist-tag). Expect breaking changes between minor versions until 1.0.
+The SDK is a 1.0 release candidate, shipping with Spree 6.0.
 
 ### `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui` — the admin dashboard stack
 
@@ -51,11 +57,15 @@ Plugin authors install `@spree/dashboard-ui` + `@spree/dashboard-core` as peer d
 
 Architecture, extension points (table registry, navigation registry, component injection), the package boundary rules, and the phased migration are documented in [`docs/plans/6.0-admin-spa.md`](../docs/plans/6.0-admin-spa.md). Local setup for the SPA is in [`packages/dashboard/README.md`](./dashboard/README.md).
 
-All three packages are currently private in the workspace and ship together with the Spree 6.0 release.
+The three packages are a fixed release group: they always share one version and ship together with Spree 6.0.
 
 ### `@spree/sdk-core` — Shared internals
 
-Private package. Provides `createRequestFn()`, `SpreeError`, retry logic, and Ransack query-param transformation (`transformListParams()`). Consumed by both SDKs; not intended for direct use.
+Private package. Provides `createRequestFn()`, `SpreeError`, retry logic, and Ransack query-param transformation (`transformListParams()`). Consumed by the SDKs; not intended for direct use.
+
+### `@spree/telemetry` — Command line usage reporting
+
+Private package. Reports one anonymous event per lifecycle command run from a terminal (`create-spree-app`, `spree init`, `dev`, `add`, …), and holds the opt-out rules shared by both tools. Bundled into `@spree/cli` and `create-spree-app` at build time, so a change here needs a changeset for those two. What is sent and how to turn it off: [Update Checks and Usage Data](https://spreecommerce.org/docs/developer/deployment/usage-data).
 
 ### `@spree/cli` — Project management CLI
 
@@ -83,4 +93,4 @@ pnpm lint:fix     # Biome lint + auto-fix
 pnpm format       # Biome format-write
 ```
 
-Per-package commands are documented in each package's `README.md`. Changesets for versioning go in the package's `.changeset/` directory.
+Per-package commands are documented in each package's `README.md`. Changesets for versioning go in the root `.changeset/` directory (`pnpm changeset`).

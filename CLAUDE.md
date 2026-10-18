@@ -32,6 +32,7 @@ Use `/project:create-plan` and `/project:update-plan` for plan management, and `
 | `packages/admin-sdk` | `@spree/admin-sdk` — TypeScript Admin API client |
 | `packages/seller-sdk` | `@spree/seller-sdk` — TypeScript Seller API client |
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private internal) |
+| `packages/telemetry` | `@spree/telemetry` — command line usage reporting, bundled into `@spree/cli` and `create-spree-app` (private internal) |
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, provisioned per worktree by `scripts/worktree/setup.sh`) |

@@ -247,6 +247,16 @@ spree auth status
 spree auth logout --profile prod
 ```
 
+### `spree telemetry`
+
+Show or change whether the CLI reports which setup commands you run. See [Update Checks and Usage Data](/developer/deployment/usage-data#command-line-tools) for exactly what is sent.
+
+```bash
+spree telemetry status
+spree telemetry disable
+spree telemetry enable
+```
+
 ## Dev workflow commands
 
 These mirror the Rails commands you'd run if you were running the app directly on your host — but each is routed through `docker compose exec` against the running stack.
