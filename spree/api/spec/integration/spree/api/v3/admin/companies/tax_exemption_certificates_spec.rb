@@ -7,10 +7,11 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
   let!(:company) { create(:company, store: store) }
+  let!(:resale) { create(:tax_exemption_reason, store: store, code: 'RESALE', name: 'Resale') }
   let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
   let!(:certificate) do
     create(:tax_exemption_certificate, company: company,
-                                       certificate_number: 'DE-RESALE-1', reason_code: 'resale')
+                                       certificate_number: 'DE-RESALE-1', tax_exemption_reason: resale)
   end
 
   def pdf_blob
@@ -75,7 +76,7 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
         let(:body) do
           {
             certificate_number: 'DE-RESALE-7',
-            reason_code: 'resale',
+            tax_exemption_reason_id: resale.prefixed_id,
             country_code: germany.iso,
             document_signed_id: pdf_blob.signed_id
           }
@@ -89,7 +90,7 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
       end
 
       response '422', 'invalid request' do
-        let(:body) { { reason_code: 'resale' } }
+        let(:body) { { tax_exemption_reason_id: resale.prefixed_id } }
 
         run_test!
       end

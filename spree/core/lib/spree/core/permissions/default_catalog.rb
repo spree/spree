@@ -167,7 +167,7 @@ module Spree
            Spree::StockLocation, Spree::DeliveryProfile,
            Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
            Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason,
-           Spree::OrderCancellationReason, Spree::Channel,
+           Spree::OrderCancellationReason, Spree::TaxExemptionReason, Spree::Channel,
            Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
         })
 

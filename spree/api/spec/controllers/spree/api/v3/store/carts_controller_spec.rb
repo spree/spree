@@ -666,6 +666,38 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(response).to have_http_status(:ok)
     end
 
+    # The update rolls the address back itself, so the outage never reaches
+    # the API's own tax handler; the endpoint still has to answer as it would.
+    context 'when the tax engine fails on the new address' do
+      let(:address) { create(:address, customer: user, country: country, state: us_state) }
+
+      def fail_tax_with(error)
+        provider = instance_double(Spree::TaxProvider::Internal)
+        allow(provider).to receive(:estimate).and_raise(error)
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+      end
+
+      it 'answers an outage with 503 so the client retries' do
+        fail_tax_with(Spree::Tax::ProviderUnavailable.new('Failed to open TCP connection'))
+
+        patch :update, params: { id: order.prefixed_id, shipping_address_id: address.prefixed_id }
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(json_response['error']['code']).to eq('tax_provider_unavailable')
+        expect(json_response['error']['message']).not_to include('TCP')
+      end
+
+      it 'answers a refusal with 422 and what the engine said' do
+        fail_tax_with(Spree::Tax::CalculationRefused.new('Zip is not valid for the state'))
+
+        patch :update, params: { id: order.prefixed_id, shipping_address_id: address.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('tax_calculation_refused')
+        expect(json_response['error']['message']).to eq('Zip is not valid for the state')
+      end
+    end
+
     it 'accepts shipping_address_id to use an existing address' do
       order.update!(email: 'customer@example.com')
       existing_address = user.addresses.first || create(:address, customer: user, country: country, state: us_state)
@@ -1163,6 +1195,38 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       expect { post :complete, params: { id: order.prefixed_id } }
         .to change { Spree::StockReservation.for_order(order).count }.from(1).to(0)
+    end
+
+    # The workflow refuses the sale itself rather than letting the tax error
+    # escape, so the endpoint maps its codes to the statuses the API's own tax
+    # handler uses.
+    context 'when the tax engine fails at completion' do
+      let(:cart) { create(:cart_with_line_items, customer: user, store: store) }
+
+      def complete_fails_with(code, message)
+        error = Spree::ServiceModule::ResultError.new({ code: code, message: message })
+        allow(Spree::Carts::Complete).to receive(:call).and_return(Spree::ServiceModule::Result.new(false, cart, error))
+      end
+
+      it 'answers an outage with 503 so the client retries' do
+        complete_fails_with('tax_provider_unavailable', 'Tax could not be calculated right now.')
+
+        post :complete, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(json_response['error']['code']).to eq('tax_provider_unavailable')
+        expect(json_response['error']['message']).to eq('Tax could not be calculated right now.')
+      end
+
+      it 'answers a refusal with 422 and what the engine said' do
+        complete_fails_with('tax_calculation_refused', 'Zip is not valid for the state.')
+
+        post :complete, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('tax_calculation_refused')
+        expect(json_response['error']['message']).to eq('Zip is not valid for the state.')
+      end
     end
 
     context 'when order cannot be completed' do

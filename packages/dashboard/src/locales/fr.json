@@ -1793,10 +1793,6 @@
           "placeholder": "Illimité"
         }
       },
-      "reason_code": {
-        "help": "Transmis au moteur de calcul comme code d'usage.",
-        "label": "Motif"
-      },
       "role": {
         "description": {
           "label": "Description",
@@ -2398,6 +2394,10 @@
           "label": "Emballage par défaut",
           "help": "L'emballage sur lequel vos tarifs de colis sont calculés. Un seul par défaut à la fois."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Gérez les motifs proposés ici dans Paramètres → Taxes → Motifs d’exonération.",
+        "label": "Motif"
       },
       "oauth_application": {
         "name": {
@@ -4843,12 +4843,15 @@
         "help": "Ce qui s'est mal passé à la livraison — endommagé, manquant ou article incorrect.",
         "title": "Motifs de réclamation"
       },
+      "code_engine_help": "Votre moteur fiscal décide de l'exonération selon ce code : choisissez celui qu'il définit pour ce motif.",
+      "code_help": "Un identifiant court enregistré sur les certificats. Unique dans votre boutique.",
+      "code_placeholder": "ex. RESALE",
       "create_description": "Les motifs apparaissent dans une liste déroulante lors de la création d'un retour, d'une réclamation ou d'un remboursement.",
       "delete_confirm": {
         "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent.",
         "title": "Supprimer le motif ?"
       },
-      "description": "Les listes de motifs utilisées par votre équipe pour les retours, réclamations, remboursements et annulations.",
+      "description": "Les listes dans lesquelles votre équipe choisit pour les retours, réclamations, remboursements et annulations.",
       "edit_sheet_title": "Modifier le motif",
       "empty": "Aucun motif pour l'instant",
       "in_use": "Utilisé",
@@ -4871,6 +4874,12 @@
       "return": {
         "help": "Pourquoi un client renvoie un article. Partagé par les retours et les échanges.",
         "title": "Motifs de retour"
+      },
+      "tax_exemption": {
+        "create_description": "Votre équipe choisit un motif lorsqu'elle enregistre le certificat d'exonération d'une entreprise.",
+        "help": "Pourquoi une entreprise achète hors taxe. Enregistré sur ses certificats d'exonération ; le code est transmis à votre moteur fiscal.",
+        "name_placeholder": "ex. Revente",
+        "title": "Motifs d'exonération de taxe"
       },
       "title": "Retours et motifs"
     },
@@ -5197,12 +5206,11 @@
         "staff": "Personnes ayant accès à ce tableau de bord",
         "stock_locations": "Entrepôts et points de retrait qui détiennent du stock",
         "store": "Nom de la boutique, fuseau horaire, unités et valeurs régionales",
-        "tax_categories": "Classes de taxe attribuées aux produits",
-        "tax_rates": "Taux appliqués par marché et région",
         "webhooks": "Points de terminaison notifiés lors d'événements",
         "package_types": "Cartons, palettes et conteneurs",
         "suppliers": "À qui vous achetez votre stock, et comment les joindre",
         "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission",
+        "taxes": "Catégories de taxe, taux et motifs d’exonération",
         "ai_agents": "Agents IA ayant accès à cette boutique",
         "oauth_clients": "Enregistrer et configurer des clients OAuth"
       },
@@ -5243,6 +5251,7 @@
         "package_types": "Types d'emballage",
         "suppliers": "Fournisseurs",
         "marketplace": "Paramètres",
+        "taxes": "Taxes",
         "ai_agents": "Agents IA",
         "oauth_clients": "Clients OAuth"
       },
@@ -5589,7 +5598,6 @@
       "sellers": "Les vendeurs tiers actifs sur votre place de marché, et où en est chacun.",
       "store_credits": "Avoirs que les clients peuvent dépenser au paiement, et comment chacun a été émis.",
       "tax_categories": "Regroupements qui décident du taux de taxe appliqué à un produit.",
-      "tax_rates": "La taxe facturée par catégorie et par région.",
       "webhook_deliveries": "Chaque événement envoyé à ce point de terminaison, et s'il a été reçu.",
       "webhook_endpoints": "Où vos autres systèmes sont notifiés quand quelque chose se produit dans la boutique.",
       "returns": "Marchandises qui reviennent, de la demande au remboursement.",
@@ -5610,8 +5618,7 @@
         "created": "Catégorie de taxe créée",
         "deleted": "Catégorie de taxe supprimée",
         "updated": "Catégorie de taxe mise à jour"
-      },
-      "search_placeholder": "Rechercher par nom…"
+      }
     },
     "tax_exemption_certificates": {
       "add_cta": "Ajouter une attestation",
@@ -5634,14 +5641,7 @@
       },
       "never_expires": "Sans expiration",
       "no_document": "Aucun document joint",
-      "reason_codes": {
-        "agricultural": "Agriculture",
-        "charitable": "Organisme caritatif",
-        "educational": "Enseignement",
-        "government": "Administration",
-        "manufacturing": "Production",
-        "resale": "Revente"
-      },
+      "no_reasons": "Aucun motif d'exonération. Ajoutez-en dans Paramètres → Taxes → Motifs d’exonération.",
       "revoke_action": "Révoquer",
       "revoke_confirm": {
         "message": "L'attestation {{number}} ne s'appliquera plus aux nouvelles commandes. Elle reste conservée comme justificatif.",
@@ -5720,7 +5720,6 @@
         "deleted": "Taux supprimé",
         "updated": "Taux mis à jour"
       },
-      "search_placeholder": "Rechercher des taux",
       "select_category": "Choisir une catégorie"
     },
     "translations": {
@@ -6372,6 +6371,21 @@
       "empty": "Vous êtes à jour.",
       "view_on_github": "Voir sur GitHub",
       "release_notes_unavailable": "Impossible de charger les notes de version. Consultez-les sur GitHub."
+    },
+    "taxes": {
+      "title": "Taxes",
+      "description": "Comment vos produits sont taxés, les taux appliqués par Spree et pourquoi des entreprises peuvent acheter hors taxes.",
+      "providers_title": "Calcul des taxes",
+      "provider_markets": "{{provider}} pour {{markets}}",
+      "manage_markets": "Gérer les marchés",
+      "tabs": {
+        "categories": "Catégories",
+        "rates": "Taux",
+        "exemption_reasons": "Motifs d’exonération"
+      },
+      "rates_unused_in": "Ces taux ne sont pas utilisés dans {{markets}}, où un service externe calcule la taxe.",
+      "rates_unused_everywhere": "Aucun de vos marchés n’utilise ces taux : dans {{markets}}, un service externe calcule la taxe.",
+      "rates_help": "La taxe facturée par catégorie et par région. Utilisés uniquement par les marchés sur les taux Spree : un service connecté comme Avalara calcule la taxe lui-même et ignore ces taux."
     },
     "mcp_connect": {
       "open_cta": "Connecter un agent",

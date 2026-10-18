@@ -12,7 +12,6 @@ import {
   PercentIcon,
   PlugIcon,
   RadioTowerIcon,
-  ReceiptTextIcon,
   ReturnRequestIcon,
   ScrollTextIcon,
   ShapesIcon,
@@ -171,28 +170,31 @@ settingsNav.add({
   subject: Subject.PaymentMethod,
 })
 
+// Categories, rates and exemption reasons share one page, so a merchant
+// setting up tax finds all of it in one place.
 settingsNav.add({
-  key: 'settings.tax-categories',
-  labelKey: 'admin.settings_nav.items.tax_categories',
-  descriptionKey: 'admin.settings_nav.descriptions.tax_categories',
-  keywords: ['vat', 'gst', 'sales tax', 'tax class'],
-  path: '/tax-categories',
+  key: 'settings.taxes',
+  labelKey: 'admin.settings_nav.items.taxes',
+  descriptionKey: 'admin.settings_nav.descriptions.taxes',
+  keywords: [
+    'vat',
+    'gst',
+    'sales tax',
+    'tax class',
+    'tax categories',
+    'tax rates',
+    'rate',
+    'percentage',
+    'exemption',
+    'exempt',
+    'certificate',
+    'avalara',
+  ],
+  path: '/taxes',
   icon: PercentIcon,
   group: 'selling',
   position: 300,
-  subject: Subject.TaxCategory,
-})
-
-settingsNav.add({
-  key: 'settings.tax-rates',
-  labelKey: 'admin.settings_nav.items.tax_rates',
-  descriptionKey: 'admin.settings_nav.descriptions.tax_rates',
-  keywords: ['vat', 'gst', 'sales tax', 'rate', 'percentage'],
-  path: '/tax-rates',
-  icon: ReceiptTextIcon,
-  group: 'selling',
-  position: 400,
-  subject: Subject.TaxRate,
+  subjects: [Subject.TaxCategory, Subject.TaxRate, Subject.TaxExemptionReason],
 })
 
 settingsNav.add({

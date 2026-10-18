@@ -1793,10 +1793,6 @@
           "placeholder": "Unbegrenzt"
         }
       },
-      "reason_code": {
-        "help": "Wird als Verwendungszweck an die Steuerberechnung übergeben.",
-        "label": "Grund"
-      },
       "role": {
         "description": {
           "label": "Beschreibung",
@@ -2398,6 +2394,10 @@
           "label": "Standardverpackung",
           "help": "Die Verpackung, auf der Ihre Paketangebote basieren. Nur eine Standardverpackung gleichzeitig."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Die hier angebotenen Gründe verwalten Sie unter Einstellungen → Steuern → Befreiungsgründe.",
+        "label": "Grund"
       },
       "oauth_application": {
         "name": {
@@ -4843,6 +4843,9 @@
         "help": "Was bei der Lieferung schiefging – beschädigt, fehlend oder falscher Artikel.",
         "title": "Reklamationsgründe"
       },
+      "code_engine_help": "Ihre Steuerberechnung entscheidet anhand dieses Codes über die Befreiung. Wählen Sie den Code, den sie für diesen Grund vorsieht.",
+      "code_help": "Eine kurze Kennung, die Nachweise speichern. In Ihrem Shop eindeutig.",
+      "code_placeholder": "z. B. RESALE",
       "create_description": "Gründe erscheinen als Auswahl, wenn Mitarbeitende eine Rücksendung, Reklamation oder Rückerstattung anlegen.",
       "delete_confirm": {
         "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn.",
@@ -4871,6 +4874,12 @@
       "return": {
         "help": "Warum ein Kunde etwas zurückschickt. Gilt für Rücksendungen und Umtausch.",
         "title": "Rücksendegründe"
+      },
+      "tax_exemption": {
+        "create_description": "Ihr Team wählt einen Grund, wenn es den Befreiungsnachweis eines Unternehmens erfasst.",
+        "help": "Warum ein Unternehmen steuerfrei einkauft. Wird auf seinen Befreiungsnachweisen festgehalten; der Code geht an Ihre Steuerberechnung.",
+        "name_placeholder": "z. B. Wiederverkauf",
+        "title": "Gründe für Steuerbefreiungen"
       },
       "title": "Rücksendungen & Gründe"
     },
@@ -5197,12 +5206,11 @@
         "staff": "Personen mit Zugriff auf dieses Dashboard",
         "stock_locations": "Lager und Abholpunkte mit Beständen",
         "store": "Shopname, Zeitzone, Einheiten und regionale Standards",
-        "tax_categories": "Steuerklassen für Produkte",
-        "tax_rates": "Sätze pro Markt und Region",
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
         "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
+        "taxes": "Steuerkategorien, Steuersätze und Befreiungsgründe",
         "ai_agents": "KI-Agenten mit Zugriff auf diesen Shop",
         "oauth_clients": "OAuth-Clients registrieren und konfigurieren"
       },
@@ -5243,6 +5251,7 @@
         "package_types": "Verpackungsarten",
         "suppliers": "Lieferanten",
         "marketplace": "Einstellungen",
+        "taxes": "Steuern",
         "ai_agents": "KI-Agenten",
         "oauth_clients": "OAuth-Clients"
       },
@@ -5589,7 +5598,6 @@
       "sellers": "Die Drittanbieter auf Ihrem Marktplatz und der Stand jedes einzelnen.",
       "store_credits": "Guthaben, das Kunden an der Kasse ausgeben können, und wie es ausgestellt wurde.",
       "tax_categories": "Gruppen, die entscheiden, welcher Steuersatz für ein Produkt gilt.",
-      "tax_rates": "Die je Kategorie und Region berechnete Steuer.",
       "webhook_deliveries": "Jedes an diesen Endpunkt gesendete Ereignis und ob es empfangen wurde.",
       "webhook_endpoints": "Wohin Ihre anderen Systeme benachrichtigt werden, wenn im Shop etwas passiert.",
       "returns": "Zurückkommende Ware, von der Anfrage bis zur Erstattung.",
@@ -5610,8 +5618,7 @@
         "created": "Steuerkategorie erstellt",
         "deleted": "Steuerkategorie gelöscht",
         "updated": "Steuerkategorie aktualisiert"
-      },
-      "search_placeholder": "Nach Name suchen…"
+      }
     },
     "tax_exemption_certificates": {
       "add_cta": "Bescheinigung hinzufügen",
@@ -5634,14 +5641,7 @@
       },
       "never_expires": "Läuft nicht ab",
       "no_document": "Kein Dokument hinterlegt",
-      "reason_codes": {
-        "agricultural": "Landwirtschaft",
-        "charitable": "Gemeinnützig",
-        "educational": "Bildung",
-        "government": "Behörde",
-        "manufacturing": "Produktion",
-        "resale": "Wiederverkauf"
-      },
+      "no_reasons": "Noch keine Befreiungsgründe. Fügen Sie sie unter Einstellungen → Steuern → Befreiungsgründe hinzu.",
       "revoke_action": "Widerrufen",
       "revoke_confirm": {
         "message": "Bescheinigung {{number}} gilt dann nicht mehr für neue Bestellungen. Sie bleibt als Nachweis erhalten.",
@@ -5720,7 +5720,6 @@
         "deleted": "Steuersatz gelöscht",
         "updated": "Steuersatz aktualisiert"
       },
-      "search_placeholder": "Steuersätze suchen",
       "select_category": "Kategorie wählen"
     },
     "translations": {
@@ -6372,6 +6371,21 @@
       "empty": "Sie sind auf dem neuesten Stand.",
       "view_on_github": "Auf GitHub ansehen",
       "release_notes_unavailable": "Die Versionshinweise konnten nicht geladen werden. Lesen Sie sie stattdessen auf GitHub."
+    },
+    "taxes": {
+      "title": "Steuern",
+      "description": "Wie Ihre Produkte besteuert werden, welche Sätze Spree berechnet und warum Unternehmen steuerfrei einkaufen dürfen.",
+      "providers_title": "Steuerberechnung",
+      "provider_markets": "{{provider}} in {{markets}}",
+      "manage_markets": "Märkte verwalten",
+      "tabs": {
+        "categories": "Kategorien",
+        "rates": "Steuersätze",
+        "exemption_reasons": "Befreiungsgründe"
+      },
+      "rates_unused_in": "Diese Steuersätze gelten nicht in {{markets}}, wo ein externer Dienst die Steuer berechnet.",
+      "rates_unused_everywhere": "Keiner Ihrer Märkte verwendet diese Steuersätze: In {{markets}} berechnet ein externer Dienst die Steuer.",
+      "rates_help": "Die je Kategorie und Region berechnete Steuer. Gilt nur für Märkte mit Spree-Steuersätzen: Ein angebundener Dienst wie Avalara berechnet die Steuer selbst und ignoriert diese Sätze."
     },
     "mcp_connect": {
       "open_cta": "Agent verbinden",

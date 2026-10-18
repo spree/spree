@@ -1,7 +1,7 @@
 import { expect, type Page, test } from '@playwright/test'
 import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
-const TAX_RATES_PATH = (storeId: string) => `/${storeId}/settings/tax-rates`
+const TAX_RATES_PATH = (storeId: string) => `/${storeId}/settings/taxes/rates`
 const CTA = /add tax rate/i
 
 async function createTaxRate(

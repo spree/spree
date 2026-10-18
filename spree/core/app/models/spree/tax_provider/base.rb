@@ -41,6 +41,16 @@ module Spree
         name.demodulize.titleize
       end
 
+      # The exemption reason codes this engine understands, `{ code => label }`,
+      # offered to a merchant adding a {Spree::TaxExemptionReason}. Nil for an
+      # engine that does not read the code, Spree's own included: any code a
+      # merchant chooses is then as good as another.
+      #
+      # @return [Hash{String => String}, nil]
+      def self.exemption_reason_codes
+        nil
+      end
+
       # The declared limits with the strings a merchant can act on. A capability
       # with no translation degrades to its humanized key rather than a missing
       # translation, so an extension that declares one without shipping strings
@@ -69,6 +79,7 @@ module Spree
           name: display_name,
           available: available_for_store?(store),
           unsupported_capabilities: unsupported_capability_details,
+          exemption_reason_codes: exemption_reason_codes&.map { |code, label| { value: code.to_s, label: label.to_s } },
           default: name == Spree.default_tax_provider.to_s
         }
       end
@@ -86,8 +97,13 @@ module Spree
       #   registration, nil for a consumer sale
       # @param exemptions [Array] exemption evidence to apply
       # @param context [Hash] untyped provider extras from set_tax_line_context
-      # @return [void] the written rows are the output; raise when the
-      #   calculation cannot be completed
+      # @return [void] the written rows are the output
+      # @raise [Spree::Tax::ProviderUnavailable] when the engine could not
+      #   answer — refused, timed out, unreachable. Raise this (or a subclass,
+      #   as a provider's own request error may) rather than a bare error: core
+      #   turns it into a refusal the customer can retry, where anything else
+      #   reaches them as a broken checkout. A provider a merchant switched off
+      #   is not this — it has no opinion and writes no rows.
       def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
         raise NotImplementedError, "Please implement 'estimate' in your tax provider: #{self.class.name}"
       end

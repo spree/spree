@@ -43,6 +43,7 @@ RSpec.describe Spree::Seeds::All do
       expect(Spree::ReturnReason.where(store: store).count).to eq(Spree::Seeds::ReturnsEnvironment::RETURN_REASONS.count)
       expect(Spree::ClaimReason.where(store: store).count).to eq(Spree::Seeds::ReturnsEnvironment::CLAIM_REASONS.count)
       expect(Spree::RefundReason.where(store: store)).to exist
+      expect(store.tax_exemption_reasons.pluck(:code)).to match_array(Spree::Seeds::TaxExemptionReasons::REASONS.keys)
       expect(Spree::ProductType.where(store: store)).to exist
     end
 

@@ -594,7 +594,7 @@
     },
     {
       "source": "/user/settings/tax",
-      "destination": "/user/settings/tax-rates"
+      "destination": "/user/settings/taxes"
     },
     {
       "source": "/user/settings/returns-configuration",
@@ -1376,6 +1376,7 @@
                         "pages": [
                           "user/settings/markets",
                           "user/settings/payments",
+                          "user/settings/taxes",
                           "user/settings/tax-categories",
                           "user/settings/tax-rates"
                         ]

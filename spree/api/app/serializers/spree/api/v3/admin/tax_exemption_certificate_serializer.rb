@@ -5,7 +5,7 @@ module Spree
         # Admin-only: certificates are back-office evidence with no storefront
         # surface, so there is no store serializer to extend.
         class TaxExemptionCertificateSerializer < V3::BaseSerializer
-          typelize certificate_number: :string, reason_code: :string, status: [:string, enum: Spree::TaxExemptionCertificate.statuses, enum_type_name: 'TaxExemptionCertificateStatus'],
+          typelize certificate_number: :string, tax_exemption_reason_id: :string, status: [:string, enum: Spree::TaxExemptionCertificate.statuses, enum_type_name: 'TaxExemptionCertificateStatus'],
                    issuing_authority: [:string, nullable: true],
                    issued_at: [:string, nullable: true], expires_at: [:string, nullable: true],
                    verified_at: [:string, nullable: true],
@@ -17,11 +17,15 @@ module Spree
                    document_url: [:string, nullable: true],
                    metadata: 'Record<string, unknown> | null'
 
-          attributes :certificate_number, :reason_code, :status, :issuing_authority, :metadata,
+          attributes :certificate_number, :status, :issuing_authority, :metadata,
                      issued_at: :iso8601, expires_at: :iso8601, verified_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          prefixed_id_attributes :company
+          prefixed_id_attributes :company, :tax_exemption_reason
+
+          one :tax_exemption_reason,
+              resource: proc { Spree.api.admin_tax_exemption_reason_serializer },
+              if: proc { expand?('tax_exemption_reason') }
 
           # The jurisdiction the certificate holds in, in the same vocabulary the
           # tax lines use.

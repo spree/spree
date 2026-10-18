@@ -32,7 +32,8 @@ describe Spree::Tax::ResolveExemptions do
 
       exemption = described_class.call(order: order.reload).value.sole
 
-      expect(exemption.reason_code).to eq('resale')
+      expect(exemption.reason_code).to eq('RESALE')
+      expect(exemption.reason_name).to eq('Resale')
       expect(exemption.certificate_number).to eq('DE-RESALE-1')
       expect(exemption.country_code).to eq('DE')
       expect(exemption.state_code).to eq('BE')
@@ -43,7 +44,22 @@ describe Spree::Tax::ResolveExemptions do
       create(:tax_exemption_certificate, :verified, company: company, reason_code: 'government')
 
       expect(described_class.call(order: order.reload).value.map(&:reason_code)).
-        to contain_exactly('resale', 'government')
+        to contain_exactly('RESALE', 'GOVERNMENT')
+    end
+
+    # Recorded before reasons existed and not yet linked by the upgrade step.
+    it 'claims with the old code of a certificate not linked to a reason' do
+      certificate = create(:tax_exemption_certificate, :verified, company: company)
+      certificate.update_columns(tax_exemption_reason_id: nil, reason_code: 'G')
+
+      expect(described_class.call(order: order.reload).value.sole).to have_attributes(reason_code: 'G', reason_name: nil)
+    end
+
+    it 'skips a certificate whose reason is gone, rather than failing' do
+      certificate = create(:tax_exemption_certificate, :verified, company: company)
+      certificate.update_columns(tax_exemption_reason_id: certificate.tax_exemption_reason_id.to_i + 1_000, reason_code: nil)
+
+      expect(described_class.call(order: order.reload).value).to eq([])
     end
 
     it 'ignores a certificate awaiting verification' do

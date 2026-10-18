@@ -159,6 +159,8 @@ export interface PreferencePropertySchema {
   'x-spree-prefix'?: string
   /** A longer text, best edited in a multi-line field. */
   'x-spree-widget'?: 'textarea'
+  /** Display labels for `enum` values that cannot name themselves, keyed by value. */
+  'x-spree-choice-labels'?: Record<string, string>
 }
 
 /**

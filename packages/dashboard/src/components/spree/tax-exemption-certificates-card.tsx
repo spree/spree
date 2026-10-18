@@ -56,7 +56,7 @@ import {
 } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -66,9 +66,9 @@ import {
   useTaxExemptionCertificates,
   useVerifyTaxExemptionCertificate,
 } from '../../hooks/use-companies'
+import { useTaxExemptionReasons } from '../../hooks/use-reasons'
 import {
   TAX_EXEMPTION_CERTIFICATE_DEFAULTS,
-  TAX_EXEMPTION_REASON_CODES,
   type TaxExemptionCertificateFormValues,
   taxExemptionCertificateFormSchema,
   taxExemptionCertificateValuesToParams,
@@ -201,9 +201,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                 </div>
                 <span className="text-muted-foreground text-xs">
-                  {t(`admin.tax_exemption_certificates.reason_codes.${certificate.reason_code}`, {
-                    defaultValue: certificate.reason_code,
-                  })}
+                  {certificate.tax_exemption_reason?.name ?? '—'}
                   {' · '}
                   <JurisdictionLabel
                     countryCode={certificate.country_code}
@@ -338,6 +336,15 @@ function CertificateSheet({
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateTaxExemptionCertificate(companyId)
+  const reasons = useTaxExemptionReasons()
+  // Only the reasons the store still offers; the server refuses any other.
+  const reasonOptions: ReasonOption[] = useMemo(
+    () =>
+      reasons
+        .filter((reason) => reason.active)
+        .map((reason) => ({ value: reason.id, label: reason.name })),
+    [reasons],
+  )
   const form = useForm<TaxExemptionCertificateFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(taxExemptionCertificateFormSchema) as any,
@@ -400,17 +407,13 @@ function CertificateSheet({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="reason_code">{t('admin.fields.reason_code.label')}</FieldLabel>
+                <FieldLabel htmlFor="tax_exemption_reason_id">
+                  {t('admin.fields.tax_exemption_reason_id.label')}
+                </FieldLabel>
                 <Controller
-                  name="reason_code"
+                  name="tax_exemption_reason_id"
                   control={form.control}
                   render={({ field }) => {
-                    const reasonOptions = TAX_EXEMPTION_REASON_CODES.map((code) => ({
-                      value: code,
-                      label: t(`admin.tax_exemption_certificates.reason_codes.${code}`, {
-                        defaultValue: code,
-                      }),
-                    }))
                     const selected = reasonOptions.find((o) => o.value === field.value) ?? null
                     return (
                       <Combobox
@@ -423,11 +426,15 @@ function CertificateSheet({
                         itemToStringValue={(option: ReasonOption | null) => option?.value ?? ''}
                       >
                         <ComboboxInput
-                          id="reason_code"
+                          id="tax_exemption_reason_id"
                           placeholder={t('admin.tax_exemption_certificates.select_reason')}
                         />
                         <ComboboxContent>
-                          <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
+                          <ComboboxEmpty>
+                            {reasonOptions.length
+                              ? t('admin.common.no_results')
+                              : t('admin.tax_exemption_certificates.no_reasons')}
+                          </ComboboxEmpty>
                           <ComboboxList>
                             {(option: ReasonOption) => (
                               <ComboboxItem key={option.value} value={option}>
@@ -440,8 +447,10 @@ function CertificateSheet({
                     )
                   }}
                 />
-                <FieldDescription>{t('admin.fields.reason_code.help')}</FieldDescription>
-                <FieldError errors={[errors.reason_code]} />
+                <FieldDescription>
+                  {t('admin.fields.tax_exemption_reason_id.help')}
+                </FieldDescription>
+                <FieldError errors={[errors.tax_exemption_reason_id]} />
               </Field>
 
               <Field>

@@ -7,6 +7,12 @@ module Spree
     # default tax category's rates — except customs duties, which +taxable_items+
     # withholds (see Spree::Purchase::Taxation).
     class Internal < Base
+      # What a merchant sees when picking a market's tax engine: the class name
+      # says nothing to someone who never read the code.
+      def self.display_name
+        I18n.t('spree.tax_providers.internal')
+      end
+
       # Rates are configured per country or state with no local-tax breakdown, no buyer
       # registration handling, no distance-selling thresholds, and delivery taxed
       # at its own method's rate rather than apportioned across the rates of the
@@ -226,9 +232,14 @@ module Spree
       # a genuinely exempt supply depends on which exemption applied, which the
       # reason alone cannot say.
       def exemption_data(exemption, item)
+        reason_code = exemption.reason_code_for(item)
+
         {
           'exemption' => {
-            'reason_code' => exemption.reason_code_for(item),
+            'reason_code' => reason_code,
+            # A per-line override names only a code, so the entry's name would
+            # describe a different reason.
+            'reason_name' => (exemption.reason_name if reason_code == exemption.reason_code),
             'certificate_number' => exemption.certificate_number
           }.compact
         }

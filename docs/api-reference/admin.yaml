@@ -27673,6 +27673,408 @@ paths:
       responses:
         '204':
           description: return reason deleted
+  "/api/v3/admin/tax_exemption_reasons":
+    get:
+      summary: List tax exemption reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why a business buys without tax — the reasons a merchant can record on a
+        tax exemption certificate. Each has the merchant's own `name` and a `code`,
+        which certificates record and the tax provider receives.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. A provider whose engine reads the code lists
+        the codes it understands on `GET /tax_providers`. Inactive rows stay on the
+        certificates that already record them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.taxExemptionReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tax_exemption_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `active`, `code`, `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: TaxExemptionReason
+        sortable:
+        - active
+        - code
+        - created_at
+        - id
+        - name
+        - updated_at
+      responses:
+        '200':
+          description: tax exemption reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: txr_UkLWZg9DAJ
+                  name: Reseller (wholesale)
+                  code: G
+                  active: true
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a tax exemption reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a tax exemption reason to this store. Names and codes are unique per store.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // `code` is what certificates record and the tax engine receives — on
+          // Avalara, an entity use code such as `G` (resale).
+          const reason = await client.taxExemptionReasons.create({
+            name: 'Reseller (wholesale)',
+            code: 'G',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /tax_exemption_reasons -d '{"name":"Reseller (wholesale)","code":"G"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: tax exemption reason created
+          content:
+            application/json:
+              example:
+                id: txr_gbHJdmfrXB
+                name: Federal government
+                code: A
+                active: true
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank and Code can't be blank
+                  details:
+                    name:
+                    - code: blank
+                      message: can't be blank
+                      specific: false
+                    code:
+                    - code: blank
+                      message: can't be blank
+                      specific: false
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/TaxExemptionReasonCreateParams"
+        required: true
+  "/api/v3/admin/tax_exemption_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Tax exemption reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a tax exemption reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single tax exemption reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.taxExemptionReasons.get('txr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tax_exemption_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: tax exemption reason found
+          content:
+            application/json:
+              example:
+                id: txr_UkLWZg9DAJ
+                name: Reseller (wholesale)
+                code: G
+                active: true
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: tax exemption reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Tax exemption reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a tax exemption reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a tax exemption reason or retires it. Deactivating keeps it on the
+        certificates that already record it while removing it from the pickers. The
+        code can change at any time, and every certificate holding the reason sends
+        the new code to the tax provider from then on.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.taxExemptionReasons.update('txr_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /tax_exemption_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: tax exemption reason updated
+          content:
+            application/json:
+              example:
+                id: txr_UkLWZg9DAJ
+                name: Reseller (wholesale)
+                code: G
+                active: false
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/TaxExemptionReasonUpdateParams"
+        required: true
+    delete:
+      summary: Delete a tax exemption reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a tax exemption reason the store no longer uses. A reason a
+        certificate records is refused — deactivate it instead.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.taxExemptionReasons.delete('txr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /tax_exemption_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: tax exemption reason deleted
+        '422':
+          description: tax exemption reason is in use
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Tax exemption reason cannot be deleted
   "/api/v3/admin/promotions/{promotion_id}/coupon_codes":
     parameters:
     - name: promotion_id
@@ -41217,11 +41619,11 @@ paths:
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `expires_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `reason_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `status` | One of `pending`, `verified`, `expired`, `revoked` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `tax_exemption_reason_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `certificate_number`, `created_at`, `expires_at`, `id`, `reason_code`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `certificate_number`, `created_at`, `expires_at`, `id`, `status`, `tax_exemption_reason_id`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: TaxExemptionCertificate
         sortable:
@@ -41229,8 +41631,8 @@ paths:
         - created_at
         - expires_at
         - id
-        - reason_code
         - status
+        - tax_exemption_reason_id
         - updated_at
       responses:
         '200':
@@ -41241,7 +41643,6 @@ paths:
                 data:
                 - id: cert_UkLWZg9DAJ
                   certificate_number: DE-RESALE-1
-                  reason_code: resale
                   status: pending
                   issuing_authority:
                   metadata: {}
@@ -41251,6 +41652,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   company_id: comp_UkLWZg9DAJ
+                  tax_exemption_reason_id: txr_UkLWZg9DAJ
                   country_code:
                   state_code:
                   active: false
@@ -41300,7 +41702,7 @@ paths:
           // `signed_id` comes from `client.files.upload(file, { visibility: 'private' })`.
           const certificate = await client.companies.taxExemptionCertificates.create('comp_UkLWZg9DAJ', {
             certificate_number: 'DE-RESALE-7',
-            reason_code: 'resale',
+            tax_exemption_reason_id: 'txr_UkLWZg9DAJ',
             country_code: 'DE',
             document_signed_id: signed_id,
           })
@@ -41317,7 +41719,6 @@ paths:
               example:
                 id: cert_gbHJdmfrXB
                 certificate_number: DE-RESALE-7
-                reason_code: resale
                 status: pending
                 issuing_authority:
                 metadata: {}
@@ -41327,6 +41728,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
+                tax_exemption_reason_id: txr_UkLWZg9DAJ
                 country_code: DE
                 state_code:
                 active: false
@@ -41416,7 +41818,6 @@ paths:
               example:
                 id: cert_UkLWZg9DAJ
                 certificate_number: DE-RESALE-1
-                reason_code: resale
                 status: pending
                 issuing_authority: Finanzamt Berlin
                 metadata: {}
@@ -41426,6 +41827,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
+                tax_exemption_reason_id: txr_UkLWZg9DAJ
                 country_code:
                 state_code:
                 active: false
@@ -41508,7 +41910,6 @@ paths:
               example:
                 id: cert_UkLWZg9DAJ
                 certificate_number: DE-RESALE-1
-                reason_code: resale
                 status: verified
                 issuing_authority:
                 metadata: {}
@@ -41518,6 +41919,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
+                tax_exemption_reason_id: txr_UkLWZg9DAJ
                 country_code:
                 state_code:
                 active: true
@@ -41588,7 +41990,6 @@ paths:
               example:
                 id: cert_gbHJdmfrXB
                 certificate_number: CERT-1
-                reason_code: resale
                 status: revoked
                 issuing_authority:
                 metadata: {}
@@ -41598,6 +41999,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
+                tax_exemption_reason_id: txr_UkLWZg9DAJ
                 country_code:
                 state_code:
                 active: false
@@ -55480,8 +55882,8 @@ tags:
 - name: Policies
   description: The store's legal documents — terms of service, privacy, returns, shipping
 - name: Reasons
-  description: Merchant-owned vocabularies for why a return, claim, refund or cancellation
-    happened
+  description: Merchant-owned vocabularies for why a return, claim, refund, cancellation
+    or tax exemption happened
 - name: Promotions
   description: Promotions, promotion rules, promotion actions, and coupon codes
 - name: Refunds
@@ -71758,8 +72160,6 @@ components:
           type: string
         certificate_number:
           type: string
-        reason_code:
-          type: string
         status:
           anyOf:
           - type: string
@@ -71792,6 +72192,10 @@ components:
           type: string
         company_id:
           type: string
+        tax_exemption_reason_id:
+          type: string
+        tax_exemption_reason:
+          "$ref": "#/components/schemas/TaxExemptionReason"
         country_code:
           type: string
           nullable: true
@@ -72057,7 +72461,6 @@ components:
       required:
       - id
       - certificate_number
-      - reason_code
       - status
       - issuing_authority
       - metadata
@@ -72067,6 +72470,7 @@ components:
       - created_at
       - updated_at
       - company_id
+      - tax_exemption_reason_id
       - country_code
       - state_code
       - active
@@ -72075,6 +72479,36 @@ components:
       - document_filename
       - document_byte_size
       - document_url
+      x-typelizer: true
+    TaxExemptionReason:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        active:
+          type: boolean
+        metadata:
+          type: object
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        can_be_deleted:
+          type: boolean
+      required:
+      - id
+      - name
+      - code
+      - active
+      - metadata
+      - created_at
+      - updated_at
+      - can_be_deleted
       x-typelizer: true
     TaxIdentifier:
       type: object
@@ -81837,10 +82271,10 @@ components:
         certificate_number:
           type: string
           example: DE-RESALE-7
-        reason_code:
+        tax_exemption_reason_id:
           type: string
-          description: Becomes the tax provider's entity use code.
-          example: resale
+          description: One of the store's active tax exemption reasons. The tax provider
+            receives its `code`.
         issuing_authority:
           type: string
           example: Finanzamt Berlin
@@ -81870,17 +82304,17 @@ components:
           additionalProperties: true
       required:
       - certificate_number
-      - reason_code
+      - tax_exemption_reason_id
     TaxExemptionCertificateUpdateParams:
       type: object
       properties:
         certificate_number:
           type: string
           example: DE-RESALE-7
-        reason_code:
+        tax_exemption_reason_id:
           type: string
-          description: Becomes the tax provider's entity use code.
-          example: resale
+          description: One of the store's active tax exemption reasons. The tax provider
+            receives its `code`.
         issuing_authority:
           type: string
           example: Finanzamt Berlin
@@ -81905,6 +82339,43 @@ components:
         document_signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.'
+        metadata:
+          type: object
+          additionalProperties: true
+    TaxExemptionReasonCreateParams:
+      type: object
+      properties:
+        name:
+          type: string
+        active:
+          type: boolean
+          description: Whether the reason is offered on new records.
+        code:
+          type: string
+          description: What the tax provider receives for every certificate holding
+            this reason — for Avalara, an entity use code such as `G`. Saved in capitals.
+            Changing it changes what those certificates send from then on.
+          example: RESALE
+        metadata:
+          type: object
+          additionalProperties: true
+      required:
+      - name
+      - code
+    TaxExemptionReasonUpdateParams:
+      type: object
+      properties:
+        name:
+          type: string
+        active:
+          type: boolean
+          description: Whether the reason is offered on new records.
+        code:
+          type: string
+          description: What the tax provider receives for every certificate holding
+            this reason — for Avalara, an entity use code such as `G`. Saved in capitals.
+            Changing it changes what those certificates send from then on.
+          example: RESALE
         metadata:
           type: object
           additionalProperties: true
@@ -83820,13 +84291,23 @@ components:
         created_at: datetime
         expires_at: datetime
         id: id
-        reason_code: text
         status:
           enum:
           - pending
           - verified
           - expired
           - revoked
+        tax_exemption_reason_id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    TaxExemptionReason:
+      attributes:
+        active: boolean
+        code: text
+        created_at: datetime
+        id: id
+        name: text
         updated_at: datetime
       associations: {}
       scopes: {}

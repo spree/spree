@@ -1811,10 +1811,6 @@
           "placeholder": "Bez ograniczeń"
         }
       },
-      "reason_code": {
-        "help": "Przekazywany do naliczania podatku jako kod przeznaczenia.",
-        "label": "Powód"
-      },
       "role": {
         "description": {
           "label": "Opis",
@@ -2416,6 +2412,10 @@
           "label": "Domyślne opakowanie",
           "help": "Opakowanie, na którym opierają się wyceny Twoich przesyłek. Tylko jedno domyślne naraz."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Powody dostępne tutaj ustawisz w Ustawienia → Podatki → Powody zwolnień.",
+        "label": "Powód"
       },
       "oauth_application": {
         "name": {
@@ -4907,6 +4907,9 @@
         "help": "Co poszło nie tak z dostawą — uszkodzony, brakujący lub zły towar.",
         "title": "Powody reklamacji"
       },
+      "code_engine_help": "Silnik podatkowy rozstrzyga o zwolnieniu na podstawie tego kodu, więc wybierz kod, który definiuje dla tego powodu.",
+      "code_help": "Krótki identyfikator zapisywany na zaświadczeniach. Unikalny w sklepie.",
+      "code_placeholder": "np. RESALE",
       "create_description": "Powody pojawiają się na liście przy tworzeniu zwrotu, reklamacji lub zwrotu pieniędzy.",
       "delete_confirm": {
         "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują.",
@@ -4935,6 +4938,12 @@
       "return": {
         "help": "Dlaczego klient odsyła towar. Wspólne dla zwrotów i wymian.",
         "title": "Powody zwrotu"
+      },
+      "tax_exemption": {
+        "create_description": "Zespół wybiera powód przy zapisywaniu zaświadczenia o zwolnieniu firmy.",
+        "help": "Dlaczego firma kupuje bez podatku. Zapisywany na jej zaświadczeniach o zwolnieniu; kod trafia do silnika podatkowego.",
+        "name_placeholder": "np. Odsprzedaż",
+        "title": "Powody zwolnienia z podatku"
       },
       "title": "Zwroty i powody"
     },
@@ -5261,12 +5270,11 @@
         "staff": "Osoby z dostępem do tego panelu",
         "stock_locations": "Magazyny i punkty odbioru przechowujące towar",
         "store": "Nazwa sklepu, strefa czasowa, jednostki i ustawienia regionalne",
-        "tax_categories": "Klasy podatkowe przypisane do produktów",
-        "tax_rates": "Stawki stosowane według rynku i regionu",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
         "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
+        "taxes": "Kategorie podatkowe, stawki i powody zwolnień",
         "ai_agents": "Agenty AI z dostępem do tego sklepu",
         "oauth_clients": "Rejestrowanie i konfiguracja klientów OAuth"
       },
@@ -5307,6 +5315,7 @@
         "package_types": "Rodzaje opakowań",
         "suppliers": "Dostawcy",
         "marketplace": "Ustawienia",
+        "taxes": "Podatki",
         "ai_agents": "Agenci AI",
         "oauth_clients": "Klienci OAuth"
       },
@@ -5655,7 +5664,6 @@
       "sellers": "Sprzedawcy zewnętrzni działający na Twoim marketplace i status każdego z nich.",
       "store_credits": "Środki, które klienci mogą wydać przy kasie, oraz sposób ich wystawienia.",
       "tax_categories": "Grupy decydujące o tym, która stawka podatku dotyczy produktu.",
-      "tax_rates": "Podatek naliczany według kategorii i regionu.",
       "webhook_deliveries": "Każde zdarzenie wysłane do tego punktu końcowego i informacja, czy zostało odebrane.",
       "webhook_endpoints": "Gdzie Twoje inne systemy są powiadamiane, gdy coś dzieje się w sklepie.",
       "returns": "Towary wracające do sklepu, od zgłoszenia do zwrotu pieniędzy.",
@@ -5676,8 +5684,7 @@
         "created": "Kategoria podatkowa utworzona",
         "deleted": "Kategoria podatkowa usunięta",
         "updated": "Kategoria podatkowa zaktualizowana"
-      },
-      "search_placeholder": "Szukaj według nazwy…"
+      }
     },
     "tax_exemption_certificates": {
       "add_cta": "Dodaj certyfikat",
@@ -5700,14 +5707,7 @@
       },
       "never_expires": "Bez daty wygaśnięcia",
       "no_document": "Brak załączonego dokumentu",
-      "reason_codes": {
-        "agricultural": "Rolnictwo",
-        "charitable": "Organizacja charytatywna",
-        "educational": "Edukacja",
-        "government": "Instytucja publiczna",
-        "manufacturing": "Produkcja",
-        "resale": "Odsprzedaż"
-      },
+      "no_reasons": "Brak powodów zwolnienia. Dodaj je w Ustawienia → Podatki → Powody zwolnień.",
       "revoke_action": "Unieważnij",
       "revoke_confirm": {
         "message": "Certyfikat {{number}} przestanie obowiązywać dla nowych zamówień. Pozostanie zapisany jako dokumentacja.",
@@ -5786,7 +5786,6 @@
         "deleted": "Stawka usunięta",
         "updated": "Stawka zaktualizowana"
       },
-      "search_placeholder": "Szukaj stawek",
       "select_category": "Wybierz kategorię"
     },
     "translations": {
@@ -6440,6 +6439,21 @@
       "empty": "Wszystko przeczytane.",
       "view_on_github": "Zobacz na GitHubie",
       "release_notes_unavailable": "Nie udało się wczytać informacji o wydaniu. Przeczytaj je na GitHubie."
+    },
+    "taxes": {
+      "title": "Podatki",
+      "description": "Jak opodatkowane są Twoje produkty, jakie stawki nalicza Spree i dlaczego firmy mogą kupować bez podatku.",
+      "providers_title": "Obliczanie podatku",
+      "provider_markets": "{{provider}}: {{markets}}",
+      "manage_markets": "Zarządzaj rynkami",
+      "tabs": {
+        "categories": "Kategorie",
+        "rates": "Stawki",
+        "exemption_reasons": "Powody zwolnień"
+      },
+      "rates_unused_in": "Te stawki nie są używane na rynkach: {{markets}}, gdzie podatek oblicza zewnętrzna usługa.",
+      "rates_unused_everywhere": "Żaden z Twoich rynków nie używa tych stawek: na rynkach {{markets}} podatek oblicza zewnętrzna usługa.",
+      "rates_help": "Podatek naliczany według kategorii i regionu. Używane tylko na rynkach korzystających ze stawek Spree: podłączona usługa, np. Avalara, sama oblicza podatek i pomija te stawki."
     },
     "mcp_connect": {
       "open_cta": "Połącz agenta",

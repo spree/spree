@@ -1,18 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { TaxRate } from '@spree/admin-sdk'
 import {
-  adminClient,
   Can,
   CountryCombobox,
   mapSpreeErrorsToForm,
-  ResourceTable,
-  resourceSearchSchema,
   StateCombobox,
   Subject,
   useCountryStates,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
+  ActiveBadge,
   Button,
   Field,
   FieldDescription,
@@ -24,6 +22,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Pagination,
   RowActions,
   Select,
   SelectContent,
@@ -37,66 +36,67 @@ import {
   SheetHeader,
   SheetTitle,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   useConfirm,
-  useRowClickBridge,
 } from '@spree/dashboard-ui'
-import { PlusIcon } from '@spree/dashboard-ui/icons'
+import { PlusIcon, ReceiptTextIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { useTaxCategories } from '../../../../hooks/use-tax-categories'
+import { JurisdictionLabel } from '../../../../../components/spree/jurisdiction-label'
+import { SettingsListCard } from '../../../../../components/spree/settings-list-card'
+import { TaxCategoryLabel } from '../../../../../components/spree/tax-category-label'
+import { TaxRatesUsageNote } from '../../../../../components/spree/taxes/market-tax-providers'
+import { useTaxCategories } from '../../../../../hooks/use-tax-categories'
 import {
   useCreateTaxRate,
   useDeleteTaxRate,
   useTaxRate,
+  useTaxRates,
   useUpdateTaxRate,
-} from '../../../../hooks/use-tax-rates'
+} from '../../../../../hooks/use-tax-rates'
 import {
   TAX_RATE_DEFAULTS,
   type TaxRateFormValues,
   taxRateFormSchema,
   taxRateValuesToParams,
-} from '../../../../schemas/tax-rate'
-import '../../../../tables/tax-rates'
+} from '../../../../../schemas/tax-rate'
 
-const taxRatesSearchSchema = resourceSearchSchema.extend({
+const taxRatesSearchSchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
   edit: z.string().optional(),
   new: z.coerce.boolean().optional(),
 })
 
-export const Route = createFileRoute('/_authenticated/$storeId/settings/tax-rates')({
+export const Route = createFileRoute('/_authenticated/$storeId/settings/taxes/rates')({
   validateSearch: taxRatesSearchSchema,
   component: TaxRatesPage,
 })
 
 function TaxRatesPage() {
   const { t } = useTranslation()
-  const search = Route.useSearch() as z.infer<typeof taxRatesSearchSchema>
+  const search = Route.useSearch()
   const navigate = useNavigate()
   const confirm = useConfirm()
   const deleteMutation = useDeleteTaxRate()
   const { permissions } = usePermissions()
+  const { data, isLoading, isError } = useTaxRates({ page: search.page ?? 1 })
+  const taxRates = data?.data ?? []
 
   const editId = search.edit
   const isCreating = !!search.new
 
-  const closeSheet = () =>
-    navigate({
-      search: (prev: Record<string, unknown>) => {
-        const { edit: _e, new: _n, ...rest } = prev
-        return rest as never
-      },
-    })
+  const updateSearch = (patch: Partial<z.infer<typeof taxRatesSearchSchema>>) =>
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) as never })
 
-  const openCreate = () =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
-
-  const openEdit = (id: string) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
-
-  useRowClickBridge('data-tax-rate-id', openEdit)
+  const closeSheet = () => updateSearch({ edit: undefined, new: undefined })
 
   async function handleDelete(taxRate: TaxRate) {
     const ok = await confirm({
@@ -111,34 +111,90 @@ function TaxRatesPage() {
 
   return (
     <>
-      <ResourceTable<TaxRate>
-        tableKey="tax-rates"
-        queryKey="tax-rates"
-        queryFn={(params) => adminClient.taxRates.list(params)}
-        searchParams={search}
-        rowActions={(taxRate) => (
-          <RowActions
-            actions={[
-              { key: 'edit', onSelect: () => openEdit(taxRate.id) },
-              {
-                key: 'delete',
-                destructive: true,
-                visible: permissions.can('destroy', Subject.TaxRate),
-                disabled: deleteMutation.isPending,
-                onSelect: () => handleDelete(taxRate),
-              },
-            ]}
-          />
-        )}
-        actions={
+      <TaxRatesUsageNote />
+      <SettingsListCard
+        title={t('admin.settings_nav.items.tax_rates')}
+        description={t('admin.taxes.rates_help')}
+        action={
           <Can I="create" a={Subject.TaxRate}>
-            <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
+            <Button size="sm" onClick={() => updateSearch({ new: true })}>
               <PlusIcon className="size-4" />
               {t('admin.tax_rates.add_cta')}
             </Button>
           </Can>
         }
-      />
+        isLoading={isLoading}
+        isError={isError}
+        isEmpty={taxRates.length === 0}
+        emptyIcon={<ReceiptTextIcon />}
+        emptyTitle={t('admin.tax_rates.empty')}
+        footer={
+          data?.meta && data.meta.pages > 1 ? (
+            <Pagination meta={data.meta} onPageChange={(page: number) => updateSearch({ page })} />
+          ) : undefined
+        }
+      >
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.fields.name.label')}</TableHead>
+              <TableHead>{t('admin.fields.tax_rate.amount.label')}</TableHead>
+              <TableHead>{t('admin.fields.tax_rate.jurisdiction.label')}</TableHead>
+              <TableHead>{t('admin.settings_nav.items.tax_categories')}</TableHead>
+              <TableHead>{t('admin.fields.tax_rate.included_in_price.label')}</TableHead>
+              <TableHead className="w-12" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {taxRates.map((taxRate) => (
+              <TableRow key={taxRate.id}>
+                <TableCell>
+                  <button
+                    type="button"
+                    className="text-left font-medium"
+                    onClick={() => updateSearch({ edit: taxRate.id })}
+                  >
+                    {taxRate.name}
+                  </button>
+                </TableCell>
+                <TableCell>
+                  {taxRate.rate_percent == null ? '—' : `${taxRate.rate_percent}%`}
+                </TableCell>
+                <TableCell>
+                  <JurisdictionLabel
+                    countryCode={taxRate.country_code}
+                    stateCode={taxRate.state_code}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TaxCategoryLabel id={taxRate.tax_category_id} />
+                </TableCell>
+                <TableCell>
+                  <ActiveBadge
+                    active={taxRate.included_in_price}
+                    activeLabel={t('admin.fields.tax_rate.included_in_price.short')}
+                    dashWhenInactive
+                  />
+                </TableCell>
+                <TableCell>
+                  <RowActions
+                    actions={[
+                      { key: 'edit', onSelect: () => updateSearch({ edit: taxRate.id }) },
+                      {
+                        key: 'delete',
+                        destructive: true,
+                        visible: permissions.can('destroy', Subject.TaxRate),
+                        disabled: deleteMutation.isPending,
+                        onSelect: () => handleDelete(taxRate),
+                      },
+                    ]}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </SettingsListCard>
 
       {isCreating && <CreateTaxRateSheet open onOpenChange={(o) => !o && closeSheet()} />}
       {editId && <EditTaxRateSheet id={editId} open onOpenChange={(o) => !o && closeSheet()} />}
