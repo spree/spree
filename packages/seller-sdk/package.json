@@ -81,15 +81,15 @@
   },
   "devDependencies": {
     "@spree/sdk-core": "workspace:*",
-    "@types/node": "^25.6.0",
-    "@vitest/coverage-v8": "^4.1.5",
-    "msw": "^2.14.3",
-    "tsup": "^8.0.0",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.5",
+    "msw": "^3.0.3",
+    "tsup": "^9.0.0",
     "tsx": "^4.0.0",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5",
     "yaml": "^2.8.4",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "peerDependencies": {
     "typescript": ">=4.7.0",
