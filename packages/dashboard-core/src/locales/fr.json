@@ -194,7 +194,9 @@
       "yes": "Oui",
       "done": "Terminé",
       "error": "Une erreur s'est produite.",
-      "unsaved_label": "Modifications non enregistrées"
+      "unsaved_label": "Modifications non enregistrées",
+      "scroll_to_end": "Aller à la fin",
+      "scroll_to_start": "Aller au début"
     },
     "components": {
       "address_block": {

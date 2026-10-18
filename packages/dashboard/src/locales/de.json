@@ -6944,6 +6944,42 @@
       "open_discussion": "Diskussion auf GitHub öffnen",
       "copied_to_paste": "Zu lang für einen Link, daher kopiert. Füge es auf GitHub ein.",
       "copy_failed": "Zu lang für einen Link, und das Kopieren ist fehlgeschlagen. Kürze die Nachricht oder kopiere den Bericht unter Einstellungen → Systeminfo."
+    },
+    "assistant": {
+      "approve": "Genehmigen",
+      "beta": "Beta",
+      "close": "Schließen",
+      "collapse": "Verkleinern",
+      "description": "Stellen Sie Fragen zu Ihrem Shop oder bitten Sie um Hilfe.",
+      "disclaimer": "Der Assistent kann Fehler machen. Prüfen Sie Wichtiges nach.",
+      "empty": "Stellen Sie eine Frage zu Ihrem Shop, um zu beginnen.",
+      "expand": "Erweitern",
+      "new_chat": "Neuer Chat",
+      "placeholder": "Fragen Sie nach Produkten, Bestellungen, Aktionen…",
+      "reject": "Ablehnen",
+      "send": "Senden",
+      "status": {
+        "proposed": "Benötigt Ihre Genehmigung",
+        "executed": "Erledigt",
+        "rejected": "Abgelehnt",
+        "failed": "Fehlgeschlagen"
+      },
+      "suggestions": {
+        "products": "Welche Produkte sind nicht auf Lager?",
+        "orders": "Zeige aktuelle Bestellungen",
+        "promotions": "Welche Aktionen laufen gerade?"
+      },
+      "thinking": "Arbeitet…",
+      "title": "Assistent",
+      "more_records_one": "{{count}} weiterer nicht angezeigt",
+      "more_records_other": "{{count}} weitere nicht angezeigt",
+      "errors": {
+        "turn_failed": "Der Assistent konnte das nicht abschließen. Bitte erneut versuchen."
+      },
+      "delete_chat": "Chat löschen",
+      "delete_chat_confirm": "„{{name}}\" löschen? Das kann nicht rückgängig gemacht werden.",
+      "recent_chats": "Letzte Chats",
+      "untitled_chat": "Chat ohne Titel"
     }
   }
 }

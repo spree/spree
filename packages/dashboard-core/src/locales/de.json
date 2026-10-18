@@ -194,7 +194,9 @@
       "yes": "Ja",
       "done": "Fertig",
       "error": "Etwas ist schiefgelaufen.",
-      "unsaved_label": "Ungespeicherte Änderungen"
+      "unsaved_label": "Ungespeicherte Änderungen",
+      "scroll_to_end": "Zum Ende scrollen",
+      "scroll_to_start": "Zum Anfang scrollen"
     },
     "components": {
       "address_block": {

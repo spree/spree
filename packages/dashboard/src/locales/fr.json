@@ -6946,6 +6946,42 @@
       "open_discussion": "Ouvrir une discussion sur GitHub",
       "copied_to_paste": "Trop long pour un lien, le texte a donc été copié. Collez-le sur GitHub.",
       "copy_failed": "Trop long pour un lien, et la copie a échoué. Raccourcissez le message ou copiez le rapport depuis Paramètres → Informations système."
+    },
+    "assistant": {
+      "approve": "Approuver",
+      "beta": "Bêta",
+      "close": "Fermer",
+      "collapse": "Réduire",
+      "description": "Posez des questions sur votre boutique ou demandez de l'aide.",
+      "disclaimer": "L'assistant peut se tromper. Vérifiez ce qui est important.",
+      "empty": "Posez une question sur votre boutique pour commencer.",
+      "expand": "Agrandir",
+      "new_chat": "Nouvelle discussion",
+      "placeholder": "Produits, commandes, promotions…",
+      "reject": "Refuser",
+      "send": "Envoyer",
+      "status": {
+        "proposed": "Nécessite votre approbation",
+        "executed": "Terminé",
+        "rejected": "Refusé",
+        "failed": "Échec"
+      },
+      "suggestions": {
+        "products": "Quels produits sont en rupture de stock ?",
+        "orders": "Afficher les commandes récentes",
+        "promotions": "Quelles promotions sont en cours ?"
+      },
+      "thinking": "En cours…",
+      "title": "Assistant",
+      "more_records_one": "{{count}} autre non affiché",
+      "more_records_other": "{{count}} autres non affichés",
+      "errors": {
+        "turn_failed": "L'assistant n'a pas pu terminer. Veuillez réessayer."
+      },
+      "delete_chat": "Supprimer la discussion",
+      "delete_chat_confirm": "Supprimer « {{name}} » ? Cette action est irréversible.",
+      "recent_chats": "Discussions récentes",
+      "untitled_chat": "Discussion sans titre"
     }
   }
 }

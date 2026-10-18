@@ -47,7 +47,7 @@ module Spree
             def require_assistant_permission!
               return if assistant_context.permitted?('read_assistant')
 
-              render json: { error: Spree.t('assistant.errors.forbidden') }, status: :forbidden
+              render json: { error: I18n.t('spree.assistant.errors.forbidden') }, status: :forbidden
             end
 
             def serialize(chat, include_messages: false)

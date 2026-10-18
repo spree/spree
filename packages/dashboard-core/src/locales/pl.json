@@ -195,7 +195,9 @@
       "yes": "Tak",
       "done": "Gotowe",
       "error": "Coś poszło nie tak.",
-      "unsaved_label": "Niezapisane zmiany"
+      "unsaved_label": "Niezapisane zmiany",
+      "scroll_to_end": "Przewiń do końca",
+      "scroll_to_start": "Przewiń do początku"
     },
     "components": {
       "address_block": {

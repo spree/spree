@@ -61,10 +61,10 @@ module Spree
         # The assistant is its own permission resource: holding it is what lets
         # an admin open a conversation at all, separate from what the tools
         # inside it may touch.
-        Spree.permissions.register_resource(
+        Spree.permissions.register_scope(
           :assistant,
           group: :settings,
-          subjects: -> { [Spree::AssistantChat] }
+          resources: -> { [Spree::AssistantChat] }
         )
       end
     end

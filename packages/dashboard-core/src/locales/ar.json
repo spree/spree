@@ -194,7 +194,9 @@
       "yes": "نعم",
       "done": "تم",
       "error": "حدث خطأ ما.",
-      "unsaved_label": "تغييرات غير محفوظة"
+      "unsaved_label": "تغييرات غير محفوظة",
+      "scroll_to_end": "التمرير إلى النهاية",
+      "scroll_to_start": "التمرير إلى البداية"
     },
     "components": {
       "address_block": {

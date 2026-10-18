@@ -194,7 +194,9 @@
       "yes": "是",
       "done": "完成",
       "error": "出了点问题。",
-      "unsaved_label": "未保存的更改"
+      "unsaved_label": "未保存的更改",
+      "scroll_to_end": "滚动到底部",
+      "scroll_to_start": "滚动到顶部"
     },
     "components": {
       "address_block": {

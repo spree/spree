@@ -21,7 +21,6 @@ export type {
   SortKey,
   TextFilters,
 } from '@spree/sdk-core'
-export * from './filters.generated'
 // Dashboard assistant (optional spree_assistant gem — not part of the core
 // serializer type generation run).
 export type {
@@ -35,6 +34,7 @@ export type {
   AssistantToolCall,
   AssistantToolCallStatus,
 } from './assistant'
+export * from './filters.generated'
 // Hand-written discovery-endpoint types (controller-shaped, not generated):
 // entries returned by the delivery-method provider discovery endpoints.
 export type {

@@ -25,7 +25,7 @@ module Spree
               return unless current_api_key.present? && current_user.blank?
 
               render json: {
-                error: Spree.t('assistant.errors.jwt_only'),
+                error: I18n.t('spree.assistant.errors.jwt_only'),
                 code: 'assistant_requires_user'
               }, status: :forbidden
             end

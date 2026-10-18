@@ -48,14 +48,14 @@ module Spree
 
               write_event(:'turn.finished', awaiting_approval: turn.awaiting_approval?)
             rescue Spree::Assistant::ForbiddenError
-              write_event(:'turn.failed', message: Spree.t('assistant.errors.permission_lost'))
+              write_event(:'turn.failed', message: I18n.t('spree.assistant.errors.permission_lost'))
             rescue Spree::Assistant::AlreadyResolvedError
-              write_event(:'turn.failed', message: Spree.t('assistant.errors.already_resolved'))
+              write_event(:'turn.failed', message: I18n.t('spree.assistant.errors.already_resolved'))
             rescue ActionController::Live::ClientDisconnected
               nil
             rescue StandardError => e
               Rails.logger.error("[Spree Assistant] resolve failed: #{e.class}: #{e.message}")
-              write_event(:'turn.failed', message: Spree.t('assistant.errors.turn_failed'))
+              write_event(:'turn.failed', message: I18n.t('spree.assistant.errors.turn_failed'))
             ensure
               response.stream.close
             end
@@ -97,7 +97,7 @@ module Spree
             def require_assistant_permission!
               return if assistant_context.permitted?('read_assistant')
 
-              render json: { error: Spree.t('assistant.errors.forbidden') }, status: :forbidden
+              render json: { error: I18n.t('spree.assistant.errors.forbidden') }, status: :forbidden
             end
           end
         end

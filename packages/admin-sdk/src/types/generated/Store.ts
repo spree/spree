@@ -75,6 +75,7 @@ interface Store {
   email_text_color: string | null;
   email_heading_color: string | null;
   email_font: EmailFont | null;
+  assistant_provider: string;
   order_number_sequence_started: boolean;
   default_minimum_payout_amount: string | null;
   default_commission_tax_rate: string | null;

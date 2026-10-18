@@ -7014,6 +7014,44 @@
       "open_discussion": "Otwórz dyskusję na GitHubie",
       "copied_to_paste": "Za długie na link, więc zostało skopiowane. Wklej to na GitHubie.",
       "copy_failed": "Za długie na link, a kopiowanie się nie powiodło. Skróć wiadomość albo skopiuj raport z Ustawienia → Informacje o systemie."
+    },
+    "assistant": {
+      "approve": "Zatwierdź",
+      "beta": "Beta",
+      "close": "Zamknij",
+      "collapse": "Zmniejsz",
+      "description": "Zapytaj o swój sklep lub poproś o pomoc w wykonaniu zadania.",
+      "disclaimer": "Asystent może się mylić. Sprawdź ważne informacje.",
+      "empty": "Zadaj pytanie o swój sklep, aby zacząć.",
+      "expand": "Powiększ",
+      "new_chat": "Nowa rozmowa",
+      "placeholder": "Zapytaj o produkty, zamówienia, promocje…",
+      "reject": "Odrzuć",
+      "send": "Wyślij",
+      "status": {
+        "proposed": "Wymaga zatwierdzenia",
+        "executed": "Gotowe",
+        "rejected": "Odrzucone",
+        "failed": "Niepowodzenie"
+      },
+      "suggestions": {
+        "products": "Których produktów brakuje w magazynie?",
+        "orders": "Pokaż ostatnie zamówienia",
+        "promotions": "Jakie promocje są aktywne?"
+      },
+      "thinking": "Pracuję…",
+      "title": "Asystent",
+      "more_records_few": "Nie pokazano jeszcze {{count}}",
+      "more_records_many": "Nie pokazano jeszcze {{count}}",
+      "more_records_one": "Nie pokazano jeszcze {{count}}",
+      "more_records_other": "Nie pokazano jeszcze {{count}}",
+      "errors": {
+        "turn_failed": "Asystent nie mógł tego dokończyć. Spróbuj ponownie."
+      },
+      "delete_chat": "Usuń rozmowę",
+      "delete_chat_confirm": "Usunąć „{{name}}\"? Tej operacji nie można cofnąć.",
+      "recent_chats": "Ostatnie rozmowy",
+      "untitled_chat": "Rozmowa bez tytułu"
     }
   }
 }

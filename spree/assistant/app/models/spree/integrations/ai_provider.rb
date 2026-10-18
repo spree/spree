@@ -31,7 +31,7 @@ module Spree
         self.connection_error_message = nil
 
         if preferred_api_key.blank?
-          self.connection_error_message = Spree.t('assistant.errors.api_key_missing')
+          self.connection_error_message = I18n.t('spree.assistant.errors.api_key_missing')
           return false
         end
 

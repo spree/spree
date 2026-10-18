@@ -64,7 +64,7 @@ module Spree
           # `approved` would strand a change that never ran and can never be
           # decided again.
           finish(status: Spree::AssistantToolCall::FAILED,
-                 result: { error: Spree.t('assistant.errors.permission_lost') })
+                 result: { error: I18n.t('spree.assistant.errors.permission_lost') })
           raise ForbiddenError
         end
 
@@ -85,7 +85,7 @@ module Spree
       def reject!
         finish(
           status: Spree::AssistantToolCall::REJECTED,
-          result: { declined: true, reason: Spree.t('assistant.tool_calls.declined') }
+          result: { declined: true, reason: I18n.t('spree.assistant.tool_calls.declined') }
         )
       end
 

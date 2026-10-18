@@ -45,7 +45,7 @@ module Spree
 
       def build_llm_chat(turn)
         credentials = Spree::Assistant::ResolveProvider.new(store: context.store).call
-        raise Spree::Assistant::ProviderError, Spree.t('assistant.errors.not_configured') if credentials.nil?
+        raise Spree::Assistant::ProviderError, I18n.t('spree.assistant.errors.not_configured') if credentials.nil?
 
         llm_chat = ChatBuilder.build(
           provider_key: credentials[:provider],
