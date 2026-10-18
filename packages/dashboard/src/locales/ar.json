@@ -2953,7 +2953,9 @@
           "this_order": "هذا الطلب",
           "shared_help": "دُفعت مرة واحدة لسلة تضم عدة بائعين. هذا الطلب له حصة منها.",
           "load_error": "تعذر تحميل مدفوعات هذا الطلب.",
-          "view_at_gateway": "عرض في {{gateway}}"
+          "view_at_gateway": "عرض في {{gateway}}",
+          "view_details": "عرض التفاصيل",
+          "failed_card_checks": "فشل التحقق من البطاقة"
         },
         "priced_by": "التسعير من {{name}}",
         "purchase_order": {
@@ -3003,6 +3005,22 @@
           "cbm": "{{value}} م³",
           "kg": "{{value}} كجم",
           "incomplete": "بعض الأصناف غير مقاسة، لذا هذه الأرقام حد أدنى وليست إجماليًا."
+        },
+        "payment_details": {
+          "title": "الدفعة {{number}}",
+          "description": "ما أبلغت عنه الجهة المصدرة للبطاقة، وكل عملية تحصيل للمبلغ.",
+          "transaction_id": "معرّف المعاملة",
+          "address_check": "التحقق من العنوان",
+          "security_code_check": "التحقق من رمز الأمان",
+          "code": "الرمز {{code}}",
+          "check": {
+            "passed": "ناجح",
+            "failed": "غير ناجح",
+            "not_checked": "لم يتم التحقق"
+          },
+          "captures": "عمليات التحصيل",
+          "captures_empty": "لم يتم تحصيل أي مبلغ بعد.",
+          "captured_at": "تاريخ التحصيل"
         }
       },
       "edit": {

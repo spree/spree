@@ -2933,7 +2933,9 @@
           "this_order": "This order",
           "shared_help": "Paid once for a basket spanning several sellers. This order has a share of it.",
           "load_error": "Could not load the payments for this order.",
-          "view_at_gateway": "View at {{gateway}}"
+          "view_at_gateway": "View at {{gateway}}",
+          "view_details": "View details",
+          "failed_card_checks": "Failed card checks"
         },
         "priced_by": "Priced by {{name}}",
         "purchase_order": {
@@ -2983,6 +2985,22 @@
           "cbm": "{{value}} CBM",
           "kg": "{{value}} kg",
           "incomplete": "Some items are not measured, so these figures are a floor rather than a total."
+        },
+        "payment_details": {
+          "title": "Payment {{number}}",
+          "description": "What the card issuer reported, and each capture of the money.",
+          "transaction_id": "Transaction ID",
+          "address_check": "Address check",
+          "security_code_check": "Security code check",
+          "code": "Code {{code}}",
+          "check": {
+            "passed": "Passed",
+            "failed": "Did not pass",
+            "not_checked": "Not checked"
+          },
+          "captures": "Captures",
+          "captures_empty": "Nothing has been captured yet.",
+          "captured_at": "Captured"
         }
       },
       "edit": {
