@@ -182,6 +182,25 @@ module Spree
           end
         end
 
+        # Renders a failed workflow or service result. A tax engine failure the
+        # workflow caught itself (so it could roll the cart back) answers as
+        # handle_tax_provider_error would have: 503 for an outage, the one
+        # status the SDK retries, and 422 for a refusal. Anything else is
+        # rendered with +code+.
+        #
+        # @param result [Spree::ServiceModule::Result]
+        # @param code [String] the error code for any other failure
+        def render_result_failure(result, code:)
+          case result.error.code
+          when ERROR_CODES[:tax_provider_unavailable]
+            render_error(code: ERROR_CODES[:tax_provider_unavailable], message: result.error.to_s, status: :service_unavailable)
+          when ERROR_CODES[:tax_calculation_refused]
+            render_error(code: ERROR_CODES[:tax_calculation_refused], message: result.error.to_s, status: :unprocessable_content)
+          else
+            render_service_error(result.error, code: code)
+          end
+        end
+
         # Legacy support - redirect to new error handling
         def render_errors(errors, status = :unprocessable_content)
           code = infer_error_code(errors, status)

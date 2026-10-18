@@ -49,7 +49,7 @@ module Spree
         end
         cart.warnings |= warnings if warnings.present?
 
-        failure(cart, unavailable_message_for(e))
+        failure(cart, { code: unavailable_code_for(e), message: unavailable_message_for(e) })
       rescue ActiveRecord::RecordInvalid => e
         failure(cart, e.record.errors.full_messages.to_sentence)
       rescue StandardError => e
@@ -234,6 +234,17 @@ module Spree
       # customer can only act on what they are told. A refused calculation
       # carries the engine's own words, because "the postcode is not valid for
       # that state" is something they can fix and "please try again" is not.
+      # The same split the API's own handler makes: a refusal names something
+      # to fix, an outage is worth retrying, and a price that could not be
+      # confirmed is neither tax case.
+      def unavailable_code_for(error)
+        case error
+        when Spree::Tax::CalculationRefused then 'tax_calculation_refused'
+        when Spree::Tax::ProviderError then 'tax_provider_unavailable'
+        else 'provider_unavailable'
+        end
+      end
+
       def unavailable_message_for(error)
         case error
         when Spree::Tax::CalculationRefused then error.message.to_s

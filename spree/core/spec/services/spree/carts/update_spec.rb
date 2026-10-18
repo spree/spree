@@ -28,6 +28,8 @@ module Spree
 
         expect(result).to be_failure
         expect(result.error.to_s).to include('Tax could not be calculated')
+        # The API answers this code with 503, the status a client retries.
+        expect(result.error.code).to eq('tax_provider_unavailable')
         expect(cart_under_test.reload.ship_address_id).not_to eq(address.id)
       end
 
