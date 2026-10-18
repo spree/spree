@@ -200,11 +200,16 @@ jobs:
       - name: Check both apps on TypeScript 6
         if: ${{ !cancelled() }}
         run: |
+          status=0
           for app in dashboard seller-dashboard; do
-            cd "$RUNNER_TEMP/app/apps/$app"
-            pnpm add --save-dev typescript@~6.0.3
-            pnpm typecheck && pnpm build
+            (
+              cd "$RUNNER_TEMP/app/apps/$app" &&
+                pnpm add --save-dev typescript@~6.0.3 &&
+                pnpm typecheck &&
+                pnpm build
+            ) || status=1
           done
+          exit "$status"
 
   sdk-integration:
     name: "SDK Integration Tests"
