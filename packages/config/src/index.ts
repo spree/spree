@@ -45,6 +45,7 @@ export type {
   StoreEntry,
   SupplierEntry,
   TaxCategoryEntry,
+  TaxExemptionReasonEntry,
   VariantEntry,
 } from './schema.js'
 export { configSchema, SCHEMA_URL, toJsonSchema } from './schema.js'

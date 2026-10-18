@@ -1619,6 +1619,31 @@
         "additionalProperties": false
       }
     },
+    "tax_exemption_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What the tax engine receives for certificates holding this reason; saved in capitals."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
     "commission_rates": {
       "type": "array",
       "items": {

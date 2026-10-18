@@ -23,6 +23,7 @@ export const RESOURCES = [
   'claim_reasons',
   'refund_reasons',
   'order_cancellation_reasons',
+  'tax_exemption_reasons',
   'commission_rates',
   'seller_requirements',
   'api_keys',

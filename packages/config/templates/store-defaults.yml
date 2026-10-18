@@ -23,6 +23,22 @@ tax_categories:
     default: true
   - name: Non-taxable
 
+tax_exemption_reasons:
+  # Neutral codes Spree's own tax engine keeps for reference; a store whose
+  # engine reads them (Avalara) changes each code to that engine's.
+  - code: RESALE
+    name: Resale
+  - code: GOVERNMENT
+    name: Government
+  - code: CHARITABLE
+    name: Charitable organization
+  - code: EDUCATIONAL
+    name: Educational institution
+  - code: MANUFACTURING
+    name: Manufacturing
+  - code: AGRICULTURAL
+    name: Agricultural
+
 delivery_profiles:
   - name: Digital
     kind: digital
