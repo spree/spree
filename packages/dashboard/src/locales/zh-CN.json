@@ -4834,7 +4834,7 @@
       },
       "code_engine_help": "您的税务引擎根据此代码判断是否免税，请选择它为此原因定义的代码。",
       "code_help": "证书记录的简短标识符，在店铺内唯一。",
-      "code_placeholder": "例如 resale",
+      "code_placeholder": "例如 RESALE",
       "create_description": "员工创建退货、理赔或退款时，可从下拉列表中选择原因。",
       "delete_confirm": {
         "message": "将不再提供 {{name}}。已使用它的记录保持不变。",
@@ -4865,7 +4865,9 @@
         "title": "退货原因"
       },
       "tax_exemption": {
+        "create_description": "员工在记录企业的免税证书时选择一个原因。",
         "help": "企业免税采购的原因。记录在其免税证书上；代码会发送给您的税务引擎。",
+        "name_placeholder": "例如 转售",
         "title": "免税原因"
       },
       "title": "退货与原因"

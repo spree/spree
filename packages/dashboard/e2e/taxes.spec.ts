@@ -53,13 +53,14 @@ test.describe('taxes', () => {
       .click()
     await page.locator('#reason-name').fill(name)
     await page.locator('#reason-code').fill(code)
+    // Codes are stored upper case, the way tax engines compare them.
+    await expect(page.locator('#reason-code')).toHaveValue(code.toUpperCase())
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^create$/i })
       .click()
 
     const row = exemptionReasons(page).getByRole('row').filter({ hasText: name })
-    // Codes are stored upper case, the way tax engines compare them.
     await expect(row.getByText(code.toUpperCase())).toBeVisible({ timeout: 15_000 })
   })
 })

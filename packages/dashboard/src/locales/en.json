@@ -4845,7 +4845,7 @@
       },
       "code_engine_help": "Your tax engine decides the exemption by this code, so pick the one it defines for this reason.",
       "code_help": "A short identifier certificates record. Unique in your store.",
-      "code_placeholder": "e.g. resale",
+      "code_placeholder": "e.g. RESALE",
       "create_description": "Reasons appear in a dropdown when staff open a return, claim or refund.",
       "delete_confirm": {
         "message": "{{name}} will no longer be offered. Records already using it keep it.",
@@ -4876,7 +4876,9 @@
         "title": "Return reasons"
       },
       "tax_exemption": {
+        "create_description": "Staff pick a reason when recording a company's tax exemption certificate.",
         "help": "Why a business buys without tax. Recorded on its exemption certificates; the code is what your tax engine receives.",
+        "name_placeholder": "e.g. Resale",
         "title": "Tax exemption reasons"
       },
       "title": "Returns & reasons"

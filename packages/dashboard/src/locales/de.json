@@ -4845,7 +4845,7 @@
       },
       "code_engine_help": "Ihre Steuerberechnung entscheidet anhand dieses Codes über die Befreiung. Wählen Sie den Code, den sie für diesen Grund vorsieht.",
       "code_help": "Eine kurze Kennung, die Nachweise speichern. In Ihrem Shop eindeutig.",
-      "code_placeholder": "z. B. resale",
+      "code_placeholder": "z. B. RESALE",
       "create_description": "Gründe erscheinen als Auswahl, wenn Mitarbeitende eine Rücksendung, Reklamation oder Rückerstattung anlegen.",
       "delete_confirm": {
         "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn.",
@@ -4876,7 +4876,9 @@
         "title": "Rücksendegründe"
       },
       "tax_exemption": {
+        "create_description": "Ihr Team wählt einen Grund, wenn es den Befreiungsnachweis eines Unternehmens erfasst.",
         "help": "Warum ein Unternehmen steuerfrei einkauft. Wird auf seinen Befreiungsnachweisen festgehalten; der Code geht an Ihre Steuerberechnung.",
+        "name_placeholder": "z. B. Wiederverkauf",
         "title": "Gründe für Steuerbefreiungen"
       },
       "title": "Rücksendungen & Gründe"

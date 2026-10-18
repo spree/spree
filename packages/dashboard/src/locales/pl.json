@@ -4909,7 +4909,7 @@
       },
       "code_engine_help": "Silnik podatkowy rozstrzyga o zwolnieniu na podstawie tego kodu, więc wybierz kod, który definiuje dla tego powodu.",
       "code_help": "Krótki identyfikator zapisywany na zaświadczeniach. Unikalny w sklepie.",
-      "code_placeholder": "np. resale",
+      "code_placeholder": "np. RESALE",
       "create_description": "Powody pojawiają się na liście przy tworzeniu zwrotu, reklamacji lub zwrotu pieniędzy.",
       "delete_confirm": {
         "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują.",
@@ -4940,7 +4940,9 @@
         "title": "Powody zwrotu"
       },
       "tax_exemption": {
+        "create_description": "Zespół wybiera powód przy zapisywaniu zaświadczenia o zwolnieniu firmy.",
         "help": "Dlaczego firma kupuje bez podatku. Zapisywany na jej zaświadczeniach o zwolnieniu; kod trafia do silnika podatkowego.",
+        "name_placeholder": "np. Odsprzedaż",
         "title": "Powody zwolnienia z podatku"
       },
       "title": "Zwroty i powody"

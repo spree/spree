@@ -5384,7 +5384,7 @@
       },
       "code_engine_help": "Tu motor de impuestos decide la exención por este código, así que elige el que define para este motivo.",
       "code_help": "Un identificador corto que registran los certificados. Único en tu tienda.",
-      "code_placeholder": "p. ej. resale",
+      "code_placeholder": "p. ej. RESALE",
       "create_description": "Los motivos aparecen en un desplegable cuando el staff abre una devolución, un reclamo o un reembolso.",
       "delete_confirm": {
         "message": "{{name}} ya no se ofrecerá. Los registros que ya lo usan lo conservan.",
@@ -5415,7 +5415,9 @@
         "title": "Motivos de devolución"
       },
       "tax_exemption": {
+        "create_description": "Tu equipo elige un motivo al registrar el certificado de exención de una empresa.",
         "help": "Por qué una empresa compra sin impuestos. Se registra en sus certificados de exención; el código es lo que recibe tu motor de impuestos.",
+        "name_placeholder": "p. ej. Reventa",
         "title": "Motivos de exención de impuestos"
       },
       "title": "Devoluciones y motivos"

@@ -254,7 +254,13 @@ function CreateReasonSheet({
       <SheetContent>
         <SheetHeader>
           <SheetTitle>{t('admin.reasons.add_sheet_title')}</SheetTitle>
-          <SheetDescription>{t('admin.reasons.create_description')}</SheetDescription>
+          <SheetDescription>
+            {t(
+              withCode
+                ? 'admin.reasons.tax_exemption.create_description'
+                : 'admin.reasons.create_description',
+            )}
+          </SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -348,7 +354,11 @@ function ReasonFormFields({
         <Input
           id="reason-name"
           aria-invalid={!!errors.name}
-          placeholder={t('admin.reasons.name_placeholder')}
+          placeholder={t(
+            withCode
+              ? 'admin.reasons.tax_exemption.name_placeholder'
+              : 'admin.reasons.name_placeholder',
+          )}
           {...form.register('name')}
         />
         {errors.name && <FieldError>{errors.name.message}</FieldError>}
@@ -398,6 +408,7 @@ function ReasonCodeField({ form }: { form: UseFormReturn<ReasonFormValues> }) {
         .map((code) => [code.value, code]),
     ).values(),
   ]
+  const codeInput = form.register('code')
   const help = engineCodes.length
     ? t('admin.reasons.code_engine_help')
     : t('admin.reasons.code_help')
@@ -446,7 +457,15 @@ function ReasonCodeField({ form }: { form: UseFormReturn<ReasonFormValues> }) {
           id="reason-code"
           aria-invalid={!!errors.code}
           placeholder={t('admin.reasons.code_placeholder')}
-          {...form.register('code')}
+          {...codeInput}
+          onChange={(event) => {
+            // Codes are saved in capitals, so show them that way while typing.
+            const input = event.target
+            const { selectionStart, selectionEnd } = input
+            input.value = input.value.toUpperCase()
+            input.setSelectionRange(selectionStart, selectionEnd)
+            codeInput.onChange(event)
+          }}
         />
       )}
       <FieldDescription>{help}</FieldDescription>

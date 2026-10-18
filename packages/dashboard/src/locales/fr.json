@@ -4845,7 +4845,7 @@
       },
       "code_engine_help": "Votre moteur fiscal décide de l'exonération selon ce code : choisissez celui qu'il définit pour ce motif.",
       "code_help": "Un identifiant court enregistré sur les certificats. Unique dans votre boutique.",
-      "code_placeholder": "ex. resale",
+      "code_placeholder": "ex. RESALE",
       "create_description": "Les motifs apparaissent dans une liste déroulante lors de la création d'un retour, d'une réclamation ou d'un remboursement.",
       "delete_confirm": {
         "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent.",
@@ -4876,7 +4876,9 @@
         "title": "Motifs de retour"
       },
       "tax_exemption": {
+        "create_description": "Votre équipe choisit un motif lorsqu'elle enregistre le certificat d'exonération d'une entreprise.",
         "help": "Pourquoi une entreprise achète hors taxe. Enregistré sur ses certificats d'exonération ; le code est transmis à votre moteur fiscal.",
+        "name_placeholder": "ex. Revente",
         "title": "Motifs d'exonération de taxe"
       },
       "title": "Retours et motifs"
