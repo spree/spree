@@ -14,6 +14,17 @@ export const PriceSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   get variant() { return VariantSchema.optional(); },
-}) as unknown as z.ZodObject<{ [K in keyof Price]-?: z.ZodType<Price[K]> }>;
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<Price['id']>;
+  currency: z.ZodType<Price['currency']>;
+  amount: z.ZodType<Price['amount']>;
+  compare_at_amount: z.ZodType<Price['compare_at_amount']>;
+  price_list_id: z.ZodType<Price['price_list_id']>;
+  min_quantity: z.ZodType<Price['min_quantity']>;
+  variant_id: z.ZodType<Price['variant_id']>;
+  created_at: z.ZodType<Price['created_at']>;
+  updated_at: z.ZodType<Price['updated_at']>;
+  variant: z.ZodOptional<z.ZodType<Exclude<Price['variant'], undefined>>>;
+}>;
 
 export type { Price };

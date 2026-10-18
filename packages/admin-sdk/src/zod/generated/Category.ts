@@ -34,6 +34,37 @@ export const CategorySchema = z.object({
   products_count: z.number(),
   created_at: z.string(),
   updated_at: z.string(),
-}) as unknown as z.ZodObject<{ [K in keyof Category]-?: z.ZodType<Category[K]> }>;
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<Category['id']>;
+  name: z.ZodType<Category['name']>;
+  permalink: z.ZodType<Category['permalink']>;
+  position: z.ZodType<Category['position']>;
+  depth: z.ZodType<Category['depth']>;
+  meta_title: z.ZodType<Category['meta_title']>;
+  meta_description: z.ZodType<Category['meta_description']>;
+  meta_keywords: z.ZodType<Category['meta_keywords']>;
+  children_count: z.ZodType<Category['children_count']>;
+  parent_id: z.ZodType<Category['parent_id']>;
+  description: z.ZodType<Category['description']>;
+  description_html: z.ZodType<Category['description_html']>;
+  image_url: z.ZodType<Category['image_url']>;
+  square_image_url: z.ZodType<Category['square_image_url']>;
+  is_root: z.ZodType<Category['is_root']>;
+  is_child: z.ZodType<Category['is_child']>;
+  is_leaf: z.ZodType<Category['is_leaf']>;
+  parent: z.ZodOptional<z.ZodType<Exclude<Category['parent'], undefined>>>;
+  children: z.ZodOptional<z.ZodType<Exclude<Category['children'], undefined>>>;
+  ancestors: z.ZodOptional<z.ZodType<Exclude<Category['ancestors'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Category['custom_fields'], undefined>>>;
+  external_references: z.ZodType<Category['external_references']>;
+  translations: z.ZodOptional<z.ZodType<Exclude<Category['translations'], undefined>>>;
+  metadata: z.ZodType<Category['metadata']>;
+  pretty_name: z.ZodType<Category['pretty_name']>;
+  lft: z.ZodType<Category['lft']>;
+  rgt: z.ZodType<Category['rgt']>;
+  products_count: z.ZodType<Category['products_count']>;
+  created_at: z.ZodType<Category['created_at']>;
+  updated_at: z.ZodType<Category['updated_at']>;
+}>;
 
 export type { Category };

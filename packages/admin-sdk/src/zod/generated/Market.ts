@@ -16,6 +16,19 @@ export const MarketSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   tax_provider: z.string().nullable(),
-}) as unknown as z.ZodObject<{ [K in keyof Market]-?: z.ZodType<Market[K]> }>;
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<Market['id']>;
+  name: z.ZodType<Market['name']>;
+  currency: z.ZodType<Market['currency']>;
+  default_locale: z.ZodType<Market['default_locale']>;
+  tax_inclusive: z.ZodType<Market['tax_inclusive']>;
+  default: z.ZodType<Market['default']>;
+  country_codes: z.ZodType<Market['country_codes']>;
+  supported_locales: z.ZodType<Market['supported_locales']>;
+  countries: z.ZodOptional<z.ZodType<Exclude<Market['countries'], undefined>>>;
+  created_at: z.ZodType<Market['created_at']>;
+  updated_at: z.ZodType<Market['updated_at']>;
+  tax_provider: z.ZodType<Market['tax_provider']>;
+}>;
 
 export type { Market };

@@ -266,7 +266,11 @@ function typeToZod(
   }
 }
 
-function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>, typesImportDir: string): string {
+function generateZodFile(
+  parsed: ParsedType,
+  cyclicTypes: Set<string>,
+  typesImportDir: string,
+): string {
   const referencedTypes = new Set<string>()
   const fieldLines: string[] = []
 
@@ -311,9 +315,7 @@ function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>, typesImpo
     '',
     schemaDecl,
     ...fieldLines,
-    cyclic
-      ? `}) as unknown as z.ZodObject<{ [K in keyof ${parsed.typeName}]-?: z.ZodType<${parsed.typeName}[K]> }>;`
-      : '});',
+    cyclic ? `}) as unknown as z.ZodObject<{\n${cyclicShapeType(parsed)}\n}>;` : '});',
     '',
     cyclic
       ? `export type { ${parsed.typeName} };`
@@ -322,6 +324,18 @@ function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>, typesImpo
   ]
 
   return lines.join('\n')
+}
+
+/** The object shape a cyclic schema is cast to: one entry per field, optional fields kept optional. */
+function cyclicShapeType(parsed: ParsedType): string {
+  return parsed.fields
+    .map(({ name, optional }) => {
+      const fieldType = `${parsed.typeName}['${name}']`
+      return optional
+        ? `  ${name}: z.ZodOptional<z.ZodType<Exclude<${fieldType}, undefined>>>;`
+        : `  ${name}: z.ZodType<${fieldType}>;`
+    })
+    .join('\n')
 }
 
 /** Extract type references from field types */
@@ -430,7 +444,11 @@ function generateFolder(typesDir: string, zodDir: string): void {
   for (const [, parsed] of parsedTypes) {
     fs.writeFileSync(
       path.join(zodDir, `${parsed.typeName}.ts`),
-      generateZodFile(parsed, cyclicTypes, path.relative(zodDir, typesDir).split(path.sep).join('/')),
+      generateZodFile(
+        parsed,
+        cyclicTypes,
+        path.relative(zodDir, typesDir).split(path.sep).join('/'),
+      ),
       'utf-8',
     )
     generatedNames.push(parsed.typeName)

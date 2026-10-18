@@ -401,12 +401,13 @@ function resolveAdminCredentials(flags: { adminEmail?: string; adminPassword?: s
 export async function openBrowser(url: string): Promise<void> {
   const os = platform()
   // `start` is built into cmd.exe rather than a program of its own; its first
-  // quoted argument is a window title, hence the empty one.
+  // quoted argument is a window title. An empty argument reaches cmd.exe as
+  // `""`, which is that empty title.
   const [cmd, args] =
     os === 'darwin'
       ? ['open', [url]]
       : os === 'win32'
-        ? ['cmd', ['/c', 'start', '""', url]]
+        ? ['cmd', ['/c', 'start', '', url]]
         : ['xdg-open', [url]]
 
   try {

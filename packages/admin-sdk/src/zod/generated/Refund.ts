@@ -20,6 +20,22 @@ export const RefundSchema = z.object({
   refunder_type: z.string().nullable(),
   refunder: ActorSchema.optional(),
   get payment() { return PaymentSchema.optional(); },
-}) as unknown as z.ZodObject<{ [K in keyof Refund]-?: z.ZodType<Refund[K]> }>;
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<Refund['id']>;
+  transaction_id: z.ZodType<Refund['transaction_id']>;
+  amount: z.ZodType<Refund['amount']>;
+  payment_id: z.ZodType<Refund['payment_id']>;
+  refund_reason_id: z.ZodType<Refund['refund_reason_id']>;
+  originator_id: z.ZodType<Refund['originator_id']>;
+  originator_type: z.ZodType<Refund['originator_type']>;
+  metadata: z.ZodType<Refund['metadata']>;
+  created_at: z.ZodType<Refund['created_at']>;
+  updated_at: z.ZodType<Refund['updated_at']>;
+  tax_amount: z.ZodType<Refund['tax_amount']>;
+  refunder_id: z.ZodType<Refund['refunder_id']>;
+  refunder_type: z.ZodType<Refund['refunder_type']>;
+  refunder: z.ZodOptional<z.ZodType<Exclude<Refund['refunder'], undefined>>>;
+  payment: z.ZodOptional<z.ZodType<Exclude<Refund['payment'], undefined>>>;
+}>;
 
 export type { Refund };
