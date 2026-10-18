@@ -1,54 +1,50 @@
 ---
 title: "MCP Server"
 sidebarTitle: Overview
-description: "Your store hosts a Model Context Protocol server, so an AI client can operate it in plain language under the same permissions as the API."
+description: "Your store can be run from an AI assistant — in plain language, and only as far as the person who connected it is allowed to go."
 ---
 
-Spree can host a [Model Context Protocol](https://modelcontextprotocol.io) server of its own, so an MCP client — Claude Desktop, claude.ai, Claude Code, Cursor, an in-house agent — can work in your store by talking to it: find products, answer "what did we sell in Germany last month", cancel an order, mark a shipment delivered, add a market.
+Your store can host a server that lets an AI assistant work in it by talking to it. Claude, Cursor, an assistant your team builds — any of them can find products, answer "what did we sell in Germany last month", cancel an order, mark a shipment delivered or add a market.
 
-It runs inside your Spree application. There is no separate service to deploy, and every request goes through the same tenancy, permission and validation rules as the API itself. An agent does exactly what the person who connected it allows, and nothing else.
+It is part of Spree. There is nothing extra to deploy, and an assistant can only do what the person who connected it could do by clicking.
 
-## The endpoint
+## The address
 
 ```text
 https://your-store.com/api/v3/admin/mcp
 ```
 
-The back office: the catalog, orders, reporting and store setup, for staff and the agents they connect.
+Paste that into your assistant and it will ask you to sign in.
 
-<Note>
-  One endpoint, one audience. The tools an agent is offered here are the back office's, and a merchant's grant is measured against their own staff permissions — so an agent reaches exactly what the person who connected it can reach.
-</Note>
+This is the back office — the catalog, orders, reporting and store setup — for your staff and the assistants they connect.
 
-## How it fits together
+## What an assistant gets
 
-An MCP client speaks JSON-RPC to one endpoint. Behind it:
+- **Things it can do.** 58 of them, each one job: search products, cancel an order, run a report. [The reference](/developer/mcp/tools) lists every one.
+- **Files it can read.** Finished exports, so you can ask about a CSV rather than open it.
+- **What you approved, and no more.** You pick the permissions when you connect. An assistant is never even shown the things you did not approve, so it cannot try them.
 
-- **Tools** are what the agent can do — one per operation, named for the merchant's language rather than the API's. [The reference](/developer/mcp/tools) lists all 58.
-- **Resources** are files the client can fetch. Finished exports, as CSV.
-- **Consent** decides what any of it reaches. A merchant signs in and approves specific permissions; the agent is never offered a tool outside them.
-
-Every tool reaches data by making a real API request inside the process — the same routing, authentication, record-level authorization and serialization an external client gets. A guard added to the API protects agents without anyone copying it into the tool layer.
+Everything an assistant does runs through the same checks as the rest of your store. There is no side door, and nothing an assistant can reach that your own permissions do not already reach.
 
 ## Getting started
 
 <CardGroup cols={2}>
   <Card title="Quick start" icon="rocket" href="/developer/mcp/quick-start">
-    Install the gem, connect a client, run the first conversation.
+    Connect an assistant and have your first conversation.
   </Card>
-  <Card title="Tool reference" icon="wrench" href="/developer/mcp/tools">
-    All 58 tools, what each is for and which permission it needs.
+  <Card title="What an assistant can do" icon="wrench" href="/developer/mcp/tools">
+    All 58 jobs, and the permission each one needs.
   </Card>
   <Card title="Permissions and consent" icon="shield-check" href="/developer/mcp/permissions">
-    What a merchant approves, how a grant is bounded, revoking access.
+    What you approve, what it can never reach, and how to take access away.
   </Card>
   <Card title="Custom tools" icon="puzzle-piece" href="/developer/mcp/custom-tools">
-    Register your own, and expose a workflow an extension adds.
+    For developers: teach an assistant something your store does.
   </Card>
 </CardGroup>
 
 ## What it is not
 
-**Not the documentation server.** The [docs MCP server](/developer/agentic/mcp) lets an agent read Spree's documentation while writing code against it. This one operates a live store. They are unrelated and you can use both.
+**Not the documentation server.** The [docs MCP server](/developer/agentic/docs-mcp) lets an assistant read Spree's documentation while someone writes code. This one runs a real store. They are unrelated, and you can use both.
 
-**Not a replacement for the API.** An agent is good at a merchant's request in words. A scheduled job, a data pipeline or a storefront should call the [Admin API](/api-reference/admin) or the [`spree api` CLI](/developer/cli/admin-api) directly.
+**Not a replacement for the API.** An assistant is good at a request in words. Anything scheduled or automatic — a nightly sync, a data pipeline, a storefront — should use the [Admin API](/api-reference/admin) or the [`spree api` CLI](/developer/cli/admin-api).

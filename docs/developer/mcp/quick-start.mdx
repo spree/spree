@@ -1,5 +1,5 @@
 ---
-title: "Quick Start"
+title: "MCP Server Quick Start"
 sidebarTitle: Quick start
 description: "Install the MCP server, connect an AI client and run the first conversation against your store."
 ---
@@ -14,8 +14,7 @@ https://your-store.com/api/v3/admin/mcp
 ```
 
 <Note>
-  Nothing to configure, and no migration for the server itself. The OAuth
-  tables ship with `spree_core` and arrive with Spree's other migrations.
+  There is nothing to configure and nothing to set up first.
 </Note>
 
 Upgrading an older store, or deliberately removed it? Add the gem back:
@@ -39,7 +38,7 @@ Upgrading an older store, or deliberately removed it? Add the gem back:
 
 ## Connect a client
 
-Paste the URL into your MCP client. It sends you to Spree, you sign in, and you approve what the agent may do.
+Paste the URL into your MCP client. It sends you to your store, you sign in, and you approve what it may do.
 
 <Tabs>
   <Tab title="Claude Code">
@@ -80,10 +79,10 @@ Paste the URL into your MCP client. It sends you to Spree, you sign in, and you 
   </Tab>
 </Tabs>
 
-That is the whole setup. There is no key to mint, paste or rotate — the client discovers how to authorize itself from the endpoint, and you approve it in a browser.
+That is the whole setup. There is no key to create, paste or rotate: your assistant works out where to send you, and you approve it in a browser.
 
 <Note>
-  A Spree API key is **not** accepted here, deliberately: an agent acts for a person, so it carries that person's own permissions rather than a standing credential with nobody behind it. For access that cannot sign in — a CI job, a server-side integration — use the [`spree api` CLI](/developer/cli/admin-api).
+  A Spree API key will **not** work here, deliberately: an assistant acts for a person and carries that person's own permissions. For something that cannot sign in — a nightly job, a server-side integration — use the [`spree api` CLI](/developer/cli/admin-api).
 </Note>
 
 ## Approve what it may do
@@ -92,15 +91,15 @@ Signing in brings up a consent screen listing the permissions the client asked f
 
 What you approve matters more than it looks:
 
-- **An agent never gets more than you have.** The grant narrows your own permissions, so a staff member who cannot issue refunds cannot approve an agent that can.
+- **It never gets more than you have.** If you cannot issue refunds, you cannot approve an assistant that can.
 - **Only what you approved.** Approving product access does not quietly include orders — the tools for anything else are not even offered to the model.
-- **It is yours, not the store's.** Each person connects for themselves, so an agent's actions are recorded against whoever approved it, and revoking one person's access leaves their colleagues working.
+- **It is yours, not the store's.** Each person connects for themselves, so an assistant's actions are recorded against whoever approved it, and revoking one person's access leaves their colleagues working.
 
 [Permissions and consent](/developer/mcp/permissions) covers this in full.
 
 ## The first conversation
 
-The agent picks tools from what you ask; there is no command to learn.
+It works out what to do from what you ask; there is no command to learn.
 
 > **You:** Which products are out of stock, and what did we sell in Germany last month?
 
@@ -116,17 +115,17 @@ It finds the order, then calls `orders_cancel`. Your client asks you to confirm 
 
 ## Check what it can see
 
-Ask the agent directly — `describe_resource` with no arguments lists every resource the connection reaches, and the client's own tool list shows what it was offered. A connection approved for products alone sees roughly a dozen tools rather than all 58.
+Just ask it. It can list everything it reaches, and your assistant's own settings show what it was offered. A connection approved for products alone sees roughly a dozen jobs rather than all 58.
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="The client says the server needs authorization and nothing happens">
-    The endpoint advertises its authorization server at `/api/v3/oauth/protected-resource/admin`. If your store sits behind a proxy that rewrites the host, the advertised URL has to be one the browser can reach — check that `Spree::Store#url` and the incoming `Host` header agree.
+    Your assistant asks the store where to send you to sign in. If your store sits behind a proxy or a tunnel that changes the address, the one it is given has to be an address your browser can actually open — so check that your store's configured URL matches the one you reach it on.
   </Accordion>
 
-  <Accordion title="Connected, but the agent says it cannot do something">
-    It was not granted that permission. **Settings → AI Agents** shows what each connection holds; revoke and reconnect to approve more. Tools outside the grant are not offered at all, so the agent will say it has no way to do it rather than failing mid-call.
+  <Accordion title="Connected, but it says it cannot do something">
+    You did not approve that permission. **Settings → AI Agents** shows what each connection holds; revoke and reconnect to approve more. Anything you did not approve is not offered at all, so it will say it has no way to do it rather than failing halfway.
   </Accordion>
 
   <Accordion title="A tool exists but refuses with a permission error">
@@ -134,7 +133,7 @@ Ask the agent directly — `describe_resource` with no arguments lists every res
   </Accordion>
 
   <Accordion title="Nothing is listed under AI Agents">
-    The page lists each agent registered for the store with the people connected through it. An agent nobody has connected yet shows no one — register it under **Settings → OAuth clients**, then connect from your own client.
+    The page lists each assistant registered for the store with the people connected through it. One nobody has connected yet shows no one — register it under **Settings → OAuth clients**, then connect from your own.
   </Accordion>
 </AccordionGroup>
 
@@ -145,12 +144,12 @@ Ask the agent directly — `describe_resource` with no arguments lists every res
     All 58 tools and the permission each needs.
   </Card>
   <Card title="Permissions and consent" icon="shield-check" href="/developer/mcp/permissions">
-    How a grant is bounded, and what is out of reach whatever you approve.
+    What you approve, and what is out of reach whatever you do.
   </Card>
   <Card title="Custom tools" icon="puzzle-piece" href="/developer/mcp/custom-tools">
-    Add your own, or expose a workflow your extension ships.
+    For developers: teach an assistant something your store does.
   </Card>
   <Card title="Admin API" icon="code" href="/api-reference/admin">
-    What every tool is dispatching to underneath.
+    The same operations, for code rather than conversation.
   </Card>
 </CardGroup>

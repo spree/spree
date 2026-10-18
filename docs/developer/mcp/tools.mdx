@@ -1,15 +1,15 @@
 ---
-title: "Tool Reference"
+title: "MCP Server Tool Reference"
 sidebarTitle: Tools
 description: "Every tool the MCP server offers, what it is for and which permission it needs."
 ---
 
-58 tools ship with the server. An agent is only ever shown the ones its grant permits, so a connection approved for products alone sees roughly a dozen.
+58 tools ship with the server. An assistant is only ever shown the ones you approved, so a connection for products alone sees roughly a dozen.
 
 The catalog is deliberately not a mirror of the API's 500-odd operations — a tool list that size makes a model worse at choosing, not better. Tools cover the operations a merchant asks for by name; everything else is reached through the three generic ones under [store setup](#store-setup).
 
 <Note>
-  The **Permission** column is what a grant must hold for the tool to be offered. A dash means the tool carries no permission of its own and is gated per resource instead: `search_resources` is offered to everyone, but only lists resources the grant can read.
+  The **Permission** column is what you have to approve for the tool to be offered. A dash means it has no permission of its own and is checked per record instead: `search_resources` is offered to everyone, but only finds what you approved.
 
   The last column says whether the tool reads or writes. A write asks your client to confirm before it runs.
 </Note>
@@ -110,10 +110,10 @@ The catalog is deliberately not a mirror of the API's 500-odd operations — a t
 
 ### Creating, changing and deleting records
 
-Three tools cover every resource the Admin API can write — 38 of them, from
+Three tools cover everything your store can write — 38 kinds of record, from
 products and orders to markets, tax rates and delivery methods — rather than
-one tool per resource. They dispatch to the real endpoint, so a resource whose
-controller runs a workflow gets that workflow.
+one tool each. Creating an order through an assistant does exactly what
+creating one in the dashboard does.
 
 | Tool | Permission | |
 | --- | --- | --- |
@@ -123,7 +123,7 @@ controller runs a workflow gets that workflow.
 | `tax_exemption_certificates_verify` | `write_customers` | write |
 
 The dash is the point: each call is gated on the resource being written, so a
-grant holding `write_products` can create a product and is refused a market.
+connection approved for products can create a product and is refused a market.
 Call `describe_resource` for what a resource accepts.
 
 
@@ -135,14 +135,14 @@ Beyond tools, the server offers MCP **resources** — files a client can fetch r
 | --- | --- |
 | `spree+export://<id>` | A finished export, as CSV. Reading one costs the same permission as reading the records in it, and an export of gift cards or coupon codes is never readable here. |
 
-A product's media, an order's purchase order and an import's own file are things an agent *puts* there rather than reads back, so they are uploads rather than resources.
+A product's media, an order's purchase order and an import's own file are things an assistant *puts* there rather than reads back, so they are uploads rather than files it can fetch.
 
 ## What no tool will do
 
-Some things are out of reach whatever a grant holds.
+Some things are out of reach whatever you approve.
 
-- **Credentials.** API keys, integrations, webhook endpoints and gift card codes are never returned by any tool. A gift card code is the money itself, and an integration's settings are where provider credentials live.
-- **Minting another credential.** A grant cannot create API keys, roles, staff accounts or another OAuth client — so an agent can never widen its own reach.
+- **Keys and codes.** API keys, integrations, webhooks and gift card codes are never shown. A gift card code is the money itself, and an integration's settings hold the passwords for another service.
+- **Making another way in.** An assistant cannot create API keys, roles, staff accounts or register another assistant — so it can never widen its own reach.
 - **Erasing a customer.** GDPR erasure is irreversible and is not something to put behind a single confirmation prompt. Do it in the dashboard.
 - **Codes that spend money.** A gift card or coupon export carries live codes, so no tool creates or reads one. Download it from the dashboard.
 
@@ -160,7 +160,7 @@ Two things worth knowing about the generic writes:
 
 <CardGroup cols={2}>
   <Card title="Permissions and consent" icon="shield-check" href="/developer/mcp/permissions">
-    What a merchant approves and how a grant is bounded.
+    What you approve, and what an assistant can never reach.
   </Card>
   <Card title="Custom tools" icon="puzzle-piece" href="/developer/mcp/custom-tools">
     Add your own, or expose a workflow your extension ships.
