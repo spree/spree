@@ -3,7 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execaCommand } from 'execa'
+import { execa } from 'execa'
 import pc from 'picocolors'
 import { PLUGIN_PEER_RANGES } from '../lib/plugin-peer-ranges.js'
 import { render, type TemplateVars } from '../lib/template.js'
@@ -371,7 +371,7 @@ async function resolveField(spec: FieldSpec): Promise<string | symbol> {
 /** Read a git config value, returning undefined when unset or git is absent. */
 async function gitConfigValue(key: string): Promise<string | undefined> {
   try {
-    const { stdout } = await execaCommand(`git config --get ${key}`)
+    const { stdout } = await execa('git', ['config', '--get', key])
     const value = stdout.trim()
     return value || undefined
   } catch {
@@ -422,7 +422,7 @@ async function runInstall(dst: string, answers: Answers): Promise<void> {
   if (answers.includeDashboard) {
     s.start('Running pnpm install...')
     try {
-      await execaCommand('pnpm install', { cwd: dst, stdio: 'pipe' })
+      await execa('pnpm', ['install'], { cwd: dst, stdio: 'pipe' })
       s.stop('pnpm install complete.')
     } catch (err) {
       s.stop(pc.yellow('pnpm install failed — run it manually.'))
@@ -432,7 +432,7 @@ async function runInstall(dst: string, answers: Answers): Promise<void> {
   if (answers.includeEngine) {
     s.start('Running bundle install in engine/...')
     try {
-      await execaCommand('bundle install', { cwd: path.join(dst, 'engine'), stdio: 'pipe' })
+      await execa('bundle', ['install'], { cwd: path.join(dst, 'engine'), stdio: 'pipe' })
       s.stop('bundle install complete.')
     } catch (err) {
       s.stop(pc.yellow('bundle install failed — run it manually.'))

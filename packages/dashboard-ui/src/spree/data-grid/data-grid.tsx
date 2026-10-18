@@ -1,10 +1,11 @@
 import {
+  type ColumnDef,
   flexRender,
-  getCoreRowModel,
   type Row,
+  type RowData,
   type Table,
-  type TableOptions,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
@@ -14,9 +15,18 @@ import type { CellCoords, CellKey, CellRegistration, RenderSectionHeader } from 
 import { cellKey } from './types'
 import { useDataGridKeyboard } from './use-data-grid-keyboard'
 
-interface DataGridProps<T> {
+// The grid renders rows as given — no sorting, filtering or column state — so
+// it needs only the table's core features.
+const dataGridFeatures = tableFeatures({})
+type DataGridFeatures = typeof dataGridFeatures
+
+/** A column of a `DataGrid`. */
+// biome-ignore lint/suspicious/noExplicitAny: each column reads a value of its own type
+export type DataGridColumn<T extends RowData> = ColumnDef<DataGridFeatures, T, any>
+
+interface DataGridProps<T extends RowData> {
   rows: T[]
-  columns: TableOptions<T>['columns']
+  columns: DataGridColumn<T>[]
   getRowId: (row: T) => string
   /** Optional grouping. Return a node spanning all columns to render this row
    *  as a (non-editable) section header. Return null to render the row as
@@ -39,7 +49,7 @@ interface DataGridProps<T> {
   scrollable?: boolean
 }
 
-export function DataGrid<T>({
+export function DataGrid<T extends RowData>({
   rows,
   columns,
   getRowId,
@@ -48,11 +58,11 @@ export function DataGrid<T>({
   'aria-label': ariaLabel,
   scrollable = false,
 }: DataGridProps<T>) {
-  const table = useReactTable<T>({
+  const table = useTable({
+    features: dataGridFeatures,
     data: rows,
     columns,
     getRowId,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   return (
@@ -66,14 +76,14 @@ export function DataGrid<T>({
   )
 }
 
-function DataGridShell<T>({
+function DataGridShell<T extends RowData>({
   table,
   renderSectionHeader,
   className,
   ariaLabel,
   scrollable,
 }: {
-  table: Table<T>
+  table: Table<DataGridFeatures, T>
   renderSectionHeader?: RenderSectionHeader<T>
   className?: string
   ariaLabel?: string
@@ -324,12 +334,12 @@ function DataGridShell<T>({
   )
 }
 
-function DataGridRow<T>({
+function DataGridRow<T extends RowData>({
   row,
   renderSectionHeader,
   columnCount,
 }: {
-  row: Row<T>
+  row: Row<DataGridFeatures, T>
   renderSectionHeader?: RenderSectionHeader<T>
   columnCount: number
 }) {
@@ -345,7 +355,7 @@ function DataGridRow<T>({
   }
   return (
     <tr>
-      {row.getVisibleCells().map((cell) => (
+      {row.getAllCells().map((cell) => (
         <td key={cell.id} className="h-9 p-0 align-middle">
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>

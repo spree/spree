@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { execa, execaCommand } from 'execa'
+import { execa } from 'execa'
 import type { PackageManager } from './types.js'
 
 /**
@@ -30,7 +30,7 @@ async function isPnpmAvailable(): Promise<boolean> {
 
 export async function isDockerRunning(): Promise<boolean> {
   try {
-    await execaCommand('docker info', { stdio: 'ignore' })
+    await execa('docker', ['info'], { stdio: 'ignore' })
     return true
   } catch {
     return false
