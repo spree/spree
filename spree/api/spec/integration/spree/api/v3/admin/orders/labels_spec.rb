@@ -106,6 +106,8 @@ RSpec.describe 'Admin Shipping Labels API', type: :request, swagger_doc: 'api-re
       description 'One label, with what it cost and where to print it from.'
       admin_scope :read, :fulfillments
 
+      admin_sdk_example 'order-labels/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -130,6 +132,8 @@ RSpec.describe 'Admin Shipping Labels API', type: :request, swagger_doc: 'api-re
       security [{ api_key: [], bearer_auth: [] }]
       description 'Removes an uploaded label. A purchased label is refunded instead, so the postage history stays honest.'
       admin_scope :write, :fulfillments
+
+      admin_sdk_example 'order-labels/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

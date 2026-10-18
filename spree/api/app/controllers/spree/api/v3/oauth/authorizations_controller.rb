@@ -1,0 +1,61 @@
+module Spree
+  module Api
+    module V3
+      module Oauth
+        # The authorization endpoint a client sends the browser to.
+        #
+        # It renders nothing itself: consent belongs in the dashboard, where
+        # the merchant is already signed in and the screen matches the rest of
+        # the admin. This hands the request over with its parameters intact,
+        # and the dashboard reads them back through the JSON endpoints under
+        # /api/v3/admin/oauth.
+        #
+        # It is a real route rather than a skipped one because RFC 8414
+        # requires the metadata document to name an `authorization_endpoint`,
+        # and a consumer client refuses a document that advertises the
+        # authorization-code flow without one.
+        class AuthorizationsController < ActionController::Base
+          include Spree::Core::ControllerHelpers::Store
+
+          # The authorization endpoint is reached by a cross-site GET on
+          # purpose — a client sends the browser here — and forgery
+          # protection never applies to a GET, so `:exception` costs nothing
+          # while leaving the endpoint reachable. Nothing is granted here
+          # either way: the action only redirects, and consent is submitted
+          # to the Admin API under the merchant's own session.
+          protect_from_forgery with: :exception
+
+          # Carried across to the dashboard. Everything else is dropped, so a
+          # crafted link cannot smuggle extra parameters into the consent page.
+          FORWARDED_PARAMETERS = %w[
+            client_id redirect_uri response_type scope state
+            code_challenge code_challenge_method resource
+          ].freeze
+
+          def new
+            redirect_to consent_url, allow_other_host: true
+          end
+
+          private
+
+          # The client id names the store, not the hostname. An installation
+          # serving several stores from one API origin would otherwise send
+          # every consent to whichever store that host happens to resolve as,
+          # and the merchant would approve on the wrong one.
+          def consent_url
+            query = params.permit(*FORWARDED_PARAMETERS).to_h.compact_blank.to_query
+            base = Spree::Stores::DashboardUrl.call(store: consent_store)
+
+            "#{base}/#{consent_store.prefixed_id}/oauth/authorize?#{query}"
+          end
+
+          # @return [Spree::Store]
+          def consent_store
+            @consent_store ||=
+              Spree::OauthApplication.find_by(uid: params[:client_id])&.store || current_store
+          end
+        end
+      end
+    end
+  end
+end

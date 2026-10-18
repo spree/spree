@@ -19,6 +19,8 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       description 'Every return in the store, across all orders.'
       admin_scope :read, :orders
 
+      admin_sdk_example 'returns/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
@@ -42,6 +44,8 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       security [api_key: [], bearer_auth: []]
       description 'The returns opened on one order.'
       admin_scope :read, :orders
+
+      admin_sdk_example 'order-returns/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -68,6 +72,8 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       security [api_key: [], bearer_auth: []]
       description 'Opens a return on a completed order for fulfilled units the customer is sending back.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-returns/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -109,6 +115,8 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       description 'Edits the warehouse, reason, memo or metadata of a return. Its status moves only through the approve, receive, refund and cancel actions.'
       admin_scope :write, :orders
 
+      admin_sdk_example 'order-returns/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
@@ -138,6 +146,8 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       security [api_key: [], bearer_auth: []]
       description 'Records what arrived on an approved return. Omit `items` to receive everything as requested and resellable; send rows for a partial or damaged receipt.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-returns/receive'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -170,6 +180,8 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       description 'Pays the customer back for a received return, to store credit or through the original payment.'
       admin_scope :write, :orders
 
+      admin_sdk_example 'order-returns/refund'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
@@ -199,6 +211,8 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       description 'Withdraws a return whose goods have not been received.'
       admin_scope :write, :orders
 
+      admin_sdk_example 'order-returns/cancel'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
@@ -225,6 +239,8 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       security [api_key: [], bearer_auth: []]
       description 'The shipping labels issued for sending one return back to the store.'
       admin_scope :read, :orders
+
+      admin_sdk_example 'order-returns/labels-list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

@@ -21,6 +21,7 @@ export {
   BellIcon,
   BoldIcon,
   BookOpenIcon,
+  BotIcon,
   BoxesIcon,
   BracesIcon,
   Building2Icon,

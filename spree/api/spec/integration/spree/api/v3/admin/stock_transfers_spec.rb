@@ -45,6 +45,8 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       DESC
       admin_scope :read, :stock
 
+      admin_sdk_example 'stock-transfers/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -145,6 +147,8 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :stock
 
+      admin_sdk_example 'stock-transfers/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -187,6 +191,8 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       DESC
       admin_scope :write, :stock
 
+      admin_sdk_example 'stock-transfers/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -221,6 +227,8 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       DESC
       admin_scope :write, :stock
 
+      admin_sdk_example 'stock-transfers/delete'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -246,6 +254,8 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
         same list. Nothing leaves the shelf yet.
       DESC
       admin_scope :write, :stock
+
+      admin_sdk_example 'stock-transfers/mark-ready'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -501,6 +511,8 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
         refused with a 422.
       DESC
       admin_scope :write, :stock
+
+      admin_sdk_example 'stock-transfers/cancel'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

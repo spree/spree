@@ -95,11 +95,21 @@ test.describe('purchase orders', () => {
     await expect(picker).toBeHidden()
     await page.getByRole('spinbutton', { name: /^ordered$/i }).fill('12')
 
-    await page.getByRole('button', { name: /create draft/i }).click()
+    // A new line starts without a cost: an unpriced order cannot be raised by accident.
+    const createDraft = page.getByRole('button', { name: /create draft/i })
+    await expect(page.getByLabel(/^unit cost$/i)).toHaveValue('')
+    await expect(createDraft).toBeDisabled()
+    await page.getByLabel(/^unit cost$/i).fill('7.50')
+    await expect(createDraft).toBeEnabled()
+
+    await createDraft.click()
 
     await expect(page).toHaveURL(/\/purchase-orders\/po_/, { timeout: 15_000 })
     await expect(page.getByText(/^draft$/i).first()).toBeVisible()
     await expect(page.getByText('0 received of 12 ordered')).toBeVisible()
+    const line = page.getByRole('row').filter({ hasText: FIXTURE_TRANSFER_PRODUCT })
+    await expect(line).toContainText('7.50')
+    await expect(line).toContainText('90.00')
 
     await page.getByRole('button', { name: /mark as ordered/i }).click()
     await expect(page.getByRole('heading', { name: /place this order\?/i })).toBeVisible()
@@ -143,7 +153,7 @@ test.describe('purchase orders', () => {
     await expect(page.getByText('Discontinued by the supplier')).toBeVisible()
   })
 
-  test('corrects a draft', async ({ page }) => {
+  test('corrects a draft, but not into a line without a cost', async ({ page }) => {
     const creds = await login(page)
     const purchaseOrder = await createPurchaseOrder(page, creds.accessToken, { quantity: 3 })
     await openPurchaseOrder(page, creds.store_id, purchaseOrder)
@@ -155,12 +165,65 @@ test.describe('purchase orders', () => {
 
     const reference = `Corrected ${Date.now()}`
     await page.locator('#reference').fill(reference)
-    await page.getByRole('button', { name: /^save$/i }).click()
+
+    const unitCost = page.getByLabel(/^unit cost$/i)
+    const save = page.getByRole('button', { name: /^save$/i })
+    await expect(unitCost).toHaveValue('7.50')
+    await unitCost.fill('')
+    await expect(save).toBeDisabled()
+    await unitCost.fill('8.25')
+    await expect(save).toBeEnabled()
+    await save.click()
 
     await expect(page.getByRole('heading', { name: purchaseOrder.number })).toBeVisible({
       timeout: 15_000,
     })
     await expect(page.getByText(reference)).toBeVisible()
+    const line = page.getByRole('row').filter({ hasText: FIXTURE_TRANSFER_PRODUCT })
+    await expect(line).toContainText('8.25')
+    await expect(line).toContainText('24.75')
+  })
+
+  test('books each delivery as its own stock receipt', async ({ page }) => {
+    const creds = await login(page)
+    const purchaseOrder = await createPurchaseOrder(page, creds.accessToken, {
+      quantity: 10,
+      ordered: true,
+    })
+    await openPurchaseOrder(page, creds.store_id, purchaseOrder)
+    await expect(page.getByText(/no deliveries yet/i)).toBeVisible()
+
+    // The first delivery: six intact, one of the wrong item.
+    const firstNote = `DN-1-${Date.now()}`
+    await page.getByLabel(/^delivery note$/i).fill(firstNote)
+    await page.getByLabel(/^accepted$/i).fill('6')
+    await page.getByLabel(/^rejected$/i).fill('1')
+    // A refusal has to say why before the delivery can be booked.
+    const receive = page.getByRole('button', { name: /^receive$/i })
+    await expect(receive).toBeDisabled()
+    await page.getByLabel(/^reason$/i).click()
+    await page.getByRole('option', { name: /^wrong item$/i }).click()
+    await receive.click()
+
+    await expect(page.getByText(/^partially received$/i).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('6 received of 10 ordered')).toBeVisible()
+    await expect(page.getByText(firstNote)).toBeVisible()
+    await expect(page.getByText('6 accepted · 1 rejected')).toBeVisible()
+    await expect(page.getByRole('cell', { name: /^wrong item$/i })).toBeVisible()
+
+    // A refused unit is still owed by the supplier, so the second delivery
+    // brings its replacement with the rest, and closes the order.
+    await page.getByLabel(/^accepted$/i).fill('4')
+    await receive.click()
+
+    await expect(page.getByText('10 received of 10 ordered')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('4 accepted · 0 rejected')).toBeVisible()
+    // Each delivery stays its own record rather than folding into the first.
+    await expect(page.getByText(/^\d+ accepted · \d+ rejected$/)).toHaveCount(2)
+    await expect(page.getByText('6 accepted · 1 rejected')).toBeVisible()
+    await expect(page.getByText(/receive a delivery/i)).toHaveCount(0)
   })
 
   test('cancels a placed order after confirming', async ({ page }) => {

@@ -1,0 +1,59 @@
+---
+title: "MCP Server Permissions and Consent"
+sidebarTitle: Permissions
+description: "What you approve when you connect an assistant, what it can never reach, and how to take access away."
+---
+
+An assistant acts for the person who connected it. There is no key to create or rotate: you sign in, tick the permissions you are willing to hand over, and those are its limits from then on.
+
+## What you approve
+
+Connecting takes you to your store, where a screen lists what the assistant has asked for. You tick what to allow. The names are the ones you already know from staff roles — products, orders, reports — so you are approving in the same terms you assign a colleague.
+
+Three things are worth knowing:
+
+**You cannot hand over more than you have.** If you cannot issue refunds, you cannot approve an assistant that can. Anything it asked for beyond your own permissions is simply dropped.
+
+**It lasts until you take it back.** This is why your permissions are recorded as they are the day you approve. If you are promoted later, the assistant does not quietly gain what you gained.
+
+**It is yours, not the store's.** Each person connects for themselves, and an assistant's actions are recorded against whoever approved it. Taking one person's access away leaves their colleagues working.
+
+## What it can never reach
+
+Some things are never offered, however much an assistant asks:
+
+- **API keys, integrations and webhooks.** These create *other* ways into your store. An assistant that could make one could give itself permissions you never approved.
+- **Roles and staff accounts.** For the same reason — an assistant cannot promote anyone, including itself.
+- **Gift card and discount codes.** The code is the money. Anyone who reads one can spend it, so no assistant is shown them.
+- **Erasing a customer.** It cannot be undone, and it should not sit behind a single confirmation. Do it in the dashboard.
+
+## Two layers, not one
+
+Approving a permission decides which jobs an assistant is **offered**. What each job then reaches is checked again, against the records themselves.
+
+So an assistant approved for reports can run one — and will still be refused a report broken down by customer unless you also approved customers. And if your store limits a staff member to their own seller's products, an assistant connected by that person is limited the same way.
+
+## Taking access away
+
+**Settings → AI Agents** lists each assistant and the people connected through it, with what each person approved and when.
+
+Revoking takes effect on the assistant's next request. The registration stays, so the same person can connect again later without an administrator setting it up afresh.
+
+## Registering an assistant
+
+Before anyone can connect one, the assistant has to be registered for the store — once, under **Settings → OAuth clients**. A registration grants nothing by itself; every permission is decided when a person connects.
+
+## For things that cannot sign in
+
+A nightly sync or a server-side integration has no person behind it and no browser to sign in with. Those use an [API key](/developer/cli/admin-api) instead, which is what keys are for. An assistant connection deliberately will not accept one.
+
+## See also
+
+<CardGroup cols={2}>
+  <Card title="What an assistant can do" icon="wrench" href="/developer/mcp/tools">
+    Every job, and the permission it needs.
+  </Card>
+  <Card title="Roles and permissions" icon="users" href="/developer/customization/permissions">
+    The permissions you assign to people, which an assistant draws from.
+  </Card>
+</CardGroup>

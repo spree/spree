@@ -115,6 +115,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
       description 'Corrects the details recorded for a certificate, such as its issuing authority or expiry date.'
       admin_scope :write, :customers
 
+      admin_sdk_example 'tax-exemption-certificates/update'
+
       request_body_for
 
       response '200', 'certificate updated' do
@@ -197,10 +199,6 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
     parameter name: :company_id, in: :path, type: :string, required: true
     parameter name: :id, in: :path, type: :string, required: true
 
-    # No SDK sample: the client has no download method by design, matching
-    # exports — the caller fetches document_url with the Authorization header
-    # and drives the browser download from a Blob, because a top-level
-    # navigation cannot carry an in-memory JWT.
     get 'Download a certificate document' do
       tags 'Companies'
       produces 'application/octet-stream'
@@ -210,6 +208,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
         the same credentials apply to every read of a confidential document. Requires only read access.
       DESC
       admin_scope :read, :customers
+
+      admin_sdk_example 'tax-exemption-certificates/download'
 
       response '200', 'document streamed' do
         let(:id) do

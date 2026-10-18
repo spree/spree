@@ -416,6 +416,7 @@ export type CustomFieldOwnerType =
   | 'category'
   | 'collection'
   | 'option_type'
+  | 'seller'
   | (string & {})
 
 export type PromotionKind = 'coupon_code' | 'automatic'
@@ -472,4 +473,23 @@ export interface StoreCreditListResponse {
 export type EmailTemplateLanguageParams = {
   /** A language code, or `any` (the default) for the version every language uses. */
   language?: string
+}
+
+/**
+ * The OAuth authorization request, forwarded from the query string the client
+ * sent the browser to. Passed through unchanged so the authorization server
+ * validates it rather than the dashboard — PKCE and the audience in
+ * particular must not be re-derived here.
+ */
+export interface OauthAuthorizationParams {
+  client_id: string
+  redirect_uri: string
+  response_type: string
+  /** Space-delimited permission keys, the same vocabulary as API-key scopes. */
+  scope?: string
+  state?: string
+  code_challenge?: string
+  code_challenge_method?: string
+  /** RFC 8707: which protected resource the token is being requested for. */
+  resource?: string
 }

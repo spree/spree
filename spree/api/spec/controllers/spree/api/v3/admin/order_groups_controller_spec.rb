@@ -46,6 +46,14 @@ RSpec.describe Spree::Api::V3::Admin::OrderGroupsController, type: :controller d
       numbers = json_response['orders'].map { |order| order['number'] }
       expect(numbers).to contain_exactly(first_party_order.number, seller_order.number)
     end
+
+    it "expands each payment's method within a narrowed response" do
+      payment = create(:payment, order_group: group, amount: 50)
+
+      get :show, params: { id: group.prefixed_id, fields: 'payments,number', expand: 'payments.payment_method' }
+
+      expect(json_response['payments'].first['payment_method']['name']).to eq(payment.payment_method.name)
+    end
   end
 
   # Read-only by routing: a group records a checkout that already happened.

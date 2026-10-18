@@ -46,6 +46,8 @@ import type {
   CompanyMembershipFilters,
   CompanyMembershipSort,
   CompanySort,
+  ConsentRecordFilters,
+  ConsentRecordSort,
   CouponCodeFilters,
   CouponCodeSort,
   CreditCardFilters,
@@ -58,6 +60,8 @@ import type {
   CustomFieldDefinitionSort,
   CustomFieldFilters,
   CustomFieldSort,
+  DataRequestFilters,
+  DataRequestSort,
   DeliveryMethodFilters,
   DeliveryMethodSort,
   DeliveryProfileFilters,
@@ -160,6 +164,8 @@ import type {
   StockLocationSort,
   StockMovementFilters,
   StockMovementSort,
+  StockReservationFilters,
+  StockReservationSort,
   StockTransferFilters,
   StockTransferSort,
   StoreCreditEventFilters,
@@ -422,6 +428,7 @@ import type {
   CustomFieldOwnerType,
   CustomFieldResourceType,
   CustomFieldUpdateParams,
+  DataRequestCreateParams,
   DeliveryCreateParams,
   DeliveryMarkDeliveredParams,
   DeliveryMethodCreateParams,
@@ -479,6 +486,7 @@ import type {
   MediaUpdateParams,
   MediaUsageReference,
   MeUpdateParams,
+  OauthAuthorizationParams,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
   OrderCancelParams,
@@ -611,6 +619,7 @@ import type {
   Company,
   CompanyInvitation,
   CompanyMembership,
+  ConsentRecord,
   Country,
   CouponCode,
   CreditCard,
@@ -619,6 +628,7 @@ import type {
   CustomField,
   CustomFieldDefinition,
   DashboardCounter,
+  DataRequest,
   Delivery,
   DeliveryMethod,
   DeliveryMethodRule,
@@ -650,6 +660,10 @@ import type {
   Locale,
   Market,
   Media,
+  OauthAccessToken,
+  OauthApplication,
+  OauthConsentRequest,
+  OauthRedirect,
   OptionType,
   Order,
   OrderCancellationReason,
@@ -689,6 +703,7 @@ import type {
   StockLocation,
   StockMovement,
   StockReceipt,
+  StockReservation,
   StockTransfer,
   Store,
   StoreCredit,
@@ -729,6 +744,7 @@ const CUSTOM_FIELD_OWNER_PATHS = {
   category: '/categories',
   collection: '/collections',
   option_type: '/option_types',
+  seller: '/sellers',
 } as const satisfies Record<Exclude<CustomFieldOwnerType, string & {}>, string>
 
 export class AdminClient {
@@ -3448,6 +3464,8 @@ export class AdminClient {
      */
     settle: (id: string, options?: RequestOptions): Promise<{ data: SellerPayout[] }> =>
       this.request<{ data: SellerPayout[] }>('POST', `/sellers/${id}/payouts`, options),
+
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.seller),
   }
 
   // ============================================
@@ -4741,6 +4759,38 @@ export class AdminClient {
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.customer),
   }
 
+  /** The consents customers gave or withdrew — evidence of what each one agreed to and when. */
+  readonly consentRecords = {
+    list: (
+      params?: ListParams<ConsentRecordFilters, ConsentRecordSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ConsentRecord>> =>
+      this.request<PaginatedResponse<ConsentRecord>>('GET', '/consent_records', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+  }
+
+  /** Requests customers made to export (`access`) or erase (`erasure`) their personal data. */
+  readonly dataRequests = {
+    list: (
+      params?: ListParams<DataRequestFilters, DataRequestSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DataRequest>> =>
+      this.request<PaginatedResponse<DataRequest>>('GET', '/data_requests', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    /**
+     * Records a request the customer made to the merchant directly and starts
+     * answering it. A request of the same kind already in progress is returned
+     * instead of a second one.
+     */
+    create: (params: DataRequestCreateParams, options?: RequestOptions): Promise<DataRequest> =>
+      this.request<DataRequest>('POST', '/data_requests', { ...options, body: params }),
+  }
+
   // ============================================
   // Categories
   // ============================================
@@ -5489,6 +5539,26 @@ export class AdminClient {
   }
 
   // ============================================
+  // Stock Reservations
+  // ============================================
+
+  /**
+   * Stock held for orders being checked out, so it cannot be sold twice
+   * before they complete or the hold expires. Read-only: holds are placed and
+   * released by checkout.
+   */
+  readonly stockReservations = {
+    list: (
+      params?: ListParams<StockReservationFilters, StockReservationSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<StockReservation>> =>
+      this.request<PaginatedResponse<StockReservation>>('GET', '/stock_reservations', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+  }
+
+  // ============================================
   // Stock Transfers
   // ============================================
 
@@ -5913,6 +5983,98 @@ export class AdminClient {
   // ============================================
   // API Keys (publishable + secret)
   // ============================================
+
+  /**
+   * OAuth 2.1 consent, for the screen a merchant approves when an agent or an
+   * app asks for access to the store.
+   *
+   * `authorization` describes what is being asked for; `approve` and `deny`
+   * both answer with the `redirect_uri` the browser should then be sent to.
+   * These require a signed-in admin: a secret key authenticates but is not a
+   * person, so it can never grant authority on someone's behalf.
+   */
+  readonly oauth = {
+    authorization: (
+      params: OauthAuthorizationParams,
+      options?: RequestOptions,
+    ): Promise<OauthConsentRequest> =>
+      this.request<OauthConsentRequest>('GET', '/oauth/authorize', {
+        ...options,
+        // The authorization request is a flat set of strings by construction,
+        // so it travels as query params untouched — no Ransack wrapping, and
+        // nothing re-derived on the way.
+        params: { ...params } as Record<string, string | undefined>,
+      }),
+
+    approve: (params: OauthAuthorizationParams, options?: RequestOptions): Promise<OauthRedirect> =>
+      this.request<OauthRedirect>('POST', '/oauth/authorize', { ...options, body: params }),
+
+    deny: (params: OauthAuthorizationParams, options?: RequestOptions): Promise<OauthRedirect> =>
+      this.request<OauthRedirect>('DELETE', '/oauth/authorize', { ...options, body: params }),
+
+    /** The OAuth clients registered against this store. */
+    applications: {
+      list: (
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OauthApplication>> =>
+        this.request<PaginatedResponse<OauthApplication>>('GET', '/oauth/applications', {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      create: (
+        params: { name: string; redirect_uri: string },
+        options?: RequestOptions,
+      ): Promise<OauthApplication> =>
+        this.request<OauthApplication>('POST', '/oauth/applications', {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        id: string,
+        params: Partial<{ name: string; redirect_uri: string }>,
+        options?: RequestOptions,
+      ): Promise<OauthApplication> =>
+        this.request<OauthApplication>('PATCH', `/oauth/applications/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Removes the registration, and every grant and token with it. */
+      delete: (id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/oauth/applications/${id}`, options ?? {}),
+
+      /**
+       * The live access a connected client holds, one entry per person who
+       * connected it. A store registers a client once and everyone connects
+       * to that same registration, so this is who is actually connected.
+       */
+      tokens: {
+        list: (
+          applicationId: string,
+          params?: ListParams,
+          options?: RequestOptions,
+        ): Promise<PaginatedResponse<OauthAccessToken>> =>
+          this.request<PaginatedResponse<OauthAccessToken>>(
+            'GET',
+            `/oauth/applications/${applicationId}/tokens`,
+            { ...(options ?? {}), params: params ? transformListParams(params) : undefined },
+          ),
+
+        /**
+         * Revokes one person's access, leaving their colleagues connected.
+         */
+        delete: (applicationId: string, id: string, options?: RequestOptions): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/oauth/applications/${applicationId}/tokens/${id}`,
+            options ?? {},
+          ),
+      },
+    },
+  }
 
   readonly apiKeys = {
     list: (

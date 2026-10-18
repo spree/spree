@@ -134,6 +134,8 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
       DESC
       admin_scope :write, :stock
 
+      admin_sdk_example 'stock-levels/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Stock level ID'

@@ -19,6 +19,8 @@ RSpec.describe 'Admin Customer Tax Identifiers API', type: :request, swagger_doc
       description "Returns the customer's own tax registrations, one per kind."
       admin_scope :read, :customers
 
+      admin_sdk_example 'customer-tax-identifiers/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :customer_id, in: :path, type: :string, required: true
@@ -48,6 +50,8 @@ RSpec.describe 'Admin Customer Tax Identifiers API', type: :request, swagger_doc
       security [api_key: [], bearer_auth: []]
       description 'Corrects a registration number. A changed number is checked again before it counts as verified.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'customer-tax-identifiers/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

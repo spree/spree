@@ -146,11 +146,8 @@ describe Spree::Gateway, type: :model do
   end
 
   describe '#gateway_dashboard_payment_url' do
-    let(:payment_method) { create(:credit_card_payment_method) }
-    let(:payment) { create(:payment, payment_method: payment_method, transaction_id: '123') }
-
     it 'returns nil' do
-      expect(payment_method.gateway_dashboard_payment_url(payment)).to be_nil
+      expect(TestGateway.new.gateway_dashboard_payment_url(build(:payment, transaction_id: '123'))).to be_nil
     end
   end
 end

@@ -25,6 +25,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       description 'Returns CSV imports queued or completed for the current store.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
 
+      admin_sdk_example 'imports/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       filter_parameters_for
@@ -57,6 +59,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
         `completed_mapping`/`processing`; terminal statuses are `completed` and `failed`.
       MD
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
+
+      admin_sdk_example 'imports/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -98,6 +102,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
                   'custom field columns available for the model.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
 
+      admin_sdk_example 'imports/template'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :type, in: :query, type: :string, required: true,
@@ -125,6 +131,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
                   'sample data `rake spree:load_sample_data` uses, pinned to the installed ' \
                   'Spree version. Returns 404 for a type that ships no example file.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
+
+      admin_sdk_example 'imports/example'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -156,6 +164,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
                   'present while `status` is `mapping`.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
 
+      admin_sdk_example 'imports/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -177,6 +187,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       description 'Removes the import, its rows and the uploaded file. Returns 422 while ' \
                   'the import is being processed.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
+
+      admin_sdk_example 'imports/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -201,6 +213,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
                   'imported. JWT/API-key protected; SPA clients fetch it with the Authorization ' \
                   'header and trigger the browser download via a Blob URL.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
+
+      admin_sdk_example 'imports/download'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -238,6 +252,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       MD
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
 
+      admin_sdk_example 'imports/complete-mapping'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -273,6 +289,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
                   'when the import is not `completed` or has no failed rows.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
 
+      admin_sdk_example 'imports/retry-failed-rows'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -304,6 +322,8 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
                   '`q[status_eq]=failed` to list only rows that could not be imported; ' \
                   'each row carries the raw CSV `data` and its `validation_errors`.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
+
+      admin_sdk_example 'imports/rows-list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

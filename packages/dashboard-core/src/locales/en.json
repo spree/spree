@@ -183,7 +183,9 @@
       "searching": "Searching…",
       "select_placeholder": "Select…",
       "unsaved_changes": "You have unsaved changes.",
-      "yes": "Yes"
+      "yes": "Yes",
+      "done": "Done",
+      "error": "Something went wrong."
     },
     "components": {
       "address_block": {

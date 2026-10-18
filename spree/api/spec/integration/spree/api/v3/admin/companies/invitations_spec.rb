@@ -19,6 +19,8 @@ RSpec.describe 'Admin Company Invitations API', type: :request, swagger_doc: 'ap
       description 'Returns the invitations into this business that are still waiting to be accepted.'
       admin_scope :read, :customers
 
+      admin_sdk_example 'companies/invitations/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :company_id, in: :path, type: :string, required: true

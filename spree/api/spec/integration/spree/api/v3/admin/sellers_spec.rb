@@ -330,6 +330,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
       DESC
       admin_scope :write, :sellers
 
+      admin_sdk_example 'sellers/reopen-onboarding'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       request_body_for
@@ -390,6 +392,60 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/admin/sellers/{id}/reopen_onboarding' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
+
+    patch 'Send a seller back to onboarding' do
+      tags 'Sellers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Hands an application back to the seller to finish, rather than
+        approving or rejecting it. Only a seller whose application is ready
+        for review can be sent back, and the note says what is missing.
+      DESC
+      admin_scope :write, :sellers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, required: false, schema: {
+        type: :object,
+        properties: {
+          note: { type: :string, description: 'What the seller still has to supply',
+                  example: 'Your bank details do not match the registered business name.' }
+        }
+      }
+
+      response '200', 'seller back in onboarding' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { seller.prefixed_id }
+        let(:body) { { note: 'Your bank details do not match the registered business name.' } }
+
+        before { seller.update!(status: 'ready_for_review') }
+
+        schema '$ref' => '#/components/schemas/Seller'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['status']).to eq('onboarding')
+        end
+      end
+
+      response '422', 'the seller is not awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { seller.prefixed_id }
+        let(:body) { {} }
+
+        before { seller.update!(status: 'approved') }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/sellers/{id}/reject' do
     parameter name: :id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
 
@@ -442,6 +498,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
         Computed from the ledger rather than stored, so the rows carry no id.
       DESC
       admin_scope :read, :payouts
+
+      admin_sdk_example 'sellers/balances'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -503,6 +561,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
       DESC
       admin_scope :write, :payouts
 
+      admin_sdk_example 'sellers/settle'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 
@@ -548,6 +608,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
       description 'What this seller submitted against the marketplace requirements, with the review decision on each.'
       admin_scope :read, :sellers
 
+      admin_sdk_example 'sellers/requirement-submissions/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
@@ -579,6 +641,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
         submits on the seller's behalf: this endpoint only waives.
       DESC
       admin_scope :write, :sellers
+
+      admin_sdk_example 'sellers/requirement-submissions/waive'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -617,6 +681,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
       security [api_key: [], bearer_auth: []]
       description 'Marks what the seller submitted as meeting the requirement.'
       admin_scope :write, :sellers
+
+      admin_sdk_example 'sellers/requirement-submissions/accept'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -657,6 +723,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
       DESC
       admin_scope :write, :sellers
 
+      admin_sdk_example 'sellers/requirement-submissions/reject'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       request_body_for(required: false)
@@ -684,6 +752,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
         reversals. Read-only, since fulfilment and refunds write it.
       DESC
       admin_scope :read, :payouts
+
+      admin_sdk_example 'seller-transfers/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -717,6 +787,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
         still owed; `completed` ones reached the seller.
       DESC
       admin_scope :read, :payouts
+
+      admin_sdk_example 'seller-payouts/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -761,6 +833,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
         is safe.
       DESC
       admin_scope :write, :payouts
+
+      admin_sdk_example 'seller-payouts/complete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

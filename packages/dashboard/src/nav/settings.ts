@@ -1,5 +1,6 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
+  BotIcon,
   Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
@@ -105,6 +106,18 @@ settingsNav.add({
   group: 'store',
   position: 250,
   subject: Subject.Policy,
+})
+
+settingsNav.add({
+  key: 'settings.ai-agents',
+  labelKey: 'admin.settings_nav.items.ai_agents',
+  descriptionKey: 'admin.settings_nav.descriptions.ai_agents',
+  keywords: ['oauth', 'agents', 'mcp', 'claude', 'assistant', 'integrations', 'revoke'],
+  path: '/ai-agents',
+  icon: BotIcon,
+  group: 'store',
+  position: 260,
+  subject: Subject.OauthApplication,
 })
 
 settingsNav.add({
@@ -342,6 +355,17 @@ settingsNav.add({
   group: 'developer',
   position: 100,
   subject: Subject.ApiKey,
+})
+
+settingsNav.add({
+  key: 'settings.oauth_clients',
+  labelKey: 'admin.settings_nav.items.oauth_clients',
+  descriptionKey: 'admin.settings_nav.descriptions.oauth_clients',
+  path: '/oauth-clients',
+  icon: KeyRoundIcon,
+  group: 'developer',
+  position: 151,
+  subject: Subject.OauthApplication,
 })
 
 settingsNav.add({

@@ -8,6 +8,7 @@ interface PromptFlags {
   noSellerDashboard?: boolean
   noDashboard?: boolean
   noAgentSkills?: boolean
+  noDocsMcp?: boolean
   noStart?: boolean
   packageManager?: PackageManager
 }
@@ -69,21 +70,24 @@ export async function runPrompts(
     sellerDashboard = sellerResult
   }
 
-  let agentSkills: boolean
-  if (flags.noAgentSkills !== undefined) {
-    agentSkills = !flags.noAgentSkills
-  } else {
-    const skillsResult = await p.confirm({
-      message: `Install Spree agent skills?\n${pc.dim('Teaches AI coding agents (Claude Code, Codex, Cursor, Copilot and others) how to work with Spree')}`,
+  // One question covers both agent conveniences. Passing either flag means the
+  // run is scripted, so the other half takes its default instead of asking —
+  // scripts that only pass --no-agent-skills must not start blocking on input.
+  let agentSetup = true
+  if (flags.noAgentSkills === undefined && flags.noDocsMcp === undefined) {
+    const agentResult = await p.confirm({
+      message: `Set up AI coding agents?\n${pc.dim('Installs the Spree agent skills (Claude Code, Codex, Cursor, Copilot and others) and connects Claude Code, Cursor and VS Code to the Spree docs')}`,
       initialValue: true,
     })
 
-    if (p.isCancel(skillsResult)) {
+    if (p.isCancel(agentResult)) {
       p.cancel('Setup cancelled.')
       process.exit(0)
     }
-    agentSkills = skillsResult
+    agentSetup = agentResult
   }
+  const agentSkills = flags.noAgentSkills === undefined ? agentSetup : !flags.noAgentSkills
+  const docsMcp = flags.noDocsMcp === undefined ? agentSetup : !flags.noDocsMcp
 
   let start: boolean
   if (flags.noStart !== undefined) {
@@ -107,6 +111,7 @@ export async function runPrompts(
     dashboard,
     sellerDashboard,
     agentSkills,
+    docsMcp,
     start,
     packageManager: flags.packageManager ?? 'npm',
   }

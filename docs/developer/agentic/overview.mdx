@@ -19,8 +19,11 @@ Spree ships first-class tooling for AI-assisted development. Whether you use Cla
   <Card title="Agent Skills" icon="graduation-cap" href="/developer/agentic/agent-skills">
     Skills teaching agents Spree's conventions, customization patterns, and upgrade flows — installable into 60+ agent tools, plus a Claude Code plugin with slash commands and safety hooks.
   </Card>
-  <Card title="Docs MCP Server" icon="plug" href="/developer/agentic/mcp">
+  <Card title="Docs MCP Server" icon="plug" href="/developer/agentic/docs-mcp">
     Connect your agent to the Spree documentation MCP server to search and read the latest docs while building.
+  </Card>
+  <Card title="Admin MCP Server" icon="store" href="/developer/mcp/overview">
+    Let an agent run your store — merchandise the catalog, answer reporting questions, manage orders and setup — under the same permissions as the Admin API.
   </Card>
   <Card title="LLM-Ready Docs" icon="file-text" href="/developer/agentic/llm-docs">
     llms.txt, per-page Markdown, and the `@spree/docs` npm package for fast local reads.
@@ -33,8 +36,8 @@ Spree ships first-class tooling for AI-assisted development. Whether you use Cla
 ## A typical agentic workflow
 
 1. **Scaffold** a project with `npx create-spree-app@latest my-store` — it generates an `AGENTS.md`, installs `@spree/docs` for local reference, and wires up the CLI.
-2. **Keep the agent skills** the scaffold offers to install (or add them later with `npx skills add spree/agent-skills`) so your agent knows the decision tree for customizations (subscriber vs decorator vs dependency injection vs generator) before it writes a line of code.
-3. **Connect the docs MCP server** so questions the skills don't cover get answered from the live documentation.
+2. **Say yes to "Set up AI coding agents?"** — the scaffold installs the agent skills, so your agent knows the decision tree for customizations (subscriber vs decorator vs dependency injection vs generator) before it writes a line of code, and connects it to the docs MCP server, so questions the skills don't cover get answered from the live documentation. In an existing project, run `spree add ai` to get both.
+3. **Commit the agent files** (`.agents/skills/`, `.mcp.json`, `.cursor/mcp.json`, `.vscode/mcp.json`) so everyone on the team works with the same setup.
 4. **Let the agent work** — generate an API resource (`spree generate api_resource Brand name:string`), customize checkout, integrate a payment provider, or run an upgrade with `spree upgrade`.
 
 <Tip>

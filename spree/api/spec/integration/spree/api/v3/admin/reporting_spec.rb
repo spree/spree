@@ -21,6 +21,8 @@ RSpec.describe 'Admin Reporting API', type: :request, swagger_doc: 'api-referenc
       DESC
       admin_scope :read, :reports
 
+      admin_sdk_example 'reporting/query'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       request_body_for

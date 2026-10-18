@@ -4,5 +4,5 @@ export type PurchaseOrderItemParams = {
   variant_id: string
   quantity_ordered: number
   /** What the merchant agreed to pay per unit. */
-  unit_cost?: string
+  unit_cost: string
 }

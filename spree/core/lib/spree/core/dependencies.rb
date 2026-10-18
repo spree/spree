@@ -70,6 +70,11 @@ module Spree
         order_fee_create_service: 'Spree::Orders::Fees::Create',
         order_fee_update_service: 'Spree::Orders::Fees::Update',
         order_fee_destroy_service: 'Spree::Orders::Fees::Destroy',
+        # A workflow since 6.0: its `perform` signature is what the agent
+        # tools derive their schema from, which a service's opaque `params`
+        # hash could not provide. The `_service` key still resolves it, so a
+        # host app that overrode or called it keeps working.
+        order_create_workflow: 'Spree::Orders::Create',
         order_create_service: 'Spree::Orders::Create',
         order_create_from_cart_service: 'Spree::Orders::CreateFromCart',
         order_update_service: 'Spree::Orders::Update',
@@ -98,6 +103,10 @@ module Spree
 
         # inventory operations
         stock_level_correct_service: 'Spree::StockLevels::Correct',
+        # A workflow since 6.0: its signature is what the agent tool derives
+        # its schema from, which `Spree::ServiceModule` could not provide.
+        # The `_service` key still resolves it.
+        stock_level_bulk_upsert_workflow: 'Spree::StockLevels::BulkUpsert',
         stock_level_bulk_upsert_service: 'Spree::StockLevels::BulkUpsert',
         stock_level_recount_service: 'Spree::StockLevels::Recount',
         stock_transfer_create_workflow: 'Spree::StockTransfers::Create',
