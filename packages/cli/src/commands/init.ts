@@ -4,7 +4,7 @@ import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execa, execaCommand } from 'execa'
+import { execa } from 'execa'
 import pc from 'picocolors'
 import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
@@ -400,10 +400,18 @@ function resolveAdminCredentials(flags: { adminEmail?: string; adminPassword?: s
 
 export async function openBrowser(url: string): Promise<void> {
   const os = platform()
-  const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
+  // `start` is built into cmd.exe rather than a program of its own; its first
+  // quoted argument is a window title. An empty argument reaches cmd.exe as
+  // `""`, which is that empty title.
+  const [cmd, args] =
+    os === 'darwin'
+      ? ['open', [url]]
+      : os === 'win32'
+        ? ['cmd', ['/c', 'start', '', url]]
+        : ['xdg-open', [url]]
 
   try {
-    await execaCommand(`${cmd} ${url}`, { stdio: 'ignore' })
+    await execa(cmd, args, { stdio: 'ignore' })
   } catch {
     // best-effort
   }

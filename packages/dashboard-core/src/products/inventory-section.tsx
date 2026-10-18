@@ -2,13 +2,13 @@ import type { ProductFormValues, StockLevelFormValues } from '@spree/dashboard-c
 import { useStockLocations } from '@spree/dashboard-core'
 import {
   DataGrid,
+  type DataGridColumn,
   editableRowIndex,
   NumberCell,
   ReadOnlyCell,
   SwitchCell,
 } from '@spree/dashboard-ui'
 import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
-import type { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -135,7 +135,7 @@ export function InventorySection({ form, stockLocationHref }: InventorySectionPr
     [form],
   )
 
-  const columns = useMemo<ColumnDef<InventoryRow>[]>(
+  const columns = useMemo<DataGridColumn<InventoryRow>[]>(
     () => [
       {
         id: 'location',

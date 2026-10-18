@@ -6,7 +6,7 @@
 
 **Consequences:** Merchants on Avalara change each seeded code to Avalara's. Placed orders keep the code and name they were taxed with. A `spree:upgrade:tax_exemption_reasons` step seeds existing stores, saves existing codes in capitals, and links certificates recorded before reasons existed to the reason matching their old `reason_code`, which the migration keeps (nullable) for that purpose; until it runs, tax still reads an unlinked certificate's old code. The dashboard offers an engine's own codes only once a market uses that engine.
 
-**Plan:** `6.0-avalara-provider-gem.md`.
+**Plan:** `6.0-tax-provider.md`.
 
 ## 2026-10-16: Tax exemption reasons are a store-owned model
 
@@ -16,7 +16,7 @@
 
 **Consequences:** Seeds give each store six neutral reasons; the Avalara upgrade task adds one per Avalara entity use code. A provider whose engine reads reason codes adds `exemption_reason_codes` rather than registering a list.
 
-**Plan:** `6.0-avalara-provider-gem.md`.
+**Plan:** `6.0-tax-provider.md`.
 
 ## 2026-10-10: One upload endpoint, store-owned blobs, and `<slot>_signed_id` everywhere
 

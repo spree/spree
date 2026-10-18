@@ -5050,7 +5050,7 @@
       },
       "never_expires": "No vence",
       "no_document": "Sin documento adjunto",
-      "no_reasons": "Aún no hay motivos de exención. Añádelos en Configuración → Motivos.",
+      "no_reasons": "Aún no hay motivos de exención. Añádelos en Configuración → Impuestos → Motivos de exención.",
       "revoke_action": "Revocar",
       "revoke_confirm": {
         "message": "El certificado {{number}} deja de aplicar a pedidos nuevos. Queda archivado como registro.",

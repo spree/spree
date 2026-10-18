@@ -1,8 +1,14 @@
-import type { ColumnDef } from '@tanstack/react-table'
 import { PlusIcon, XIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { Button } from '../ui/button'
-import { DataGrid, DecimalCell, editableRowIndex, MoneyCell, ReadOnlyCell } from './data-grid'
+import {
+  DataGrid,
+  type DataGridColumn,
+  DecimalCell,
+  editableRowIndex,
+  MoneyCell,
+  ReadOnlyCell,
+} from './data-grid'
 import { SearchInput } from './search-input'
 
 export interface BulkPriceRow {
@@ -131,7 +137,7 @@ export function BulkPriceTable({
   isLoading,
   error,
 }: BulkPriceTableProps) {
-  const columns = useMemo<ColumnDef<BulkPriceRow>[]>(
+  const columns = useMemo<DataGridColumn<BulkPriceRow>[]>(
     () => [
       {
         id: 'variant',
@@ -203,7 +209,7 @@ export function BulkPriceTable({
                   />
                 )
               },
-            } satisfies ColumnDef<BulkPriceRow>,
+            } satisfies DataGridColumn<BulkPriceRow>,
           ]
         : []),
       {
@@ -291,7 +297,7 @@ export function BulkPriceTable({
                   </Button>
                 )
               },
-            } satisfies ColumnDef<BulkPriceRow>,
+            } satisfies DataGridColumn<BulkPriceRow>,
           ]
         : []),
     ],

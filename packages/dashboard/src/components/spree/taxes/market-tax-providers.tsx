@@ -30,15 +30,16 @@ interface ProviderMarkets {
 /**
  * The store's markets grouped by the tax engine each one uses. A market that
  * names no engine runs on the installation default. Empty for staff who
- * cannot read markets.
+ * cannot read markets. `isLoading` tells a store still loading apart from one
+ * whose markets settled on no engine.
  */
-export function useMarketTaxProviders(): ProviderMarkets[] {
+export function useMarketTaxProviders(): { groups: ProviderMarkets[]; isLoading: boolean } {
   const { permissions } = usePermissions()
   const canReadMarkets = permissions.can('read', Subject.Market)
-  const { markets } = useAllMarkets({ enabled: canReadMarkets })
-  const { data } = useTaxProviders()
+  const { markets, isLoading: marketsLoading } = useAllMarkets({ enabled: canReadMarkets })
+  const { data, isLoading: providersLoading } = useTaxProviders()
 
-  return useMemo(() => {
+  const groups = useMemo(() => {
     if (!canReadMarkets) return []
 
     const providers = data?.data ?? []
@@ -58,13 +59,15 @@ export function useMarketTaxProviders(): ProviderMarkets[] {
 
     return [...groups.values()]
   }, [canReadMarkets, markets, data])
+
+  return { groups, isLoading: providersLoading || (canReadMarkets && marketsLoading) }
 }
 
 /** Which tax engine each market uses, with a link to change it. */
 export function TaxProviderSummary() {
   const { t } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId: string }
-  const groups = useMarketTaxProviders()
+  const { groups } = useMarketTaxProviders()
 
   if (groups.length === 0) return null
 
@@ -102,7 +105,7 @@ export function TaxProviderSummary() {
  */
 export function TaxRatesUsageNote() {
   const { t } = useTranslation()
-  const groups = useMarketTaxProviders()
+  const { groups } = useMarketTaxProviders()
 
   const external = groups.filter((group) => group.providerId !== INTERNAL_PROVIDER)
   if (external.length === 0) return null

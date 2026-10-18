@@ -5641,7 +5641,7 @@
       },
       "never_expires": "Läuft nicht ab",
       "no_document": "Kein Dokument hinterlegt",
-      "no_reasons": "Noch keine Befreiungsgründe. Fügen Sie sie unter Einstellungen → Gründe hinzu.",
+      "no_reasons": "Noch keine Befreiungsgründe. Fügen Sie sie unter Einstellungen → Steuern → Befreiungsgründe hinzu.",
       "revoke_action": "Widerrufen",
       "revoke_confirm": {
         "message": "Bescheinigung {{number}} gilt dann nicht mehr für neue Bestellungen. Sie bleibt als Nachweis erhalten.",

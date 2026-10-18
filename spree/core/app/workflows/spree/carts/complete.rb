@@ -80,8 +80,14 @@ module Spree
 
         # A draft leaves before FINALIZE, so the document that phase files is
         # filed here — otherwise it charged tax that never reached the return.
-        # Never split, so it is the only order to file.
-        @order = result.value
+        # A draft holding several sellers' goods divides like a checkout, and
+        # each of its orders is a sale of its own to file.
+        if result.value.is_a?(Spree::OrderGroup)
+          @order_group = result.value
+          @order = order_group.orders.order(:id).first
+        else
+          @order = result.value
+        end
         external_step :commit_tax
 
         halt!(result.value)

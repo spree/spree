@@ -47,9 +47,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
-    "turbo": "^2.9.14",
-    "@changesets/cli": "^2.31.0",
-    "@changesets/changelog-github": "^0.7.0"
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3",
+    "@typescript/typescript6": "^6.0.2",
+    "turbo": "^2.11.8"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {

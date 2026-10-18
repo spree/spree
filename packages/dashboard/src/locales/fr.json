@@ -5641,7 +5641,7 @@
       },
       "never_expires": "Sans expiration",
       "no_document": "Aucun document joint",
-      "no_reasons": "Aucun motif d'exonération. Ajoutez-en dans Paramètres → Motifs.",
+      "no_reasons": "Aucun motif d'exonération. Ajoutez-en dans Paramètres → Taxes → Motifs d’exonération.",
       "revoke_action": "Révoquer",
       "revoke_confirm": {
         "message": "L'attestation {{number}} ne s'appliquera plus aux nouvelles commandes. Elle reste conservée comme justificatif.",

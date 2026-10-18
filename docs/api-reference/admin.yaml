@@ -27970,7 +27970,8 @@ paths:
       description: |-
         Renames a tax exemption reason or retires it. Deactivating keeps it on the
         certificates that already record it while removing it from the pickers. The
-        code is fixed once a certificate records it.
+        code can change at any time, and every certificate holding the reason sends
+        the new code to the tax provider from then on.
 
 
         **Required scope:** `write_settings` (for API-key authentication).
@@ -28066,6 +28067,14 @@ paths:
       responses:
         '204':
           description: tax exemption reason deleted
+        '422':
+          description: tax exemption reason is in use
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Tax exemption reason cannot be deleted
   "/api/v3/admin/promotions/{promotion_id}/coupon_codes":
     parameters:
     - name: promotion_id

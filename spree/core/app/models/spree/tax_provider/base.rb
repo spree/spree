@@ -100,7 +100,7 @@ module Spree
       # @return [void] the written rows are the output
       # @raise [Spree::Tax::ProviderUnavailable] when the engine could not
       #   answer — refused, timed out, unreachable. Raise this (or a subclass,
-      #   as `SpreeAvalara::RequestError` does) rather than a bare error: core
+      #   as a provider's own request error may) rather than a bare error: core
       #   turns it into a refusal the customer can retry, where anything else
       #   reaches them as a broken checkout. A provider a merchant switched off
       #   is not this — it has no opinion and writes no rows.

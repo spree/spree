@@ -5629,7 +5629,7 @@
       },
       "never_expires": "长期有效",
       "no_document": "未附文件",
-      "no_reasons": "尚无免税原因。请在 设置 → 原因 中添加。",
+      "no_reasons": "尚无免税原因。请在 设置 → 税费 → 免税原因 中添加。",
       "revoke_action": "撤销",
       "revoke_confirm": {
         "message": "证明 {{number}} 将不再适用于新订单，但会作为记录保留。",
