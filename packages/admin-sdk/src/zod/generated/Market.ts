@@ -16,6 +16,6 @@ export const MarketSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   tax_provider: z.string().nullable(),
-}) as unknown as z.ZodType<Market>;
+}) as unknown as z.ZodObject<{ [K in keyof Market]-?: z.ZodType<Market[K]> }>;
 
 export type { Market };

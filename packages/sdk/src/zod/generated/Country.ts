@@ -12,6 +12,6 @@ export const CountrySchema = z.object({
   zipcode_required: z.boolean(),
   states: z.array(StateSchema).optional(),
   get market() { return MarketSchema.nullable().optional(); },
-}) as unknown as z.ZodType<Country>;
+}) as unknown as z.ZodObject<{ [K in keyof Country]-?: z.ZodType<Country[K]> }>;
 
 export type { Country };

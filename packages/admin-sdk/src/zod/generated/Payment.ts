@@ -36,6 +36,6 @@ export const PaymentSchema = z.object({
   get order() { return OrderSchema.optional(); },
   get refunds() { return z.array(RefundSchema).optional(); },
   payment_splits: z.array(PaymentSplitSchema).optional(),
-}) as unknown as z.ZodType<Payment>;
+}) as unknown as z.ZodObject<{ [K in keyof Payment]-?: z.ZodType<Payment[K]> }>;
 
 export type { Payment };

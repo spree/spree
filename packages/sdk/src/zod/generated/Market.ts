@@ -14,6 +14,6 @@ export const MarketSchema = z.object({
   country_isos: z.array(z.string()),
   supported_locales: z.array(z.string()),
   get countries() { return z.array(CountrySchema).optional(); },
-}) as unknown as z.ZodType<Market>;
+}) as unknown as z.ZodObject<{ [K in keyof Market]-?: z.ZodType<Market[K]> }>;
 
 export type { Market };

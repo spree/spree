@@ -20,6 +20,6 @@ export const RefundSchema = z.object({
   refunder_type: z.string().nullable(),
   refunder: ActorSchema.optional(),
   get payment() { return PaymentSchema.optional(); },
-}) as unknown as z.ZodType<Refund>;
+}) as unknown as z.ZodObject<{ [K in keyof Refund]-?: z.ZodType<Refund[K]> }>;
 
 export type { Refund };

@@ -27,6 +27,6 @@ export const StockLevelSchema = z.object({
   available_count: z.number(),
   stock_location: StockLocationSchema.optional(),
   get variant() { return VariantSchema.optional(); },
-}) as unknown as z.ZodType<StockLevel>;
+}) as unknown as z.ZodObject<{ [K in keyof StockLevel]-?: z.ZodType<StockLevel[K]> }>;
 
 export type { StockLevel };

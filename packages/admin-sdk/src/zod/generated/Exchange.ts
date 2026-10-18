@@ -32,6 +32,6 @@ export const ExchangeSchema = z.object({
   get order() { return OrderSchema.optional(); },
   stock_location: StockLocationSchema.optional(),
   get refunds() { return z.array(RefundSchema).optional(); },
-}) as unknown as z.ZodType<Exchange>;
+}) as unknown as z.ZodObject<{ [K in keyof Exchange]-?: z.ZodType<Exchange[K]> }>;
 
 export type { Exchange };

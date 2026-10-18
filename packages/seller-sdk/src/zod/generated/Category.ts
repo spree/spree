@@ -25,6 +25,6 @@ export const CategorySchema = z.object({
   get children() { return z.array(CategorySchema).optional(); },
   get ancestors() { return z.array(CategorySchema).optional(); },
   custom_fields: z.array(CustomFieldSchema).optional(),
-}) as unknown as z.ZodType<Category>;
+}) as unknown as z.ZodObject<{ [K in keyof Category]-?: z.ZodType<Category[K]> }>;
 
 export type { Category };

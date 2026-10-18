@@ -20,6 +20,6 @@ export const CompanySchema = z.object({
   get children() { return z.array(CompanySchema).optional(); },
   addresses: z.array(AddressSchema).optional(),
   memberships: z.array(CompanyMembershipSchema).optional(),
-}) as unknown as z.ZodType<Company>;
+}) as unknown as z.ZodObject<{ [K in keyof Company]-?: z.ZodType<Company[K]> }>;
 
 export type { Company };

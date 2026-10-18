@@ -34,6 +34,6 @@ export const CategorySchema = z.object({
   products_count: z.number(),
   created_at: z.string(),
   updated_at: z.string(),
-}) as unknown as z.ZodType<Category>;
+}) as unknown as z.ZodObject<{ [K in keyof Category]-?: z.ZodType<Category[K]> }>;
 
 export type { Category };

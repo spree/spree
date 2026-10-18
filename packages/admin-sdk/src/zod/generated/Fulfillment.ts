@@ -47,6 +47,6 @@ export const FulfillmentSchema = z.object({
   provider_generates_labels: z.boolean(),
   fulfillment_items: z.array(FulfillmentItemSchema).optional(),
   get order() { return OrderSchema.optional(); },
-}) as unknown as z.ZodType<Fulfillment>;
+}) as unknown as z.ZodObject<{ [K in keyof Fulfillment]-?: z.ZodType<Fulfillment[K]> }>;
 
 export type { Fulfillment };

@@ -15,6 +15,6 @@ export const OptionTypeSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   get option_values() { return z.array(OptionValueSchema).optional(); },
-}) as unknown as z.ZodType<OptionType>;
+}) as unknown as z.ZodObject<{ [K in keyof OptionType]-?: z.ZodType<OptionType[K]> }>;
 
 export type { OptionType };

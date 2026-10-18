@@ -67,6 +67,6 @@ export const VariantSchema = z.object({
   delivery_profile_id: z.string().nullable(),
   get prices() { return z.array(PriceSchema).optional(); },
   get stock_levels() { return z.array(StockLevelSchema).optional(); },
-}) as unknown as z.ZodType<Variant>;
+}) as unknown as z.ZodObject<{ [K in keyof Variant]-?: z.ZodType<Variant[K]> }>;
 
 export type { Variant };

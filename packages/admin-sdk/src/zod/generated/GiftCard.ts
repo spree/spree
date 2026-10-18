@@ -27,6 +27,6 @@ export const GiftCardSchema = z.object({
   created_by: AdminUserSchema.optional(),
   gift_card_batch: GiftCardBatchSchema.optional(),
   get orders() { return z.array(OrderSchema).optional(); },
-}) as unknown as z.ZodType<GiftCard>;
+}) as unknown as z.ZodObject<{ [K in keyof GiftCard]-?: z.ZodType<GiftCard[K]> }>;
 
 export type { GiftCard };

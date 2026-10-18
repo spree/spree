@@ -22,6 +22,6 @@ export const StoreCreditSchema = z.object({
   originator_id: z.string().nullable(),
   get customer() { return CustomerSchema.optional(); },
   created_by: AdminUserSchema.optional(),
-}) as unknown as z.ZodType<StoreCredit>;
+}) as unknown as z.ZodObject<{ [K in keyof StoreCredit]-?: z.ZodType<StoreCredit[K]> }>;
 
 export type { StoreCredit };

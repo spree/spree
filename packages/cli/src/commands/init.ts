@@ -400,10 +400,17 @@ function resolveAdminCredentials(flags: { adminEmail?: string; adminPassword?: s
 
 export async function openBrowser(url: string): Promise<void> {
   const os = platform()
-  const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
+  // `start` is built into cmd.exe rather than a program of its own; its first
+  // quoted argument is a window title, hence the empty one.
+  const [cmd, args] =
+    os === 'darwin'
+      ? ['open', [url]]
+      : os === 'win32'
+        ? ['cmd', ['/c', 'start', '""', url]]
+        : ['xdg-open', [url]]
 
   try {
-    await execa(cmd, [url], { stdio: 'ignore' })
+    await execa(cmd, args, { stdio: 'ignore' })
   } catch {
     // best-effort
   }

@@ -30,6 +30,6 @@ export const ClaimSchema = z.object({
   created_by: ActorSchema.optional(),
   get order() { return OrderSchema.optional(); },
   get refunds() { return z.array(RefundSchema).optional(); },
-}) as unknown as z.ZodType<Claim>;
+}) as unknown as z.ZodObject<{ [K in keyof Claim]-?: z.ZodType<Claim[K]> }>;
 
 export type { Claim };

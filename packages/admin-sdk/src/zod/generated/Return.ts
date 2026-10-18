@@ -41,6 +41,6 @@ export const ReturnSchema = z.object({
   documents: z.array(z.object({ kind: z.string(), url: z.string() })),
   labels: z.array(ShippingLabelSchema),
   deliveries: z.array(DeliverySchema),
-}) as unknown as z.ZodType<Return>;
+}) as unknown as z.ZodObject<{ [K in keyof Return]-?: z.ZodType<Return[K]> }>;
 
 export type { Return };

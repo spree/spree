@@ -42,6 +42,6 @@ export const CustomerSchema = z.object({
   get store_credits() { return z.array(StoreCreditSchema).optional(); },
   customer_group_ids: z.array(z.string()),
   get companies() { return z.array(CompanySchema).optional(); },
-}) as unknown as z.ZodType<Customer>;
+}) as unknown as z.ZodObject<{ [K in keyof Customer]-?: z.ZodType<Customer[K]> }>;
 
 export type { Customer };

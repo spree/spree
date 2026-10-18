@@ -293,8 +293,9 @@ function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>, typesImpo
 
   // Inferring a type through schemas that reference each other walks the
   // whole reference cycle, which TypeScript 7 rejects as too deep. A schema in
-  // a cycle is typed as the generated type it was built from instead, so
-  // nothing reading it infers through the cycle. It is a cast because the
+  // a cycle is typed field by field from the generated type it was built
+  // from instead, so nothing reading it infers through the cycle, and it keeps
+  // the object schema API (shape, pick, extend). It is a cast because the
   // schema accepts any string where that type lists an enum's values.
   const cyclic = cyclicTypes.has(parsed.typeName)
   const typeImport = cyclic
@@ -310,7 +311,9 @@ function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>, typesImpo
     '',
     schemaDecl,
     ...fieldLines,
-    cyclic ? `}) as unknown as z.ZodType<${parsed.typeName}>;` : '});',
+    cyclic
+      ? `}) as unknown as z.ZodObject<{ [K in keyof ${parsed.typeName}]-?: z.ZodType<${parsed.typeName}[K]> }>;`
+      : '});',
     '',
     cyclic
       ? `export type { ${parsed.typeName} };`
@@ -427,7 +430,7 @@ function generateFolder(typesDir: string, zodDir: string): void {
   for (const [, parsed] of parsedTypes) {
     fs.writeFileSync(
       path.join(zodDir, `${parsed.typeName}.ts`),
-      generateZodFile(parsed, cyclicTypes, path.relative(zodDir, typesDir)),
+      generateZodFile(parsed, cyclicTypes, path.relative(zodDir, typesDir).split(path.sep).join('/')),
       'utf-8',
     )
     generatedNames.push(parsed.typeName)

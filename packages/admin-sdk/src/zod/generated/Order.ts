@@ -112,6 +112,6 @@ export const OrderSchema = z.object({
   get exchanges() { return z.array(ExchangeSchema).optional(); },
   get claims() { return z.array(ClaimSchema).optional(); },
   freight_summary: FreightSummarySchema.nullable(),
-}) as unknown as z.ZodType<Order>;
+}) as unknown as z.ZodObject<{ [K in keyof Order]-?: z.ZodType<Order[K]> }>;
 
 export type { Order };
