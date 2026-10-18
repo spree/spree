@@ -8,6 +8,7 @@ import type {
   RefundReason as SdkRefundReason,
   ReturnReason as SdkReturnReason,
   SellerRequirement as SdkSellerRequirement,
+  TaxExemptionReason as SdkTaxExemptionReason,
 } from '@spree/admin-sdk'
 import {
   ALLOWED_ORIGIN_ATTRIBUTES,
@@ -22,6 +23,8 @@ import {
   type ReasonEntry,
   SELLER_REQUIREMENT_ATTRIBUTES,
   type SellerRequirementEntry,
+  TAX_EXEMPTION_REASON_ATTRIBUTES,
+  type TaxExemptionReasonEntry,
 } from '../schema.js'
 import type { LiveRecord, SectionName } from '../types.js'
 import { type Payload, pick, plainSection, scalarPreferences } from './section.js'
@@ -74,6 +77,19 @@ export const returnReasons = reasons('return_reasons')
 export const claimReasons = reasons('claim_reasons')
 export const refundReasons = reasons('refund_reasons')
 export const orderCancellationReasons = reasons('order_cancellation_reasons')
+
+// The code is what tax engines read, so it is the identity; names are for staff.
+export const taxExemptionReasons = plainSection<
+  TaxExemptionReasonEntry,
+  SdkTaxExemptionReason & LiveRecord
+>({
+  name: 'tax_exemption_reasons',
+  scope: 'write_settings',
+  introspectByDefault: true,
+  key: 'code',
+  attributes: TAX_EXEMPTION_REASON_ATTRIBUTES,
+  defaults: { active: true },
+})
 
 export const commissionRates = plainSection<CommissionRateEntry, CommissionRate>({
   name: 'commission_rates',

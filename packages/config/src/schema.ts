@@ -220,6 +220,7 @@ export const SELLER_ATTRIBUTES = [
   'tax_remittance',
 ] as const
 export const REASON_ATTRIBUTES = ['name', 'active'] as const
+export const TAX_EXEMPTION_REASON_ATTRIBUTES = ['code', 'name', 'active'] as const
 export const COMMISSION_RATE_ATTRIBUTES = [
   'code',
   'position',
@@ -468,6 +469,16 @@ export const claimReasonSchema = reasonSchema('claim_reasons')
 export const refundReasonSchema = reasonSchema('refund_reasons')
 export const orderCancellationReasonSchema = reasonSchema('order_cancellation_reasons')
 
+export const taxExemptionReasonSchema = z
+  .object({
+    ...specShape('tax_exemption_reasons', TAX_EXEMPTION_REASON_ATTRIBUTES),
+    code: nonEmpty.describe(
+      'What the tax engine receives for certificates holding this reason; saved in capitals.',
+    ),
+    name: nonEmpty,
+  })
+  .strict()
+
 export const commissionRateSchema = z
   .object({ ...specShape('commission_rates', COMMISSION_RATE_ATTRIBUTES), code: nonEmpty })
   .strict()
@@ -518,6 +529,7 @@ export const configSchema = z
     claim_reasons: z.array(claimReasonSchema).optional(),
     refund_reasons: z.array(refundReasonSchema).optional(),
     order_cancellation_reasons: z.array(orderCancellationReasonSchema).optional(),
+    tax_exemption_reasons: z.array(taxExemptionReasonSchema).optional(),
     commission_rates: z.array(commissionRateSchema).optional(),
     seller_requirements: z.array(sellerRequirementSchema).optional(),
     api_keys: z.array(apiKeySchema).optional(),
@@ -545,6 +557,7 @@ export type ProductEntry = z.infer<typeof productSchema>
 export type CustomerEntry = z.infer<typeof customerSchema>
 export type SellerEntry = z.infer<typeof sellerSchema>
 export type ReasonEntry = z.infer<typeof returnReasonSchema>
+export type TaxExemptionReasonEntry = z.infer<typeof taxExemptionReasonSchema>
 export type CommissionRateEntry = z.infer<typeof commissionRateSchema>
 export type SellerRequirementEntry = z.infer<typeof sellerRequirementSchema>
 export type ApiKeyEntry = z.infer<typeof apiKeySchema>

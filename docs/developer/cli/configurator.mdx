@@ -111,6 +111,7 @@ The header line points editors at the published JSON Schema, so VS Code and ever
 | `payment_methods` | `name` | `type` (for example `store_credit`) is set on create; gateway credentials are not written from the file |
 | `product_types` | `name` | `delivery_profile` by name |
 | `return_reasons`, `claim_reasons`, `refund_reasons`, `order_cancellation_reasons` | `name` | |
+| `tax_exemption_reasons` | `code` | the code a tax engine reads for certificates holding the reason; saved in capitals |
 | `commission_rates` | `code` | |
 | `seller_requirements` | `type` | one per kind, for example `accept_terms` |
 | `api_keys` | `name` | created once, never updated; the token is never written to the file, and the section cannot be pruned |
@@ -128,7 +129,7 @@ Prices are keyed by currency and stock by stock location name. A product's `vari
 
 ## Store defaults
 
-Every new store starts with the same defaults: tax categories, a wholesale channel and customer group, return, claim, refund and cancellation reasons, store credit, digital delivery, the marketplace's commission rate and seller requirements. On top of those come the defaults shaped by where the store sells from: a warehouse in its country, *Domestic* and *International* delivery zones with flat rates in its currency, store pickup, and a parcel box in its units.
+Every new store starts with the same defaults: tax categories and tax exemption reasons, a wholesale channel and customer group, return, claim, refund and cancellation reasons, store credit, digital delivery, the marketplace's commission rate and seller requirements. On top of those come the defaults shaped by where the store sells from: a warehouse in its country, *Domestic* and *International* delivery zones with flat rates in its currency, store pickup, and a parcel box in its units.
 
 They are configuration files like any other, shipped with `@spree/config`, and deployed for you:
 
