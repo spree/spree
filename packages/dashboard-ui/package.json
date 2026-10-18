@@ -43,7 +43,6 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@tanstack/react-hotkeys": "^0.10.0",
     "@tanstack/react-router": "^1.169.2",
     "i18next": "^26.2.0",
     "react": "^19.2.6",
@@ -68,8 +67,11 @@
     "@dnd-kit/utilities": "3.2.2",
     "@fontsource-variable/geist": "5.2.8",
     "@fontsource-variable/geist-mono": "5.2.7",
+    "@tanstack/react-hotkeys": "^0.10.0",
     "@tanstack/react-table": "8.21.3",
     "@tiptap/core": "3.31.3",
+    "@tiptap/extension-bubble-menu": "3.31.3",
+    "@tiptap/extension-floating-menu": "3.31.3",
     "@tiptap/extension-image": "3.31.3",
     "@tiptap/extension-link": "3.31.3",
     "@tiptap/extension-placeholder": "3.31.3",
