@@ -23,6 +23,7 @@ import {
   refundReasons,
   returnReasons,
   sellerRequirements,
+  taxExemptionReasons,
 } from './setup.js'
 
 /**
@@ -55,6 +56,7 @@ export const ORDERED_SECTIONS: AnySection[] = [
   claimReasons,
   refundReasons,
   orderCancellationReasons,
+  taxExemptionReasons,
   commissionRates,
   sellerRequirements,
   apiKeys,
