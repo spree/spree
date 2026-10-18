@@ -29,7 +29,7 @@ export async function dockerCompose(args: string[], projectDir: string, options?
 // remove a race, we never mask a failure.
 export async function primeBundleVolume(
   projectDir: string,
-  options?: { stdio?: ExecaOptions['stdio'] },
+  options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
 ): Promise<void> {
   try {
     await dockerCompose(['up', '-d', '--no-deps', 'web'], projectDir, {
@@ -199,7 +199,7 @@ export async function dockerComposeRun(
 // carries compose's output on the thrown error.
 export async function prepareDatabase(
   projectDir: string,
-  options?: { stdio?: ExecaOptions['stdio'] },
+  options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
 ): Promise<void> {
   const stdio = options?.stdio ?? 'pipe'
   await dockerCompose(['up', '-d', '--wait', 'postgres'], projectDir, { stdio })

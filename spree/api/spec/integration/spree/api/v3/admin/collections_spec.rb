@@ -16,6 +16,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Returns a paginated list of the store\'s collections.'
       admin_scope :read, :collections
 
+      admin_sdk_example 'collections/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -44,6 +46,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Creates a manual or automatic (rule-based) collection. For automatic collections, send the full desired rule set under `rules`.'
       admin_scope :write, :collections
+
+      admin_sdk_example 'collections/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -91,6 +95,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Returns a single collection by ID, including its rules.'
       admin_scope :read, :collections
 
+      admin_sdk_example 'collections/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -128,6 +134,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Updates a collection. Send `position` to reorder it within the flat list; send the full `rules` set to sync automatic rules.'
       admin_scope :write, :collections
 
+      admin_sdk_example 'collections/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -154,6 +162,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Deletes a collection.'
       admin_scope :write, :collections
 
+      admin_sdk_example 'collections/delete'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -175,6 +185,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Products curated in the collection, ordered by their membership position.'
       admin_scope :read, :collections
+
+      admin_sdk_example 'collection-products/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -200,6 +212,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Curates products into the collection in bulk (appended to the end). ' \
                   'Already-curated products are skipped; the count reports what was added.'
       admin_scope :write, :collections
+
+      admin_sdk_example 'collection-products/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -227,6 +241,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Removes products from the collection\'s manual curation in bulk. ' \
                   'Ids that are not curated are ignored; the count reports what was removed.'
       admin_scope :write, :collections
+
+      admin_sdk_example 'collection-products/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -258,6 +274,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Moves a product to a new index among the collection\'s products.'
       admin_scope :write, :collections
 
+      admin_sdk_example 'collection-products/reposition'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -286,6 +304,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Enumerates the registered rule kinds with their labels and descriptions — drives the rule picker on an automatic collection. Plugins extend the list by registering `Spree::CollectionRule` subclasses via `config.spree.collection_rules`. The `type` returned here is the wire shorthand accepted when writing a collection\'s `rules`.'
       admin_scope :read, :collections
+
+      admin_sdk_example 'collection-rules/types'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

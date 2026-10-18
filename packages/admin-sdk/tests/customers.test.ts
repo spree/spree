@@ -222,3 +222,52 @@ describe('customers', () => {
     })
   })
 })
+
+describe('consentRecords', () => {
+  it('GETs /consent_records with Ransack-wrapped filters', async () => {
+    let url: URL | null = null
+    server.use(
+      http.get(`${API_PREFIX}/consent_records`, ({ request }) => {
+        url = new URL(request.url)
+        return HttpResponse.json(paginated([{ id: 'consent_1', purpose: 'marketing' }]))
+      }),
+    )
+
+    const res = await createTestClient().consentRecords.list({ email_eq: 'jane@example.com' })
+
+    expect(res.data[0]?.id).toBe('consent_1')
+    expect(url!.searchParams.get('q[email_eq]')).toBe('jane@example.com')
+  })
+})
+
+describe('dataRequests', () => {
+  it('GETs /data_requests', async () => {
+    server.use(
+      http.get(`${API_PREFIX}/data_requests`, () =>
+        HttpResponse.json(paginated([{ id: 'dsr_1', kind: 'erasure' }])),
+      ),
+    )
+
+    const res = await createTestClient().dataRequests.list()
+
+    expect(res.data[0]?.kind).toBe('erasure')
+  })
+
+  it('POSTs /data_requests with the customer and kind', async () => {
+    let body: unknown = null
+    server.use(
+      http.post(`${API_PREFIX}/data_requests`, async ({ request }) => {
+        body = await request.json()
+        return HttpResponse.json({ id: 'dsr_1', kind: 'access' }, { status: 202 })
+      }),
+    )
+
+    const res = await createTestClient().dataRequests.create({
+      customer_id: 'cus_abc123',
+      kind: 'access',
+    })
+
+    expect(body).toEqual({ customer_id: 'cus_abc123', kind: 'access' })
+    expect(res.id).toBe('dsr_1')
+  })
+})

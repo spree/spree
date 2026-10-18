@@ -16,6 +16,8 @@ RSpec.describe 'Admin Saved Reports API', type: :request, swagger_doc: 'api-refe
       description "Returns the store's saved reports, each a named query staff can run again."
       admin_scope :read, :reports
 
+      admin_sdk_example 'reporting/saved-reports/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       filter_parameters_for
@@ -39,6 +41,8 @@ RSpec.describe 'Admin Saved Reports API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description 'Saves a reporting query under a name so staff can run it again. The query is validated against the reporting registry.'
       admin_scope :write, :reports
+
+      admin_sdk_example 'reporting/saved-reports/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -74,6 +78,8 @@ RSpec.describe 'Admin Saved Reports API', type: :request, swagger_doc: 'api-refe
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :reports
+
+      admin_sdk_example 'reporting/saved-reports/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

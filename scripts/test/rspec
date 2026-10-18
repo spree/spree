@@ -6,7 +6,7 @@
 #   scripts/test/rspec api spec/controllers/spree/api/v3/admin/orders_controller_spec.rb:12
 #                                                         # targeted: background priority, no queue
 #
-# Engines: core, api, emails, dashboard, opentelemetry, easypost, meilisearch, stripe.
+# Engines: core, api, emails, dashboard, mcp, opentelemetry, easypost, meilisearch, stripe.
 # Everything after the engine is passed to rspec; with nothing after it the whole
 # suite runs through parallel_rspec.
 #

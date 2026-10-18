@@ -183,7 +183,7 @@ describe Spree::TaxProvider::Internal, type: :model do
         tax_line = order.tax_lines.reload.sole
         expect(tax_line.amount).to eq(0)
         expect(tax_line.taxability_reason).to eq('customer_exempt')
-        expect(tax_line.data['exemption']).to eq('reason_code' => 'resale', 'certificate_number' => 'CERT-9')
+        expect(tax_line.data['exemption']).to eq('reason_code' => 'RESALE', 'reason_name' => 'Resale', 'certificate_number' => 'CERT-9')
       end
 
       it 'taxes normally while the certificate is still awaiting verification' do

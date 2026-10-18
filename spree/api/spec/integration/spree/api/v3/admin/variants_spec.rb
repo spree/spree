@@ -191,6 +191,8 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       description 'Returns every variant in the store across all products, for pickers and stock views that are not tied to one product.'
       admin_scope :read, :products
 
+      admin_sdk_example 'variants/list-all'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'

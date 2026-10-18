@@ -719,6 +719,49 @@
           "admission_description": "Activar cualquiera de estas opciones elimina una decisión humana. Está bien en un marketplace solo por invitación; es arriesgado en uno abierto a cualquiera.",
           "communication_title": "Comunicación",
           "commission_tax_title": "Impuesto sobre la comisión"
+        },
+        "ai_agents": {
+          "title": "Agentes de IA",
+          "subtitle": "Agentes de IA conectados a tu tienda. Conecta Claude, ChatGPT y otros para gestionar tu tienda",
+          "empty": "Aún no se ha conectado ningún agente.",
+          "revoke": "Revocar acceso",
+          "table": {
+            "access": "Acceso",
+            "status": "Estado"
+          },
+          "revoke_confirm": {
+            "title": "¿Revocar el acceso?",
+            "message": "{{who}} perderá el acceso a {{name}} de inmediato. El resto sigue conectado."
+          },
+          "manage_connections": "Gestionar conexiones",
+          "connections": {
+            "person": "Persona",
+            "empty": "Nadie está conectado mediante este agente.",
+            "unknown_person": "Desconocido",
+            "count_one": "{{count}} persona conectada",
+            "count_other": "{{count}} personas conectadas",
+            "connected": "Conectado"
+          }
+        },
+        "oauth_clients": {
+          "title": "Clientes OAuth",
+          "subtitle": "Los clientes OAuth registrados para esta tienda",
+          "empty": "Aún no hay clientes registrados.",
+          "register": "Registrar un cliente",
+          "table": {
+            "client_id": "ID de cliente",
+            "created": "Registrado"
+          },
+          "delete_confirm": {
+            "title": "¿Eliminar este cliente?",
+            "message": "{{name}} dejará de funcionar de inmediato y se eliminará su registro."
+          },
+          "form": {
+            "create_title": "Registrar un cliente",
+            "edit_title": "Editar cliente",
+            "description": "Registre un cliente OAuth para poder conectarlo a esta tienda."
+          },
+          "copy_client_id": "Copiar ID de cliente"
         }
       },
       "staff": {
@@ -1035,6 +1078,20 @@
         "variants_empty": "Todavía no hay variantes.",
         "variants_one": "{{count}} variante",
         "variants_other": "{{count}} variantes"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Autorizar aplicación",
+          "subtitle": "Revise lo que pide esta aplicación antes de permitirla.",
+          "intro": "{{client}} quiere acceder a esta tienda en su nombre. Solo podrá hacer lo que usted permita a continuación, y nunca más de lo que permitan sus propios permisos.",
+          "permissions_heading": "Permisos",
+          "revoke_hint": "Puede revocarlo en cualquier momento en Configuración → Aplicaciones conectadas.",
+          "approve": "Permitir acceso",
+          "deny": "Cancelar",
+          "invalid_request": "Esta solicitud de autorización no es válida. Vuelva a empezar desde la aplicación que le envió aquí.",
+          "decision_failed": "No se pudo registrar la decisión. Inténtelo de nuevo.",
+          "withheld": "No se ofrece porque su propio rol no incluye: {{permissions}}"
+        }
       }
     },
     "fields": {
@@ -1832,10 +1889,6 @@
           "placeholder": "Ilimitado"
         }
       },
-      "reason_code": {
-        "help": "Se vuelve el código de uso de entidad del motor de impuestos.",
-        "label": "Motivo"
-      },
       "role": {
         "description": {
           "label": "Descripción",
@@ -2432,6 +2485,20 @@
           "label": "Caja predeterminada",
           "help": "El empaque sobre el que se calculan tus cotizaciones de paquetería. Solo una predeterminada a la vez."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Gestiona los motivos que se ofrecen aquí en Configuración → Impuestos → Motivos de exención.",
+        "label": "Motivo"
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "URL de retorno",
+          "help": "De la documentación del propio cliente. Los códigos de autorización se entregan aquí, así que debe ser la dirección que el cliente publica."
+        }
       }
     },
     "orders": {
@@ -2713,7 +2780,10 @@
           "state": "Estado",
           "this_order": "Este pedido",
           "shared_help": "Pagado una vez por un carrito que abarca varios vendedores. Este pedido tiene una parte de él.",
-          "load_error": "No se pudieron cargar los pagos de este pedido."
+          "load_error": "No se pudieron cargar los pagos de este pedido.",
+          "view_at_gateway": "Ver en {{gateway}}",
+          "view_details": "Ver detalles",
+          "failed_card_checks": "Verificaciones de tarjeta fallidas"
         },
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
@@ -2763,6 +2833,22 @@
           "cbm": "{{value}} CBM",
           "kg": "{{value}} kg",
           "incomplete": "Algunos artículos no están medidos, así que estas cifras son un piso más que un total."
+        },
+        "payment_details": {
+          "title": "Pago {{number}}",
+          "description": "Lo que informó el emisor de la tarjeta y cada captura del importe.",
+          "transaction_id": "ID de transacción",
+          "address_check": "Verificación de dirección",
+          "security_code_check": "Verificación del código de seguridad",
+          "code": "Código {{code}}",
+          "check": {
+            "passed": "Superada",
+            "failed": "No superada",
+            "not_checked": "No verificada"
+          },
+          "captures": "Capturas",
+          "captures_empty": "Aún no se ha capturado nada.",
+          "captured_at": "Capturado"
         }
       },
       "edit": {
@@ -4099,7 +4185,8 @@
         "staff": "Miembros del equipo, invitaciones, roles y sus permisos",
         "stock": "Niveles de stock, ubicaciones, movimientos y transferencias",
         "store_credits": "Saldos de crédito de tienda de los clientes",
-        "webhooks": "Endpoints y entregas de webhooks"
+        "webhooks": "Endpoints y entregas de webhooks",
+        "oauth_applications": "Clientes OAuth registrados en esta tienda"
       },
       "grid": {
         "read_aria": "Ver {{resource}}",
@@ -4151,7 +4238,8 @@
         "staff": "Staff y roles",
         "stock": "Stock",
         "store_credits": "Créditos de tienda",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "oauth_applications": "Aplicaciones OAuth"
       }
     },
     "settings_nav": {
@@ -4175,12 +4263,13 @@
         "staff": "Personas con acceso a este dashboard",
         "stock_locations": "Depósitos y puntos de retiro que guardan stock",
         "store": "Nombre de la tienda, zona horaria, unidades y predeterminados regionales",
-        "tax_categories": "Clases de impuestos asignadas a los productos",
-        "tax_rates": "Tasas aplicadas por mercado y región",
         "webhooks": "Endpoints notificados cuando ocurren eventos",
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
-        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión"
+        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
+        "taxes": "Categorías fiscales, tipos impositivos y motivos de exención",
+        "ai_agents": "Agentes de IA con acceso a esta tienda",
+        "oauth_clients": "Registrar y configurar clientes OAuth"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4218,7 +4307,10 @@
         "webhooks": "Webhooks",
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
-        "marketplace": "Configuración"
+        "marketplace": "Configuración",
+        "taxes": "Impuestos",
+        "ai_agents": "Agentes de IA",
+        "oauth_clients": "Clientes OAuth"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -4953,14 +5045,7 @@
       },
       "never_expires": "No vence",
       "no_document": "Sin documento adjunto",
-      "reason_codes": {
-        "agricultural": "Agrícola",
-        "charitable": "Benéfico",
-        "educational": "Educativo",
-        "government": "Gubernamental",
-        "manufacturing": "Manufactura",
-        "resale": "Reventa"
-      },
+      "no_reasons": "Aún no hay motivos de exención. Añádelos en Configuración → Impuestos → Motivos de exención.",
       "revoke_action": "Revocar",
       "revoke_confirm": {
         "message": "El certificado {{number}} deja de aplicar a pedidos nuevos. Queda archivado como registro.",
@@ -5292,12 +5377,15 @@
         "help": "Qué salió mal con una entrega: artículo dañado, faltante o equivocado.",
         "title": "Motivos de reclamo"
       },
+      "code_engine_help": "Tu motor de impuestos decide la exención por este código, así que elige el que define para este motivo.",
+      "code_help": "Un identificador corto que registran los certificados. Único en tu tienda.",
+      "code_placeholder": "p. ej. RESALE",
       "create_description": "Los motivos aparecen en un desplegable cuando el staff abre una devolución, un reclamo o un reembolso.",
       "delete_confirm": {
         "message": "{{name}} ya no se ofrecerá. Los registros que ya lo usan lo conservan.",
         "title": "¿Eliminar motivo?"
       },
-      "description": "Los vocabularios de los que elige tu equipo al manejar devoluciones, reclamos, reembolsos y cancelaciones.",
+      "description": "Las listas que usa tu equipo al gestionar devoluciones, reclamaciones, reembolsos y cancelaciones.",
       "edit_sheet_title": "Editar motivo",
       "empty": "Todavía no hay motivos",
       "in_use": "En uso",
@@ -5320,6 +5408,12 @@
       "return": {
         "help": "Por qué un cliente devuelve algo. Lo comparten devoluciones y cambios.",
         "title": "Motivos de devolución"
+      },
+      "tax_exemption": {
+        "create_description": "Tu equipo elige un motivo al registrar el certificado de exención de una empresa.",
+        "help": "Por qué una empresa compra sin impuestos. Se registra en sus certificados de exención; el código es lo que recibe tu motor de impuestos.",
+        "name_placeholder": "p. ej. Reventa",
+        "title": "Motivos de exención de impuestos"
       },
       "title": "Devoluciones y motivos"
     },
@@ -5531,7 +5625,6 @@
       "sellers": "Los vendedores terceros que operan en tu marketplace y en qué punto está cada uno.",
       "store_credits": "Saldos que los clientes pueden gastar al finalizar la compra y cómo se emitió cada uno.",
       "tax_categories": "Agrupaciones que deciden qué tasa impositiva recibe un producto.",
-      "tax_rates": "El impuesto cobrado por categoría y región.",
       "webhook_deliveries": "Cada evento enviado a este endpoint y si se recibió.",
       "webhook_endpoints": "Dónde se notifica a tus otros sistemas cuando pasa algo en la tienda.",
       "returns": "Mercadería que vuelve, desde la solicitud hasta el reembolso.",
@@ -5807,7 +5900,6 @@
         "deleted": "Tasa de impuesto eliminada",
         "updated": "Tasa de impuesto actualizada"
       },
-      "search_placeholder": "Buscar tasas de impuesto",
       "select_category": "Seleccionar una categoría"
     },
     "translations": {
@@ -5995,8 +6087,7 @@
         "created": "Categoría de impuestos creada",
         "deleted": "Categoría de impuestos eliminada",
         "updated": "Categoría de impuestos actualizada"
-      },
-      "search_placeholder": "Buscar por nombre…"
+      }
     },
     "inventory_lines": {
       "add_label": "Agregar un producto",
@@ -6275,6 +6366,57 @@
       "empty": "Estás al día.",
       "view_on_github": "Ver en GitHub",
       "release_notes_unavailable": "No se pudieron cargar las notas de la versión. Léelas en GitHub."
+    },
+    "taxes": {
+      "title": "Impuestos",
+      "description": "Cómo se gravan tus productos, qué tipos aplica Spree y por qué las empresas pueden comprar sin impuestos.",
+      "providers_title": "Cálculo de impuestos",
+      "provider_markets": "{{provider}} en {{markets}}",
+      "manage_markets": "Gestionar mercados",
+      "tabs": {
+        "categories": "Categorías",
+        "rates": "Tipos",
+        "exemption_reasons": "Motivos de exención"
+      },
+      "rates_unused_in": "Estos tipos no se usan en {{markets}}, donde un servicio externo calcula el impuesto.",
+      "rates_unused_everywhere": "Ninguno de tus mercados usa estos tipos: en {{markets}} un servicio externo calcula el impuesto.",
+      "rates_help": "El impuesto cobrado por categoría y región. Solo lo usan los mercados con los tipos de Spree: un servicio conectado como Avalara calcula el impuesto por su cuenta e ignora estos tipos."
+    },
+    "mcp_connect": {
+      "open_cta": "Conectar un agente",
+      "title": "Conectar un agente",
+      "subtitle": "Elija el asistente al que quiere dar acceso a esta tienda.",
+      "step_paste": "Pegue esta dirección en el conector o la configuración MCP de su cliente.",
+      "step_sign_in": "Le enviará aquí para iniciar sesión.",
+      "step_approve": "Apruebe lo que puede hacer el agente. Puede retirarlo en cualquier momento en esta página.",
+      "client_id_label": "ID de cliente",
+      "client_id_help": "Algunos clientes lo piden antes de empezar.",
+      "ready_title": "{{client}} está listo para conectarse",
+      "ready_subtitle": "Pegue esto en el cliente y luego apruebe lo que puede hacer.",
+      "endpoint_label": "La dirección MCP de su tienda",
+      "copy_endpoint": "Copiar dirección",
+      "copy_client_id": "Copiar ID de cliente",
+      "other_title": "Otra cosa",
+      "bounded_note": "Un agente nunca obtiene más de lo que usted tiene, y solo lo que usted aprueba.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop y Claude Code",
+        "chatgpt": "ChatGPT y Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai y Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Cualquier otro cliente que hable MCP",
+      "continue": "Continuar",
+      "run_label": "Ejecute esto",
+      "copy_command": "Copiar comando",
+      "cli_then_sign_in": "Se abrirá el navegador para iniciar sesión y aprobar lo que el agente puede hacer."
     }
   }
 }

@@ -20,6 +20,8 @@ RSpec.describe 'Admin Product Translations API', type: :request, swagger_doc: 'a
       description 'Returns the full translation matrix for the product: the source value and content type per translatable field, plus the translated value for every supported locale.'
       admin_scope :read, :products
 
+      admin_sdk_example 'product-translations/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :product_id, in: :path, type: :string, required: true

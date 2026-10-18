@@ -7,6 +7,11 @@ module Spree
     include Spree::Metadata
     include Spree::LabelTranslatable
 
+    # Values are written through their option type, so they ride the same permission.
+    def self.translation_write_permission
+      'write_products'
+    end
+
     TRANSLATABLE_FIELDS = Spree::LabelTranslatable::TRANSLATABLE_FIELDS
 
     #

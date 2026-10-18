@@ -19,6 +19,8 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       description 'Every exchange in the store, across all orders.'
       admin_scope :read, :orders
 
+      admin_sdk_example 'exchanges/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
@@ -42,6 +44,8 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'The exchanges opened on one order.'
       admin_scope :read, :orders
+
+      admin_sdk_example 'order-exchanges/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -68,6 +72,8 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Opens an exchange on a completed order: items coming back, and the variant that goes out in place of each.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-exchanges/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -105,6 +111,8 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       description 'Edits the warehouse, reason, memo or metadata of an exchange. Its status moves only through the approve, receive, fulfill and cancel actions.'
       admin_scope :write, :orders
 
+      admin_sdk_example 'order-exchanges/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
@@ -134,6 +142,8 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Records the goods that came back on an approved exchange. Omit `items` to receive everything as requested and resellable.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-exchanges/receive'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -165,6 +175,8 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Ships the replacements for a received exchange and settles any price difference.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-exchanges/fulfill'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -198,6 +210,8 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Withdraws an exchange whose goods have not been received.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-exchanges/cancel'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

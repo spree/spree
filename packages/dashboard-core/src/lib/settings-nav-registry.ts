@@ -61,6 +61,12 @@ export interface SettingsNavEntry {
   /** CanCanCan subject required to see this item. Omit for always-visible. */
   subject?: SubjectName
   /**
+   * For a page holding several resources, as tabs: the entry is shown when
+   * `action` is allowed on any of these, so a role reaching one tab still
+   * finds the page. Takes precedence over `subject`.
+   */
+  subjects?: SubjectName[]
+  /**
    * Action checked against `subject`. Defaults to `'read'`. Settings pages
    * that only exist to *change* something (store settings, emails) should
    * declare `'update'` — every staff member can read the store record for
@@ -221,6 +227,19 @@ export function settingsEntryMatches(
 }
 
 /**
+ * Whether a staff member may reach this settings entry. The sidebar, the
+ * settings landing page and the command palette all ask this, so they agree.
+ */
+export function canSeeSettingsEntry(
+  entry: SettingsNavEntry,
+  can: (action: string, subject: string) => boolean,
+): boolean {
+  const action = entry.action ?? 'read'
+  if (entry.subjects?.length) return entry.subjects.some((subject) => can(action, subject))
+  return !entry.subject || can(action, entry.subject)
+}
+
+/**
  * Drop entries the current staff member cannot reach. Exported because the
  * sidebar and the settings landing page must agree on what a role can see —
  * a private copy on either surface is how one starts showing a card the other
@@ -231,7 +250,7 @@ export function filterSettingsByPermissions(
   permissions: { can: (action: string, subject: string) => boolean },
 ): SettingsNavSnapshot {
   return regroup(snapshot, (entry) =>
-    !entry.subject ? true : permissions.can(entry.action ?? 'read', entry.subject),
+    canSeeSettingsEntry(entry, (action, subject) => permissions.can(action, subject)),
   )
 }
 
@@ -265,9 +284,7 @@ export function hasVisibleSettingsEntries(permissions: unknown): boolean {
     ?.can
   if (typeof can !== 'function') return false
 
-  return getSnapshot().all.some(
-    (entry) => !entry.subject || can(entry.action ?? 'read', entry.subject),
-  )
+  return getSnapshot().all.some((entry) => canSeeSettingsEntry(entry, can))
 }
 
 /** Test-only: clear the registry. */

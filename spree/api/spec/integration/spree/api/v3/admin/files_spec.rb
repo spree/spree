@@ -38,6 +38,8 @@ RSpec.describe 'Admin Files API', type: :request, swagger_doc: 'api-reference/ad
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'files/create'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'

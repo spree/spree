@@ -1,10 +1,10 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { TaxExemptionReasonSchema } from './TaxExemptionReason';
 
 export const TaxExemptionCertificateSchema = z.object({
   id: z.string(),
   certificate_number: z.string(),
-  reason_code: z.string(),
   status: z.string(),
   issuing_authority: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()).nullable(),
@@ -14,6 +14,8 @@ export const TaxExemptionCertificateSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   company_id: z.string(),
+  tax_exemption_reason_id: z.string(),
+  tax_exemption_reason: TaxExemptionReasonSchema.optional(),
   country_code: z.string().nullable(),
   state_code: z.string().nullable(),
   active: z.boolean(),

@@ -15,6 +15,7 @@ const ANSWERED = {
   noStorefront: true,
   noSellerDashboard: false,
   noAgentSkills: false,
+  noDocsMcp: false,
   noStart: true,
   packageManager: 'pnpm',
 } as const
@@ -44,20 +45,38 @@ describe('runPrompts', () => {
     )
   })
 
-  it('asks about the agent skills, defaulting to yes', async () => {
+  it('asks one question about the agent skills and docs MCP server, defaulting to yes', async () => {
     const { confirm } = await import('@clack/prompts')
     vi.mocked(confirm).mockClear()
     vi.mocked(confirm).mockResolvedValueOnce(true)
 
-    const options = await runPrompts({ ...ANSWERED, noAgentSkills: undefined })
+    const options = await runPrompts({
+      ...ANSWERED,
+      noAgentSkills: undefined,
+      noDocsMcp: undefined,
+    })
 
     expect(options.agentSkills).toBe(true)
+    expect(options.docsMcp).toBe(true)
+    expect(vi.mocked(confirm)).toHaveBeenCalledTimes(1)
     expect(vi.mocked(confirm)).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: expect.stringContaining('Install Spree agent skills?'),
+        message: expect.stringContaining('Set up AI coding agents?'),
         initialValue: true,
       }),
     )
+  })
+
+  // Scripted runs (CI) pass only the flag they care about and cannot answer.
+  it('does not ask when either agent flag is passed, defaulting the other half to yes', async () => {
+    const { confirm } = await import('@clack/prompts')
+    vi.mocked(confirm).mockClear()
+
+    const options = await runPrompts({ ...ANSWERED, noAgentSkills: true, noDocsMcp: undefined })
+
+    expect(options.agentSkills).toBe(false)
+    expect(options.docsMcp).toBe(true)
+    expect(vi.mocked(confirm)).not.toHaveBeenCalled()
   })
 
   // Sample data is loaded on demand with `spree sample-data`, never as part of

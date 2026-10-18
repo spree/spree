@@ -26,8 +26,19 @@ module Spree
     ResultError = Struct.new(:value) do
       def to_s
         return value.full_messages.join(', ') if value&.respond_to?(:full_messages)
+        # A failure carrying a code beside its message (`failure(cart, code:,
+        # message:)`) reads as the message, not as the hash it travels in.
+        return value[:message].to_s if value.is_a?(Hash) && value.key?(:message)
 
         value.to_s
+      end
+
+      # The machine-readable reason a failure named, when it named one, so a
+      # caller can answer an outage differently from a refusal.
+      #
+      # @return [String, nil]
+      def code
+        value[:code]&.to_s if value.is_a?(Hash)
       end
 
       def to_h

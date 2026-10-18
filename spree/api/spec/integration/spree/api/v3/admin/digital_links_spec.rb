@@ -19,6 +19,8 @@ RSpec.describe 'Admin Digital Links API', type: :request, swagger_doc: 'api-refe
       description 'Returns the download links issued for digital products bought in this store, newest first.'
       admin_scope :read, :orders
 
+      admin_sdk_example 'digital-links/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'

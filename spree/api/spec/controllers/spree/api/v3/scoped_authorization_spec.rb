@@ -136,6 +136,63 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
   end
+
+  # A staff member can delegate part of their authority to an agent or an app
+  # through an OAuth grant. The grant is a ceiling on top of their roles, so
+  # the gate asks for the intersection — approving a client must never be a
+  # way to gain permissions the person does not have.
+  describe 'request on a delegated credential' do
+    before do
+      request.headers['X-Spree-Api-Key'] = nil
+      request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
+      allow(controller).to receive(:current_oauth_token).and_return(delegated_token)
+    end
+
+    let(:scopes) { ['read_customers'] }
+
+    def token_granting(*granted)
+      instance_double(Spree::OauthAccessToken, scopes: Doorkeeper::OAuth::Scopes.from_array(granted))
+    end
+
+    context 'when the grant covers the action' do
+      let(:delegated_token) { token_granting('read_orders') }
+
+      it 'allows it' do
+        get :index, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when the grant does not cover the action' do
+      let(:delegated_token) { token_granting('read_products') }
+
+      it 'denies it even though the admin could do it directly' do
+        get :index, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(JSON.parse(response.body)['error']['details']['required_permission']).to eq('read_orders')
+      end
+    end
+
+    context 'when the grant names more than the person holds' do
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          create(:role_user, user: user, role: create(:role, name: 'products-only', permissions: %w[read_products], resource: store))
+        end
+      end
+      let(:delegated_token) { token_granting(*Spree.permissions.catalog_keys) }
+
+      before do
+        request.headers['Authorization'] =
+          "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}"
+      end
+
+      it 'grants nothing extra' do
+        get :index, as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
 end
 
 # Regression: the promotions controllers declare `scoped_resource :promotions`,

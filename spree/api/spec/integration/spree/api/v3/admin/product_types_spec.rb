@@ -22,6 +22,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       DESC
       admin_scope :read, :products
 
+      admin_sdk_example 'product-types/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -66,6 +68,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'product-types/create'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -104,6 +108,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description 'Returns a single product type with its option types, categories and custom fields.'
       admin_scope :read, :products
+
+      admin_sdk_example 'product-types/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -144,6 +150,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'product-types/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -169,6 +177,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description 'Deletes a product type. Types still used by products cannot be deleted.'
       admin_scope :write, :products
+
+      admin_sdk_example 'product-types/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -199,6 +209,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
         currently has.
       DESC
       admin_scope :write, :products
+
+      admin_sdk_example 'product-types/apply-to-products'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

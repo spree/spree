@@ -594,7 +594,7 @@
     },
     {
       "source": "/user/settings/tax",
-      "destination": "/user/settings/tax-rates"
+      "destination": "/user/settings/taxes"
     },
     {
       "source": "/user/settings/returns-configuration",
@@ -699,6 +699,14 @@
     {
       "source": "/user/orders/creating-orders",
       "destination": "/user/orders/draft-orders"
+    },
+    {
+      "source": "/developer/agentic/admin-mcp",
+      "destination": "/developer/mcp/overview"
+    },
+    {
+      "source": "/developer/agentic/mcp",
+      "destination": "/developer/agentic/docs-mcp"
     }
   ],
   "contextual": {
@@ -806,11 +814,22 @@
                     "pages": [
                       "developer/agentic/overview",
                       "developer/agentic/agent-skills",
-                      "developer/agentic/mcp",
+                      "developer/agentic/docs-mcp",
                       "developer/agentic/llm-docs",
                       "developer/cli/admin-api"
                     ],
                     "icon": "sparkles"
+                  },
+                  {
+                    "group": "MCP Server",
+                    "pages": [
+                      "developer/mcp/overview",
+                      "developer/mcp/quick-start",
+                      "developer/mcp/tools",
+                      "developer/mcp/permissions",
+                      "developer/mcp/custom-tools"
+                    ],
+                    "icon": "plug"
                   },
                   {
                     "group": "Tutorial",
@@ -1357,6 +1376,7 @@
                         "pages": [
                           "user/settings/markets",
                           "user/settings/payments",
+                          "user/settings/taxes",
                           "user/settings/tax-categories",
                           "user/settings/tax-rates"
                         ]
@@ -1850,7 +1870,7 @@
                     "pages": [
                       "v5/developer/agentic/overview",
                       "v5/developer/agentic/agent-skills",
-                      "v5/developer/agentic/mcp",
+                      "v5/developer/agentic/docs-mcp",
                       "v5/developer/agentic/llm-docs"
                     ]
                   }
@@ -2647,7 +2667,7 @@
                 "pages": [
                   "developer/agentic/overview",
                   "developer/agentic/agent-skills",
-                  "developer/agentic/mcp",
+                  "developer/agentic/docs-mcp",
                   "developer/agentic/llm-docs"
                 ]
               }

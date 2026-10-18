@@ -27,6 +27,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       DESC
       admin_scope :read, :settings
 
+      admin_sdk_example 'tax-rates/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -71,6 +73,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       DESC
       admin_scope :write, :settings
 
+      admin_sdk_example 'tax-rates/create'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -114,6 +118,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :settings
 
+      admin_sdk_example 'tax-rates/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -133,6 +139,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :settings
+
+      admin_sdk_example 'tax-rates/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -157,6 +165,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes the rate. Tax lines it already produced keep their own rate snapshot.'
       admin_scope :write, :settings
+
+      admin_sdk_example 'tax-rates/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

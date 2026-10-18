@@ -74,6 +74,8 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
       description "Returns the profile's origin groups: the sets of warehouses that each quote their own delivery rates."
       admin_scope :read, :settings
 
+      admin_sdk_example 'delivery-profiles/origin-groups-list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       filter_parameters_for

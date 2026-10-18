@@ -705,6 +705,22 @@ steps:
       Idempotent — a store that already has a default package type is left
       alone, so a box edited since the upgrade is never overwritten.
 
+  - id: tax_exemption_reasons
+    name: "Give every store the default tax exemption reasons and link certificates to them"
+    task: "spree:upgrade:tax_exemption_reasons"
+    notes: |
+      Company tax exemption certificates point at one of the store's
+      exemption reasons, so a store without any cannot record a certificate.
+      Existing reason codes are saved in capitals, the way tax engines compare
+      them. Certificates recorded before reasons existed are linked to the
+      reason matching their old reason code; a code no reason holds gets a
+      reason of its own. Merchants using an external tax engine change each
+      reason's code to that engine's under Settings → Taxes → Exemption
+      reasons.
+
+      Idempotent — a reason the merchant already has under the same code or
+      name is left alone, and a certificate already linked is skipped.
+
   - id: migrate_external_receives_to_purchase_orders
     name: "Turn 5.x supplier receives into purchase orders, and give every transfer a store"
     task: "spree:upgrade:migrate_external_receives_to_purchase_orders"

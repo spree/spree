@@ -131,6 +131,8 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       DESC
       admin_scope :read, :commissions
 
+      admin_sdk_example 'commission_rates/rule-types'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 

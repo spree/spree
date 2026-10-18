@@ -16,6 +16,8 @@ RSpec.describe 'Admin Order Groups API', type: :request, swagger_doc: 'api-refer
       description 'Returns checkouts split into one order per seller, grouping the orders placed together.'
       admin_scope :read, :orders
 
+      admin_sdk_example 'order-groups/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       filter_parameters_for

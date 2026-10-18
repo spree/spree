@@ -1811,10 +1811,6 @@
           "placeholder": "Bez ograniczeń"
         }
       },
-      "reason_code": {
-        "help": "Przekazywany do naliczania podatku jako kod przeznaczenia.",
-        "label": "Powód"
-      },
       "role": {
         "description": {
           "label": "Opis",
@@ -2411,6 +2407,20 @@
           "label": "Domyślne opakowanie",
           "help": "Opakowanie, na którym opierają się wyceny Twoich przesyłek. Tylko jedno domyślne naraz."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Powody dostępne tutaj ustawisz w Ustawienia → Podatki → Powody zwolnień.",
+        "label": "Powód"
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Nazwa",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "Adres zwrotny",
+          "help": "Z dokumentacji samego klienta. Tu trafiają kody autoryzacyjne, więc musi to być adres publikowany przez klienta."
+        }
       }
     },
     "gift_cards": {
@@ -2955,7 +2965,10 @@
           "state": "Stan",
           "this_order": "To zamówienie",
           "shared_help": "Zapłacone raz za koszyk obejmujący kilku sprzedawców. To zamówienie ma w nim udział.",
-          "load_error": "Nie udało się wczytać płatności tego zamówienia."
+          "load_error": "Nie udało się wczytać płatności tego zamówienia.",
+          "view_at_gateway": "Zobacz w {{gateway}}",
+          "view_details": "Zobacz szczegóły",
+          "failed_card_checks": "Nieudana weryfikacja karty"
         },
         "priced_by": "Cena z {{name}}",
         "purchase_order": {
@@ -3005,6 +3018,22 @@
           "cbm": "{{value}} m³",
           "kg": "{{value}} kg",
           "incomplete": "Część towaru nie ma wymiarów, więc te liczby to wartość minimalna, a nie suma."
+        },
+        "payment_details": {
+          "title": "Płatność {{number}}",
+          "description": "Co zgłosił wydawca karty oraz każde pobranie środków.",
+          "transaction_id": "ID transakcji",
+          "address_check": "Weryfikacja adresu",
+          "security_code_check": "Weryfikacja kodu bezpieczeństwa",
+          "code": "Kod {{code}}",
+          "check": {
+            "passed": "Pozytywna",
+            "failed": "Negatywna",
+            "not_checked": "Niesprawdzona"
+          },
+          "captures": "Pobrania środków",
+          "captures_empty": "Nie pobrano jeszcze żadnych środków.",
+          "captured_at": "Pobrano"
         }
       },
       "edit": {
@@ -4123,6 +4152,49 @@
           "admission_description": "Włączenie którejkolwiek z tych opcji usuwa decyzję człowieka. To w porządku na marketplace tylko na zaproszenie, ale ryzykowne tam, gdzie dołączyć może każdy.",
           "communication_title": "Komunikacja",
           "commission_tax_title": "Podatek od prowizji"
+        },
+        "ai_agents": {
+          "title": "Agenci AI",
+          "subtitle": "Agenci AI połączeni z Twoim sklepem. Podłącz Claude, ChatGPT i innych, aby zarządzać sklepem",
+          "empty": "Nie połączono jeszcze żadnego agenta.",
+          "revoke": "Odbierz dostęp",
+          "table": {
+            "access": "Dostęp",
+            "status": "Status"
+          },
+          "revoke_confirm": {
+            "title": "Odebrać dostęp?",
+            "message": "{{who}} natychmiast straci dostęp do {{name}}. Pozostali pozostaną połączeni."
+          },
+          "manage_connections": "Zarządzaj połączeniami",
+          "connections": {
+            "person": "Osoba",
+            "empty": "Nikt nie jest połączony przez tego agenta.",
+            "unknown_person": "Nieznany",
+            "count_one": "{{count}} połączona osoba",
+            "count_other": "{{count}} połączonych osób",
+            "connected": "Połączono"
+          }
+        },
+        "oauth_clients": {
+          "title": "Klienci OAuth",
+          "subtitle": "Klienci OAuth zarejestrowani dla tego sklepu",
+          "empty": "Nie zarejestrowano jeszcze żadnego klienta.",
+          "register": "Zarejestruj klienta",
+          "table": {
+            "client_id": "Identyfikator klienta",
+            "created": "Zarejestrowano"
+          },
+          "delete_confirm": {
+            "title": "Usunąć tego klienta?",
+            "message": "{{name}} przestanie działać natychmiast, a jego rejestracja zostanie usunięta."
+          },
+          "form": {
+            "create_title": "Zarejestruj klienta",
+            "edit_title": "Edytuj klienta",
+            "description": "Zarejestruj klienta OAuth, aby można go było połączyć z tym sklepem."
+          },
+          "copy_client_id": "Kopiuj identyfikator klienta"
         }
       },
       "staff": {
@@ -4173,6 +4245,20 @@
         },
         "total": "Łącznie",
         "translated": "Przetłumaczone"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Autoryzuj aplikację",
+          "subtitle": "Sprawdź, o co prosi ta aplikacja, przed udzieleniem zgody.",
+          "intro": "{{client}} chce uzyskać dostęp do tego sklepu w Twoim imieniu. Będzie mogła robić tylko to, na co zezwolisz poniżej, i nigdy więcej, niż pozwalają Twoje własne uprawnienia.",
+          "permissions_heading": "Uprawnienia",
+          "revoke_hint": "Możesz odebrać dostęp w dowolnym momencie w Ustawienia → Połączone aplikacje.",
+          "approve": "Zezwól na dostęp",
+          "deny": "Anuluj",
+          "invalid_request": "To żądanie autoryzacji jest nieprawidłowe. Zacznij ponownie z aplikacji, która Cię tu skierowała.",
+          "decision_failed": "Nie udało się zapisać decyzji. Spróbuj ponownie.",
+          "withheld": "Niedostępne, ponieważ Twoja rola nie obejmuje: {{permissions}}"
+        }
       }
     },
     "payment_methods": {
@@ -4233,7 +4319,8 @@
         "staff": "Członkowie zespołu, zaproszenia, role i ich uprawnienia",
         "stock": "Stany magazynowe, lokalizacje, ruchy i transfery",
         "store_credits": "Salda środków sklepowych klientów",
-        "webhooks": "Punkty końcowe i dostarczenia webhooków"
+        "webhooks": "Punkty końcowe i dostarczenia webhooków",
+        "oauth_applications": "Klienci OAuth zarejestrowani w tym sklepie"
       },
       "grid": {
         "read_aria": "Podgląd: {{resource}}",
@@ -4285,7 +4372,8 @@
         "staff": "Zespół i role",
         "stock": "Stan magazynowy",
         "store_credits": "Środki w sklepie",
-        "webhooks": "Webhooki"
+        "webhooks": "Webhooki",
+        "oauth_applications": "Aplikacje OAuth"
       }
     },
     "policies": {
@@ -4814,6 +4902,9 @@
         "help": "Co poszło nie tak z dostawą — uszkodzony, brakujący lub zły towar.",
         "title": "Powody reklamacji"
       },
+      "code_engine_help": "Silnik podatkowy rozstrzyga o zwolnieniu na podstawie tego kodu, więc wybierz kod, który definiuje dla tego powodu.",
+      "code_help": "Krótki identyfikator zapisywany na zaświadczeniach. Unikalny w sklepie.",
+      "code_placeholder": "np. RESALE",
       "create_description": "Powody pojawiają się na liście przy tworzeniu zwrotu, reklamacji lub zwrotu pieniędzy.",
       "delete_confirm": {
         "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują.",
@@ -4842,6 +4933,12 @@
       "return": {
         "help": "Dlaczego klient odsyła towar. Wspólne dla zwrotów i wymian.",
         "title": "Powody zwrotu"
+      },
+      "tax_exemption": {
+        "create_description": "Zespół wybiera powód przy zapisywaniu zaświadczenia o zwolnieniu firmy.",
+        "help": "Dlaczego firma kupuje bez podatku. Zapisywany na jej zaświadczeniach o zwolnieniu; kod trafia do silnika podatkowego.",
+        "name_placeholder": "np. Odsprzedaż",
+        "title": "Powody zwolnienia z podatku"
       },
       "title": "Zwroty i powody"
     },
@@ -5168,12 +5265,13 @@
         "staff": "Osoby z dostępem do tego panelu",
         "stock_locations": "Magazyny i punkty odbioru przechowujące towar",
         "store": "Nazwa sklepu, strefa czasowa, jednostki i ustawienia regionalne",
-        "tax_categories": "Klasy podatkowe przypisane do produktów",
-        "tax_rates": "Stawki stosowane według rynku i regionu",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
-        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji"
+        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
+        "taxes": "Kategorie podatkowe, stawki i powody zwolnień",
+        "ai_agents": "Agenty AI z dostępem do tego sklepu",
+        "oauth_clients": "Rejestrowanie i konfiguracja klientów OAuth"
       },
       "groups": {
         "audit": "Audyt",
@@ -5211,7 +5309,10 @@
         "webhooks": "Webhooki",
         "package_types": "Rodzaje opakowań",
         "suppliers": "Dostawcy",
-        "marketplace": "Ustawienia"
+        "marketplace": "Ustawienia",
+        "taxes": "Podatki",
+        "ai_agents": "Agenci AI",
+        "oauth_clients": "Klienci OAuth"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -5558,7 +5659,6 @@
       "sellers": "Sprzedawcy zewnętrzni działający na Twoim marketplace i status każdego z nich.",
       "store_credits": "Środki, które klienci mogą wydać przy kasie, oraz sposób ich wystawienia.",
       "tax_categories": "Grupy decydujące o tym, która stawka podatku dotyczy produktu.",
-      "tax_rates": "Podatek naliczany według kategorii i regionu.",
       "webhook_deliveries": "Każde zdarzenie wysłane do tego punktu końcowego i informacja, czy zostało odebrane.",
       "webhook_endpoints": "Gdzie Twoje inne systemy są powiadamiane, gdy coś dzieje się w sklepie.",
       "returns": "Towary wracające do sklepu, od zgłoszenia do zwrotu pieniędzy.",
@@ -5579,8 +5679,7 @@
         "created": "Kategoria podatkowa utworzona",
         "deleted": "Kategoria podatkowa usunięta",
         "updated": "Kategoria podatkowa zaktualizowana"
-      },
-      "search_placeholder": "Szukaj według nazwy…"
+      }
     },
     "tax_exemption_certificates": {
       "add_cta": "Dodaj certyfikat",
@@ -5603,14 +5702,7 @@
       },
       "never_expires": "Bez daty wygaśnięcia",
       "no_document": "Brak załączonego dokumentu",
-      "reason_codes": {
-        "agricultural": "Rolnictwo",
-        "charitable": "Organizacja charytatywna",
-        "educational": "Edukacja",
-        "government": "Instytucja publiczna",
-        "manufacturing": "Produkcja",
-        "resale": "Odsprzedaż"
-      },
+      "no_reasons": "Brak powodów zwolnienia. Dodaj je w Ustawienia → Podatki → Powody zwolnień.",
       "revoke_action": "Unieważnij",
       "revoke_confirm": {
         "message": "Certyfikat {{number}} przestanie obowiązywać dla nowych zamówień. Pozostanie zapisany jako dokumentacja.",
@@ -5689,7 +5781,6 @@
         "deleted": "Stawka usunięta",
         "updated": "Stawka zaktualizowana"
       },
-      "search_placeholder": "Szukaj stawek",
       "select_category": "Wybierz kategorię"
     },
     "translations": {
@@ -6343,6 +6434,57 @@
       "empty": "Wszystko przeczytane.",
       "view_on_github": "Zobacz na GitHubie",
       "release_notes_unavailable": "Nie udało się wczytać informacji o wydaniu. Przeczytaj je na GitHubie."
+    },
+    "taxes": {
+      "title": "Podatki",
+      "description": "Jak opodatkowane są Twoje produkty, jakie stawki nalicza Spree i dlaczego firmy mogą kupować bez podatku.",
+      "providers_title": "Obliczanie podatku",
+      "provider_markets": "{{provider}}: {{markets}}",
+      "manage_markets": "Zarządzaj rynkami",
+      "tabs": {
+        "categories": "Kategorie",
+        "rates": "Stawki",
+        "exemption_reasons": "Powody zwolnień"
+      },
+      "rates_unused_in": "Te stawki nie są używane na rynkach: {{markets}}, gdzie podatek oblicza zewnętrzna usługa.",
+      "rates_unused_everywhere": "Żaden z Twoich rynków nie używa tych stawek: na rynkach {{markets}} podatek oblicza zewnętrzna usługa.",
+      "rates_help": "Podatek naliczany według kategorii i regionu. Używane tylko na rynkach korzystających ze stawek Spree: podłączona usługa, np. Avalara, sama oblicza podatek i pomija te stawki."
+    },
+    "mcp_connect": {
+      "open_cta": "Połącz agenta",
+      "title": "Połącz agenta",
+      "subtitle": "Wybierz asystenta, któremu chcesz dać dostęp do tego sklepu.",
+      "step_paste": "Wklej ten adres w konektorze lub ustawieniach MCP swojego klienta.",
+      "step_sign_in": "Odeśle Cię tutaj, abyś się zalogował.",
+      "step_approve": "Zatwierdź, co agent może robić. Możesz to cofnąć w dowolnej chwili na tej stronie.",
+      "client_id_label": "Identyfikator klienta",
+      "client_id_help": "Niektórzy klienci proszą o niego przed startem.",
+      "ready_title": "{{client}} jest gotowy do połączenia",
+      "ready_subtitle": "Wklej to w kliencie, a następnie zatwierdź, co może robić.",
+      "endpoint_label": "Adres MCP Twojego sklepu",
+      "copy_endpoint": "Kopiuj adres",
+      "copy_client_id": "Kopiuj identyfikator klienta",
+      "other_title": "Coś innego",
+      "bounded_note": "Agent nigdy nie dostanie więcej niż masz Ty i tylko to, co zatwierdzisz.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop i Claude Code",
+        "chatgpt": "ChatGPT i Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai i Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Dowolny inny klient obsługujący MCP",
+      "continue": "Dalej",
+      "run_label": "Uruchom to",
+      "copy_command": "Kopiuj polecenie",
+      "cli_then_sign_in": "Otworzy przeglądarkę, abyś mógł się zalogować i zatwierdzić uprawnienia agenta."
     }
   }
 }

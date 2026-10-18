@@ -1,5 +1,6 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
+  BotIcon,
   Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
@@ -11,7 +12,6 @@ import {
   PercentIcon,
   PlugIcon,
   RadioTowerIcon,
-  ReceiptTextIcon,
   ReturnRequestIcon,
   ScrollTextIcon,
   ShapesIcon,
@@ -109,6 +109,18 @@ settingsNav.add({
 })
 
 settingsNav.add({
+  key: 'settings.ai-agents',
+  labelKey: 'admin.settings_nav.items.ai_agents',
+  descriptionKey: 'admin.settings_nav.descriptions.ai_agents',
+  keywords: ['oauth', 'agents', 'mcp', 'claude', 'assistant', 'integrations', 'revoke'],
+  path: '/ai-agents',
+  icon: BotIcon,
+  group: 'store',
+  position: 260,
+  subject: Subject.OauthApplication,
+})
+
+settingsNav.add({
   key: 'settings.channels',
   labelKey: 'admin.settings_nav.items.channels',
   descriptionKey: 'admin.settings_nav.descriptions.channels',
@@ -158,28 +170,31 @@ settingsNav.add({
   subject: Subject.PaymentMethod,
 })
 
+// Categories, rates and exemption reasons share one page, so a merchant
+// setting up tax finds all of it in one place.
 settingsNav.add({
-  key: 'settings.tax-categories',
-  labelKey: 'admin.settings_nav.items.tax_categories',
-  descriptionKey: 'admin.settings_nav.descriptions.tax_categories',
-  keywords: ['vat', 'gst', 'sales tax', 'tax class'],
-  path: '/tax-categories',
+  key: 'settings.taxes',
+  labelKey: 'admin.settings_nav.items.taxes',
+  descriptionKey: 'admin.settings_nav.descriptions.taxes',
+  keywords: [
+    'vat',
+    'gst',
+    'sales tax',
+    'tax class',
+    'tax categories',
+    'tax rates',
+    'rate',
+    'percentage',
+    'exemption',
+    'exempt',
+    'certificate',
+    'avalara',
+  ],
+  path: '/taxes',
   icon: PercentIcon,
   group: 'selling',
   position: 300,
-  subject: Subject.TaxCategory,
-})
-
-settingsNav.add({
-  key: 'settings.tax-rates',
-  labelKey: 'admin.settings_nav.items.tax_rates',
-  descriptionKey: 'admin.settings_nav.descriptions.tax_rates',
-  keywords: ['vat', 'gst', 'sales tax', 'rate', 'percentage'],
-  path: '/tax-rates',
-  icon: ReceiptTextIcon,
-  group: 'selling',
-  position: 400,
-  subject: Subject.TaxRate,
+  subjects: [Subject.TaxCategory, Subject.TaxRate, Subject.TaxExemptionReason],
 })
 
 settingsNav.add({
@@ -340,6 +355,17 @@ settingsNav.add({
   group: 'developer',
   position: 100,
   subject: Subject.ApiKey,
+})
+
+settingsNav.add({
+  key: 'settings.oauth_clients',
+  labelKey: 'admin.settings_nav.items.oauth_clients',
+  descriptionKey: 'admin.settings_nav.descriptions.oauth_clients',
+  path: '/oauth-clients',
+  icon: KeyRoundIcon,
+  group: 'developer',
+  position: 151,
+  subject: Subject.OauthApplication,
 })
 
 settingsNav.add({

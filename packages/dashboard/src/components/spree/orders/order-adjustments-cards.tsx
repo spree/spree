@@ -119,12 +119,8 @@ function taxExemptionDetail(group: TaxLineGroup): string | null {
   const number = group.exemption?.certificate_number
   if (group.taxabilityReason !== 'customer_exempt' || !number) return null
 
-  const reasonCode = group.exemption?.reason_code
-  const reason = reasonCode
-    ? i18n.t(`admin.tax_exemption_certificates.reason_codes.${reasonCode}`, {
-        defaultValue: reasonCode,
-      })
-    : null
+  // The name the reason had when the sale was taxed; older lines carry only the code.
+  const reason = group.exemption?.reason_name ?? group.exemption?.reason_code
 
   return reason
     ? i18n.t('admin.orders.detail.adjustment_lines.tax_exempt_certificate', {
