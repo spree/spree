@@ -42,7 +42,10 @@ describe 'spree:upgrade:tax_exemption_reasons' do
     expect(reason.reload.code).to eq('DIPLOMATIC')
   end
 
-  it 'leaves a lower-case code alone when its capitals are taken' do
+  # MySQL compares codes without regard to case, so its unique index already
+  # refuses a lower-case twin and the clash cannot exist there.
+  it 'leaves a lower-case code alone when its capitals are taken',
+     skip: (ActiveRecord::Base.connection.adapter_name.match?(/mysql/i) && 'MySQL codes are case-insensitive') do
     create(:tax_exemption_reason, store: store, code: 'DIPLOMATIC', name: 'Diplomatic')
     reason = create(:tax_exemption_reason, store: store, name: 'Embassy')
     legacy_code(reason, 'diplomatic')
