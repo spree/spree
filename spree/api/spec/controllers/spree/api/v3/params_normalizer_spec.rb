@@ -115,4 +115,88 @@ RSpec.describe Spree::Api::V3::ParamsNormalizer do
     end
   end
 
+  # The sqid alphabet is shared across models, so `prod_` and `variant_`
+  # decode to the same integers. Decoding whatever arrives meant an order
+  # asked for a product answered 201 and held a line item for an unrelated
+  # variant that happened to carry that number.
+  describe 'an id of the wrong kind' do
+    let(:order_controller_class) do
+      Class.new(ActionController::API) do
+        include Spree::Api::V3::ParamsNormalizer
+
+        public :resolve_prefixed_ids
+
+        def model_class
+          Spree::Order
+        end
+
+        def nested_param_models
+          { 'items' => Spree::LineItem }
+        end
+      end
+    end
+
+    let(:order_controller) { order_controller_class.new }
+
+    it 'leaves a product id where a variant belongs, so the lookup refuses it' do
+      product = create(:product)
+      hash = { 'items' => [{ 'variant_id' => product.prefixed_id, 'quantity' => 1 }] }.with_indifferent_access
+
+      result = order_controller.resolve_prefixed_ids(hash)
+
+      expect(result['items'].first['variant_id']).to eq(product.prefixed_id)
+    end
+
+    it 'decodes an id of the right kind' do
+      variant = create(:variant)
+      hash = { 'items' => [{ 'variant_id' => variant.prefixed_id, 'quantity' => 1 }] }.with_indifferent_access
+
+      result = order_controller.resolve_prefixed_ids(hash)
+
+      expect(result['items'].first['variant_id']).to eq(variant.id)
+    end
+
+    # `category_ids` names `has_many :categories`, so the singular lookup
+    # found nothing and the id went through unchecked.
+    context 'inside a plural list' do
+      let(:product_controller) do
+        Class.new(ActionController::API) do
+          include Spree::Api::V3::ParamsNormalizer
+
+          public :resolve_prefixed_ids
+
+          def model_class
+            Spree::Product
+          end
+        end.new
+      end
+
+      it 'leaves an id of the wrong kind' do
+        product = create(:product)
+        hash = { 'category_ids' => [product.prefixed_id] }.with_indifferent_access
+
+        result = product_controller.resolve_prefixed_ids(hash)
+
+        expect(result['category_ids']).to eq([product.prefixed_id])
+      end
+
+      it 'decodes an id of the right kind' do
+        category = create(:category)
+        hash = { 'category_ids' => [category.prefixed_id] }.with_indifferent_access
+
+        result = product_controller.resolve_prefixed_ids(hash)
+
+        expect(result['category_ids']).to eq([category.id])
+      end
+    end
+
+    it 'decodes a top-level association id of the right kind' do
+      customer = create(:customer)
+      hash = { 'customer_id' => customer.prefixed_id }.with_indifferent_access
+
+      result = order_controller.resolve_prefixed_ids(hash)
+
+      expect(result['customer_id']).to eq(customer.id)
+    end
+  end
 end

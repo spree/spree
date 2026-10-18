@@ -45,6 +45,8 @@ module Spree
           # *other* users. `avatar_signed_id` takes a signed id from
           # POST /files to set the photo, or `null` to remove it.
           def update
+            return refuse_delegated_write if current_oauth_token.present?
+
             if current_user.update(permitted_params)
               render json: me_response
             else
@@ -53,6 +55,20 @@ module Spree
           end
 
           private
+
+          # A grant acts *for* a staff member, not *as* one. This action is
+          # unguarded because it was only ever the person at the keyboard
+          # editing their own profile — but a delegated credential reaches it
+          # too, and the name it could rewrite is the one audit trails show
+          # as the actor. There is no catalog permission for "edit my own
+          # profile", so the answer is that an agent has no business here.
+          def refuse_delegated_write
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+              message: 'A connected agent cannot change the profile of the person who connected it.',
+              status: :forbidden
+            )
+          end
 
           # A request authenticated by a secret API key has no Spree user to
           # describe/update, so it gets a 404 pointing at the key endpoint
@@ -82,11 +98,15 @@ module Spree
             params.permit(*declared_permitted_attributes)
           end
 
+          # What this credential may do, which is not always what its owner
+          # may do: a grant narrows the approver's role, so reporting the
+          # role would both disclose more than was handed over and mislead a
+          # client that reads /me to decide what to attempt.
           def me_response
             {
               user: admin_user_serializer.new(current_user, params: serializer_params).to_h,
               permissions: serialize_permissions(current_ability),
-              permission_keys: serialize_permission_keys(current_ability)
+              permission_keys: staff_permission_keys
             }
           end
 
