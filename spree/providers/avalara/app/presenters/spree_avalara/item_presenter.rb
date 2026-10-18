@@ -12,7 +12,7 @@ module SpreeAvalara
     DESCRIPTION_LIMIT = 256
     ITEM_CODE_LIMIT = 50
 
-    # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee]
+    # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee, Spree::ExchangeLineItem]
     # @param owner [Spree::Cart, Spree::Order]
     # @param tax_included [Boolean] resolved through the tax destination
     # @param exemptions [Array<Spree::TaxExemption>] entries to place on this
@@ -55,12 +55,12 @@ module SpreeAvalara
     # the same rule Internal applies.
     def exemption_payload
       entry = exemptions.find do |exemption|
-        exemption.covers_item?(item) &&
+        exemption.covers_item?(exemption_subject) &&
           exemption.covers_jurisdiction?(destination_country, destination_state)
       end
       return {} if entry.nil?
 
-      code = EntityUseCodes.for(entry.reason_code_for(item))
+      code = EntityUseCodes.for(entry.reason_code_for(exemption_subject))
       payload = code ? { entityUseCode: code } : {}
       # `exemptionCode` on a line, `exemptionNo` on the document. Strictly one
       # each — all four combinations checked against the sandbox, and each name
@@ -78,6 +78,13 @@ module SpreeAvalara
       payload
     end
 
+    # An exchange's replacement is claimed as the line it replaces was: a
+    # certificate's per-line carve-out names the sold line, and the
+    # replacement would otherwise match no carve-out and come out exempt.
+    def exemption_subject
+      item.is_a?(Spree::ExchangeLineItem) ? item.line_item || item : item
+    end
+
     def destination_country
       owner.tax_address&.country_code
     end
@@ -86,7 +93,11 @@ module SpreeAvalara
       owner.tax_address&.state_code
     end
 
+    # An exchange line announces one quantity and may receive fewer; only
+    # what is credited ships a replacement.
     def quantity
+      return item.credited_quantity if item.is_a?(Spree::ExchangeLineItem)
+
       item.respond_to?(:quantity) ? item.quantity : 1
     end
 
@@ -97,6 +108,8 @@ module SpreeAvalara
     def tax_code
       case item
       when Spree::LineItem then item.tax_category&.tax_code.presence || default_tax_code || DEFAULT_TAX_CODE
+      when Spree::ExchangeLineItem
+        item.new_variant&.tax_category&.tax_code.presence || default_tax_code || DEFAULT_TAX_CODE
       when Spree::Fulfillment then delivery_tax_code.presence || FREIGHT_TAX_CODE
       else default_tax_code
       end
@@ -112,6 +125,7 @@ module SpreeAvalara
     def description
       text = case item
              when Spree::LineItem then item.name
+             when Spree::ExchangeLineItem then item.new_variant&.name
              when Spree::Fulfillment then delivery_description
              when Spree::Fee then item.label.presence || item.kind
              end
@@ -130,9 +144,12 @@ module SpreeAvalara
     # one for a fulfillment or a fee would put a value into that namespace that
     # the merchant never assigned.
     def item_code
-      return unless item.is_a?(Spree::LineItem)
+      variant = case item
+                when Spree::LineItem then item.variant
+                when Spree::ExchangeLineItem then item.new_variant
+                end
 
-      item.variant&.sku.presence&.first(ITEM_CODE_LIMIT)
+      variant&.sku.presence&.first(ITEM_CODE_LIMIT)
     end
 
     # A fulfillment carries no tax category of its own — the delivery method it

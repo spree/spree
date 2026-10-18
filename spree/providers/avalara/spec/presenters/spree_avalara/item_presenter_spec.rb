@@ -149,4 +149,35 @@ RSpec.describe SpreeAvalara::ItemPresenter do
       expect(present(fee)[:taxCode]).to eq('OF040000')
     end
   end
+
+  # What an exchange sends out: the replacement, not the line it replaces.
+  describe 'an exchange replacement' do
+    let(:exchange) { create(:received_exchange) }
+    let(:line) { exchange.exchange_line_items.first }
+
+    def present_replacement(exemptions: [])
+      described_class.new(item: line, owner: exchange.order, tax_included: false, exemptions: exemptions).call
+    end
+
+    it 'is priced at the replacement, under its own tax code and SKU' do
+      category = create(:tax_category, store: @default_store, tax_code: 'PC040100')
+      line.new_variant.update!(sku: 'SWAP-SKU-1', tax_category: category)
+
+      payload = present_replacement
+
+      expect(payload).to include(number: line.prefixed_id, quantity: 1, amount: line.taxable_basis,
+                                 taxCode: 'PC040100', itemCode: 'SWAP-SKU-1')
+    end
+
+    # A carve-out names the sold line, whose treatment the replacement takes over.
+    it 'is claimed as the line it replaces was' do
+      carved_out = Spree::TaxExemption.new(
+        reason_code: 'RESALE',
+        item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: line.line_item.prefixed_id, exempt: false)]
+      )
+
+      expect(present_replacement(exemptions: [carved_out])).not_to have_key(:entityUseCode)
+      expect(present_replacement(exemptions: [Spree::TaxExemption.new(reason_code: 'RESALE')])[:entityUseCode]).to eq('G')
+    end
+  end
 end

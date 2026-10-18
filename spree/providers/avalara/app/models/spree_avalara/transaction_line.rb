@@ -45,8 +45,8 @@ module SpreeAvalara
     # violation, not a row to drop: Avalara answered about something we did not
     # ask about, and silently ignoring it would leave an item untaxed.
     #
-    # @param items [Array<Spree::LineItem, Spree::Fulfillment, Spree::Fee>]
-    # @return [Spree::LineItem, Spree::Fulfillment, Spree::Fee]
+    # @param items [Array<Spree::LineItem, Spree::Fulfillment, Spree::Fee, Spree::ExchangeLineItem>]
+    # @return [Spree::LineItem, Spree::Fulfillment, Spree::Fee, Spree::ExchangeLineItem]
     # @raise [SpreeAvalara::Error] when no item carries that prefixed id
     def matching_item(items)
       item = items.find { |candidate| candidate.prefixed_id.to_s == line_number.to_s }
@@ -279,6 +279,7 @@ module SpreeAvalara
       when Spree::LineItem then :line_item_id
       when Spree::Fulfillment then :fulfillment_id
       when Spree::Fee then :fee_id
+      when Spree::ExchangeLineItem then :exchange_line_item_id
       else raise SpreeAvalara::Error, "#{item.class} is not taxable"
       end
     end

@@ -401,34 +401,138 @@ RSpec.describe SpreeAvalara::TaxProvider do
     end
   end
 
-  describe '#refund' do
-    let(:order) { create(:order, store: @default_store, completed_at: Time.current, ship_address: address, bill_address: address) }
-    let(:refunded_line) { create(:line_item, order: order, cart: nil, price: 100, quantity: 4) }
-    let(:return_items) do
-      [instance_double(Spree::ReturnLineItem, line_item: refunded_line, received_quantity: 2,
-                                              return: instance_double(Spree::Return, number: 'RET1'))]
-    end
+  describe '#estimate_refund' do
+    let(:return_record) { create(:return) }
+    let(:order) { return_record.order }
+    let(:line) { return_record.return_line_items.first }
 
-    before do
-      refunded_line.update_column(:pre_tax_amount, 400)
-      allow(client).to receive(:create_transaction).and_return('id' => 5)
-    end
+    # Avalara would quote the credit at today's rates; the customer is owed
+    # what the sale charged, which only the sale's own rows know.
+    it 'gives back the share of the tax the sale charged, without asking Avalara' do
+      line.line_item.update_columns(quantity: 2)
+      create(:tax_line, line_item: line.line_item, order: order, amount: 3.30, provider_id: 'avalara')
 
-    it 'credits the returned lines against the filed document' do
-      provider.refund(order, return_items)
+      provider.estimate_refund(order, [line])
+
+      expect(line.tax_lines.credits.sole).to have_attributes(amount: 1.65, provider_id: 'avalara')
+      expect(client).not_to have_received(:create_transaction)
+    end
+  end
+
+  describe '#estimate_replacement' do
+    let(:exchange) { create(:exchange) }
+    let(:order) { exchange.order }
+    let(:line) { exchange.exchange_line_items.first }
+
+    before { allow(client).to receive(:create_transaction).and_return(response(tax: 2.5, line_number: line.prefixed_id)) }
+
+    it 'quotes the replacement as a sale and writes its tax on the exchange line' do
+      provider.estimate_replacement(order, [line])
 
       expect(client).to have_received(:create_transaction) do |model|
-        expect(model[:type]).to eq('ReturnInvoice')
-        expect(model[:code]).to eq("#{order.number}-RET1")
-        expect(model[:lines].sole[:amount]).to eq(-200)
+        expect(model[:type]).to eq('SalesOrder')
+        expect(model[:lines].sole).to include(number: line.prefixed_id, quantity: 1, amount: line.taxable_basis)
+      end
+      expect(line.tax_lines.charges.sole).to have_attributes(amount: 2.5, provider_id: 'avalara', order: order)
+      expect(order.tax_lines.reload).to be_empty
+    end
+
+    it 'leaves the credit for the units coming back alone' do
+      credit = create(:tax_line, order: order, line_item: nil, exchange_line_item: line, credit: true, amount: 1)
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.credits).to eq([credit])
+    end
+
+    it 'writes nothing once nothing ships' do
+      provider.estimate_replacement(order, [line])
+      exchange.update!(status: 'canceled')
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.reload).to be_empty
+      expect(client).to have_received(:create_transaction).once
+    end
+
+    it 'refuses rather than leave the replacement untaxed when Avalara cannot answer' do
+      allow(client).to receive(:create_transaction).and_raise(SpreeAvalara::RequestError.new('timeout', status: nil))
+
+      expect { provider.estimate_replacement(order, [line]) }.to raise_error(Spree::Tax::ProviderUnavailable)
+    end
+
+    it 'has no opinion with nothing connected' do
+      allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(nil)
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.reload).to be_empty
+      expect(client).not_to have_received(:create_transaction)
+    end
+  end
+
+  describe '#commit_replacement' do
+    let(:exchange) { create(:received_exchange) }
+    let(:order) { exchange.order }
+    let(:lines) { exchange.exchange_line_items.to_a }
+
+    before { allow(client).to receive(:create_or_adjust_transaction).and_return('id' => 1) }
+
+    # The credit for the units coming back is a ReturnInvoice keyed to the
+    # exchange, so the replacement needs a code of its own.
+    it 'files the replacement as a sale keyed to the exchange' do
+      provider.commit_replacement(order, lines)
+
+      expect(client).to have_received(:create_or_adjust_transaction) do |args|
+        model = args[:createTransactionModel]
+        expect(model[:type]).to eq('SalesInvoice')
+        expect(model[:code]).to eq("#{order.number}-#{exchange.number}-REPLACEMENT")
+        expect(model[:lines].sole[:number]).to eq(lines.first.prefixed_id)
       end
     end
 
-    it 'files nothing when no units came back' do
-      empty = [instance_double(Spree::ReturnLineItem, line_item: refunded_line, received_quantity: 0,
-                                                      return: instance_double(Spree::Return, number: 'RET1'))]
+    it 'treats a replayed filing as success' do
+      allow(client).to receive(:create_or_adjust_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Document already exists.', status: 400,
+                                                 details: { 'code' => 'DocumentAlreadyExists' }))
 
-      provider.refund(order, empty)
+      expect { provider.commit_replacement(order, lines) }.not_to raise_error
+    end
+  end
+
+  describe '#refund' do
+    let(:return_record) { create(:received_return) }
+    let(:order) { return_record.order }
+    let(:line) { return_record.return_line_items.first }
+
+    before do
+      create(:tax_line, order: order, line_item: nil, return_line_item: line, credit: true, amount: 1.5)
+      allow(client).to receive(:create_transaction).and_return('id' => 5)
+    end
+
+    it 'credits the lines with the tax their credit rows gave back' do
+      provider.refund(order, [line])
+
+      expect(client).to have_received(:create_transaction) do |model|
+        expect(model[:type]).to eq('ReturnInvoice')
+        expect(model[:code]).to eq("#{order.number}-#{return_record.number}")
+        expect(model[:lines].sole[:taxOverride]).to include(type: 'TaxAmount', taxAmount: -1.5)
+      end
+    end
+
+    # The same refund path serves claims, whose lines have no received count.
+    it 'keys a claim credit to the claim' do
+      claim = create(:approved_claim)
+
+      provider.refund(claim.order, claim.claim_line_items.to_a)
+
+      expect(client).to have_received(:create_transaction) do |model|
+        expect(model[:code]).to eq("#{claim.order.number}-#{claim.number}")
+      end
+    end
+
+    it 'files nothing when nothing went back' do
+      provider.refund(order, [line], amount: 0)
 
       expect(client).not_to have_received(:create_transaction)
     end
@@ -438,7 +542,7 @@ RSpec.describe SpreeAvalara::TaxProvider do
         and_raise(SpreeAvalara::RequestError.new('Document already exists.', status: 400,
                                                  details: { 'code' => 'DocumentAlreadyExists' }))
 
-      expect { provider.refund(order, return_items) }.not_to raise_error
+      expect { provider.refund(order, [line]) }.not_to raise_error
     end
   end
 

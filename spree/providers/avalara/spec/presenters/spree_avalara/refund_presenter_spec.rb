@@ -5,25 +5,23 @@ RSpec.describe SpreeAvalara::RefundPresenter do
   let(:order) { create(:order, store: @default_store, completed_at: Time.utc(2026, 5, 1, 12, 0, 0)) }
   let(:line_item) { create(:line_item, order: order, cart: nil, price: 100, quantity: 4) }
 
-  # Four units worth 400 before tax, so a unit credits 100.
-  before { line_item.update_column(:pre_tax_amount, 400) }
-
-  def return_item(received: 2)
-    instance_double(
-      Spree::ReturnLineItem,
-      line_item: line_item,
-      received_quantity: received,
-      return: instance_double(Spree::Return, number: 'RET1')
-    )
+  # Two units of a 100 line, with 8.00 of tax added on top given back.
+  def credited_line(line: line_item, quantity: 2, worth: 216, tax: 16)
+    instance_double(Spree::ReturnLineItem, line_item: line, credited_quantity: quantity,
+                                           credited_worth: worth.to_d, credited_tax_total: tax.to_d)
   end
 
   def present(**overrides)
-    described_class.new(**{ order: order, integration: integration, return_items: [return_item] }.merge(overrides))
+    described_class.new(**{ order: order, integration: integration, return_items: [credited_line] }.merge(overrides))
   end
 
-  it 'credits the returned units at their pre-tax worth' do
-    expect(present.lines_worth).to eq(200)
-    expect(present.call[:lines].sole).to include(number: line_item.prefixed_id, quantity: 2, amount: -200)
+  before { allow(SpreeAvalara).to receive(:post_sale_record).and_return(instance_double(Spree::Return, number: 'RET1')) }
+
+  it 'credits the units at what went back before tax, with the tax core gave back' do
+    expect(present.call[:lines].sole).to include(
+      number: line_item.prefixed_id, quantity: 2, amount: -200, taxIncluded: false,
+      taxOverride: { type: 'TaxAmount', reason: 'Refund', taxAmount: -16, taxDate: '2026-05-01' }
+    )
   end
 
   it 'files a line-level return rather than a percentage refund' do
@@ -44,17 +42,23 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     expect(present.call[:commit]).to be(false)
   end
 
-  # A replayed Returns::Refund must adjust this document, not file a second credit.
-  it 'keys the document to the order and the return' do
+  # A replayed refund must adjust this document, not file a second credit.
+  it 'keys the document to the order and the return, claim or exchange' do
     expect(present.code).to eq("#{order.number}-RET1")
   end
 
-  # Rates move, and a return reverses the original sale rather than making a new one.
-  it 'taxes the credit as of the original supply date' do
-    expect(present.call[:taxOverride]).to eq(type: 'TaxDate', reason: 'Refund', taxDate: '2026-05-01')
+  # The credit belongs to the period the money went back in, while its tax
+  # follows the sale it reverses.
+  it 'dates the credit on the refund day and taxes it as of the original supply' do
+    Timecop.freeze(Time.utc(2026, 7, 3, 12, 0, 0)) do
+      payload = present.call
+
+      expect(payload[:date]).to eq('2026-07-03')
+      expect(payload[:taxOverride]).to eq(type: 'TaxDate', reason: 'Refund', taxDate: '2026-05-01')
+    end
   end
 
-  # The credit has to be classified the way the sale was, or Avalara re-prices it
+  # The credit has to be classified the way the sale was, or Avalara files it
   # as generic goods for a non-exempt buyer.
   describe 'mirroring the sale' do
     it 'carries the tax code the line was sold under' do
@@ -74,65 +78,57 @@ RSpec.describe SpreeAvalara::RefundPresenter do
       expect(line[:exemptionCode]).to eq('C-100')
     end
 
-    # The amount comes from pre_tax_amount, so it is net. Flagging it inclusive
-    # would have Avalara back tax out of a figure that never contained any,
-    # crediting roughly 1/(1+rate) of the VAT actually charged.
-    it 'states the credit as net of tax' do
-      expect(present.call[:lines].sole[:taxIncluded]).to be(false)
+    # A sale that carried its tax inside the price gives back gross money, and
+    # only the part of it that is not tax is the credited amount.
+    it 'takes the tax out of money refunded gross' do
+      gross = credited_line(quantity: 1, worth: 100, tax: 18.70)
+
+      expect(present(return_items: [gross]).call[:lines].sole).to include(
+        amount: -81.30, taxOverride: hash_including(taxAmount: -18.70)
+      )
     end
 
-    # On an exclusive market the claim above holds either way, so it proves
-    # nothing on its own — this is the market where the mistake shows, and the
-    # one the legacy extension shipped it on: it sent the same net figure with
-    # the sale document's inclusive flag, crediting a fraction of the VAT.
-    it 'states the credit as net even where prices are sold gross' do
-      market = create(:market, store: @default_store, tax_inclusive: true, currency: 'PLN')
-      market.update!(country_codes: ['PL'])
-      address = create(:address, country_code: 'PL', state_code: nil, city: 'Warszawa', zipcode: '00-526')
-      order.update!(market: market, ship_address: address, bill_address: address)
+    # An exempt sale gave nothing back in tax, and its credit says so rather
+    # than letting Avalara price the return.
+    it 'credits zero tax where the sale charged none' do
+      exempt = credited_line(worth: 200, tax: 0)
 
-      expect(SpreeAvalara.tax_inclusive?(order.reload)).to be(true)
-      expect(present.call[:lines].sole[:taxIncluded]).to be(false)
-      expect(present.call[:lines].sole[:amount]).to eq(-200)
+      expect(present(return_items: [exempt]).call[:lines].sole).to include(
+        amount: -200, taxOverride: hash_including(taxAmount: 0)
+      )
     end
   end
 
-  # Every unit of every line came back, so the whole pre-tax worth is credited.
-  it 'credits a full return in full' do
-    everything = [return_item(received: 4)]
-
-    presenter = present(return_items: everything)
-
-    expect(presenter.lines_worth).to eq(400)
-    expect(presenter.call[:lines].sole).to include(quantity: 4, amount: -400)
-  end
-
-  # Worth is summed across lines and the scale applies to each, so a fault that
-  # credited only the first line — or scaled each against its own worth — would
-  # never show up in a single-line example.
-  describe 'a return spanning several lines' do
+  # A restocking fee or a part refund: the money is divided across the lines
+  # as core divided it before writing their credit rows.
+  describe 'a refund short of the lines' do
     let(:second_line) { create(:line_item, order: order, cart: nil, price: 50, quantity: 2) }
     let(:both_lines) do
-      [return_item(received: 4),
-       instance_double(Spree::ReturnLineItem, line_item: second_line, received_quantity: 2,
-                                              return: instance_double(Spree::Return, number: 'RET1'))]
+      [credited_line(worth: 216, tax: 8), credited_line(line: second_line, quantity: 2, worth: 108, tax: 4)]
     end
 
-    before { second_line.update_column(:pre_tax_amount, 100) }
+    it 'divides the money in proportion to what each line is worth' do
+      lines = present(return_items: both_lines, amount: 162).call[:lines]
 
-    it 'credits each line its own worth' do
-      presenter = present(return_items: both_lines)
-
-      expect(presenter.lines_worth).to eq(500)
-      expect(presenter.call[:lines].map { |line| line[:amount] }).to eq([-400, -100])
+      expect(lines.map { |line| line[:amount] }).to eq([-100, -50])
+      expect(lines.map { |line| line.dig(:taxOverride, :taxAmount) }).to eq([-8, -4])
     end
 
-    it 'spreads a short refund across every line rather than exhausting the first' do
-      presenter = present(return_items: both_lines, amount: 250)
+    it 'credits each line its whole worth when the refund covers it' do
+      lines = present(return_items: both_lines, amount: 5_000).call[:lines]
 
-      expect(presenter.scale).to eq(0.5)
-      expect(presenter.call[:lines].map { |line| line[:amount] }).to eq([-200, -50])
-      expect(presenter.call[:lines].sum { |line| line[:amount] }).to eq(-250)
+      expect(lines.map { |line| line[:amount] }).to eq([-208, -104])
+    end
+
+    # Rounding each line on its own would credit a cent nobody refunded.
+    it 'lands the division on the cent' do
+      pennies = create_list(:line_item, 2, order: order, cart: nil, price: 1, quantity: 1).map do |line|
+        credited_line(line: line, quantity: 1, worth: 1, tax: 0)
+      end
+
+      lines = present(return_items: pennies, amount: 1.03).call[:lines]
+
+      expect(lines.sum { |line| line[:amount] }).to eq(-1.03)
     end
   end
 
@@ -147,92 +143,20 @@ RSpec.describe SpreeAvalara::RefundPresenter do
 
     it 'says nothing where the sale carried no registration' do
       expect(present.call).not_to have_key(:businessIdentificationNo)
-      expect(present(tax_identifier: instance_double(Spree::TaxIdentifier, value: nil)).call).
-        not_to have_key(:businessIdentificationNo)
-    end
-  end
-
-  # Rounding each line on its own credits a cent nobody refunded, which the
-  # cap exists to prevent.
-  describe 'rounding a short refund across lines' do
-    # Two lines a penny apart from the refund, so per-line rounding would round
-    # both up. Sold net, so gross and net worth agree and only the rounding is
-    # under test.
-    let(:penny_lines) { create_list(:line_item, 2, order: order, cart: nil, price: 1, quantity: 1) }
-    let(:both_penny_lines) do
-      penny_lines.map do |line|
-        instance_double(Spree::ReturnLineItem, line_item: line, received_quantity: 1,
-                                               return: instance_double(Spree::Return, number: 'RET1'))
-      end
-    end
-
-    before { penny_lines.each { |line| line.update_column(:pre_tax_amount, 1) } }
-
-    it 'never credits more than the refund carried' do
-      presenter = present(return_items: both_penny_lines, amount: 1.03)
-      credited = presenter.call[:lines].sum { |line| line[:amount] }
-
-      expect(credited).to eq(-1.03)
-      expect(presenter.call[:lines].map { |line| line[:amount] }).to eq([-0.52, -0.51])
-    end
-  end
-
-  # `amount` is money the customer receives, so where the sale carried its tax
-  # inside the price the refund figure does too. Scaling it against the net
-  # basis credited full tax for any shortfall smaller than the tax.
-  describe 'a short refund of a line sold gross' do
-    # 100.00 gross at 23%: 81.30 net, 18.70 tax inside the price.
-    let(:gross_line) { create(:line_item, order: order, cart: nil, price: 100, quantity: 1) }
-    let(:returned_gross) do
-      [instance_double(Spree::ReturnLineItem, line_item: gross_line, received_quantity: 1,
-                                              return: instance_double(Spree::Return, number: 'RET1'))]
-    end
-
-    before { gross_line.update_column(:pre_tax_amount, 81.30) }
-
-    it 'credits the refunded share of the net basis, not all of it' do
-      presenter = present(return_items: returned_gross, amount: 90)
-
-      expect(presenter.scale).to eq(0.9)
-      expect(presenter.call[:lines].sole[:amount]).to eq(-73.17)
-    end
-
-    it 'still credits the whole basis when the refund is the whole price' do
-      presenter = present(return_items: returned_gross, amount: 100)
-
-      expect(presenter.scale).to eq(1)
-      expect(presenter.call[:lines].sole[:amount]).to eq(-81.30)
-    end
-  end
-
-  describe 'when the refund is short of the returned lines' do
-    # An admin keeping a restocking fee refunded less than came back, and no more
-    # tax may be credited than the refund actually carried.
-    it 'credits every line proportionally' do
-      expect(present(amount: 100).scale).to eq(0.5)
-      expect(present(amount: 100).call[:lines].sole[:amount]).to eq(-100)
-    end
-
-    it 'never credits more than the lines are worth' do
-      expect(present(amount: 5_000).scale).to eq(1)
-      expect(present(amount: 5_000).call[:lines].sole[:amount]).to eq(-200)
-    end
-
-    it 'credits the full worth when no amount is named' do
-      expect(present.scale).to eq(1)
     end
   end
 
   describe 'nothing to credit' do
-    it 'is true when no units came back' do
-      expect(present(return_items: [return_item(received: 0)])).to be_nothing_to_credit
+    it 'is true when nothing went back' do
+      expect(present(return_items: [credited_line(quantity: 0, worth: 0, tax: 0)])).to be_nothing_to_credit
+      expect(present(amount: 0)).to be_nothing_to_credit
     end
 
     it 'is true when the return is empty' do
       expect(present(return_items: [])).to be_nothing_to_credit
     end
 
-    it 'is false for a real return' do
+    it 'is false for a real refund' do
       expect(present).not_to be_nothing_to_credit
     end
   end

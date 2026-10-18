@@ -93,17 +93,31 @@ module SpreeAvalara
   # the store has none, and pricing tax must not write inventory records.
   #
   # @param owner [Spree::Cart, Spree::Order]
-  # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee, nil]
+  # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee, Spree::ExchangeLineItem, nil]
   # @return [Spree::StockLocation, nil]
   def self.origin_location(owner, item: nil)
     from_item = case item
                 when Spree::Fulfillment then item.stock_location
                 when Spree::LineItem then item.fulfillments.first&.stock_location
+                when Spree::ExchangeLineItem then item.exchange&.stock_location
                 end
     return from_item if from_item
 
     locations = owner.store&.stock_locations&.first_party
 
     owner.fulfillments.first&.stock_location || locations&.find_by(default: true) || locations&.first
+  end
+
+  # The return, claim or exchange a post-sale line belongs to, whose number
+  # keys the documents filed for it.
+  #
+  # @param item [Spree::ReturnLineItem, Spree::ClaimLineItem, Spree::ExchangeLineItem, nil]
+  # @return [Spree::Return, Spree::Claim, Spree::Exchange, nil]
+  def self.post_sale_record(item)
+    case item
+    when Spree::ReturnLineItem then item.return
+    when Spree::ClaimLineItem then item.claim
+    when Spree::ExchangeLineItem then item.exchange
+    end
   end
 end

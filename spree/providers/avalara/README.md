@@ -60,6 +60,17 @@ Avalara's; once a market uses Avalara the dashboard offers Avalara's codes, and 
 A reason whose code Avalara does not define is sent as OTHER/CUSTOM, and the reason you recorded is kept
 on the tax row.
 
+## Returns, claims and exchanges
+
+The tax given back on a return, a claim or an exchange is exactly what the sale charged on the units
+coming back, so a customer is never refunded more or less tax than they paid. Once the money has gone
+back, Spree files a credit with Avalara carrying that same tax. The credit is dated the day of the
+refund but taxed as of the original sale, and it is keyed to the return, claim or exchange number, so
+retrying a refund adjusts one document.
+
+An exchange's replacement is taxed by Avalara as a new sale while the exchange is open, and filed as
+its own document once it ships.
+
 ## Upgrading from `spree_avatax_official`
 
 ```bash

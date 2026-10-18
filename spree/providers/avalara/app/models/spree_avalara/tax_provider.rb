@@ -126,10 +126,84 @@ module SpreeAvalara
       raise tax_failure(error) unless integration.client.already_voided_error?(error)
     end
 
-    # Credits the returned lines against the filed document.
+    # Gives back exactly the tax the sale charged on the credited units, read
+    # off the sale's own rows rather than quoted again: the customer is owed
+    # what they paid, and Avalara would price the credit at today's rates and
+    # the list price. Needs no connected integration, since nothing is asked.
+    #
+    # @see Spree::TaxProvider::Base#estimate_refund
+    def estimate_refund(order, items, amounts: nil, tax_date: nil)
+      Spree::TaxProvider::RecordedShare.new(order: order, items: items, amounts: amounts).call
+    end
+
+    # Quotes an exchange's replacement as a new sale and writes its tax as
+    # charge rows on the exchange lines. Fails closed like +estimate+; with
+    # nothing connected it has no opinion and writes no rows.
+    #
+    # @see Spree::TaxProvider::Base#estimate_replacement
+    def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [])
+      items = Array(items)
+      return if items.empty?
+
+      integration = Integration.active_for(order.store)
+      shipped = items.select { |item| item.credited_quantity.to_i.positive? }
+
+      if integration.nil? || shipped.empty? || order.tax_address.nil?
+        report_disconnected(order) if integration.nil?
+        sweep_replacement!(items)
+        return
+      end
+
+      body = integration.client.create_transaction(
+        TransactionPresenter.new(
+          owner: order, integration: integration, items: shipped, type: 'SalesOrder',
+          tax_date: tax_date, tax_identifier: tax_identifier, exemptions: exemptions
+        ).call
+      )
+      lines = TransactionLine.from_response(
+        body, context: response_context(order, shipped, tax_identifier, exemptions)
+      )
+
+      ApplicationRecord.transaction do
+        sweep_replacement!(items)
+        lines.each do |line|
+          Spree::TaxLine.create!(line.to_tax_line_attributes(item: line.matching_item(shipped), owner: order))
+        end
+      end
+    rescue SpreeAvalara::Error => error
+      raise tax_failure(error)
+    end
+
+    # Files an exchange's replacement as a sale of its own once it ships,
+    # keyed to the exchange so a replay adjusts one document. Its credit is a
+    # separate ReturnInvoice (see #refund), so the two carry different codes.
+    #
+    # @see Spree::TaxProvider::Base#commit_replacement
+    def commit_replacement(order, items)
+      shipped = Array(items).select { |item| item.credited_quantity.to_i.positive? }
+      return if shipped.empty?
+
+      integration = Integration.active_for(order.store)
+      return report_disconnected(order) if integration.nil?
+
+      integration.client.create_or_adjust_transaction(
+        createTransactionModel: TransactionPresenter.new(
+          owner: order, integration: integration, items: shipped, type: 'SalesInvoice',
+          code: "#{order.number}-#{SpreeAvalara.post_sale_record(shipped.first)&.number}-REPLACEMENT",
+          commit: integration.preferred_commit_transaction_enabled,
+          tax_identifier: order.resolved_tax_identifier,
+          exemptions: order.usable_exemptions
+        ).call
+      )
+    rescue SpreeAvalara::RequestError => error
+      raise tax_failure(error) unless integration.client.duplicate_document_error?(error)
+    end
+
+    # Credits the lines of a return, claim or exchange against the filed
+    # document, with the tax their credit rows gave back.
     #
     # @param order [Spree::Order]
-    # @param return_items [Array<Spree::ReturnLineItem>]
+    # @param return_items [Array<Spree::ReturnLineItem, Spree::ClaimLineItem, Spree::ExchangeLineItem>]
     # @param amount [BigDecimal, nil] the refund issued; nil = the lines' worth
     # @param tax_date [Time, nil] the original supply date
     # @return [void]
@@ -209,6 +283,14 @@ module SpreeAvalara
     # a landed-cost provider writes against a duty — are not ours to delete.
     def sweep!(owner)
       owner.tax_lines.where(provider_id: SpreeAvalara::PROVIDER_ID).delete_all
+
+      nil
+    end
+
+    # Only the replacement's charge rows: the credit rows on the same lines are
+    # what the customer is refunded, and the order's own rows are the sale.
+    def sweep_replacement!(items)
+      Spree::TaxLine.charges.where(exchange_line_item_id: items.map(&:id), provider_id: SpreeAvalara::PROVIDER_ID).delete_all
 
       nil
     end

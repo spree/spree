@@ -288,13 +288,15 @@ RSpec.describe 'AvaTax API contract', :vcr do
                      ship_address: destination, bill_address: destination)
     end
     let(:line_item) { create(:line_item, order: order, cart: nil, price: 100, quantity: 2) }
+    # One unit of the two back, with the 8.88 of New York tax the sale charged on it.
     let(:return_items) do
-      [instance_double(Spree::ReturnLineItem, line_item: line_item, received_quantity: 1,
-                                              return: instance_double(Spree::Return, number: 'RET1'))]
+      [instance_double(Spree::ReturnLineItem, line_item: line_item, credited_quantity: 1,
+                                              credited_worth: 108.88.to_d, credited_tax_total: 8.88.to_d)]
     end
 
     before do
       allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      allow(SpreeAvalara).to receive(:post_sale_record).and_return(instance_double(Spree::Return, number: 'RET1'))
       create(:stock_location, store: @default_store, default: true, country_code: 'US',
                               state_code: 'CA', city: 'Irvine', zipcode: '92614', address1: '2000 Main Street')
       line_item.update_column(:pre_tax_amount, 200)
@@ -325,10 +327,52 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(credited['lines'].map { |line| line['taxDate'] }).to all(eq('2024-01-15'))
     end
 
+    # The credit carries the tax core gave back rather than a fresh quote, and
+    # still classifies it as of the sale. Whether a line's tax-amount override
+    # and the document's tax-date override combine is Avalara's to say.
+    it 'credits exactly the tax given back, as of the original sale',
+       vcr: { cassette_name: 'refund/tax_amount_override' } do
+      order.update_column(:number, "R-TAXAMOUNT-#{Time.now.to_i}")
+      credited = nil
+      allow(integration.client).to receive(:create_transaction).and_wrap_original do |original, model|
+        credited = original.call(model)
+      end
+
+      provider.refund(order, return_items)
+
+      expect(credited).to be_present
+      expect(credited['lines'].sole).to include('tax' => -8.88, 'taxDate' => '2024-01-15')
+    end
+
     it 'accepts a replayed credit', vcr: { cassette_name: 'refund/duplicate' } do
       provider.refund(order, return_items)
 
       expect { provider.refund(order, return_items) }.not_to raise_error
+    end
+  end
+
+  describe 'an exchange replacement' do
+    let(:exchange) { create(:received_exchange) }
+    let(:order) { exchange.order }
+    let(:lines) { exchange.exchange_line_items.to_a }
+
+    before do
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      destination = create(:address, city: 'New York', state_code: 'NY', country_code: 'US', zipcode: '10001')
+      order.update_columns(ship_address_id: destination.id, bill_address_id: destination.id,
+                           number: "R-EXCHANGE-#{Time.now.to_i}")
+      exchange.stock_location.update!(country_code: 'US', state_code: 'CA', city: 'Irvine',
+                                      zipcode: '92614', address1: '2000 Main Street')
+    end
+
+    it 'quotes the replacement as a new sale', vcr: { cassette_name: 'exchange/replacement_quote' } do
+      provider.estimate_replacement(order.reload, lines)
+
+      expect(lines.first.tax_lines.charges.sole.amount).to be_positive
+    end
+
+    it 'files the replacement once it ships', vcr: { cassette_name: 'exchange/replacement_filed' } do
+      expect { provider.commit_replacement(order.reload, lines) }.not_to raise_error
     end
   end
 
