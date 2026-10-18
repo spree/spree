@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
 import { Field, FieldLabel } from '../ui/field'
-import { Input } from '../ui/input'
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '../ui/input-group'
+import { EyeIcon, EyeOffIcon } from './icons'
 
 // Server masks stored secrets as `••••…` on read so admins can see "yes,
 // something is stored" without exposing the actual value. Detecting that
@@ -35,7 +36,9 @@ interface SecretInputProps {
  * mask (`••••3K9z`) and renders as a read-only badge with a "Replace"
  * button — never as an input, and never with a reveal toggle, because the
  * server does not send the secret and there is nothing to unhide. Replace
- * switches to an empty password input so the admin opts in to rotation;
+ * switches to an empty password input so the admin opts in to rotation; that
+ * input does carry a reveal toggle, since what it hides is what the admin is
+ * typing right now;
  * Cancel reverts to the badge so the next save preserves the existing
  * secret via the backend's masked round-trip guard.
  *
@@ -57,6 +60,7 @@ export function SecretInput({
   // after `onChange('')` has cleared the parent value.
   const [pendingMask, setPendingMask] = useState<string | null>(null)
   const replacing = pendingMask !== null
+  const [revealed, setRevealed] = useState(false)
 
   // A stored secret always renders as the badge: the server sent a mask,
   // not the value, so there is nothing a reveal toggle could show.
@@ -93,17 +97,29 @@ export function SecretInput({
     <Field>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <div className="flex items-center gap-2">
-        <Input
-          id={id}
-          type="password"
-          autoComplete="new-password"
-          placeholder={
-            replacing ? t('admin.components.secret_input.new_value_placeholder') : placeholder
-          }
-          value={(value as string) ?? ''}
-          onChange={(e) => onChange(e.target.value)}
-          className="flex-1"
-        />
+        <InputGroup className="flex-1">
+          <InputGroupInput
+            id={id}
+            type={revealed ? 'text' : 'password'}
+            autoComplete="new-password"
+            spellCheck={false}
+            placeholder={
+              replacing ? t('admin.components.secret_input.new_value_placeholder') : placeholder
+            }
+            value={(value as string) ?? ''}
+            onChange={(e) => onChange(e.target.value)}
+          />
+          <InputGroupAddon align="inline-end">
+            <InputGroupButton
+              size="icon-xs"
+              aria-label={revealed ? t('admin.actions.hide') : t('admin.actions.show')}
+              aria-pressed={revealed}
+              onClick={() => setRevealed((visible) => !visible)}
+            >
+              {revealed ? <EyeOffIcon /> : <EyeIcon />}
+            </InputGroupButton>
+          </InputGroupAddon>
+        </InputGroup>
         {replacing && (
           <Button
             type="button"

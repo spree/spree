@@ -13,7 +13,7 @@ const { signed_id } = await client.files.upload(certificatePdf, { visibility: 'p
 // `signed_id` comes from `client.files.upload(file, { visibility: 'private' })`.
 const certificate = await client.companies.taxExemptionCertificates.create('comp_UkLWZg9DAJ', {
   certificate_number: 'DE-RESALE-7',
-  reason_code: 'resale',
+  tax_exemption_reason_id: 'txr_UkLWZg9DAJ',
   country_code: 'DE',
   document_signed_id: signed_id,
 })

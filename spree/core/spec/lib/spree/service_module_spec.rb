@@ -216,4 +216,17 @@ describe Spree::ServiceModule do
       expect { service.call }.to raise_error(Spree::ServiceModule::IncompatibleParamsPassed)
     end
   end
+
+  describe Spree::ServiceModule::ResultError do
+    it 'reads a failure carrying a code as its message, and exposes the code' do
+      error = described_class.new({ code: 'tax_provider_unavailable', message: 'Tax could not be calculated' })
+
+      expect(error.to_s).to eq('Tax could not be calculated')
+      expect(error.code).to eq('tax_provider_unavailable')
+    end
+
+    it 'has no code for a plain message' do
+      expect(described_class.new('Something went wrong').code).to be_nil
+    end
+  end
 end

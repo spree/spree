@@ -1,4 +1,5 @@
 import {
+  canSeeSettingsEntry,
   type NavEntry,
   type Permissions,
   permittedCreateActions,
@@ -338,7 +339,7 @@ function buildGotoCommands({
     // `comingSoon` pages are disabled in the sidebar — keep them unreachable
     // from the palette too.
     if (entry.comingSoon) continue
-    if (!canRead(entry.subject, permissions)) continue
+    if (!canSeeSettingsEntry(entry, (action, subject) => permissions.can(action, subject))) continue
     commands.push({
       key: `settings:${entry.key}`,
       label: resolveNavLabel(entry, t),

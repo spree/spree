@@ -46,6 +46,7 @@ export const Subject = {
   ClaimReason: 'claim_reason',
   RefundReason: 'refund_reason',
   OrderCancellationReason: 'order_cancellation_reason',
+  TaxExemptionReason: 'tax_exemption_reason',
   CustomFieldDefinition: 'custom_field_definition',
   Integration: 'integration',
   PaymentMethod: 'payment_method',

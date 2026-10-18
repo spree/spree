@@ -19,7 +19,7 @@ test.describe('getting started', () => {
     if ((await step.getAttribute('aria-expanded')) !== 'true') await step.click()
     await page.getByRole('link', { name: /^tax settings$/i }).click()
 
-    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/settings/tax-rates`))
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/settings/taxes/rates`))
     await expect(page.getByRole('button', { name: /add tax rate/i })).toBeVisible({
       timeout: 15_000,
     })

@@ -20,6 +20,7 @@ export interface GroupableTaxLine {
 /** The exemption snapshot a tax provider stamps onto a line. */
 export interface TaxLineExemption {
   reason_code?: string
+  reason_name?: string
   certificate_number?: string
 }
 
@@ -46,11 +47,16 @@ export function taxLineExemption(row: GroupableTaxLine): TaxLineExemption | null
 
   const record = raw as Record<string, unknown>
   const reasonCode = typeof record.reason_code === 'string' ? record.reason_code : undefined
+  const reasonName = typeof record.reason_name === 'string' ? record.reason_name : undefined
   const certificateNumber =
     typeof record.certificate_number === 'string' ? record.certificate_number : undefined
   if (!reasonCode && !certificateNumber) return null
 
-  return { reason_code: reasonCode, certificate_number: certificateNumber }
+  return {
+    reason_code: reasonCode,
+    ...(reasonName ? { reason_name: reasonName } : {}),
+    certificate_number: certificateNumber,
+  }
 }
 
 /**

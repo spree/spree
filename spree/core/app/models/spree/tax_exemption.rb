@@ -14,6 +14,9 @@ module Spree
     # Why the sale is exempt, in the provider's vocabulary — Avalara's
     # entityUseCode territory.
     attribute :reason_code, :string
+    # The merchant's wording for the reason, kept with the claim so a placed
+    # order still reads the way it did when it was taxed.
+    attribute :reason_name, :string
     attribute :certificate_number, :string
 
     # Where the claim holds. Nil country = everywhere the provider taxes,
@@ -60,6 +63,29 @@ module Spree
     # @return [String, nil]
     def reason_code_for(item)
       override_for(item)&.reason_code.presence || reason_code
+    end
+
+    # The claim as plain data, for freezing onto a placed order. Certificates
+    # lapse, get revoked and are edited, so a provider filing or crediting that
+    # sale later has to read the evidence the sale was priced with rather than
+    # whatever resolves on the day.
+    #
+    # @return [Hash]
+    def to_snapshot
+      attributes.except('item_overrides').
+        merge('item_overrides' => Array(item_overrides).map(&:to_snapshot))
+    end
+
+    # Unknown keys are dropped rather than raising: a snapshot is read back long
+    # after it was written, possibly by a different version of Spree.
+    #
+    # @param snapshot [Hash]
+    # @return [Spree::TaxExemption]
+    def self.from_snapshot(snapshot)
+      snapshot = snapshot.to_h.stringify_keys
+      overrides = Array(snapshot['item_overrides']).map { |override| ItemOverride.from_snapshot(override) }
+
+      new(snapshot.slice(*attribute_names).symbolize_keys.merge(item_overrides: overrides))
     end
 
     private

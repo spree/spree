@@ -1889,10 +1889,6 @@
           "placeholder": "Ilimitado"
         }
       },
-      "reason_code": {
-        "help": "Se vuelve el código de uso de entidad del motor de impuestos.",
-        "label": "Motivo"
-      },
       "role": {
         "description": {
           "label": "Descripción",
@@ -2494,6 +2490,10 @@
           "label": "Caja predeterminada",
           "help": "El empaque sobre el que se calculan tus cotizaciones de paquetería. Solo una predeterminada a la vez."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Gestiona los motivos que se ofrecen aquí en Configuración → Impuestos → Motivos de exención.",
+        "label": "Motivo"
       },
       "oauth_application": {
         "name": {
@@ -4268,12 +4268,11 @@
         "staff": "Personas con acceso a este dashboard",
         "stock_locations": "Depósitos y puntos de retiro que guardan stock",
         "store": "Nombre de la tienda, zona horaria, unidades y predeterminados regionales",
-        "tax_categories": "Clases de impuestos asignadas a los productos",
-        "tax_rates": "Tasas aplicadas por mercado y región",
         "webhooks": "Endpoints notificados cuando ocurren eventos",
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
         "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
+        "taxes": "Categorías fiscales, tipos impositivos y motivos de exención",
         "ai_agents": "Agentes de IA con acceso a esta tienda",
         "oauth_clients": "Registrar y configurar clientes OAuth"
       },
@@ -4314,6 +4313,7 @@
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
         "marketplace": "Configuración",
+        "taxes": "Impuestos",
         "ai_agents": "Agentes de IA",
         "oauth_clients": "Clientes OAuth"
       },
@@ -5050,14 +5050,7 @@
       },
       "never_expires": "No vence",
       "no_document": "Sin documento adjunto",
-      "reason_codes": {
-        "agricultural": "Agrícola",
-        "charitable": "Benéfico",
-        "educational": "Educativo",
-        "government": "Gubernamental",
-        "manufacturing": "Manufactura",
-        "resale": "Reventa"
-      },
+      "no_reasons": "Aún no hay motivos de exención. Añádelos en Configuración → Motivos.",
       "revoke_action": "Revocar",
       "revoke_confirm": {
         "message": "El certificado {{number}} deja de aplicar a pedidos nuevos. Queda archivado como registro.",
@@ -5389,12 +5382,15 @@
         "help": "Qué salió mal con una entrega: artículo dañado, faltante o equivocado.",
         "title": "Motivos de reclamo"
       },
+      "code_engine_help": "Tu motor de impuestos decide la exención por este código, así que elige el que define para este motivo.",
+      "code_help": "Un identificador corto que registran los certificados. Único en tu tienda.",
+      "code_placeholder": "p. ej. RESALE",
       "create_description": "Los motivos aparecen en un desplegable cuando el staff abre una devolución, un reclamo o un reembolso.",
       "delete_confirm": {
         "message": "{{name}} ya no se ofrecerá. Los registros que ya lo usan lo conservan.",
         "title": "¿Eliminar motivo?"
       },
-      "description": "Los vocabularios de los que elige tu equipo al manejar devoluciones, reclamos, reembolsos y cancelaciones.",
+      "description": "Las listas que usa tu equipo al gestionar devoluciones, reclamaciones, reembolsos y cancelaciones.",
       "edit_sheet_title": "Editar motivo",
       "empty": "Todavía no hay motivos",
       "in_use": "En uso",
@@ -5417,6 +5413,12 @@
       "return": {
         "help": "Por qué un cliente devuelve algo. Lo comparten devoluciones y cambios.",
         "title": "Motivos de devolución"
+      },
+      "tax_exemption": {
+        "create_description": "Tu equipo elige un motivo al registrar el certificado de exención de una empresa.",
+        "help": "Por qué una empresa compra sin impuestos. Se registra en sus certificados de exención; el código es lo que recibe tu motor de impuestos.",
+        "name_placeholder": "p. ej. Reventa",
+        "title": "Motivos de exención de impuestos"
       },
       "title": "Devoluciones y motivos"
     },
@@ -5628,7 +5630,6 @@
       "sellers": "Los vendedores terceros que operan en tu marketplace y en qué punto está cada uno.",
       "store_credits": "Saldos que los clientes pueden gastar al finalizar la compra y cómo se emitió cada uno.",
       "tax_categories": "Agrupaciones que deciden qué tasa impositiva recibe un producto.",
-      "tax_rates": "El impuesto cobrado por categoría y región.",
       "webhook_deliveries": "Cada evento enviado a este endpoint y si se recibió.",
       "webhook_endpoints": "Dónde se notifica a tus otros sistemas cuando pasa algo en la tienda.",
       "returns": "Mercadería que vuelve, desde la solicitud hasta el reembolso.",
@@ -5904,7 +5905,6 @@
         "deleted": "Tasa de impuesto eliminada",
         "updated": "Tasa de impuesto actualizada"
       },
-      "search_placeholder": "Buscar tasas de impuesto",
       "select_category": "Seleccionar una categoría"
     },
     "translations": {
@@ -6092,8 +6092,7 @@
         "created": "Categoría de impuestos creada",
         "deleted": "Categoría de impuestos eliminada",
         "updated": "Categoría de impuestos actualizada"
-      },
-      "search_placeholder": "Buscar por nombre…"
+      }
     },
     "inventory_lines": {
       "add_label": "Agregar un producto",
@@ -6372,6 +6371,21 @@
       "empty": "Estás al día.",
       "view_on_github": "Ver en GitHub",
       "release_notes_unavailable": "No se pudieron cargar las notas de la versión. Léelas en GitHub."
+    },
+    "taxes": {
+      "title": "Impuestos",
+      "description": "Cómo se gravan tus productos, qué tipos aplica Spree y por qué las empresas pueden comprar sin impuestos.",
+      "providers_title": "Cálculo de impuestos",
+      "provider_markets": "{{provider}} en {{markets}}",
+      "manage_markets": "Gestionar mercados",
+      "tabs": {
+        "categories": "Categorías",
+        "rates": "Tipos",
+        "exemption_reasons": "Motivos de exención"
+      },
+      "rates_unused_in": "Estos tipos no se usan en {{markets}}, donde un servicio externo calcula el impuesto.",
+      "rates_unused_everywhere": "Ninguno de tus mercados usa estos tipos: en {{markets}} un servicio externo calcula el impuesto.",
+      "rates_help": "El impuesto cobrado por categoría y región. Solo lo usan los mercados con los tipos de Spree: un servicio conectado como Avalara calcula el impuesto por su cuenta e ignora estos tipos."
     },
     "mcp_connect": {
       "open_cta": "Conectar un agente",

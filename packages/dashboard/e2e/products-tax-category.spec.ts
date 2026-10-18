@@ -7,7 +7,7 @@ import {
   variantsCard as variantsCardLocator,
 } from './products-helpers'
 
-const TAX_CATEGORIES_PATH = (storeId: string) => `/${storeId}/settings/tax-categories`
+const TAX_CATEGORIES_PATH = (storeId: string) => `/${storeId}/settings/taxes/categories`
 
 async function createTaxCategory(page: Page, name: string) {
   await page.getByRole('button', { name: /add tax category/i }).click()

@@ -362,7 +362,6 @@ module Spree
   # @return [Class]
   singleton_class.delegate :password_validator, :password_validator=, to: :spree_config
 
-
   # Commission rule kinds selectable on a commission rate.
   #
   # @return [Array<Class>]
@@ -684,5 +683,5 @@ require 'spree/core/model_extensions'
 require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/price_resolution'
-require 'spree/core/pricing/resolver'
 require 'spree/core/tax/provider_error'
+require 'spree/core/pricing/resolver'

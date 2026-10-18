@@ -52,7 +52,14 @@ module Spree
         schema = value_schema(definition)
         choices = definition[:choices]
         choices = choices.call if choices.respond_to?(:call)
-        schema['enum'] = choices.map { |choice| choice.is_a?(Symbol) ? choice.to_s : choice } if choices.present?
+        if choices.present?
+          # `{ value => label }` names values that cannot label themselves — an
+          # endpoint URL is no i18n key, let alone something to show a merchant.
+          labels = choices.to_h { |value, label| [value.to_s, label.to_s] } if choices.is_a?(Hash)
+          values = choices.is_a?(Hash) ? choices.keys : Array(choices)
+          schema['enum'] = values.map { |choice| choice.is_a?(Symbol) ? choice.to_s : choice }
+          schema['x-spree-choice-labels'] = labels if labels
+        end
         default = definition[:dynamic_default] ? nil : wire_default(default, definition)
         unset_reads_null = default.nil? && !definition[:dynamic_default]
 

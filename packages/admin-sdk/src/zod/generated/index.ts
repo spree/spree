@@ -145,6 +145,7 @@ export { StoreCreditEventSchema, type StoreCreditEvent } from './StoreCreditEven
 export { SupplierSchema, type Supplier } from './Supplier';
 export { TaxCategorySchema, type TaxCategory } from './TaxCategory';
 export { TaxExemptionCertificateSchema, type TaxExemptionCertificate } from './TaxExemptionCertificate';
+export { TaxExemptionReasonSchema, type TaxExemptionReason } from './TaxExemptionReason';
 export { TaxIdentifierSchema, type TaxIdentifier } from './TaxIdentifier';
 export { TaxLineSchema, type TaxLine } from './TaxLine';
 export { TaxRateSchema, type TaxRate } from './TaxRate';

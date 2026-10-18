@@ -58,6 +58,24 @@ export interface StorePayoutProvider {
   default: boolean
 }
 
+/** One tax engine a market can calculate through, from `taxProviders.list()`. */
+export interface TaxProviderOption {
+  /** The engine's shorthand (`internal`, `avalara`) — what a market's `tax_provider` takes. */
+  id: string
+  name: string
+  /** False when the store has not connected what this engine needs. */
+  available: boolean
+  /** True for the engine used when a market names none. */
+  default: boolean
+  /** Tax domains this engine cannot handle, with what each costs the merchant. */
+  unsupported_capabilities: Array<{ key: string; label: string; description?: string }>
+  /**
+   * The exemption reason codes this engine reads, to offer when a merchant adds
+   * a tax exemption reason; null when any code will do.
+   */
+  exemption_reason_codes: Array<{ value: string; label: string }> | null
+}
+
 export interface StoreDataSources {
   pricing_providers: StoreDataSourceProvider[]
   inventory_providers: StoreDataSourceProvider[]
