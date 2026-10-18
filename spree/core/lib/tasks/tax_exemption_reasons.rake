@@ -24,8 +24,21 @@ namespace :spree do
         end
       end
 
+      # The reasons a new store gets from the configurator's store defaults
+      # (packages/config/templates/store-defaults.yml), for stores that
+      # predate them.
+      defaults = {
+        'RESALE' => 'Resale',
+        'GOVERNMENT' => 'Government',
+        'CHARITABLE' => 'Charitable organization',
+        'EDUCATIONAL' => 'Educational institution',
+        'MANUFACTURING' => 'Manufacturing',
+        'AGRICULTURAL' => 'Agricultural'
+      }
       Spree::Store.find_each do |store|
-        Spree::Seeds::TaxExemptionReasons.call(store: store)
+        defaults.each do |code, name|
+          store.tax_exemption_reasons.find_or_create_by_code_or_name!(code: code, name: name)
+        end
       end
 
       linked = 0

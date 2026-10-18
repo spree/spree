@@ -99,6 +99,14 @@ describe('provisionStore', () => {
         (m) => m.country_code,
       ),
     ).toEqual(['DE', 'US'])
+    expect(api.all('/tax_exemption_reasons').map((reason) => reason.code)).toEqual([
+      'RESALE',
+      'GOVERNMENT',
+      'CHARITABLE',
+      'EDUCATIONAL',
+      'MANUFACTURING',
+      'AGRICULTURAL',
+    ])
     const key = api.all('/api_keys')[0]
     expect(key).toMatchObject({ name: 'Storefront (Wholesale)', key_type: 'publishable' })
     expect(key.channel_id).toBe(api.all('/channels').find((c) => c.code === 'wholesale')?.id)

@@ -30,7 +30,7 @@ describe 'spree:upgrade:tax_exemption_reasons' do
   it 'gives the store the default reasons' do
     subject.invoke
 
-    expect(store.tax_exemption_reasons.pluck(:code)).to include(*Spree::Seeds::TaxExemptionReasons::REASONS.keys)
+    expect(store.tax_exemption_reasons.pluck(:code)).to include('RESALE', 'GOVERNMENT', 'CHARITABLE', 'EDUCATIONAL', 'MANUFACTURING', 'AGRICULTURAL')
   end
 
   it 'saves a lower-case code in capitals' do
