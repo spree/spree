@@ -22,6 +22,7 @@ module Spree
     has_status :pending, :verified, :expired, :revoked, default: :pending
 
     belongs_to :company, class_name: 'Spree::Company', inverse_of: :tax_exemption_certificates
+    belongs_to :tax_exemption_reason, class_name: 'Spree::TaxExemptionReason', inverse_of: :tax_exemption_certificates
     belongs_to :verified_by, class_name: Spree.admin_user_class.to_s, optional: true
 
     # Confidential, so the private service rather than the public one that
@@ -29,15 +30,15 @@ module Spree
     has_one_attached :document, service: Spree.private_storage_service_name
     signed_id_attachments :document
 
-    validates :certificate_number, :reason_code, presence: true
+    validates :certificate_number, presence: true
     # Certificates exist only on legal-entity nodes — a division's purchases
     # read exemption through its legal entity. A validation rather than a
     # schema difference, so a per-division registration can be allowed later
     # by relaxing this alone.
     validate :company_is_legal_entity
-    # Checked when the code is set, not on every save: a reason the merchant
+    # Checked when the reason is set, not on every save: a reason the merchant
     # retires later leaves the certificates that already record it valid.
-    validate :reason_code_offered_by_store, if: :will_save_change_to_reason_code?
+    validate :reason_offered_by_store, if: :will_save_change_to_tax_exemption_reason_id?
 
     # A certificate is a scanned form, not an archive. Bounded because the
     # download action reads the whole blob into memory to serve it, so an
@@ -67,7 +68,7 @@ module Spree
         where(state_code: [address.state_code.presence, nil].uniq)
     }
 
-    self.whitelisted_ransackable_attributes = %w[certificate_number reason_code status expires_at]
+    self.whitelisted_ransackable_attributes = %w[certificate_number tax_exemption_reason_id status expires_at]
 
     delegate :store, :store_id, to: :company
 
@@ -98,11 +99,11 @@ module Spree
       errors.add(:company, :must_be_legal_entity)
     end
 
-    def reason_code_offered_by_store
-      return if reason_code.blank? || company.nil?
-      return if store.tax_exemption_reasons.active.exists?(code: reason_code)
+    def reason_offered_by_store
+      return if tax_exemption_reason.nil? || company.nil?
+      return if tax_exemption_reason.active? && tax_exemption_reason.store_id == store_id
 
-      errors.add(:reason_code, :not_offered)
+      errors.add(:tax_exemption_reason, :not_offered)
     end
   end
 end

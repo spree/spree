@@ -66,7 +66,7 @@ import {
   useTaxExemptionCertificates,
   useVerifyTaxExemptionCertificate,
 } from '../../hooks/use-companies'
-import { useTaxExemptionReasonNames, useTaxExemptionReasons } from '../../hooks/use-reasons'
+import { useTaxExemptionReasons } from '../../hooks/use-reasons'
 import {
   TAX_EXEMPTION_CERTIFICATE_DEFAULTS,
   type TaxExemptionCertificateFormValues,
@@ -109,15 +109,9 @@ export function TaxExemptionCertificatesCard({
   const verifyMutation = useVerifyTaxExemptionCertificate(companyId)
   const revokeMutation = useRevokeTaxExemptionCertificate(companyId)
   const deleteMutation = useDeleteTaxExemptionCertificate(companyId)
-  const reasonNames = useTaxExemptionReasonNames()
   const [addOpen, setAddOpen] = useState(false)
 
   const certificates = data?.data ?? []
-
-  // A code whose reason was since deleted still reads, as the code itself.
-  function reasonLabel(code: string) {
-    return reasonNames.get(code) ?? code
-  }
 
   async function handleRevoke(certificate: TaxExemptionCertificate) {
     const ok = await confirm({
@@ -207,7 +201,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                 </div>
                 <span className="text-muted-foreground text-xs">
-                  {reasonLabel(certificate.reason_code)}
+                  {certificate.tax_exemption_reason?.name ?? '—'}
                   {' · '}
                   <JurisdictionLabel
                     countryCode={certificate.country_code}
@@ -348,7 +342,7 @@ function CertificateSheet({
     () =>
       reasons
         .filter((reason) => reason.active)
-        .map((reason) => ({ value: reason.code, label: reason.name })),
+        .map((reason) => ({ value: reason.id, label: reason.name })),
     [reasons],
   )
   const form = useForm<TaxExemptionCertificateFormValues>({
@@ -413,9 +407,11 @@ function CertificateSheet({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="reason_code">{t('admin.fields.reason_code.label')}</FieldLabel>
+                <FieldLabel htmlFor="tax_exemption_reason_id">
+                  {t('admin.fields.tax_exemption_reason_id.label')}
+                </FieldLabel>
                 <Controller
-                  name="reason_code"
+                  name="tax_exemption_reason_id"
                   control={form.control}
                   render={({ field }) => {
                     const selected = reasonOptions.find((o) => o.value === field.value) ?? null
@@ -430,7 +426,7 @@ function CertificateSheet({
                         itemToStringValue={(option: ReasonOption | null) => option?.value ?? ''}
                       >
                         <ComboboxInput
-                          id="reason_code"
+                          id="tax_exemption_reason_id"
                           placeholder={t('admin.tax_exemption_certificates.select_reason')}
                         />
                         <ComboboxContent>
@@ -451,8 +447,10 @@ function CertificateSheet({
                     )
                   }}
                 />
-                <FieldDescription>{t('admin.fields.reason_code.help')}</FieldDescription>
-                <FieldError errors={[errors.reason_code]} />
+                <FieldDescription>
+                  {t('admin.fields.tax_exemption_reason_id.help')}
+                </FieldDescription>
+                <FieldError errors={[errors.tax_exemption_reason_id]} />
               </Field>
 
               <Field>

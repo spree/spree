@@ -274,7 +274,10 @@ export function useValidateCompanyTaxIdentifier(companyId: string) {
 export function useTaxExemptionCertificates(companyId: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('companies', companyId ?? 'noop', 'tax-exemption-certificates'),
-    queryFn: () => adminClient.companies.taxExemptionCertificates.list(companyId as string),
+    queryFn: () =>
+      adminClient.companies.taxExemptionCertificates.list(companyId as string, {
+        expand: ['tax_exemption_reason'],
+      }),
     enabled: !!companyId,
   })
 }

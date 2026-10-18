@@ -189,6 +189,16 @@ RSpec.describe 'spree_avalara:upgrade' do
       expect(store.tax_exemption_reasons.find_by(code: 'G').name).to eq('Reseller (wholesale)')
     end
 
+    # The merchant's own reason holds a name the task would give another code.
+    it 'keeps a reason already holding a name it would create' do
+      create(:avalara_integration, :active, store: store)
+      label = SpreeAvalara::EntityUseCodes::ALL['G']
+      store.tax_exemption_reasons.create!(code: 'MY_RESALE', name: "#{label.capitalize} (G)")
+
+      expect { upgrader.call }.not_to raise_error
+      expect(store.tax_exemption_reasons.where(name: "#{label.capitalize} (G)").pluck(:code)).to eq(['MY_RESALE'])
+    end
+
     it 'runs twice without adding a second set' do
       create(:avalara_integration, :active, store: store)
 

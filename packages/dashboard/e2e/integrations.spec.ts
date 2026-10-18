@@ -70,6 +70,12 @@ test.describe('integrations', () => {
 
     await accountId.fill('acct-e2e')
     await secret.fill('relay-secret-4321')
+    // The eye shows what was typed, and hides it again.
+    await expect(secret).toHaveAttribute('type', 'password')
+    await sheet.getByRole('button', { name: /^show$/i }).click()
+    await expect(secret).toHaveAttribute('type', 'text')
+    await sheet.getByRole('button', { name: /^hide$/i }).click()
+    await expect(secret).toHaveAttribute('type', 'password')
     await interval.fill('30')
     await sandbox.click()
     await sheet.getByRole('button', { name: /^connect$/i }).click()

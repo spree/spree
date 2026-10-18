@@ -1,32 +1,45 @@
 module Spree
   # Why a business buys without tax — "Resale", "Government", "Charitable
-  # organisation". Recorded on a {Spree::TaxExemptionCertificate} by its
-  # `code`, which is what a tax engine reads: Spree's own engine only keeps
-  # it for reference, while an external one (Avalara's entity use codes)
-  # decides the exemption by it. The `name` is the merchant's own wording.
+  # organisation". Certificates point at a reason the way products point at a
+  # tax category: the `name` is the merchant's own wording, and the `code` is
+  # what a tax engine reads. Spree's own engine only keeps the code for
+  # reference, while an external one (Avalara's entity use codes) decides the
+  # exemption by it, so changing the code changes what every certificate
+  # holding the reason sends from then on.
   class TaxExemptionReason < Spree.base_class
     has_prefix_id :txr
 
     include Spree::NamedType
     include Spree::Metadata
 
+    # Guarded by hand rather than with :restrict_with_error, which would also
+    # refuse when the whole store is being destroyed.
+    has_many :tax_exemption_certificates, class_name: 'Spree::TaxExemptionCertificate',
+                                          inverse_of: :tax_exemption_reason, dependent: nil
+
     self.whitelisted_ransackable_attributes = %w[name code active]
 
-    normalizes :code, with: ->(value) { value&.to_s&.strip&.presence }
+    # Upper case because tax engines read codes case-insensitively: `g` and
+    # `G` would be two reasons here and one to Avalara.
+    normalizes :code, with: ->(value) { value.to_s.strip.upcase.presence }
 
     validates :code, presence: true, length: { maximum: 64 }
     validates_store_uniqueness :code
-    validate :code_unchanged_while_in_use, on: :update
 
     before_destroy :ensure_unused
 
-    # The certificates recording this reason. They hold the code rather than
-    # a reference, because the code is what the tax engine reads.
+    # Finds the reason already holding the code, else the one holding the
+    # name, so seeding a store never collides with a reason the merchant added
+    # or renamed. Code first: it is what a tax engine reads, so a match on it
+    # is the same reason whatever the merchant called it.
     #
-    # @return [ActiveRecord::Relation<Spree::TaxExemptionCertificate>]
-    def certificates
-      Spree::TaxExemptionCertificate.joins(:company).
-        where(reason_code: code_in_database, Spree::Company.table_name => { store_id: store_id })
+    # @param code [String]
+    # @param name [String]
+    # @return [Spree::TaxExemptionReason]
+    def self.find_or_create_by_code_or_name!(code:, name:)
+      code = normalize_value_for(:code, code)
+
+      find_by(code: code) || find_by(name: name) || create!(code: code, name: name)
     end
 
     # Mirrors the destroy guard, so the dashboard can hide the delete control
@@ -34,18 +47,10 @@ module Spree
     #
     # @return [Boolean]
     def can_be_deleted?
-      !certificates.exists?
+      !tax_exemption_certificates.exists?
     end
 
     private
-
-    # Renaming the code would leave every certificate that holds it pointing at
-    # a reason that no longer exists, so a code in use is fixed.
-    def code_unchanged_while_in_use
-      return unless will_save_change_to_code? && certificates.exists?
-
-      errors.add(:code, :in_use)
-    end
 
     def ensure_unused
       return if destroyed_by_association.present? || can_be_deleted?

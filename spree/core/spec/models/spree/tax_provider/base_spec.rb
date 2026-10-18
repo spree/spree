@@ -61,7 +61,7 @@ describe Spree::TaxProvider::Base, type: :model do
       hash = Spree::TaxProvider::Internal.to_api_hash(order.store)
 
       expect(hash[:id]).to eq('internal')
-      expect(hash[:name]).to eq('Internal')
+      expect(hash[:name]).to eq('Spree tax rates')
       expect(hash[:available]).to be(true)
       expect(hash[:default]).to be(true)
       expect(hash[:exemption_reason_codes]).to be_nil

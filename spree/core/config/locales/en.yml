@@ -429,14 +429,12 @@ en:
           attributes:
             company:
               must_be_legal_entity: must be a legal entity, not a division
-            reason_code:
+            tax_exemption_reason:
               not_offered: is not a tax exemption reason this store offers
         spree/tax_exemption_reason:
           attributes:
             base:
               in_use: is recorded on tax exemption certificates and cannot be deleted
-            code:
-              in_use: cannot change while tax exemption certificates record it
         spree/tax_identifier:
           attributes:
             company:
@@ -1794,6 +1792,8 @@ en:
       gb_vat: UK VAT
       us_ein: US EIN
     tax_provider_unavailable: The tax service could not work out the tax to give back. Try again in a few minutes.
+    tax_providers:
+      internal: Spree tax rates
     terms_of_service: Terms of Service
     there_are_no_items_for_this_order: There are no items for this order
     tiered_flat_rate: Tiered Flat Rate

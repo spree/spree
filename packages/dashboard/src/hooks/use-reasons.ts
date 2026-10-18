@@ -90,14 +90,3 @@ export function useTaxExemptionReasons() {
   // The list endpoint is the tax exemption one, whatever the shared client type says.
   return useMemo(() => (data?.data ?? []) as TaxExemptionReason[], [data])
 }
-
-/**
- * The store's own name for each tax exemption reason code, so a certificate
- * or an exempt tax line reads as the reason the merchant picked rather than
- * the code it stores.
- */
-export function useTaxExemptionReasonNames() {
-  const reasons = useTaxExemptionReasons()
-
-  return useMemo(() => new Map(reasons.map((reason) => [reason.code, reason.name])), [reasons])
-}

@@ -51,10 +51,11 @@ can move one region at a time.
 
 ## How exemptions reach Avalara
 
-Company tax exemption certificates recorded in Spree are sent with the sale, each with the code of the
-exemption reason it records. Exemption reasons are your store's own list, managed under
-**Settings → Reasons**: give each one an Avalara entity use code (`G` for resale, `A` for federal
-government, …) and name it however you like. The dashboard offers Avalara's codes when you add one.
+Company tax exemption certificates recorded in Spree are sent with the sale, each with the code of its
+exemption reason. Exemption reasons are your store's own list, managed under **Settings → Taxes → Exemption reasons**:
+give each one an Avalara entity use code (`G` for resale, `A` for federal government, …) and name it
+however you like. A new store's six default reasons carry neutral codes, so change the ones you use to
+Avalara's; once a market uses Avalara the dashboard offers Avalara's codes, and every certificate follows the change.
 
 A reason whose code Avalara does not define is sent as OTHER/CUSTOM, and the reason you recorded is kept
 on the tax row.

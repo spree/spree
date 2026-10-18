@@ -1793,10 +1793,6 @@
           "placeholder": "Unlimited"
         }
       },
-      "reason_code": {
-        "help": "Manage the reasons offered here in Settings → Reasons.",
-        "label": "Reason"
-      },
       "role": {
         "description": {
           "label": "Description",
@@ -2398,6 +2394,10 @@
           "label": "Default box",
           "help": "The packaging your parcel quotes are built on. One default at a time."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Manage the reasons offered here in Settings → Taxes → Exemption reasons.",
+        "label": "Reason"
       }
     },
     "gift_cards": {
@@ -4757,14 +4757,13 @@
       },
       "code_engine_help": "Your tax engine decides the exemption by this code, so pick the one it defines for this reason.",
       "code_help": "A short identifier certificates record. Unique in your store.",
-      "code_locked_help": "Certificates record this code, so it cannot change. Rename the reason instead.",
       "code_placeholder": "e.g. resale",
       "create_description": "Reasons appear in a dropdown when staff open a return, claim or refund.",
       "delete_confirm": {
         "message": "{{name}} will no longer be offered. Records already using it keep it.",
         "title": "Delete reason?"
       },
-      "description": "The vocabularies your team picks from when handling returns, claims, refunds, cancellations and tax exemptions.",
+      "description": "The vocabularies your team picks from when handling returns, claims, refunds and cancellations.",
       "edit_sheet_title": "Edit reason",
       "empty": "No reasons yet",
       "in_use": "In use",
@@ -5117,12 +5116,11 @@
         "staff": "People with access to this dashboard",
         "stock_locations": "Warehouses and pickup points that hold stock",
         "store": "Store name, timezone, units and regional defaults",
-        "tax_categories": "Tax classes assigned to products",
-        "tax_rates": "Rates applied per market and region",
         "webhooks": "Endpoints notified when events happen",
         "package_types": "Boxes, cartons, pallets and containers",
         "suppliers": "Who you buy stock from, and how to reach them",
-        "marketplace": "Seller payouts, seller approval, seller emails and commission tax"
+        "marketplace": "Seller payouts, seller approval, seller emails and commission tax",
+        "taxes": "Tax categories, rates and exemption reasons"
       },
       "groups": {
         "audit": "Audit",
@@ -5160,7 +5158,8 @@
         "webhooks": "Webhooks",
         "package_types": "Package types",
         "suppliers": "Suppliers",
-        "marketplace": "Settings"
+        "marketplace": "Settings",
+        "taxes": "Taxes"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -5505,7 +5504,6 @@
       "sellers": "The third-party sellers trading on your marketplace, and where each one stands.",
       "store_credits": "Balances customers can spend at checkout, and how each was issued.",
       "tax_categories": "Groupings that decide which tax rate a product gets.",
-      "tax_rates": "The tax charged per category and region.",
       "webhook_deliveries": "Each event sent to this endpoint, and whether it was received.",
       "webhook_endpoints": "Where your other systems are notified when something happens in the store.",
       "returns": "Goods coming back, from request to refund.",
@@ -5526,8 +5524,7 @@
         "created": "Tax category created",
         "deleted": "Tax category deleted",
         "updated": "Tax category updated"
-      },
-      "search_placeholder": "Search by name…"
+      }
     },
     "tax_exemption_certificates": {
       "add_cta": "Add certificate",
@@ -5629,7 +5626,6 @@
         "deleted": "Tax rate deleted",
         "updated": "Tax rate updated"
       },
-      "search_placeholder": "Search tax rates",
       "select_category": "Select a category"
     },
     "translations": {
@@ -6281,6 +6277,21 @@
       "empty": "You're all caught up.",
       "view_on_github": "View on GitHub",
       "release_notes_unavailable": "The release notes could not be loaded. Read them on GitHub instead."
+    },
+    "taxes": {
+      "title": "Taxes",
+      "description": "How your products are taxed, the rates Spree charges, and why businesses may buy without tax.",
+      "providers_title": "Tax calculation",
+      "provider_markets": "{{provider}} in {{markets}}",
+      "manage_markets": "Manage markets",
+      "tabs": {
+        "categories": "Categories",
+        "rates": "Rates",
+        "exemption_reasons": "Exemption reasons"
+      },
+      "rates_unused_in": "These rates are not used in {{markets}}, which work out tax with an external service.",
+      "rates_unused_everywhere": "None of your markets use these rates: {{markets}} work out tax with an external service.",
+      "rates_help": "The tax charged per category and region. Used only by markets on Spree tax rates: a connected service such as Avalara works out tax itself and ignores these rates."
     }
   }
 }

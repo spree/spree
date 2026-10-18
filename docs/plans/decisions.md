@@ -1,3 +1,13 @@
+## 2026-10-17: Certificates point at their exemption reason
+
+**Context:** Certificates stored a copy of their reason's code, so a code had to be locked once any certificate used it. A new store's seeded reasons could then never be switched to Avalara's codes, and finding a reason's certificates meant joining through companies on a copied string.
+
+**Decision:** `Spree::TaxExemptionCertificate` `belongs_to :tax_exemption_reason`, like products and tax categories; the API takes `tax_exemption_reason_id`. A reason's code can change at any time and is stored in upper case. A tax line's exemption snapshot keeps the reason's name beside its code.
+
+**Consequences:** Merchants on Avalara change each seeded code to Avalara's. Placed orders keep the code and name they were taxed with. A `spree:upgrade:tax_exemption_reasons` step seeds existing stores, saves existing codes in capitals, and links certificates recorded before reasons existed to the reason matching their old `reason_code`, which the migration keeps (nullable) for that purpose; until it runs, tax still reads an unlinked certificate's old code. The dashboard offers an engine's own codes only once a market uses that engine.
+
+**Plan:** `6.0-avalara-provider-gem.md`.
+
 ## 2026-10-16: Tax exemption reasons are a store-owned model
 
 **Context:** The reasons a merchant records on a tax exemption certificate came from a code registry: six values hard-coded in core, replaced by the vocabulary of whichever tax provider gem registered one. Spree's own tax engine never reads the reason, so for most stores it was a label the merchant could not rename, translate or extend, unlike every other reason list.

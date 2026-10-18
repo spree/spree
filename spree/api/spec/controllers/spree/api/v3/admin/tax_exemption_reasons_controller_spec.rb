@@ -24,6 +24,52 @@ RSpec.describe Spree::Api::V3::Admin::TaxExemptionReasonsController, type: :cont
 
       expect(json_response['data'].map { |r| r['id'] }).not_to include(other.prefixed_id)
     end
+
+    # The certificate form picks from this list.
+    context 'with a key that manages customers but not settings' do
+      let(:customers_key) { create(:api_key, :secret, store: store, scopes: %w[read_customers write_customers]) }
+      let(:headers) { { 'x-spree-api-key' => customers_key.plaintext_token } }
+
+      it 'reads the reasons' do
+        get :index, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |r| r['id'] }).to include(reason.prefixed_id)
+      end
+
+      it 'cannot change them' do
+        patch :update, params: { id: reason.prefixed_id, name: 'Resale' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'as a staffer whose role manages customers but not settings' do
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          create(:role_user, user: user, role: create(:role, name: 'customers', permissions: %w[read_customers write_customers], resource: store))
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'reads the reasons and each one' do
+        get :index, as: :json
+        expect(json_response['data'].map { |r| r['id'] }).to include(reason.prefixed_id)
+
+        get :show, params: { id: reason.prefixed_id }, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'cannot create one' do
+        post :create, params: { name: 'Federal government', code: 'A' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'POST #create' do
@@ -50,14 +96,13 @@ RSpec.describe Spree::Api::V3::Admin::TaxExemptionReasonsController, type: :cont
       expect(reason.reload.name).to eq('Resale')
     end
 
-    # Certificates hold the code, not a reference, so changing it would strand them.
-    it 'refuses to change a code a certificate records' do
-      create(:tax_exemption_certificate, company: create(:company, store: store), reason_code: 'G')
+    it 'changes the code of a reason a certificate records' do
+      create(:tax_exemption_certificate, company: create(:company, store: store), tax_exemption_reason: reason)
 
-      patch :update, params: { id: reason.prefixed_id, code: 'N' }, as: :json
+      patch :update, params: { id: reason.prefixed_id, code: 'n' }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(reason.reload.code).to eq('G')
+      expect(response).to have_http_status(:ok)
+      expect(reason.reload.code).to eq('N')
     end
   end
 
@@ -68,7 +113,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxExemptionReasonsController, type: :cont
     end
 
     it 'refuses to delete a reason a certificate records' do
-      create(:tax_exemption_certificate, company: create(:company, store: store), reason_code: 'G')
+      create(:tax_exemption_certificate, company: create(:company, store: store), tax_exemption_reason: reason)
 
       expect { delete :destroy, params: { id: reason.prefixed_id }, as: :json }.
         not_to change(Spree::TaxExemptionReason, :count)

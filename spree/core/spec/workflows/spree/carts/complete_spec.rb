@@ -411,7 +411,7 @@ module Spree
       # its own date, so re-resolving at refund time would file a credit for an
       # exempt sale as a consumer refund.
       it 'freezes the exemptions the sale was priced with onto the order' do
-        claim = Spree::TaxExemption.new(reason_code: 'resale', certificate_number: 'CERT-9',
+        claim = Spree::TaxExemption.new(reason_code: 'RESALE', reason_name: 'Resale', certificate_number: 'CERT-9',
                                         country_code: 'US', state_code: 'CA')
         allow(Spree.tax_resolve_exemptions_service).to receive(:new).
           and_return(instance_double(Spree::Tax::ResolveExemptions,
@@ -420,7 +420,7 @@ module Spree
         order = described_class.call(cart: ready_cart).value
 
         expect(order.applied_tax_exemptions).to eq(
-          [{ 'reason_code' => 'resale', 'certificate_number' => 'CERT-9',
+          [{ 'reason_code' => 'RESALE', 'reason_name' => 'Resale', 'certificate_number' => 'CERT-9',
              'country_code' => 'US', 'state_code' => 'CA', 'item_overrides' => [] }]
         )
       end

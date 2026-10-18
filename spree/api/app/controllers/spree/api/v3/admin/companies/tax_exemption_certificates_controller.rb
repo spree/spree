@@ -12,9 +12,8 @@ module Spree
             request_params :tax_exemption_certificate do |body|
               body.attribute :certificate_number, :string, required: true, on: :create,
                 example: 'DE-RESALE-7'
-              body.attribute :reason_code, :string, required: true, on: :create,
-                example: 'resale',
-                description: "The `code` of one of the store's active tax exemption reasons. The tax provider receives it."
+              body.attribute :tax_exemption_reason_id, :id, required: true, on: :create,
+                description: "One of the store's active tax exemption reasons. The tax provider receives its `code`."
               body.attribute :issuing_authority, :string, nullable: true, example: 'Finanzamt Berlin'
               body.attribute :issued_at, :datetime, nullable: true
               body.attribute :expires_at, :datetime, nullable: true
@@ -100,11 +99,18 @@ module Spree
             end
 
             def collection_includes
-              [{ document_attachment: :blob }]
+              [:tax_exemption_reason, { document_attachment: :blob }]
             end
 
+            # Read through the store, so another store's reason is a 404
+            # rather than a certificate pointing across stores.
             def permitted_params
-              params.permit(*declared_permitted_attributes)
+              attributes = params.permit(*declared_permitted_attributes)
+              return attributes if attributes[:tax_exemption_reason_id].blank?
+
+              attributes.except(:tax_exemption_reason_id).merge(
+                tax_exemption_reason: current_store.tax_exemption_reasons.find_by_prefix_id!(attributes[:tax_exemption_reason_id])
+              )
             end
 
             def build_resource

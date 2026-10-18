@@ -440,9 +440,9 @@ export type TaxCategoryFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.BooleanFilters<'is_default'>
   & Filter.TextFilters<'name' | 'tax_code'>
 
-export type TaxExemptionCertificateFields = Filter.TextFilters<'certificate_number' | 'reason_code'>
+export type TaxExemptionCertificateFields = Filter.TextFilters<'certificate_number'>
   & Filter.RangeFilters<'created_at' | 'expires_at' | 'updated_at'>
-  & Filter.IdFilters<'id'>
+  & Filter.IdFilters<'id' | 'tax_exemption_reason_id'>
   & Filter.EnumFilters<'status', 'pending' | 'verified' | 'expired' | 'revoked'>
 
 export type TaxExemptionReasonFields = Filter.BooleanFilters<'active'>
@@ -2507,7 +2507,7 @@ export type TaxExemptionCertificateFilters = TaxExemptionCertificateFields
   & Filter.OrFilters
   & TaxExemptionCertificateFilterExtensions
 
-export type TaxExemptionCertificateSort = Filter.SortKey<'certificate_number' | 'created_at' | 'expires_at' | 'id' | 'reason_code' | 'status' | 'updated_at' | (keyof TaxExemptionCertificateSortExtensions & string)>
+export type TaxExemptionCertificateSort = Filter.SortKey<'certificate_number' | 'created_at' | 'expires_at' | 'id' | 'status' | 'tax_exemption_reason_id' | 'updated_at' | (keyof TaxExemptionCertificateSortExtensions & string)>
 
 /**
  * Filters your app adds to TaxExemptionReason lists. Generate them with `spree filters types`,

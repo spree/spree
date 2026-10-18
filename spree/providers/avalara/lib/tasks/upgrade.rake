@@ -165,8 +165,8 @@ module SpreeAvalara
 
     # The legacy extension kept Avalara's entity use codes in an editable table
     # merchants picked from; each store connected to Avalara gets them as tax
-    # exemption reasons instead. Found by code, so a reason the merchant already
-    # added or renamed is left alone. TAXABLE is not a reason to be exempt.
+    # exemption reasons instead. Found by code or name, so a reason the merchant
+    # already added or renamed is left alone. TAXABLE is not a reason to be exempt.
     def create_exemption_reasons
       created = 0
 
@@ -174,10 +174,8 @@ module SpreeAvalara
         next if SpreeAvalara::Integration.active_for(store).nil?
 
         SpreeAvalara::EntityUseCodes::ALL.except('TAXABLE').each do |code, label|
-          next if store.tax_exemption_reasons.exists?(code: code)
-
-          store.tax_exemption_reasons.create!(code: code, name: "#{label.capitalize} (#{code})")
-          created += 1
+          reason = store.tax_exemption_reasons.find_or_create_by_code_or_name!(code: code, name: "#{label.capitalize} (#{code})")
+          created += 1 if reason.previously_new_record?
         end
       end
 

@@ -807,7 +807,7 @@ When a sale is for a company, the company's registration takes precedence over t
 
 ### Exemption reasons
 
-A certificate's `reason_code` must be the `code` of one of the store's active tax exemption reasons. A new store has six neutral ones (`resale`, `government`, `charitable`, `educational`, `manufacturing`, `agricultural`). Add your own to give a reason your wording, or to use the codes your tax service reads — Avalara decides an exemption by its entity use code, so a reason there carries a code such as `G` (resale). `taxProviders.list()` returns the codes each tax service understands as `exemption_reason_codes`.
+Every certificate points at one of the store's active tax exemption reasons, the way a product points at a tax category. A reason has a `name` in your own wording and a `code` your tax service reads. A new store has six neutral ones (`RESALE`, `GOVERNMENT`, `CHARITABLE`, `EDUCATIONAL`, `MANUFACTURING`, `AGRICULTURAL`). Avalara decides an exemption by its entity use code, so on Avalara change each reason's code to Avalara's, such as `G` for resale. `taxProviders.list()` returns the codes each tax service understands as `exemption_reason_codes`. Codes are stored in upper case.
 
 <CodeGroup>
 
@@ -827,7 +827,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/tax_exemption_reasons' \
 
 </CodeGroup>
 
-A reason's code is fixed once a certificate records it. Rename the reason, or turn off `active` to stop offering it; certificates that already record it keep it.
+Changing a reason's code changes what every certificate holding it sends from then on; orders already placed keep the code they were taxed with. Turn off `active` to stop offering a reason; certificates that already hold it keep it. A reason that certificates hold cannot be deleted.
 
 ### Exemption certificates
 
@@ -838,7 +838,7 @@ A certificate starts `pending` and exempts nothing until staff verify it. Scope 
 ```typescript Admin SDK
 const certificate = await adminClient.companies.taxExemptionCertificates.create('comp_xxx', {
   certificate_number: 'RS-44-1901',
-  reason_code: 'resale',
+  tax_exemption_reason_id: 'txr_xxx',
   country_code: 'US',
   state_code: 'CA',
   expires_at: '2027-12-31',

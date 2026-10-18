@@ -2,26 +2,25 @@ module Spree
   module Seeds
     # The reasons a business can give for buying without tax. Neutral codes
     # that Spree's own engine keeps for reference; a store using an engine
-    # that reads them (Avalara) adds its own reasons with that engine's codes.
+    # that reads them (Avalara) changes each code to that engine's.
     class TaxExemptionReasons
       prepend Spree::ServiceModule::Base
       include StoreScoped
 
       REASONS = {
-        'resale' => 'Resale',
-        'government' => 'Government',
-        'charitable' => 'Charitable organization',
-        'educational' => 'Educational institution',
-        'manufacturing' => 'Manufacturing',
-        'agricultural' => 'Agricultural'
+        'RESALE' => 'Resale',
+        'GOVERNMENT' => 'Government',
+        'CHARITABLE' => 'Charitable organization',
+        'EDUCATIONAL' => 'Educational institution',
+        'MANUFACTURING' => 'Manufacturing',
+        'AGRICULTURAL' => 'Agricultural'
       }.freeze
 
       private
 
-      # Found by code, so a merchant who renamed a reason keeps their wording.
       def seed(store)
         REASONS.each do |code, name|
-          store.tax_exemption_reasons.find_or_create_by!(code: code) { |reason| reason.name = name }
+          store.tax_exemption_reasons.find_or_create_by_code_or_name!(code: code, name: name)
         end
       end
     end

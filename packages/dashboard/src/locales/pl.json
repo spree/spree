@@ -1811,10 +1811,6 @@
           "placeholder": "Bez ograniczeń"
         }
       },
-      "reason_code": {
-        "help": "Powody dostępne tutaj ustawisz w Ustawienia → Powody.",
-        "label": "Powód"
-      },
       "role": {
         "description": {
           "label": "Opis",
@@ -2416,6 +2412,10 @@
           "label": "Domyślne opakowanie",
           "help": "Opakowanie, na którym opierają się wyceny Twoich przesyłek. Tylko jedno domyślne naraz."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Powody dostępne tutaj ustawisz w Ustawienia → Podatki → Powody zwolnień.",
+        "label": "Powód"
       }
     },
     "gift_cards": {
@@ -4821,14 +4821,13 @@
       },
       "code_engine_help": "Silnik podatkowy rozstrzyga o zwolnieniu na podstawie tego kodu, więc wybierz kod, który definiuje dla tego powodu.",
       "code_help": "Krótki identyfikator zapisywany na zaświadczeniach. Unikalny w sklepie.",
-      "code_locked_help": "Zaświadczenia zapisują ten kod, więc nie można go zmienić. Zamiast tego zmień nazwę powodu.",
       "code_placeholder": "np. resale",
       "create_description": "Powody pojawiają się na liście przy tworzeniu zwrotu, reklamacji lub zwrotu pieniędzy.",
       "delete_confirm": {
         "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują.",
         "title": "Usunąć powód?"
       },
-      "description": "Listy powodów, z których korzysta zespół przy zwrotach, reklamacjach, refundacjach, anulowaniach i zwolnieniach z podatku.",
+      "description": "Listy powodów, z których korzysta zespół przy zwrotach, reklamacjach, refundacjach i anulowaniach.",
       "edit_sheet_title": "Edytuj powód",
       "empty": "Brak powodów",
       "in_use": "W użyciu",
@@ -5181,12 +5180,11 @@
         "staff": "Osoby z dostępem do tego panelu",
         "stock_locations": "Magazyny i punkty odbioru przechowujące towar",
         "store": "Nazwa sklepu, strefa czasowa, jednostki i ustawienia regionalne",
-        "tax_categories": "Klasy podatkowe przypisane do produktów",
-        "tax_rates": "Stawki stosowane według rynku i regionu",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
-        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji"
+        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
+        "taxes": "Kategorie podatkowe, stawki i powody zwolnień"
       },
       "groups": {
         "audit": "Audyt",
@@ -5224,7 +5222,8 @@
         "webhooks": "Webhooki",
         "package_types": "Rodzaje opakowań",
         "suppliers": "Dostawcy",
-        "marketplace": "Ustawienia"
+        "marketplace": "Ustawienia",
+        "taxes": "Podatki"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -5571,7 +5570,6 @@
       "sellers": "Sprzedawcy zewnętrzni działający na Twoim marketplace i status każdego z nich.",
       "store_credits": "Środki, które klienci mogą wydać przy kasie, oraz sposób ich wystawienia.",
       "tax_categories": "Grupy decydujące o tym, która stawka podatku dotyczy produktu.",
-      "tax_rates": "Podatek naliczany według kategorii i regionu.",
       "webhook_deliveries": "Każde zdarzenie wysłane do tego punktu końcowego i informacja, czy zostało odebrane.",
       "webhook_endpoints": "Gdzie Twoje inne systemy są powiadamiane, gdy coś dzieje się w sklepie.",
       "returns": "Towary wracające do sklepu, od zgłoszenia do zwrotu pieniędzy.",
@@ -5592,8 +5590,7 @@
         "created": "Kategoria podatkowa utworzona",
         "deleted": "Kategoria podatkowa usunięta",
         "updated": "Kategoria podatkowa zaktualizowana"
-      },
-      "search_placeholder": "Szukaj według nazwy…"
+      }
     },
     "tax_exemption_certificates": {
       "add_cta": "Dodaj certyfikat",
@@ -5695,7 +5692,6 @@
         "deleted": "Stawka usunięta",
         "updated": "Stawka zaktualizowana"
       },
-      "search_placeholder": "Szukaj stawek",
       "select_category": "Wybierz kategorię"
     },
     "translations": {
@@ -6349,6 +6345,21 @@
       "empty": "Wszystko przeczytane.",
       "view_on_github": "Zobacz na GitHubie",
       "release_notes_unavailable": "Nie udało się wczytać informacji o wydaniu. Przeczytaj je na GitHubie."
+    },
+    "taxes": {
+      "title": "Podatki",
+      "description": "Jak opodatkowane są Twoje produkty, jakie stawki nalicza Spree i dlaczego firmy mogą kupować bez podatku.",
+      "providers_title": "Obliczanie podatku",
+      "provider_markets": "{{provider}}: {{markets}}",
+      "manage_markets": "Zarządzaj rynkami",
+      "tabs": {
+        "categories": "Kategorie",
+        "rates": "Stawki",
+        "exemption_reasons": "Powody zwolnień"
+      },
+      "rates_unused_in": "Te stawki nie są używane na rynkach: {{markets}}, gdzie podatek oblicza zewnętrzna usługa.",
+      "rates_unused_everywhere": "Żaden z Twoich rynków nie używa tych stawek: na rynkach {{markets}} podatek oblicza zewnętrzna usługa.",
+      "rates_help": "Podatek naliczany według kategorii i regionu. Używane tylko na rynkach korzystających ze stawek Spree: podłączona usługa, np. Avalara, sama oblicza podatek i pomija te stawki."
     }
   }
 }

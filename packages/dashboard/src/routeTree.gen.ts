@@ -75,8 +75,7 @@ import { Route as SettingsSellerRequirementsRouteImport } from './routes/_authen
 import { Route as SettingsStaffRouteImport } from './routes/_authenticated/$storeId/settings/staff'
 import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$storeId/settings/stock-locations'
 import { Route as SettingsStoreRouteImport } from './routes/_authenticated/$storeId/settings/store'
-import { Route as SettingsTaxCategoriesRouteImport } from './routes/_authenticated/$storeId/settings/tax-categories'
-import { Route as SettingsTaxRatesRouteImport } from './routes/_authenticated/$storeId/settings/tax-rates'
+import { Route as SettingsTaxesRouteImport } from './routes/_authenticated/$storeId/settings/taxes'
 import { Route as TransfersIndexRouteImport } from './routes/_authenticated/$storeId/transfers/index'
 import { Route as TransfersNewRouteImport } from './routes/_authenticated/$storeId/transfers/new'
 import { Route as OrdersOrderIdIndexRouteImport } from './routes/_authenticated/$storeId/orders/$orderId/index'
@@ -98,6 +97,10 @@ import { Route as SellersPayoutsPayoutIdRouteImport } from './routes/_authentica
 import { Route as SettingsDeliveryProfilesIndexRouteImport } from './routes/_authenticated/$storeId/settings/delivery-profiles/index'
 import { Route as SettingsEmailsIndexRouteImport } from './routes/_authenticated/$storeId/settings/emails/index'
 import { Route as SettingsImportsIndexRouteImport } from './routes/_authenticated/$storeId/settings/imports/index'
+import { Route as SettingsTaxesIndexRouteImport } from './routes/_authenticated/$storeId/settings/taxes/index'
+import { Route as SettingsTaxesCategoriesRouteImport } from './routes/_authenticated/$storeId/settings/taxes/categories'
+import { Route as SettingsTaxesExemptionReasonsRouteImport } from './routes/_authenticated/$storeId/settings/taxes/exemption-reasons'
+import { Route as SettingsTaxesRatesRouteImport } from './routes/_authenticated/$storeId/settings/taxes/rates'
 import { Route as SettingsWebhooksIndexRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/index'
 import { Route as SettingsWebhooksWebhookEndpointIdRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
 import { Route as TransfersTransferIdIndexRouteImport } from './routes/_authenticated/$storeId/transfers/$transferId/index'
@@ -441,14 +444,9 @@ const SettingsStoreRoute = SettingsStoreRouteImport.update({
   path: '/store',
   getParentRoute: () => SettingsRoute,
 } as any)
-const SettingsTaxCategoriesRoute = SettingsTaxCategoriesRouteImport.update({
-  id: '/tax-categories',
-  path: '/tax-categories',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsTaxRatesRoute = SettingsTaxRatesRouteImport.update({
-  id: '/tax-rates',
-  path: '/tax-rates',
+const SettingsTaxesRoute = SettingsTaxesRouteImport.update({
+  id: '/taxes',
+  path: '/taxes',
   getParentRoute: () => SettingsRoute,
 } as any)
 const TransfersIndexRoute = TransfersIndexRouteImport.update({
@@ -562,6 +560,27 @@ const SettingsImportsIndexRoute = SettingsImportsIndexRouteImport.update({
   id: '/imports/',
   path: '/imports/',
   getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsTaxesIndexRoute = SettingsTaxesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsTaxesRoute,
+} as any)
+const SettingsTaxesCategoriesRoute = SettingsTaxesCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => SettingsTaxesRoute,
+} as any)
+const SettingsTaxesExemptionReasonsRoute =
+  SettingsTaxesExemptionReasonsRouteImport.update({
+    id: '/exemption-reasons',
+    path: '/exemption-reasons',
+    getParentRoute: () => SettingsTaxesRoute,
+  } as any)
+const SettingsTaxesRatesRoute = SettingsTaxesRatesRouteImport.update({
+  id: '/rates',
+  path: '/rates',
+  getParentRoute: () => SettingsTaxesRoute,
 } as any)
 const SettingsWebhooksIndexRoute = SettingsWebhooksIndexRouteImport.update({
   id: '/webhooks/',
@@ -678,8 +697,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
-  '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
-  '/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
+  '/$storeId/settings/taxes': typeof SettingsTaxesRouteWithChildren
   '/$storeId/transfers/new': typeof TransfersNewRoute
   '/$storeId/companies/': typeof CompaniesIndexRoute
   '/$storeId/customers/': typeof CustomersIndexRoute
@@ -701,6 +719,9 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
   '/$storeId/purchase-orders/$purchaseOrderId/edit': typeof PurchaseOrdersPurchaseOrderIdEditRoute
   '/$storeId/sellers/payouts/$payoutId': typeof SellersPayoutsPayoutIdRoute
+  '/$storeId/settings/taxes/categories': typeof SettingsTaxesCategoriesRoute
+  '/$storeId/settings/taxes/exemption-reasons': typeof SettingsTaxesExemptionReasonsRoute
+  '/$storeId/settings/taxes/rates': typeof SettingsTaxesRatesRoute
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/transfers/$transferId/edit': typeof TransfersTransferIdEditRoute
   '/$storeId/orders/$orderId/': typeof OrdersOrderIdIndexRoute
@@ -713,6 +734,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/delivery-profiles/': typeof SettingsDeliveryProfilesIndexRoute
   '/$storeId/settings/emails/': typeof SettingsEmailsIndexRoute
   '/$storeId/settings/imports/': typeof SettingsImportsIndexRoute
+  '/$storeId/settings/taxes/': typeof SettingsTaxesIndexRoute
   '/$storeId/settings/webhooks/': typeof SettingsWebhooksIndexRoute
   '/$storeId/transfers/$transferId/': typeof TransfersTransferIdIndexRoute
   '/$storeId/settings/emails/templates/$templateId': typeof SettingsEmailsTemplatesTemplateIdRoute
@@ -776,8 +798,6 @@ export interface FileRoutesByTo {
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
-  '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
-  '/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
   '/$storeId/transfers/new': typeof TransfersNewRoute
   '/$storeId/companies': typeof CompaniesIndexRoute
   '/$storeId/customers': typeof CustomersIndexRoute
@@ -799,6 +819,9 @@ export interface FileRoutesByTo {
   '/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
   '/$storeId/purchase-orders/$purchaseOrderId/edit': typeof PurchaseOrdersPurchaseOrderIdEditRoute
   '/$storeId/sellers/payouts/$payoutId': typeof SellersPayoutsPayoutIdRoute
+  '/$storeId/settings/taxes/categories': typeof SettingsTaxesCategoriesRoute
+  '/$storeId/settings/taxes/exemption-reasons': typeof SettingsTaxesExemptionReasonsRoute
+  '/$storeId/settings/taxes/rates': typeof SettingsTaxesRatesRoute
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/transfers/$transferId/edit': typeof TransfersTransferIdEditRoute
   '/$storeId/orders/$orderId': typeof OrdersOrderIdIndexRoute
@@ -811,6 +834,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/delivery-profiles': typeof SettingsDeliveryProfilesIndexRoute
   '/$storeId/settings/emails': typeof SettingsEmailsIndexRoute
   '/$storeId/settings/imports': typeof SettingsImportsIndexRoute
+  '/$storeId/settings/taxes': typeof SettingsTaxesIndexRoute
   '/$storeId/settings/webhooks': typeof SettingsWebhooksIndexRoute
   '/$storeId/transfers/$transferId': typeof TransfersTransferIdIndexRoute
   '/$storeId/settings/emails/templates/$templateId': typeof SettingsEmailsTemplatesTemplateIdRoute
@@ -878,8 +902,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/staff': typeof SettingsStaffRoute
   '/_authenticated/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$storeId/settings/store': typeof SettingsStoreRoute
-  '/_authenticated/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
-  '/_authenticated/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
+  '/_authenticated/$storeId/settings/taxes': typeof SettingsTaxesRouteWithChildren
   '/_authenticated/$storeId/transfers/new': typeof TransfersNewRoute
   '/_authenticated/$storeId/companies/': typeof CompaniesIndexRoute
   '/_authenticated/$storeId/customers/': typeof CustomersIndexRoute
@@ -901,6 +924,9 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
   '/_authenticated/$storeId/purchase-orders/$purchaseOrderId/edit': typeof PurchaseOrdersPurchaseOrderIdEditRoute
   '/_authenticated/$storeId/sellers/payouts/$payoutId': typeof SellersPayoutsPayoutIdRoute
+  '/_authenticated/$storeId/settings/taxes/categories': typeof SettingsTaxesCategoriesRoute
+  '/_authenticated/$storeId/settings/taxes/exemption-reasons': typeof SettingsTaxesExemptionReasonsRoute
+  '/_authenticated/$storeId/settings/taxes/rates': typeof SettingsTaxesRatesRoute
   '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/_authenticated/$storeId/transfers/$transferId/edit': typeof TransfersTransferIdEditRoute
   '/_authenticated/$storeId/orders/$orderId/': typeof OrdersOrderIdIndexRoute
@@ -913,6 +939,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/delivery-profiles/': typeof SettingsDeliveryProfilesIndexRoute
   '/_authenticated/$storeId/settings/emails/': typeof SettingsEmailsIndexRoute
   '/_authenticated/$storeId/settings/imports/': typeof SettingsImportsIndexRoute
+  '/_authenticated/$storeId/settings/taxes/': typeof SettingsTaxesIndexRoute
   '/_authenticated/$storeId/settings/webhooks/': typeof SettingsWebhooksIndexRoute
   '/_authenticated/$storeId/transfers/$transferId/': typeof TransfersTransferIdIndexRoute
   '/_authenticated/$storeId/settings/emails/templates/$templateId': typeof SettingsEmailsTemplatesTemplateIdRoute
@@ -980,8 +1007,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
-    | '/$storeId/settings/tax-categories'
-    | '/$storeId/settings/tax-rates'
+    | '/$storeId/settings/taxes'
     | '/$storeId/transfers/new'
     | '/$storeId/companies/'
     | '/$storeId/customers/'
@@ -1003,6 +1029,9 @@ export interface FileRouteTypes {
     | '/$storeId/products/price-lists/new'
     | '/$storeId/purchase-orders/$purchaseOrderId/edit'
     | '/$storeId/sellers/payouts/$payoutId'
+    | '/$storeId/settings/taxes/categories'
+    | '/$storeId/settings/taxes/exemption-reasons'
+    | '/$storeId/settings/taxes/rates'
     | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/transfers/$transferId/edit'
     | '/$storeId/orders/$orderId/'
@@ -1015,6 +1044,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/delivery-profiles/'
     | '/$storeId/settings/emails/'
     | '/$storeId/settings/imports/'
+    | '/$storeId/settings/taxes/'
     | '/$storeId/settings/webhooks/'
     | '/$storeId/transfers/$transferId/'
     | '/$storeId/settings/emails/templates/$templateId'
@@ -1078,8 +1108,6 @@ export interface FileRouteTypes {
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
-    | '/$storeId/settings/tax-categories'
-    | '/$storeId/settings/tax-rates'
     | '/$storeId/transfers/new'
     | '/$storeId/companies'
     | '/$storeId/customers'
@@ -1101,6 +1129,9 @@ export interface FileRouteTypes {
     | '/$storeId/products/price-lists/new'
     | '/$storeId/purchase-orders/$purchaseOrderId/edit'
     | '/$storeId/sellers/payouts/$payoutId'
+    | '/$storeId/settings/taxes/categories'
+    | '/$storeId/settings/taxes/exemption-reasons'
+    | '/$storeId/settings/taxes/rates'
     | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/transfers/$transferId/edit'
     | '/$storeId/orders/$orderId'
@@ -1113,6 +1144,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/delivery-profiles'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/imports'
+    | '/$storeId/settings/taxes'
     | '/$storeId/settings/webhooks'
     | '/$storeId/transfers/$transferId'
     | '/$storeId/settings/emails/templates/$templateId'
@@ -1179,8 +1211,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/staff'
     | '/_authenticated/$storeId/settings/stock-locations'
     | '/_authenticated/$storeId/settings/store'
-    | '/_authenticated/$storeId/settings/tax-categories'
-    | '/_authenticated/$storeId/settings/tax-rates'
+    | '/_authenticated/$storeId/settings/taxes'
     | '/_authenticated/$storeId/transfers/new'
     | '/_authenticated/$storeId/companies/'
     | '/_authenticated/$storeId/customers/'
@@ -1202,6 +1233,9 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/price-lists/new'
     | '/_authenticated/$storeId/purchase-orders/$purchaseOrderId/edit'
     | '/_authenticated/$storeId/sellers/payouts/$payoutId'
+    | '/_authenticated/$storeId/settings/taxes/categories'
+    | '/_authenticated/$storeId/settings/taxes/exemption-reasons'
+    | '/_authenticated/$storeId/settings/taxes/rates'
     | '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
     | '/_authenticated/$storeId/transfers/$transferId/edit'
     | '/_authenticated/$storeId/orders/$orderId/'
@@ -1214,6 +1248,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/delivery-profiles/'
     | '/_authenticated/$storeId/settings/emails/'
     | '/_authenticated/$storeId/settings/imports/'
+    | '/_authenticated/$storeId/settings/taxes/'
     | '/_authenticated/$storeId/settings/webhooks/'
     | '/_authenticated/$storeId/transfers/$transferId/'
     | '/_authenticated/$storeId/settings/emails/templates/$templateId'
@@ -1697,18 +1732,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsStoreRouteImport
       parentRoute: typeof SettingsRoute
     }
-    '/_authenticated/$storeId/settings/tax-categories': {
-      id: '/_authenticated/$storeId/settings/tax-categories'
-      path: '/tax-categories'
-      fullPath: '/$storeId/settings/tax-categories'
-      preLoaderRoute: typeof SettingsTaxCategoriesRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/_authenticated/$storeId/settings/tax-rates': {
-      id: '/_authenticated/$storeId/settings/tax-rates'
-      path: '/tax-rates'
-      fullPath: '/$storeId/settings/tax-rates'
-      preLoaderRoute: typeof SettingsTaxRatesRouteImport
+    '/_authenticated/$storeId/settings/taxes': {
+      id: '/_authenticated/$storeId/settings/taxes'
+      path: '/taxes'
+      fullPath: '/$storeId/settings/taxes'
+      preLoaderRoute: typeof SettingsTaxesRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/transfers/': {
@@ -1858,6 +1886,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsImportsIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/taxes/': {
+      id: '/_authenticated/$storeId/settings/taxes/'
+      path: '/'
+      fullPath: '/$storeId/settings/taxes/'
+      preLoaderRoute: typeof SettingsTaxesIndexRouteImport
+      parentRoute: typeof SettingsTaxesRoute
+    }
+    '/_authenticated/$storeId/settings/taxes/categories': {
+      id: '/_authenticated/$storeId/settings/taxes/categories'
+      path: '/categories'
+      fullPath: '/$storeId/settings/taxes/categories'
+      preLoaderRoute: typeof SettingsTaxesCategoriesRouteImport
+      parentRoute: typeof SettingsTaxesRoute
+    }
+    '/_authenticated/$storeId/settings/taxes/exemption-reasons': {
+      id: '/_authenticated/$storeId/settings/taxes/exemption-reasons'
+      path: '/exemption-reasons'
+      fullPath: '/$storeId/settings/taxes/exemption-reasons'
+      preLoaderRoute: typeof SettingsTaxesExemptionReasonsRouteImport
+      parentRoute: typeof SettingsTaxesRoute
+    }
+    '/_authenticated/$storeId/settings/taxes/rates': {
+      id: '/_authenticated/$storeId/settings/taxes/rates'
+      path: '/rates'
+      fullPath: '/$storeId/settings/taxes/rates'
+      preLoaderRoute: typeof SettingsTaxesRatesRouteImport
+      parentRoute: typeof SettingsTaxesRoute
+    }
     '/_authenticated/$storeId/settings/webhooks/': {
       id: '/_authenticated/$storeId/settings/webhooks/'
       path: '/webhooks'
@@ -1931,6 +1987,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SettingsTaxesRouteChildren {
+  SettingsTaxesCategoriesRoute: typeof SettingsTaxesCategoriesRoute
+  SettingsTaxesExemptionReasonsRoute: typeof SettingsTaxesExemptionReasonsRoute
+  SettingsTaxesRatesRoute: typeof SettingsTaxesRatesRoute
+  SettingsTaxesIndexRoute: typeof SettingsTaxesIndexRoute
+}
+
+const SettingsTaxesRouteChildren: SettingsTaxesRouteChildren = {
+  SettingsTaxesCategoriesRoute: SettingsTaxesCategoriesRoute,
+  SettingsTaxesExemptionReasonsRoute: SettingsTaxesExemptionReasonsRoute,
+  SettingsTaxesRatesRoute: SettingsTaxesRatesRoute,
+  SettingsTaxesIndexRoute: SettingsTaxesIndexRoute,
+}
+
+const SettingsTaxesRouteWithChildren = SettingsTaxesRoute._addFileChildren(
+  SettingsTaxesRouteChildren,
+)
+
 interface SettingsRouteChildren {
   SettingsAllowedOriginsRoute: typeof SettingsAllowedOriginsRoute
   SettingsApiKeysRoute: typeof SettingsApiKeysRoute
@@ -1951,8 +2025,7 @@ interface SettingsRouteChildren {
   SettingsStaffRoute: typeof SettingsStaffRoute
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
   SettingsStoreRoute: typeof SettingsStoreRoute
-  SettingsTaxCategoriesRoute: typeof SettingsTaxCategoriesRoute
-  SettingsTaxRatesRoute: typeof SettingsTaxRatesRoute
+  SettingsTaxesRoute: typeof SettingsTaxesRouteWithChildren
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsWebhooksWebhookEndpointIdRoute: typeof SettingsWebhooksWebhookEndpointIdRoute
   SettingsDeliveryProfilesIndexRoute: typeof SettingsDeliveryProfilesIndexRoute
@@ -1986,8 +2059,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsStaffRoute: SettingsStaffRoute,
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
   SettingsStoreRoute: SettingsStoreRoute,
-  SettingsTaxCategoriesRoute: SettingsTaxCategoriesRoute,
-  SettingsTaxRatesRoute: SettingsTaxRatesRoute,
+  SettingsTaxesRoute: SettingsTaxesRouteWithChildren,
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsWebhooksWebhookEndpointIdRoute:
     SettingsWebhooksWebhookEndpointIdRoute,

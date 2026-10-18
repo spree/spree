@@ -24,6 +24,7 @@ export {
   BoxesIcon,
   BracesIcon,
   Building2Icon,
+  CalculatorIcon,
   CalendarIcon,
   CalendarOffIcon,
   ChartColumnIcon,

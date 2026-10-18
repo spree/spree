@@ -14,6 +14,9 @@ module Spree
     # Why the sale is exempt, in the provider's vocabulary — Avalara's
     # entityUseCode territory.
     attribute :reason_code, :string
+    # The merchant's wording for the reason, kept with the claim so a placed
+    # order still reads the way it did when it was taxed.
+    attribute :reason_name, :string
     attribute :certificate_number, :string
 
     # Where the claim holds. Nil country = everywhere the provider taxes,

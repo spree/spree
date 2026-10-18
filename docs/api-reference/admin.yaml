@@ -39433,11 +39433,11 @@ paths:
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `expires_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `reason_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `status` | One of `pending`, `verified`, `expired`, `revoked` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `tax_exemption_reason_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `certificate_number`, `created_at`, `expires_at`, `id`, `reason_code`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `certificate_number`, `created_at`, `expires_at`, `id`, `status`, `tax_exemption_reason_id`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: TaxExemptionCertificate
         sortable:
@@ -39445,8 +39445,8 @@ paths:
         - created_at
         - expires_at
         - id
-        - reason_code
         - status
+        - tax_exemption_reason_id
         - updated_at
       responses:
         '200':
@@ -39457,7 +39457,6 @@ paths:
                 data:
                 - id: cert_UkLWZg9DAJ
                   certificate_number: DE-RESALE-1
-                  reason_code: resale
                   status: pending
                   issuing_authority:
                   metadata: {}
@@ -39467,6 +39466,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   company_id: comp_UkLWZg9DAJ
+                  tax_exemption_reason_id: txr_UkLWZg9DAJ
                   country_code:
                   state_code:
                   active: false
@@ -39516,7 +39516,7 @@ paths:
           // `signed_id` comes from `client.files.upload(file, { visibility: 'private' })`.
           const certificate = await client.companies.taxExemptionCertificates.create('comp_UkLWZg9DAJ', {
             certificate_number: 'DE-RESALE-7',
-            reason_code: 'resale',
+            tax_exemption_reason_id: 'txr_UkLWZg9DAJ',
             country_code: 'DE',
             document_signed_id: signed_id,
           })
@@ -39533,7 +39533,6 @@ paths:
               example:
                 id: cert_gbHJdmfrXB
                 certificate_number: DE-RESALE-7
-                reason_code: resale
                 status: pending
                 issuing_authority:
                 metadata: {}
@@ -39543,6 +39542,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
+                tax_exemption_reason_id: txr_UkLWZg9DAJ
                 country_code: DE
                 state_code:
                 active: false
@@ -39612,7 +39612,6 @@ paths:
               example:
                 id: cert_UkLWZg9DAJ
                 certificate_number: DE-RESALE-1
-                reason_code: resale
                 status: pending
                 issuing_authority: Finanzamt Berlin
                 metadata: {}
@@ -39622,6 +39621,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
+                tax_exemption_reason_id: txr_UkLWZg9DAJ
                 country_code:
                 state_code:
                 active: false
@@ -39704,7 +39704,6 @@ paths:
               example:
                 id: cert_UkLWZg9DAJ
                 certificate_number: DE-RESALE-1
-                reason_code: resale
                 status: verified
                 issuing_authority:
                 metadata: {}
@@ -39714,6 +39713,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
+                tax_exemption_reason_id: txr_UkLWZg9DAJ
                 country_code:
                 state_code:
                 active: true
@@ -39784,7 +39784,6 @@ paths:
               example:
                 id: cert_gbHJdmfrXB
                 certificate_number: CERT-1
-                reason_code: resale
                 status: revoked
                 issuing_authority:
                 metadata: {}
@@ -39794,6 +39793,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
+                tax_exemption_reason_id: txr_UkLWZg9DAJ
                 country_code:
                 state_code:
                 active: false
@@ -67918,8 +67918,6 @@ components:
           type: string
         certificate_number:
           type: string
-        reason_code:
-          type: string
         status:
           anyOf:
           - type: string
@@ -67952,6 +67950,10 @@ components:
           type: string
         company_id:
           type: string
+        tax_exemption_reason_id:
+          type: string
+        tax_exemption_reason:
+          "$ref": "#/components/schemas/TaxExemptionReason"
         country_code:
           type: string
           nullable: true
@@ -68217,7 +68219,6 @@ components:
       required:
       - id
       - certificate_number
-      - reason_code
       - status
       - issuing_authority
       - metadata
@@ -68227,6 +68228,7 @@ components:
       - created_at
       - updated_at
       - company_id
+      - tax_exemption_reason_id
       - country_code
       - state_code
       - active
@@ -78002,11 +78004,10 @@ components:
         certificate_number:
           type: string
           example: DE-RESALE-7
-        reason_code:
+        tax_exemption_reason_id:
           type: string
-          description: The `code` of one of the store's active tax exemption reasons.
-            The tax provider receives it.
-          example: resale
+          description: One of the store's active tax exemption reasons. The tax provider
+            receives its `code`.
         issuing_authority:
           type: string
           example: Finanzamt Berlin
@@ -78036,18 +78037,17 @@ components:
           additionalProperties: true
       required:
       - certificate_number
-      - reason_code
+      - tax_exemption_reason_id
     TaxExemptionCertificateUpdateParams:
       type: object
       properties:
         certificate_number:
           type: string
           example: DE-RESALE-7
-        reason_code:
+        tax_exemption_reason_id:
           type: string
-          description: The `code` of one of the store's active tax exemption reasons.
-            The tax provider receives it.
-          example: resale
+          description: One of the store's active tax exemption reasons. The tax provider
+            receives its `code`.
         issuing_authority:
           type: string
           example: Finanzamt Berlin
@@ -78085,10 +78085,10 @@ components:
           description: Whether the reason is offered on new records.
         code:
           type: string
-          description: What certificates record and the tax provider receives — for
-            Avalara, an entity use code such as `G`. Fixed once a certificate records
-            it.
-          example: resale
+          description: What the tax provider receives for every certificate holding
+            this reason — for Avalara, an entity use code such as `G`. Saved in capitals.
+            Changing it changes what those certificates send from then on.
+          example: RESALE
         metadata:
           type: object
           additionalProperties: true
@@ -78105,10 +78105,10 @@ components:
           description: Whether the reason is offered on new records.
         code:
           type: string
-          description: What certificates record and the tax provider receives — for
-            Avalara, an entity use code such as `G`. Fixed once a certificate records
-            it.
-          example: resale
+          description: What the tax provider receives for every certificate holding
+            this reason — for Avalara, an entity use code such as `G`. Saved in capitals.
+            Changing it changes what those certificates send from then on.
+          example: RESALE
         metadata:
           type: object
           additionalProperties: true
@@ -80024,13 +80024,13 @@ components:
         created_at: datetime
         expires_at: datetime
         id: id
-        reason_code: text
         status:
           enum:
           - pending
           - verified
           - expired
           - revoked
+        tax_exemption_reason_id: id
         updated_at: datetime
       associations: {}
       scopes: {}

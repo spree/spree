@@ -1788,10 +1788,6 @@
           "placeholder": "不限"
         }
       },
-      "reason_code": {
-        "help": "在 设置 → 原因 中管理此处提供的原因。",
-        "label": "事由"
-      },
       "role": {
         "description": {
           "label": "描述",
@@ -2393,6 +2389,10 @@
           "label": "默认包装",
           "help": "您的包裹报价所依据的包装。同一时间只能有一个默认包装。"
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "在 设置 → 税费 → 免税原因 中管理此处提供的原因。",
+        "label": "事由"
       }
     },
     "gift_cards": {
@@ -4746,14 +4746,13 @@
       },
       "code_engine_help": "您的税务引擎根据此代码判断是否免税，请选择它为此原因定义的代码。",
       "code_help": "证书记录的简短标识符，在店铺内唯一。",
-      "code_locked_help": "已有证书记录此代码，因此无法修改。请改为重命名该原因。",
       "code_placeholder": "例如 resale",
       "create_description": "员工创建退货、理赔或退款时，可从下拉列表中选择原因。",
       "delete_confirm": {
         "message": "将不再提供 {{name}}。已使用它的记录保持不变。",
         "title": "删除原因？"
       },
-      "description": "团队处理退货、索赔、退款、取消和免税时可选择的原因列表。",
+      "description": "您的团队在处理退货、索赔、退款和取消时可选择的原因列表。",
       "edit_sheet_title": "编辑原因",
       "empty": "暂无原因",
       "in_use": "使用中",
@@ -5106,12 +5105,11 @@
         "staff": "可访问此后台的人员",
         "stock_locations": "存放库存的仓库与自提点",
         "store": "店铺名称、时区、单位与区域默认值",
-        "tax_categories": "分配给商品的税务类别",
-        "tax_rates": "按市场和地区适用的税率",
         "webhooks": "事件发生时接收通知的端点",
         "package_types": "纸箱、外箱、托盘与集装箱",
         "suppliers": "你从谁那里采购库存，以及如何联系他们",
-        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税"
+        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税",
+        "taxes": "税务类别、税率和免税原因"
       },
       "groups": {
         "audit": "审计",
@@ -5149,7 +5147,8 @@
         "webhooks": "Webhooks",
         "package_types": "包装类型",
         "suppliers": "供应商",
-        "marketplace": "设置"
+        "marketplace": "设置",
+        "taxes": "税费"
       },
       "breadcrumbs": {
         "marketplace": "平台"
@@ -5493,7 +5492,6 @@
       "sellers": "在您平台上经营的第三方卖家及各自的状态。",
       "store_credits": "客户可在结账时使用的余额，以及每笔余额的发放方式。",
       "tax_categories": "决定商品适用哪种税率的分组。",
-      "tax_rates": "按类别和地区收取的税费。",
       "webhook_deliveries": "发送到此端点的每个事件，以及是否已被接收。",
       "webhook_endpoints": "店铺发生事件时通知您其他系统的地址。",
       "returns": "退回的商品，从申请到退款。",
@@ -5514,8 +5512,7 @@
         "created": "税务类别已创建",
         "deleted": "税务类别已删除",
         "updated": "税务类别已更新"
-      },
-      "search_placeholder": "按名称搜索…"
+      }
     },
     "tax_exemption_certificates": {
       "add_cta": "添加证明",
@@ -5617,7 +5614,6 @@
         "deleted": "税率已删除",
         "updated": "税率已更新"
       },
-      "search_placeholder": "搜索税率",
       "select_category": "选择类别"
     },
     "translations": {
@@ -6268,6 +6264,21 @@
       "empty": "暂无新通知。",
       "view_on_github": "在 GitHub 上查看",
       "release_notes_unavailable": "无法加载版本说明，请前往 GitHub 查看。"
+    },
+    "taxes": {
+      "title": "税费",
+      "description": "您的商品如何计税、Spree 收取哪些税率，以及企业为何可以免税购买。",
+      "providers_title": "税费计算",
+      "provider_markets": "{{markets}}：{{provider}}",
+      "manage_markets": "管理市场",
+      "tabs": {
+        "categories": "类别",
+        "rates": "税率",
+        "exemption_reasons": "免税原因"
+      },
+      "rates_unused_in": "这些税率不适用于 {{markets}}，这些市场由外部服务计算税费。",
+      "rates_unused_everywhere": "您的市场均未使用这些税率：{{markets}} 由外部服务计算税费。",
+      "rates_help": "按类别和地区收取的税费。仅适用于使用 Spree 税率的市场：Avalara 等已连接的服务会自行计算税费，忽略这些税率。"
     }
   }
 }

@@ -4,10 +4,8 @@ import type { CountryCode } from '../generated'
 
 export type TaxExemptionCertificateUpdateParams = {
   certificate_number?: string
-  /**
-   * The `code` of one of the store's active tax exemption reasons. The tax provider receives it.
-   */
-  reason_code?: string
+  /** One of the store's active tax exemption reasons. The tax provider receives its `code`. */
+  tax_exemption_reason_id?: string
   issuing_authority?: string | null
   issued_at?: string | null
   expires_at?: string | null

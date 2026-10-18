@@ -1,9 +1,9 @@
 ---
 title: "Returns & Reasons"
-description: "Learn how to set up the reasons your team picks from when handling returns, claims, refunds, cancellations and tax exemptions in Spree Commerce."
+description: "Learn how to set up the reasons your team picks from when handling returns, claims, refunds and cancellations in Spree Commerce."
 ---
 
-Every time your team sends money back, takes goods back, calls off an order or records why a business buys without tax, Spree asks them why. This screen holds the lists they pick from.
+Every time your team sends money back, takes goods back, or calls off an order, Spree asks them why. This screen holds the lists they pick from.
 
 Keeping these as fixed lists rather than free text is what makes the answers countable. "Damaged in transit" chosen 40 times this month is a conversation with your carrier. Forty differently worded notes are not.
 
@@ -11,9 +11,9 @@ To manage them, navigate to **Settings → Returns & reasons**, under the **Ship
 
 ![The Returns and reasons page, showing the four separate reason lists](/docs/images/user/settings/returns-and-reasons/1-returns-and-reasons.png)
 
-## The Five Lists
+## The Four Lists
 
-The page holds five independent lists, each in its own card. A reason added to one does not appear in the others, because each answers a different question.
+The page holds four independent lists, each in its own card. A reason added to one does not appear in the others, because each answers a different question.
 
 ### Return Reasons
 
@@ -77,23 +77,6 @@ These reasons separate cancellations you can do something about from the ones yo
 
 <Note>A reason is not required when cancelling an order. The picker reads **No reason given** until somebody chooses one, so cancellations can still go unexplained even with the list in place.</Note>
 
-### Tax Exemption Reasons
-
-Why a business buys without tax. Staff pick one when recording a company's [<u>tax exemption certificate</u>](/user/customers/companies).
-
-Each reason has a **Name**, which is your own wording, and a **Code**, which the certificate records and your tax engine receives. Spree's built-in tax rates only keep the code for reference, so any short code works. If you calculate tax through Avalara, the code decides the exemption: the form offers Avalara's codes, such as `G` for resale or `A` for federal government, and you name each reason however you like.
-
-A new store arrives with six:
-
-- Agricultural
-- Charitable organization
-- Educational institution
-- Government
-- Manufacturing
-- Resale
-
-<Note>Once a certificate records a reason, its code cannot change, because the certificate holds the code itself. You can still rename the reason or retire it.</Note>
-
 ## How to Add a Reason
 
 Find the card for the kind of reason you are adding, then click **Add reason** on that card.
@@ -101,8 +84,7 @@ Find the card for the kind of reason you are adding, then click **Add reason** o
 <Warning>Every card carries a button labelled **Add reason**. The card you click on decides which list the reason joins, and a reason cannot be moved afterwards.</Warning>
 
 - **Name** - A description of the reason that staff will pick from a dropdown. Keep it short and unambiguous.
-- **Code** - Tax exemption reasons only. What certificates record and your tax engine receives.
-- **Available on new records** - On by default. Controls whether the reason is offered when staff open a new return, claim, refund, cancellation or exemption certificate.
+- **Available on new records** - On by default. Controls whether the reason is offered when staff open a new return, claim, refund or cancellation.
 
 Click **Create**.
 
@@ -122,4 +104,4 @@ Unused reasons can be deleted outright from the row menu.
 - [<u>Claims</u>](/user/orders/claims) - Handling a delivery that went wrong
 - [<u>Refunding Orders</u>](/user/orders/refunding-orders) - Sending money back
 - [<u>Policies</u>](/user/settings/policies) - Publishing your returns policy
-- [<u>Companies</u>](/user/customers/companies) - Recording a business's tax exemption certificates
+- [<u>Taxes</u>](/user/settings/taxes) - Where tax exemption reasons are managed

@@ -5,8 +5,9 @@ export type TaxExemptionReasonCreateParams = {
   /** Whether the reason is offered on new records. */
   active?: boolean
   /**
-   * What certificates record and the tax provider receives — for Avalara, an entity use code such
-   * as `G`. Fixed once a certificate records it.
+   * What the tax provider receives for every certificate holding this reason — for Avalara, an
+   * entity use code such as `G`. Saved in capitals. Changing it changes what those certificates
+   * send from then on.
    */
   code: string
   metadata?: Record<string, unknown>

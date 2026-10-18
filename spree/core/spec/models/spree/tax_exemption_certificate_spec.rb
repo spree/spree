@@ -14,24 +14,25 @@ describe Spree::TaxExemptionCertificate, type: :model do
     expect(create(:tax_exemption_certificate, company: company)).to be_pending
   end
 
-  describe 'reason code' do
+  describe 'reason' do
     let!(:reason) { create(:tax_exemption_reason, store: store, code: 'G') }
 
-    it 'must name a reason the store offers' do
-      certificate = described_class.new(company: company, certificate_number: 'C-1', reason_code: 'diplomatic')
+    it "must be one of the company's store's reasons" do
+      foreign = create(:tax_exemption_reason, store: create(:store))
+      certificate = described_class.new(company: company, certificate_number: 'C-1', tax_exemption_reason: foreign)
 
       expect(certificate).not_to be_valid
-      expect(certificate.errors.details[:reason_code]).to include(error: :not_offered)
+      expect(certificate.errors.details[:tax_exemption_reason]).to include(error: :not_offered)
     end
 
     it 'refuses a retired reason on a new certificate' do
       reason.update!(active: false)
 
-      expect(described_class.new(company: company, certificate_number: 'C-1', reason_code: 'G')).not_to be_valid
+      expect(described_class.new(company: company, certificate_number: 'C-1', tax_exemption_reason: reason)).not_to be_valid
     end
 
     it 'leaves a certificate valid when its reason is retired later' do
-      certificate = create(:tax_exemption_certificate, company: company, reason_code: 'G')
+      certificate = create(:tax_exemption_certificate, company: company, tax_exemption_reason: reason)
       reason.update!(active: false)
 
       expect(certificate.reload).to be_valid

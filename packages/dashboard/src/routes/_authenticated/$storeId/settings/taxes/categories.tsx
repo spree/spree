@@ -1,21 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { TaxCategory, TaxCategoryCreateParams } from '@spree/admin-sdk'
+import { Can, mapSpreeErrorsToForm, Subject, usePermissions } from '@spree/dashboard-core'
 import {
-  adminClient,
-  Can,
-  mapSpreeErrorsToForm,
-  ResourceTable,
-  resourceSearchSchema,
-  Subject,
-  usePermissions,
-} from '@spree/dashboard-core'
-import {
+  ActiveBadge,
   Button,
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
   Input,
+  Pagination,
   RowActions,
   Sheet,
   SheetContent,
@@ -24,66 +18,64 @@ import {
   SheetHeader,
   SheetTitle,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Textarea,
   useConfirm,
-  useRowClickBridge,
 } from '@spree/dashboard-ui'
-import { PlusIcon } from '@spree/dashboard-ui/icons'
+import { PercentIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { SettingsListCard } from '../../../../../components/spree/settings-list-card'
 import {
   useCreateTaxCategory,
   useDeleteTaxCategory,
+  useTaxCategories,
   useTaxCategory,
   useUpdateTaxCategory,
-} from '../../../../hooks/use-tax-categories'
+} from '../../../../../hooks/use-tax-categories'
 import {
   TAX_CATEGORY_DEFAULTS,
   type TaxCategoryFormValues,
   taxCategoryFormSchema,
   taxCategoryValuesToParams,
-} from '../../../../schemas/tax-category'
-import '../../../../tables/tax-categories'
+} from '../../../../../schemas/tax-category'
 
-const taxCategoriesSearchSchema = resourceSearchSchema.extend({
+const taxCategoriesSearchSchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
   edit: z.string().optional(),
   new: z.coerce.boolean().optional(),
 })
 
-export const Route = createFileRoute('/_authenticated/$storeId/settings/tax-categories')({
+export const Route = createFileRoute('/_authenticated/$storeId/settings/taxes/categories')({
   validateSearch: taxCategoriesSearchSchema,
   component: TaxCategoriesPage,
 })
 
 function TaxCategoriesPage() {
   const { t } = useTranslation()
-  const search = Route.useSearch() as z.infer<typeof taxCategoriesSearchSchema>
+  const search = Route.useSearch()
   const navigate = useNavigate()
   const confirm = useConfirm()
   const deleteMutation = useDeleteTaxCategory()
   const { permissions } = usePermissions()
+  const { data, isLoading, isError } = useTaxCategories({ page: search.page ?? 1 })
+  const taxCategories = data?.data ?? []
 
   const editId = search.edit
   const isCreating = !!search.new
 
-  const closeSheet = () =>
-    navigate({
-      search: (prev: Record<string, unknown>) => {
-        const { edit: _e, new: _n, ...rest } = prev
-        return rest as never
-      },
-    })
+  const updateSearch = (patch: Partial<z.infer<typeof taxCategoriesSearchSchema>>) =>
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) as never })
 
-  const openCreate = () =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
-
-  const openEdit = (id: string) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
-
-  useRowClickBridge('data-tax-category-id', openEdit)
+  const closeSheet = () => updateSearch({ edit: undefined, new: undefined })
 
   async function handleDelete(taxCategory: TaxCategory) {
     const ok = await confirm({
@@ -100,34 +92,85 @@ function TaxCategoriesPage() {
 
   return (
     <>
-      <ResourceTable<TaxCategory>
-        tableKey="tax-categories"
-        queryKey="tax-categories"
-        queryFn={(params) => adminClient.taxCategories.list(params)}
-        searchParams={search}
-        rowActions={(taxCategory) => (
-          <RowActions
-            actions={[
-              { key: 'edit', onSelect: () => openEdit(taxCategory.id) },
-              {
-                key: 'delete',
-                destructive: true,
-                visible: permissions.can('destroy', Subject.TaxCategory),
-                disabled: deleteMutation.isPending,
-                onSelect: () => handleDelete(taxCategory),
-              },
-            ]}
-          />
-        )}
-        actions={
+      <SettingsListCard
+        title={t('admin.settings_nav.items.tax_categories')}
+        description={t('admin.table_descriptions.tax_categories')}
+        action={
           <Can I="create" a={Subject.TaxCategory}>
-            <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
+            <Button size="sm" onClick={() => updateSearch({ new: true })}>
               <PlusIcon className="size-4" />
               {t('admin.tax_categories.add_cta')}
             </Button>
           </Can>
         }
-      />
+        isLoading={isLoading}
+        isError={isError}
+        isEmpty={taxCategories.length === 0}
+        emptyIcon={<PercentIcon />}
+        emptyTitle={t('admin.tax_categories.empty')}
+        footer={
+          data?.meta && data.meta.pages > 1 ? (
+            <Pagination meta={data.meta} onPageChange={(page: number) => updateSearch({ page })} />
+          ) : undefined
+        }
+      >
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.fields.name.label')}</TableHead>
+              <TableHead>{t('admin.fields.tax_category.tax_code.label')}</TableHead>
+              <TableHead>{t('admin.fields.tax_category.is_default.label')}</TableHead>
+              <TableHead className="w-12" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {taxCategories.map((taxCategory) => (
+              <TableRow key={taxCategory.id}>
+                <TableCell>
+                  <button
+                    type="button"
+                    className="text-left font-medium"
+                    onClick={() => updateSearch({ edit: taxCategory.id })}
+                  >
+                    {taxCategory.name}
+                  </button>
+                  {taxCategory.description && (
+                    <p className="text-xs text-muted-foreground">{taxCategory.description}</p>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {taxCategory.tax_code ? (
+                    <code className="text-sm">{taxCategory.tax_code}</code>
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
+                <TableCell>
+                  <ActiveBadge
+                    active={taxCategory.is_default}
+                    activeLabel={t('admin.fields.tax_category.is_default.label')}
+                    dashWhenInactive
+                  />
+                </TableCell>
+                <TableCell>
+                  <RowActions
+                    actions={[
+                      { key: 'edit', onSelect: () => updateSearch({ edit: taxCategory.id }) },
+                      {
+                        key: 'delete',
+                        destructive: true,
+                        visible: permissions.can('destroy', Subject.TaxCategory),
+                        disabled: deleteMutation.isPending,
+                        onSelect: () => handleDelete(taxCategory),
+                      },
+                    ]}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </SettingsListCard>
 
       {isCreating && <CreateTaxCategorySheet open onOpenChange={(o) => !o && closeSheet()} />}
       {editId && <EditTaxCategorySheet id={editId} open onOpenChange={(o) => !o && closeSheet()} />}
