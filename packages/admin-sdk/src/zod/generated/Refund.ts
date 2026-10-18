@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Refund from '../../types/generated/Refund';
 import { ActorSchema } from './Actor';
 import { PaymentSchema } from './Payment';
 
@@ -19,6 +20,6 @@ export const RefundSchema = z.object({
   refunder_type: z.string().nullable(),
   refunder: ActorSchema.optional(),
   get payment() { return PaymentSchema.optional(); },
-});
+}) as unknown as z.ZodType<Refund>;
 
-export type Refund = z.infer<typeof RefundSchema>;
+export type { Refund };

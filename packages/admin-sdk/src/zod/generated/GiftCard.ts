@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type GiftCard from '../../types/generated/GiftCard';
 import { AdminUserSchema } from './AdminUser';
 import { CustomerSchema } from './Customer';
 import { GiftCardBatchSchema } from './GiftCardBatch';
@@ -26,6 +27,6 @@ export const GiftCardSchema = z.object({
   created_by: AdminUserSchema.optional(),
   gift_card_batch: GiftCardBatchSchema.optional(),
   get orders() { return z.array(OrderSchema).optional(); },
-});
+}) as unknown as z.ZodType<GiftCard>;
 
-export type GiftCard = z.infer<typeof GiftCardSchema>;
+export type { GiftCard };

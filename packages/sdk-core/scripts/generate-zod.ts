@@ -266,7 +266,7 @@ function typeToZod(
   }
 }
 
-function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>): string {
+function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>, typesImportDir: string): string {
   const referencedTypes = new Set<string>()
   const fieldLines: string[] = []
 
@@ -291,18 +291,30 @@ function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>): string {
     .sort()
     .map((ref) => `import { ${ref}Schema } from './${ref}';`)
 
+  // Inferring a type through schemas that reference each other walks the
+  // whole reference cycle, which TypeScript 7 rejects as too deep. A schema in
+  // a cycle is typed as the generated type it was built from instead, so
+  // nothing reading it infers through the cycle. It is a cast because the
+  // schema accepts any string where that type lists an enum's values.
+  const cyclic = cyclicTypes.has(parsed.typeName)
+  const typeImport = cyclic
+    ? [`import type ${parsed.typeName} from '${typesImportDir}/${parsed.typeName}';`]
+    : []
   const schemaDecl = `export const ${parsed.typeName}Schema = z.object({`
 
   const lines: string[] = [
     '// This file is auto-generated. Do not edit directly.',
     "import { z } from 'zod';",
+    ...typeImport,
     ...refImports,
     '',
     schemaDecl,
     ...fieldLines,
-    '});',
+    cyclic ? `}) as unknown as z.ZodType<${parsed.typeName}>;` : '});',
     '',
-    `export type ${parsed.typeName} = z.infer<typeof ${parsed.typeName}Schema>;`,
+    cyclic
+      ? `export type { ${parsed.typeName} };`
+      : `export type ${parsed.typeName} = z.infer<typeof ${parsed.typeName}Schema>;`,
     '',
   ]
 
@@ -415,7 +427,7 @@ function generateFolder(typesDir: string, zodDir: string): void {
   for (const [, parsed] of parsedTypes) {
     fs.writeFileSync(
       path.join(zodDir, `${parsed.typeName}.ts`),
-      generateZodFile(parsed, cyclicTypes),
+      generateZodFile(parsed, cyclicTypes, path.relative(zodDir, typesDir)),
       'utf-8',
     )
     generatedNames.push(parsed.typeName)

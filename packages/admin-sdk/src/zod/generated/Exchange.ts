@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Exchange from '../../types/generated/Exchange';
 import { ActorSchema } from './Actor';
 import { ExchangeLineItemSchema } from './ExchangeLineItem';
 import { OrderSchema } from './Order';
@@ -31,6 +32,6 @@ export const ExchangeSchema = z.object({
   get order() { return OrderSchema.optional(); },
   stock_location: StockLocationSchema.optional(),
   get refunds() { return z.array(RefundSchema).optional(); },
-});
+}) as unknown as z.ZodType<Exchange>;
 
-export type Exchange = z.infer<typeof ExchangeSchema>;
+export type { Exchange };

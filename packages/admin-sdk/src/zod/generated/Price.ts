@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Price from '../../types/generated/Price';
 import { VariantSchema } from './Variant';
 
 export const PriceSchema = z.object({
@@ -13,6 +14,6 @@ export const PriceSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   get variant() { return VariantSchema.optional(); },
-});
+}) as unknown as z.ZodType<Price>;
 
-export type Price = z.infer<typeof PriceSchema>;
+export type { Price };

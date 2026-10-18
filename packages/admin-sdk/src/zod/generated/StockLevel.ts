@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type StockLevel from '../../types/generated/StockLevel';
 import { StockLocationSchema } from './StockLocation';
 import { VariantSchema } from './Variant';
 
@@ -26,6 +27,6 @@ export const StockLevelSchema = z.object({
   available_count: z.number(),
   stock_location: StockLocationSchema.optional(),
   get variant() { return VariantSchema.optional(); },
-});
+}) as unknown as z.ZodType<StockLevel>;
 
-export type StockLevel = z.infer<typeof StockLevelSchema>;
+export type { StockLevel };

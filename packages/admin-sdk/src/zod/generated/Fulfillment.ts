@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Fulfillment from '../../types/generated/Fulfillment';
 import { DeliverySchema } from './Delivery';
 import { DeliveryMethodSchema } from './DeliveryMethod';
 import { DeliveryRateSchema } from './DeliveryRate';
@@ -46,6 +47,6 @@ export const FulfillmentSchema = z.object({
   provider_generates_labels: z.boolean(),
   fulfillment_items: z.array(FulfillmentItemSchema).optional(),
   get order() { return OrderSchema.optional(); },
-});
+}) as unknown as z.ZodType<Fulfillment>;
 
-export type Fulfillment = z.infer<typeof FulfillmentSchema>;
+export type { Fulfillment };

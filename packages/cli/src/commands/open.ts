@@ -1,6 +1,6 @@
 import { platform } from 'node:os'
 import type { Command } from 'commander'
-import { execaCommand } from 'execa'
+import { execa } from 'execa'
 import { DASHBOARD_PORT } from '../constants.js'
 import { detectProject } from '../context.js'
 import { hasDashboardApp } from '../dashboard-server.js'
@@ -18,6 +18,6 @@ export function registerOpenCommand(program: Command): void {
         : `http://localhost:${ctx.port}/dashboard`
       const os = platform()
       const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
-      await execaCommand(`${cmd} ${url}`)
+      await execa(cmd, [url])
     })
 }

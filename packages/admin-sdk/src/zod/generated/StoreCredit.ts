@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type StoreCredit from '../../types/generated/StoreCredit';
 import { AdminUserSchema } from './AdminUser';
 import { CustomerSchema } from './Customer';
 
@@ -21,6 +22,6 @@ export const StoreCreditSchema = z.object({
   originator_id: z.string().nullable(),
   get customer() { return CustomerSchema.optional(); },
   created_by: AdminUserSchema.optional(),
-});
+}) as unknown as z.ZodType<StoreCredit>;
 
-export type StoreCredit = z.infer<typeof StoreCreditSchema>;
+export type { StoreCredit };

@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Return from '../../types/generated/Return';
 import { ActorSchema } from './Actor';
 import { DeliverySchema } from './Delivery';
 import { OrderSchema } from './Order';
@@ -40,6 +41,6 @@ export const ReturnSchema = z.object({
   documents: z.array(z.object({ kind: z.string(), url: z.string() })),
   labels: z.array(ShippingLabelSchema),
   deliveries: z.array(DeliverySchema),
-});
+}) as unknown as z.ZodType<Return>;
 
-export type Return = z.infer<typeof ReturnSchema>;
+export type { Return };

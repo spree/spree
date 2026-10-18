@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type OptionValue from '../../types/generated/OptionValue';
 import { OptionTypeSchema } from './OptionType';
 
 export const OptionValueSchema = z.object({
@@ -16,6 +17,6 @@ export const OptionValueSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   get option_type() { return OptionTypeSchema.optional(); },
-});
+}) as unknown as z.ZodType<OptionValue>;
 
-export type OptionValue = z.infer<typeof OptionValueSchema>;
+export type { OptionValue };

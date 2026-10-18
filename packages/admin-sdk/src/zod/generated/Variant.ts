@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Variant from '../../types/generated/Variant';
 import { CustomFieldSchema } from './CustomField';
 import { MediaSchema } from './Media';
 import { OptionValueSchema } from './OptionValue';
@@ -66,6 +67,6 @@ export const VariantSchema = z.object({
   delivery_profile_id: z.string().nullable(),
   get prices() { return z.array(PriceSchema).optional(); },
   get stock_levels() { return z.array(StockLevelSchema).optional(); },
-});
+}) as unknown as z.ZodType<Variant>;
 
-export type Variant = z.infer<typeof VariantSchema>;
+export type { Variant };

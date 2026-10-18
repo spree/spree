@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Payment from '../../types/generated/Payment';
 import { CreditCardSchema } from './CreditCard';
 import { OrderSchema } from './Order';
 import { PaymentCaptureEventSchema } from './PaymentCaptureEvent';
@@ -35,6 +36,6 @@ export const PaymentSchema = z.object({
   get order() { return OrderSchema.optional(); },
   get refunds() { return z.array(RefundSchema).optional(); },
   payment_splits: z.array(PaymentSplitSchema).optional(),
-});
+}) as unknown as z.ZodType<Payment>;
 
-export type Payment = z.infer<typeof PaymentSchema>;
+export type { Payment };

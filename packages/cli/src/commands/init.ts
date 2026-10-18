@@ -4,7 +4,7 @@ import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execa, execaCommand } from 'execa'
+import { execa } from 'execa'
 import pc from 'picocolors'
 import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
@@ -403,7 +403,7 @@ export async function openBrowser(url: string): Promise<void> {
   const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
 
   try {
-    await execaCommand(`${cmd} ${url}`, { stdio: 'ignore' })
+    await execa(cmd, [url], { stdio: 'ignore' })
   } catch {
     // best-effort
   }

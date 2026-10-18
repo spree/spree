@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Claim from '../../types/generated/Claim';
 import { ActorSchema } from './Actor';
 import { ClaimLineItemSchema } from './ClaimLineItem';
 import { ClaimReasonSchema } from './ClaimReason';
@@ -29,6 +30,6 @@ export const ClaimSchema = z.object({
   created_by: ActorSchema.optional(),
   get order() { return OrderSchema.optional(); },
   get refunds() { return z.array(RefundSchema).optional(); },
-});
+}) as unknown as z.ZodType<Claim>;
 
-export type Claim = z.infer<typeof ClaimSchema>;
+export type { Claim };

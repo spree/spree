@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type CustomerGroup from '../../types/generated/CustomerGroup';
 import { CustomerSchema } from './Customer';
 
 export const CustomerGroupSchema = z.object({
@@ -10,6 +11,6 @@ export const CustomerGroupSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   get customers() { return z.array(CustomerSchema).optional(); },
-});
+}) as unknown as z.ZodType<CustomerGroup>;
 
-export type CustomerGroup = z.infer<typeof CustomerGroupSchema>;
+export type { CustomerGroup };

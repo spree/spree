@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Company from '../../types/generated/Company';
 import { AddressSchema } from './Address';
 import { CompanyMembershipSchema } from './CompanyMembership';
 
@@ -19,6 +20,6 @@ export const CompanySchema = z.object({
   get children() { return z.array(CompanySchema).optional(); },
   addresses: z.array(AddressSchema).optional(),
   memberships: z.array(CompanyMembershipSchema).optional(),
-});
+}) as unknown as z.ZodType<Company>;
 
-export type Company = z.infer<typeof CompanySchema>;
+export type { Company };

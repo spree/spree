@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Market from '../../types/generated/Market';
 import { CountrySchema } from './Country';
 
 export const MarketSchema = z.object({
@@ -15,6 +16,6 @@ export const MarketSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   tax_provider: z.string().nullable(),
-});
+}) as unknown as z.ZodType<Market>;
 
-export type Market = z.infer<typeof MarketSchema>;
+export type { Market };

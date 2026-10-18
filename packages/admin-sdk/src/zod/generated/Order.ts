@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Order from '../../types/generated/Order';
 import { ActorSchema } from './Actor';
 import { AddressSchema } from './Address';
 import { AppliedPromotionSchema } from './AppliedPromotion';
@@ -111,6 +112,6 @@ export const OrderSchema = z.object({
   get exchanges() { return z.array(ExchangeSchema).optional(); },
   get claims() { return z.array(ClaimSchema).optional(); },
   freight_summary: FreightSummarySchema.nullable(),
-});
+}) as unknown as z.ZodType<Order>;
 
-export type Order = z.infer<typeof OrderSchema>;
+export type { Order };

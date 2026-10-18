@@ -86,19 +86,21 @@ overrides:
   # and schedulePositionCheck — exports 3.31 removed. Pin the family
   # together on the patched line (prototype pollution <3.30.4, Markdown
   # ReDoS <3.30.5).
-  '@tiptap/core': 3.31.3
-  '@tiptap/pm': 3.31.3
-  '@tiptap/react': 3.31.3
-  '@tiptap/starter-kit': 3.31.3
-  '@tiptap/extensions': 3.31.3
-  '@tiptap/extension-image': 3.31.3
-  '@tiptap/extension-link': 3.31.3
-  '@tiptap/extension-placeholder': 3.31.3
-  # @tiptap/pm 3.31 wants prosemirror-model ^1.25.11 and prosemirror-view
-  # ^1.42.3, but schema-list/state still resolve the older 1.25.4 / 1.41.8
-  # line. Two copies make wrapInList throw, so list toolbar buttons no-op.
-  prosemirror-model: 1.25.11
-  prosemirror-view: 1.42.3
+  '@tiptap/core': 3.32.0
+  '@tiptap/pm': 3.32.0
+  '@tiptap/react': 3.32.0
+  '@tiptap/starter-kit': 3.32.0
+  '@tiptap/extensions': 3.32.0
+  '@tiptap/extension-bubble-menu': 3.32.0
+  '@tiptap/extension-floating-menu': 3.32.0
+  '@tiptap/extension-image': 3.32.0
+  '@tiptap/extension-link': 3.32.0
+  '@tiptap/extension-placeholder': 3.32.0
+  # @tiptap/pm 3.32 wants prosemirror-model ^1.25.12 and prosemirror-view
+  # ^1.42.6, but schema-list/state still resolve an older line. Two copies
+  # make wrapInList throw, so list toolbar buttons no-op.
+  prosemirror-model: 1.25.12
+  prosemirror-view: 1.42.6
 
 # auditConfig: advisories we have reviewed and decided not to fix. The weekly
 # security-audit workflow honors this list, so an entry here also stops the job
@@ -111,15 +113,3 @@ overrides:
 auditConfig:
   ignoreGhsas:
     - GHSA-vfj7-8cjw-p6xm
-
-minimumReleaseAgeExclude:
-  - '@tiptap/core@3.31.3'
-  - '@tiptap/pm@3.31.3'
-  - '@tiptap/react@3.31.3'
-  - '@tiptap/starter-kit@3.31.3'
-  - '@tiptap/extensions@3.31.3'
-  - '@tiptap/extension-image@3.31.3'
-  - '@tiptap/extension-link@3.31.3'
-  - '@tiptap/extension-placeholder@3.31.3'
-  - prosemirror-model@1.25.11
-  - prosemirror-view@1.42.3

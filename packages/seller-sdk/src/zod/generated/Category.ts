@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Category from '../../types/generated/Category';
 import { CustomFieldSchema } from './CustomField';
 
 export const CategorySchema = z.object({
@@ -24,6 +25,6 @@ export const CategorySchema = z.object({
   get children() { return z.array(CategorySchema).optional(); },
   get ancestors() { return z.array(CategorySchema).optional(); },
   custom_fields: z.array(CustomFieldSchema).optional(),
-});
+}) as unknown as z.ZodType<Category>;
 
-export type Category = z.infer<typeof CategorySchema>;
+export type { Category };
