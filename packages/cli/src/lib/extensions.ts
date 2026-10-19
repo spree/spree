@@ -97,7 +97,9 @@ export function snapshotInstallFiles(apiPath: string): () => void {
     }
     // A file the install deleted outright is missing from currentFiles().
     for (const [file, content] of before) {
-      if (!fs.existsSync(file)) fs.writeFileSync(file, content)
+      if (fs.existsSync(file)) continue
+      fs.mkdirSync(path.dirname(file), { recursive: true })
+      fs.writeFileSync(file, content)
     }
   }
 }
