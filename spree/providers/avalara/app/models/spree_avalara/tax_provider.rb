@@ -44,7 +44,7 @@ module SpreeAvalara
     # no rows.
     #
     # @see Spree::TaxProvider::Base#estimate
-    def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
+    def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil, context: {})
       integration = Integration.active_for(owner.store)
       taxable = owner.taxable_items
 
@@ -58,7 +58,8 @@ module SpreeAvalara
         return
       end
 
-      body = fetch(owner, taxable, integration, tax_date, tax_identifier, exemptions)
+      tax_inclusive = owner.tax_inclusive? if tax_inclusive.nil?
+      body = fetch(owner, taxable, integration, tax_date, tax_identifier, exemptions, tax_inclusive)
       lines = TransactionLine.from_response(
         body, context: response_context(owner, taxable, tax_identifier, exemptions)
       )
@@ -141,7 +142,7 @@ module SpreeAvalara
     # nothing connected it has no opinion and writes no rows.
     #
     # @see Spree::TaxProvider::Base#estimate_replacement
-    def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [])
+    def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil)
       items = Array(items)
       return if items.empty?
 
@@ -157,7 +158,8 @@ module SpreeAvalara
       body = integration.client.create_transaction(
         TransactionPresenter.new(
           owner: order, integration: integration, items: shipped, type: 'SalesOrder',
-          tax_date: tax_date, tax_identifier: tax_identifier, exemptions: exemptions
+          tax_date: tax_date, tax_identifier: tax_identifier, exemptions: exemptions,
+          tax_inclusive: tax_inclusive
         ).call
       )
       lines = TransactionLine.from_response(
@@ -295,10 +297,10 @@ module SpreeAvalara
       nil
     end
 
-    def fetch(owner, taxable, integration, tax_date, tax_identifier, exemptions)
+    def fetch(owner, taxable, integration, tax_date, tax_identifier, exemptions, tax_inclusive)
       cache_key = EstimateCacheKey.new(
         owner: owner, items: taxable, integration: integration,
-        tax_identifier: tax_identifier, exemptions: exemptions
+        tax_identifier: tax_identifier, exemptions: exemptions, tax_inclusive: tax_inclusive
       )
 
       # Only successes are cached: the block raises on a refusal, which
@@ -307,7 +309,8 @@ module SpreeAvalara
         integration.client.create_transaction(
           TransactionPresenter.new(
             owner: owner, integration: integration, items: taxable, type: 'SalesOrder',
-            tax_date: tax_date, tax_identifier: tax_identifier, exemptions: exemptions
+            tax_date: tax_date, tax_identifier: tax_identifier, exemptions: exemptions,
+            tax_inclusive: tax_inclusive
           ).call
         )
       end

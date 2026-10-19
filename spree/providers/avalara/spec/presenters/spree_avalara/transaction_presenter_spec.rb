@@ -83,10 +83,18 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
     end
   end
 
-  it 'prices every line against the resolved inclusiveness, not the cart market' do
-    allow(SpreeAvalara).to receive(:tax_inclusive?).with(cart).and_return(true)
+  describe 'whether the prices include tax' do
+    it 'states what core passed on every line' do
+      expect(present(tax_inclusive: true)[:lines].map { |line| line[:taxIncluded] }).to eq([true])
+    end
 
-    expect(present[:lines].map { |line| line[:taxIncluded] }).to eq([true])
+    # Filing passes nothing, so the sale's own market answers, as it did for
+    # the estimate the customer was charged.
+    it "asks the sale's market when core passed nothing" do
+      allow(cart).to receive(:tax_inclusive?).and_return(true)
+
+      expect(present[:lines].map { |line| line[:taxIncluded] }).to eq([true])
+    end
   end
 
   describe 'exemption placement' do

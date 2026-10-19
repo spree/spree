@@ -1,3 +1,13 @@
+## 2026-10-19: Avalara reads whether prices include tax from core
+
+**Context:** The Avalara gem worked out inclusiveness itself, through the market covering the tax country, because 5.x restated prices for the destination and the browsing market could disagree with it. Core now passes `tax_inclusive:` to every provider and charges every customer of a market its prices as entered (2026-10-16).
+
+**Decision:** The gem sends Avalara the `tax_inclusive:` core passes, and asks the owner where none is passed (filing). `SpreeAvalara.tax_inclusive?` is removed. Reverses the inclusiveness part of 2026-08-19.
+
+**Consequences:** Avalara is told the same thing about a price that Spree charged and showed. A merchant who wants a country's prices stated differently gives it a market of its own, as with Spree's own tax rates.
+
+**Plan:** `6.0-avalara-provider-gem.md`.
+
 ## 2026-10-17: Certificates point at their exemption reason
 
 **Context:** Certificates stored a copy of their reason's code, so a code had to be locked once any certificate used it. A new store's seeded reasons could then never be switched to Avalara's codes, and finding a reason's certificates meant joining through companies on a copied string.

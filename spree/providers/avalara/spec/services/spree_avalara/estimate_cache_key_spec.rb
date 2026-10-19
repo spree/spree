@@ -31,13 +31,9 @@ RSpec.describe SpreeAvalara::EstimateCacheKey do
       expect(key).not_to eq(before_move)
     end
 
-    # An address change can flip inclusiveness without changing the rate, and
-    # serving the previous calculation would state prices the wrong way round.
-    it 'the resolved inclusiveness, not the cart market flag' do
-      exclusive = key
-      allow(SpreeAvalara).to receive(:tax_inclusive?).with(cart).and_return(true)
-
-      expect(key).not_to eq(exclusive)
+    # Serving the previous calculation would state prices the wrong way round.
+    it 'whether the prices include tax' do
+      expect(key(tax_inclusive: true)).not_to eq(key(tax_inclusive: false))
     end
 
     it 'the quantity' do

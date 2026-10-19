@@ -4,10 +4,9 @@ module SpreeAvalara
   # request would otherwise each pay a round trip inside the cart's own
   # transaction.
   #
-  # Everything that can change the answer belongs in the key. Notably the
-  # *resolved* inclusiveness rather than the cart's market flag: an address
-  # change that flips it has to bust the key instead of serving a stale
-  # calculation.
+  # Everything that can change the answer belongs in the key, including whether
+  # the prices include tax: a market change that flips it has to bust the key
+  # instead of serving a calculation stated the wrong way round.
   class EstimateCacheKey
     EXPIRES_IN = 5.minutes
 
@@ -16,12 +15,14 @@ module SpreeAvalara
     # @param integration [SpreeAvalara::Integration]
     # @param tax_identifier [Spree::TaxIdentifier, nil]
     # @param exemptions [Array<Spree::TaxExemption>]
-    def initialize(owner:, items:, integration:, tax_identifier: nil, exemptions: [])
+    # @param tax_inclusive [Boolean]
+    def initialize(owner:, items:, integration:, tax_identifier: nil, exemptions: [], tax_inclusive: false)
       @owner = owner
       @items = items
       @integration = integration
       @tax_identifier = tax_identifier
       @exemptions = exemptions
+      @tax_inclusive = tax_inclusive
     end
 
     # @return [String]
@@ -36,14 +37,14 @@ module SpreeAvalara
 
     private
 
-    attr_reader :owner, :items, :integration, :tax_identifier, :exemptions
+    attr_reader :owner, :items, :integration, :tax_identifier, :exemptions, :tax_inclusive
 
     def fingerprint
       {
         integration: [integration.id, integration.updated_at.to_i, integration.preferred_company_code],
         tax_address: tax_address,
         market: owner.market&.id,
-        tax_included: SpreeAvalara.tax_inclusive?(owner),
+        tax_included: tax_inclusive,
         currency: owner.currency,
         identifier: tax_identifier && [tax_identifier.kind, tax_identifier.value],
         exemptions: exemptions.map { |exemption| exemption_fingerprint(exemption) },

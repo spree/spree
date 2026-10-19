@@ -14,7 +14,7 @@ module SpreeAvalara
 
     # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee, Spree::ExchangeLineItem]
     # @param owner [Spree::Cart, Spree::Order]
-    # @param tax_included [Boolean] resolved through the tax destination
+    # @param tax_included [Boolean] whether the sale's prices include tax
     # @param exemptions [Array<Spree::TaxExemption>] entries to place on this
     #   line; empty when the claim was placed on the document instead
     def initialize(item:, owner:, tax_included:, exemptions: [])

@@ -12,8 +12,10 @@ module SpreeAvalara
     # @param tax_date [Time, nil] the date whose rates apply
     # @param tax_identifier [Spree::TaxIdentifier, nil] the buyer's registration
     # @param exemptions [Array<Spree::TaxExemption>] accepted; placement is Phase 4
+    # @param tax_inclusive [Boolean, nil] whether the prices include tax, as core
+    #   passes it; nil = ask the owner
     def initialize(owner:, integration:, items:, type:, code: nil, commit: false,
-                   tax_date: nil, tax_identifier: nil, exemptions: [])
+                   tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil)
       @owner = owner
       @integration = integration
       @items = items
@@ -23,6 +25,7 @@ module SpreeAvalara
       @tax_date = tax_date
       @tax_identifier = tax_identifier
       @exemptions = exemptions
+      @tax_inclusive = tax_inclusive.nil? ? owner.tax_inclusive? : tax_inclusive
     end
 
     # @return [Hash]
@@ -71,7 +74,7 @@ module SpreeAvalara
     private
 
     attr_reader :owner, :integration, :items, :type, :code, :commit,
-                :tax_date, :tax_identifier, :exemptions
+                :tax_date, :tax_identifier, :exemptions, :tax_inclusive
 
     # Which day's rates apply, read in the store's own zone: a merchant closing
     # a sale late on the 31st means their 31st, not the server's next morning.
@@ -95,12 +98,11 @@ module SpreeAvalara
     end
 
     def lines
-      tax_included = SpreeAvalara.tax_inclusive?(owner)
       # Placed once on the document, or line by line — never both.
       line_exemptions = document_exemption ? [] : exemptions
 
       items.map do |item|
-        ItemPresenter.new(item: item, owner: owner, tax_included: tax_included,
+        ItemPresenter.new(item: item, owner: owner, tax_included: tax_inclusive,
                           exemptions: line_exemptions).call
       end
     end
