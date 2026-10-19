@@ -99,6 +99,18 @@ RSpec.describe Spree::DataRequests::Create do
 
       expect(staff_request.value).not_to eq(waiting)
       expect(staff_request.value).to be_pending
+      expect(waiting.reload).to be_lapsed
+    end
+
+    it 'emails the current address once the account has moved to another' do
+      waiting = result.value
+      customer.update_columns(email: 'corrected@example.com')
+
+      again = described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS,
+                                   confirm_by_email: true)
+
+      expect(waiting.reload).to be_lapsed
+      expect(again.value.email).to eq('corrected@example.com')
     end
   end
 

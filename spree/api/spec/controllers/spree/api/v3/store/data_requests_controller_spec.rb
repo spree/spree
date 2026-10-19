@@ -26,6 +26,7 @@ RSpec.describe Spree::Api::V3::Store::DataRequestsController, type: :controller 
       get :show, params: { token: token }, as: :json
 
       expect(json_response['download_url']).to include(data_request.reload.download_token)
+      expect(response.headers['Cache-Control']).to include('no-store')
     end
 
     it 'finds nothing for a token that does not match' do

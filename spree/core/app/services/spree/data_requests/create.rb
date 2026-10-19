@@ -48,7 +48,7 @@ module Spree
         # of the same person's whole history; taking the lock closes it without
         # a partial unique index, which MySQL does not support.
         customer.with_lock do
-          lapse_unconfirmed_requests(store: store, customer: customer)
+          lapse_unconfirmed_requests(store: store, customer: customer, kind: kind, staff_request: !confirm_by_email)
           existing = in_flight_request(store: store, customer: customer, kind: kind,
                                        include_unconfirmed: confirm_by_email)
 
@@ -88,7 +88,7 @@ module Spree
       # would close the customer's request with a file they can never download.
       # A request still waiting for confirmation is returned only to the
       # customer: staff have checked who they are dealing with, so theirs
-      # proceeds on its own row and the unconfirmed one lapses.
+      # proceeds on its own row (see lapse_unconfirmed_requests).
       def in_flight_request(store:, customer:, kind:, include_unconfirmed:)
         requests = Spree::DataRequest.where(store_id: store.id, customer_id: customer.id, kind: kind.to_s,
                                             requested_by_id: nil)
@@ -97,9 +97,17 @@ module Spree
         open_requests.recent_first.first
       end
 
-      def lapse_unconfirmed_requests(store:, customer:)
-        Spree::DataRequest.where(store_id: store.id, customer_id: customer.id).past_confirmation_window.
-          find_each { |data_request| data_request.update!(status: 'lapsed') }
+      # Lapses what can no longer be confirmed: requests past the window, and
+      # requests naming an address the account has since moved away from, so
+      # asking again emails the current address. A staff request of the same
+      # kind replaces the customer's unconfirmed one, which would otherwise
+      # run the same work a second time once confirmed.
+      def lapse_unconfirmed_requests(store:, customer:, kind:, staff_request:)
+        unconfirmed = Spree::DataRequest.where(store_id: store.id, customer_id: customer.id).awaiting_confirmation
+        stale = unconfirmed.past_confirmation_window.or(unconfirmed.where.not(email: customer.email))
+        stale = stale.or(unconfirmed.where(kind: kind.to_s)) if staff_request
+
+        stale.find_each { |data_request| data_request.update!(status: 'lapsed') }
       end
 
       # The token travels in a credential event, which reaches only webhook

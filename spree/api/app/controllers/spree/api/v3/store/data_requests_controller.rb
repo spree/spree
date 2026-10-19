@@ -7,10 +7,14 @@ module Spree
         #
         # Token-addressed rather than session-authenticated, because the link
         # arrives by email and may be opened on a device that was never signed
-        # in. It is the only place the API shows the export link, since the
-        # token is what reached the address the request names.
+        # in. Besides the export email, it is the only place the export link is
+        # shown, since the token is what reached the address the request names.
         class DataRequestsController < Store::BaseController
           allow_guest_storefront_access!
+
+          # The response can carry a live link to a person's whole export, the
+          # same credential the download itself keeps out of shared caches.
+          before_action { response.headers['Cache-Control'] = 'no-store' }
 
           # GET /api/v3/store/data_requests/:token
           def show
