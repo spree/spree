@@ -234,6 +234,41 @@ RSpec.shared_examples 'an addresses host' do
     it 'answers nil for another customer\'s address' do
       expect(record.selectable_address(create(:address, customer: create(:user)).id)).to be_nil
     end
+
+    context 'when the entry has been retired' do
+      it 'answers nil for a retired entry of the buyer\'s own book' do
+        own_address.update_column(:deleted_at, Time.current)
+
+        expect(record.selectable_address(own_address.id)).to be_nil
+        expect(record.selectable_address(own_address.prefixed_id)).to be_nil
+      end
+
+      it 'answers nil for a retired company site' do
+        company = create(:company, store: store)
+        create(:company_membership, company: company, customer: user)
+        site = create(:company_address, owner: company)
+        record.company = company
+        site.update_column(:deleted_at, Time.current)
+
+        expect(record.selectable_address(site.id)).to be_nil
+        expect(record.selectable_address(site.prefixed_id)).to be_nil
+      end
+
+      it 'refuses a retired company site on the writers too' do
+        company = create(:company, store: store)
+        create(:company_membership, company: company, customer: user)
+        site = create(:company_address, owner: company)
+        record.company = company
+        site.update_column(:deleted_at, Time.current)
+
+        record.ship_address_id = site.id
+        record.bill_address_id = site.id
+
+        expect(record.ship_address_id).to be_nil
+        expect(record.bill_address_id).to be_nil
+        expect(record.selectable_addresses).not_to include(site)
+      end
+    end
   end
 
   describe '#selectable_addresses' do

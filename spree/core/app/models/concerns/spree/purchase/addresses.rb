@@ -108,13 +108,13 @@ module Spree
       # @param id [Integer, String, nil]
       # @return [Spree::Address, nil]
       def selectable_address(id)
-        address = ::Spree::Address.find_by_param(id) || ::Spree::Address.find_by(id: id)
-        return nil if address.nil?
+        address = ::Spree::Address.not_deleted.find_by_param(id) || ::Spree::Address.not_deleted.find_by(id: id)
+        return if address.nil?
 
         return address if customer_id.present? && address.customer_owned? && address.owner_id == customer_id
 
         company = resolved_company
-        return nil if company.nil? || address.owner_type != 'Spree::Company'
+        return if company.nil? || address.owner_type != 'Spree::Company'
 
         company.self_and_ancestors.any? { |node| node.id == address.owner_id } ? address : nil
       end
