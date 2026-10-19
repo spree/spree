@@ -106,7 +106,12 @@ function listFiles(target: string): string[] {
   if (!fs.existsSync(target)) return []
   if (!fs.statSync(target).isDirectory()) return [target]
   return fs
-    .readdirSync(target, { recursive: true, withFileTypes: true })
-    .filter((entry) => entry.isFile())
-    .map((entry) => path.join(entry.parentPath, entry.name))
+    .readdirSync(target, { withFileTypes: true })
+    .flatMap((entry) =>
+      entry.isDirectory()
+        ? listFiles(path.join(target, entry.name))
+        : entry.isFile()
+          ? [path.join(target, entry.name)]
+          : [],
+    )
 }
