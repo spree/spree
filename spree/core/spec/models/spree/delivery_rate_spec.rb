@@ -23,13 +23,23 @@ describe Spree::DeliveryRate, type: :model do
                             cost: 10
   end
 
+  describe '#tax_inclusive?' do
+    it "follows the market of the fulfillment's cart or order" do
+      rate = Spree::DeliveryRate.new(fulfillment: shipment, delivery_method: delivery_method, cost: 10)
+      allow(shipment.owner).to receive(:tax_inclusive?).and_return(true)
+
+      expect(rate).to be_tax_inclusive
+    end
+  end
+
   context '#display_price' do
     context 'when tax included in price' do
+      before { allow(shipping_rate).to receive(:tax_inclusive?).and_return(true) }
+
       let(:default_tax_rate) do
         create :tax_rate,
                name: 'VAT',
                amount: 0.1,
-               included_in_price: true,
                country_code: @default_country&.iso
       end
 
@@ -57,7 +67,6 @@ describe Spree::DeliveryRate, type: :model do
           create :tax_rate,
                  name: 'VAT',
                  amount: 0.2,
-                 included_in_price: true,
                  country_code: create(:country, iso: 'FR', name: 'France')&.iso
         end
 
@@ -135,9 +144,12 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'with tax included in price' do
-      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true) }
+      let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
-      before { shipping_rate.tax_rate = tax_rate }
+      before do
+        shipping_rate.tax_rate = tax_rate
+        allow(shipping_rate).to receive(:tax_inclusive?).and_return(true)
+      end
 
       it 'returns 0' do
         expect(shipping_rate.additional_tax_total).to eq(0)
@@ -145,7 +157,7 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'with tax additional to price' do
-      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: false) }
+      let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
       before { shipping_rate.tax_rate = tax_rate }
 
@@ -163,9 +175,12 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'with tax included in price' do
-      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true) }
+      let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
-      before { shipping_rate.tax_rate = tax_rate }
+      before do
+        shipping_rate.tax_rate = tax_rate
+        allow(shipping_rate).to receive(:tax_inclusive?).and_return(true)
+      end
 
       it 'returns the tax amount' do
         expect(shipping_rate.included_tax_total).to eq(shipping_rate.tax_amount)
@@ -173,7 +188,7 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'with tax additional to price' do
-      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: false) }
+      let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
       before { shipping_rate.tax_rate = tax_rate }
 

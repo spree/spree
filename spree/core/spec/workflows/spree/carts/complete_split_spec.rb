@@ -264,7 +264,7 @@ module Spree
         let!(:tax_category) { create(:tax_category, store: store, is_default: true) }
         let!(:tax_rate) do
           create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
         end
 
         let(:cart) do
@@ -398,7 +398,7 @@ module Spree
 
         before do
           create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
           create(:fee, order: nil, cart: cart, amount: 9, kind: 'payment', label: 'Card surcharge')
           cart.reload.recalculate_totals!
           cart.payments.each { |payment| payment.update!(amount: cart.reload.total) }
@@ -439,7 +439,7 @@ module Spree
 
         before do
           create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
           create(:fee, order: nil, cart: cart, line_item: cart.line_items.reload.last,
                        amount: 10, kind: 'gift_wrap', label: 'Gift wrap')
           cart.reload.recalculate_totals!
@@ -475,7 +475,7 @@ module Spree
 
         before do
           create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
           create(:fee, order: nil, cart: cart, fulfillment: cart.fulfillments.first,
                        amount: 10, kind: 'handling', label: 'Handling')
           cart.reload.recalculate_totals!

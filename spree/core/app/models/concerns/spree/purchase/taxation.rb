@@ -28,6 +28,15 @@ module Spree
         market&.tax_provider_instance || Spree.default_tax_provider.new
       end
 
+      # Whether this sale's prices include tax, which its market decides. With
+      # no market yet (an empty cart before currency resolution) the store's
+      # default market answers.
+      #
+      # @return [Boolean]
+      def tax_inclusive?
+        (market || store&.default_market)&.tax_inclusive? || false
+      end
+
       # The typed inputs every +estimate+ call carries. Assembled here rather
       # than at each call site so a single-item re-estimate reaches the provider
       # with the same buyer registration and exemption evidence as a full
@@ -39,7 +48,8 @@ module Spree
         {
           tax_date: Time.current,
           tax_identifier: resolved_tax_identifier,
-          exemptions: usable_exemptions
+          exemptions: usable_exemptions,
+          tax_inclusive: tax_inclusive?
         }
       end
 

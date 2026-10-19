@@ -9,7 +9,6 @@ export type TaxRateCreateParams = {
   rate?: string
   /** The rate as a percentage. */
   rate_percent?: string
-  included_in_price?: boolean
   show_rate_in_label?: boolean
   tax_category_id: string
   /** ISO country code. A rate naming no country taxes everywhere. */

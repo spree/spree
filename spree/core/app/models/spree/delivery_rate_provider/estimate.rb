@@ -2,10 +2,11 @@ module Spree
   module DeliveryRateProvider
     # A single quote returned by a delivery rate provider.
     #
-    # +cost+ is pre-tax and pre-VAT-gross-up: the Estimator applies
-    # +gross_amount+ and resolves the tax rate afterwards, exactly as it does
-    # for calculator output. Everything else is carrier metadata that flows
-    # onto the persisted DeliveryRate.
+    # +cost+ is the quoted price: the Estimator adds markup and resolves the
+    # tax rate afterwards, exactly as it does for calculator output, and the
+    # market decides whether that tax is inside the cost or added on top.
+    # Everything else is carrier metadata that flows onto the persisted
+    # DeliveryRate.
     class Estimate
       include ActiveModel::Model
       include ActiveModel::Attributes

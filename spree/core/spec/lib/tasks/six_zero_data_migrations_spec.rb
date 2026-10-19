@@ -556,6 +556,81 @@ describe '6.0 data migration tasks' do
     end
   end
 
+  describe 'spree:markets:backfill_tax_inclusive' do
+    let(:tax_store) { create(:store) }
+    let(:tax_category) { create(:tax_category, store: tax_store) }
+    let!(:market) { create(:market, store: tax_store, countries: [Spree::Country.by_iso('DE')]) }
+
+    def legacy_rate(country_code, included:)
+      create(:tax_rate, store: tax_store, tax_category: tax_category, country_code: country_code, included_in_price: included)
+    end
+
+    it 'includes tax in the prices of a market whose rates were included in the price' do
+      legacy_rate('DE', included: true)
+      legacy_rate(nil, included: true)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).to be_tax_inclusive
+    end
+
+    it 'adds tax on top in a market whose rates were added on top' do
+      market.update_column(:tax_inclusive, true)
+      legacy_rate('DE', included: false)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).not_to be_tax_inclusive
+    end
+
+    it 'leaves a market whose rates mixed the two for the merchant to set' do
+      market.update_column(:tax_inclusive, true)
+      legacy_rate('DE', included: false)
+      legacy_rate(nil, included: true)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).to be_tax_inclusive
+    end
+
+    it "reads only the market's own store's rates" do
+      create(:tax_rate, store: store, country_code: 'DE', included_in_price: true)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).not_to be_tax_inclusive
+    end
+
+    it 'stops while some rates have no store yet' do
+      legacy_rate('DE', included: true).update_column(:store_id, nil)
+
+      expect { run_task('spree:markets:backfill_tax_inclusive') }.
+        to raise_error(SystemExit, /spree:backfill_tax_store_ids/).and output.to_stderr
+      expect(market.reload).not_to be_tax_inclusive
+    end
+
+    # Every upgrade walks every manifest, so this runs again on later upgrades.
+    it 'reads each old flag once, so running again keeps what the merchant set since' do
+      rate = legacy_rate('DE', included: true)
+      run_task('spree:markets:backfill_tax_inclusive')
+      market.update_column(:tax_inclusive, false)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(rate.reload.included_in_price).to be_nil
+      expect(market.reload).not_to be_tax_inclusive
+    end
+
+    it 'leaves a market alone whose rates were all created after the upgrade' do
+      market.update_column(:tax_inclusive, true)
+      create(:tax_rate, store: tax_store, tax_category: tax_category, country_code: 'DE')
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).to be_tax_inclusive
+    end
+  end
+
   describe 'spree:backfill_order_markets' do
     it 'assigns the store default market to orders missing one' do
       order = create(:order, store: store)

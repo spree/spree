@@ -69,7 +69,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   context 'with additional (US-style) tax of 10%' do
     let(:item_price) { 250 }
     let!(:tax_rate) do
-      create(:tax_rate, country_code: @default_country&.iso, tax_category: tax_category, amount: 0.10, included_in_price: false)
+      create(:tax_rate, country_code: @default_country&.iso, tax_category: tax_category, amount: 0.10)
     end
 
     before { build_cart! }
@@ -157,10 +157,13 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   context 'with included (VAT-style) tax of 20%' do
     let(:item_price) { 350 }
     let!(:tax_rate) do
-      create(:tax_rate, country_code: @default_country&.iso, tax_category: tax_category, amount: 0.20, included_in_price: true)
+      create(:tax_rate, country_code: @default_country&.iso, tax_category: tax_category, amount: 0.20)
     end
 
-    before { build_cart! }
+    before do
+      store.default_market.update!(tax_inclusive: true)
+      build_cart!
+    end
 
     it 'starts from VAT on the full amount' do
       expect(order.included_tax_total).to eq(58.33)

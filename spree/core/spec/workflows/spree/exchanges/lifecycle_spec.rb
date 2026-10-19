@@ -240,7 +240,7 @@ RSpec.describe 'Spree::Exchanges workflows' do
       create(:tax_line, order: order, line_item: line_item, amount: 2.5, rate: 0.1, label: 'Sales tax 10%')
       order.recalculate_totals!
       create(:tax_rate, country_code: order.tax_address.country.iso, amount: 0.1,
-                        tax_category: replacement.tax_category, included_in_price: false)
+                        tax_category: replacement.tax_category)
       order.payments.completed.first.update_column(:amount, 500)
       replacement.stock_levels.first&.set_count_on_hand(10)
       allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)

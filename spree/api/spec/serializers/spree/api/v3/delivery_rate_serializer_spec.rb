@@ -66,7 +66,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
   end
 
   context 'with additional tax' do
-    let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: false) }
+    let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
     before { shipping_rate.update!(tax_rate: tax_rate) }
 
@@ -78,9 +78,12 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
   end
 
   context 'with included tax' do
-    let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true, country_code: @default_country&.iso) }
+    let(:tax_rate) { create(:tax_rate, amount: 0.1, country_code: @default_country&.iso) }
 
-    before { shipping_rate.update!(tax_rate: tax_rate) }
+    before do
+      shipping_rate.update!(tax_rate: tax_rate)
+      allow(shipping_rate).to receive(:tax_inclusive?).and_return(true)
+    end
 
     it 'returns the tax in included_tax_total' do
       expect(subject['tax_total'].to_d).to be > 0

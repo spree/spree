@@ -26,7 +26,9 @@ module Spree
               required: true, on: :create,
               example: 'de',
               description: 'Locale used as the market default. Always part of `supported_locales`.'
-            body.attribute :tax_inclusive, :boolean, description: 'Display prices with tax included.'
+            body.attribute :tax_inclusive, :boolean,
+              description: 'Whether the prices entered for this market include tax. True charges every customer the ' \
+                           'price as entered, with their tax inside it; false adds tax at checkout.'
             body.attribute :tax_provider, :string,
               nullable: true,
               example: 'internal',
