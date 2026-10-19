@@ -6434,3 +6434,23 @@ relaxation.
 The registry was split by surface during the 6.0 build for exactly this —
 `Spree.store_agent_tools` exists and is empty, and a tool filed on the wrong
 surface is refused at registration.
+
+## 2026-10-19 — `spree add` installs extensions from a catalog shipped with the CLI
+
+`spree add paypal` will eject (with consent), add the gem, run its install
+generator if it has one, migrate, install any dashboard plugin and restart a
+running server (`docs/plans/6.0-cli-add-extensions.md`). Names resolve only
+through a JSON catalog bundled in `@spree/cli`, never by guessing a gem name,
+because a guessed name turns a typo into installing a stranger's gem. The
+catalog ships with the CLI rather than being fetched, so the command works
+offline and a remote file cannot change what gets installed. Setup notes live
+in each gem's `post_install_message`, not in the CLI.
+
+## 2026-10-19 — Extensions released with Spree are pinned to the project's Spree version
+
+`spree add` adds the gems that ship from this repository (`spree_stripe`,
+`spree_meilisearch`, `spree_easypost`, `spree_opentelemetry`, `spree_mcp`) as
+`>= <locked spree version>`. An unpinned `bundle add spree_stripe` resolves to
+the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
+already lists is reported as installed rather than ejecting the project to
+re-add it.
