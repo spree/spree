@@ -1429,8 +1429,8 @@
           "label": "Unterstützte Sprachen"
         },
         "tax_inclusive": {
-          "help": "Preise mit enthaltener Steuer anzeigen. In EU-Märkten üblich.",
-          "label": "Preise inklusive Steuer"
+          "help": "An: Kunden zahlen den eingegebenen Preis, die Steuer ist darin enthalten. Aus: Die Steuer wird an der Kasse hinzugefügt.",
+          "label": "Preise enthalten Steuern"
         },
         "tax_provider": {
           "help": "Womit die Steuer für Bestellungen in diesem Markt berechnet wird.",
@@ -2220,11 +2220,6 @@
         },
         "country_code": {
           "help": "Leer lassen, um jedes Land zu besteuern."
-        },
-        "included_in_price": {
-          "help": "Die Preise enthalten diese Steuer bereits, sie wird herausgerechnet statt aufgeschlagen.",
-          "label": "Im Preis enthalten",
-          "short": "Enthalten"
         },
         "jurisdiction": {
           "label": "Gilt für"

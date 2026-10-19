@@ -1429,8 +1429,8 @@
           "label": "Langues prises en charge"
         },
         "tax_inclusive": {
-          "help": "Afficher les prix taxes comprises. Courant sur les marchés de l'UE.",
-          "label": "Prix taxes comprises"
+          "help": "Activé : les clients paient le prix saisi, taxes incluses. Désactivé : les taxes sont ajoutées lors du paiement.",
+          "label": "Les prix incluent les taxes"
         },
         "tax_provider": {
           "help": "Ce qui calcule la taxe pour les commandes de ce marché.",
@@ -2220,11 +2220,6 @@
         },
         "country_code": {
           "help": "Laissez vide pour taxer tous les pays."
-        },
-        "included_in_price": {
-          "help": "Les prix contiennent déjà cette taxe, elle est déduite au lieu d'être ajoutée.",
-          "label": "Incluse dans le prix",
-          "short": "Incluse"
         },
         "jurisdiction": {
           "label": "S'applique à"

@@ -15,14 +15,13 @@ To manage tax rates, navigate to **Settings → Taxes**, under the **Selling** g
 
 ## Reviewing Your Tax Rates
 
-![The Tax rates list, showing each rate, what it applies to and whether it is included in the price](/docs/images/user/settings/tax-rates/1-tax-rates-overview.png)
+![The Tax rates list, showing each rate and what it applies to](/docs/images/user/settings/tax-rates/1-tax-rates-overview.png)
 
 Each row shows:
 
 - **Name** - What the rate is called.
 - **Rate** - The percentage charged.
 - **Applies to** - The country, and the state where one is set.
-- **Included in price** - Whether displayed prices already contain this tax.
 
 ## How to Create a Tax Rate
 
@@ -35,21 +34,13 @@ Click **Add tax rate**.
 - **Tax category** - Which products this rate taxes. Only goods carrying this category are affected.
 - **Country** - Where the rate applies. Leave it empty to tax every country.
 - **State** - Narrows the rate to one state. This field only appears once you pick a country that has states.
-- **Included in price** - Prices already carry this tax, so it is backed out of the displayed price rather than added at checkout.
 - **Show rate in the tax label** - Adds the percentage to the tax line the customer sees, so it reads "VAT (20%)" rather than "VAT".
 
 Click **Create tax rate**.
 
 <Warning>A rate that names no country taxes every country. Leaving **Country** empty is occasionally what you want, but more often it is an oversight that taxes customers who should not be charged.</Warning>
 
-### Included in price, or added at checkout
-
-This switch is the difference between how European and North American stores usually work, and getting it wrong misprices everything on the affected goods.
-
-- **On** suits regions where advertised prices include tax. A product shown at 120 with a 20% rate is treated as 100 plus 20 tax, and the customer pays 120.
-- **Off** suits regions where tax is added at the end. A product shown at 120 with a 20% rate becomes 144 at checkout.
-
-<Note>Whether a market displays prices with tax included is set on the market itself. Set **Tax-inclusive pricing** on the [<u>market</u>](/user/settings/markets) and **Included in price** on its rates to match, or displayed prices and charged tax will disagree.</Note>
+<Note>Whether your prices already include these taxes, or the tax is added at checkout, is set on each [<u>market</u>](/user/settings/markets) with **Prices include tax**, not on the rate.</Note>
 
 ## How to Edit a Tax Rate
 
@@ -66,5 +57,5 @@ Open the row menu and choose **Delete**.
 ## Further Reading
 
 - [<u>Tax Categories</u>](/user/settings/tax-categories) - The groupings a rate applies to
-- [<u>Markets</u>](/user/settings/markets) - Where tax-inclusive pricing and the tax engine are set
+- [<u>Markets</u>](/user/settings/markets) - Where **Prices include tax** and the tax engine are set
 - [<u>Orders</u>](/user/orders/orders) - How tax appears in an order's summary

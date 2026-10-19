@@ -6,7 +6,7 @@ module Spree
     # Stored as a string class name on DeliveryMethod and constantized at call
     # time; registered via Spree.delivery_rate_providers. The Estimator
     # dispatches here in place of calling the calculator directly, so
-    # filtering, VAT gross-up, tax resolution and sorting stay in one place
+    # filtering, markup, tax resolution and sorting stay in one place
     # for every provider.
     #
     # External providers resolve credentials through the delivery method's

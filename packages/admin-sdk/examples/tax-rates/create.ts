@@ -12,7 +12,6 @@ const taxRate = await client.taxRates.create({
   rate_percent: '19',
   country_code: 'DE',
   tax_category_id: 'txc_UkLWZg9DAJ',
-  included_in_price: true,
 })
 
 // endregion:example

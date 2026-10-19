@@ -1429,8 +1429,8 @@
           "label": "Supported locales"
         },
         "tax_inclusive": {
-          "help": "Display prices with tax included. Common in EU markets.",
-          "label": "Tax-inclusive pricing"
+          "help": "On: customers pay the price you enter, with tax inside it. Off: tax is added at checkout.",
+          "label": "Prices include tax"
         },
         "tax_provider": {
           "help": "Which engine calculates tax for orders in this market.",
@@ -2220,11 +2220,6 @@
         },
         "country_code": {
           "help": "Leave empty to tax every country."
-        },
-        "included_in_price": {
-          "help": "Prices already carry this tax, so it is backed out rather than added.",
-          "label": "Included in price",
-          "short": "Included"
         },
         "jurisdiction": {
           "label": "Applies to"

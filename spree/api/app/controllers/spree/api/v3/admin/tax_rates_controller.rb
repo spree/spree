@@ -13,7 +13,6 @@ module Spree
               example: '0.19',
               description: 'The rate as a fraction. Send this or `rate_percent`.'
             body.attribute :rate_percent, :decimal, example: '19', description: 'The rate as a percentage.'
-            body.attribute :included_in_price, :boolean
             body.attribute :show_rate_in_label, :boolean
             body.attribute :tax_category_id, :id, required: true, on: :create
             body.attribute :country_code, :country,

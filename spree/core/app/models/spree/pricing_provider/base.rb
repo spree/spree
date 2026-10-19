@@ -6,7 +6,7 @@ module Spree
     # A provider returns a {Spree::Price}: {Internal} returns the persisted
     # catalog row, an external provider an **unsaved, readonly** instance. The
     # Active Record shape is deliberately the contract, so everything
-    # downstream — tax-inclusive restatement, +discounted?+, the serializers —
+    # downstream — the line item, +discounted?+, the serializers —
     # keeps working without knowing where the number came from. +readonly!+ is
     # what stops an external answer being written back into the catalog.
     #
