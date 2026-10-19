@@ -110,13 +110,7 @@ export function ImportWizardDialog({ importId, onClose, onViewRecords }: ImportW
       }}
       modal
     >
-      <DialogContent
-        // Edge-to-edge minus a 3-unit gutter — see BulkPriceEditorDialog for
-        // why every inset/translate/max is overridden.
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
-        style={{ maxHeight: 'none' }}
-        showCloseButton={false}
-      >
+      <DialogContent fullScreen showCloseButton={false}>
         {importId && (
           <ImportWizard
             importId={importId}

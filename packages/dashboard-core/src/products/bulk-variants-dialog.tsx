@@ -215,13 +215,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? onOpenChange(true) : handleCancel())} modal>
-      <DialogContent
-        // Edge-to-edge minus a 3-unit gutter, same overrides as the bulk
-        // price dialog (see BulkPriceEditorDialog for why each is needed).
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
-        style={{ maxHeight: 'none' }}
-        showCloseButton={false}
-      >
+      <DialogContent fullScreen showCloseButton={false}>
         <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
           <DialogTitle className="truncate">
             {t('admin.products.variants.bulk_edit.title')}
