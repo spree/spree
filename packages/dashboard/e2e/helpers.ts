@@ -501,12 +501,25 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
 /**
  * Places an order for the promo customer, paid by store credit, and ships it
  * unless `ship` is false. `firstName` / `lastName` set the billing name, so a
- * list test can tell its own orders apart from everyone else's.
+ * list test can tell its own orders apart from everyone else's. `locale`
+ * places it in another of the store's languages.
  */
 export async function createPlacedOrder(
   page: Page,
   accessToken: string,
-  { quantity = 2, ship = true, firstName = 'Promo', lastName = 'Customer' } = {},
+  {
+    quantity = 2,
+    ship = true,
+    firstName = 'Promo',
+    lastName = 'Customer',
+    locale,
+  }: {
+    quantity?: number
+    ship?: boolean
+    firstName?: string
+    lastName?: string
+    locale?: string
+  } = {},
 ) {
   const headers = { Authorization: `Bearer ${accessToken}` }
   const request = async (method: 'get' | 'post' | 'patch', path: string, data?: object) => {
@@ -537,6 +550,7 @@ export async function createPlacedOrder(
     items: [{ variant_id: variants.data[0].id, quantity }],
     shipping_address: address,
     billing_address: address,
+    ...(locale ? { locale } : {}),
   })
   await request('post', `/api/v3/admin/customers/${customerId}/store_credits`, {
     amount: order.total,

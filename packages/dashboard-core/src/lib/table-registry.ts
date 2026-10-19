@@ -100,7 +100,7 @@ export type TaggableType = 'product' | 'customer' | 'order' | (string & {})
  */
 export type ColumnDef<T = any> =
   | (ColumnDefBase<T> & {
-      filterType?: 'string' | 'boolean' | 'number' | 'date' | 'currency'
+      filterType?: 'string' | 'boolean' | 'number' | 'date' | 'currency' | 'locale'
       filterOptions?: never
       filterResource?: never
       taggableType?: never

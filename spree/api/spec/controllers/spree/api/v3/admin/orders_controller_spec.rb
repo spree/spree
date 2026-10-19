@@ -67,6 +67,27 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           expect(ids).to include(pos_order.prefixed_id, default_channel_order.prefixed_id)
         end
       end
+
+      context 'filtering by market and locale' do
+        let(:market) { create(:market, store: store) }
+        let!(:market_order) do
+          allow(store).to receive(:supported_locales_list).and_return(%w[de en])
+          create(:order, store: store, market: market, locale: 'de')
+        end
+
+        it 'returns only orders in the requested market via a prefixed market_id_in' do
+          get :index, params: { q: { market_id_in: [market.prefixed_id] } }, as: :json
+
+          expect(json_response['data'].map { |o| o['id'] }).to eq([market_order.prefixed_id])
+          expect(json_response['data'].first['market']['name']).to eq(market.name)
+        end
+
+        it 'returns only orders in the requested locale via locale_in' do
+          get :index, params: { q: { locale_in: ['de'] } }, as: :json
+
+          expect(json_response['data'].map { |o| o['id'] }).to eq([market_order.prefixed_id])
+        end
+      end
     end
 
     context 'with q[search] (full-text search)' do

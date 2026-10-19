@@ -1511,6 +1511,12 @@
         "internal_note": {
           "label": "Internal note (staff only)"
         },
+        "locale": {
+          "label": "Locale"
+        },
+        "market": {
+          "label": "Market"
+        },
         "order_group": {
           "label": "Purchase",
           "view": "View purchase"

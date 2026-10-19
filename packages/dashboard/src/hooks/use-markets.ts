@@ -97,3 +97,16 @@ export function useDeleteMarket() {
     },
   })
 }
+
+export function marketAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (q: string) =>
+      adminClient.markets.list({ search: q, limit: 100, sort: 'position', fields: ['name'] }),
+    hydrate: (ids: string[]) => adminClient.markets.list({ id_in: ids, limit: ids.length }),
+    listAll: () => adminClient.markets.list({ limit: 100, sort: 'position', fields: ['name'] }),
+    getOptionLabel: (market: Market) => market.name ?? market.id,
+    placeholder: i18n.t('admin.markets.search_placeholder'),
+    emptyText: i18n.t('admin.markets.empty'),
+  }
+}

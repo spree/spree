@@ -40,6 +40,7 @@ import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
+import { useDisplayName } from '../hooks/use-display-name'
 import {
   DATE_PRESET_KEYS,
   type DatePresetKey,
@@ -81,6 +82,13 @@ interface TableToolbarProps {
 
 // Operator labels are stored as i18n keys (`admin.components.table_toolbar.operators.*`)
 // and resolved with `t()` at render time so they follow the active language.
+const storeCodeOperators = [
+  { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' },
+  { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.is_not' },
+  { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
+  { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
+]
+
 const operatorsByType: Record<string, { value: string; labelKey: string }[]> = {
   string: [
     // `i_cont` (case-insensitive) rather than `cont` — an admin typing
@@ -125,13 +133,9 @@ const operatorsByType: Record<string, { value: string; labelKey: string }[]> = {
     { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
   ],
   // Same shape as `enum` — the value picker just sources its option list
-  // from the active store's `supported_currencies`.
-  currency: [
-    { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' },
-    { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.is_not' },
-    { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
-    { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
-  ],
+  // from the active store's `supported_currencies` / `supported_locales`.
+  currency: storeCodeOperators,
+  locale: storeCodeOperators,
 }
 
 function getOperators(type: string) {
@@ -155,7 +159,7 @@ const noValueOperators = ['present', 'blank']
 
 /** Stable empty list, so a panel with no store doesn't rebuild `items` (and
  *  re-emit Base UI Select state) on every render. */
-const noCurrencies: string[] = []
+const noCodes: string[] = []
 
 // ============================================================================
 // TableToolbar
@@ -1101,10 +1105,15 @@ function InlineValueList({
   const tagsClient = getApiClient().tags
   const isTags = column.filterType === 'tags'
   const isCurrency = column.filterType === 'currency'
-  // `filterType: 'currency'` is only declared by tables in the operator's
-  // dashboard, which always has a store. Reading it optionally keeps the panel
-  // mountable in one that has none.
-  const currencies = useOptionalStore()?.currencies ?? noCurrencies
+  const isLocale = column.filterType === 'locale'
+  // Store codes are listed client-side from the store payload, never searched.
+  const isStoreCode = isCurrency || isLocale
+  // `filterType: 'currency'` / `'locale'` are only declared by tables in the
+  // operator's dashboard, which always has a store. Reading it optionally
+  // keeps the panel mountable in one that has none.
+  const store = useOptionalStore()
+  const storeCodes = (isCurrency ? store?.currencies : isLocale ? store?.locales : null) ?? noCodes
+  const languageName = useDisplayName('language')
 
   // Tags arrive as one list and are filtered client-side; resources are
   // searched server-side, since their vocabulary is unbounded.
@@ -1134,7 +1143,7 @@ function InlineValueList({
     // tenant's results.
     queryKey: ['panel-resource-filter', column.filterResource?.queryKey, tenantId, deferredQuery],
     queryFn: () => column.filterResource?.search(deferredQuery),
-    enabled: !isTags && !isCurrency && Boolean(column.filterResource),
+    enabled: !isTags && !isStoreCode && Boolean(column.filterResource),
     // These lists are reference data an operator reopens repeatedly while
     // narrowing one list, and the result is small now that only the displayed
     // fields are requested. Holding it for the session keeps reopening the
@@ -1157,11 +1166,14 @@ function InlineValueList({
   })
 
   const options = useMemo(() => {
-    if (isCurrency) {
+    if (isStoreCode) {
       const needle = query.trim().toLowerCase()
-      return currencies
-        .filter((code) => !needle || code.toLowerCase().includes(needle))
-        .map((code) => ({ value: code, label: code }))
+      return storeCodes
+        .map((code) => ({
+          value: code,
+          label: isLocale ? `${languageName(code) ?? code} (${code})` : code,
+        }))
+        .filter((option) => !needle || option.label.toLowerCase().includes(needle))
     }
     if (isTags) {
       const names = tags.data?.data?.map((tag) => tag.name) ?? []
@@ -1175,7 +1187,17 @@ function InlineValueList({
       value: record.id,
       label: config.getOptionLabel(record),
     }))
-  }, [isCurrency, currencies, isTags, tags.data, resources.data, column.filterResource, query])
+  }, [
+    isStoreCode,
+    isLocale,
+    storeCodes,
+    languageName,
+    isTags,
+    tags.data,
+    resources.data,
+    column.filterResource,
+    query,
+  ])
 
   // Values already selected when the list opens ride at the top, so an active
   // filter is visible without scrolling. The set is frozen at mount: ticking a
@@ -1191,7 +1213,7 @@ function InlineValueList({
     return [...chosen, ...rest]
   }, [options, pinned])
 
-  if (!isCurrency && (tags.isLoading || resources.isLoading)) {
+  if (!isStoreCode && (tags.isLoading || resources.isLoading)) {
     return (
       <p className="px-2 py-6 text-center text-muted-foreground">{t('admin.common.loading')}</p>
     )
@@ -1274,7 +1296,7 @@ function FilterPanel({
   // Types whose values are chosen from a list rather than typed. `multi` ones
   // accumulate a set and need an explicit Apply; the single ones commit on the
   // click that picks them.
-  const multi = type === 'tags' || type === 'resource' || type === 'currency'
+  const multi = type === 'tags' || type === 'resource' || type === 'currency' || type === 'locale'
   // Dates are their own shape: a list of relative presets, with the calendar
   // behind "custom". Same presets the quick filter offers, so a range means
   // the same thing wherever it was set.
@@ -1653,7 +1675,7 @@ function FilterPanel({
               </Select>
             ) : null}
 
-            {/* Everything picked from a list — currency, tags, resources — or
+            {/* Everything picked from a list — currency, locale, tags, resources — or
                 from a calendar is handled above; this branch is only the types
                 you type into. */}
             {!noValueOperators.includes(operator) && listOptions.length === 0 && (

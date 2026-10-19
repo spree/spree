@@ -1529,6 +1529,12 @@
         "internal_note": {
           "label": "ملاحظة داخلية (للموظفين فقط)"
         },
+        "locale": {
+          "label": "لغة"
+        },
+        "market": {
+          "label": "سوق"
+        },
         "order_group": {
           "label": "عملية الشراء",
           "view": "عرض عملية الشراء"

@@ -5,6 +5,7 @@ import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { channelAutocompleteProps } from '../hooks/use-channels'
 import { customerAutocompleteProps } from '../hooks/use-customers'
+import { marketAutocompleteProps } from '../hooks/use-markets'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 import { orderGroupSearch } from '../lib/order-group-search'
 
@@ -179,6 +180,27 @@ defineTable('orders', {
       filterType: 'currency',
       default: false,
       render: (order) => order.currency ?? '—',
+    },
+    {
+      key: 'market',
+      label: i18n.t('admin.fields.order.market.label'),
+      filterable: true,
+      filterType: 'resource',
+      filterResource: marketAutocompleteProps('orders-table-market-filter'),
+      ransackAttribute: 'market_id',
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (order) => order.market?.name ?? '—',
+    },
+    {
+      key: 'locale',
+      label: i18n.t('admin.fields.order.locale.label'),
+      sortable: true,
+      filterable: true,
+      filterType: 'locale',
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (order) => order.locale ?? '—',
     },
     // On a marketplace this list holds the operator's own orders and every
     // seller's together, so a row has to say which it is — shown by default
