@@ -13,13 +13,23 @@ module Spree
           # and reimplement the server's resolution of which company an
           # unstated purchase is for. Asking the cart keeps the picker and the
           # writer that accepts the chosen id from ever disagreeing.
+          #
+          # Signed in only, unlike the rest of the cart surface. What comes
+          # back is not the cart's own data but the books behind it — every
+          # address the buyer has saved, and their company's sites. A guest
+          # token says the caller holds this cart, which it may well do
+          # because the account holder adopted a cart the attacker started;
+          # it says nothing about the account. A genuine guest cart has
+          # neither book, so requiring the account costs nothing but the 401.
           class AddressesController < Store::ResourceController
             include Spree::Api::V3::CartResolvable
+
+            prepend_before_action :require_authentication!
 
             protected
 
             def set_parent
-              @parent = @cart = find_cart
+              @parent = @cart = find_cart(token: nil)
             end
 
             def model_class
@@ -27,7 +37,11 @@ module Spree
             end
 
             def serializer_class
-              Spree.api.address_serializer
+              Spree.api.selectable_address_serializer
+            end
+
+            def collection_includes
+              [:owner]
             end
 
             def parent_association

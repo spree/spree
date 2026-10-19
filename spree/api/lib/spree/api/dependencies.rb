@@ -9,7 +9,7 @@ module Spree
       STORE_SERIALIZERS =
         %i[credit_card price price_history product product_type variant media option_type option_value cart order
            order_group line_item payment payment_session payment_setup_session payment_source store_credit
-           fulfillment delivery address customer data_request customer_group country channel product_publication
+           fulfillment delivery address address_owner selectable_address customer data_request customer_group country channel product_publication
            market state wishlist wishlist_item payment_method delivery_method delivery_rate freight_summary
            stock_location category collection applied_promotion discount tax_line delivery_zone delivery_zone_member
            fee digital_link gift_card currency locale policy custom_field tax_category tax_identifier

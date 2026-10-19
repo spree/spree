@@ -1097,8 +1097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3446979
-                  slug: product-3446979
+                  name: Product 3456979
+                  slug: product-3456979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1390,8 +1390,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3929085
-                  slug: product-3929085
+                  name: Product 3939085
+                  slug: product-3939085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1422,8 +1422,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 3938209
-                  slug: product-3938209
+                  name: Product 3948209
+                  slug: product-3948209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1552,8 +1552,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4206885
-                slug: product-4206885
+                name: Product 4216885
+                slug: product-4216885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1922,6 +1922,16 @@ paths:
         book, plus the address book of the company the cart is for — that company's own
         sites and the ones it inherits from the companies above it.
 
+        Requires a signed-in customer, unlike the rest of the cart endpoints. The response
+        is the account's address books rather than the cart's own data, so a guest cart
+        token is not accepted here. A guest cart has neither book and would get an empty
+        list in any case.
+
+        Each entry carries the `owner` it was filed under — the customer, or the company
+        node that owns the site — so a picker can group and label them without asking
+        which company the cart is for. An inherited site names the node above, not the
+        one the cart is for.
+
         Any address returned here is accepted as `shipping_address_id` or
         `billing_address_id` on the cart, so the picker and the cart cannot disagree.
         Curating either book stays with `/store/customers/me/addresses` and
@@ -1952,12 +1962,7 @@ paths:
           type: string
       - name: Authorization
         in: header
-        required: false
-        schema:
-          type: string
-      - name: x-spree-token
-        in: header
-        required: false
+        required: true
         schema:
           type: string
       - name: page
@@ -2047,6 +2052,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 - id: addr_gbHJdmfrXB
                   label:
                   first_name: John
@@ -2068,6 +2077,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 - id: addr_EfhxLZ9ck8
                   label:
                   first_name: John
@@ -2089,6 +2102,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 meta:
                   page: 1
                   limit: 25
@@ -2105,9 +2122,19 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/Address"
+                      "$ref": "#/components/schemas/SelectableAddress"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
+        '401':
+          description: not authenticated
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
         '404':
           description: cart not found
           content:
@@ -2473,8 +2500,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 315715
-                    slug: product-315715
+                    name: Product 316715
+                    slug: product-316715
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2594,8 +2621,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3162171
-                    slug: product-3162171
+                    name: Product 3172171
+                    slug: product-3172171
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2883,7 +2910,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 320307 was removed because it was sold out
+                  message: Product 321307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -3126,8 +3153,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3213263
-                  slug: product-3213263
+                  name: Product 3223263
+                  slug: product-3223263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3350,8 +3377,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3238992
-                  slug: product-3238992
+                  name: Product 3248992
+                  slug: product-3248992
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3381,7 +3408,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 381 Lovely Street
+                  address1: 384 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3403,7 +3430,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 380 Lovely Street
+                  address1: 383 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3590,8 +3617,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3264794
-                  slug: product-3264794
+                  name: Product 3274794
+                  slug: product-3274794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3701,7 +3728,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 387 Lovely Street
+                  address1: 390 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3723,7 +3750,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 386 Lovely Street
+                  address1: 389 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3909,8 +3936,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3592614
-                  slug: product-3592614
+                  name: Product 3602614
+                  slug: product-3602614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4104,8 +4131,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3603461
-                  slug: product-3603461
+                  name: Product 3613461
+                  slug: product-3613461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4293,8 +4320,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3628182
-                  slug: product-3628182
+                  name: Product 3638182
+                  slug: product-3638182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4405,7 +4432,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 502 Lovely Street
+                  address1: 505 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4613,8 +4640,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3645702
-                  slug: product-3645702
+                  name: Product 3655702
+                  slug: product-3655702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4857,8 +4884,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3689569
-                  slug: product-3689569
+                  name: Product 3699569
+                  slug: product-3699569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4987,10 +5014,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 37163 cannot be delivered to the selected address
+                  message: Product 37263 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 372298 cannot be delivered to the selected address
+                  message: Product 373298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -5049,8 +5076,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 37163
-                  slug: product-37163
+                  name: Product 37263
+                  slug: product-37263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5080,8 +5107,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 372298
-                  slug: product-372298
+                  name: Product 373298
+                  slug: product-373298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5296,8 +5323,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3789165
-                  slug: product-3789165
+                  name: Product 3799165
+                  slug: product-3799165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6104,8 +6131,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4439789
-                  slug: product-4439789
+                  name: Product 4449789
+                  slug: product-4449789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6289,8 +6316,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 445179
-                  slug: product-445179
+                  name: Product 446179
+                  slug: product-446179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6649,8 +6676,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 382496
-                  slug: product-382496
+                  name: Product 383496
+                  slug: product-383496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6769,7 +6796,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 558 Lovely Street
+                  address1: 561 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6791,7 +6818,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 559 Lovely Street
+                  address1: 562 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7998,8 +8025,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3465270
-                    slug: product-3465270
+                    name: Product 3475270
+                    slug: product-3475270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -8118,7 +8145,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 446 Lovely Street
+                    address1: 449 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8140,7 +8167,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 447 Lovely Street
+                    address1: 450 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8324,8 +8351,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3485633
-                  slug: product-3485633
+                  name: Product 3495633
+                  slug: product-3495633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -8444,7 +8471,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 452 Lovely Street
+                  address1: 455 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8466,7 +8493,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 453 Lovely Street
+                  address1: 456 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8659,7 +8686,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 458 Lovely Street
+                  address1: 461 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8680,7 +8707,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 459 Lovely Street
+                  address1: 462 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8702,7 +8729,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 459 Lovely Street
+                  address1: 462 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8724,7 +8751,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 458 Lovely Street
+                  address1: 461 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8816,7 +8843,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 460 Lovely Street
+                  address1: 463 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8837,7 +8864,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 461 Lovely Street
+                  address1: 464 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8859,7 +8886,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 461 Lovely Street
+                  address1: 464 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8881,7 +8908,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 460 Lovely Street
+                  address1: 463 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -11017,7 +11044,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-551
+                  sku: SKU-552
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11103,7 +11130,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-552
+                  sku: SKU-553
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -12229,7 +12256,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 416 Lovely Street
+                  address1: 419 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -12355,7 +12382,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 422 Lovely Street
+                address1: 425 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -12616,8 +12643,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3455649
-                    slug: product-3455649
+                    name: Product 3465649
+                    slug: product-3465649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -12735,7 +12762,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 430 Lovely Street
+                    address1: 433 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -12757,7 +12784,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 431 Lovely Street
+                    address1: 434 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -13705,6 +13732,28 @@ components:
       required:
       - variant_id
       - quantity
+    AddressOwner:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          anyOf:
+          - type: string
+            enum:
+            - customer
+            - company
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        name:
+          type: string
+          nullable: true
+      required:
+      - id
+      - type
+      - name
+      x-typelizer: true
     Address:
       type: object
       properties:
@@ -21904,6 +21953,333 @@ components:
       - created_at
       - updated_at
       - user_id
+      x-typelizer: true
+    SelectableAddress:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+          nullable: true
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        full_name:
+          type: string
+        address1:
+          type: string
+          nullable: true
+        address2:
+          type: string
+          nullable: true
+        postal_code:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        country_name:
+          type: string
+        country_code:
+          type: string
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BL
+          - BM
+          - BN
+          - BO
+          - BQ
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CC
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CW
+          - CX
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - ID
+          - IE
+          - IL
+          - IM
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MF
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NF
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PM
+          - PN
+          - PR
+          - PS
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SJ
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SX
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TK
+          - TL
+          - TM
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WF
+          - WS
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+        state_text:
+          type: string
+          nullable: true
+        state_code:
+          type: string
+          nullable: true
+        quick_checkout:
+          type: boolean
+        is_default_billing:
+          type: boolean
+        is_default_shipping:
+          type: boolean
+        state_abbr:
+          type: string
+          nullable: true
+          deprecated: true
+        country_iso:
+          type: string
+          deprecated: true
+        state_name:
+          type: string
+          nullable: true
+        owner:
+          "$ref": "#/components/schemas/AddressOwner"
+      required:
+      - id
+      - label
+      - first_name
+      - last_name
+      - full_name
+      - address1
+      - address2
+      - postal_code
+      - city
+      - phone
+      - company
+      - country_name
+      - country_code
+      - state_text
+      - state_code
+      - quick_checkout
+      - is_default_billing
+      - is_default_shipping
+      - state_abbr
+      - country_iso
+      - state_name
+      - owner
       x-typelizer: true
     Seller:
       type: object

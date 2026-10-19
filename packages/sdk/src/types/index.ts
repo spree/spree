@@ -28,6 +28,7 @@ export * from './filters.generated'
 // Re-export all generated types (unprefixed: Product, Order, etc.)
 export type {
   Address,
+  AddressOwner,
   AppliedPromotion,
   Base,
   Cart,
@@ -77,6 +78,7 @@ export type {
   Refund,
   Return,
   ReturnLineItem,
+  SelectableAddress,
   Seller,
   State,
   StockLocation,

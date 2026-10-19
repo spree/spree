@@ -20,6 +20,16 @@ RSpec.describe 'Cart Addresses API', type: :request, swagger_doc: 'api-reference
         book, plus the address book of the company the cart is for — that company's own
         sites and the ones it inherits from the companies above it.
 
+        Requires a signed-in customer, unlike the rest of the cart endpoints. The response
+        is the account's address books rather than the cart's own data, so a guest cart
+        token is not accepted here. A guest cart has neither book and would get an empty
+        list in any case.
+
+        Each entry carries the `owner` it was filed under — the customer, or the company
+        node that owns the site — so a picker can group and label them without asking
+        which company the cart is for. An inherited site names the node above, not the
+        one the cart is for.
+
         Any address returned here is accepted as `shipping_address_id` or
         `billing_address_id` on the cart, so the picker and the cart cannot disagree.
         Curating either book stays with `/store/customers/me/addresses` and
@@ -29,8 +39,7 @@ RSpec.describe 'Cart Addresses API', type: :request, swagger_doc: 'api-reference
       sdk_example 'cart-addresses/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: 'Authorization', in: :header, type: :string, required: false
-      parameter name: 'x-spree-token', in: :header, type: :string, required: false
+      parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
       filter_parameters_for
@@ -42,14 +51,25 @@ RSpec.describe 'Cart Addresses API', type: :request, swagger_doc: 'api-reference
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/Address' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/SelectableAddress' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data'].map { |row| row['id'] }).to include(address.prefixed_id)
+          expect(data['data'].first['owner']['type']).to eq('customer')
         end
+      end
+
+      response '401', 'not authenticated' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { nil }
+        let(:cart_id) { cart.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
       end
 
       response '404', 'cart not found' do

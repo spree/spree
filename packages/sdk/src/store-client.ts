@@ -74,6 +74,7 @@ import type {
   Return,
   ReturnFilters,
   ReturnSort,
+  SelectableAddress,
   Seller,
   StockLocation,
   StoreCredit,
@@ -580,18 +581,22 @@ export class StoreClient {
      * the sites that company inherits from the ones above it. Every address
      * listed here is accepted as `shipping_address_id` or `billing_address_id`
      * on the cart.
+     *
+     * Requires a customer JWT (`token`), unlike the rest of the cart calls: it
+     * returns the account's address books rather than the cart's own data, so a
+     * guest cart token is not accepted. A guest cart has neither book anyway.
      */
     addresses: {
       /**
-       * List the addresses this cart may use
+       * List the addresses this cart may use. Requires a customer JWT.
        * @param cartId - Cart prefixed ID
        */
       list: (
         cartId: string,
         params?: ListParams<AddressFilters, AddressSort>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<Address>> =>
-        this.request<PaginatedResponse<Address>>('GET', `/carts/${cartId}/addresses`, {
+      ): Promise<PaginatedResponse<SelectableAddress>> =>
+        this.request<PaginatedResponse<SelectableAddress>>('GET', `/carts/${cartId}/addresses`, {
           ...options,
           params: transformListParams({ ...params }),
         }),
