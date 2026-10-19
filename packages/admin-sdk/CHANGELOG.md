@@ -1,5 +1,27 @@
 # @spree/admin-sdk
 
+## 1.0.0-rc.4
+
+### Minor Changes
+
+- [#14912](https://github.com/spree/spree/pull/14912) [`67c98ac`](https://github.com/spree/spree/commit/67c98ac10479069632f8c085a2ccbcd0741ad6d6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `stockReservations.list`, `consentRecords.list`, `dataRequests.list`, `dataRequests.create` and `sellers.customFields`, so every Admin API endpoint can be called through the SDK. Every endpoint in the Admin API reference now also shows an SDK example.
+
+- [#14833](https://github.com/spree/spree/pull/14833) [`b38df6e`](https://github.com/spree/spree/commit/b38df6ef3efce15705cb23c2774eb301021861d5) Thanks [@mad-eel](https://github.com/mad-eel)! - Tax rates no longer have `included_in_price`, in responses, create and update params, filters or sort. Whether prices include tax is now the market's `tax_inclusive` setting.
+
+- [#14900](https://github.com/spree/spree/pull/14900) [`11b9a03`](https://github.com/spree/spree/commit/11b9a03c775fce616a9cd73cb39fa47e7b88bb13) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `CountryCode`, `CurrencyCode` and `LocaleCode` as values as well as types, so you can write `CurrencyCode.USD`, list every code with `Object.values(CurrencyCode)` and see each code's name in your editor. Plain strings such as `'USD'` still type-check.
+
+- [#14916](https://github.com/spree/spree/pull/14916) [`a7aa0e5`](https://github.com/spree/spree/commit/a7aa0e51f1e7eb7847efcef27b12e53913a5defd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Admin API payments now include `avs_risky` and `cvv_risky`, and can expand `capture_events`, each capture of the money the payment authorized. On the order page, a payment whose card failed the issuer's checks is flagged, and each payment's menu opens a details dialog with the address and security code check results and the list of captures.
+
+- [#14913](https://github.com/spree/spree/pull/14913) [`9688d11`](https://github.com/spree/spree/commit/9688d11a6033d310557080da9ff5208433eee495) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Admin API payments now include `gateway_dashboard_payment_url`, a link to the payment in the payment provider's own dashboard. On the order page, each payment's menu shows a "View at {payment method}" link when the provider offers one, so staff can look up the full payment details there.
+
+- [#14922](https://github.com/spree/spree/pull/14922) [`214c5aa`](https://github.com/spree/spree/commit/214c5aa64bb78fe1ff88696c4f62fe94187c1622) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `taxExemptionReasons`, the store's own list of reasons a business can give for buying without tax, with list, get, create, update and delete. Each reason has a `code` the tax engine receives. Tax exemption certificates now point at a reason with `tax_exemption_reason_id` instead of recording `reason_code`, and can expand `tax_exemption_reason`. `taxProviders.list()` is now typed (`TaxProviderOption`) and says which exemption reason codes each engine reads. The dashboard gains one Settings → Taxes page with tabs for tax categories, tax rates and exemption reasons, which also shows the tax service each market uses; the certificate form offers the store's reasons.
+
+### Patch Changes
+
+- [#14905](https://github.com/spree/spree/pull/14905) [`e7d276d`](https://github.com/spree/spree/commit/e7d276dbc5c36c03466cefd0d40d439135d4c464) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The email branding preview now shows a newly uploaded or removed logo before saving, and refreshes after saving. The logo now sits in the Branding section of email settings. `EmailTemplatePreviewParams` accepts `mailer_logo_signed_id`.
+
+- [#14914](https://github.com/spree/spree/pull/14914) [`1ff3b91`](https://github.com/spree/spree/commit/1ff3b911308ccc248c946b1c27f2fe5e435b7c57) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `unit_cost` is now required on every purchase order item (`PurchaseOrderItemParams`), matching what the API already enforced. The dashboard's purchase order form now starts each line with an empty cost, so Save stays disabled until the merchant prices every line, instead of filling in zero.
+
 ## 1.0.0-rc.3
 
 ### Patch Changes
