@@ -24,6 +24,12 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
   Progress,
   ScrollArea,
   Skeleton,
@@ -246,7 +252,7 @@ function DashboardPage() {
 }
 
 const OPERATIONS_ROW_CLASS =
-  'flex items-center gap-3 border-b border-border-subtle px-4 py-3 last:border-0'
+  'flex flex-nowrap items-center gap-3 rounded-none border-0 border-b border-border-subtle px-4 py-3 last:border-0'
 
 /** `orders_to_fulfill` reads as "Orders to fulfill" when nobody has translated
  *  it — better than a raw key for an extension's own counter. */
@@ -396,41 +402,41 @@ function CounterRow({
   })
   const content = (
     <>
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-md border">
-        <Icon className="size-4 text-muted-foreground" />
-      </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-sm">{label}</span>
+      <ItemMedia variant="icon" className="size-8 rounded-md border">
+        <Icon className="text-muted-foreground" />
+      </ItemMedia>
+      <ItemContent className="min-w-0">
+        <ItemTitle className="font-normal">{label}</ItemTitle>
         {description && (
-          <span className="truncate text-xs text-muted-foreground">{description}</span>
+          <ItemDescription className="line-clamp-1 text-xs">{description}</ItemDescription>
         )}
-      </span>
-      <span
-        className={cn(
-          'text-sm font-semibold tabular-nums',
-          counter.value === 0 && 'text-muted-foreground',
-        )}
-      >
-        {counter.value.toLocaleString()}
-      </span>
-      {link && <ChevronRightIcon className="size-4 text-muted-foreground" />}
+      </ItemContent>
+      <ItemActions>
+        <span
+          className={cn(
+            'text-sm font-semibold tabular-nums',
+            counter.value === 0 && 'text-muted-foreground',
+          )}
+        >
+          {counter.value.toLocaleString()}
+        </span>
+        {link && <ChevronRightIcon className="size-4 text-muted-foreground" />}
+      </ItemActions>
     </>
   )
 
   if (link) {
     return (
-      <Link
-        to={link.to}
-        params={{ storeId }}
-        search={{ filters: link.filters }}
+      <Item
+        render={<Link to={link.to} params={{ storeId }} search={{ filters: link.filters }} />}
         className={cn(OPERATIONS_ROW_CLASS, 'hover:bg-accent/50')}
       >
         {content}
-      </Link>
+      </Item>
     )
   }
 
-  return <div className={OPERATIONS_ROW_CLASS}>{content}</div>
+  return <Item className={OPERATIONS_ROW_CLASS}>{content}</Item>
 }
 
 type RankingTab = 'customers' | 'categories' | 'companies' | 'sellers'
