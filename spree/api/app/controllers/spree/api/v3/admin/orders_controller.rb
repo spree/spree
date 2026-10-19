@@ -333,6 +333,13 @@ module Spree
             resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:create))))
           end
 
+          # `items` is the public name for line items, so the normalizer needs
+          # telling which model the rows describe — otherwise a `prod_` id in
+          # `variant_id` is not recognised as the wrong kind.
+          def nested_param_models
+            { 'items' => Spree::LineItem }
+          end
+
           # Named rather than read from the action, since an upsert reaches
           # update from the create action.
           def order_update_params

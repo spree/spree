@@ -266,7 +266,11 @@ function typeToZod(
   }
 }
 
-function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>): string {
+function generateZodFile(
+  parsed: ParsedType,
+  cyclicTypes: Set<string>,
+  typesImportDir: string,
+): string {
   const referencedTypes = new Set<string>()
   const fieldLines: string[] = []
 
@@ -291,22 +295,47 @@ function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>): string {
     .sort()
     .map((ref) => `import { ${ref}Schema } from './${ref}';`)
 
+  // Inferring a type through schemas that reference each other walks the
+  // whole reference cycle, which TypeScript 7 rejects as too deep. A schema in
+  // a cycle is typed field by field from the generated type it was built
+  // from instead, so nothing reading it infers through the cycle, and it keeps
+  // the object schema API (shape, pick, extend). It is a cast because the
+  // schema accepts any string where that type lists an enum's values.
+  const cyclic = cyclicTypes.has(parsed.typeName)
+  const typeImport = cyclic
+    ? [`import type ${parsed.typeName} from '${typesImportDir}/${parsed.typeName}';`]
+    : []
   const schemaDecl = `export const ${parsed.typeName}Schema = z.object({`
 
   const lines: string[] = [
     '// This file is auto-generated. Do not edit directly.',
     "import { z } from 'zod';",
+    ...typeImport,
     ...refImports,
     '',
     schemaDecl,
     ...fieldLines,
-    '});',
+    cyclic ? `}) as unknown as z.ZodObject<{\n${cyclicShapeType(parsed)}\n}>;` : '});',
     '',
-    `export type ${parsed.typeName} = z.infer<typeof ${parsed.typeName}Schema>;`,
+    cyclic
+      ? `export type { ${parsed.typeName} };`
+      : `export type ${parsed.typeName} = z.infer<typeof ${parsed.typeName}Schema>;`,
     '',
   ]
 
   return lines.join('\n')
+}
+
+/** The object shape a cyclic schema is cast to: one entry per field, optional fields kept optional. */
+function cyclicShapeType(parsed: ParsedType): string {
+  return parsed.fields
+    .map(({ name, optional }) => {
+      const fieldType = `${parsed.typeName}['${name}']`
+      return optional
+        ? `  ${name}: z.ZodOptional<z.ZodType<Exclude<${fieldType}, undefined>>>;`
+        : `  ${name}: z.ZodType<${fieldType}>;`
+    })
+    .join('\n')
 }
 
 /** Extract type references from field types */
@@ -415,7 +444,11 @@ function generateFolder(typesDir: string, zodDir: string): void {
   for (const [, parsed] of parsedTypes) {
     fs.writeFileSync(
       path.join(zodDir, `${parsed.typeName}.ts`),
-      generateZodFile(parsed, cyclicTypes),
+      generateZodFile(
+        parsed,
+        cyclicTypes,
+        path.relative(zodDir, typesDir).split(path.sep).join('/'),
+      ),
       'utf-8',
     )
     generatedNames.push(parsed.typeName)

@@ -123,7 +123,7 @@ module Spree
                 sweep_unavailable_coupon_code!
                 render_cart
               else
-                render_service_error(result.error, code: ERROR_CODES[:validation_error])
+                render_result_failure(result, code: ERROR_CODES[:validation_error])
               end
             end
           end
@@ -181,11 +181,10 @@ module Spree
             if result.success?
               @cart = result.value
               render_order
+            elsif result.error.to_s.present?
+              render_result_failure(result, code: ERROR_CODES[:cart_cannot_complete])
             else
-              render_service_error(
-                result.error.to_s.presence || 'Could not complete checkout',
-                code: ERROR_CODES[:cart_cannot_complete]
-              )
+              render_service_error('Could not complete checkout', code: ERROR_CODES[:cart_cannot_complete])
             end
           rescue ActiveRecord::RecordNotFound
             # Gateway-race retry with the id the client got back: the webhook

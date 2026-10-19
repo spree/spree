@@ -105,6 +105,7 @@ export function useOrderGroup(orderGroupId: string | null | undefined) {
     queryFn: () =>
       adminClient.orderGroups.get(orderGroupId as string, {
         fields: ['payments', 'number'],
+        expand: ['payments.payment_method', 'payments.capture_events'],
       }),
     enabled: !!orderGroupId,
   })

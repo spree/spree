@@ -41,6 +41,16 @@ describe Spree::PreferenceSchema::JsonSchema do
 
     it 'turns choices into an enum' do
       expect(property(Spree::Promotion::Rules::Product, :match_policy)).to include('type' => 'string', 'enum' => %w[any all none])
+      expect(property(Spree::Promotion::Rules::Product, :match_policy)).not_to have_key('x-spree-choice-labels')
+    end
+
+    it 'labels choices declared as value => label' do
+      definition = { type: :string, choices: { 'https://one.example' => 'One', 'https://two.example' => 'Two' } }
+
+      expect(described_class.property_schema(definition, default: 'https://one.example')).to include(
+        'enum' => %w[https://one.example https://two.example],
+        'x-spree-choice-labels' => { 'https://one.example' => 'One', 'https://two.example' => 'Two' }
+      )
     end
 
     it 'marks a secret and never carries its default' do

@@ -50,6 +50,11 @@ module Spree
             return true
           end
 
+          # Then an OAuth token, which carries both the admin who granted it
+          # and the store its client was registered for, so neither a JWT's
+          # store-membership check nor a key's store selection applies.
+          return true if authenticate_admin_oauth_token
+
           # Fall back to JWT authentication, then bind the admin to the store
           # they hold a role on (the token itself is store-agnostic).
           return false unless require_authentication!
@@ -58,6 +63,62 @@ module Spree
         end
 
         private
+
+        # An OAuth bearer token, accepted only when it was issued for this
+        # API. A token names the resources it may be used against (RFC 8707),
+        # and a client asking for one endpoint must not receive a credential
+        # good across the rest — so a token naming only the MCP endpoint is
+        # refused here, and the MCP controller refuses one naming only this.
+        #
+        # @return [Boolean] true when the request is now authenticated
+        def authenticate_admin_oauth_token
+          token = admin_oauth_token
+          return false if token.nil?
+
+          owner = token.resource_owner
+          return false unless owner.is_a?(Spree.admin_user_class)
+
+          @current_api_key = nil
+          @current_user = owner
+          true
+        end
+
+        # @return [Spree::OauthAccessToken, nil]
+        def admin_oauth_token
+          return @admin_oauth_token if defined?(@admin_oauth_token)
+
+          @admin_oauth_token = begin
+            token = Spree::OauthAccessToken.by_token(oauth_bearer_value)
+            token if token&.accessible? && admin_audience_matches?(token)
+          end
+        end
+
+        # Split rather than matched: a regex with `\s+(.+)` backtracks on a
+        # header of many spaces, and this one is attacker-supplied on an
+        # unauthenticated request.
+        #
+        # @return [String, nil]
+        def oauth_bearer_value
+          scheme, value = request.headers['Authorization'].to_s.split(' ', 2)
+          return unless scheme&.casecmp?('Bearer')
+
+          value.to_s.strip.presence
+        end
+
+        # Compared by path, because the origin a client was given varies with
+        # how the installation is reached — a tunnel, a proxy, a custom
+        # domain — while the path it names does not. An unbound token is
+        # refused rather than trusted.
+        def admin_audience_matches?(token)
+          expected = Spree::Api::Oauth.resources[:admin]
+          return false if expected.blank?
+
+          token.resource.to_s.split.any? do |indicator|
+            URI.parse(indicator).path == expected
+          rescue URI::InvalidURIError
+            false
+          end
+        end
 
         # Rejects an authenticated JWT admin who has no role on +current_store+.
         # API-key principals are already store-bound and skip this check.

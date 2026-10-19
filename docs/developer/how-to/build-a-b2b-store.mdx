@@ -805,6 +805,30 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/companies/comp_xxx/tax_identi
 
 When a sale is for a company, the company's registration takes precedence over the buyer's own, because the invoice is addressed to the business.
 
+### Exemption reasons
+
+Every certificate points at one of the store's active tax exemption reasons, the way a product points at a tax category. A reason has a `name` in your own wording and a `code` your tax service reads. A new store has six neutral ones (`RESALE`, `GOVERNMENT`, `CHARITABLE`, `EDUCATIONAL`, `MANUFACTURING`, `AGRICULTURAL`). Avalara decides an exemption by its entity use code, so on Avalara change each reason's code to Avalara's, such as `G` for resale. `taxProviders.list()` returns the codes each tax service understands as `exemption_reason_codes`. Codes are stored in upper case.
+
+<CodeGroup>
+
+```typescript Admin SDK
+const reason = await adminClient.taxExemptionReasons.create({
+  name: 'Reseller (wholesale)',
+  code: 'G',
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/tax_exemption_reasons' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "name": "Reseller (wholesale)", "code": "G" }'
+```
+
+</CodeGroup>
+
+Changing a reason's code changes what every certificate holding it sends from then on; orders already placed keep the code they were taxed with. Turn off `active` to stop offering a reason; certificates that already hold it keep it. A reason that certificates hold cannot be deleted.
+
 ### Exemption certificates
 
 A certificate starts `pending` and exempts nothing until staff verify it. Scope it to the country or state that issued it, or leave both empty for one that holds everywhere.
@@ -814,7 +838,7 @@ A certificate starts `pending` and exempts nothing until staff verify it. Scope 
 ```typescript Admin SDK
 const certificate = await adminClient.companies.taxExemptionCertificates.create('comp_xxx', {
   certificate_number: 'RS-44-1901',
-  reason_code: 'resale',
+  tax_exemption_reason_id: 'txr_xxx',
   country_code: 'US',
   state_code: 'CA',
   expires_at: '2027-12-31',

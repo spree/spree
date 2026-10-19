@@ -39,6 +39,30 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(json_response['status']).to be_present
     end
 
+    it "returns the payment's page at the gateway dashboard" do
+      allow_any_instance_of(Spree::Payment).to receive(:gateway_dashboard_payment_url).and_return('https://dashboard.example.com/payments/ch_123')
+
+      get :show, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id }, as: :json
+
+      expect(json_response['gateway_dashboard_payment_url']).to eq('https://dashboard.example.com/payments/ch_123')
+    end
+
+    it 'returns each capture of the payment when expanded' do
+      capture = create(:payment_capture_event, payment: payment, amount: BigDecimal('25.5'))
+
+      get :show, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id, expand: 'capture_events' }, as: :json
+
+      expect(json_response['capture_events']).to include(include('id' => capture.prefixed_id, 'amount' => '25.50'))
+    end
+
+    it 'reports which card checks failed' do
+      payment.update_columns(avs_response: 'Y', cvv_response_code: 'N', cvv_response_message: 'CVV does not match')
+
+      get :show, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id }, as: :json
+
+      expect(json_response).to include('avs_risky' => false, 'cvv_risky' => true)
+    end
+
     it 'returns 404 for unknown payment id' do
       get :show, params: { order_id: order_with_payment.prefixed_id, id: 'pay_unknown' }, as: :json
 

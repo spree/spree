@@ -8,6 +8,12 @@ module Spree
 
     include FriendlyId
     include Spree::TranslatableResource
+
+    # The store itself is settings — see Admin::StoreController.
+    def self.translation_write_permission
+      'write_settings'
+    end
+
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::Stores::Setup
@@ -209,6 +215,7 @@ module Spree
     has_many :claim_reasons, class_name: 'Spree::ClaimReason', inverse_of: :store, dependent: :destroy
     has_many :refund_reasons, class_name: 'Spree::RefundReason', inverse_of: :store, dependent: :destroy
     has_many :order_cancellation_reasons, class_name: 'Spree::OrderCancellationReason', inverse_of: :store, dependent: :destroy
+    has_many :tax_exemption_reasons, class_name: 'Spree::TaxExemptionReason', inverse_of: :store, dependent: :destroy
 
     # :nullify (not :destroy) — clearing the collection must not cascade into
     # Promotion#not_used? / payment records; orphaned rows are detached, not deleted.
@@ -339,6 +346,7 @@ module Spree
     has_many :catalogs, class_name: 'Spree::Catalog', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
+    has_many :oauth_applications, class_name: 'Spree::OauthApplication', dependent: :destroy
     has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy
 
     #

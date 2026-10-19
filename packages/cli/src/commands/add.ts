@@ -8,6 +8,13 @@ import pc from 'picocolors'
 import { isNotFound } from '../config.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT } from '../constants.js'
 import { detectProject } from '../context.js'
+import {
+  AGENT_SKILLS_REPO,
+  addDocsMcpServer,
+  addDocsSectionToAgentInstructions,
+  dlxCommand,
+  installAgentSkills,
+} from '../lib/ai.js'
 import type { ProjectContext } from '../types.js'
 
 /**
@@ -55,26 +62,54 @@ interface AddDashboardOptions {
   quiet?: boolean
 }
 
+interface AddAiOptions {
+  /** Install the Spree agent skills. */
+  skills: boolean
+  /** Connect coding agents to the Spree docs MCP server. */
+  mcp: boolean
+  /** Skip the final summary note — create-spree-app prints its own. */
+  quiet?: boolean
+}
+
 // `spree add <thing>` — bolt an optional component onto an existing project.
-// Dashboard and seller panel for now; storefront parity is planned (see
-// docs/plans/5.6-project-layout-and-dashboard.md).
+// Dashboard, seller panel and the AI coding agent setup for now; storefront
+// parity is planned (see docs/plans/5.6-project-layout-and-dashboard.md).
 export function registerAddCommand(program: Command) {
   program
     .command('add')
     .description('Add an optional component to your project')
-    .argument('<thing>', 'Component to add: dashboard or seller-dashboard')
+    .argument('<thing>', 'Component to add: dashboard, seller-dashboard or ai')
     .option(
       '--template <src>',
       'Starter template: git URL or local path (default: the template bundled with the CLI; env SPREE_DASHBOARD_TEMPLATE / SPREE_SELLER_DASHBOARD_TEMPLATE overrides)',
     )
     .option('--no-install', 'Skip dependency install')
+    .option('--no-skills', 'ai: skip installing the Spree agent skills')
+    .option('--no-mcp', 'ai: skip connecting coding agents to the Spree docs MCP server')
     .option('--quiet', 'Skip the final summary note (for wrapping tools that print their own)')
     .action(
-      async (thing: string, flags: { template?: string; install: boolean; quiet?: boolean }) => {
+      async (
+        thing: string,
+        flags: {
+          template?: string
+          install: boolean
+          skills: boolean
+          mcp: boolean
+          quiet?: boolean
+        },
+      ) => {
+        if (thing === 'ai') {
+          if (!flags.quiet) p.intro(pc.bgCyan(pc.black(' Spree AI coding agents ')))
+          const ready = await addAi(detectProject(), flags)
+          if (!flags.quiet) p.outro(ready ? 'Done!' : 'Done, with warnings.')
+          if (!ready) process.exit(1)
+          return
+        }
+
         const app = APPS[thing]
         if (!app) {
           console.error(
-            `\n${pc.red('Error:')} Unknown component: ${thing}. Try: ${Object.keys(APPS).join(', ')}\n`,
+            `\n${pc.red('Error:')} Unknown component: ${thing}. Try: ${[...Object.keys(APPS), 'ai'].join(', ')}\n`,
           )
           process.exit(2)
         }
@@ -90,6 +125,72 @@ export function registerAddCommand(program: Command) {
         p.outro('Done!')
       },
     )
+}
+
+/**
+ * Set a project up for AI coding agents: connect each agent to the Spree docs
+ * MCP server, point the agent instructions at it, and install the Spree agent
+ * skills. Safe to re-run — servers already configured are kept as they are.
+ *
+ * @return false when a step failed and the project is only partly set up
+ */
+export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<boolean> {
+  let ready = true
+
+  if (opts.mcp) {
+    const outcomes = addDocsMcpServer(ctx.projectDir)
+    for (const [file, outcome] of Object.entries(outcomes)) {
+      if (outcome === 'unreadable' || outcome === 'unwritable') {
+        ready = false
+        p.log.warn(
+          `Could not ${outcome === 'unreadable' ? 'read' : 'write'} ${pc.bold(file)}${outcome === 'unreadable' ? ' as JSON' : ''}, so it was left as it is. Add the server by hand: https://spreecommerce.org/docs/developer/agentic/mcp`,
+        )
+      } else if (!opts.quiet) {
+        p.log.info(
+          outcome === 'added'
+            ? `Added the Spree docs MCP server to ${pc.bold(file)}`
+            : `${pc.bold(file)} already lists the Spree docs MCP server`,
+        )
+      }
+    }
+    const instructions = addDocsSectionToAgentInstructions(ctx.projectDir)
+    for (const file of instructions.updated) {
+      if (!opts.quiet) p.log.info(`Pointed ${pc.bold(file)} at the Spree docs MCP server`)
+    }
+    for (const file of instructions.failed) {
+      ready = false
+      p.log.warn(`Could not update ${pc.bold(file)}, so agents may not know about the docs server.`)
+    }
+  }
+
+  if (opts.skills) {
+    const packageManager = detectPackageManager(ctx.projectDir, ctx.projectDir)
+    const s = p.spinner()
+    s.start('Installing Spree agent skills...')
+    try {
+      await installAgentSkills(ctx.projectDir, packageManager)
+      s.stop('Spree agent skills installed.')
+    } catch (err) {
+      ready = false
+      s.stop(pc.yellow('Spree agent skills were not installed.'))
+      p.log.warn(
+        `Install them later with ${pc.bold(`${dlxCommand(packageManager).join(' ')} skills add ${AGENT_SKILLS_REPO}`)}.\n${err instanceof Error ? err.message : String(err)}`,
+      )
+    }
+  }
+
+  if (!opts.quiet && opts.mcp) {
+    p.note(
+      [
+        'Claude Code asks you to approve the docs server the first time you open',
+        'the project; Cursor and VS Code list it in their MCP settings.',
+        'Commit the new files so your team gets the same setup.',
+      ].join('\n'),
+      'AI coding agents set up',
+    )
+  }
+
+  return ready
 }
 
 /**

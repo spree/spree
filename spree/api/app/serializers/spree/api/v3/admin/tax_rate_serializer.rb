@@ -6,7 +6,6 @@ module Spree
         # customer-facing. What the customer sees is the label on a tax line.
         class TaxRateSerializer < V3::BaseSerializer
           typelize name: :string,
-                   included_in_price: :boolean,
                    show_rate_in_label: :boolean,
                    tax_category_id: [:string, nullable: true],
                    store_id: [:string, nullable: true],
@@ -15,7 +14,7 @@ module Spree
                    metadata: ['Record<string, unknown>', nullable: true],
                    deleted_at: [:string, nullable: true]
 
-          attributes :name, :included_in_price, :show_rate_in_label, :metadata,
+          attributes :name, :show_rate_in_label, :metadata,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
 
           rate_attributes :rate, :rate_percent

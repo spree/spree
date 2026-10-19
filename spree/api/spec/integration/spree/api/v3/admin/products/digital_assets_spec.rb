@@ -19,6 +19,8 @@ RSpec.describe 'Admin Product Digital Assets API', type: :request, swagger_doc: 
       description "Returns the downloadable files attached to the product's variants, oldest first."
       admin_scope :read, :products
 
+      admin_sdk_example 'products/digital-assets/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -52,6 +54,8 @@ RSpec.describe 'Admin Product Digital Assets API', type: :request, swagger_doc: 
         `provider_type` and `provider_settings` instead of a file.
       DESC
       admin_scope :write, :products
+
+      admin_sdk_example 'products/digital-assets/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -97,6 +101,8 @@ RSpec.describe 'Admin Product Digital Assets API', type: :request, swagger_doc: 
         serve the new file.
       DESC
       admin_scope :write, :products
+
+      admin_sdk_example 'products/digital-assets/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

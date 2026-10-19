@@ -1,0 +1,184 @@
+module Spree
+  module Orders
+    # Admin-side order creation. One-shot: customer, items, addresses, currency,
+    # market, locale, notes, metadata, and a coupon code in a single call.
+    # Invalid coupons are non-fatal — the order is created and `result.value`
+    # carries `discount_application_errors`.
+    #
+    # Standalone from Spree::Carts::Create (storefront). Admin-created orders
+    # are first-class Spree::Order records (status: 'draft') in 5.x and remain
+    # so in 6.0 — Spree::Cart in 6.0 is storefront-only.
+    class Create < Spree::Workflow
+      attr_reader :discount_application_errors
+
+      # @param store [Spree::Store] the store the order belongs to
+      # @param customer [Object, nil] who is ordering, when they are an
+      #   existing customer; the order keeps `email` either way
+      # @param created_by [Object, nil] who is placing it — a staff member, or
+      #   the credential acting for one
+      # @param params [Hash] the order's own attributes, plus `items`,
+      #   addresses and a coupon code
+      # @return [Spree::ServiceModule::Result]
+      def perform(store:, customer: nil, created_by: nil, params: {})
+        @store = store
+        @customer = customer
+        @created_by = created_by
+        @params = params.to_h.deep_symbolize_keys
+        @discount_application_errors = []
+
+        return failure(:store_is_required) if store.nil?
+
+        order = nil
+        ApplicationRecord.transaction do
+          order = build_order
+          assign_addresses(order)
+          order.tags = @params[:tags] if @params[:tags]
+          order.save!
+
+          add_items(order) if @params[:items].present?
+          build_fulfillments(order)
+          apply_coupon(order) if @params[:coupon_code].present?
+          order.recalculate_totals!
+        end
+
+        success(order.reload)
+      rescue ActiveRecord::RecordInvalid => e
+        failure(e.record, e.record.errors.full_messages.to_sentence)
+      rescue ActiveStorage::FileNotFoundError
+        # An abandoned presigned upload leaves the blob row without its bytes.
+        # ActiveStorage raises a message-less error for that, which would
+        # otherwise be an unhandled 500 on the Admin API.
+        order ||= @store.orders.new
+        order.errors.add(:po_document, :po_document_upload_incomplete, message: I18n.t('spree.po_document_upload_incomplete'))
+        failure(order, order.errors.full_messages.to_sentence)
+      end
+
+      private
+
+      def build_order
+        attrs = {
+          customer: @customer,
+          created_by: @created_by,
+          email: @params[:email] || @customer&.email,
+          currency: @params[:currency].presence&.upcase || @store.default_currency,
+          locale: @params[:locale] || Spree::Current.locale,
+          customer_note: @params[:customer_note],
+          po_number: @params[:po_number],
+          internal_note: @params[:internal_note],
+          metadata: @params[:metadata].to_h,
+          token: Spree::GenerateToken.new.call(Spree::Order),
+          status: 'draft'
+        }
+
+        # The buyer's purchase order, when it arrived with the paperwork. A
+        # signed id, so it assigns like any other attribute.
+        attrs[:po_document_signed_id] = @params[:po_document_signed_id] if @params[:po_document_signed_id].present?
+
+        attrs[:market] = resolve_market if @params[:market_id].present?
+        attrs[:channel] = resolve_channel if @params[:channel_id].present?
+        attrs[:company] = resolve_company if @params[:company_id].present?
+        attrs[:preferred_stock_location] = resolve_preferred_stock_location if @params[:preferred_stock_location_id].present?
+        attrs.compact_blank!
+
+        @store.orders.new(attrs)
+      end
+
+      def resolve_market
+        @store.markets.find_by_param!(@params[:market_id])
+      end
+
+      def resolve_channel
+        @store.channels.find_by_param!(@params[:channel_id])
+      end
+
+      def resolve_company
+        @store.companies.find_by_param!(@params[:company_id])
+      end
+
+      def resolve_preferred_stock_location
+        @store.stock_locations.find_by_param!(@params[:preferred_stock_location_id])
+      end
+
+      def assign_addresses(order)
+        assign_default_addresses(order) if @params[:use_customer_default_address]
+
+        assign_address(order, :ship_address, @params[:shipping_address_id], @params[:shipping_address])
+        assign_address(order, :bill_address, @params[:billing_address_id], @params[:billing_address])
+      end
+
+      def assign_default_addresses(order)
+        company = order.company
+
+        if company.present?
+          order.bill_address = company.default_billing_address&.snapshot
+          order.ship_address = company.default_shipping_address&.snapshot
+          return
+        end
+
+        return if @customer.nil?
+
+        @customer.association(:bill_address).load_target
+        @customer.association(:ship_address).load_target
+        order.bill_address = @customer.bill_address&.snapshot
+        order.ship_address = @customer.ship_address&.snapshot
+      end
+
+      def assign_address(order, association, address_id, address_attrs)
+        if address_id.present?
+          address = order.selectable_address(address_id)
+          order.public_send(:"#{association}_id=", address.id) if address
+        elsif address_attrs.present?
+          order.public_send(:"#{association}_attributes=", address_attrs)
+        end
+      end
+
+      def add_items(order)
+        result = Spree::Orders::UpsertItems.call(order: order, items: @params[:items])
+        return if result.success?
+
+        propagate_step_failure!(order, result, fallback: 'Failed to add items to order')
+      end
+
+      def build_fulfillments(order)
+        result = Spree::Orders::BuildFulfillments.call(order: order)
+        return if result.success?
+
+        propagate_step_failure!(order, result, fallback: 'Failed to build shipments')
+      end
+
+      # Surface the failing record's errors on the order so the API response
+      # carries an actionable message instead of an empty +processing_error+.
+      # Falls back to a static message when neither the record nor the result
+      # carry one — better than raising +RecordInvalid+ with an empty errors
+      # collection.
+      def propagate_step_failure!(order, result, fallback:)
+        record = result.value
+        if record.respond_to?(:errors) && record.errors.any?
+          record.errors.full_messages.each { |msg| order.errors.add(:base, msg) }
+        elsif result.error.to_s.present?
+          order.errors.add(:base, result.error.to_s)
+        else
+          order.errors.add(:base, fallback)
+        end
+        raise ActiveRecord::RecordInvalid, order
+      end
+
+      def apply_coupon(order)
+        order.coupon_code = @params[:coupon_code]
+        handler = Spree::PromotionHandler::Coupon.new(order).apply
+
+        if handler.successful?
+          order.save!
+        else
+          @discount_application_errors << {
+            code: handler.status_code,
+            message: handler.error,
+            coupon_code: @params[:coupon_code]
+          }
+          order.coupon_code = nil
+          handler.release_stale_coupon_codes
+        end
+      end
+    end
+  end
+end

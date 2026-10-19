@@ -130,6 +130,18 @@ After ejecting, the Docker image is built from `server/Dockerfile`. Edit files i
 
 See [Customizing the Backend](/developer/create-spree-app/quickstart#customizing-the-backend) for details on what you can customize.
 
+### `spree add`
+
+Add an optional part to an existing project.
+
+```bash
+spree add dashboard           # the Admin Dashboard app in apps/dashboard/, to customize it
+spree add seller-dashboard    # the marketplace Seller Panel in apps/seller-dashboard/
+spree add ai                  # Spree agent skills + the docs MCP server for coding agents
+```
+
+`spree add ai` installs the [Spree agent skills](/developer/agentic/agent-skills) and connects Claude Code, Cursor and VS Code to the [docs MCP server](/developer/agentic/docs-mcp). It keeps the MCP servers your config files already list and is safe to re-run. Pass `--no-skills` or `--no-mcp` to set up only one of the two.
+
 ### `spree logs`
 
 Stream service logs.
@@ -373,4 +385,4 @@ spree task spree:price_history:prune
 
 ## Pair with AI agents
 
-The CLI's predictable command surface is what AI coding agents drive when working on Spree projects. The [Spree agent skills](/developer/agentic/agent-skills) teach agents these commands and conventions, and the Claude Code plugin adds `/spree:doctor` (stack diagnosis) and `/spree:audit-upgrade` (upgrade-readiness audit) on top. See [Agentic Development](/developer/agentic/overview).
+The CLI's predictable command surface is what AI coding agents drive when working on Spree projects. The [Spree agent skills](/developer/agentic/agent-skills) teach agents these commands and conventions (install them with `spree add ai`), and the Claude Code plugin adds `/spree:doctor` (stack diagnosis) and `/spree:audit-upgrade` (upgrade-readiness audit) on top. See [Agentic Development](/developer/agentic/overview).

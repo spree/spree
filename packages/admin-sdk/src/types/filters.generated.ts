@@ -440,10 +440,15 @@ export type TaxCategoryFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.BooleanFilters<'is_default'>
   & Filter.TextFilters<'name' | 'tax_code'>
 
-export type TaxExemptionCertificateFields = Filter.TextFilters<'certificate_number' | 'reason_code'>
+export type TaxExemptionCertificateFields = Filter.TextFilters<'certificate_number'>
   & Filter.RangeFilters<'created_at' | 'expires_at' | 'updated_at'>
-  & Filter.IdFilters<'id'>
+  & Filter.IdFilters<'id' | 'tax_exemption_reason_id'>
   & Filter.EnumFilters<'status', 'pending' | 'verified' | 'expired' | 'revoked'>
+
+export type TaxExemptionReasonFields = Filter.BooleanFilters<'active'>
+  & Filter.TextFilters<'code' | 'name'>
+  & Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
 
 export type TaxIdentifierFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -456,7 +461,6 @@ export type TaxLineFields = Filter.TextFilters<'country_code' | 'provider_id' | 
 export type TaxRateFields = Filter.RangeFilters<'amount' | 'created_at' | 'rate' | 'updated_at'>
   & Filter.TextFilters<'country_code' | 'name' | 'state_code'>
   & Filter.IdFilters<'id' | 'tax_category_id'>
-  & Filter.BooleanFilters<'included_in_price'>
 
 export type VariantFields = Filter.IdFilters<'carton_package_type_id' | 'id' | 'product_id'>
   & Filter.RangeFilters<'carton_weight' | 'cost_price' | 'created_at' | 'deleted_at' | 'depth' | 'discontinue_on' | 'height' | 'updated_at' | 'weight' | 'width'>
@@ -2502,7 +2506,27 @@ export type TaxExemptionCertificateFilters = TaxExemptionCertificateFields
   & Filter.OrFilters
   & TaxExemptionCertificateFilterExtensions
 
-export type TaxExemptionCertificateSort = Filter.SortKey<'certificate_number' | 'created_at' | 'expires_at' | 'id' | 'reason_code' | 'status' | 'updated_at' | (keyof TaxExemptionCertificateSortExtensions & string)>
+export type TaxExemptionCertificateSort = Filter.SortKey<'certificate_number' | 'created_at' | 'expires_at' | 'id' | 'status' | 'tax_exemption_reason_id' | 'updated_at' | (keyof TaxExemptionCertificateSortExtensions & string)>
+
+/**
+ * Filters your app adds to TaxExemptionReason lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface TaxExemptionReasonFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface TaxExemptionReasonFilterExtensions {}
+
+/** Sort fields your app adds to TaxExemptionReason lists, as keys: `{ erp_id: true }`. */
+export interface TaxExemptionReasonSortExtensions {}
+
+export type TaxExemptionReasonFilters = TaxExemptionReasonFields
+  & Filter.OrFilters
+  & TaxExemptionReasonFilterExtensions
+
+export type TaxExemptionReasonSort = Filter.SortKey<'active' | 'code' | 'created_at' | 'id' | 'name' | 'updated_at' | (keyof TaxExemptionReasonSortExtensions & string)>
 
 /**
  * Filters your app adds to TaxIdentifier lists. Generate them with `spree filters types`,
@@ -2565,7 +2589,7 @@ export type TaxRateFilters = TaxRateFields
   & Filter.OrFilters
   & TaxRateFilterExtensions
 
-export type TaxRateSort = Filter.SortKey<'amount' | 'country_code' | 'created_at' | 'id' | 'included_in_price' | 'name' | 'rate' | 'state_code' | 'tax_category_id' | 'updated_at' | (keyof TaxRateSortExtensions & string)>
+export type TaxRateSort = Filter.SortKey<'amount' | 'country_code' | 'created_at' | 'id' | 'name' | 'rate' | 'state_code' | 'tax_category_id' | 'updated_at' | (keyof TaxRateSortExtensions & string)>
 
 /**
  * Filters your app adds to Variant lists. Generate them with `spree filters types`,

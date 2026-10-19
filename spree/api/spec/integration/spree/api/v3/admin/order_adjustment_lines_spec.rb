@@ -103,6 +103,8 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       description 'Edits the label or amount of a manual discount and re-sums the order totals. Promotion-sourced rows are owned by recalculation and respond 422.'
       admin_scope :write, :orders
 
+      admin_sdk_example 'orders/discounts-update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
@@ -130,6 +132,8 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       security [api_key: [], bearer_auth: []]
       description "Returns the order's fees, such as surcharges, handling and gift wrap, on the whole order or on one item or delivery."
       admin_scope :read, :orders
+
+      admin_sdk_example 'orders/fees-list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -189,6 +193,8 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       security [api_key: [], bearer_auth: []]
       description 'Edits the label, amount or kind of a fee and re-sums the order totals. Works on completed orders.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'orders/fees-update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

@@ -78,10 +78,12 @@ module SpreeStripe
       saved_change_to_preferred_secret_key?
     end
 
+    # Stripe shows test-mode payments only under its /test/ dashboard path.
     def gateway_dashboard_payment_url(payment)
       return if payment.transaction_id.blank?
 
-      "https://dashboard.stripe.com/payments/#{payment.transaction_id}"
+      mode_path = preferred_secret_key.to_s.match?(/\A(sk|rk)_test_/) ? 'test/' : ''
+      "https://dashboard.stripe.com/#{mode_path}payments/#{payment.transaction_id}"
     end
 
     # Called by core when a session-created payment moves to pending. The intent

@@ -7,7 +7,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
 
   let!(:tax_category) { create(:tax_category) }
   let!(:germany) { Spree::Country.by_iso('DE') }
-  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country_code: germany&.iso, amount: 0.19, included_in_price: true) }
+  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country_code: germany&.iso, amount: 0.19) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/tax_rates' do
@@ -18,14 +18,16 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       description <<~DESC
         Returns the store's tax rates. Rates are the entire configuration of
         the built-in tax provider: each pairs a tax category with a jurisdiction
-        (a country, optionally narrowed to one state) and a percentage, and
-        decides whether the tax is already included in the product price
-        (VAT-style) or added on top (US-style).
+        (a country, optionally narrowed to one state) and a percentage. Whether
+        the tax is included in the product price (VAT-style) or added on top
+        (US-style) is the market's `tax_inclusive` setting.
 
         Markets using an external tax provider ignore these rows — that
         provider carries its own jurisdiction data.
       DESC
       admin_scope :read, :settings
+
+      admin_sdk_example 'tax-rates/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -68,11 +70,10 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
 
         Name the jurisdiction with `country_code` (and `state_code` for a
         state-level rate). Omitting the country makes the rate apply everywhere.
-
-        Set `included_in_price` for VAT-style pricing, where the rate is backed
-        out of the displayed price rather than added to it.
       DESC
       admin_scope :write, :settings
+
+      admin_sdk_example 'tax-rates/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -82,7 +83,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       response '201', 'tax rate created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
-          { name: 'VAT', rate_percent: '19', included_in_price: true,
+          { name: 'VAT', rate_percent: '19',
             tax_category_id: tax_category.prefixed_id, country_code: 'DE' }
         end
 
@@ -117,6 +118,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :settings
 
+      admin_sdk_example 'tax-rates/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -136,6 +139,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :settings
+
+      admin_sdk_example 'tax-rates/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -160,6 +165,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes the rate. Tax lines it already produced keep their own rate snapshot.'
       admin_scope :write, :settings
+
+      admin_sdk_example 'tax-rates/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

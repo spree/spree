@@ -26,6 +26,8 @@ RSpec.describe 'Admin Order Discount Codes API', type: :request, swagger_doc: 'a
                   'Completed orders refuse codes; change their discounts through manual discounts instead.'
       admin_scope :write, :orders
 
+      admin_sdk_example 'orders/discount-codes-apply'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'

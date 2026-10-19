@@ -80,6 +80,8 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
       description 'Updates a company node. Only the attributes sent change.'
       admin_scope :write, :customers
 
+      admin_sdk_example 'companies/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       request_body_for

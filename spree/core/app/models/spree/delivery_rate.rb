@@ -41,7 +41,7 @@ module Spree
       return price if tax_rate.nil? || tax_amount.zero? || !tax_rate.show_rate_in_label
 
       I18n.t(
-        "spree.shipping_rates.display_price.#{tax_rate.included_in_price? ? :including_tax : :excluding_tax}",
+        "spree.shipping_rates.display_price.#{tax_inclusive? ? :including_tax : :excluding_tax}",
         price: price,
         tax_amount: display_tax_amount,
         tax_rate_name: tax_rate.name
@@ -79,7 +79,7 @@ module Spree
     def tax_amount
       @tax_amount ||= if tax_rate.nil?
                         BigDecimal(0)
-                      elsif tax_rate.included_in_price?
+                      elsif tax_inclusive?
                         Spree::Money::Rounding.to_currency(cost / (1 + tax_rate.amount) * tax_rate.amount, currency)
                       else
                         Spree::Money::Rounding.to_currency(cost * tax_rate.amount, currency)
@@ -90,14 +90,22 @@ module Spree
     #
     # @return [BigDecimal]
     def additional_tax_total
-      tax_rate&.included_in_price? ? BigDecimal(0) : tax_amount
+      tax_rate && tax_inclusive? ? BigDecimal(0) : tax_amount
     end
 
     # Returns the included tax total for the shipping rate
     #
     # @return [BigDecimal]
     def included_tax_total
-      tax_rate&.included_in_price? ? tax_amount : BigDecimal(0)
+      tax_rate && tax_inclusive? ? tax_amount : BigDecimal(0)
+    end
+
+    # Whether the cost already includes its tax, which the sale's market
+    # decides (Spree::Purchase::Taxation#tax_inclusive?).
+    #
+    # @return [Boolean]
+    def tax_inclusive?
+      fulfillment&.owner&.tax_inclusive? || false
     end
 
     alias tax_total tax_amount

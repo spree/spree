@@ -8,6 +8,14 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
+export function useTaxRates({ page = 1, limit = 100 }: { page?: number; limit?: number } = {}) {
+  return useQuery({
+    queryKey: useResourceKey('tax-rates', { page, limit }),
+    queryFn: () => adminClient.taxRates.list({ page, limit, sort: 'name' }),
+    staleTime: 1000 * 60 * 5,
+  })
+}
+
 export function useTaxRate(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('tax-rates', id ?? 'noop'),

@@ -186,7 +186,9 @@
       "searching": "Recherche…",
       "select_placeholder": "Sélectionner…",
       "unsaved_changes": "Vous avez des modifications non enregistrées.",
-      "yes": "Oui"
+      "yes": "Oui",
+      "done": "Terminé",
+      "error": "Une erreur s'est produite."
     },
     "components": {
       "address_block": {

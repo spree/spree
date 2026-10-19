@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Fulfillment from '../../types/generated/Fulfillment';
 import { DeliverySchema } from './Delivery';
 import { DeliveryMethodSchema } from './DeliveryMethod';
 import { DeliveryRateSchema } from './DeliveryRate';
@@ -46,6 +47,43 @@ export const FulfillmentSchema = z.object({
   provider_generates_labels: z.boolean(),
   fulfillment_items: z.array(FulfillmentItemSchema).optional(),
   get order() { return OrderSchema.optional(); },
-});
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<Fulfillment['id']>;
+  number: z.ZodType<Fulfillment['number']>;
+  tracking: z.ZodType<Fulfillment['tracking']>;
+  tracking_url: z.ZodType<Fulfillment['tracking_url']>;
+  pickup_point_data: z.ZodType<Fulfillment['pickup_point_data']>;
+  selected_delivery_rate_id: z.ZodType<Fulfillment['selected_delivery_rate_id']>;
+  unpriced: z.ZodType<Fulfillment['unpriced']>;
+  cost: z.ZodType<Fulfillment['cost']>;
+  total: z.ZodType<Fulfillment['total']>;
+  discount_total: z.ZodType<Fulfillment['discount_total']>;
+  additional_tax_total: z.ZodType<Fulfillment['additional_tax_total']>;
+  included_tax_total: z.ZodType<Fulfillment['included_tax_total']>;
+  tax_total: z.ZodType<Fulfillment['tax_total']>;
+  status: z.ZodType<Fulfillment['status']>;
+  fulfillment_type: z.ZodType<Fulfillment['fulfillment_type']>;
+  fulfilled_at: z.ZodType<Fulfillment['fulfilled_at']>;
+  delivered_at: z.ZodType<Fulfillment['delivered_at']>;
+  items: z.ZodType<Fulfillment['items']>;
+  deliveries: z.ZodType<Fulfillment['deliveries']>;
+  delivery_method: z.ZodOptional<z.ZodType<Exclude<Fulfillment['delivery_method'], undefined>>>;
+  stock_location: z.ZodOptional<z.ZodType<Exclude<Fulfillment['stock_location'], undefined>>>;
+  delivery_rates: z.ZodOptional<z.ZodType<Exclude<Fulfillment['delivery_rates'], undefined>>>;
+  tax_lines: z.ZodOptional<z.ZodType<Exclude<Fulfillment['tax_lines'], undefined>>>;
+  external_references: z.ZodType<Fulfillment['external_references']>;
+  metadata: z.ZodType<Fulfillment['metadata']>;
+  created_at: z.ZodType<Fulfillment['created_at']>;
+  updated_at: z.ZodType<Fulfillment['updated_at']>;
+  adjustment_total: z.ZodType<Fulfillment['adjustment_total']>;
+  pre_tax_amount: z.ZodType<Fulfillment['pre_tax_amount']>;
+  order_id: z.ZodType<Fulfillment['order_id']>;
+  stock_location_id: z.ZodType<Fulfillment['stock_location_id']>;
+  documents: z.ZodType<Fulfillment['documents']>;
+  labels: z.ZodType<Fulfillment['labels']>;
+  provider_generates_labels: z.ZodType<Fulfillment['provider_generates_labels']>;
+  fulfillment_items: z.ZodOptional<z.ZodType<Exclude<Fulfillment['fulfillment_items'], undefined>>>;
+  order: z.ZodOptional<z.ZodType<Exclude<Fulfillment['order'], undefined>>>;
+}>;
 
-export type Fulfillment = z.infer<typeof FulfillmentSchema>;
+export type { Fulfillment };

@@ -158,12 +158,6 @@ module Spree
 
     # Assigns the current price without saving — the caller is expected to.
     # {#recalculate_price} persists instead.
-    #
-    # Restatement for a tax-inclusive market happens inside
-    # {Spree::Carts::PriceItems}: an address-less cart still has a taxing
-    # country (its market's own), and without it a cross-border cart is taxed
-    # for the destination at a price quoted for home, leaving the merchant to
-    # absorb the difference.
     # persist: false — runs mid-build and from callers that save the record
     # themselves.
     def update_price
@@ -181,8 +175,8 @@ module Spree
       price_record = Spree::PricingProvider::Internal.new.price_for(context)
       return if price_record.blank?
 
-      # Through the same writer every resolved price goes through, so the
-      # tax-inclusive restatement inputs are stated once.
+      # Through the same writer every resolved price goes through, so a line
+      # built here is priced exactly like a resolved one.
       Spree::Carts::PriceItems.apply([[self, price_record]], persist: false)
     end
 

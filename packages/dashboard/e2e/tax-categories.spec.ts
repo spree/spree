@@ -1,7 +1,7 @@
 import { expect, type Page, test } from '@playwright/test'
 import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
-const TAX_CATEGORIES_PATH = (storeId: string) => `/${storeId}/settings/tax-categories`
+const TAX_CATEGORIES_PATH = (storeId: string) => `/${storeId}/settings/taxes/categories`
 const CTA = /add tax category/i
 
 async function createTaxCategory(

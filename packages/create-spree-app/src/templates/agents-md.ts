@@ -1,5 +1,5 @@
 import type { PackageManager } from '../types.js'
-import { dlxCommand, runCommand } from '../utils.js'
+import { runCommand } from '../utils.js'
 
 /**
  * Root CLAUDE.md for a generated project. Claude Code reads CLAUDE.md, not
@@ -140,7 +140,7 @@ export function agentsMdContent(
     '',
     'The official Spree skills cover API conventions, the data model, events, testing,',
     'security, deployment, the Admin Dashboard and the storefront. If `.agents/skills/`',
-    `is missing, install them with \`${dlxCommand(pm)} skills add spree/agent-skills\`.`,
+    `is missing, install them with \`${spree} add ai --no-mcp\`.`,
     '',
   )
 

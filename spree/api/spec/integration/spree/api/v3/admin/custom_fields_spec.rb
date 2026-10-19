@@ -28,6 +28,8 @@ RSpec.describe 'Admin Custom Fields API', type: :request, swagger_doc: 'api-refe
         description "Returns the #{config[:label]}'s custom field values."
         admin_scope :read, config[:scope]
 
+        admin_sdk_example "#{segment.singularize.dasherize}-custom-fields/list"
+
         parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
         parameter name: :Authorization, in: :header, type: :string, required: true
         parameter name: parent_param, in: :path, type: :string, required: true

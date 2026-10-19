@@ -193,6 +193,11 @@ export const FIXTURE_PANEL_SELLER = 'E2E Panel Seller'
 /** The marketplace seller panel, its own app on its own origin (see playwright.config.ts). */
 export const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
 
+/** A placed order on the comma store, paid by a card the Bogus gateway charged. */
+export const FIXTURE_BOGUS_GATEWAY = 'E2E Bogus Gateway'
+export const FIXTURE_BOGUS_ORDER_EMAIL = 'e2e-gateway-link@example.com'
+export const FIXTURE_BOGUS_TRANSACTION_ID = 'BGS-E2E-PAYMENT'
+
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
 export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'

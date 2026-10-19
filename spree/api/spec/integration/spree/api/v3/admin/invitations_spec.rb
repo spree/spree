@@ -165,6 +165,8 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
         field is how the person proves the account is theirs.
       DESC
 
+      admin_sdk_example 'auth/accept-invitation'
+
       parameter name: :token, in: :query, type: :string, required: true,
                 description: 'The token from the emailed link'
       request_body_for

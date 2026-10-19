@@ -1,0 +1,51 @@
+---
+title: "Taxes"
+description: "Learn where tax is set up in Spree Commerce: tax categories, tax rates and the reasons businesses give for buying without tax."
+---
+
+Everything that decides the tax on an order sits on one screen. Navigate to **Settings → Taxes**, under the **Selling** group.
+
+The screen has three tabs:
+
+- **Categories** - How your products are grouped for tax, such as Standard or Reduced rate. See [<u>Tax Categories</u>](/user/settings/tax-categories).
+- **Rates** - The percentages Spree's built-in tax calculation charges, per category and place. See [<u>Tax Rates</u>](/user/settings/tax-rates).
+- **Exemption reasons** - Why a business may buy without tax. See [Tax Exemption Reasons](#tax-exemption-reasons) below.
+
+You only see the tabs your role lets you open.
+
+## Which Service Works Out Your Tax
+
+Each [<u>market</u>](/user/settings/markets) chooses who works out its tax: Spree's built-in calculation, or a connected service such as Avalara. The **Tax calculation** box under the page title lists your markets by the service each one uses, for example **Avalara AvaTax in United States**. Click **Manage markets** to change it.
+
+This matters for the **Rates** tab. Your tax rates only apply to markets on Spree's built-in calculation. A connected service works the tax out itself and never reads them. The **Rates** tab says so, and when some of your markets use a connected service it names them, so you know the rates you edit there do not apply in those markets.
+
+## Tax Exemption Reasons
+
+Why a business buys without tax, such as resale or a government purchase. Staff pick one when recording a company's [<u>tax exemption certificate</u>](/user/customers/companies).
+
+Each reason has a **Name**, which is your own wording, and a **Code**, which your tax service receives. Spree's built-in calculation only keeps the code for reference, so any short code works. If a market calculates tax through Avalara, the code decides the exemption: once a market uses Avalara, the form offers Avalara's codes, such as `G` for resale or `A` for federal government, and you name each reason however you like. Change the code of each reason you use to Avalara's.
+
+A new store arrives with six:
+
+- Agricultural
+- Charitable organization
+- Educational institution
+- Government
+- Manufacturing
+- Resale
+
+To add one, click **Add reason** and fill in:
+
+- **Name** - What staff pick from the list on a certificate.
+- **Code** - What your tax service receives. Saved in capital letters.
+- **Available on new records** - On by default. Turn it off to stop offering the reason on new certificates.
+
+<Note>You can change a reason's name or code at any time. Every certificate with that reason follows, while orders already placed keep the reason they were taxed with. A reason that certificates use cannot be deleted, but you can retire it by turning off **Available on new records**.</Note>
+
+## Further Reading
+
+- [<u>Tax Categories</u>](/user/settings/tax-categories) - Grouping products by how they are taxed
+- [<u>Tax Rates</u>](/user/settings/tax-rates) - The percentages charged in each place
+- [<u>Markets</u>](/user/settings/markets) - Where each market's tax service is chosen
+- [<u>Companies</u>](/user/customers/companies) - Recording a business's tax exemption certificates
+- [<u>Integrations</u>](/user/settings/integrations) - Connecting a tax service such as Avalara

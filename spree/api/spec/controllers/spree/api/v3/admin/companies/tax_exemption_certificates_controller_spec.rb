@@ -6,6 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
   include_context 'API v3 Admin authenticated'
 
   let!(:company) { create(:company, store: store) }
+  let!(:resale) { create(:tax_exemption_reason, store: store, code: 'RESALE', name: 'Resale') }
   let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
 
   before { request.headers.merge!(headers) }
@@ -22,14 +23,16 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
   describe 'GET #index' do
     it 'lists the company certificates with whether each counts' do
       create(:tax_exemption_certificate, :verified, company: company,
-                                                    certificate_number: 'DE-1', reason_code: 'resale',
+                                                    certificate_number: 'DE-1', tax_exemption_reason: resale,
                                                     country_code: germany&.iso)
 
-      get :index, params: { company_id: company.prefixed_id }, as: :json
+      get :index, params: { company_id: company.prefixed_id, expand: 'tax_exemption_reason' }, as: :json
 
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
       expect(row['id']).to start_with('cert_')
+      expect(row['tax_exemption_reason_id']).to eq(resale.prefixed_id)
+      expect(row['tax_exemption_reason']).to include('name' => 'Resale', 'code' => 'RESALE')
       expect(row['certificate_number']).to eq('DE-1')
       expect(row['status']).to eq('verified')
       expect(row['country_code']).to eq('DE')
@@ -62,7 +65,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       post :create, params: {
         company_id: company.prefixed_id,
         certificate_number: 'DE-RESALE-7',
-        reason_code: 'resale',
+        tax_exemption_reason_id: resale.prefixed_id,
         country_code: germany.iso
       }, as: :json
 
@@ -70,6 +73,29 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       expect(json_response['status']).to eq('pending')
       expect(json_response['country_code']).to eq('DE')
       expect(company.tax_exemption_certificates.sole.country_code).to eq(germany.iso)
+    end
+
+    it 'refuses a reason the store has retired' do
+      resale.update!(active: false)
+
+      post :create, params: {
+        company_id: company.prefixed_id,
+        certificate_number: 'DE-RESALE-9',
+        tax_exemption_reason_id: resale.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'details', 'tax_exemption_reason')).to be_present
+    end
+
+    it "404s on another store's reason" do
+      post :create, params: {
+        company_id: company.prefixed_id,
+        certificate_number: 'DE-RESALE-9',
+        tax_exemption_reason_id: create(:tax_exemption_reason, store: create(:store)).prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
     end
 
     # A division's purchases read exemption through the legal entity; the
@@ -80,7 +106,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       post :create, params: {
         company_id: division.prefixed_id,
         certificate_number: 'DE-RESALE-8',
-        reason_code: 'resale'
+        tax_exemption_reason_id: resale.prefixed_id
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
@@ -89,7 +115,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
     it 'attaches an uploaded document' do
       post :create, params: {
         company_id: company.prefixed_id,
-        certificate_number: 'DE-1', reason_code: 'resale',
+        certificate_number: 'DE-1', tax_exemption_reason_id: resale.prefixed_id,
         document_signed_id: pdf_blob.signed_id
       }, as: :json
 
@@ -104,7 +130,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
 
       post :create, params: {
         company_id: company.prefixed_id,
-        certificate_number: 'DE-1', reason_code: 'resale',
+        certificate_number: 'DE-1', tax_exemption_reason_id: resale.prefixed_id,
         document_signed_id: public_blob.signed_id
       }, as: :json
 
@@ -117,7 +143,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
     it 'points the document at the download endpoint' do
       post :create, params: {
         company_id: company.prefixed_id,
-        certificate_number: 'DE-1', reason_code: 'resale',
+        certificate_number: 'DE-1', tax_exemption_reason_id: resale.prefixed_id,
         document_signed_id: pdf_blob.signed_id
       }, as: :json
 
@@ -130,7 +156,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
 
     it 'reports no document url when nothing is attached' do
       post :create, params: {
-        company_id: company.prefixed_id, certificate_number: 'DE-2', reason_code: 'resale'
+        company_id: company.prefixed_id, certificate_number: 'DE-2', tax_exemption_reason_id: resale.prefixed_id
       }, as: :json
 
       expect(json_response['document_url']).to be_nil
@@ -140,7 +166,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
     it 'rejects a tampered signed id with a validation error' do
       post :create, params: {
         company_id: company.prefixed_id,
-        certificate_number: 'DE-1', reason_code: 'resale',
+        certificate_number: 'DE-1', tax_exemption_reason_id: resale.prefixed_id,
         document_signed_id: 'not-a-real-signed-id'
       }, as: :json
 

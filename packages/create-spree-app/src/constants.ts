@@ -4,9 +4,7 @@ export const DASHBOARD_PORT = 5173
 // Seller panel dev server; 5174 matches @spree/cli's own default.
 export const SELLER_DASHBOARD_PORT = 5174
 
-export const DOCS_MCP_URL = 'https://spreecommerce.org/docs/mcp'
 export const STOREFRONT_REPO = 'https://github.com/spree/storefront.git'
-export const AGENT_SKILLS_REPO = 'spree/agent-skills'
 
 /**
  * pnpm pinned into the generated root package.json's `packageManager` field.

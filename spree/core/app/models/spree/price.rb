@@ -9,7 +9,6 @@ module Spree
 
     has_prefix_id :price
 
-    include Spree::VatPriceCalculation
     include Spree::StorePreferences
     include Spree::CanonicalDecimals
 
@@ -135,44 +134,28 @@ module Spree
     alias_attribute :price, :amount
     alias_attribute :compare_at_price, :compare_at_amount
 
-    # Whether this figure is the merchant's answer for the buyer's geography
-    # already. A price list narrowed by market or country states its prices for
-    # that geography, so they are charged exactly as entered — restating one would
-    # net it out with the *home* rate and destroy the price point the merchant
-    # chose. Lists narrowed by anything else (a quantity, a group) were not set
-    # for a country, so their prices restate like any other.
-    #
-    # @return [Boolean]
-    def final_for_destination?
-      rules = price_list&.price_rules.to_a
-      return false unless rules.any?(&:geographic?)
-
-      # Under 'any' the list can win on a non-geographic rule alone, so a
-      # geographic rule being present does not mean this buyer's geography is why
-      # the price applied. Under 'all' every rule matched, so it does.
-      price_list.match_policy == 'all' || rules.all?(&:geographic?)
+    # @deprecated Prices are charged as entered for every buyer since 6.0. Use {#price}; removed in 6.1.
+    def price_including_vat_for(_price_options = {})
+      Spree::Deprecation.warn('Spree::Price#price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #price instead.')
+      price
     end
 
-    def price_including_vat_for(price_options)
-      return price if final_for_destination?
-
-      options = price_options.merge(tax_category: variant.tax_category)
-      gross_amount(price, options)
+    # @deprecated Use {#compare_at_price}; removed in 6.1.
+    def compare_at_price_including_vat_for(_price_options = {})
+      Spree::Deprecation.warn('Spree::Price#compare_at_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #compare_at_price instead.')
+      compare_at_price
     end
 
-    def compare_at_price_including_vat_for(price_options)
-      return compare_at_price if final_for_destination?
-
-      options = price_options.merge(tax_category: variant.tax_category)
-      gross_amount(compare_at_price, options)
+    # @deprecated Use {#display_price}; removed in 6.1.
+    def display_price_including_vat_for(_price_options = {})
+      Spree::Deprecation.warn('Spree::Price#display_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #display_price instead.')
+      display_price
     end
 
-    def display_price_including_vat_for(price_options)
-      Spree::Money.new(price_including_vat_for(price_options), currency: currency)
-    end
-
-    def display_compare_at_price_including_vat_for(price_options)
-      Spree::Money.new(compare_at_price_including_vat_for(price_options), currency: currency)
+    # @deprecated Use {#display_compare_at_price}; removed in 6.1.
+    def display_compare_at_price_including_vat_for(_price_options = {})
+      Spree::Deprecation.warn('Spree::Price#display_compare_at_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #display_compare_at_price instead.')
+      display_compare_at_price
     end
 
     # returns the name of the price in a format of variant name and currency

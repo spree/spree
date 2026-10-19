@@ -20,6 +20,8 @@ const program = new Command()
   .option('--no-storefront', 'skip Next.js storefront setup')
   .option('--agent-skills', 'install the Spree agent skills without asking')
   .option('--no-agent-skills', 'skip installing the Spree agent skills')
+  .option('--docs-mcp', 'connect coding agents to the Spree docs MCP server without asking')
+  .option('--no-docs-mcp', 'skip connecting coding agents to the Spree docs MCP server')
   // Deprecated: the dashboard is included by default. Hidden, kept so
   // existing scripts keep working.
   .addOption(new Option('--react-dashboard').hideHelp())
@@ -49,6 +51,7 @@ const program = new Command()
           flags.sellerDashboard === undefined ? undefined : flags.sellerDashboard === false,
         noDashboard: flags.dashboard === false,
         noAgentSkills: flags.agentSkills === undefined ? undefined : flags.agentSkills === false,
+        noDocsMcp: flags.docsMcp === undefined ? undefined : flags.docsMcp === false,
         noStart: flags.start === false ? true : undefined,
         packageManager,
       })

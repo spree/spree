@@ -277,101 +277,15 @@ describe Spree::Price, type: :model do
   end
 
   describe '#price_including_vat_for' do
-    subject(:price_with_vat) { price.price_including_vat_for(price_options) }
+    let(:price) { build(:price, amount: 10, compare_at_amount: 100) }
 
-    let(:variant) { create(:variant) }
-    let(:home_country) { Spree::Country.new(iso: 'DE') }
-    let(:destination) { Spree::Country.new(iso: 'FR') }
-    let(:amount) { 10 }
-    let(:tax_category) { Spree::TaxCategory.new }
-    let(:price) { build :price, variant: variant, amount: amount }
-    let(:price_options) { { country: destination } }
+    it 'returns the price as entered for a buyer abroad' do
+      allow(Spree::Deprecation).to receive(:warn)
+      france = Spree::Country.by_iso('FR')
 
-    context 'when the destination is another country' do
-      before do
-        allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_tax_country).at_least(:once).and_return(home_country)
-        allow(price).to receive(:included_tax_amount).with({ country: home_country, tax_category: tax_category }).and_return(0.19)
-        allow(price).to receive(:included_tax_amount).with({ country: destination, tax_category: tax_category }).and_return(0.25)
-      end
-
-      it 'returns the correct price including another VAT to two digits' do
-        expect(price_with_vat).to eq(10.50)
-      end
-    end
-
-    context 'when the destination is the home country' do
-      before do
-        allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_tax_country).at_least(:once).and_return(destination)
-      end
-
-      it 'returns the correct price' do
-        expect(price).to receive(:price).and_call_original
-        expect(price_with_vat).to eq(10.00)
-      end
-    end
-
-    context 'when no home country is set' do
-      before do
-        allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_tax_country).at_least(:once).and_return(nil)
-      end
-
-      it 'returns the correct price' do
-        expect(price).to receive(:price).and_call_original
-        expect(price.price_including_vat_for(country: destination)).to eq(10.00)
-      end
-    end
-  end
-
-  describe '#compare_at_price_including_vat_for' do
-    subject(:compare_at_price_with_vat) { price.compare_at_price_including_vat_for(price_options) }
-
-    let(:variant) { create(:variant) }
-    let(:home_country) { Spree::Country.new(iso: 'DE') }
-    let(:destination) { Spree::Country.new(iso: 'FR') }
-    let(:amount) { 10 }
-    let(:compare_at_amount) { 100 }
-    let(:tax_category) { Spree::TaxCategory.new }
-    let(:price) { build :price, variant: variant, amount: amount, compare_at_amount: compare_at_amount }
-    let(:price_options) { { country: destination } }
-
-    context 'when the destination is another country' do
-      before do
-        allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_tax_country).at_least(:once).and_return(home_country)
-        allow(price).to receive(:included_tax_amount).with({ country: home_country, tax_category: tax_category }).and_return(0.19)
-        allow(price).to receive(:included_tax_amount).with({ country: destination, tax_category: tax_category }).and_return(0.25)
-      end
-
-      it 'returns the correct price including another VAT to two digits' do
-        expect(compare_at_price_with_vat).to eq(105.04)
-      end
-    end
-
-    context 'when the destination is the home country' do
-      before do
-        allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_tax_country).at_least(:once).and_return(destination)
-      end
-
-      it 'returns the correct price' do
-        expect(price).to receive(:compare_at_price).and_call_original
-        expect(compare_at_price_with_vat).to eq(100.00)
-      end
-    end
-
-    context 'when no home country is set' do
-      before do
-        allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_tax_country).at_least(:once).and_return(nil)
-      end
-
-      it 'returns the correct price' do
-        expect(price).to receive(:compare_at_price).and_call_original
-        expect(price.compare_at_price_including_vat_for(country: destination)).to eq(100.00)
-      end
+      expect(price.price_including_vat_for(country: france)).to eq(10)
+      expect(price.compare_at_price_including_vat_for(country: france)).to eq(100)
+      expect(Spree::Deprecation).to have_received(:warn).twice
     end
   end
 
@@ -537,38 +451,6 @@ describe Spree::Price, type: :model do
       it 'returns nil' do
         expect(price.prior_price).to be_nil
       end
-    end
-  end
-  describe '#final_for_destination?' do
-    let(:store) { @default_store }
-    let(:variant) { create(:variant) }
-
-    it 'is true for a price on a list narrowed by market' do
-      market = create(:market, store: store, name: "M #{Time.current.to_f}", currency: 'USD',
-                               default_locale: 'en')
-      list = create(:price_list, store: store)
-      list.price_rules.create!(type: 'Spree::PriceRules::MarketRule',
-                               preferences: { market_ids: [market.id] })
-
-      price = create(:price, variant: variant, currency: 'USD', amount: 99, price_list: list)
-
-      expect(price.final_for_destination?).to be(true)
-    end
-
-    it 'is false for a price on a list narrowed by something other than geography' do
-      list = create(:price_list, store: store)
-      list.price_rules.create!(type: 'Spree::PriceRules::VolumeRule',
-                               preferences: { min_quantity: 1 })
-
-      price = create(:price, variant: variant, currency: 'USD', amount: 99, price_list: list)
-
-      expect(price.final_for_destination?).to be(false)
-    end
-
-    it 'is false for a base price' do
-      base = variant.prices.find_by(currency: 'USD', price_list_id: nil)
-
-      expect(base.final_for_destination?).to be(false)
     end
   end
 

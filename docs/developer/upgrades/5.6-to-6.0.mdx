@@ -161,6 +161,16 @@ bundle exec rake spree:backfill_order_markets
 
 A store without a market gets a default one covering its old checkout zone's countries (or its default country), and the checkout zone is cleared. Orders missing a market then get the store default — `market` is required on carts and orders in 6.0.
 
+### Decide whether each market's prices include tax
+
+```bash
+bundle exec rake spree:markets:backfill_tax_inclusive
+```
+
+Tax rates no longer say whether they are included in the price; the market does, with `tax_inclusive` (see [Prices include tax per market](#prices-include-tax-per-market-not-per-rate)). This sets each market from the rates that cover its countries: all included in the price sets it to `true`, all added on top to `false`, and a market with no rates keeps its setting. A market whose rates mixed the two is left as it is and named in the output, for you to set by hand.
+
+It reads each rate's old setting once and then clears it, so running it again later leaves your markets as they are.
+
 ### Fill in the stock level counters
 
 ```bash
@@ -573,6 +583,15 @@ now returns `nil` for an ID with another model's prefix, the same as
 `find_by_prefix_id`. Call `Spree::PrefixedId.decode_prefixed_id` if you
 really need to decode any prefix.
 
+## Prices include tax per market, not per rate
+
+Whether a price includes tax is now the market's `tax_inclusive` setting ([Markets](/developer/core-concepts/markets#tax-behavior)). Before, each tax rate said so with `included_in_price`, and nothing read the market's flag.
+
+- **Every customer of a market pays the price as entered.** In 5.x a store with a default tax zone adjusted prices for buyers outside it: its own tax came out of the price and the buyer's went in. That adjustment is gone, so those buyers now pay the price as entered, with their own country's tax inside it when the market's prices include tax. To charge some countries a different price, give them a market of their own with a price list.
+- **The Admin API drops `included_in_price`** from tax rates: responses, request bodies, filters and sort. The dashboard's tax rate form and list drop it too. The column stays in the database until 6.1, for the upgrade step to read.
+- **Tax providers receive `tax_inclusive:`** on `estimate` and `estimate_replacement`. A provider that names its keyword arguments must accept it.
+- **Removed:** `Spree::VatPriceCalculation`, `Spree::Stock::Estimator#taxation_options_for`, `Spree::PriceRule#geographic?`, `Spree::Price#final_for_destination?`, and on `Spree::TaxRate` the `included_tax_amount_for`, `included_in_price` and `for_country` class methods and the `#included?` and `#additional?` methods. `TaxRate#adjustment_label` takes `included:`.
+
 ## Type values are short names, not class names
 
 The API no longer sends or accepts Ruby class names. Every value that used to name a class is now a short name (`Spree::CreditCard` becomes `credit_card`), so the API keeps the same shape whatever the server is built with. Records in the database are not touched.
@@ -735,7 +754,7 @@ The single-currency accessors are gone from both `Variant` and `Product`:
 | `display_price`, `display_amount` | `price_in(currency).display_amount` |
 | `compare_at_price=` | `set_price(currency, amount, compare_at_amount)` |
 | `display_compare_at_price` | `price_in(currency).display_compare_at_amount` |
-| `price_including_vat_for(opts)` | `price_in(currency).price_including_vat_for(opts)` |
+| `price_including_vat_for(opts)` | `price_in(currency).amount` — prices are charged as entered |
 | `has_default_price?` | `prices.base_prices.exists?(currency: currency)` |
 
 The `compare_at_price` **reader** (which resolves against `cost_currency`) is unchanged on both `Variant` and `Product` — only the writer is gone. So are the `price_in` / `amount_in` / `compare_at_amount_in` readers.
@@ -986,6 +1005,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `Fulfillment#ship`, `#ship!` | `Spree.fulfillment_fulfill_workflow.call(fulfillment:)` (`Spree::Fulfillments::Fulfill`) |
 | `Fulfillment#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
 | `LineItem#target_shipment` | `#target_fulfillment` |
+| `Price#price_including_vat_for`, `#compare_at_price_including_vat_for`, `#display_price_including_vat_for`, `#display_compare_at_price_including_vat_for` | `#price`, `#compare_at_price`, `#display_price`, `#display_compare_at_price` — prices are charged as entered for every buyer |
 | `Order#create_proposed_shipments` / `#create_proposed_fulfillments` (Order and Cart) | `#rebuild_fulfillments!` |
 | `#user`, `#user=`, `#user_id`, `#associate_user!` (Order and Cart) | `#customer`, `#customer=`, `#customer_id`, `#associate_customer!` |
 | `#shipments`, `#set_shipments_cost`, `#ensure_updated_shipments`, `#display_shipment_total` (Order and Cart) | `#fulfillments`, `#set_fulfillments_cost`, `#ensure_updated_fulfillments`, `#display_delivery_total` |

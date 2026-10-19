@@ -13,7 +13,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxProvidersController, type: :controller 
 
       expect(response).to have_http_status(:ok)
       internal = json_response['data'].find { |provider| provider['id'] == 'internal' }
-      expect(internal['name']).to eq('Internal')
+      expect(internal['name']).to eq('Spree tax rates')
       expect(internal['available']).to be(true)
       expect(internal['default']).to be(true)
       expect(internal['unsupported_capabilities'].map { |capability| capability['key'] }).to(

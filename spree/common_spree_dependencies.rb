@@ -17,8 +17,8 @@ platforms :jruby do
 end
 
 platforms :ruby do
-  gem 'mysql2' if ENV['DB'] == 'mysql' || ENV['CI']
-  gem 'pg' if ENV['DB'] == 'postgres' || ENV['CI']
+  gem 'mysql2' if ENV['DB'] == 'mysql'
+  gem 'pg' if ENV['DB'] == 'postgres'
 
   gem 'sqlite3', '>= 2.0'
 end

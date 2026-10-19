@@ -29,11 +29,12 @@ export function useMarkets({ page = 1, limit = 100, expand }: UseMarketsParams =
  * (e.g. the Market price rule) that need to filter client-side without
  * round-tripping the API on each keystroke.
  */
-export function useAllMarkets() {
+export function useAllMarkets({ enabled = true }: { enabled?: boolean } = {}) {
   const { data, isLoading } = useQuery({
     queryKey: useResourceKey('markets', 'all'),
     queryFn: () => adminClient.markets.list({ limit: 100, sort: 'position' }),
     staleTime: 1000 * 60 * 30,
+    enabled,
   })
 
   return { markets: data?.data ?? [], isLoading }

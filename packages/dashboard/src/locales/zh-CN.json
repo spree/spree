@@ -1424,8 +1424,8 @@
           "label": "支持的语言区域"
         },
         "tax_inclusive": {
-          "help": "显示含税价格。在欧盟市场较为常见。",
-          "label": "含税定价"
+          "help": "开启：顾客支付你输入的价格，税费已包含在内。关闭：在结账时加收税费。",
+          "label": "价格含税"
         },
         "tax_provider": {
           "help": "用于计算该市场订单税费的引擎。",
@@ -1787,10 +1787,6 @@
           "label": "使用次数限制",
           "placeholder": "不限"
         }
-      },
-      "reason_code": {
-        "help": "作为用途代码传递给税费计算引擎。",
-        "label": "事由"
       },
       "role": {
         "description": {
@@ -2220,11 +2216,6 @@
         "country_code": {
           "help": "留空表示对所有国家征税。"
         },
-        "included_in_price": {
-          "help": "价格已包含该税费，因此从价格中拆分而非另行加收。",
-          "label": "价格含税",
-          "short": "含税"
-        },
         "jurisdiction": {
           "label": "适用范围"
         },
@@ -2392,6 +2383,20 @@
         "default": {
           "label": "默认包装",
           "help": "您的包裹报价所依据的包装。同一时间只能有一个默认包装。"
+        }
+      },
+      "tax_exemption_reason_id": {
+        "help": "在 设置 → 税费 → 免税原因 中管理此处提供的原因。",
+        "label": "事由"
+      },
+      "oauth_application": {
+        "name": {
+          "label": "名称",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "回调地址",
+          "help": "来自客户端自己的文档。授权码会发送到这里，因此必须是客户端公布的地址。"
         }
       }
     },
@@ -2924,7 +2929,10 @@
           "state": "状态",
           "this_order": "本订单",
           "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
-          "load_error": "无法加载此订单的付款信息。"
+          "load_error": "无法加载此订单的付款信息。",
+          "view_at_gateway": "在 {{gateway}} 中查看",
+          "view_details": "查看详情",
+          "failed_card_checks": "银行卡验证未通过"
         },
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {
@@ -2974,6 +2982,22 @@
           "cbm": "{{value}} 立方米",
           "kg": "{{value}} 公斤",
           "incomplete": "部分商品未量尺寸，因此以上数字是下限而非总量。"
+        },
+        "payment_details": {
+          "title": "付款 {{number}}",
+          "description": "发卡机构的验证结果，以及每一笔资金扣款。",
+          "transaction_id": "交易 ID",
+          "address_check": "地址验证",
+          "security_code_check": "安全码验证",
+          "code": "代码 {{code}}",
+          "check": {
+            "passed": "通过",
+            "failed": "未通过",
+            "not_checked": "未验证"
+          },
+          "captures": "扣款记录",
+          "captures_empty": "尚未扣款。",
+          "captured_at": "扣款时间"
         }
       },
       "edit": {
@@ -4070,6 +4094,49 @@
           "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
           "communication_title": "沟通",
           "commission_tax_title": "佣金税"
+        },
+        "ai_agents": {
+          "title": "AI 代理",
+          "subtitle": "已连接到您商店的 AI 代理。连接 Claude、ChatGPT 等来管理您的商店",
+          "empty": "尚未连接任何代理。",
+          "revoke": "撤销访问权限",
+          "table": {
+            "access": "访问权限",
+            "status": "状态"
+          },
+          "revoke_confirm": {
+            "title": "撤销访问权限？",
+            "message": "{{who}} 将立即失去对 {{name}} 的访问权限。其他人仍保持连接。"
+          },
+          "manage_connections": "管理连接",
+          "connections": {
+            "person": "成员",
+            "empty": "尚无人通过此代理连接。",
+            "unknown_person": "未知",
+            "count_one": "已连接 {{count}} 人",
+            "count_other": "已连接 {{count}} 人",
+            "connected": "连接时间"
+          }
+        },
+        "oauth_clients": {
+          "title": "OAuth 客户端",
+          "subtitle": "为此商店注册的 OAuth 客户端",
+          "empty": "尚未注册任何客户端。",
+          "register": "注册客户端",
+          "table": {
+            "client_id": "客户端 ID",
+            "created": "注册时间"
+          },
+          "delete_confirm": {
+            "title": "删除此客户端？",
+            "message": "{{name}} 将立即停止工作，其注册记录也会被删除。"
+          },
+          "form": {
+            "create_title": "注册客户端",
+            "edit_title": "编辑客户端",
+            "description": "注册 OAuth 客户端后即可将其连接到此店铺。"
+          },
+          "copy_client_id": "复制客户端 ID"
         }
       },
       "staff": {
@@ -4120,6 +4187,20 @@
         },
         "total": "总计",
         "translated": "已翻译"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "授权应用",
+          "subtitle": "在允许之前，请查看此应用请求的权限。",
+          "intro": "{{client}} 希望代表您访问此店铺。它只能执行您在下方允许的操作，且绝不会超出您自己的权限范围。",
+          "permissions_heading": "权限",
+          "revoke_hint": "您可以随时在“设置 → 已连接的应用”中撤销。",
+          "approve": "允许访问",
+          "deny": "取消",
+          "invalid_request": "此授权请求无效。请从引导您来此的应用重新开始。",
+          "decision_failed": "无法记录此决定，请重试。",
+          "withheld": "未提供，因为您自己的角色不包含：{{permissions}}"
+        }
       }
     },
     "payment_methods": {
@@ -4180,7 +4261,8 @@
         "staff": "团队成员、邀请、角色及其权限",
         "stock": "库存水平、仓库、变动与调拨",
         "store_credits": "客户店铺余额",
-        "webhooks": "Webhook 端点与投递记录"
+        "webhooks": "Webhook 端点与投递记录",
+        "oauth_applications": "已在此店铺注册的 OAuth 客户端"
       },
       "grid": {
         "read_aria": "查看{{resource}}",
@@ -4232,7 +4314,8 @@
         "staff": "团队与角色",
         "stock": "库存",
         "store_credits": "店铺信用",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "oauth_applications": "OAuth 应用"
       }
     },
     "policies": {
@@ -4750,12 +4833,15 @@
         "help": "配送出现的问题——商品损坏、缺失或发错。",
         "title": "理赔原因"
       },
+      "code_engine_help": "您的税务引擎根据此代码判断是否免税，请选择它为此原因定义的代码。",
+      "code_help": "证书记录的简短标识符，在店铺内唯一。",
+      "code_placeholder": "例如 RESALE",
       "create_description": "员工创建退货、理赔或退款时，可从下拉列表中选择原因。",
       "delete_confirm": {
         "message": "将不再提供 {{name}}。已使用它的记录保持不变。",
         "title": "删除原因？"
       },
-      "description": "团队在处理退货、理赔、退款和取消时可选用的原因列表。",
+      "description": "您的团队在处理退货、索赔、退款和取消时可选择的原因列表。",
       "edit_sheet_title": "编辑原因",
       "empty": "暂无原因",
       "in_use": "使用中",
@@ -4778,6 +4864,12 @@
       "return": {
         "help": "客户退回商品的原因。退货和换货共用。",
         "title": "退货原因"
+      },
+      "tax_exemption": {
+        "create_description": "员工在记录企业的免税证书时选择一个原因。",
+        "help": "企业免税采购的原因。记录在其免税证书上；代码会发送给您的税务引擎。",
+        "name_placeholder": "例如 转售",
+        "title": "免税原因"
       },
       "title": "退货与原因"
     },
@@ -5104,12 +5196,13 @@
         "staff": "可访问此后台的人员",
         "stock_locations": "存放库存的仓库与自提点",
         "store": "店铺名称、时区、单位与区域默认值",
-        "tax_categories": "分配给商品的税务类别",
-        "tax_rates": "按市场和地区适用的税率",
         "webhooks": "事件发生时接收通知的端点",
         "package_types": "纸箱、外箱、托盘与集装箱",
         "suppliers": "你从谁那里采购库存，以及如何联系他们",
-        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税"
+        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税",
+        "taxes": "税务类别、税率和免税原因",
+        "ai_agents": "有权访问此店铺的 AI 代理",
+        "oauth_clients": "注册并配置 OAuth 客户端"
       },
       "groups": {
         "audit": "审计",
@@ -5147,7 +5240,10 @@
         "webhooks": "Webhooks",
         "package_types": "包装类型",
         "suppliers": "供应商",
-        "marketplace": "设置"
+        "marketplace": "设置",
+        "taxes": "税费",
+        "ai_agents": "AI 代理",
+        "oauth_clients": "OAuth 客户端"
       },
       "breadcrumbs": {
         "marketplace": "平台"
@@ -5491,7 +5587,6 @@
       "sellers": "在您平台上经营的第三方卖家及各自的状态。",
       "store_credits": "客户可在结账时使用的余额，以及每笔余额的发放方式。",
       "tax_categories": "决定商品适用哪种税率的分组。",
-      "tax_rates": "按类别和地区收取的税费。",
       "webhook_deliveries": "发送到此端点的每个事件，以及是否已被接收。",
       "webhook_endpoints": "店铺发生事件时通知您其他系统的地址。",
       "returns": "退回的商品，从申请到退款。",
@@ -5512,8 +5607,7 @@
         "created": "税务类别已创建",
         "deleted": "税务类别已删除",
         "updated": "税务类别已更新"
-      },
-      "search_placeholder": "按名称搜索…"
+      }
     },
     "tax_exemption_certificates": {
       "add_cta": "添加证明",
@@ -5536,14 +5630,7 @@
       },
       "never_expires": "长期有效",
       "no_document": "未附文件",
-      "reason_codes": {
-        "agricultural": "农业",
-        "charitable": "慈善机构",
-        "educational": "教育机构",
-        "government": "政府机构",
-        "manufacturing": "生产制造",
-        "resale": "转售"
-      },
+      "no_reasons": "尚无免税原因。请在 设置 → 税费 → 免税原因 中添加。",
       "revoke_action": "撤销",
       "revoke_confirm": {
         "message": "证明 {{number}} 将不再适用于新订单，但会作为记录保留。",
@@ -5622,7 +5709,6 @@
         "deleted": "税率已删除",
         "updated": "税率已更新"
       },
-      "search_placeholder": "搜索税率",
       "select_category": "选择类别"
     },
     "translations": {
@@ -6273,6 +6359,57 @@
       "empty": "暂无新通知。",
       "view_on_github": "在 GitHub 上查看",
       "release_notes_unavailable": "无法加载版本说明，请前往 GitHub 查看。"
+    },
+    "taxes": {
+      "title": "税费",
+      "description": "您的商品如何计税、Spree 收取哪些税率，以及企业为何可以免税购买。",
+      "providers_title": "税费计算",
+      "provider_markets": "{{markets}}：{{provider}}",
+      "manage_markets": "管理市场",
+      "tabs": {
+        "categories": "类别",
+        "rates": "税率",
+        "exemption_reasons": "免税原因"
+      },
+      "rates_unused_in": "这些税率不适用于 {{markets}}，这些市场由外部服务计算税费。",
+      "rates_unused_everywhere": "您的市场均未使用这些税率：{{markets}} 由外部服务计算税费。",
+      "rates_help": "按类别和地区收取的税费。仅适用于使用 Spree 税率的市场：Avalara 等已连接的服务会自行计算税费，忽略这些税率。"
+    },
+    "mcp_connect": {
+      "open_cta": "连接代理",
+      "title": "连接代理",
+      "subtitle": "选择要授予此店铺访问权限的助手。",
+      "step_paste": "将此地址粘贴到客户端的连接器或 MCP 设置中。",
+      "step_sign_in": "它会把您送到这里登录。",
+      "step_approve": "确认代理可以做什么。您随时可以在此页面收回。",
+      "client_id_label": "客户端 ID",
+      "client_id_help": "部分客户端在开始前会要求填写。",
+      "ready_title": "{{client}} 已可连接",
+      "ready_subtitle": "将这些粘贴到客户端，然后批准它可以做什么。",
+      "endpoint_label": "您店铺的 MCP 地址",
+      "copy_endpoint": "复制地址",
+      "copy_client_id": "复制客户端 ID",
+      "other_title": "其他",
+      "bounded_note": "代理获得的权限绝不会超过您自己的，且仅限于您批准的部分。",
+      "clients": {
+        "claude": "claude.ai、Claude Desktop 和 Claude Code",
+        "chatgpt": "ChatGPT 和 Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai 与桌面版",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "任何其他支持 MCP 的客户端",
+      "continue": "继续",
+      "run_label": "运行此命令",
+      "copy_command": "复制命令",
+      "cli_then_sign_in": "它会打开浏览器，让您登录并批准代理可以执行的操作。"
     }
   }
 }

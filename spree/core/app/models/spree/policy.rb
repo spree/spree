@@ -4,6 +4,12 @@ module Spree
 
     extend FriendlyId
     include Spree::TranslatableResource
+
+    # Policies are store settings — see Admin::PoliciesController.
+    def self.translation_write_permission
+      'write_settings'
+    end
+
     include Spree::SanitizableRichText
 
     UNIQUENESS_SCOPE = %i[owner_id owner_type].freeze

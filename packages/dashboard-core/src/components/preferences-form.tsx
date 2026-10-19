@@ -46,6 +46,8 @@ export interface PreferenceFieldDef {
   format?: string
   default: unknown
   choices?: string[]
+  /** Labels the declaration gave its choices, for values that cannot name themselves (an endpoint URL). */
+  choiceLabels?: Record<string, string>
   /** Whether the setting may be left empty (it reads back as null). */
   nullable: boolean
   /** The property's own JSON Schema, for widgets that need more (list items, object properties). */
@@ -101,6 +103,7 @@ export function preferenceFields(
     format: property.format ?? property.items?.format,
     default: property.default ?? null,
     choices: property.enum?.filter((choice): choice is string => typeof choice === 'string'),
+    choiceLabels: property['x-spree-choice-labels'],
     nullable: Array.isArray(property.type) && property.type.includes('null'),
     schema: property,
   }))
@@ -432,12 +435,23 @@ export function PreferenceField({
       // the set is what the server validates against, so typing anything
       // else can only fail on save.
       if (field.choices?.length) {
-        const options = field.choices.map((choice) => ({
+        // A translation wins where one exists, so the locale files stay in
+        // charge of the values that read as words; then the label the
+        // declaration supplied, for the ones that do not — a URL cannot serve
+        // as its own i18n key, let alone as a label.
+        const declared = field.choices.map((choice) => ({
           value: choice,
           label: i18n.exists(`${preferenceKey}_options.${choice}`)
             ? t(`${preferenceKey}_options.${choice}`)
-            : humanizeKey(choice),
+            : (field.choiceLabels?.[choice] ?? humanizeKey(choice)),
         }))
+        // A stored value outside the set is offered as its own option rather
+        // than dropped, so one written past the picker by an API client is not
+        // silently rewritten to the first choice.
+        const options =
+          typeof value === 'string' && value !== '' && !declared.some((o) => o.value === value)
+            ? [...declared, { value, label: value }]
+            : declared
 
         return (
           <Field>

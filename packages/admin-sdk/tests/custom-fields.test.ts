@@ -47,6 +47,7 @@ describe('custom fields', () => {
     ['variants', 'variant_1', 'variants'],
     ['categories', 'ctg_1', 'categories'],
     ['optionTypes', 'opt_1', 'option_types'],
+    ['sellers', 'sel_1', 'sellers'],
   ] as const)('first-class parent: %s', (resource, parentId, routeSegment) => {
     it('lists via the dedicated accessor and hits the matching route', async () => {
       const accessor = client[resource].customFields

@@ -116,6 +116,8 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :purchasing
 
+      admin_sdk_example 'suppliers/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -146,6 +148,8 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :purchasing
 
+      admin_sdk_example 'suppliers/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -170,6 +174,8 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
         readable. Refused with a 422 while a purchase order still points at it.
       DESC
       admin_scope :write, :purchasing
+
+      admin_sdk_example 'suppliers/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

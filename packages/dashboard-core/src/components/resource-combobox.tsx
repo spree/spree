@@ -109,6 +109,11 @@ export function ResourceCombobox<T extends ComboboxOption>({
     // elsewhere (a customer created on another page) never invalidates it.
     // Every search refetches; cached rows for a repeated term still paint first.
     staleTime: 0,
+    // Keeps the last results on screen while the next query loads, so the
+    // list does not blank on every keystroke. Only within one tenant: the
+    // second argument is the query those results came from.
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[1] === tenantId ? previous : undefined,
   })
 
   // Hydrate the currently selected ID into a record so the trigger shows

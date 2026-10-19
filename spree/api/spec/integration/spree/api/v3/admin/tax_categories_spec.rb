@@ -16,6 +16,8 @@ RSpec.describe 'Admin Tax Categories API', type: :request, swagger_doc: 'api-ref
       description 'Returns the tax categories products and delivery methods can be assigned to, which tax rates then apply to.'
       admin_scope :read, :settings
 
+      admin_sdk_example 'tax-categories/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -42,6 +44,8 @@ RSpec.describe 'Admin Tax Categories API', type: :request, swagger_doc: 'api-ref
       security [api_key: [], bearer_auth: []]
       description 'Creates a tax category. `tax_code` is the code a tax provider uses to classify the goods in it.'
       admin_scope :write, :settings
+
+      admin_sdk_example 'tax-categories/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -83,6 +87,8 @@ RSpec.describe 'Admin Tax Categories API', type: :request, swagger_doc: 'api-ref
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :settings
+
+      admin_sdk_example 'tax-categories/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

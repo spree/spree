@@ -21,6 +21,8 @@ RSpec.describe 'Admin Translations Batch API', type: :request, swagger_doc: 'api
       description 'Atomically upserts translations across many records of (possibly) different translatable resource types in one request — e.g. an option type and all its option values in one save. A flat list of independent registry writes; all entries succeed or none do.'
       admin_scope_note('`write_<resource>` for every resource type in the batch (for API-key authentication)')
 
+      admin_sdk_example 'translations/batch'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       request_body_for

@@ -20,6 +20,7 @@ export const Subject = {
   CustomerGroup: 'customer_group',
   AdminUser: 'admin_user',
   ApiKey: 'api_key',
+  OauthApplication: 'oauth_application',
   AllowedOrigin: 'allowed_origin',
   Store: 'store',
   // The store's packaging vocabulary: the box it ships parcels in, and the
@@ -45,6 +46,7 @@ export const Subject = {
   ClaimReason: 'claim_reason',
   RefundReason: 'refund_reason',
   OrderCancellationReason: 'order_cancellation_reason',
+  TaxExemptionReason: 'tax_exemption_reason',
   CustomFieldDefinition: 'custom_field_definition',
   Integration: 'integration',
   PaymentMethod: 'payment_method',

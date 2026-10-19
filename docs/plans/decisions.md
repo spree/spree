@@ -1,3 +1,33 @@
+## 2026-10-17: Certificates point at their exemption reason
+
+**Context:** Certificates stored a copy of their reason's code, so a code had to be locked once any certificate used it. A new store's seeded reasons could then never be switched to Avalara's codes, and finding a reason's certificates meant joining through companies on a copied string.
+
+**Decision:** `Spree::TaxExemptionCertificate` `belongs_to :tax_exemption_reason`, like products and tax categories; the API takes `tax_exemption_reason_id`. A reason's code can change at any time and is stored in upper case. A tax line's exemption snapshot keeps the reason's name beside its code.
+
+**Consequences:** Merchants on Avalara change each seeded code to Avalara's. Placed orders keep the code and name they were taxed with. A `spree:upgrade:tax_exemption_reasons` step seeds existing stores, saves existing codes in capitals, and links certificates recorded before reasons existed to the reason matching their old `reason_code`, which the migration keeps (nullable) for that purpose; until it runs, tax still reads an unlinked certificate's old code. The dashboard offers an engine's own codes only once a market uses that engine.
+
+**Plan:** `6.0-tax-provider.md`.
+
+## 2026-10-16: Tax exemption reasons are a store-owned model
+
+**Context:** The reasons a merchant records on a tax exemption certificate came from a code registry: six values hard-coded in core, replaced by the vocabulary of whichever tax provider gem registered one. Spree's own tax engine never reads the reason, so for most stores it was a label the merchant could not rename, translate or extend, unlike every other reason list.
+
+**Decision:** `Spree::TaxExemptionReason` is a store-owned model (`name`, `code`, `active`), managed beside return, claim, refund and order-cancellation reasons through `/api/v3/admin/tax_exemption_reasons`. A certificate keeps its `reason_code` string, which must name an active reason of its store when set. A tax provider declares the codes its engine understands (`exemption_reason_codes`, published on `/tax_providers`) so the dashboard can offer them, but it does not own the list. The registry, the default list in core and the `…/tax_exemption_certificates/reason_codes` endpoint are removed.
+
+**Consequences:** Seeds give each store six neutral reasons; the Avalara upgrade task adds one per Avalara entity use code. A provider whose engine reads reason codes adds `exemption_reason_codes` rather than registering a list.
+
+**Plan:** `6.0-tax-provider.md`.
+
+## 2026-10-16: The market decides whether prices include tax, and prices are no longer adjusted for buyers abroad (V-3662, reverses 2026-08-11)
+
+**Context:** A store whose home country is the US sold into a Eurozone market marked tax-inclusive. A €527.99 book shipped to Berlin was charged €564.95: the 2026-08-11 rule took the US's 0% out of the price and put Germany's 7% in, so the product page and checkout disagreed. Whether a price includes tax was spread over three places: `TaxRate#included_in_price`, which Spree's own tax tables read; `Market#tax_inclusive`, which the API and dashboard exposed but no code read; and the restatement, which assumed every price included the home country's tax. A first fix for #14833 added a per-market `tax_display` and a main country per market; review rejected a second setting beside the unused one.
+
+**Decision:** `Market#tax_inclusive` is the one setting. On, every customer of the market pays the price as entered, with their own country's tax inside it; off, tax is added at checkout. Spree's own tax tables read it through `Purchase::Taxation#tax_inclusive?` (with no market, the store's default market answers), and every provider receives it as `tax_inclusive:` on `estimate` and `estimate_replacement`. Refunds keep the `included` flag the sale's tax lines recorded, so editing a market never changes a placed order. `TaxRate#included_in_price` leaves the Admin API, the SDK and the dashboard; the column stays until 6.1 for `spree:markets:backfill_tax_inclusive`, which sets each market from the rates covering its countries (all included sets true, all added on top sets false, a mix is left unchanged and reported). It reads each rate's flag once and clears it, because every upgrade re-runs every step, and new rates leave the flag empty. Restatement is removed, with `VatPriceCalculation`, `PriceRule#geographic?` and `Price#final_for_destination?`: it ran only on the Internal provider, showed a multi-country market the main country's price until checkout, and broke round prices. Without it the home country prices nothing, so markets keep no main country of their own. Commission tax reads every matching rate, since a commission's tax is added on top whatever a market does.
+
+**Consequences:** A merchant who wants a different price in some countries gives them a market of their own with a price list, and one market cannot mix conventions by country. A 5.x store with a default tax zone, and a store on the 6.0 release candidates, charges buyers abroad the price as entered after upgrading, which the upgrade guide says. Commission VAT in an EU store whose rates were all marked included now uses the real rate rather than the store default. A provider that names its keyword arguments must accept `tax_inclusive:`. A business buyer with a valid tax number pays the price as entered in an inclusive market; whether they should pay it without tax stays open. Restatement can return in 6.1, reading the storefront's country, or as a country rule on price lists, if merchants ask for it.
+
+**Plans amended:** `6.0-tax-provider.md` (the cross-border Key Decision, Phase 8, the Phase 9 `tax_inclusive` item and the Constraints on Current Work).
+
 ## 2026-10-10: One upload endpoint, store-owned blobs, and `<slot>_signed_id` everywhere
 
 **Context:** Files reached Spree through `/direct_uploads`, which copied Active Storage's nested request and minted references that never expired, and nothing recorded which store a blob belonged to. Endpoints that took those references named them seven different ways.
@@ -7,6 +37,22 @@
 **Consequences:** A new endpoint that takes a file uses `<slot>_signed_id`, never `file`, `document` or `attachment`. A blob Spree creates must belong to a store: pass `store_id`, or create it where `Spree::Current.store` is set. API responses never contain a blob id, storage key or Rails blob URL; a response offering an existing file for reuse mints a fresh expiring `signed_id`. Supersedes `6.0-digital-assets.md`'s "never multipart through the API request": multipart is allowed for small files through `/files`.
 
 **Plan:** `6.0-uploads-and-file-ownership.md`.
+
+## 2026-10-10: Agent tools run through the Admin API, not beside it
+
+**Context:** The MCP branch (PR #14664) built its tools as a second way into the same data — their own store scoping, permission checks, Ransack call, writable-attribute lists and error shape, about 3,900 lines of Ruby. Probing the branch found three faults, all the same fault. A prefixed id filters nothing: `search_resources` calls `.ransack` directly and skips the controller step that decodes ids, so filtering variants by `product_id_eq: "prod_3uWpPTcf5W"` — the only form the tools return — answers 0 where the raw id answers 3, with no error. Extension attributes are invisible, because the writable list reads `resource_permitted_attributes` but not `additional_permitted_attributes`. And the stock upsert wrote to whichever shelf an id named, including another store's, because the scoping lived in its one caller.
+
+**Decision:** A tool call runs the real Admin API request path — routing, authentication, controller, serializer, error format — dispatched in-process through `Rails.application.call` with the caller's own credential and `Host` header. No internal trusted header, which would rebuild the boundary this removes. No HTTP to itself: a socket back to the same app holds one Puma thread waiting on another, so concurrent tool calls on a small pool deadlock it.
+
+`Spree::Current` does not reset across a nested dispatch — probed: an inner call overwrote the outer request's currency — so the adapter snapshots and restores it, with a spec proving a tool call cannot corrupt the MCP request's own state. Tool calls do not run inside a transaction the MCP controller opened.
+
+The catalog is the lasting asset: each entry names an operation, a permission, a description and a parameter projection, with schemas from OpenAPI rather than Ruby signatures. A capability with no endpoint becomes an endpoint first — the rule the dashboard already follows.
+
+Two simplifications follow. Generic create, update and destroy become correct for *every* resource, because the controller behind each runs whatever workflow it declares — the old rule that a resource with a workflow refuses the generic write existed only because those writes skipped workflows. That leaves dedicated tools for the non-CRUD member actions alone (cancel, complete, capture, fulfil, approve, activate). And the catalog is keyed by OpenAPI operation rather than by `Spree::Dependencies` key, so the contract spec walks `admin.yaml` instead of scanning controller source — and does not rest on a mechanism being replaced by workflow hooks.
+
+Two operational notes recorded with it: the rate limiter counts the dispatched operations, not the MCP envelope, or one agent turn counts twice; and the adapter trims index responses until the Admin API has sparse fieldsets, since a full admin payload is more than a model's context should hold.
+
+**Consequences:** Every guard added to the Admin API protects agents by construction. The prefixed-id fault stops existing rather than being patched, and the hand-written writable lists go. The branch loses more Ruby than it gains, which is the measure of the step. At 7 the same catalog runs under TypeScript with `@spree/admin-sdk`, differing only in which `fetch` it is given, so the Ruby adapter is deleted rather than ported. Credential filtering stays in the agent layer: guarding what leaves for a model is not the API's job.
 
 ## 2026-10-09: Typed filters keep sellers association-free, take arrays for `_in`, and ship no 5.x warning
 
@@ -6131,6 +6177,27 @@ documented exactly two callers — that list grows as flows are added, but the
 rule it protects stands: never wire it to a settings screen, since re-running
 it against a configured store is a data reset.
 
+
+## 2026-09-16 — The MCP server ships as one pull request, not a registry PR then an adapter PR
+
+Plan: `6.0-mcp-server.md`. Refines that plan's "Order of operations", which
+proposed extracting the agent-tool registry into `spree_core` on its own
+branch, merging it, and only then branching `spree_mcp` from `main`.
+
+**Decision.** Migration Path steps 1 to 5 — the core registry, the reporting
+tools, the workflow tools with their allowlist and generic record writes, the
+`spree_mcp` gem, and the documentation — ship in one branch. A registry-only
+pull request would ask reviewers to judge a contract with no caller, and the
+follow-up would re-open every shape question with the first already merged.
+The commits follow the plan's phase order so the history still reads as the
+staged migration.
+
+**Consequences for other work.** The `feat/dash-assistant` branch is read but
+never written by this work: its files are copied across with `git checkout` so
+blame follows the code, and deleting the originals and repointing the RubyLLM
+adapter at `Spree.agent_tools` remains that branch's own step. Until it does,
+the registry classes exist in both places, and the constraint against adding
+tools under `Spree::Assistant::Tools` stands.
 ## 2026-09-29 — Webhook payloads stay on Store serializers; every event is declared
 
 Plan: `6.0-typed-webhook-events.md`.
@@ -6168,6 +6235,98 @@ seller reset requests are declared `webhook: false` and never reach any
 webhook endpoint, whatever it subscribes to — the rule 5.x kept in the
 subscriber's `NON_DELIVERABLE_EVENTS`, now read from the catalog.
 
+## 2026-10-05 — MCP consumer reach needs OAuth; nothing else is both interoperable and merchant-grade
+
+The Admin MCP server shipped in 6.0 authenticates with a secret key in a
+header, which reaches agents whose configuration a developer edits and no
+further. Reviewing that against what merchants actually need closed every
+alternative to OAuth 2.1, so `6.0-mcp-oauth` plans it and it ships in the
+same pull request.
+
+**A developer-only MCP server is worse than none.** The `spree api` CLI
+already serves agents with a shell, with full endpoint coverage and pipeable
+output. An MCP server reaching only that audience is a second surface to
+maintain that loses to the first, so consumer reach is the feature's
+acceptance criterion rather than an enhancement to it.
+
+**A stdio bridge does not deliver it.** Shipping a local proxy that injects
+the header is the common pattern among self-hosted platforms (GitLab,
+WooCommerce and BigCommerce all document one), and it does unblock desktop
+clients. But it needs Node, a global install and a hand-edited
+`claude_desktop_config.json` — a developer workflow. Anyone who can do it can
+use the CLI. Packaging it as a desktop extension removes the JSON editing and
+not the install, and reaches one vendor's client only.
+
+**Vendor header features do not deliver it either.** Anthropic's
+`static_headers` lets a merchant paste a key with no terminal, but it is in
+beta behind per-organization gating, carries an open bug where the configured
+header is ignored in favour of an OAuth flow, is an organization-wide
+credential that cannot identify the calling user, and is Anthropic's alone.
+Building the merchant path on it would mean Spree stores connect from Claude
+and from nothing else.
+
+**OAuth is what the clients that matter actually require**, and the spec is
+clear that authorization is optional — so the key-based server is already
+compliant and OAuth is about reach, not correctness. Hosted connectors
+(claude.ai, ChatGPT) fetch the URL from the vendor's own servers, so no local
+process can help them, and OAuth 2.1 is the single interoperable way in.
+
+**Consequences for other work.** The key path stays permanently rather than
+being retired by OAuth; it is how CI jobs, server-side integrations and
+editors authenticate, and commercetools ships both for the same reason. A 401
+on the MCP endpoint is now reserved for an authorization challenge, so
+permission refusals must stay where they already are: `{ error: '…' }`
+inside a 200 JSON-RPC response, which is where MCP puts tool-level failures.
+Promoting one to a 401 would send consumer clients into a re-authorization
+loop. `6.0-platform-auth` phase 7 makes
+Spree an OIDC *client* and does not provide any of this; the two share a spec
+family and almost no code.
+
+## 2026-10-05 — A delegated grant narrows the user's authority; it never inherits it
+
+The OAuth grant an admin approves for an agent carries scopes, and
+`Spree::AgentTools::Context` now takes `granted_scopes:` so those scopes
+intersect with what the user's own role allows. Without the intersection the
+context read only the CanCanCan ability, so a merchant who consented to
+reading products handed over all 64 tools, refunds included.
+
+Two rules the intersection has to keep. It only ever **narrows**: a grant
+naming every key in the catalog still gives a limited role nothing extra, so a
+compromised client cannot widen its own reach. And it applies to record checks
+too, not just to which tools are offered — being handed a read tool is not
+permission to write through it, so `can?` consults the grant before the
+ability.
+
+**Consequences for other work.** Anything that builds a `Context` for a caller
+acting *on behalf of* a person must pass `granted_scopes:`; omitting it means
+the full ability, which is right for the dashboard assistant (the admin is
+acting directly) and wrong for any delegated credential. The MCP endpoint is
+the worked example.
+
+## 2026-10-05 — OAuth lives in spree_api, its tables and models in spree_core
+
+Making Spree an OAuth 2.1 authorization server is platform infrastructure, not
+an MCP detail: `5.5-admin-api-key-scopes` already recorded that a public app
+marketplace would reuse the same scope vocabulary, and merchant-approved
+integrations and storefront customer login are the same flow with a different
+client. So the Doorkeeper configuration sits in `spree_api`, beside the
+authentication it extends, and protected resources register themselves —
+`Spree::Api::Oauth.register_resource(:mcp) { |store| … }` — rather than the
+authorization server knowing about MCP.
+
+The tables and the three models (`Spree::OauthApplication`,
+`OauthAccessGrant`, `OauthAccessToken`, named as they were before 5.4) are in
+`spree_core` for a blunter reason: a migration in `spree_api/db/migrate` is
+only copied by `spree_api:install:migrations`, because the engine names
+differ, while every upgrade guide tells people to run
+`spree:install:migrations`. Left there the tables would silently never be
+created on upgrade. `Spree::ApiKey` is already in core for the same reason.
+
+**Consequences for other work.** `doorkeeper` is a `spree_core` dependency,
+pinned to `~> 6.0.0.rc2` because that is the first release carrying RFC 8707
+resource indicators; relax it to `~> 6.0` once 6.0.0 is final. A new engine
+that needs its own migrations must either live in core or document its own
+install task — do not assume `spree:install:migrations` covers it.
 ## 2026-10-06 — The products CSV carries each location's shelf count
 
 **Context:** The products export filled `inventory_count` from
@@ -6210,3 +6369,68 @@ their products' stock held in marketplace locations.
 **Plans amended:** `5.6-admin-spa-csv-import.md` (stock is per location),
 `6.0-stock-reservations.md` and `6.0-typed-stock-movements.md` (the "read
 availability, never the shelf" constraints name the write-back exception).
+
+## 2026-10-05 — MCP takes a grant, the CLI takes a key
+
+The MCP endpoint accepted a secret API key as well as an OAuth token, which
+made it the one surface with two ways in. The key path is now removed: a
+request without a grant is refused with the discovery challenge, whatever
+credential it carried.
+
+The reasoning is what each credential can say. A grant names the person who
+approved the agent and the subset of their permissions they allowed, and both
+are re-read on every call — narrowing a role or deleting the user takes effect
+immediately. A key says neither: it is a standing credential with nobody
+behind it, and it outlives whoever created it. For an agent acting on
+someone's behalf that is the wrong shape, however convenient.
+
+Keys keep their place on every other Admin API surface and in the `spree api`
+CLI, which is what scripted callers that cannot open a browser should use.
+
+**Consequences for other work.** A workflow run through MCP now records the
+approving admin as the actor rather than an API key, so anything asserting a
+key principal there is wrong. The store comes from the token's application,
+so `X-Spree-Store-Id` is not consulted on this endpoint. `Spree::AgentTools::
+Context` keeps its `api_key:` principal — the dashboard assistant and any
+other adapter may still use it; only the MCP transport refuses one.
+
+## 2026-10-16 — One OAuth audience for the Admin API, MCP included
+
+The MCP endpoint had an audience of its own (`/api/v3/admin/mcp`) while the
+Admin API demanded `/api/v3/admin`. A tool call reaches data by dispatching
+into the Admin API carrying the caller's own token, so no single credential
+could satisfy both checks: every dispatched read and write answered
+"authentication required" while the endpoint itself looked healthy.
+
+A workaround minted both audiences for an MCP grant, but only on the consent
+preview — the action that writes the grant passed the client's raw `resource`
+through, and the indicator is optional, so real grants carried none at all.
+
+There is now one audience. `granted_audience` is gone, the MCP engine
+registers no resource, and the endpoint checks the Admin API's audience like
+every other admin surface. The scopes a merchant approves are the ceiling;
+the path a token names was buying nothing.
+
+The specs that missed this minted tokens in Ruby and dispatched with an admin
+JWT, so neither consent nor the OAuth dispatch path was ever exercised. The
+MCP suite now walks consent, token exchange and a tool call as a client does.
+
+## 2026-10-16 — The store MCP surface reuses everything but the catalog
+
+A second MCP endpoint for shoppers is planned for 6.1
+(`docs/plans/6.1-store-mcp-server.md`). The tool contract, the registry, the
+in-process dispatcher, the record summaries and the protocol adapter are all
+surface-neutral and carry over unchanged — about 4,600 lines of tool layer
+under 590 of adapter, and the adapter is the part that would otherwise need
+rewriting.
+
+Two things do not carry over. The resource map is derived by walking
+`Admin::ResourceController.descendants` and reading each controller's
+`scoped_resource`; Store controllers declare no scope, so the store map needs
+its own basis. And a grant's owner is refused unless it is an admin user, in
+two places, so a customer principal is a deliberate addition rather than a
+relaxation.
+
+The registry was split by surface during the 6.0 build for exactly this —
+`Spree.store_agent_tools` exists and is empty, and a tool filed on the wrong
+surface is refused at registration.

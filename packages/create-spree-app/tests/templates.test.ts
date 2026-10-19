@@ -90,7 +90,7 @@ describe('rootPackageJsonContent', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     // The floor must admit every CLI capability the scaffold calls — the
     // seller-dashboard component landed in 3.0.
-    expect(pkg.dependencies['@spree/cli']).toBe('^3.0.0')
+    expect(pkg.dependencies['@spree/cli']).toBe('^3.4.0')
   })
 
   it('includes convenience scripts using spree cli', () => {

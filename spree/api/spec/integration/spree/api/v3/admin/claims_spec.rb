@@ -19,6 +19,8 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       description 'Every damage or missing-item claim in the store, across all orders.'
       admin_scope :read, :orders
 
+      admin_sdk_example 'claims/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
@@ -42,6 +44,8 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       security [api_key: [], bearer_auth: []]
       description 'The damage or missing-item claims opened on one order.'
       admin_scope :read, :orders
+
+      admin_sdk_example 'order-claims/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -68,6 +72,8 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       security [api_key: [], bearer_auth: []]
       description 'Opens a damage or missing-item claim on a completed order. Each item says how it should be made right: money back, a replacement, or both.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-claims/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -103,6 +109,8 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       description 'Edits the reason, memo or metadata of a claim. Its status moves only through the approve, resolve, deny and cancel actions.'
       admin_scope :write, :orders
 
+      admin_sdk_example 'order-claims/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
@@ -132,6 +140,8 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       security [api_key: [], bearer_auth: []]
       description 'Settles an approved claim with money back, a replacement shipment, or both.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-claims/resolve'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -174,6 +184,8 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       description 'Turns down an open claim, recording why for the customer.'
       admin_scope :write, :orders
 
+      admin_sdk_example 'order-claims/deny'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
@@ -201,6 +213,8 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       security [api_key: [], bearer_auth: []]
       description 'Withdraws a claim that has not been resolved.'
       admin_scope :write, :orders
+
+      admin_sdk_example 'order-claims/cancel'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
