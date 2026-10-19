@@ -20,7 +20,7 @@ module Spree
             body.attribute :customer_id, :id
             body.attribute :use_customer_default_address, :boolean,
               only: :create,
-              description: "Copies the saved default billing and shipping addresses onto the order. An order for a company takes that company's defaults, inherited from its parent nodes when it holds none of its own; otherwise it takes the customer's."
+              description: "Copies the saved default billing and shipping addresses onto the order. Sent with `company_id`, it takes that company's defaults, inherited from its parent nodes when the company holds none of its own; otherwise it takes the customer's."
             body.attribute :currency, :currency, example: 'USD'
             body.attribute :market_id, :id
             body.attribute :channel_id, :id, description: 'Defaults to the store primary channel when omitted.'

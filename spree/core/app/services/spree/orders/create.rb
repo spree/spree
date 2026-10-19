@@ -107,7 +107,7 @@ module Spree
       end
 
       def assign_default_addresses(order)
-        company = order.resolved_company
+        company = order.company
 
         if company.present?
           order.bill_address = company.default_billing_address&.snapshot

@@ -1009,6 +1009,28 @@ describe Spree::Address, type: :model do
 
         expect(snapshot.company).to eq('Acme Logistics — Dock B')
       end
+
+      # A company site names the business, not a person, and the model exempts
+      # it from needing a name. The copy has to stay exempt or placing the
+      # order fails on a first name the site never had.
+      context 'with no contact name on it' do
+        let(:address) { create(:company_address, owner: company, first_name: nil, last_name: nil) }
+
+        it 'is valid and saveable' do
+          expect(snapshot).to be_valid
+          expect(snapshot.save).to be(true)
+        end
+
+        it 'stays recognisably a business address' do
+          expect(snapshot).to be_business_owned
+        end
+      end
+
+      it 'keeps the copy out of the book it came from' do
+        expect(snapshot.owner_id).to be_nil
+        expect(snapshot.owner).to be_nil
+        expect(company.addresses.reload).not_to include(snapshot.tap(&:save!))
+      end
     end
   end
 

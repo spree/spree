@@ -303,9 +303,10 @@ module Spree
         expect(result.value.ship_address_id).to be_nil
       end
 
+      # Deliberately left on the factory's nameless company site: a company
+      # address names the business and not a person, which is what broke the
+      # copy the order keeps of it.
       describe 'use_customer_default_address' do
-        let(:headquarters) { create(:company_address, owner: company, first_name: 'Dana', last_name: 'Reyes') }
-
         before do
           company.update!(default_bill_address: headquarters, default_ship_address: headquarters)
         end
@@ -345,6 +346,21 @@ module Spree
 
           expect(result).to be_success
           expect(result.value.bill_address).to be_nil
+        end
+
+        it 'uses the buyer\'s own defaults when no company is named' do
+          create(:company_membership, company: company, customer: user)
+          own_address = create(:address, customer: user)
+          user.update!(bill_address: own_address, ship_address: own_address)
+
+          result = described_class.call(
+            store: store, customer: user,
+            params: { use_customer_default_address: true }
+          )
+
+          expect(result).to be_success
+          expect(result.value.ship_address.address1).to eq(own_address.address1)
+          expect(result.value.bill_address.address1).to eq(own_address.address1)
         end
       end
     end

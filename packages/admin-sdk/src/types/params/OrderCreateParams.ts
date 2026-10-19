@@ -15,9 +15,9 @@ export type OrderCreateParams = {
   email?: string
   customer_id?: string
   /**
-   * Copies the saved default billing and shipping addresses onto the order. An order for a company
-   * takes that company's defaults, inherited from its parent nodes when it holds none of its own;
-   * otherwise it takes the customer's.
+   * Copies the saved default billing and shipping addresses onto the order. Sent with `company_id`,
+   * it takes that company's defaults, inherited from its parent nodes when the company holds none
+   * of its own; otherwise it takes the customer's.
    */
   use_customer_default_address?: boolean
   currency?: CurrencyCode

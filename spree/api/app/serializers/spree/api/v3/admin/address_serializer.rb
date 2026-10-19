@@ -34,8 +34,13 @@ module Spree
           # customer-only shorthand the customers surface reads.
           prefixed_id_attributes :owner
 
+          # Only when there is an owner to name. The copy a purchase keeps of a
+          # company site retains the owner type so it stays recognisably a
+          # business address, but it belongs to nobody's book — reporting an
+          # owner type beside a null owner would describe ownership it has not
+          # got.
           attribute :owner_type do |address|
-            Spree::Base.polymorphic_api_type(address.owner_type)
+            Spree::Base.polymorphic_api_type(address.owner_type) if address.owner_id.present?
           end
         end
       end
