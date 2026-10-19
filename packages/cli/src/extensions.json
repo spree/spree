@@ -1,0 +1,17 @@
+{
+  "extensions": {
+    "mcp": { "label": "MCP server", "gem": "spree_mcp", "release": "spree" },
+    "opentelemetry": { "label": "OpenTelemetry", "gem": "spree_opentelemetry", "release": "spree" },
+    "stripe": { "label": "Stripe", "gem": "spree_stripe", "release": "spree" },
+    "paypal_checkout": { "label": "PayPal", "gem": "spree_paypal_checkout", "aliases": ["paypal"] },
+    "adyen": { "label": "Adyen", "gem": "spree_adyen" },
+    "klaviyo": { "label": "Klaviyo", "gem": "spree_klaviyo" },
+    "avatax_official": {
+      "label": "Avalara AvaTax",
+      "gem": "spree_avatax_official",
+      "aliases": ["avatax"]
+    },
+    "meilisearch": { "label": "Meilisearch", "gem": "spree_meilisearch", "release": "spree" },
+    "easypost": { "label": "EasyPost", "gem": "spree_easypost", "release": "spree" }
+  }
+}

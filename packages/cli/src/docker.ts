@@ -76,6 +76,19 @@ export async function appServices(projectDir: string): Promise<string[]> {
 }
 
 /**
+ * Restart the app services in place when web is running, so a new Puma
+ * process loads gems installed or updated since it booted. A stopped stack is
+ * left stopped.
+ */
+export async function restartAppServices(projectDir: string, message: string): Promise<void> {
+  if (!(await isServiceRunning('web', projectDir))) return
+  p.log.step(pc.bold(message))
+  await dockerCompose(['restart', ...(await appServices(projectDir))], projectDir, {
+    stdio: 'inherit',
+  })
+}
+
+/**
  * Whether compose has ever created a container (any state, including exited)
  * for this project.
  */
