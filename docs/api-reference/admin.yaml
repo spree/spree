@@ -6353,7 +6353,7 @@ paths:
           | `kind` | One of `access`, `erasure` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `requested_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `status` | One of `pending`, `processing`, `completed`, `failed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `awaiting_confirmation`, `pending`, `processing`, `completed`, `failed`, `lapsed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
           **Sort by:** `completed_at`, `created_at`, `email`, `id`, `kind`, `number`, `requested_at`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
@@ -36519,6 +36519,12 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
+                - name: data_request.confirmation_requested
+                  group: data_request
+                  credential_permission: write_customers
+                  credential: true
+                  deprecated: false
+                  replaced_by:
                 - name: data_request.created
                   group: data_request
                   credential_permission:
@@ -37864,7 +37870,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 251
+                  count: 252
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -59753,10 +59759,12 @@ components:
           anyOf:
           - type: string
             enum:
+            - awaiting_confirmation
             - pending
             - processing
             - completed
             - failed
+            - lapsed
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
@@ -83173,10 +83181,12 @@ components:
         requested_at: datetime
         status:
           enum:
+          - awaiting_confirmation
           - pending
           - processing
           - completed
           - failed
+          - lapsed
         updated_at: datetime
       associations: {}
       scopes:

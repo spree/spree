@@ -154,6 +154,11 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
     variable('reset_url'),
   ],
   'spree.customer_mailer.data_export_email': [variable('download_url'), variable('expires_at')],
+  'spree.customer_mailer.data_request_confirmation_email': [
+    variable('kind'),
+    variable('confirmation_url'),
+    variable('expires_at'),
+  ],
   'spree.newsletter_mailer.email_confirmation': [variable('confirmation_url')],
   'spree.company_mailer.invitation_email': [
     variable('company', ['name'] as const satisfies FieldsOf<Company>),

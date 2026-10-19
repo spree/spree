@@ -154,6 +154,10 @@ Spree::Core::Engine.add_routes do
         # Token-addressed so the emailed link works from a device that was
         # never signed in.
         get 'data_requests/:token/download', to: 'data_request_downloads#show', as: :data_request_download
+        # Addressed by the confirmation token emailed to the address a
+        # customer's own request names, for the same reason.
+        get 'data_requests/:token', to: 'data_requests#show', as: :data_request
+        post 'data_requests/:token/confirmation', to: 'data_request_confirmations#create', as: :data_request_confirmation
         # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
         get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 

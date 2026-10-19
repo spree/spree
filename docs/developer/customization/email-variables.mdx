@@ -19,6 +19,7 @@ These are the emails your customers receive. Every one of their templates receiv
 | `spree/digital_asset_mailer/files_ready_email` | `order`, `downloads`, `resend` |
 | `spree/customer_mailer/password_reset_email` | `customer`, `reset_url` |
 | `spree/customer_mailer/data_export_email` | `download_url`, `expires_at` |
+| `spree/customer_mailer/data_request_confirmation_email` | `kind`, `confirmation_url`, `expires_at` |
 | `spree/newsletter_mailer/email_confirmation` | `confirmation_url` |
 | `spree/company_mailer/invitation_email` | `company`, `accept_url` |
 
@@ -31,9 +32,10 @@ These are the emails your customers receive. Every one of their templates receiv
 | `payment_url` | Where the customer pays for the order. |
 | `reset_url` | The password reset link, carrying its token. |
 | `accept_url` | The link that accepts the invitation, carrying its token. |
-| `confirmation_url` | The link that confirms the subscription, carrying its token. |
+| `confirmation_url` | The link that confirms the subscription or data request, carrying its token. |
+| `kind` | What a data request asks for: `access` (a copy of the data) or `erasure`. |
 | `download_url` | The signed link to the customer's data export. |
-| `expires_at` | When the data export link stops working. |
+| `expires_at` | When the data export or confirmation link stops working. |
 | `downloads` | Each file bought: `filename`, `url` (carrying its token) and `expires_at`. |
 
 ## Objects

@@ -774,6 +774,7 @@ en:
     customers: Customers
     data_request_errors:
       already_anonymized: This customer's personal data has already been erased
+      confirmation_invalid: This confirmation link has expired or is no longer valid
       download_unavailable: This download link has expired or is no longer valid
       not_pending: This request has already been processed
     default: Default

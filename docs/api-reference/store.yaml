@@ -8778,7 +8778,7 @@ paths:
           | `kind` | One of `access`, `erasure` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `requested_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `status` | One of `pending`, `processing`, `completed`, `failed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `awaiting_confirmation`, `pending`, `processing`, `completed`, `failed`, `lapsed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
           **Sort by:** `completed_at`, `created_at`, `email`, `id`, `kind`, `number`, `requested_at`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
@@ -8837,11 +8837,14 @@ paths:
         bearer_auth: []
       description: |
         Opens a GDPR request for a copy of the customer's personal data (`access`)
-        or its erasure (`erasure`). The work happens in the background and the
-        response is the pending request.
+        or its erasure (`erasure`). Nothing happens until the request is confirmed
+        from the link emailed to the account's address: the response is the request
+        awaiting confirmation, and the link opens `redirect_url` with the
+        confirmation token appended. The work then happens in the background.
 
         An erasure request requires the account password. A request of the same
-        kind that is still in flight is returned instead of starting a second one.
+        kind that is still in flight is returned instead of starting a second one,
+        and a request still awaiting confirmation sends the email again.
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8862,7 +8865,7 @@ paths:
                 id: dsr_UkLWZg9DAJ
                 number: DSR1001
                 kind: access
-                status: pending
+                status: awaiting_confirmation
                 requested_at: '2026-01-15T12:00:00Z'
                 completed_at:
                 expires_at:
@@ -8892,8 +8895,9 @@ paths:
       security:
       - api_key: []
         bearer_auth: []
-      description: Returns one of the customer's own data requests, with a download
-        link once the export is ready
+      description: 'Returns one of the customer''s own data requests. The download
+        link is never shown here: it goes only to the holder of the emailed confirmation
+        token'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8934,6 +8938,103 @@ paths:
                 error:
                   code: record_not_found
                   message: Data request not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/data_requests/{token}":
+    get:
+      summary: Get a data request by its confirmation token
+      tags:
+      - Customers
+      security:
+      - api_key: []
+      description: |
+        Returns the data request the emailed confirmation token belongs to, with a
+        download link once the export is ready. Needs no signed-in session, because
+        the link may be opened on a device that was never signed in.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: data request found
+          content:
+            application/json:
+              example:
+                id: dsr_UkLWZg9DAJ
+                number: DSR1001
+                kind: access
+                status: pending
+                requested_at: '2026-01-15T12:00:00Z'
+                completed_at:
+                expires_at:
+                download_url:
+              schema:
+                "$ref": "#/components/schemas/DataRequest"
+        '404':
+          description: token not recognised
+          content:
+            application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: This confirmation link has expired or is no longer valid
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/data_requests/{token}/confirmation":
+    post:
+      summary: Confirm a data request
+      tags:
+      - Customers
+      security:
+      - api_key: []
+      description: |
+        Confirms a data request with the token from the confirmation email, and
+        starts the work. Call it when the person presses a button on the page the
+        link opens, never when the page loads: some mail scanners open links and
+        run the page's scripts. Confirming again returns the request as it stands.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: data request confirmed
+          content:
+            application/json:
+              example:
+                id: dsr_UkLWZg9DAJ
+                number: DSR1001
+                kind: access
+                status: pending
+                requested_at: '2026-01-15T12:00:00Z'
+                completed_at:
+                expires_at:
+                download_url:
+              schema:
+                "$ref": "#/components/schemas/DataRequest"
+        '422':
+          description: token not recognised, or the request has lapsed
+          content:
+            application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: This confirmation link has expired or is no longer valid
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/customers/me/gift_cards":
@@ -15524,6 +15625,56 @@ components:
       - newsletter_subscriber
       - customer_groups
       x-typelizer: true
+    DataRequestConfirmationRequestedEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        kind:
+          type: string
+          enum:
+          - access
+          - erasure
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - awaiting_confirmation
+            - pending
+            - processing
+            - completed
+            - failed
+            - lapsed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        requested_at:
+          type: string
+          nullable: true
+        completed_at:
+          type: string
+          nullable: true
+        email:
+          type: string
+        confirmation_token:
+          type: string
+        store_id:
+          type: string
+        redirect_url:
+          type: string
+      required:
+      - id
+      - number
+      - kind
+      - status
+      - requested_at
+      - completed_at
+      - email
+      - confirmation_token
+      - store_id
+      x-typelizer: true
     DataRequestEvent:
       type: object
       properties:
@@ -15540,10 +15691,12 @@ components:
           anyOf:
           - type: string
             enum:
+            - awaiting_confirmation
             - pending
             - processing
             - completed
             - failed
+            - lapsed
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
@@ -15577,10 +15730,12 @@ components:
           anyOf:
           - type: string
             enum:
+            - awaiting_confirmation
             - pending
             - processing
             - completed
             - failed
+            - lapsed
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
@@ -23806,6 +23961,12 @@ components:
         current_password:
           type: string
           description: Required for `erasure`.
+        redirect_url:
+          type: string
+          format: uri
+          description: The storefront page the confirmation link opens, with the token
+            appended. Ignored unless it matches one of the store's allowed origins.
+          example: https://myshop.com/account/data-requests/confirm
     CreateNewsletterSubscriberParams:
       type: object
       properties:
@@ -24334,10 +24495,12 @@ components:
         requested_at: datetime
         status:
           enum:
+          - awaiting_confirmation
           - pending
           - processing
           - completed
           - failed
+          - lapsed
         updated_at: datetime
       associations: {}
       scopes:

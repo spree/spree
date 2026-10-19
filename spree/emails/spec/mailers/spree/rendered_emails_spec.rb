@@ -38,6 +38,9 @@ describe 'rendered emails', type: :mailer do
       'refund' => Spree::ReturnMailer.refunded_email(create(:received_return, store: store)),
       'password reset' => Spree::CustomerMailer.password_reset_email(create(:user, first_name: payload), 'token', store),
       'data export' => Spree::CustomerMailer.data_export_email(create(:data_request, store: store)),
+      'data request confirmation' => Spree::CustomerMailer.data_request_confirmation_email(
+        create(:data_request, :erasure, :awaiting_confirmation, store: store), 'token'
+      ),
       'newsletter confirmation' => Spree::NewsletterMailer.email_confirmation(create(:newsletter_subscriber, store: store)),
       'company invitation' => Spree::CompanyMailer.invitation_email(create(:company_invitation, company: company)),
       'seller approved' => Spree::SellerMailer.approved_email(seller),
