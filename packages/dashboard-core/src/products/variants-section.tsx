@@ -16,6 +16,9 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Card,
   CardContent,
@@ -31,7 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { PencilIcon, SwatchBookIcon, XIcon } from '@spree/dashboard-ui/icons'
+import { PencilIcon, SwatchBookIcon, TriangleAlertIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -361,31 +364,34 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
         />
 
         {orphanedKeys.length > 0 && (
-          <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950/40">
-            <p className="font-medium text-amber-900 dark:text-amber-100">
+          <Alert variant="warning">
+            <TriangleAlertIcon />
+            <AlertTitle>
               {t('admin.products.variants.orphan_warning', { count: orphanedKeys.length })}
-            </p>
-            {orphanedEntries.length > 0 && (
-              <ul className="mt-1 list-disc pl-5 text-amber-900 dark:text-amber-200">
-                {orphanedEntries.map((entry) => (
-                  <li key={entry.key}>{entry.label}</li>
-                ))}
-              </ul>
-            )}
-            <div className="mt-2 flex items-center justify-end gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={handleKeepOrphans}>
-                {t('admin.products.variants.keep')}
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={handleConfirmDropOrphans}
-              >
-                {t('admin.actions.remove')}
-              </Button>
-            </div>
-          </div>
+            </AlertTitle>
+            <AlertDescription>
+              {orphanedEntries.length > 0 && (
+                <ul className="list-disc pl-5">
+                  {orphanedEntries.map((entry) => (
+                    <li key={entry.key}>{entry.label}</li>
+                  ))}
+                </ul>
+              )}
+              <div className="mt-2 flex items-center justify-end gap-2">
+                <Button type="button" variant="ghost" size="sm" onClick={handleKeepOrphans}>
+                  {t('admin.products.variants.keep')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleConfirmDropOrphans}
+                >
+                  {t('admin.actions.remove')}
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
         )}
 
         {fields.length > 0 && !awaitingOptionValues && (

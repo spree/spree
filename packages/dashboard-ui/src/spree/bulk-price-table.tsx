@@ -1,5 +1,6 @@
 import { PlusIcon, XIcon } from 'lucide-react'
 import { useMemo } from 'react'
+import { Alert, AlertDescription } from '../ui/alert'
 import { Button } from '../ui/button'
 import {
   DataGrid,
@@ -9,6 +10,7 @@ import {
   MoneyCell,
   ReadOnlyCell,
 } from './data-grid'
+import { CircleAlertIcon } from './icons'
 import { SearchInput } from './search-input'
 
 export interface BulkPriceRow {
@@ -318,12 +320,10 @@ export function BulkPriceTable({
     // table in a card does.
     <div className="flex h-full flex-col gap-3">
       {error && (
-        <div
-          role="alert"
-          className="mx-3 shrink-0 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-destructive text-sm"
-        >
-          {error}
-        </div>
+        <Alert variant="destructive" className="mx-3 w-auto shrink-0">
+          <CircleAlertIcon />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
       {showToolbar && (
         // Always-mounted toolbar. Conditionally rendering the search input

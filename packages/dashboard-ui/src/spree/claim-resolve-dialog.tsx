@@ -11,6 +11,7 @@ import {
 } from '../ui/dialog'
 import { Field, FieldLabel } from '../ui/field'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
+import { Item, ItemActions, ItemContent, ItemTitle } from '../ui/item'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Switch } from '../ui/switch'
 import type { RefundMethod } from './return-dialogs'
@@ -178,21 +179,23 @@ export function ClaimResolveDialog({
                 {t('admin.pages.orders.detail.claims.replacement_items')}
               </span>
               {lines.map((line) => (
-                <div
-                  key={line.id}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
-                >
-                  <span className="truncate text-sm">
-                    {line.label}
-                    <span className="text-muted-foreground"> ×{line.quantity}</span>
-                  </span>
-                  <Switch
-                    checked={replacing[line.id] ?? false}
-                    onCheckedChange={(checked) =>
-                      setReplacing({ ...replacing, [line.id]: checked })
-                    }
-                  />
-                </div>
+                <Item key={line.id} variant="outline" className="flex-nowrap border-border-subtle">
+                  <ItemContent className="min-w-0">
+                    <ItemTitle className="block truncate font-normal">
+                      {line.label}
+                      <span className="text-muted-foreground"> ×{line.quantity}</span>
+                    </ItemTitle>
+                  </ItemContent>
+                  <ItemActions>
+                    <Switch
+                      aria-label={line.label}
+                      checked={replacing[line.id] ?? false}
+                      onCheckedChange={(checked) =>
+                        setReplacing({ ...replacing, [line.id]: checked })
+                      }
+                    />
+                  </ItemActions>
+                </Item>
               ))}
             </div>
           )}

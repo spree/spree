@@ -19,6 +19,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@spree/dashboard-ui'
+import { CircleAlertIcon, InfoIcon } from '@spree/dashboard-ui/icons'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -155,6 +156,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
         <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
           {failure ? (
             <Alert variant="destructive">
+              <CircleAlertIcon />
               <AlertDescription>{failure}</AlertDescription>
             </Alert>
           ) : null}
@@ -309,6 +311,7 @@ function ConnectInstructions({
       )}
 
       <Alert variant="info">
+        <InfoIcon />
         <AlertDescription>{t('admin.mcp_connect.bounded_note')}</AlertDescription>
       </Alert>
     </div>

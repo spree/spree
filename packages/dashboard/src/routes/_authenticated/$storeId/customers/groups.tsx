@@ -15,6 +15,11 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
   RowActions,
   Sheet,
   SheetContent,
@@ -333,14 +338,20 @@ function NameDescriptionFields({ form }: { form: UseFormReturn<CustomerGroupForm
 function MembersSummary({ count, href }: { count: number; href: string }) {
   const { t } = useTranslation()
   return (
-    <div className="flex items-center justify-between rounded-md border bg-muted/40 px-3 py-2">
-      <div className="flex items-center gap-2 text-sm">
-        <UsersIcon className="size-4 text-muted-foreground" />
-        <span>{t('admin.customers.groups.count', { count })}</span>
-      </div>
-      <Link to={href as never} className="text-sm font-medium text-primary hover:underline">
-        {t('admin.customers.groups.view_members')}
-      </Link>
-    </div>
+    <Item variant="muted" size="sm">
+      <ItemMedia variant="icon">
+        <UsersIcon className="text-muted-foreground" />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle className="font-normal">
+          {t('admin.customers.groups.count', { count })}
+        </ItemTitle>
+      </ItemContent>
+      <ItemActions>
+        <Link to={href as never} className="text-sm font-medium text-primary hover:underline">
+          {t('admin.customers.groups.view_members')}
+        </Link>
+      </ItemActions>
+    </Item>
   )
 }

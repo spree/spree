@@ -6,6 +6,11 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -112,28 +117,29 @@ export function AddLineItemDialog({
               </Field>
 
               {selectedVariant && (
-                <div className="flex items-center justify-between rounded-lg border border-primary/30 bg-primary/5 p-3">
-                  <div>
-                    <div className="text-sm font-medium">
-                      {selectedVariant.product_name ?? selectedVariant.sku}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
+                <Item variant="outline" className="border-primary/30 bg-primary/5">
+                  <ItemContent>
+                    <ItemTitle>{selectedVariant.product_name ?? selectedVariant.sku}</ItemTitle>
+                    <ItemDescription className="text-xs">
                       {selectedVariant.options_text && (
                         <span>{selectedVariant.options_text} · </span>
                       )}
                       {t('admin.orders.detail.variant_search.sku_prefix')}:{' '}
                       {selectedVariant.sku || '—'} · {formatPrice(selectedVariant.price)}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedVariant(null)}
-                    className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
-                    aria-label={t('admin.a11y.clear_selection')}
-                  >
-                    <XCircleIcon className="size-4" />
-                  </button>
-                </div>
+                    </ItemDescription>
+                  </ItemContent>
+                  <ItemActions>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      onClick={() => setSelectedVariant(null)}
+                      aria-label={t('admin.a11y.clear_selection')}
+                    >
+                      <XCircleIcon className="size-4" />
+                    </Button>
+                  </ItemActions>
+                </Item>
               )}
 
               <Field>

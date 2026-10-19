@@ -26,16 +26,19 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemTitle,
+  RowActions,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -49,10 +52,8 @@ import {
   BadgeCheckIcon,
   BanIcon,
   DownloadIcon,
-  EllipsisVerticalIcon,
   PaperclipIcon,
   PlusIcon,
-  TrashIcon,
 } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
@@ -178,145 +179,137 @@ export function TaxExemptionCertificatesCard({
           </p>
         </CardContent>
       ) : (
-        <CardContent className="flex flex-col gap-3">
-          {certificates.map((certificate) => (
-            <div
-              key={certificate.id}
-              className="flex items-start justify-between gap-3 rounded-md border p-3"
-            >
-              <div className="flex min-w-0 flex-col gap-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium text-sm">{certificate.certificate_number}</span>
-                  <StatusBadge
-                    status={certificate.status}
-                    label={t(`admin.tax_exemption_certificates.status.${certificate.status}`, {
-                      defaultValue: certificate.status,
-                    })}
-                  />
-                  {certificate.lapsed && certificate.status !== 'expired' && (
+        <CardContent>
+          <ItemGroup className="gap-3">
+            {certificates.map((certificate) => (
+              <Item key={certificate.id} role="listitem" variant="outline" className="items-start">
+                <ItemContent className="min-w-0">
+                  <ItemTitle className="flex-wrap">
+                    {certificate.certificate_number}
                     <StatusBadge
-                      status="expired"
-                      label={t('admin.tax_exemption_certificates.lapsed')}
+                      status={certificate.status}
+                      label={t(`admin.tax_exemption_certificates.status.${certificate.status}`, {
+                        defaultValue: certificate.status,
+                      })}
                     />
-                  )}
-                </div>
-                <span className="text-muted-foreground text-xs">
-                  {certificate.tax_exemption_reason?.name ?? '—'}
-                  {' · '}
-                  <JurisdictionLabel
-                    countryCode={certificate.country_code}
-                    stateCode={certificate.state_code}
-                  />
-                </span>
-
-                <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-xs">
-                  {certificate.issuing_authority && (
-                    <>
-                      <dt className="text-muted-foreground">
-                        {t('admin.fields.issuing_authority.label')}
-                      </dt>
-                      <dd>{certificate.issuing_authority}</dd>
-                    </>
-                  )}
-                  {certificate.issued_at && (
-                    <>
-                      <dt className="text-muted-foreground">{t('admin.fields.issued_at.label')}</dt>
-                      <dd>
-                        <StoreDate iso={certificate.issued_at} />
-                      </dd>
-                    </>
-                  )}
-                  <dt className="text-muted-foreground">{t('admin.fields.expires_at.label')}</dt>
-                  <dd>
-                    {certificate.expires_at ? (
-                      <StoreDate iso={certificate.expires_at} />
-                    ) : (
-                      t('admin.tax_exemption_certificates.never_expires')
+                    {certificate.lapsed && certificate.status !== 'expired' && (
+                      <StatusBadge
+                        status="expired"
+                        label={t('admin.tax_exemption_certificates.lapsed')}
+                      />
                     )}
-                  </dd>
-                  {certificate.verified_at && (
-                    <>
-                      <dt className="text-muted-foreground">
-                        {t('admin.tax_exemption_certificates.verified_at')}
-                      </dt>
-                      <dd>
-                        <StoreDate iso={certificate.verified_at} />
-                      </dd>
-                    </>
-                  )}
-                </dl>
+                  </ItemTitle>
+                  <ItemDescription className="text-xs">
+                    {certificate.tax_exemption_reason?.name ?? '—'}
+                    {' · '}
+                    <JurisdictionLabel
+                      countryCode={certificate.country_code}
+                      stateCode={certificate.state_code}
+                    />
+                  </ItemDescription>
 
-                {certificate.document_filename ? (
-                  <Button
-                    type="button"
-                    variant="link"
-                    size="sm"
-                    className="h-auto justify-start p-0 text-xs"
-                    onClick={() => handleDownload(certificate)}
-                  >
-                    <PaperclipIcon className="size-3" />
-                    {certificate.document_filename}
-                    {certificate.document_byte_size ? (
-                      <span className="text-muted-foreground">
-                        ({formatFileSize(certificate.document_byte_size)})
-                      </span>
-                    ) : null}
-                  </Button>
-                ) : (
-                  <span className="text-muted-foreground text-xs">
-                    {t('admin.tax_exemption_certificates.no_document')}
-                  </span>
-                )}
-              </div>
+                  <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-xs">
+                    {certificate.issuing_authority && (
+                      <>
+                        <dt className="text-muted-foreground">
+                          {t('admin.fields.issuing_authority.label')}
+                        </dt>
+                        <dd>{certificate.issuing_authority}</dd>
+                      </>
+                    )}
+                    {certificate.issued_at && (
+                      <>
+                        <dt className="text-muted-foreground">
+                          {t('admin.fields.issued_at.label')}
+                        </dt>
+                        <dd>
+                          <StoreDate iso={certificate.issued_at} />
+                        </dd>
+                      </>
+                    )}
+                    <dt className="text-muted-foreground">{t('admin.fields.expires_at.label')}</dt>
+                    <dd>
+                      {certificate.expires_at ? (
+                        <StoreDate iso={certificate.expires_at} />
+                      ) : (
+                        t('admin.tax_exemption_certificates.never_expires')
+                      )}
+                    </dd>
+                    {certificate.verified_at && (
+                      <>
+                        <dt className="text-muted-foreground">
+                          {t('admin.tax_exemption_certificates.verified_at')}
+                        </dt>
+                        <dd>
+                          <StoreDate iso={certificate.verified_at} />
+                        </dd>
+                      </>
+                    )}
+                  </dl>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon-xs">
-                    <EllipsisVerticalIcon className="size-4" />
-                    <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {certificate.document_url && (
-                    <DropdownMenuItem onClick={() => handleDownload(certificate)}>
-                      <DownloadIcon className="size-4" />
-                      {t('admin.tax_exemption_certificates.download_action')}
-                    </DropdownMenuItem>
-                  )}
-                  {canEdit && certificate.status === 'pending' && (
-                    <DropdownMenuItem
-                      disabled={verifyMutation.isPending}
-                      onClick={() =>
-                        verifyMutation.mutateAsync(certificate.id).catch(() => undefined)
-                      }
+                  {certificate.document_filename ? (
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="sm"
+                      className="h-auto justify-start p-0 text-xs"
+                      onClick={() => handleDownload(certificate)}
                     >
-                      <BadgeCheckIcon className="size-4" />
-                      {t('admin.tax_exemption_certificates.verify_action')}
-                    </DropdownMenuItem>
+                      <PaperclipIcon className="size-3" />
+                      {certificate.document_filename}
+                      {certificate.document_byte_size ? (
+                        <span className="text-muted-foreground">
+                          ({formatFileSize(certificate.document_byte_size)})
+                        </span>
+                      ) : null}
+                    </Button>
+                  ) : (
+                    <span className="text-muted-foreground text-xs">
+                      {t('admin.tax_exemption_certificates.no_document')}
+                    </span>
                   )}
-                  {canEdit && certificate.status !== 'revoked' && (
-                    <DropdownMenuItem
-                      variant="destructive"
-                      disabled={revokeMutation.isPending}
-                      onClick={() => handleRevoke(certificate)}
-                    >
-                      <BanIcon className="size-4" />
-                      {t('admin.tax_exemption_certificates.revoke_action')}
-                    </DropdownMenuItem>
-                  )}
-                  {canEdit && certificate.can_be_deleted && (
-                    <DropdownMenuItem
-                      variant="destructive"
-                      onClick={() => handleDelete(certificate)}
-                    >
-                      <TrashIcon className="size-4" />
-                      {t('admin.actions.delete')}
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ))}
+                </ItemContent>
+
+                <ItemActions>
+                  <RowActions
+                    actions={[
+                      {
+                        key: 'download',
+                        label: t('admin.tax_exemption_certificates.download_action'),
+                        icon: <DownloadIcon className="size-4" />,
+                        visible: !!certificate.document_url,
+                        onSelect: () => handleDownload(certificate),
+                      },
+                      {
+                        key: 'verify',
+                        label: t('admin.tax_exemption_certificates.verify_action'),
+                        icon: <BadgeCheckIcon className="size-4" />,
+                        visible: canEdit && certificate.status === 'pending',
+                        disabled: verifyMutation.isPending,
+                        onSelect: () =>
+                          verifyMutation.mutateAsync(certificate.id).catch(() => undefined),
+                      },
+                      {
+                        key: 'revoke',
+                        label: t('admin.tax_exemption_certificates.revoke_action'),
+                        icon: <BanIcon className="size-4" />,
+                        visible: canEdit && certificate.status !== 'revoked',
+                        disabled: revokeMutation.isPending,
+                        destructive: true,
+                        onSelect: () => handleRevoke(certificate),
+                      },
+                      {
+                        key: 'delete',
+                        visible: canEdit && !!certificate.can_be_deleted,
+                        destructive: true,
+                        onSelect: () => handleDelete(certificate),
+                      },
+                    ]}
+                  />
+                </ItemActions>
+              </Item>
+            ))}
+          </ItemGroup>
         </CardContent>
       )}
 

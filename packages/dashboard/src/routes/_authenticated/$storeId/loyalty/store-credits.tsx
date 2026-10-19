@@ -17,6 +17,10 @@ import {
   Card,
   CardContent,
   cn,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemTitle,
   Pagination,
   RelativeTime,
   RowActions,
@@ -386,20 +390,25 @@ function StoreCreditSheet({
                   <>
                     <ul className="flex flex-col divide-y rounded-md border">
                       {events.data.map((event) => (
-                        <li
+                        <Item
                           key={event.id}
-                          className="flex items-baseline justify-between gap-3 p-3"
+                          render={<li />}
+                          className="flex-nowrap items-baseline gap-3 rounded-none border-0 p-3"
                         >
-                          <span className="text-sm">{event.display_action ?? event.action}</span>
-                          <span className="flex items-baseline gap-3">
+                          <ItemContent>
+                            <ItemTitle className="font-normal">
+                              {event.display_action ?? event.action}
+                            </ItemTitle>
+                          </ItemContent>
+                          <ItemActions className="items-baseline gap-3">
                             <span className="text-sm tabular-nums">
                               <Money amount={event.amount} currency={credit.currency} />
                             </span>
                             <span className="whitespace-nowrap text-muted-foreground text-xs">
                               <RelativeTime iso={event.created_at} />
                             </span>
-                          </span>
-                        </li>
+                          </ItemActions>
+                        </Item>
                       ))}
                     </ul>
                     {events.meta && <Pagination meta={events.meta} onPageChange={setLedgerPage} />}

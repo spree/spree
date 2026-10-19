@@ -32,7 +32,14 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { HistoryIcon, RotateCcwIcon, SendIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
+import {
+  HistoryIcon,
+  InfoIcon,
+  RotateCcwIcon,
+  SendIcon,
+  Trash2Icon,
+  TriangleAlertIcon,
+} from '@spree/dashboard-ui/icons'
 import {
   CodeEditor,
   type CodeEditorCompletion,
@@ -449,6 +456,7 @@ function EmailTemplateEditor({
         <div className="flex flex-col gap-4">
           {template.default_changed && template.base_body !== null && (
             <Alert variant="warning">
+              <TriangleAlertIcon />
               <AlertTitle>{t('admin.email_templates.default_update.title')}</AlertTitle>
               <AlertDescription>
                 {t('admin.email_templates.default_update.description')}
@@ -608,6 +616,7 @@ function EveryLanguageNotice({ language }: { language: string }) {
 
   return (
     <Alert variant="info">
+      <InfoIcon />
       <AlertDescription>
         {t('admin.email_templates.every_language.notice', {
           language: languageName(language) ?? language,

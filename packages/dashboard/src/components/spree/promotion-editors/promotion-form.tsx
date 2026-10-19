@@ -9,8 +9,14 @@ import type {
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
-import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
-import { PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
+import {
+  Alert,
+  AlertDescription,
+  DropdownMenuItem,
+  formatCalculatorSummary,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { CircleAlertIcon, PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { useEffect, useState } from 'react'
 import {
@@ -22,6 +28,7 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
+import { TypePickerSheet } from '../type-picker-sheet'
 import { EditorShell } from './editor-shell'
 import './register'
 import {
@@ -32,7 +39,6 @@ import {
   mapSpreeErrorsToForm,
   Slot,
   Subject,
-  typeDescription,
   typeLabel,
   useCountryDisplayName,
   usePermissions,
@@ -313,12 +319,10 @@ export function PromotionForm({
           main={
             <>
               {form.formState.errors.root?.message && (
-                <p
-                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                  role="alert"
-                >
-                  {form.formState.errors.root.message}
-                </p>
+                <Alert variant="destructive">
+                  <CircleAlertIcon />
+                  <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                </Alert>
               )}
               <RulesCard
                 form={form}
@@ -755,10 +759,17 @@ function RulesCard({
         </div>
 
         {pickerOpen && (
-          <RulePickerSheet
+          <TypePickerSheet
+            family="promotion_rule"
+            title={t('admin.promotions.rule_picker.title')}
+            description={t('admin.promotions.rule_picker.description')}
+            emptyMessage={t(
+              types.length === 0
+                ? 'admin.promotions.rule_types_empty'
+                : 'admin.promotions.rule_types_all_used',
+            )}
             // One rule type per promotion (backend uniqueness on `type`).
             types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
-            registeredCount={types.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -969,66 +980,6 @@ function customerLabel(c: Customer): string {
   return c.full_name || c.email || ''
 }
 
-function RulePickerSheet({
-  types,
-  registeredCount,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  /** Types still selectable — already-added types are filtered out upstream. */
-  types: ResourceTypeDefinition[]
-  /** Total registered types regardless of selection. */
-  registeredCount: number
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  const emptyKey =
-    registeredCount === 0
-      ? 'admin.promotions.rule_types_empty'
-      : 'admin.promotions.rule_types_all_used'
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.promotions.rule_picker.title')}</SheetTitle>
-          <SheetDescription>{t('admin.promotions.rule_picker.description')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
-          ) : (
-            types.map((tt) => (
-              <button
-                key={tt.type}
-                type="button"
-                onClick={() => onPicked(tt)}
-                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-              >
-                <span className="text-sm font-medium">
-                  {typeLabel('promotion_rule', tt.type, tt.label)}
-                </span>
-                {tt.description && (
-                  <span className="text-xs text-muted-foreground">
-                    {typeDescription('promotion_rule', tt.type, tt.description)}
-                  </span>
-                )}
-              </button>
-            ))
-          )}
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
-}
-
 function RuleEditSheet({
   draft,
   types,
@@ -1160,7 +1111,10 @@ function ActionsCard({
         </div>
 
         {pickerOpen && (
-          <ActionPickerSheet
+          <TypePickerSheet
+            family="promotion_action"
+            title={t('admin.promotions.action_picker.title')}
+            description={t('admin.promotions.action_picker.description')}
             types={types}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
@@ -1278,54 +1232,6 @@ function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
     )
   if (parts.length === 0) return null
   return <div className="truncate text-xs text-muted-foreground">{parts.join(' · ')}</div>
-}
-
-function ActionPickerSheet({
-  types,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  types: ResourceTypeDefinition[]
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.promotions.action_picker.title')}</SheetTitle>
-          <SheetDescription>{t('admin.promotions.action_picker.description')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.map((type) => (
-            <button
-              key={type.type}
-              type="button"
-              onClick={() => onPicked(type)}
-              className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-            >
-              <span className="text-sm font-medium">
-                {typeLabel('promotion_action', type.type, type.label)}
-              </span>
-              {type.description && (
-                <span className="text-xs text-muted-foreground">
-                  {typeDescription('promotion_action', type.type, type.description)}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
 }
 
 function ActionEditSheet({

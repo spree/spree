@@ -30,7 +30,16 @@ import {
   usePermissions,
   useResourceKeyBuilder,
 } from '@spree/dashboard-core'
-import { Button, DragHandle, Switch, useConfirm } from '@spree/dashboard-ui'
+import {
+  Button,
+  DragHandle,
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+  Switch,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { PlusIcon, SlidersHorizontalIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { type CSSProperties, useMemo, useState } from 'react'
@@ -334,20 +343,18 @@ function RuleTypePicker({
       {types.map((type) => {
         const description = typeDescription('order_routing_rule', type.type, type.description ?? '')
         return (
-          <button
+          <Item
             key={type.type}
-            type="button"
-            disabled={disabled}
-            className="rounded-md px-2 py-1.5 text-left hover:bg-accent disabled:opacity-50"
+            size="xs"
+            render={<button type="button" disabled={disabled} />}
+            className="cursor-pointer text-left hover:bg-accent disabled:cursor-default disabled:opacity-50"
             onClick={() => onPick(type)}
           >
-            <span className="block text-sm">
-              {typeLabel('order_routing_rule', type.type, type.label)}
-            </span>
-            {description && (
-              <span className="block text-xs text-muted-foreground">{description}</span>
-            )}
-          </button>
+            <ItemContent>
+              <ItemTitle>{typeLabel('order_routing_rule', type.type, type.label)}</ItemTitle>
+              {description && <ItemDescription>{description}</ItemDescription>}
+            </ItemContent>
+          </Item>
         )
       })}
       <Button type="button" variant="outline" size="sm" className="self-start" onClick={onCancel}>

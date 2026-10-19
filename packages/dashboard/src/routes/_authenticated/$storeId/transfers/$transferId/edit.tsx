@@ -1,5 +1,6 @@
 import { PageHeader } from '@spree/dashboard-core'
 import { Alert, AlertDescription } from '@spree/dashboard-ui'
+import { InfoIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
@@ -37,6 +38,7 @@ function EditStockTransferPage() {
           backTo={`transfers/${transferId}`}
         />
         <Alert>
+          <InfoIcon />
           <AlertDescription>{t('admin.stock_transfers.errors.not_editable')}</AlertDescription>
         </Alert>
       </div>
