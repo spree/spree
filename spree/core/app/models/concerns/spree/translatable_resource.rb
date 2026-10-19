@@ -85,6 +85,40 @@ module Spree
       def arel_table_alias
         Arel::Table.new(translation_table_alias)
       end
+
+      # Sorts translated fields by the translation, or by the default-language
+      # value in the base column when the translation is missing or empty.
+      # Ransack sorts them by the translation alone, which leaves untranslated
+      # records unordered. On a DISTINCT relation the value is selected as
+      # well, because PostgreSQL rejects an ORDER BY the select list lacks.
+      #
+      # @return [ActiveRecord::Relation]
+      def with_translation_fallback_order
+        relation = all
+        return relation unless relation.order_values.any? { |node| translated_ordering?(node) }
+
+        relation = relation.select(arel_table[Arel.star]) if relation.distinct_value && relation.select_values.empty?
+        orders = relation.order_values.map do |node|
+          next node unless translated_ordering?(node)
+
+          value = Arel::Nodes::NamedFunction.new('COALESCE', [
+            Arel::Nodes::NamedFunction.new('NULLIF', [node.expr, Arel::Nodes.build_quoted('')]),
+            arel_table[node.expr.name]
+          ])
+          relation = relation.select(Arel::Nodes::As.new(value, Arel.sql('translated_sort'))) if relation.distinct_value
+          node.class.new(value)
+        end
+
+        relation.reorder(orders)
+      end
+
+      private
+
+      def translated_ordering?(node)
+        node.is_a?(Arel::Nodes::Ordering) &&
+          node.expr.is_a?(Mobility::Plugins::Arel::Attribute) &&
+          self <= node.expr.backend_class.model_class
+      end
     end
 
     def get_field_with_locale(locale, field_name, fallback: false)

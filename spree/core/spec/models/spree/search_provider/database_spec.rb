@@ -91,6 +91,23 @@ module Spree
         end
       end
 
+      context 'with a name sort in a non-default locale' do
+        let(:category) { create(:category, name: 'Clothing') }
+
+        before do
+          create(:product_translation, translated_model: product_2, locale: 'de', name: 'Anzug')
+          [product_1, product_2, product_3].each { |product| product.categories << category }
+        end
+
+        it 'sorts filtered products by the translation, falling back to the base name' do
+          products = Mobility.with_locale(:de) do
+            provider.search_and_filter(scope: scope, filters: { 'in_category' => category.prefixed_id }, sort: 'name').products.to_a
+          end
+
+          expect(products).to eq([product_2, product_3, product_1])
+        end
+      end
+
       context 'with custom price sort' do
         subject(:result) { provider.search_and_filter(scope: scope, sort: 'price') }
 

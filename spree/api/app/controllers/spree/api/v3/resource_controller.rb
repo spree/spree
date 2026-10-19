@@ -268,6 +268,7 @@ module Spree
                     preload_associations_lazily.
                     ransack(ransack_params, auth_object: ransack_auth_object)
           result = @search.result(distinct: collection_distinct?)
+          result = result.with_translation_fallback_order if model_class.include?(Spree::TranslatableResource)
           pagy_options = { limit: limit, page: page }
           result = apply_collection_sort(result)
           @pagy, @collection = pagy(result, **pagy_options)

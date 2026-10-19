@@ -271,6 +271,23 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(names).to eq(names.sort.reverse)
       end
 
+      context 'by name in a non-default locale' do
+        let!(:translated_product) { create(:product, name: 'Zulu Product') }
+
+        before do
+          create(:product_translation, translated_model: translated_product, locale: 'de', name: 'Aal')
+          allow(controller).to receive(:current_locale).and_return('de')
+        end
+
+        it 'sorts filtered products by the translation, falling back to the base name' do
+          ids = [product, second_product, translated_product].map(&:prefixed_id)
+          get :index, params: { sort: 'name', q: { id_in: ids } }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['data'].pluck('id')).to eq([translated_product, second_product, product].map(&:prefixed_id))
+        end
+      end
+
       context 'by price' do
         let!(:cheap_product) do
           create(:product, name: 'Cheap').tap do |p|
