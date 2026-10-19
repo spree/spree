@@ -17,9 +17,10 @@ import {
   useResourceKey,
   useStore,
 } from '@spree/dashboard-core'
-import { DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
+import { Alert, AlertDescription, DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
 import {
   CalendarOffIcon,
+  CircleAlertIcon,
   PauseIcon,
   PencilIcon,
   PlayIcon,
@@ -299,12 +300,10 @@ export function PriceListForm({
             main={
               <>
                 {form.formState.errors.root?.message && (
-                  <p
-                    className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                    role="alert"
-                  >
-                    {form.formState.errors.root.message}
-                  </p>
+                  <Alert variant="destructive">
+                    <CircleAlertIcon />
+                    <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                  </Alert>
                 )}
                 <RulesCard form={form} rulesArray={rulesArray} />
                 {mode === 'edit' && priceList && (

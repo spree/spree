@@ -9,8 +9,14 @@ import type {
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
-import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
-import { PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
+import {
+  Alert,
+  AlertDescription,
+  DropdownMenuItem,
+  formatCalculatorSummary,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { CircleAlertIcon, PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { useEffect, useState } from 'react'
 import {
@@ -313,12 +319,10 @@ export function PromotionForm({
           main={
             <>
               {form.formState.errors.root?.message && (
-                <p
-                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                  role="alert"
-                >
-                  {form.formState.errors.root.message}
-                </p>
+                <Alert variant="destructive">
+                  <CircleAlertIcon />
+                  <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                </Alert>
               )}
               <RulesCard
                 form={form}

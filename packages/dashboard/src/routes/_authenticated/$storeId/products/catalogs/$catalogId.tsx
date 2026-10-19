@@ -13,6 +13,8 @@ import {
 } from '@spree/dashboard-core'
 import {
   ActiveBadge,
+  Alert,
+  AlertDescription,
   Button,
   Card,
   CardContent,
@@ -30,7 +32,7 @@ import {
   Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PauseIcon, PlayIcon, TableIcon } from '@spree/dashboard-ui/icons'
+import { CircleAlertIcon, PauseIcon, PlayIcon, TableIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
@@ -321,12 +323,10 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
             main={
               <>
                 {form.formState.errors.root?.message && (
-                  <p
-                    className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                    role="alert"
-                  >
-                    {form.formState.errors.root.message}
-                  </p>
+                  <Alert variant="destructive">
+                    <CircleAlertIcon />
+                    <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                  </Alert>
                 )}
                 <DeferredProductMembershipCard
                   parentId={catalog.id}

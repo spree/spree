@@ -16,6 +16,9 @@ import {
   Subject,
 } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertAction,
+  AlertDescription,
   Badge,
   Button,
   Card,
@@ -37,7 +40,7 @@ import {
   useFormSubmitShortcut,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
-import { AlertTriangleIcon, PencilIcon, PlayIcon, RotateCcwIcon } from '@spree/dashboard-ui/icons'
+import { CircleAlertIcon, PencilIcon, PlayIcon, RotateCcwIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { lazy, Suspense } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
@@ -317,15 +320,23 @@ function AutoDisabledAlert({
 }) {
   const { t } = useTranslation()
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive sm:flex-row sm:items-center sm:justify-between">
-      <span className="flex items-start gap-2">
-        <AlertTriangleIcon className="size-4 shrink-0" />
+    <Alert variant="destructive" className="has-data-[slot=alert-action]:pr-28">
+      <CircleAlertIcon />
+      <AlertDescription>
         {endpoint.disabled_reason || t('admin.pages.settings.webhooks.health.auto_disabled_alert')}
-      </span>
-      <Button type="button" size="sm" variant="outline" onClick={onReEnable} disabled={reEnabling}>
-        {t('admin.pages.settings.webhooks.health.re_enable_cta')}
-      </Button>
-    </div>
+      </AlertDescription>
+      <AlertAction>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={onReEnable}
+          disabled={reEnabling}
+        >
+          {t('admin.pages.settings.webhooks.health.re_enable_cta')}
+        </Button>
+      </AlertAction>
+    </Alert>
   )
 }
 

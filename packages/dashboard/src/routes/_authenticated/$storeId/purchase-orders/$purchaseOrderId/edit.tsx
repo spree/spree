@@ -1,5 +1,6 @@
 import { PageHeader } from '@spree/dashboard-core'
 import { Alert, AlertDescription } from '@spree/dashboard-ui'
+import { InfoIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
@@ -42,6 +43,7 @@ function EditPurchaseOrderPage() {
           backTo={`purchase-orders/${purchaseOrderId}`}
         />
         <Alert>
+          <InfoIcon />
           <AlertDescription>{t('admin.purchase_orders.errors.not_editable')}</AlertDescription>
         </Alert>
       </div>

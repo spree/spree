@@ -27,7 +27,14 @@ import {
   toastManager,
   Wizard,
 } from '@spree/dashboard-ui'
-import { CheckIcon, InfoIcon, PackageIcon, PlusIcon, XIcon } from '@spree/dashboard-ui/icons'
+import {
+  CheckIcon,
+  CircleAlertIcon,
+  InfoIcon,
+  PackageIcon,
+  PlusIcon,
+  XIcon,
+} from '@spree/dashboard-ui/icons'
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -221,9 +228,10 @@ function CatalogWizard({
       </div>
 
       {form.formState.errors.root?.message && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
-          {form.formState.errors.root.message}
-        </p>
+        <Alert variant="destructive">
+          <CircleAlertIcon />
+          <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+        </Alert>
       )}
 
       {step === 'details' && <DetailsStep form={form} />}
@@ -231,9 +239,12 @@ function CatalogWizard({
         <>
           <CatalogAudienceStep form={form} assigning={assigning} onAssigningChange={setAssigning} />
           {audienceCount === 0 && (
-            <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
-              {t('admin.catalogs.wizard.audience_none_warning')}
-            </p>
+            <Alert variant="info">
+              <InfoIcon />
+              <AlertDescription>
+                {t('admin.catalogs.wizard.audience_none_warning')}
+              </AlertDescription>
+            </Alert>
           )}
         </>
       )}
@@ -241,9 +252,12 @@ function CatalogWizard({
         <>
           <ProductsStep products={products} onChange={setProducts} />
           {products.length === 0 && (
-            <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
-              {t('admin.catalogs.wizard.products_none_warning')}
-            </p>
+            <Alert variant="info">
+              <InfoIcon />
+              <AlertDescription>
+                {t('admin.catalogs.wizard.products_none_warning')}
+              </AlertDescription>
+            </Alert>
           )}
         </>
       )}

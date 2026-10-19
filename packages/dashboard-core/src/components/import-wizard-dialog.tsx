@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertDescription,
   Badge,
   Button,
   Card,
@@ -33,6 +35,7 @@ import {
   CheckCircle2Icon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CircleAlertIcon,
   DownloadIcon,
   RotateCcwIcon,
   XIcon,
@@ -472,10 +475,10 @@ function MappingStep({
         </div>
 
         {error && (
-          <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-destructive text-sm">
-            <AlertTriangleIcon className="size-4 shrink-0" />
-            <span>{error.message}</span>
-          </div>
+          <Alert variant="destructive">
+            <CircleAlertIcon />
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
         )}
       </CardContent>
     </Card>

@@ -10,6 +10,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Alert,
+  AlertDescription,
   Badge,
   Button,
   Card,
@@ -28,6 +30,7 @@ import {
 import {
   CheckCircle2Icon,
   ChevronRightIcon,
+  CircleAlertIcon,
   CircleIcon,
   ClockIcon,
   ExternalLinkIcon,
@@ -284,9 +287,10 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
 
   // A rejection the seller cannot read is a rejection they cannot act on.
   const rejection = submission?.status === 'rejected' && submission.review_note && (
-    <p className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-      {submission.review_note}
-    </p>
+    <Alert variant="destructive">
+      <CircleAlertIcon />
+      <AlertDescription>{submission.review_note}</AlertDescription>
+    </Alert>
   )
 
   // Nothing to do on a finished line. The header already carries the tick and
