@@ -49,20 +49,19 @@ docker run -d --name meilisearch \
 For local development, Meilisearch runs without authentication by default — no API key is needed. For production, set a master key (minimum 16 bytes) via `MEILI_MASTER_KEY` when starting Meilisearch. Use this master key as your `MEILISEARCH_API_KEY`.
 </Info>
 
-### 2. Add the gem to your Gemfile
+### 2. Install the extension
 
-```ruby
-gem 'spree_meilisearch'
-```
+New Spree projects include `spree_meilisearch` already, so you can skip this step. To add it to an older project:
 
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree bundle install
+spree add meilisearch
 ```
 
-```bash Without Spree CLI
-bundle install
+```ruby Without Spree CLI
+# server/Gemfile — use the same version requirement as your `spree` gem, then run `bundle install`
+gem 'spree_meilisearch', '>= 6.0.0'
 ```
 
 </CodeGroup>

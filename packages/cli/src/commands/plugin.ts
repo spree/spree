@@ -473,6 +473,15 @@ function printNextSteps(answers: Answers, dst: string, installed: boolean): void
       `  See ${pc.cyan('https://spreecommerce.org/docs/developer/contributing/creating-an-extension')}`,
     )
   }
+  const installArgs = [
+    ...(answers.includeEngine ? ['--gem', answers.rubyName] : []),
+    ...(answers.includeDashboard ? ['--npm', buildVars(answers).npm_dashboard_package] : []),
+  ]
+  if (installArgs.length > 0) {
+    lines.push('')
+    lines.push(pc.bold('Installing it in a Spree project, once published'))
+    lines.push(`  ${pc.cyan(['spree add', ...installArgs].join(' '))}`)
+  }
   lines.push('')
   p.note(lines.join('\n'), 'Your plugin is scaffolded.')
 }

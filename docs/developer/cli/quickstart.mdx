@@ -132,15 +132,46 @@ See [Customizing the Backend](/developer/create-spree-app/quickstart#customizing
 
 ### `spree add`
 
-Add an optional part to an existing project.
+Add an optional part or an extension to an existing project.
 
 ```bash
 spree add dashboard           # the Admin Dashboard app in apps/dashboard/, to customize it
 spree add seller-dashboard    # the marketplace Seller Panel in apps/seller-dashboard/
 spree add ai                  # Spree agent skills + the docs MCP server for coding agents
+spree add stripe              # an extension, installed end to end
 ```
 
 `spree add ai` installs the [Spree agent skills](/developer/agentic/agent-skills) and connects Claude Code, Cursor and VS Code to the [docs MCP server](/developer/agentic/docs-mcp). It keeps the MCP servers your config files already list and is safe to re-run. Pass `--no-skills` or `--no-mcp` to set up only one of the two.
+
+#### Extensions
+
+`spree add <extension>` installs an official extension in one step: it adds the gem, runs the extension's installer if it has one, runs the migrations, installs its dashboard plugin if it has one, and restarts the server if it is running.
+
+| Extension | Command |
+| --- | --- |
+| [Stripe](/integrations/payments/stripe) | `spree add stripe` |
+| [PayPal](/integrations/payments/paypal) | `spree add paypal` |
+| [Adyen](/integrations/payments/adyen) | `spree add adyen` |
+| [Avalara AvaTax](/integrations/tax/avalara) | `spree add avatax` |
+| [Klaviyo](/integrations/marketing/klaviyo) | `spree add klaviyo` |
+| [EasyPost](/integrations/shipping/easypost) | `spree add easypost` |
+| [Meilisearch](/integrations/search/meilisearch) | `spree add meilisearch` |
+| [MCP server](/developer/mcp/quick-start) | `spree add mcp` |
+| [OpenTelemetry](/developer/providers/observability) | `spree add opentelemetry` |
+
+A few things to know:
+
+- **A project on the prebuilt image is ejected first.** The prebuilt image cannot load new gems, so the command offers to [eject](#spree-eject) the project. Ejecting switches to a new development database without your current data, so it asks before doing it. Pass `--yes` to agree up front, for example in a script.
+- **New projects already include some extensions.** Stripe, EasyPost, Meilisearch and OpenTelemetry come with every new project. Until you eject, the command tells you there is nothing to install for those. After ejecting, it runs their installer and migrations again, which is harmless.
+- **It is safe to run again.** If an install fails partway, the command puts your `Gemfile` and `config/` back as they were. Running it again finishes an install that stopped halfway, and keeps files the first run created.
+- **Setup notes come from the extension.** If an extension needs anything else, such as an environment variable, it says so while it installs.
+
+To install an extension that is not in this list, name its gem or dashboard plugin package. The command asks you to confirm, since Spree does not vouch for it:
+
+```bash
+spree add --gem spree_acme_loyalty
+spree add --gem spree_acme_loyalty --npm @acme/loyalty-dashboard
+```
 
 ### `spree logs`
 
@@ -358,7 +389,7 @@ Run a `bundle` command. Gems land in the `bundle_cache` volume (no image rebuild
 
 ```bash
 spree bundle install
-spree bundle add stripe
+spree bundle add faker
 spree bundle update spree_core
 spree bundle outdated
 ```

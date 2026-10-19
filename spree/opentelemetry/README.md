@@ -6,9 +6,8 @@ Distributed tracing for [Spree Commerce](https://spreecommerce.org) via
 With this gem installed, Spree exports traces as soon as the standard
 OpenTelemetry environment variables point at a collector — no code changes:
 
-```ruby
-# Gemfile
-gem 'spree_opentelemetry'
+```bash
+spree add opentelemetry   # or add gem 'spree_opentelemetry' to the Gemfile
 ```
 
 ```bash

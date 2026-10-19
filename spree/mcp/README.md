@@ -6,8 +6,8 @@ can merchandise the catalog, answer reporting questions and manage store setup
 in plain language, under the same tenancy and permission rules as the Admin
 API.
 
-```ruby
-gem 'spree_mcp'
+```bash
+spree add mcp   # or add gem 'spree_mcp' to the Gemfile
 ```
 
 The endpoint is `POST /api/v3/admin/mcp`, authenticated with a Spree secret API

@@ -25,15 +25,22 @@ one price, or digital-only stores.
 
 ## Setup
 
-### 1. Add the gem
+### 1. Install the extension
 
-```ruby Gemfile
-gem 'spree_easypost'
+New Spree projects include `spree_easypost` already, so you can skip this step. To add it to an older project:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree add easypost
 ```
 
-```bash
-bundle install
+```ruby Without Spree CLI
+# server/Gemfile — use the same version requirement as your `spree` gem, then run `bundle install`
+gem 'spree_easypost', '>= 6.0.0'
 ```
+
+</CodeGroup>
 
 ### 2. Get an API key
 
