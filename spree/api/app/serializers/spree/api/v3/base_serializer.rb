@@ -278,6 +278,8 @@ module Spree
             store: current_store,
             user: current_user,
             company: params[:company],
+            market: params[:market],
+            channel: params[:channel],
             quantity: quantity
           )
         end
@@ -296,8 +298,9 @@ module Spree
           return Spree::QuantityRule.new if current_store.nil?
 
           Spree::Current.quantity_rules_resolver_for(
-            company: Spree::Current.standing_company_for(current_user),
-            user: current_user
+            company: params.key?(:company) ? params[:company] : Spree::Current.standing_company_for(current_user),
+            user: current_user,
+            channel: params[:channel]
           ).call(variant)
         end
 

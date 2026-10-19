@@ -3676,12 +3676,18 @@
         "new": {
           "add_line_item": "Add line item",
           "company_help": "Attach this order to a business. The customer list then shows only people who can buy for it.",
+          "reset_items": {
+            "confirm": "Change and remove items",
+            "message_one": "The {{count}} item you picked may not be sold, or may cost something else, for this buyer, market or channel. It will be removed.",
+            "message_other": "The {{count}} items you picked may not be sold, or may cost something else, for this buyer, market or channel. They will be removed.",
+            "title": "Remove the picked items?"
+          },
           "search_variant": "Search variant…",
           "section_billing": "Billing",
           "section_customer": "Customer",
           "section_items": "Items",
           "section_market": "Market and channel",
-          "section_market_help": "Changing the market, channel or currency clears the items, because what can be sold and its price depend on them.",
+          "section_market_help": "What can be sold, and at what price, depends on the buyer, the market and the channel.",
           "section_notes": "Notes",
           "section_summary": "Summary",
           "select_company": "Company (optional)",

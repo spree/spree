@@ -3714,12 +3714,20 @@
         "new": {
           "add_line_item": "Dodaj pozycję",
           "company_help": "Przypisz to zamówienie do firmy. Lista klientów pokaże wtedy tylko osoby, które mogą dla niej kupować.",
+          "reset_items": {
+            "confirm": "Zmień i usuń pozycje",
+            "message_few": "{{count}} wybrane pozycje mogą nie być sprzedawane temu kupującemu, na tym rynku lub w tym kanale albo mieć inną cenę. Zostaną usunięte.",
+            "message_many": "{{count}} wybranych pozycji może nie być sprzedawanych temu kupującemu, na tym rynku lub w tym kanale albo mieć inną cenę. Zostaną usunięte.",
+            "message_one": "Wybrana pozycja ({{count}}) może nie być sprzedawana temu kupującemu, na tym rynku lub w tym kanale albo mieć inną cenę. Zostanie usunięta.",
+            "message_other": "{{count}} wybranej pozycji może nie być sprzedawane temu kupującemu, na tym rynku lub w tym kanale albo mieć inną cenę. Zostaną usunięte.",
+            "title": "Usunąć wybrane pozycje?"
+          },
           "search_variant": "Szukaj wariantu…",
           "section_billing": "Rozliczenie",
           "section_customer": "Klient",
           "section_items": "Pozycje",
           "section_market": "Rynek i kanał",
-          "section_market_help": "Zmiana rynku, kanału lub waluty usuwa pozycje, ponieważ dostępność i ceny od nich zależą.",
+          "section_market_help": "To, co można sprzedać i po jakiej cenie, zależy od kupującego, rynku i kanału.",
           "section_notes": "Notatki",
           "section_summary": "Podsumowanie",
           "select_company": "Firma (opcjonalnie)",

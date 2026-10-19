@@ -76,11 +76,32 @@ module Spree
           expect(order.locale).to eq('de')
         end
 
-        context 'and an explicit locale' do
-          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, locale: 'en' } }
+        context 'and one of its languages' do
+          before { market.update!(supported_locales: %w[de fr]) }
 
-          it 'keeps the given locale' do
-            expect(subject.value.locale).to eq('en')
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, locale: 'fr' } }
+
+          it 'keeps the given language' do
+            expect(subject.value.locale).to eq('fr')
+          end
+        end
+
+        context 'and a currency the market does not use' do
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, currency: 'USD' } }
+
+          it 'refuses the order' do
+            expect { subject }.not_to change(Spree::Order, :count)
+            expect(subject).to be_failure
+            expect(subject.value.errors[:currency]).to be_present
+          end
+        end
+
+        context 'and a language the market does not offer' do
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, locale: 'ja' } }
+
+          it 'refuses the order' do
+            expect(subject).to be_failure
+            expect(subject.value.errors[:locale]).to be_present
           end
         end
       end

@@ -115,6 +115,29 @@ test.describe('new order', () => {
     await expect(page.locator('#order-locale')).toContainText('DE')
   })
 
+  test('asks before a market change removes the picked items', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-context-${Date.now()}@example.com`)
+    const itemRow = page.getByRole('cell', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    await expect(itemRow).toBeVisible()
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('button', { name: /cancel/i }).click()
+    await expect(itemRow).toBeVisible()
+    await expect(page.locator('#order-currency')).not.toContainText('EUR')
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+    await dialog.getByRole('button', { name: /change and remove items/i }).click()
+    await expect(itemRow).toBeHidden()
+    await expect(page.locator('#order-currency')).toContainText('EUR')
+  })
+
   // The motivating case for this form: a purchase order arrives by email and
   // the merchant keys the order in, reference and paperwork together.
   test('carries a PO number and its document onto the created order', async ({ page }) => {

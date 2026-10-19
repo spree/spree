@@ -35001,6 +35001,48 @@ paths:
         description: Number of records per page
         schema:
           type: integer
+      - name: order_id
+        in: query
+        required: false
+        description: 'A draft order to sell to: lists only what its buyer can be sold
+          on its channel, priced in its market. Needs `read_orders`.'
+        schema:
+          type: string
+      - name: market_id
+        in: query
+        required: false
+        description: Prices in this market and lists only variants with a price in
+          its currency.
+        schema:
+          type: string
+      - name: channel_id
+        in: query
+        required: false
+        description: Lists only variants published on this channel. Defaults to the
+          store default channel when another sales context parameter is given.
+        schema:
+          type: string
+      - name: customer_id
+        in: query
+        required: false
+        description: Narrows to the customer's catalogs and prices as they would pay.
+          Needs `read_customers`.
+        schema:
+          type: string
+      - name: company_id
+        in: query
+        required: false
+        description: Narrows to the company's catalogs and prices under its agreement.
+          Needs `read_customers`.
+        schema:
+          type: string
+      - name: currency
+        in: query
+        required: false
+        description: Currency to price in. With `market_id` it must be the market's
+          currency.
+        schema:
+          type: string
       - name: q
         in: query
         required: false

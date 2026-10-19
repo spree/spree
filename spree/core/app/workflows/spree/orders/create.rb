@@ -28,6 +28,14 @@ module Spree
 
         return failure(:store_is_required) if store.nil?
 
+        @sales_context = Spree::SalesContext.new(
+          store: store,
+          market: (resolve_market if @params[:market_id].present?),
+          currency: @params[:currency],
+          locale: @params[:locale]
+        )
+        return refuse_sales_context unless @sales_context.valid?
+
         order = nil
         ApplicationRecord.transaction do
           order = build_order
@@ -56,15 +64,13 @@ module Spree
       private
 
       def build_order
-        market = resolve_market if @params[:market_id].present?
-
         attrs = {
           customer: @customer,
           created_by: @created_by,
           email: @params[:email] || @customer&.email,
-          market: market,
-          currency: @params[:currency].presence&.upcase || market&.currency || @store.default_currency,
-          locale: @params[:locale].presence || market&.default_locale || Spree::Current.locale,
+          market: @sales_context.market,
+          currency: @sales_context.currency,
+          locale: @sales_context.locale || Spree::Current.locale,
           customer_note: @params[:customer_note],
           po_number: @params[:po_number],
           internal_note: @params[:internal_note],
@@ -83,6 +89,12 @@ module Spree
         attrs.compact_blank!
 
         @store.orders.new(attrs)
+      end
+
+      def refuse_sales_context
+        order = @store.orders.new
+        order.errors.merge!(@sales_context.errors)
+        failure(order, order.errors.full_messages.to_sentence)
       end
 
       def resolve_market

@@ -3666,12 +3666,17 @@
         "new": {
           "add_line_item": "添加订单项",
           "company_help": "将此订单关联到某个公司。客户列表随后只显示可为其采购的人员。",
+          "reset_items": {
+            "confirm": "更改并移除商品",
+            "message_other": "已选的 {{count}} 件商品可能不向此买家、市场或渠道销售，或价格不同。它们将被移除。",
+            "title": "移除已选商品？"
+          },
           "search_variant": "搜索变体…",
           "section_billing": "账单",
           "section_customer": "客户",
           "section_items": "商品",
           "section_market": "市场和渠道",
-          "section_market_help": "更改市场、渠道或货币会清空商品，因为可售范围和价格取决于它们。",
+          "section_market_help": "可销售的商品及其价格取决于买家、市场和渠道。",
           "section_notes": "备注",
           "section_summary": "概览",
           "select_company": "公司（可选）",

@@ -4971,12 +4971,17 @@ export class AdminClient {
         ...options,
         // The sales context scopes and prices the list, so it stays out of the Ransack filters.
         params: params
-          ? (({ market_id, channel_id, customer_id, company_id, currency, ...list }) => ({
+          ? (({ order_id, market_id, channel_id, customer_id, company_id, currency, ...list }) => ({
               ...transformListParams(list),
               ...Object.fromEntries(
-                Object.entries({ market_id, channel_id, customer_id, company_id, currency }).filter(
-                  ([, value]) => value,
-                ),
+                Object.entries({
+                  order_id,
+                  market_id,
+                  channel_id,
+                  customer_id,
+                  company_id,
+                  currency,
+                }).filter(([, value]) => value),
               ),
             }))(params)
           : undefined,

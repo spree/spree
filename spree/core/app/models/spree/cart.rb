@@ -284,12 +284,7 @@ module Spree
     #
     # @return [ActiveRecord::Relation<Spree::Variant>]
     def orderable_variants
-      products = Spree.products_for_context_service.call(
-        store: store, channel: channel, customer: customer, company: resolved_company,
-        base: store.products.not_discontinued_on(channel)
-      ).value
-
-      Spree::Variant.for_products(products)
+      Spree::SalesContext.new(store: store, channel: channel, customer: customer, company: resolved_company).orderable_variants
     end
 
     # Removes out-of-stock/discontinued items and populates warnings

@@ -150,6 +150,21 @@ describe('variants', () => {
       expect(url!.searchParams.get('q[market_id]')).toBeNull()
       expect(url!.searchParams.get('q[search]')).toBe('shirt')
     })
+
+    it('sends a draft order as the sales context', async () => {
+      let url: URL | null = null
+      server.use(
+        http.get(`${API_PREFIX}/variants`, ({ request }) => {
+          url = new URL(request.url)
+          return HttpResponse.json(paginated([]))
+        }),
+      )
+
+      await createTestClient().variants.list({ order_id: 'or_abc' })
+
+      expect(url!.searchParams.get('order_id')).toBe('or_abc')
+      expect(url!.searchParams.get('q[order_id]')).toBeNull()
+    })
   })
 
   describe('get', () => {

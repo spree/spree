@@ -3676,12 +3676,18 @@
         "new": {
           "add_line_item": "Position hinzufügen",
           "company_help": "Diese Bestellung einem Unternehmen zuordnen. Die Kundenliste zeigt dann nur Personen, die dafür einkaufen dürfen.",
+          "reset_items": {
+            "confirm": "Ändern und Artikel entfernen",
+            "message_one": "Der ausgewählte Artikel ({{count}}) ist für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kostet etwas anderes. Er wird entfernt.",
+            "message_other": "Die {{count}} ausgewählten Artikel sind für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kosten etwas anderes. Sie werden entfernt.",
+            "title": "Ausgewählte Artikel entfernen?"
+          },
           "search_variant": "Variante suchen…",
           "section_billing": "Rechnung",
           "section_customer": "Kunde",
           "section_items": "Artikel",
           "section_market": "Markt und Kanal",
-          "section_market_help": "Wenn Sie Markt, Kanal oder Währung ändern, werden die Artikel entfernt, da Verfügbarkeit und Preise davon abhängen.",
+          "section_market_help": "Was verkauft werden kann und zu welchem Preis, hängt vom Käufer, vom Markt und vom Kanal ab.",
           "section_notes": "Notizen",
           "section_summary": "Zusammenfassung",
           "select_company": "Firma (optional)",

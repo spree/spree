@@ -5,7 +5,12 @@ module Spree
         class VariantsController < ResourceController
           scoped_resource :products
 
-          before_action :set_sales_context, only: :index
+          SALES_CONTEXT_PARAMS = %i[order_id market_id channel_id customer_id company_id].freeze
+
+          # A draft order's item picker asks with the order's market, channel and
+          # buyer, so it lists only what that buyer can be sold there, priced as
+          # they would pay.
+          before_action :load_sales_context, only: :index
 
           protected
 
@@ -22,15 +27,19 @@ module Spree
           # variant fell back to per-row price and stock queries.
           def scope
             variants = super.eligible.accessible_by(current_ability, ability_action_for_request)
-            return variants unless sales_context?
-
-            variants.for_products(sellable_products)
+            @sales_context ? variants.merge(@sales_context.sellable_variants) : variants
           end
 
           def serializer_params
-            return super unless sales_context?
+            return super unless @sales_context
 
-            super.merge(user: context_customer, company: context_company)
+            super.merge(
+              currency: @sales_context.currency,
+              user: @sales_context.customer,
+              company: @sales_context.company,
+              market: @sales_context.market,
+              channel: @sales_context.channel
+            )
           end
 
           # `active_stock_reservations` rides along with the stock levels:
@@ -47,43 +56,52 @@ module Spree
 
           private
 
-          # A draft order's item picker passes the order's market, channel and
-          # buyer, so the list holds only what that buyer can be sold there,
-          # priced as they would pay.
-          def sales_context?
-            params[:market_id].present? || params[:channel_id].present?
-          end
+          def load_sales_context
+            return if SALES_CONTEXT_PARAMS.none? { |key| params[key].present? }
 
-          def set_sales_context
-            return unless sales_context?
+            permission = required_sales_context_permission
+            return deny_missing_permission(permission) if permission && !holds_permission?(permission)
 
-            if params[:market_id].present?
-              Spree::Current.market = current_store.markets.find_by_prefix_id!(params[:market_id])
-              Spree::Current.currency = @current_currency = Spree::Current.market.currency if params[:currency].blank?
+            if params[:order_id].present?
+              @sales_context = Spree::SalesContext.from_order(context_order)
+            else
+              @sales_context = requested_sales_context
+              render_errors(@sales_context.errors) unless @sales_context.valid?
             end
-            Spree::Current.channel = current_store.channels.find_by_prefix_id!(params[:channel_id]) if params[:channel_id].present?
           end
 
-          def sellable_products
-            Spree.products_for_context_service.call(
+          def required_sales_context_permission
+            return 'read_orders' if params[:order_id].present?
+
+            'read_customers' if params[:customer_id].present? || params[:company_id].present?
+          end
+
+          def requested_sales_context
+            Spree::SalesContext.new(
               store: current_store,
-              channel: Spree::Current.channel,
-              customer: context_customer,
-              company: context_company,
-              base: current_store.products.available(Time.current, Spree::Current.currency)
-            ).value
+              market: find_requested(current_store.markets, :market_id),
+              channel: find_requested(current_store.channels, :channel_id),
+              customer: find_requested(Spree.customer_class.accessible_by(current_ability, :show), :customer_id),
+              company: find_requested(current_store.companies, :company_id),
+              currency: params[:currency]
+            )
           end
 
-          def context_customer
-            return if params[:customer_id].blank?
-
-            @context_customer ||= Spree.customer_class.accessible_by(current_ability, :show).find_by_prefix_id!(params[:customer_id])
+          def find_requested(relation, key)
+            relation.find_by_prefix_id!(params[key]) if params[key].present?
           end
 
-          def context_company
-            return if params[:company_id].blank?
+          def context_order
+            current_store.orders.accessible_by(current_ability, :show).find_by_prefix_id!(params[:order_id])
+          end
 
-            @context_company ||= current_store.companies.find_by_prefix_id!(params[:company_id])
+          def deny_missing_permission(permission)
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+              message: "Missing permission: #{permission}",
+              status: :forbidden,
+              details: { required_permission: permission }
+            )
           end
         end
       end

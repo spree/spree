@@ -3676,12 +3676,19 @@
         "new": {
           "add_line_item": "Ajouter une ligne d'article",
           "company_help": "Rattacher cette commande à une entreprise. La liste des clients n'affiche alors que les personnes autorisées à acheter pour elle.",
+          "reset_items": {
+            "confirm": "Modifier et retirer les articles",
+            "message_many": "Les {{count}} articles choisis ne sont peut-être pas vendus, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Ils seront retirés.",
+            "message_one": "L'article choisi ({{count}}) n'est peut-être pas vendu, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Il sera retiré.",
+            "message_other": "Les {{count}} articles choisis ne sont peut-être pas vendus, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Ils seront retirés.",
+            "title": "Retirer les articles choisis ?"
+          },
           "search_variant": "Rechercher une variante…",
           "section_billing": "Facturation",
           "section_customer": "Client",
           "section_items": "Articles",
           "section_market": "Marché et canal",
-          "section_market_help": "Changer de marché, de canal ou de devise vide les articles, car la disponibilité et les prix en dépendent.",
+          "section_market_help": "Ce qui peut être vendu, et à quel prix, dépend de l'acheteur, du marché et du canal.",
           "section_notes": "Notes",
           "section_summary": "Récapitulatif",
           "select_company": "Entreprise (facultatif)",

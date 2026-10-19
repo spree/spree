@@ -40,6 +40,7 @@ import {
   TableHeader,
   TableRow,
   Textarea,
+  useConfirm,
 } from '@spree/dashboard-ui'
 import { FileTextIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useMutation } from '@tanstack/react-query'
@@ -96,18 +97,21 @@ function NewOrderPage() {
   })
   const { errors } = form.formState
 
-  const { data: channelsData } = useChannels()
+  const confirm = useConfirm()
+  const { data: channelsData, isLoading: channelsLoading } = useChannels()
   const channels = channelsData?.data ?? []
 
   // A market fixes the order's currency and narrows its languages, so the two
   // follow the market rather than being chosen independently of it.
-  const { markets } = useAllMarkets()
+  const { markets, isLoading: marketsLoading } = useAllMarkets()
   const { currencies, locales, defaultCurrency, defaultLocale } = useStore()
   const marketId = form.watch('market_id')
   const market =
     markets.find((m) => m.id === marketId) ?? markets.find((m) => m.default) ?? markets[0]
   const currencyOptions = market ? [market.currency] : currencies
-  const localeOptions: string[] = market ? market.supported_locales : locales
+  const localeOptions: string[] = market
+    ? Array.from(new Set([market.default_locale, ...market.supported_locales]))
+    : locales
   const chosenLocale = form.watch('locale')
   const currency = market?.currency ?? (form.watch('currency') || defaultCurrency)
   const locale = localeOptions.includes(chosenLocale)
@@ -124,11 +128,22 @@ function NewOrderPage() {
     currency,
   }
 
-  // Items picked for another market or channel may not be sold, or priced,
-  // the same way in the new one.
-  function changeSalesContext(field: 'market_id' | 'channel_id', value: string) {
-    form.setValue(field, value, { shouldDirty: true })
-    if (field === 'market_id') form.setValue('locale', '', { shouldDirty: true })
+  // Searching before the defaults arrive would offer items from outside them.
+  const salesContextReady = !marketsLoading && !channelsLoading
+
+  // Items picked for another buyer, market or channel may not be sold, or
+  // priced, the same way in the new one.
+  async function changeSalesContext(apply: () => void) {
+    if (items.length > 0) {
+      const confirmed = await confirm({
+        title: t('admin.pages.orders.new.reset_items.title'),
+        message: t('admin.pages.orders.new.reset_items.message', { count: items.length }),
+        confirmLabel: t('admin.pages.orders.new.reset_items.confirm'),
+        variant: 'destructive',
+      })
+      if (!confirmed) return
+    }
+    apply()
     setItems([])
   }
 
@@ -247,12 +262,15 @@ function NewOrderPage() {
                       {...companyAutocompleteProps('order-company-picker')}
                       value={company?.id}
                       onChange={(_id, record) => {
-                        setCompany(record)
+                        if (record?.id === company?.id) return
                         // A customer already chosen may have no standing for the
                         // new company, and silently sending that pair would
                         // attach the order to a business this person cannot buy
                         // for. Clearing is the honest reset.
-                        if (record?.id !== company?.id) setCustomer(null)
+                        changeSalesContext(() => {
+                          setCompany(record)
+                          setCustomer(null)
+                        })
                       }}
                       renderOption={(company) => <CompanyComboboxOption company={company} />}
                     />
@@ -263,7 +281,10 @@ function NewOrderPage() {
                     <ResourceCombobox<Customer>
                       {...customerAutocompleteProps('customer-picker', company?.id)}
                       value={customer?.id}
-                      onChange={(_id, record) => setCustomer(record)}
+                      onChange={(_id, record) => {
+                        if (record?.id !== customer?.id)
+                          changeSalesContext(() => setCustomer(record))
+                      }}
                       renderOption={(c) => (
                         <div>
                           <div className="font-medium">{c.email}</div>
@@ -316,7 +337,12 @@ function NewOrderPage() {
                         <Select
                           value={market?.id ?? ''}
                           disabled={markets.length < 2}
-                          onValueChange={(v) => changeSalesContext('market_id', v as string)}
+                          onValueChange={(v) =>
+                            changeSalesContext(() => {
+                              form.setValue('market_id', v as string, { shouldDirty: true })
+                              form.setValue('locale', '', { shouldDirty: true })
+                            })
+                          }
                         >
                           <SelectTrigger id="order-market">
                             <SelectValue>
@@ -343,7 +369,11 @@ function NewOrderPage() {
                           id="order-channel"
                           value={channelId ?? ''}
                           disabled={channels.length < 2}
-                          onChange={(v) => changeSalesContext('channel_id', v)}
+                          onChange={(v) =>
+                            changeSalesContext(() =>
+                              form.setValue('channel_id', v, { shouldDirty: true }),
+                            )
+                          }
                           placeholder={t('admin.fields.order.channel.placeholder')}
                         />
                         <FieldDescription>{t('admin.fields.order.channel.help')}</FieldDescription>
@@ -358,10 +388,11 @@ function NewOrderPage() {
                         value={currency}
                         options={currencyOptions}
                         disabled={currencyOptions.length < 2}
-                        onChange={(v) => {
-                          form.setValue('currency', v, { shouldDirty: true })
-                          setItems([])
-                        }}
+                        onChange={(v) =>
+                          changeSalesContext(() =>
+                            form.setValue('currency', v, { shouldDirty: true }),
+                          )
+                        }
                       />
                       {market && (
                         <FieldDescription>{t('admin.fields.order.currency.help')}</FieldDescription>
@@ -400,6 +431,7 @@ function NewOrderPage() {
                         held — the picker is an action, not a bound input. */}
                     <ResourceCombobox<Variant>
                       queryKey={`new-order-variant-picker:${JSON.stringify(salesContext)}`}
+                      disabled={!salesContextReady}
                       value=""
                       onChange={(id) => {
                         const variant = id ? variantById.current.get(id) : undefined

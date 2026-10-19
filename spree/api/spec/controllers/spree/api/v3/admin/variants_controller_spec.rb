@@ -117,6 +117,11 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
 
       context 'and a market' do
         let(:market) { create(:market, :eu, store: store) }
+        let!(:dollar_only_product) do
+          create(:product, store: store).tap do |dollar_product|
+            create(:product_publication, product: dollar_product, channel: wholesale_channel)
+          end
+        end
 
         before { wholesale_product.default_variant.set_price('EUR', 20) }
 
@@ -126,6 +131,46 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
           rows = json_response['data']
           expect(rows.map { |v| v['product_id'] }).to eq([wholesale_product.prefixed_id])
           expect(rows.first['price']['currency']).to eq('EUR')
+        end
+
+        it 'offers a product priced in the currency only by a price list' do
+          price_list = create(:price_list, store: store)
+          create(:price, variant: dollar_only_product.default_variant, currency: 'EUR', amount: 15,
+                         price_list: price_list)
+
+          get :index, params: { channel_id: wholesale_channel.prefixed_id, market_id: market.prefixed_id }, as: :json
+
+          expect(json_response['data'].map { |v| v['product_id'] }).to include(dollar_only_product.prefixed_id)
+        end
+
+        it "refuses a currency other than the market's" do
+          get :index, params: { market_id: market.prefixed_id, currency: 'USD' }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'reads the context from a draft order' do
+          order = create(:order, store: store, market: market, currency: 'EUR', channel: wholesale_channel,
+                                 status: 'draft')
+
+          get :index, params: { order_id: order.prefixed_id }, as: :json
+
+          rows = json_response['data']
+          expect(rows.map { |v| v['product_id'] }).to eq([wholesale_product.prefixed_id])
+          expect(rows.first['price']['currency']).to eq('EUR')
+        end
+      end
+
+      context 'with a key that holds products but not customers' do
+        let(:products_key) { create(:api_key, :secret, store: store, scopes: ['read_products']) }
+        let(:headers) { { 'x-spree-api-key' => products_key.plaintext_token } }
+
+        it 'refuses to price for a customer' do
+          customer = create(:user)
+          get :index, params: { channel_id: wholesale_channel.prefixed_id, customer_id: customer.prefixed_id },
+                      as: :json
+
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
