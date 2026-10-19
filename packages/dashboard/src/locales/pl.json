@@ -3097,6 +3097,7 @@
           "sku": "SKU",
           "variant": "Wariant"
         },
+        "use_company_default_addresses": "Użyj domyślnych adresów rozliczeniowego i wysyłki zapisanych przez {{company}}",
         "use_default_addresses": "Użyj domyślnych adresów rozliczeniowego i wysyłki klienta"
       },
       "payment_statuses": {

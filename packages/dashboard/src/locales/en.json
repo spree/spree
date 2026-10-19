@@ -3063,6 +3063,7 @@
           "sku": "SKU",
           "variant": "Variant"
         },
+        "use_company_default_addresses": "Use the default billing & shipping addresses saved by {{company}}",
         "use_default_addresses": "Use customer's default billing & shipping addresses"
       },
       "payment_statuses": {

@@ -2854,6 +2854,7 @@
           "sku": "SKU",
           "variant": "Variante"
         },
+        "use_company_default_addresses": "Usar las direcciones de facturación y envío predeterminadas guardadas por {{company}}",
         "use_default_addresses": "Usar las direcciones de facturación y envío predeterminadas del cliente"
       },
       "payment_statuses": {

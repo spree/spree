@@ -3083,6 +3083,7 @@
           "sku": "SKU",
           "variant": "البديل"
         },
+        "use_company_default_addresses": "استخدم عناوين الفوترة والشحن الافتراضية المحفوظة لدى {{company}}",
         "use_default_addresses": "استخدم عناوين الفواتير والشحن الافتراضية لـ العميل"
       },
       "payment_statuses": {

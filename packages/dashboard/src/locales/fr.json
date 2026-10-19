@@ -3063,6 +3063,7 @@
           "sku": "SKU",
           "variant": "Variante"
         },
+        "use_company_default_addresses": "Utiliser les adresses de facturation et de livraison par défaut enregistrées par {{company}}",
         "use_default_addresses": "Utiliser les adresses de facturation et de livraison par défaut du client"
       },
       "payment_statuses": {

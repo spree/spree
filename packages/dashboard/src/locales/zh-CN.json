@@ -3055,6 +3055,7 @@
           "sku": "SKU",
           "variant": "变体"
         },
+        "use_company_default_addresses": "使用 {{company}} 保存的默认账单和配送地址",
         "use_default_addresses": "使用客户的默认账单和配送地址"
       },
       "payment_statuses": {

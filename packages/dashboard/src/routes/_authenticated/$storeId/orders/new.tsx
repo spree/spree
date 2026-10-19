@@ -295,7 +295,13 @@ function NewOrderPage() {
                 {(customer || company) && (
                   <div className="mt-4 flex items-center gap-3">
                     <Switch checked={useDefaultAddress} onCheckedChange={setUseDefaultAddress} />
-                    <span className="text-sm">{t('admin.orders.new.use_default_addresses')}</span>
+                    <span className="text-sm">
+                      {company
+                        ? t('admin.orders.new.use_company_default_addresses', {
+                            company: company.name,
+                          })
+                        : t('admin.orders.new.use_default_addresses')}
+                    </span>
                   </div>
                 )}
 
