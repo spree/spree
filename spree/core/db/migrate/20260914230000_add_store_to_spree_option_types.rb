@@ -10,7 +10,8 @@ class AddStoreToSpreeOptionTypes < ActiveRecord::Migration[8.1]
     # store here crashes on a database upgraded from an earlier release.
     stores = Arel::Table.new(:spree_stores)
     default_store_id = connection.select_value(
-      stores.project(stores[:id]).where(stores[:deleted_at].eq(nil)).order(stores[:default].desc, stores[:id].asc).take(1)
+      stores.project(stores[:id]).where(stores[:deleted_at].eq(nil))
+            .order(stores[:default].desc, stores[:id].asc).take(1)
     )
     if default_store_id.present?
       option_types = Arel::Table.new(:spree_option_types)

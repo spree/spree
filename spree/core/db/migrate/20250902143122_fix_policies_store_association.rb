@@ -4,7 +4,9 @@ class FixPoliciesStoreAssociation < ActiveRecord::Migration[7.2]
 
     policies = Arel::Table.new(:spree_policies)
     connection.update(
-      Arel::UpdateManager.new.table(policies).set([[policies[:owner_id], policies[:store_id]], [policies[:owner_type], 'Spree::Store']])
+      Arel::UpdateManager.new.table(policies).set(
+        [[policies[:owner_id], policies[:store_id]], [policies[:owner_type], 'Spree::Store']]
+      )
     )
 
     remove_index :spree_policies, [:store_id, :slug], unique: true, if_exists: true
