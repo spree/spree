@@ -34,13 +34,17 @@ jobs:
         with:
           ruby-version: '4.0'
 
+      - name: Read runner image
+        id: runner-image
+        run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
+
       - name: Cache Ruby gems
         uses: actions/cache@v6
         with:
           path: vendor/bundle
-          key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
           restore-keys: |
-            gems-${{ runner.os }}-ruby4.0-postgres-
+            gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-
 
       - name: Install libvips
         uses: awalsh128/cache-apt-pkgs-action@v1
@@ -79,13 +83,17 @@ jobs:
         with:
           ruby-version: '4.0'
 
+      - name: Read runner image
+        id: runner-image
+        run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
+
       - name: Cache Ruby gems
         uses: actions/cache@v6
         with:
           path: vendor/bundle
-          key: gems-${{ runner.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
           restore-keys: |
-            gems-${{ runner.os }}-ruby4.0-mysql-
+            gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-
 
       - name: Install libvips and MySQL client library
         uses: awalsh128/cache-apt-pkgs-action@v1
@@ -185,13 +193,17 @@ jobs:
         with:
           ruby-version: '4.0'
 
+      - name: Read runner image
+        id: runner-image
+        run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
+
       - name: Restore gem cache
         uses: actions/cache@v6
         with:
           path: vendor/bundle
-          key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
           restore-keys: |
-            gems-${{ runner.os }}-ruby4.0-postgres-
+            gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-
 
       - name: Install libvips
         uses: awalsh128/cache-apt-pkgs-action@v1
@@ -330,13 +342,17 @@ jobs:
         with:
           ruby-version: '4.0'
 
+      - name: Read runner image
+        id: runner-image
+        run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
+
       - name: Restore gem cache
         uses: actions/cache@v6
         with:
           path: vendor/bundle
-          key: gems-${{ runner.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
           restore-keys: |
-            gems-${{ runner.os }}-ruby4.0-mysql-
+            gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-
 
       - name: Install libvips and MySQL client library
         uses: awalsh128/cache-apt-pkgs-action@v1
@@ -425,13 +441,17 @@ jobs:
         with:
           ruby-version: '4.0'
 
+      - name: Read runner image
+        id: runner-image
+        run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
+
       - name: Restore gem cache
         uses: actions/cache@v6
         with:
           path: vendor/bundle
-          key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
           restore-keys: |
-            gems-${{ runner.os }}-ruby4.0-postgres-
+            gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-
 
       - name: Install dependencies
         working-directory: spree
