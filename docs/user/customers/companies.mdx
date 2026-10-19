@@ -1,72 +1,179 @@
 ---
 title: "Companies"
-description: "Set up business customers as organizations — with members, delivery sites, tax registrations and their own pricing."
+description: "Learn how to set up the businesses that buy from you, with their divisions, buyers, addresses, tax details and exemptions, in Spree Commerce."
 ---
 
-A company is a business customer. Where a retail customer is one person, a business buyer is a person acting *for* an organization — one with other buyers, several delivery sites, a VAT number, and a finance team who wants to see everything anyone ordered.
+A company is the record of a business that buys from you, rather than of the individual people who place its orders. It holds the organization itself: the units it is divided into, the buyers who order on its behalf, the addresses it ships to and is billed at, its tax registrations and any exemption certificates it holds.
 
-Companies model that. And because real organizations are not flat, a company can be a **tree**: a parent with subsidiaries, divisions or regional units, each with its own people and addresses.
+A company is worth creating as soon as more than one person buys for the same business. Without a company, two buyers from one firm are simply two unrelated shoppers as far as the store is concerned, with nothing tying their orders together and nowhere to record what belongs to the business rather than the individuals.
 
-To manage companies, open **Companies** under Customers.
+A company is not a customer group. A group is a label put on customers who are not directly associated with one another, such as the *fifty customers who spent the most last year*, so that a promotion or a catalog can point at them. Reach for a group to give an arbitrary set of customers special deals and pricing, and for a company when the account itself is a business with its own tax registrations, exemptions, and negotiated pricing. See [<u>Groups</u>](/user/customers/customer-groups).
 
-## Companies and divisions
+To manage companies, navigate to **Customers → Companies** in the admin dashboard.
 
-Every node in the tree is one of two kinds. The difference is about tax, not hierarchy:
+<Note>Every member of a company has the same standing. Roles, approval workflows and spending limits are part of Spree Enterprise rather than the edition documented here.</Note>
 
-| Kind | What it is |
+## Reviewing Companies
+
+![The Companies list, with a division shown under the name of the company it belongs to](/docs/images/user/customers/companies/1-companies-list.png)
+
+The list shows one row for every company and every division, with a division's parent named in small type under its own name.
+
+| Column | What it means |
 |---|---|
-| Company | A legal entity of its own, with its own tax registrations |
-| Division | An organizational unit inside a legal entity. It shares that entity's tax identity |
+| **Name** | What the business is called. A division also names the company it sits under. |
+| **Kind** | Whether the row is a **Company**, which is a legal entity of its own, or a **Division** of one. |
+| **Members** | How many people buy for this part of the business, counting every sub-unit beneath it as well. |
+| **Sub-units** | How many divisions or companies sit directly under it. |
+| **Created at** and **Updated at** | When the record was added and when it last changed. |
 
-The top of a tree is always a company. Trees go up to five levels deep.
+The search box matches names only. **Add filter** offers **Created at** and **Updated at**, **Sort** orders the list by name, kind or either date, and **Columns** chooses which columns are shown.
 
-Use **Add sub-unit** on a company's page to build the tree beneath it. Delivery sites are *not* sub-units — ten warehouses do not mean ten nodes. Nodes are for organizational and legal structure; where goods go is an address.
+The **Kind** filter separates the legal entities from the divisions. Both kinds start ticked, so the first click removes the kind clicked rather than selecting it, and **Clear all** brings both back.
 
-## Members
+<Note>A company's **Members** count covers its whole subtree. A company whose buyers all sit in its divisions shows them in this column while its own Members card reads **No members yet**.</Note>
 
-A member is a customer who can buy for the company. Add one with **Add member** and an email address:
+## How to Create a Company
 
-- An email that already has a customer account becomes a member straight away.
-- An unknown email becomes an **invitation**, valid for 30 days, and the person gets an email with a link. Accepting it either signs them in or creates their account, and ends as a membership.
+A company is created with a name and nothing else. Everything the business needs is added from its page afterwards.
 
-Pending invitations are listed on the company page until they are accepted or you revoke them.
+1. Click **Add company**.
+2. Enter the **Name** of the business, which is the legal entity you invoice.
+3. Click **Create company**.
 
-Membership reaches downward. Someone added at "Acme Europe" can buy for every division beneath it without being added to each one. Add someone at the top of the tree and they cover the whole group.
+![A new company's page, with every card still empty](/docs/images/user/customers/companies/2-new-company.png)
 
-<Note>
-In Spree open source, every member can do everything within their standing — buy, see the orders of their node and everything below it, and manage the address book and members. Roles, order approvals and spending limits are part of Spree Enterprise.
-</Note>
+The company's page opens with every card empty, ready for its sub-units, members, addresses, tax details and exemptions.
 
-Removing a member stops them buying for the company. Their customer account is not affected.
+## Sub-units
 
-## Address book
+![The Sub-units card on a company, listing two divisions and a company](/docs/images/user/customers/companies/3-sub-units-card.png)
 
-A company keeps its own addresses — ship-to sites and billing addresses — separate from any individual member's. Each is labelled, and one of each kind can be marked as the default the buyer starts from at checkout.
+Every company sits at the top of a tree, and each part of the business below it is a sub-unit. A sub-unit is itself either a company or a division, and the choice between them is a question about tax identity rather than about size or importance.
 
-## Tax
+| | **Company** | **Division** |
+|---|---|---|
+| What it is | A legal entity in its own right | An organizational unit inside one |
+| Tax registrations | Holds its own | Borrows them from the nearest company above it |
+| Exemption certificates | Holds its own | Has no card for them |
+| Members and address book | Its own | Its own |
+| Can sit at the top of a company tree | Yes | No |
 
-Tax registrations and exemption certificates belong to legal entities only, so a division's page has no tax cards. A division's purchases are taxed through its legal entity — the nearest company above it.
+A division is the right choice for a branch, a region or a buying office that is part of the same registered business, because its purchases are taxed through the entity above it. A company is the right choice for a subsidiary that is registered separately and invoiced in its own name.
 
-That lookup stops at the first company, whether or not it holds a registration. A subsidiary with no VAT number of its own therefore has none: it never quietly borrows its parent's, because in most places that would be a false declaration.
+The top of every tree has to be a company, since a division with no company above it would have no tax identity to borrow. A tree can be five levels deep.
 
-Exemption certificates are scoped to the country or state that issued them, and stop applying when they expire. The reason a certificate gives comes from your own list of tax exemption reasons, which you manage in [<u>Taxes</u>](/user/settings/taxes#tax-exemption-reasons).
+### How to Add a Sub-unit
 
-## Purchase order numbers
+1. On the company's page, click **Add sub-unit** on the **Sub-units** card.
+2. Enter the **Name**.
+3. Choose the **Kind**, which starts on **Division**.
+4. Click **Create**.
 
-Turn on **Require a PO number** and buyers from the company must supply their purchase order number before they can check out. The number is kept on the order, shown on the order page and in the confirmation email, and can be searched for.
+The sub-unit appears on the card with its kind and its member count, and clicking the row opens its own page. A division's page names the company it belongs to beneath its title, has no **Exemption certificates** card, and shows on its **Tax registration** card which legal entity its purchases are taxed through.
 
-## Giving a company its own range and prices
+## How to Manage a Company
 
-What a company sees and pays is set through a [Catalog](/user/catalogs/catalogs) assigned to it. Assigning to a node covers everything beneath it, so one assignment at the top prices the whole group.
+The page is laid out in cards, and a division carries the same ones apart from exemption certificates. The **Sub-units** card is covered above.
 
-Company assignments win over customer-group ones. A buyer whose company — or any company above it — has a catalog gets those catalogs, and their customer groups are not consulted.
+### Company
 
-## Deleting a company
+The card holds:
 
-Deleting a node removes its whole subtree. It is refused once any order exists beneath it — order history is kept, even when an org chart is tidied up.
+- **Name** - What the business is called.
+- **Require a PO number** - Whether buyers from this company must supply a purchase order number at checkout.
 
-## Related
+**Save** stays disabled until something changes.
 
-- [Selling to businesses](/user/how-to/selling-to-businesses) — the whole B2B setup, end to end
-- [Catalogs](/user/catalogs/catalogs) — what a company sees and pays
-- [Customer Groups](/user/customers/customer-groups) — the other audience a catalog can be assigned to
+**Require a PO number** suits a business whose own procurement rules will not let an invoice be paid without one. Leaving it switched off lets its buyers check out like anyone else. Buyers can enter the PO number or attach the purchase order itself, as a PDF, a spreadsheet or a photograph of up to 10 MB. The PO number a buyer supplies is carried on the order, so your team can retrieve it when the time comes to invoice.
+
+### Members
+
+![The Members card, with one member and two pending invitations](/docs/images/user/customers/companies/4-members-card.png)
+
+The people who buy for this part of the business. A member can buy for the node they are on and everything below it, so somebody added at the head office can order for every branch, while somebody added to a branch orders only for that branch.
+
+**Add member** takes an email address. Somebody who already has a customer account joins at once, and capitals and stray spaces in what is typed make no difference. An email with no account behind it is listed under **Pending invitations** with a **Pending** badge until it is taken up.
+
+Removing a member takes the menu on their row and **Remove member**, and the confirmation makes the point that their customer account is not affected. There is no control for moving somebody between sub-units, so a buyer who changes branch is removed from the old one and added on the new one's page.
+
+### Address Book
+
+![The Address book card, with a head office set as the default for billing and shipping](/docs/images/user/customers/companies/5-address-book.png)
+
+The sites the business ships to and is billed at, each under a label your team will recognize.
+
+**Add address** takes:
+
+- **Label** - Your own name for the site, such as Head office or Warehouse.
+- **Company** - Taken from the company the address belongs to, and not editable here.
+- **Address** and **Apartment, suite, etc.** - The street address.
+- **Country**, **City**, **State / Province** and **Postal code** - Where the site is.
+- **Phone** - A contact number for the site.
+- **Default billing address** and **Default shipping address** - Which purpose this address serves by default.
+
+The street address, city and postal code are required, and which other fields are asked for depends on the country.
+
+A division's address book is its own, but it does not have to be filled in. A division with no addresses of its own offers its buyers the nearest address above it at checkout, so a branch that ships to the head office needs no entry at all. A division showing **No addresses yet** is therefore not necessarily missing anything.
+
+### Tax Registration
+
+![The Tax registration card, with an EU VAT number](/docs/images/user/customers/companies/6-tax-registration.png)
+
+The VAT or business numbers the company is registered under. A number recorded here appears on the invoices you raise, and it is what makes EU B2B reverse charge possible.
+
+**Add registration** takes:
+
+- **Kind** - Which registration this is: EU VAT, UK VAT, Swiss VAT, Australian Business Number or US EIN.
+- **Number** - The registration number itself.
+
+One registration of each kind can be held at once, so a business trading in several tax regimes can hold a UK VAT number alongside an EU one. Removing a registration leaves orders already placed with the number they were invoiced under.
+
+Divisions have no button on this card. A division's purchases are taxed through its legal entity, and the card names the company that entity is.
+
+<Note>A number is only format-checked where the store has a checker for that kind of registration, and a stock Spree store ships one for EU VAT. A registration marked **Not checked** has not been confirmed against the tax authority's own register, which is a separate step from the check made when it is saved.</Note>
+
+### Exemption Certificates
+
+![An exemption certificate awaiting review, with its reason, country, expiry and document](/docs/images/user/customers/companies/7-exemption-certificate.png)
+
+The evidence that this business's purchases are not taxed, for example because it buys to resell. A certificate is the record of why tax was not charged, which is what you produce if the decision is ever questioned.
+
+**Add certificate** takes:
+
+- **Certificate number** - The number printed on the certificate. Required.
+- **Reason** - Why the business is exempt: Resale, Government, Charitable, Educational, Manufacturing or Agricultural. Required, and it becomes the tax engine's entity use code.
+- **Country** - Where the certificate holds. Leaving it empty means everywhere.
+- **Issued on** and **Expires** - The dates on the certificate. Leaving **Expires** empty means one that does not run out.
+- **Issuing authority** - Who issued it.
+- **Certificate document** - A scan of the certificate, as a PDF or an image of up to 10 MB. Only staff can download it.
+
+A new certificate arrives as **Awaiting Review** and does not apply until somebody accepts it. Its menu offers **Download document**, **Accept**, **Revoke** and **Delete**, so check the document against the company's details before accepting it.
+
+Certificates belong to legal entities. A division has no option for adding them and is covered by its company's.
+
+## How to Delete a Company
+
+Deleting is offered under **More actions** on the company's page, and under the **⋮** button on its row in the list.
+
+<Warning>Deleting a company takes its whole subtree with it. Every division beneath it goes, along with their members, invitations, addresses, tax registrations and exemption certificates. This cannot be undone.</Warning>
+
+A company that has orders against it, or whose sub-units have, cannot be deleted at all, because those orders are part of your trading record. Removing the people who buy for a business you no longer deal with is done by removing its members, which leaves the record and its history intact.
+
+## What a Company Changes
+
+A company decides three things about the orders its buyers place.
+
+- **What they see and what they pay.** A catalog assigned to a company covers that node and everything below it. See [<u>Catalogs</u>](/user/catalogs/catalogs).
+- **Which agreement answers.** A company's catalog beats a customer group's. A buyer whose company, or any company above it, carries a catalog is served by that catalog, and their customer groups are not consulted at all. Putting a company buyer in a group will not reach them with the group's prices, so trade tiers belong on the companies themselves.
+- **Whether a PO number is demanded.** Covered by the switch on the **Company** card above.
+
+<Note>A company's own tax registration and accepted exemption certificates are what decide the tax on its buyers' orders, which is why both belong on the legal entity rather than on the people who order.</Note>
+
+## Further Reading
+
+- [<u>Groups</u>](/user/customers/customer-groups) - Labeling arbitrary customers, and why a company's catalog wins
+- [<u>Customer Profiles</u>](/user/customers/customer-profile) - The buyers themselves, and their own tax registrations
+- [<u>Sell to Businesses</u>](/user/how-to/selling-to-businesses) - Setting up a business buyer from start to finish
+- [<u>Catalogs</u>](/user/catalogs/catalogs) - What a catalog holds and who it reaches
+- [<u>Tax Rates</u>](/user/settings/tax-rates) - How tax is set up for your store
