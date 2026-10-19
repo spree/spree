@@ -17,6 +17,9 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
+  ItemContent,
+  ItemTitle,
   Pagination,
   SearchInput,
   Textarea,
@@ -349,13 +352,21 @@ function ProductsStep({
         ) : (
           <div className="flex max-h-96 flex-col divide-y overflow-y-auto rounded-md border">
             {products.map((product) => (
-              <div key={product.id} className="flex items-center gap-3 p-2">
+              <Item
+                key={product.id}
+                size="xs"
+                className="flex-nowrap gap-3 rounded-none border-0 p-2"
+              >
                 <Thumbnail
                   src={product.thumbnail_url}
                   alt={product.name ?? ''}
                   className="size-8"
                 />
-                <span className="min-w-0 flex-1 truncate text-sm">{product.name}</span>
+                <ItemContent className="min-w-0">
+                  <ItemTitle className="block truncate text-sm font-normal">
+                    {product.name}
+                  </ItemTitle>
+                </ItemContent>
                 <Button
                   variant="ghost"
                   size="icon-xs"
@@ -365,7 +376,7 @@ function ProductsStep({
                 >
                   <XIcon className="size-4" />
                 </Button>
-              </div>
+              </Item>
             ))}
           </div>
         )}
@@ -395,13 +406,21 @@ function ProductsStep({
             const added = chosen.has(product.id)
 
             return (
-              <div key={product.id} className="flex items-center gap-3 p-2">
+              <Item
+                key={product.id}
+                size="xs"
+                className="flex-nowrap gap-3 rounded-none border-0 p-2"
+              >
                 <Thumbnail
                   src={product.thumbnail_url}
                   alt={product.name ?? ''}
                   className="size-8"
                 />
-                <span className="min-w-0 flex-1 truncate text-sm">{product.name}</span>
+                <ItemContent className="min-w-0">
+                  <ItemTitle className="block truncate text-sm font-normal">
+                    {product.name}
+                  </ItemTitle>
+                </ItemContent>
                 {/* An added row stays visible and disabled rather than
                     disappearing: a list that reshuffles as you click it is
                     hard to work down. */}
@@ -415,7 +434,7 @@ function ProductsStep({
                 >
                   {added ? <CheckIcon className="size-4" /> : <PlusIcon className="size-4" />}
                 </Button>
-              </div>
+              </Item>
             )
           })}
         </div>

@@ -15,10 +15,6 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Field,
   FieldDescription,
   FieldError,
@@ -32,6 +28,7 @@ import {
   ItemGroup,
   ItemTitle,
   RelativeTime,
+  RowActions,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -41,7 +38,7 @@ import {
   StatusBadge,
   useConfirm,
 } from '../index'
-import { BadgeCheckIcon, EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from './icons'
+import { BadgeCheckIcon, PlusIcon } from './icons'
 
 /** One selectable registration kind. */
 interface KindOption {
@@ -202,34 +199,23 @@ export function TaxIdentifiersCard({
 
                 {canEdit && (
                   <ItemActions>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon-xs">
-                          <EllipsisVerticalIcon className="size-4" />
-                          <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          disabled={!identifier.validatable || mutations.isValidating}
-                          onClick={() => mutations.validate(identifier.id).catch(() => undefined)}
-                        >
-                          <BadgeCheckIcon className="size-4" />
-                          {t('admin.tax_identifiers.validate_action')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setEditing(identifier)}>
-                          <PencilIcon className="size-4" />
-                          {t('admin.actions.edit')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => handleDelete(identifier)}
-                        >
-                          <TrashIcon className="size-4" />
-                          {t('admin.actions.delete')}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <RowActions
+                      actions={[
+                        {
+                          key: 'validate',
+                          label: t('admin.tax_identifiers.validate_action'),
+                          icon: <BadgeCheckIcon className="size-4" />,
+                          disabled: !identifier.validatable || mutations.isValidating,
+                          onSelect: () => mutations.validate(identifier.id).catch(() => undefined),
+                        },
+                        { key: 'edit', onSelect: () => setEditing(identifier) },
+                        {
+                          key: 'delete',
+                          destructive: true,
+                          onSelect: () => handleDelete(identifier),
+                        },
+                      ]}
+                    />
                   </ItemActions>
                 )}
               </Item>

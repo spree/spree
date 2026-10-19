@@ -1,15 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu'
 import { Item, ItemActions, ItemContent, ItemTitle } from '../ui/item'
 import { AddressBlock, type AddressBlockValue } from './address-block'
-import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from './icons'
+import { RowActions } from './row-actions'
 
 /** What every address book row needs, whoever owns the book. */
 export interface AddressBookEntry extends AddressBlockValue {
@@ -64,34 +57,24 @@ export function AddressBookRow({
 
       {canEdit && (
         <ItemActions>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon-xs" className="shrink-0">
-                <EllipsisVerticalIcon className="size-4" />
-                <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onEdit}>
-                <PencilIcon className="size-4" />
-                {t('admin.actions.edit')}
-              </DropdownMenuItem>
-              {onSetDefaultBilling && !address.is_default_billing && (
-                <DropdownMenuItem onClick={onSetDefaultBilling}>
-                  {t('admin.address_book.set_default_billing')}
-                </DropdownMenuItem>
-              )}
-              {onSetDefaultShipping && !address.is_default_shipping && (
-                <DropdownMenuItem onClick={onSetDefaultShipping}>
-                  {t('admin.address_book.set_default_shipping')}
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem variant="destructive" onClick={onRemove}>
-                <TrashIcon className="size-4" />
-                {t('admin.actions.delete')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: onEdit },
+              {
+                key: 'set_default_billing',
+                label: t('admin.address_book.set_default_billing'),
+                visible: !!onSetDefaultBilling && !address.is_default_billing,
+                onSelect: () => onSetDefaultBilling?.(),
+              },
+              {
+                key: 'set_default_shipping',
+                label: t('admin.address_book.set_default_shipping'),
+                visible: !!onSetDefaultShipping && !address.is_default_shipping,
+                onSelect: () => onSetDefaultShipping?.(),
+              },
+              { key: 'delete', destructive: true, onSelect: onRemove },
+            ]}
+          />
         </ItemActions>
       )}
     </Item>

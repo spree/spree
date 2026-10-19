@@ -26,10 +26,6 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Field,
   FieldDescription,
   FieldError,
@@ -42,6 +38,7 @@ import {
   ItemDescription,
   ItemGroup,
   ItemTitle,
+  RowActions,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -55,10 +52,8 @@ import {
   BadgeCheckIcon,
   BanIcon,
   DownloadIcon,
-  EllipsisVerticalIcon,
   PaperclipIcon,
   PlusIcon,
-  TrashIcon,
 } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
@@ -276,52 +271,41 @@ export function TaxExemptionCertificatesCard({
                 </ItemContent>
 
                 <ItemActions>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon-xs">
-                        <EllipsisVerticalIcon className="size-4" />
-                        <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {certificate.document_url && (
-                        <DropdownMenuItem onClick={() => handleDownload(certificate)}>
-                          <DownloadIcon className="size-4" />
-                          {t('admin.tax_exemption_certificates.download_action')}
-                        </DropdownMenuItem>
-                      )}
-                      {canEdit && certificate.status === 'pending' && (
-                        <DropdownMenuItem
-                          disabled={verifyMutation.isPending}
-                          onClick={() =>
-                            verifyMutation.mutateAsync(certificate.id).catch(() => undefined)
-                          }
-                        >
-                          <BadgeCheckIcon className="size-4" />
-                          {t('admin.tax_exemption_certificates.verify_action')}
-                        </DropdownMenuItem>
-                      )}
-                      {canEdit && certificate.status !== 'revoked' && (
-                        <DropdownMenuItem
-                          variant="destructive"
-                          disabled={revokeMutation.isPending}
-                          onClick={() => handleRevoke(certificate)}
-                        >
-                          <BanIcon className="size-4" />
-                          {t('admin.tax_exemption_certificates.revoke_action')}
-                        </DropdownMenuItem>
-                      )}
-                      {canEdit && certificate.can_be_deleted && (
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={() => handleDelete(certificate)}
-                        >
-                          <TrashIcon className="size-4" />
-                          {t('admin.actions.delete')}
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <RowActions
+                    actions={[
+                      {
+                        key: 'download',
+                        label: t('admin.tax_exemption_certificates.download_action'),
+                        icon: <DownloadIcon className="size-4" />,
+                        visible: !!certificate.document_url,
+                        onSelect: () => handleDownload(certificate),
+                      },
+                      {
+                        key: 'verify',
+                        label: t('admin.tax_exemption_certificates.verify_action'),
+                        icon: <BadgeCheckIcon className="size-4" />,
+                        visible: canEdit && certificate.status === 'pending',
+                        disabled: verifyMutation.isPending,
+                        onSelect: () =>
+                          verifyMutation.mutateAsync(certificate.id).catch(() => undefined),
+                      },
+                      {
+                        key: 'revoke',
+                        label: t('admin.tax_exemption_certificates.revoke_action'),
+                        icon: <BanIcon className="size-4" />,
+                        visible: canEdit && certificate.status !== 'revoked',
+                        disabled: revokeMutation.isPending,
+                        destructive: true,
+                        onSelect: () => handleRevoke(certificate),
+                      },
+                      {
+                        key: 'delete',
+                        visible: canEdit && !!certificate.can_be_deleted,
+                        destructive: true,
+                        onSelect: () => handleDelete(certificate),
+                      },
+                    ]}
+                  />
                 </ItemActions>
               </Item>
             ))}
