@@ -5,8 +5,17 @@ class AddStoreToSpreeOptionTypes < ActiveRecord::Migration[8.1]
     # Existing option types were installation-wide, so they belong to the
     # store that has been using them. Left nullable: a fresh install has no
     # store yet, and the association enforces presence from the model side.
-    default_store = Spree::Store.where(default: true).first || Spree::Store.first
-    Spree::OptionType.update_all(store_id: default_store.id) if default_store
+    # Read without the models: Spree::Store expects its columns (preferences,
+    # metadata) in the format later migrations convert them to, so loading a
+    # store here crashes on a database upgraded from an earlier release.
+    stores = Arel::Table.new(:spree_stores)
+    default_store_id = connection.select_value(
+      stores.project(stores[:id]).where(stores[:deleted_at].eq(nil)).order(stores[:default].desc, stores[:id].asc).take(1)
+    )
+    if default_store_id.present?
+      option_types = Arel::Table.new(:spree_option_types)
+      connection.update(Arel::UpdateManager.new.table(option_types).set([[option_types[:store_id], default_store_id]]))
+    end
 
     # Names are unique within a store now, so two stores may each define `size`.
     remove_index :spree_option_types, :name, unique: true, if_exists: true

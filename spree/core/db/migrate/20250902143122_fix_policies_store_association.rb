@@ -2,10 +2,10 @@ class FixPoliciesStoreAssociation < ActiveRecord::Migration[7.2]
   def change
     add_reference :spree_policies, :owner, polymorphic: true, index: true
 
-    Spree::Policy.reset_column_information
-    Spree::Policy.all.each do |policy|
-      policy.update(owner_id: policy.store_id, owner_type: 'Spree::Store')
-    end
+    policies = Arel::Table.new(:spree_policies)
+    connection.update(
+      Arel::UpdateManager.new.table(policies).set([[policies[:owner_id], policies[:store_id]], [policies[:owner_type], 'Spree::Store']])
+    )
 
     remove_index :spree_policies, [:store_id, :slug], unique: true, if_exists: true
     remove_index :spree_policies, [:store_id, :position], if_exists: true
