@@ -87,10 +87,10 @@ jobs:
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-mysql-
 
-      - name: Install libvips
+      - name: Install libvips and MySQL client library
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: libvips42t64
+          packages: libvips42t64 libmysqlclient-dev
           version: 1
 
       - name: Install root dependencies
@@ -338,10 +338,10 @@ jobs:
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-mysql-
 
-      - name: Install libvips
+      - name: Install libvips and MySQL client library
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: libvips42t64
+          packages: libvips42t64 libmysqlclient-dev
           version: 1
 
       - name: Install dependencies
