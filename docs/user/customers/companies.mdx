@@ -129,7 +129,7 @@ The VAT or business numbers the company is registered under. A number recorded h
 
 One registration of each kind can be held at once, so a business trading in several tax regimes can hold a UK VAT number alongside an EU one. Removing a registration leaves orders already placed with the number they were invoiced under.
 
-Divisions have no button on this card. A division's purchases are taxed through its legal entity, and the card names the company that entity is.
+Divisions have no button on this card. A division's purchases are taxed through its legal entity, and the card names the company that entity is. Only the nearest company is used. If it holds no registration, the division has none, and a higher company's number is not used.
 
 <Note>A number is only format-checked where the store has a checker for that kind of registration, and a stock Spree store ships one for EU VAT. A registration marked **Not checked** has not been confirmed against the tax authority's own register, which is a separate step from the check made when it is saved.</Note>
 
@@ -165,7 +165,7 @@ A company that has orders against it, or whose sub-units have, cannot be deleted
 A company decides three things about the orders its buyers place.
 
 - **What they see and what they pay.** A catalog assigned to a company covers that node and everything below it. See [<u>Catalogs</u>](/user/catalogs/catalogs).
-- **Which agreement answers.** A company's catalog beats a customer group's. A buyer whose company, or any company above it, carries a catalog is served by that catalog, and their customer groups are not consulted at all. Putting a company buyer in a group will not reach them with the group's prices, so trade tiers belong on the companies themselves.
+- **Which agreement answers.** A company's catalog beats a customer group's. A buyer whose company, or any company above it, carries a catalog is served by that catalog, and their customer groups are not consulted at all. If no catalog is assigned to the company or to a company above it, the buyer's customer groups apply as usual. When a company catalog exists, putting a company buyer in a group does not reach them with the group's prices, so trade tiers belong on the companies themselves.
 - **Whether a PO number is demanded.** Covered by the switch on the **Company** card above.
 
 <Note>A company's own tax registration and accepted exemption certificates are what decide the tax on its buyers' orders, which is why both belong on the legal entity rather than on the people who order.</Note>

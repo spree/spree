@@ -78,7 +78,7 @@ Whatever the group was giving them stops applying as soon as they are out of it,
 2. Read the confirmation, which names the group and states that **Customers in this group are not deleted**.
 3. Click **Delete**.
 
-Deleting a group removes the label and its membership list, and leaves every customer who was in it untouched. Anything pointing at the group stops matching, so a promotion whose only rule named that group then applies to everybody, and a catalog that reached buyers through it reaches nobody. Check what referenced a group before removing it.
+Deleting a group removes the label and its membership list, and leaves every customer who was in it untouched. Anything pointing at the group stops matching, so a promotion whose only rule named that group no longer reaches those customers, and a catalog that reached buyers through it reaches nobody. Check what referenced a group before removing it.
 
 ## What a Group Changes
 
@@ -95,7 +95,7 @@ A promotion carrying a **Customer Group(s)** rule applies only to customers in t
 3. On the **Actions** card, click **Add action** and choose the discount itself, such as a whole-order adjustment of a flat percentage.
 4. Click **Create promotion**.
 
-A member who signs in sees the discount as a line in their cart. Customers outside the group, and guests, pay the full price. Product pages show the same price to everybody, members included, because the group is only known once the customer has signed in. See [<u>Create a Promotion</u>](/user/promotions/create-a-promotion).
+A member who signs in sees the discount as a line in their cart. Customers outside the group, and guests, pay the full price. Product pages show the same price to everybody, members included, because a promotion applies to the cart and not to the product price. To show a group different prices on product pages, use a catalog. See [<u>Create a Promotion</u>](/user/promotions/create-a-promotion).
 
 ### How to Give a Group Its Own Catalog
 
@@ -114,7 +114,7 @@ A new catalog is created inactive, so nothing changes for the group until it is 
 
 <Warning>Adding products to a catalog narrows its audience to those products alone. A group whose catalog holds six products sees six products in the shop, not the whole range plus six. Leave the products step empty to change what the group pays without changing what they can see.</Warning>
 
-<Note>A company's own catalog takes priority over a group's. As the **Audience** field puts it, customer group catalogs reach only buyers whose company has no catalog of its own. To change what a company's buyers see, assign the catalog to the company instead.</Note>
+<Note>A company's catalog takes priority over a group's. Customer group catalogs reach only buyers whose company, and every company above it, has no catalog. To change what a company's buyers see, assign the catalog to the company or division instead.</Note>
 
 ## Further Reading
 
