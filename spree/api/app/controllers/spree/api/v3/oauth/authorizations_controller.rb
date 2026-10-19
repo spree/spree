@@ -44,15 +44,26 @@ module Spree
           # and the merchant would approve on the wrong one.
           def consent_url
             query = params.permit(*FORWARDED_PARAMETERS).to_h.compact_blank.to_query
-            base = Spree::Stores::DashboardUrl.call(store: consent_store)
+            base = Spree::Stores::DashboardUrl.call(store: current_store)
 
-            "#{base}/#{consent_store.prefixed_id}/oauth/authorize?#{query}"
+            "#{base}/#{current_store.prefixed_id}/oauth/authorize?#{query}"
           end
 
-          # @return [Spree::Store]
-          def consent_store
-            @consent_store ||=
-              Spree::OauthApplication.find_by(uid: params[:client_id])&.store || current_store
+          # The client's store wins over the hostname's, and is looked up
+          # before the hostname is resolved at all: resolving it assigns the
+          # default store to Spree::Current, and an app scoping queries by
+          # that store would then never find another store's client.
+          #
+          # @return [Spree::Store, nil]
+          def current_store
+            @current_store ||= client_application&.store || super
+          end
+
+          # @return [Spree::OauthApplication, nil]
+          def client_application
+            return if params[:client_id].blank?
+
+            Spree::OauthApplication.find_by(uid: params[:client_id])
           end
         end
       end
