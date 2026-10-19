@@ -109,6 +109,20 @@ module Spree
           end
         end
 
+        context 'when an address belongs to an address book' do
+          let(:ship_address) { create(:company_address) }
+          let(:bill_address) { create(:address, customer: create(:customer)) }
+
+          it 'destroys the cart but leaves the book entries in place' do
+            subject
+
+            expect(cart.destroyed?).to be true
+            expect(Spree::Address.where(id: address_ids)).to contain_exactly(ship_address, bill_address)
+            expect(ship_address.reload.deleted_at).to be_nil
+            expect(bill_address.reload.deleted_at).to be_nil
+          end
+        end
+
         context 'when a gift card is applied' do
           let(:gift_card) { create(:gift_card, amount: 50, store: cart.store) }
 

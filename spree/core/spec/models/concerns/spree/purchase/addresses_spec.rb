@@ -463,6 +463,42 @@ RSpec.shared_examples 'an addresses host' do
       expect(record.bill_address.first_name).to eq 'New name'
     end
   end
+
+  describe 'destroying the purchase' do
+    let(:company) { create(:company, store: store) }
+    let(:company_address) { create(:company_address, owner: company) }
+    let(:own_address) { create(:address, customer: user) }
+
+    before { create(:company_membership, company: company, customer: user) }
+
+    it 'keeps a company site the purchase was shipping to' do
+      record.update!(company: company)
+      record.ship_address_id = company_address.id
+      record.save!
+
+      record.destroy
+
+      expect(company_address.reload.deleted_at).to be_nil
+    end
+
+    it "keeps an entry from the buyer's own book" do
+      record.bill_address_id = own_address.id
+      record.save!
+
+      record.destroy
+
+      expect(own_address.reload.deleted_at).to be_nil
+    end
+
+    it 'destroys the ownerless row it keeps for itself' do
+      snapshot = Spree::Address.create!(address_attributes)
+      record.update!(ship_address: snapshot)
+
+      record.destroy
+
+      expect(Spree::Address.where(id: snapshot.id)).to be_empty
+    end
+  end
 end
 
 RSpec.describe Spree::Purchase::Addresses do

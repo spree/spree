@@ -3,8 +3,8 @@ module Spree
     # The full address surface shared by Spree::Cart and Spree::Order:
     # the bill/ship associations and their public aliases, default filling
     # from the customer's saved addresses, address-row deduplication on
-    # write, ownership-guarded address_id assignment, promotion of checkout
-    # addresses to the customer's defaults, and the ship→bill cloning
+    # write, ownership-guarded address_id assignment and deletion, promotion
+    # of checkout addresses to the customer's defaults, and the ship→bill cloning
     # predicate. The shipping address is canonical: use_shipping copies it
     # onto the billing address; the reverse use_billing direction is a
     # deprecated 6.1-removal bridge. Clone callbacks are wired per model.
@@ -12,8 +12,13 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
-        belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
+        belongs_to :bill_address, class_name: 'Spree::Address', optional: true
+        belongs_to :ship_address, class_name: 'Spree::Address', optional: true
+
+        # Stands in for `dependent: :destroy`, which would take any attached
+        # row down with the purchase. See {#owns_address?} for why only some
+        # of them may go.
+        after_destroy :destroy_own_addresses
 
         # The writers these generate are shadowed by the hand-written ones
         # below, which deduplicate address rows. The declarations still earn
@@ -134,6 +139,24 @@ module Spree
         books.compact.reduce { |left, right| left.or(right) } || ::Spree::Address.none
       end
 
+      # Whether an attached address row is this purchase's own to delete.
+      #
+      # Only the ownerless rows are: the one a guest typed in, and the
+      # snapshot completion copies onto the order. Everything else is an entry
+      # in somebody's address book — the buyer's, a company node's, a seller's
+      # — which the purchase is merely pointing at. A cart may name a company
+      # site every other member ships from, so taking an attached row down
+      # with the cart would let one member empty the shared book.
+      #
+      # A business snapshot keeps its +owner_type+ to stay addressed to a
+      # company rather than to a person, so ownership is the id, not the type.
+      #
+      # @param address [Spree::Address, nil]
+      # @return [Boolean]
+      def owns_address?(address)
+        address.present? && address.owner_id.blank?
+      end
+
       # Fills any blank bill/ship address from the customer's valid saved
       # defaults. The ship address is skipped when no physical delivery is
       # required, so shipping-address validations never fire on digital-only
@@ -217,6 +240,13 @@ module Spree
       end
 
       private
+
+      # Both slots often hold the same row, so destroy it once.
+      def destroy_own_addresses
+        [bill_address, ship_address].compact.uniq.each do |address|
+          address.destroy if owns_address?(address)
+        end
+      end
 
       def items_require_shipping_address?
         # Answered by the profile kind, resolved once per profile.
