@@ -344,6 +344,17 @@ bin/rails g spree_reviews:install
 
 The Store API now serves reviews at `/api/v3/store/reviews`, and the Admin API manages them at `/api/v3/admin/reviews`.
 
+Once you publish the gem, Spree projects install it with one command, which adds the gem, runs your install generator, runs the migrations and restarts the server:
+
+```bash
+spree add --gem spree_reviews
+```
+
+To work well with it:
+
+- **Make the install generator optional.** The CLI runs `spree_reviews:install` only if it exists, so the gem must work without it.
+- **Put any manual setup in the gemspec's `post_install_message`**, such as an environment variable to set. Bundler prints it during the install. Keep it short; most extensions need none.
+
 ## Test the extension
 
 An extension is not a full Rails application, so its tests run against a small generated Spree application. Create it from the extension's root directory:

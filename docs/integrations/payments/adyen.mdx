@@ -13,16 +13,16 @@ Before you can enable Adyen, it must be installed. To do so, you need to run the
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree bundle add spree_adyen --github spree/spree_adyen && spree generate spree_adyen:install
+spree add adyen
 ```
 
 ```bash Without Spree CLI
-bundle add spree_adyen --github spree/spree_adyen && bin/rails g spree_adyen:install
+bundle add spree_adyen && bin/rails g spree_adyen:install && bin/rails db:migrate
 ```
 
 </CodeGroup>
 
-After that, you need to make sure to restart the server.
+The Spree CLI also runs the migrations and restarts the server for you. Without it, restart the server yourself after the commands finish.
 
 ## Connect Adyen
 
