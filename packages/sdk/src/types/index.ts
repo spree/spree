@@ -168,6 +168,7 @@ export interface ProductFiltersParams {
 // that extends them (see `spree filters types`).
 export type {
   BooleanFilters,
+  CodeFilters,
   CustomFieldValueFilters,
   EnumFilters,
   IdFilters,

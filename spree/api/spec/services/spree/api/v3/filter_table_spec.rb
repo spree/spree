@@ -46,6 +46,16 @@ RSpec.describe Spree::Api::V3::FilterTable do
       )
     end
 
+    it 'publishes locale, currency and country columns as their shared code types' do
+      expect(table['attributes']).to include('locale' => { 'code' => 'LocaleCode' }, 'currency' => { 'code' => 'CurrencyCode' })
+      expect(described_class.for_model(Spree::Market, nil).attributes).to include('default_locale' => { 'code' => 'LocaleCode' })
+      expect(described_class.for_model(Spree::Variant, nil).attributes).to include(
+        'cost_currency' => { 'code' => 'CurrencyCode' },
+        'country_of_origin' => { 'code' => 'CountryCode' }
+      )
+      expect(described_class.for_model(Spree::Address, nil).attributes).to include('country_code' => { 'code' => 'CountryCode' })
+    end
+
     it 'names associated tables instead of nesting them' do
       expect(table['associations']).to include('line_items' => 'LineItem', 'customer' => 'Customer')
     end

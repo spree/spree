@@ -3,6 +3,7 @@
 // `spree filters types`).
 export type {
   BooleanFilters,
+  CodeFilters,
   CustomFieldValueFilters,
   EnumFilters,
   ErrorResponse,
