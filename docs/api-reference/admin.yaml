@@ -7228,7 +7228,7 @@ paths:
           | `customer_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `customer_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customer_tags_` | `created_at`, `id`, `name`, `updated_at` |
@@ -7803,7 +7803,7 @@ paths:
           | `addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `orders_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `orders_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `orders_fulfillments_` | `created_at`, `id`, `number`, `updated_at` |
@@ -11611,11 +11611,11 @@ paths:
           | `customers_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customers_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customers_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `customers_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `customers_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `customers_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customers_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customers_tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `orders_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `orders_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `orders_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -11632,7 +11632,7 @@ paths:
           | `users_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `users_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `users_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `users_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `users_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `users_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `users_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `users_tags_` | `created_at`, `id`, `name`, `updated_at` |
@@ -15031,7 +15031,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -15195,7 +15195,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -16039,7 +16039,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -16203,7 +16203,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -17425,11 +17425,11 @@ paths:
           | `customer_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `customer_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customer_tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `orders_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `orders_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `orders_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -17891,7 +17891,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -18707,6 +18707,8 @@ paths:
           | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `locale` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `market_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -18748,7 +18750,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Order
         sortable:
@@ -18764,6 +18766,8 @@ paths:
         - fulfillment_status
         - id
         - item_total
+        - locale
+        - market_id
         - number
         - order_group_id
         - payment_state
@@ -20128,7 +20132,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -20299,7 +20303,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -21552,7 +21556,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -33662,7 +33666,7 @@ paths:
           | `customer_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `customer_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customer_tags_` | `created_at`, `id`, `name`, `updated_at` |
@@ -53909,10 +53913,10 @@ paths:
           | Prefix | Attributes |
           |---|---|
           | `line_item_` | `additional_tax_total`, `adjustment_total`, `cost_price`, `created_at`, `discount_total`, `id`, `included_tax_total`, `non_taxable_adjustment_total`, `order_id`, `pre_tax_amount`, `price`, `quantity`, `tax_category_id`, `taxable_adjustment_total`, `updated_at`, `variant_id` |
-          | `line_item_order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `line_item_order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `line_item_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
           | `line_item_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -83528,6 +83532,8 @@ components:
           - shipped
         id: id
         item_total: decimal
+        locale: text
+        market_id: id
         number: text
         order_group_id: id
         payment_state:
