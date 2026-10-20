@@ -159,11 +159,18 @@ module Spree
               "held=#{ability.permission_keys.join(',')}"
           end
 
+          render_missing_permission(required)
+        end
+
+        # Refuses the request for want of one permission.
+        #
+        # @param permission [String] the permission key the caller lacks
+        def render_missing_permission(permission)
           render_error(
             code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-            message: "Missing permission: #{required}",
+            message: "Missing permission: #{permission}",
             status: :forbidden,
-            details: { required_permission: required }
+            details: { required_permission: permission }
           )
         end
 

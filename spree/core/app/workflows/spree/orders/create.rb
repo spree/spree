@@ -141,7 +141,10 @@ module Spree
       end
 
       def add_items(order)
-        result = Spree::Orders::UpsertItems.call(order: order, items: @params[:items])
+        result = Spree::Orders::UpsertItems.call(
+          order: order, items: @params[:items],
+          orderable_variants: Spree::SalesContext.from_order(order).orderable_variants
+        )
         return if result.success?
 
         propagate_step_failure!(order, result, fallback: 'Failed to add items to order')

@@ -198,18 +198,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :order_id, in: :query, type: :string, required: false,
-                description: 'A draft order to sell to: lists only what its buyer can be sold on its channel, priced in its market. Needs `read_orders`.'
-      parameter name: :market_id, in: :query, type: :string, required: false,
-                description: 'Prices in this market and lists only variants with a price in its currency.'
-      parameter name: :channel_id, in: :query, type: :string, required: false,
-                description: 'Lists only variants published on this channel. Defaults to the store default channel when another sales context parameter is given.'
-      parameter name: :customer_id, in: :query, type: :string, required: false,
-                description: "Narrows to the customer's catalogs and prices as they would pay. Needs `read_customers`."
-      parameter name: :company_id, in: :query, type: :string, required: false,
-                description: "Narrows to the company's catalogs and prices under its agreement. Needs `read_customers`."
-      parameter name: :currency, in: :query, type: :string, required: false,
-                description: "Currency to price in. With `market_id` it must be the market's currency."
+      query_parameters_for Spree::Api::V3::Admin::VariantsController::SALES_CONTEXT
       filter_parameters_for
 
       response '200', 'variants found' do

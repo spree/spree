@@ -280,6 +280,7 @@ module Spree
             company: params[:company],
             market: params[:market],
             channel: params[:channel],
+            country: params[:country],
             quantity: quantity
           )
         end

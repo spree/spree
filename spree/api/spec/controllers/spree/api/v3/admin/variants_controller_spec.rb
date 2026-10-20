@@ -134,13 +134,28 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
         end
 
         it 'offers a product priced in the currency only by a price list' do
-          price_list = create(:price_list, store: store)
+          price_list = create(:price_list, :active, store: store)
           create(:price, variant: dollar_only_product.default_variant, currency: 'EUR', amount: 15,
                          price_list: price_list)
 
           get :index, params: { channel_id: wholesale_channel.prefixed_id, market_id: market.prefixed_id }, as: :json
 
           expect(json_response['data'].map { |v| v['product_id'] }).to include(dollar_only_product.prefixed_id)
+        end
+
+        it 'narrows to variants priced in a currency given on its own' do
+          market
+          get :index, params: { currency: 'EUR' }, as: :json
+
+          product_ids = json_response['data'].map { |v| v['product_id'] }
+          expect(product_ids).not_to include(product.prefixed_id)
+        end
+
+        it 'refuses an order combined with other sales context fields' do
+          order = create(:order, store: store, market: market, currency: 'EUR', status: 'draft')
+          get :index, params: { order_id: order.prefixed_id, currency: 'USD' }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "refuses a currency other than the market's" do

@@ -86,6 +86,16 @@ module Spree
           end
         end
 
+        context 'and no market, only its currency' do
+          let(:params) { { email: 'new@example.com', currency: 'EUR' } }
+
+          before { market }
+
+          it 'places the order in a market that sells the currency' do
+            expect(subject.value.market).to eq(market)
+          end
+        end
+
         context 'and a currency the market does not use' do
           let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, currency: 'USD' } }
 
@@ -272,6 +282,23 @@ module Spree
           expect(shipment.adjustment_total).to eq(-5)
           expect(order.fulfillment_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
+        end
+      end
+
+      context 'with an item not published on the channel' do
+        let(:unpublished_product) do
+          create(:product_in_stock).tap { |p| p.product_publications.destroy_all }
+        end
+        let(:params) do
+          {
+            email: 'new@example.com',
+            items: [{ variant_id: unpublished_product.default_variant.prefixed_id, quantity: 1 }]
+          }
+        end
+
+        it 'does not create the order' do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          expect(Spree::Order.where(email: 'new@example.com')).to be_empty
         end
       end
 
