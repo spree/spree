@@ -104,6 +104,7 @@ function StockTransferDetailPage() {
             stockTransferId={transfer.id}
             title={t('admin.stock_transfers.history_title')}
           />
+          <Slot name="stock_transfer.form_main" context={{ transfer }} />
         </>
       }
       sidebar={

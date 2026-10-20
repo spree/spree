@@ -64,6 +64,15 @@ test.describe('customers', () => {
     await expect(ordersCard.locator('[data-slot="card-title"]')).toHaveText('Orders')
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slot at the end of the main column', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await createCustomer(page, `e2e-slots-${Date.now()}@example.com`)
+
+    await expect(page.getByText('Slot probe: customer.form_main')).toBeVisible()
+  })
+
   test('edits a customer profile', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)

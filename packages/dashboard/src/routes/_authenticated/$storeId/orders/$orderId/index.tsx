@@ -96,6 +96,7 @@ function OrderDetailPage() {
             emptyTitle={t('admin.components.metadata_card.empty_title')}
             emptyDescription={t('admin.components.metadata_card.empty_description')}
           />
+          <Slot name="order.form_main" context={{ order }} />
         </>
       }
       sidebar={

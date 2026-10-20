@@ -5,6 +5,7 @@ import {
   extensionSubmitValues,
   mapSpreeErrorsToForm,
   PageHeader,
+  Slot,
 } from '@spree/dashboard-core'
 import {
   FormActions,
@@ -85,8 +86,18 @@ function NewCategoryPage() {
               actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
             />
           }
-          main={<CategoryMain form={form} />}
-          sidebar={<CategorySidebar form={form} />}
+          main={
+            <>
+              <CategoryMain form={form} />
+              <Slot name="category.form_main" context={{ category: undefined, mode: 'new' }} />
+            </>
+          }
+          sidebar={
+            <>
+              <CategorySidebar form={form} />
+              <Slot name="category.form_sidebar" context={{ category: undefined, mode: 'new' }} />
+            </>
+          }
         />
       </form>
     </FormProvider>

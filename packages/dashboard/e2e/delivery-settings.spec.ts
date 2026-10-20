@@ -34,6 +34,16 @@ test.describe('delivery profiles', () => {
     await expect(page.getByText(/^default$/i).first()).toBeVisible({ timeout: 15_000 })
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slots on a profile page', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+    await createProfile(page, `E2E Slots ${Date.now()}`)
+
+    await expect(page.getByText('Slot probe: delivery_profile.form_main')).toBeVisible()
+    await expect(page.getByText('Slot probe: delivery_profile.form_sidebar')).toBeVisible()
+  })
+
   test('creates a profile, a zone inside it, and a method inside the zone', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
