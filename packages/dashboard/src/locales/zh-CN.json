@@ -984,7 +984,209 @@
       "title": "下载"
     },
     "enterprise": {
-      "learn_more": "了解 Spree Enterprise"
+      "available_in": "Spree Enterprise 提供此功能",
+      "badge": "Enterprise",
+      "cta": "获取 Spree Enterprise",
+      "footer": "Spree Enterprise 在您已在使用的开源 Spree 基础上增加此功能。您的数据、网店和集成均保持不变。",
+      "how_it_works": "运作方式",
+      "learn_more": "了解 Spree Enterprise",
+      "previews": {
+        "audit_log": {
+          "benefits": {
+            "changes": {
+              "description": "每条记录都显示旧值和新值，让您准确了解更改内容。",
+              "title": "更改前后对比"
+            },
+            "coverage": {
+              "description": "产品、变体、价格、库存、分类、促销、支付、货件、商店积分、税率和店铺设置。",
+              "title": "覆盖所有关键内容"
+            },
+            "search": {
+              "description": "按操作人、记录类型或日期筛选，并打开被更改的记录。",
+              "title": "便捷搜索"
+            }
+          },
+          "intro": "多人共同管理店铺时，您需要知道是谁更改了价格、库存或设置。Spree Enterprise 会记录每一项重要更改，包括操作人、时间以及更改前后的值。",
+          "nav": "审计日志",
+          "steps": {
+            "change": {
+              "description": "团队成员编辑一条记录。",
+              "title": "更改"
+            },
+            "record": {
+              "description": "Spree 保存操作人、时间及更改内容。",
+              "title": "记录"
+            },
+            "review": {
+              "description": "随时在审计日志中找到这项更改。",
+              "title": "查看"
+            }
+          },
+          "subtitle": "查看谁在何时更改了店铺中的哪些内容。",
+          "title": "审计日志"
+        },
+        "company_onboarding": {
+          "benefits": {
+            "agreement": {
+              "description": "企业获批后即可使用其专属目录和价格。您之后可以暂停账户，也可以恢复。",
+              "title": "按您的条款批准"
+            },
+            "checklist": {
+              "description": "要求提供税号、文件或确认事项，并逐项审核。",
+              "title": "自定义审核清单"
+            },
+            "dialogue": {
+              "description": "无需直接拒绝，可附上说明将申请退回。企业在您的网店中作答。",
+              "title": "补充信息"
+            }
+          },
+          "intro": "当企业在您的网店注册时，Spree Enterprise 会将其账户置于待审核状态。企业可以浏览商品目录，但看不到价格；与此同时，您的团队核实其资料、索取缺少的信息并批准申请。",
+          "nav": "企业入驻",
+          "steps": {
+            "approve": {
+              "description": "企业可以看到其价格并下单。",
+              "title": "批准"
+            },
+            "register": {
+              "description": "企业在您的网店注册。",
+              "title": "注册"
+            },
+            "review": {
+              "description": "您的团队审核申请或要求补充信息。",
+              "title": "审核"
+            },
+            "verify": {
+              "description": "企业填写审核清单，期间价格保持隐藏。",
+              "title": "核实"
+            }
+          },
+          "subtitle": "在企业可以购买前审核其注册申请。",
+          "title": "企业入驻"
+        },
+        "lots": {
+          "benefits": {
+            "allocation": {
+              "description": "自动发出最早入库或最先到期的批次，也可由仓库自行选择。一个货件可以从多个批次出货。",
+              "title": "正确批次优先"
+            },
+            "recall": {
+              "description": "查找某个批次去往的所有订单和客户，并查看即将到期的批次。",
+              "title": "快速召回"
+            },
+            "stock": {
+              "description": "记录每个库存地点中每个批次的数量、到期日期、生产日期和供应商批号。",
+              "title": "按批次管理库存"
+            }
+          },
+          "intro": "食品、化妆品、健康产品及其他受监管商品的卖家需要知道每个批次的去向。Spree Enterprise 按批次管理库存，记录数量和到期日期，并为每个货件选出正确的批次。",
+          "nav": "批次",
+          "steps": {
+            "allocate": {
+              "description": "Spree 按您的规则为每个货件分配批次。",
+              "title": "分配"
+            },
+            "receive": {
+              "description": "采购订单或调拨到货时登记批次。",
+              "title": "收货"
+            },
+            "ship": {
+              "description": "每个货件都会记录其包含的批次。",
+              "title": "发货"
+            },
+            "trace": {
+              "description": "搜索批次，查找相关订单和客户。",
+              "title": "追溯"
+            }
+          },
+          "subtitle": "按批次跟踪库存，优先发出正确的批次，并追溯每个批次去往的订单。",
+          "title": "批次与到期日期"
+        },
+        "quotes": {
+          "benefits": {
+            "convert": {
+              "description": "买家接受后，报价单会转为订单，并保留其付款条款和采购订单号。",
+              "title": "直接生成订单"
+            },
+            "negotiate": {
+              "description": "在单张报价单中调整单价、数量、运费和费用，不影响买家的价格表。",
+              "title": "单笔交易专属价格"
+            },
+            "validity": {
+              "description": "每张报价单都有到期日期。买家可以要求修改，您再发送修订后的报价单。",
+              "title": "有效期清晰"
+            }
+          },
+          "intro": "企业买家通常需要先确认价格再下单。使用报价单，买家可从购物车发起询价，您的团队进行报价，买家在线接受。已接受的报价单会按约定价格转为普通订单。",
+          "nav": "报价单",
+          "note": {
+            "description": "使用 Spree Enterprise，买家可在到期前在线查看草稿、要求修改并接受。",
+            "title": "将此草稿作为报价单发送"
+          },
+          "steps": {
+            "accept": {
+              "description": "买家接受后，报价单即转为订单。",
+              "title": "接受"
+            },
+            "price": {
+              "description": "您的团队调整价格、数量和运费。",
+              "title": "报价"
+            },
+            "request": {
+              "description": "买家从购物车发起报价请求。",
+              "title": "询价"
+            },
+            "send": {
+              "description": "买家收到报价单链接及其到期日期。",
+              "title": "发送"
+            }
+          },
+          "subtitle": "与企业买家协商价格，并将已接受的报价单转为订单。",
+          "title": "报价单"
+        },
+        "shopify": {
+          "benefits": {
+            "catalog": {
+              "description": "产品、变体、图片、翻译、价格和库存均来自卖家的店铺。新产品照常经过您的审核。",
+              "title": "商品目录同步"
+            },
+            "control": {
+              "description": "您的团队在 Spree 中编辑过的字段会暂停同步，直到您选择恢复。无法发送的订单会标记出来提醒您。",
+              "title": "掌控权在您手中"
+            },
+            "orders": {
+              "description": "平台订单以已付款状态在卖家的 Shopify 中创建。货件、物流单号、取消和退款都会自动同步回来。",
+              "title": "订单集中处理"
+            }
+          },
+          "intro": "许多卖家已经在 Shopify 上销售。将他们的店铺连接到您的平台后，其商品目录和库存会自动保持同步。平台订单会出现在卖家的 Shopify 中，方便他们在一个地方完成所有履约。",
+          "nav": "Shopify",
+          "note": {
+            "description": "使用 Spree Enterprise，此卖家的产品、库存和订单将与其 Shopify 店铺保持同步。",
+            "title": "连接此卖家的 Shopify 店铺"
+          },
+          "steps": {
+            "connect": {
+              "description": "您为卖家创建连接。",
+              "title": "连接"
+            },
+            "install": {
+              "description": "卖家在其 Shopify 店铺中安装应用。",
+              "title": "安装"
+            },
+            "sell": {
+              "description": "订单发送到卖家店铺，货件信息同步回来。",
+              "title": "销售"
+            },
+            "sync": {
+              "description": "其商品目录、库存地点和库存同步到您的平台。",
+              "title": "同步"
+            }
+          },
+          "subtitle": "让卖家继续在自己的 Shopify 店铺中经营业务。",
+          "title": "卖家 Shopify 对接"
+        }
+      },
+      "see_how_it_works": "了解运作方式"
     },
     "errors": {
       "forbidden_description": "您没有权限查看此页面。",

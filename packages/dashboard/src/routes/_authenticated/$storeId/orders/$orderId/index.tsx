@@ -6,6 +6,7 @@ import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
 } from '../../../../../components/spree/custom-fields/custom-fields-inline'
+import { EnterprisePreviewNote } from '../../../../../components/spree/enterprise-upsell'
 import { OrderDigitalLinksCard } from '../../../../../components/spree/order-digital-links-card'
 import {
   OrderClaimsCard,
@@ -107,6 +108,8 @@ function OrderDetailPage() {
           <OrderPurchaseOrderCard order={order} />
           <SpecialInstructionsCard order={order} />
           <InternalNoteCard order={order} />
+          {/* A draft is where a negotiated price starts. */}
+          {!order.completed_at && <EnterprisePreviewNote previewKey="orders.quotes" />}
           <Slot name="order.form_sidebar" context={{ order }} />
         </>
       }

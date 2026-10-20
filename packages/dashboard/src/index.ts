@@ -43,3 +43,9 @@ export * from '@spree/dashboard-ui'
 
 export { createDashboardRouter } from './create-router'
 export { Dashboard } from './dashboard'
+export {
+  type EnterprisePreview,
+  type EnterprisePreviewPlacement,
+  enterprisePreviews,
+  useEnterprisePreview,
+} from './lib/enterprise-previews'

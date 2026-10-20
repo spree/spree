@@ -3,6 +3,7 @@ import {
   __resetPluginRoutes,
   getPluginRoutes,
   matchPluginRoute,
+  outranksRouterMatch,
   pluginRoutes,
   type RouteEntry,
 } from '../src/lib/route-registry'
@@ -45,6 +46,22 @@ describe('matchPluginRoute', () => {
   it('returns null when nothing matches', () => {
     expect(matchPluginRoute('unknown', [entry('brands', '/brands')])).toBeNull()
     expect(matchPluginRoute('', [entry('brands', '/brands')])).toBeNull()
+  })
+})
+
+describe('outranksRouterMatch', () => {
+  it('takes an address the router gave to a record page', () => {
+    expect(outranksRouterMatch('/sellers/shopify', '/sellers/$sellerId')).toBe(true)
+    expect(outranksRouterMatch('/orders/quotes', '/orders/$orderId/')).toBe(true)
+    expect(outranksRouterMatch('/orders/quotes/$quoteId', '/orders/$orderId/edit')).toBe(true)
+  })
+
+  it('never takes over a first-party page', () => {
+    expect(outranksRouterMatch('/sellers/commission-rates', '/sellers/commission-rates')).toBe(
+      false,
+    )
+    expect(outranksRouterMatch('/sellers/$id', '/sellers/$sellerId')).toBe(false)
+    expect(outranksRouterMatch('/orders/$id/history', '/orders/drafts/$draftId')).toBe(false)
   })
 })
 
