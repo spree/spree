@@ -9,7 +9,7 @@ export const taxRateFormSchema = z.object({
   // The merchant types a percentage (20); the API converts it to the fraction it stores.
   rate_percent: z
     .string()
-    .refine((value) => isDecimalString(value) && compareMoney(value, '0') >= 0, {
+    .refine((value) => isDecimalString(value) && !value.startsWith('-'), {
       error: requiredMessage('tax_rate.amount'),
     })
     // Stored as a fraction to five decimals, so a percentage keeps three.

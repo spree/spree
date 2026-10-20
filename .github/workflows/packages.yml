@@ -446,7 +446,7 @@ jobs:
 
   release-core:
     name: "Core - Release"
-    needs: check
+    needs: [check, scaffolded-app]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -727,7 +727,8 @@ jobs:
   # starter with ranges floored at these versions.
   release-seller:
     name: "Seller packages - Release"
-    needs: [check, scaffolded-app]
+    # Gated on release-core for the same reason as release-dashboard.
+    needs: [check, scaffolded-app, release-core]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:

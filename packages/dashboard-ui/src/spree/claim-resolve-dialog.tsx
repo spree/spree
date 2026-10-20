@@ -93,9 +93,11 @@ export function ClaimResolveDialog({
     },
   ]
 
+  // A number input keeps `.5` as typed; the API reads only `0.5`.
+  const refundAmount = amount.startsWith('.') ? `0${amount}` : amount
   // Refunding nothing, or replacing nothing, is what the server rejects —
   // say so here instead of letting the request fail.
-  const positiveAmount = isPositiveMoney(amount)
+  const positiveAmount = isPositiveMoney(refundAmount)
   const ready =
     (!refunding || positiveAmount) && (!sendingReplacement || chosenReplacements.length > 0)
 
@@ -210,7 +212,7 @@ export function ClaimResolveDialog({
               onSubmit({
                 resolution,
                 refundMethod,
-                amount: refunding ? amount : undefined,
+                amount: refunding ? refundAmount : undefined,
                 replacementLineItemIds: chosenReplacements,
               })
             }

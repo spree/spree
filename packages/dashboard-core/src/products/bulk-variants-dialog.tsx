@@ -1,10 +1,4 @@
-import {
-  compareMoney,
-  DimensionUnit,
-  isDecimalString,
-  normalizeMoneyInput,
-  WeightUnit,
-} from '@spree/core'
+import { DimensionUnit, normalizeMoneyInput, WeightUnit } from '@spree/core'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { useCountries, useCountryDisplayName } from '@spree/dashboard-core'
 import {
@@ -283,16 +277,18 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
   )
 }
 
+// Cells show numbers with a period, so they read back the same way, with
+// comma grouping (`1,500`) or a lone decimal comma (`2,5`) also accepted.
+const MEASURE_INPUT = /^(?:(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?|\d+,\d+)$/
+
 /**
  * A measurement typed or pasted into a cell: `null` when cleared, `undefined`
  * when it is not a non-negative number, so the cell keeps its value rather
- * than being mangled. Cells show numbers with a period and no grouping, so
- * they are read the same way; a lone comma before other than three digits
- * (`1,5`) still reads as a decimal mark.
+ * than being mangled.
  */
 function readMeasure(value: string | null | undefined): number | null | undefined {
-  if (value == null || value.trim() === '') return null
-  const canonical = normalizeMoneyInput(value, 'en')
-  if (!isDecimalString(canonical) || compareMoney(canonical, '0') < 0) return undefined
-  return Number(canonical)
+  const typed = value?.trim() ?? ''
+  if (typed === '') return null
+  if (!MEASURE_INPUT.test(typed)) return undefined
+  return Number(normalizeMoneyInput(typed, 'en'))
 }

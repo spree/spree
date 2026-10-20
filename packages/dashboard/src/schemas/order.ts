@@ -1,5 +1,5 @@
 import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
-import { compareMoney, isDecimalString, multiplyMoney, sumMoney } from '@spree/core'
+import { isDecimalString, multiplyMoney, sumMoney } from '@spree/core'
 import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
@@ -106,7 +106,7 @@ export const orderEditItemSchema = z
     if (
       !item.removed &&
       !item.revert_price &&
-      !(isDecimalString(item.price) && compareMoney(item.price, '0') >= 0)
+      !(isDecimalString(item.price) && !item.price.startsWith('-'))
     ) {
       ctx.addIssue({
         code: 'custom',

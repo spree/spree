@@ -84,7 +84,7 @@ test.describe('tax rates', () => {
     await expect(page.locator('#rate_percent')).toHaveValue('7.125', { timeout: 15_000 })
   })
 
-  test('refuses a fourth decimal and a blank rate without saving', async ({ page }) => {
+  test('refuses a fourth decimal, a negative and a blank rate without saving', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, TAX_RATES_PATH(creds.store_id), CTA)
 
@@ -94,6 +94,10 @@ test.describe('tax rates', () => {
     const rateField = page.locator('#rate_percent')
     await expect(rateField).toHaveAttribute('aria-invalid', 'true')
     await expect(page.getByText(/at most 3 decimal places/i)).toBeVisible()
+
+    await rateField.fill('-5')
+    await page.getByRole('button', { name: /create tax rate/i }).click()
+    await expect(rateField).toHaveAttribute('aria-invalid', 'true')
 
     await rateField.fill('')
     await page.getByRole('button', { name: /create tax rate/i }).click()

@@ -150,6 +150,13 @@ test.describe('product variants', () => {
     await expect(grid.getByLabel(/^weight — .*\bred$/i)).toHaveValue('1500')
     await expect(grid.getByLabel(/^weight — .*\bblue$/i)).toHaveValue('2.5')
 
+    // A value that is not a number in either format leaves the cell as it was.
+    const red = grid.getByLabel(/^weight — .*\bred$/i)
+    await red.dblclick()
+    await red.fill('1.234,5')
+    await red.press('Enter')
+    await expect(red).toHaveValue('1500')
+
     await grid.getByRole('button', { name: /^done$/i }).click()
     await expect(grid).toBeHidden()
 

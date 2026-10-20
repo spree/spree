@@ -14,7 +14,7 @@
  * draft edits update the row immediately, before any save.
  */
 
-import { formatMoney } from '@spree/core'
+import { formatMoney, isDecimalString } from '@spree/core'
 
 export interface CalculatorPayload {
   /**
@@ -104,7 +104,12 @@ function formatField(
 ): string | null {
   if (value === null || value === undefined || value === '') return null
   if (property.format === 'currency') return null
-  if (property.format === 'money') return formatMoney(String(value), currency) || String(value)
+  if (property.format === 'money') {
+    const amount = String(value)
+    return (
+      formatMoney(amount, currency) || (isDecimalString(amount) ? `${amount} ${currency}` : amount)
+    )
+  }
   if (/(?:^|_)percent$/.test(key)) return `${value}%`
 
   const type = (Array.isArray(property.type) ? property.type : [property.type]).find(
