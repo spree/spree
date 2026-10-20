@@ -13,8 +13,8 @@ en:
         invalid_position: new_position must be an integer
         media_in_use: This file is still in use (%{places}). Pass detach=true to remove it everywhere and delete it, or clear those places first.
         media_not_deleted: The file could not be deleted. Nothing was changed.
-        order_sales_context_exclusive: 'An order already fixes its sales context, so order_id cannot be combined with %{params}.'
         media_url_import_requires_product: Importing media from a URL needs a product to import it into. Upload the file instead, or post it to a product's media.
+        order_sales_context_exclusive: An order already fixes its sales context, so order_id cannot be combined with %{params}.
         store_mismatch: The requested store does not match the store this API key belongs to.
         storefront_login_required: Authentication required to access this store.
         unsupported_export_type: 'Unsupported export type. Supported types: %{types}'
