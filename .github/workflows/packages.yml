@@ -100,14 +100,14 @@ jobs:
             exit 1
           fi
 
-      # The country, currency and locale lists come from the closed code
-      # schemas in the Store API reference.
+      # The country, currency, locale and unit lists come from the closed code
+      # schemas in the Store and Admin API references.
       - name: Check SDK code lists are up to date
         run: |
-          pnpm generate:iso-codes
-          if [ -n "$(git status --porcelain -- packages/sdk-core/src/iso-codes.generated.ts)" ]; then
-            git diff -- packages/sdk-core/src/iso-codes.generated.ts
-            echo "::error::SDK code lists are out of date. Run 'pnpm generate:iso-codes' and commit the result."
+          pnpm generate:code-lists
+          if [ -n "$(git status --porcelain -- packages/sdk-core/src/code-lists.generated.ts)" ]; then
+            git diff -- packages/sdk-core/src/code-lists.generated.ts
+            echo "::error::SDK code lists are out of date. Run 'pnpm generate:code-lists' and commit the result."
             exit 1
           fi
 

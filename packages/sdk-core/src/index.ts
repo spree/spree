@@ -1,5 +1,13 @@
 // Request infrastructure
 
+// Code lists
+export {
+  CountryCode,
+  CurrencyCode,
+  DimensionUnit,
+  LocaleCode,
+  WeightUnit,
+} from './code-lists.generated'
 export type { FilterSpec } from './filter-types'
 export { renderAppFilterTypes, renderFilterTypes } from './filter-types'
 export type {
@@ -17,8 +25,6 @@ export type {
 export type { ResolvedRetryConfig } from './helpers'
 // Helpers
 export { getParams, resolveRetryConfig } from './helpers'
-// ISO codes
-export { CountryCode, CurrencyCode, LocaleCode } from './iso-codes.generated'
 // Money
 export {
   compareMoney,

@@ -100,18 +100,30 @@ module Spree
 
         # A request body is declared once per endpoint and published as a
         # component, so the operation carries a `$ref` to it rather than the
-        # properties themselves. Followed a few hops, which is as deep as the
-        # generated document nests them.
+        # properties themselves. A body that builds on a shared shape is an
+        # `allOf` of that shape and its own fields, read as one object.
+        # Followed a few hops, which is as deep as the generated document
+        # nests them.
         #
         # @param schema [Hash, nil] a schema that may be a reference
         # @return [Hash, nil] the schema it names
         def resolve_schema(schema, depth = 0)
           return unless schema.is_a?(Hash)
-          return schema unless schema.key?('$ref')
           return if depth > 3
+          return merge_all_of(schema['allOf'], depth) if schema.key?('allOf')
+          return schema unless schema.key?('$ref')
 
           name = schema['$ref'].to_s.split('/').last
           resolve_schema(document.dig('components', 'schemas', name), depth + 1)
+        end
+
+        private
+
+        def merge_all_of(parts, depth)
+          parts.filter_map { |part| resolve_schema(part, depth + 1) }.each_with_object({}) do |part, merged|
+            merged['properties'] = (merged['properties'] || {}).merge(part['properties'] || {})
+            merged['required'] = (merged['required'] || []) | Array(part['required'])
+          end
         end
       end
     end

@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { DimensionUnit, WeightUnit } from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -45,10 +46,8 @@ import { mapSpreeErrorsToForm } from '../lib/form-errors'
 import { Subject } from '../lib/permissions'
 import { usePermissions } from '../providers/permission-provider'
 import {
-  PACKAGE_DIMENSION_UNITS,
   PACKAGE_TYPE_DEFAULTS,
   PACKAGE_TYPE_KINDS,
-  PACKAGE_WEIGHT_UNITS,
   type PackageTypeFormValues,
   packageTypeFormSchema,
   packageTypeFormValuesToParams,
@@ -376,7 +375,7 @@ function PackageTypeFormFields({ form }: { form: UseFormReturn<PackageTypeFormVa
         <UnitField
           form={form}
           name="dimensions_unit"
-          units={PACKAGE_DIMENSION_UNITS}
+          units={Object.values(DimensionUnit)}
           label={t('admin.fields.package_type.dimensions_unit.label')}
         />
       </div>
@@ -416,7 +415,7 @@ function PackageTypeFormFields({ form }: { form: UseFormReturn<PackageTypeFormVa
         <UnitField
           form={form}
           name="weight_unit"
-          units={PACKAGE_WEIGHT_UNITS}
+          units={Object.values(WeightUnit)}
           label={t('admin.fields.package_type.weight_unit.label')}
         />
       </div>

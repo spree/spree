@@ -1,3 +1,4 @@
+import { WeightUnit } from '@spree/admin-sdk'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -5,12 +6,10 @@ import { z } from 'zod/v4'
 // `admin.store.weight_units.*`. Consumers translate at render time.
 export type UnitSystem = 'metric' | 'imperial'
 export const UNIT_SYSTEMS: readonly UnitSystem[] = ['metric', 'imperial']
-export type WeightUnit = 'kg' | 'g' | 'lb' | 'oz'
 export const WEIGHT_UNITS: Record<UnitSystem, readonly WeightUnit[]> = {
   metric: ['kg', 'g'],
   imperial: ['lb', 'oz'],
 }
-const ALL_WEIGHT_UNITS = [...WEIGHT_UNITS.metric, ...WEIGHT_UNITS.imperial] as const
 
 // Store-wide storefront posture. Unlike the channel field there is no blank
 // "inherit" option — the store is the terminal fallback in the resolution
@@ -45,7 +44,7 @@ export const storeSettingsFormSchema = z.object({
   admin_locale: z.string().nullable().optional(),
   timezone: z.string().min(1, { error: requiredMessage('store.timezone') }),
   unit_system: z.enum(['metric', 'imperial']),
-  weight_unit: z.enum(ALL_WEIGHT_UNITS),
+  weight_unit: z.enum(WeightUnit),
   storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
   guest_checkout: z.boolean(),
   always_include_confirm_step: z.boolean(),

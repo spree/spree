@@ -1,10 +1,12 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { WeightUnit } from '../generated'
+
 export type StoreUpdateParams = {
   name?: string
   admin_locale?: string
   timezone?: string
-  weight_unit?: 'g' | 'kg' | 'lb' | 'oz'
+  weight_unit?: WeightUnit
   unit_system?: 'metric' | 'imperial'
   /**
    * The store-wide default for what anonymous visitors can see. Channels fall back to it when they

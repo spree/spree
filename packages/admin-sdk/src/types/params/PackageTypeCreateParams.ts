@@ -1,5 +1,8 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { DimensionUnit } from '../generated'
+import type { WeightUnit } from '../generated'
+
 export type PackageTypeCreateParams = {
   /** Unique within the store. */
   name: string
@@ -12,12 +15,12 @@ export type PackageTypeCreateParams = {
   width?: number | null
   height?: number | null
   /** Unit the three dimensions are in; falls back to the store's unit system. */
-  dimensions_unit?: 'mm' | 'cm' | 'in' | 'ft' | null
+  dimensions_unit?: DimensionUnit | null
   /** The empty package's own weight, added to content weight on every quote. */
   weight?: number | null
   /** What the package can hold, not the same as its own weight. */
   max_weight?: number | null
-  weight_unit?: 'g' | 'kg' | 'lb' | 'oz' | null
+  weight_unit?: WeightUnit | null
   /** The box every parcel quote is built on. Setting this demotes whichever row held it. */
   default?: boolean
   metadata?: Record<string, unknown>

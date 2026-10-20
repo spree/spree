@@ -1097,8 +1097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3406979
-                  slug: product-3406979
+                  name: Product 3436979
+                  slug: product-3436979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1390,8 +1390,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3889085
-                  slug: product-3889085
+                  name: Product 3919085
+                  slug: product-3919085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1422,8 +1422,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 3898209
-                  slug: product-3898209
+                  name: Product 3928209
+                  slug: product-3928209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1552,8 +1552,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4166885
-                slug: product-4166885
+                name: Product 4196885
+                slug: product-4196885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1946,7 +1946,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e3e622807fc2a4cbaf839915644236c074b14c7b
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -1954,7 +1954,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--3750f7691683b5375486d3266b42be430e421821
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c371f81d2998190ebc1edf0b658c9b3921921de1
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -2261,8 +2261,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 311715
-                    slug: product-311715
+                    name: Product 314715
+                    slug: product-314715
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2382,8 +2382,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3122171
-                    slug: product-3122171
+                    name: Product 3152171
+                    slug: product-3152171
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2671,7 +2671,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 316307 was removed because it was sold out
+                  message: Product 319307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2914,8 +2914,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3173263
-                  slug: product-3173263
+                  name: Product 3203263
+                  slug: product-3203263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3138,8 +3138,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3198992
-                  slug: product-3198992
+                  name: Product 3228992
+                  slug: product-3228992
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3378,8 +3378,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3224794
-                  slug: product-3224794
+                  name: Product 3254794
+                  slug: product-3254794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3697,8 +3697,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3552614
-                  slug: product-3552614
+                  name: Product 3582614
+                  slug: product-3582614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3892,8 +3892,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3563461
-                  slug: product-3563461
+                  name: Product 3593461
+                  slug: product-3593461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4081,8 +4081,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3588182
-                  slug: product-3588182
+                  name: Product 3618182
+                  slug: product-3618182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4401,8 +4401,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3605702
-                  slug: product-3605702
+                  name: Product 3635702
+                  slug: product-3635702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4645,8 +4645,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3649569
-                  slug: product-3649569
+                  name: Product 3679569
+                  slug: product-3679569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4775,10 +4775,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 36763 cannot be delivered to the selected address
+                  message: Product 37063 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 368298 cannot be delivered to the selected address
+                  message: Product 371298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4837,8 +4837,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 36763
-                  slug: product-36763
+                  name: Product 37063
+                  slug: product-37063
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4868,8 +4868,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 368298
-                  slug: product-368298
+                  name: Product 371298
+                  slug: product-371298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5084,8 +5084,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3749165
-                  slug: product-3749165
+                  name: Product 3779165
+                  slug: product-3779165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5892,8 +5892,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4399789
-                  slug: product-4399789
+                  name: Product 4429789
+                  slug: product-4429789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6077,8 +6077,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 441179
-                  slug: product-441179
+                  name: Product 444179
+                  slug: product-444179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6437,8 +6437,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 378496
-                  slug: product-378496
+                  name: Product 381496
+                  slug: product-381496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -7790,8 +7790,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3425270
-                    slug: product-3425270
+                    name: Product 3455270
+                    slug: product-3455270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -8116,8 +8116,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3445633
-                  slug: product-3445633
+                  name: Product 3475633
+                  slug: product-3475633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -9537,7 +9537,7 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[amount_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
@@ -10809,7 +10809,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-547
+                  sku: SKU-550
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -10895,7 +10895,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-548
+                  sku: SKU-551
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -12412,8 +12412,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3415649
-                    slug: product-3415649
+                    name: Product 3445649
+                    slug: product-3445649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
