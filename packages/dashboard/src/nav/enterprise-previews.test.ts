@@ -1,6 +1,6 @@
 import { __getNavEntries, getPluginRoutes, matchPluginRoute } from '@spree/dashboard-core'
 import { describe, expect, it } from 'vitest'
-import { enterprisePreviews } from '../lib/enterprise-previews'
+import { ENTERPRISE_PREVIEWS_ENABLED, enterprisePreviews } from '../lib/enterprise-previews'
 import './default'
 import './settings'
 import './enterprise-previews'
@@ -10,7 +10,8 @@ const childKeys = (parentKey: string) =>
     .find((entry) => entry.key === parentKey)
     ?.children?.map((child) => child.key) ?? []
 
-describe('Enterprise previews', () => {
+// An installation that turns the previews off registers none of them.
+describe.skipIf(!ENTERPRISE_PREVIEWS_ENABLED)('Enterprise previews', () => {
   it('places each preview where its Enterprise page will be', () => {
     expect(childKeys('orders')).toContain('orders.quotes')
     expect(childKeys('companies')).toContain('companies.onboarding')
