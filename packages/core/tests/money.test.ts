@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { CURRENCY_EXPONENTS } from '../../sdk-core/src/currency-exponents'
 import {
+  CURRENCY_EXPONENTS,
   compareMoney,
   decimalPlaces,
   formatMoney,

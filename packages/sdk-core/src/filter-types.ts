@@ -4,7 +4,7 @@
 // tables the Ransack allowlists produce, so the types say exactly what the API
 // accepts.
 
-import { FILTER_PREDICATES } from './filters'
+import { FILTER_PREDICATES } from '@spree/core'
 
 const PACKAGE_HEADER =
   '// This file is auto-generated from the filter tables in docs/api-reference by `pnpm generate:filters`. Do not edit directly.\n'
