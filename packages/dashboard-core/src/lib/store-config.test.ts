@@ -1,6 +1,9 @@
 import type { Market } from '@spree/admin-sdk'
-import { describe, expect, it } from 'vitest'
-import { marketLocalization } from './store-config'
+import { describe, expect, it, vi } from 'vitest'
+import { adminClient } from '../client'
+import { listAllMarkets, marketLocalization } from './store-config'
+
+vi.mock('../client', () => ({ adminClient: { markets: { list: vi.fn() } } }))
 
 function market(attributes: Partial<Market>): Market {
   return {
@@ -59,5 +62,32 @@ describe('marketLocalization', () => {
       defaultCurrency: undefined,
       defaultLocale: undefined,
     })
+  })
+})
+
+describe('listAllMarkets', () => {
+  it('joins every page so markets past the first page are not lost', async () => {
+    const page = (number: number, pages: number) => ({
+      data: [market({ id: `mkt_${number}` })],
+      meta: {
+        page: number,
+        pages,
+        limit: 100,
+        count: pages,
+        from: 1,
+        to: 1,
+        in: 1,
+        previous: null,
+        next: null,
+      },
+    })
+    vi.mocked(adminClient.markets.list).mockImplementation(async (params) =>
+      page(params?.page ?? 1, 3),
+    )
+
+    const result = await listAllMarkets()
+
+    expect(result.data.map((record) => record.id)).toEqual(['mkt_1', 'mkt_2', 'mkt_3'])
+    expect(adminClient.markets.list).toHaveBeenCalledTimes(3)
   })
 })

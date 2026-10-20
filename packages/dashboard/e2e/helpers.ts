@@ -239,11 +239,15 @@ export function getCredentials(): E2ECredentials {
  * are single-use (rotated on every refresh), so each context needs its own.
  *
  * Not used by `auth.spec.ts` — that spec exercises the login form itself.
+ * Pass `account` to sign in as a teammate rather than the seeded admin.
  */
-export async function login(page: Page): Promise<E2ELoginSession> {
+export async function login(
+  page: Page,
+  account?: { email: string; password: string },
+): Promise<E2ELoginSession> {
   const creds = getCredentials()
   const res = await page.request.post('/api/v3/admin/auth/login', {
-    data: { email: creds.admin_email, password: creds.admin_password },
+    data: account ?? { email: creds.admin_email, password: creds.admin_password },
   })
   if (!res.ok()) {
     throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)

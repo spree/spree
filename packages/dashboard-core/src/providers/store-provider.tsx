@@ -86,10 +86,18 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
     queryFn: listAllMarkets,
     staleTime: STORE_CONFIG_STALE_TIME,
   })
-  const localization = useMemo(
-    () => marketLocalization(marketsQuery.data?.data ?? []),
-    [marketsQuery.data],
-  )
+  // Until the markets arrive, or if they cannot be read, the store payload
+  // stands in: the server derives the same values from the same markets, and a
+  // hardcoded USD/en would be wrong for most stores.
+  const localization = useMemo(() => {
+    if (marketsQuery.data) return marketLocalization(marketsQuery.data.data)
+    return {
+      currencies: store?.supported_currencies ?? [],
+      locales: store?.supported_locales ?? [],
+      defaultCurrency: store?.default_currency,
+      defaultLocale: store?.default_locale,
+    }
+  }, [marketsQuery.data, store])
 
   // Reconcile the admin language against this store's default — adopting it,
   // or dropping a now-stale auto-applied default — only when no account locale
